@@ -1,15 +1,7 @@
 package com.garretwilson.swing;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.net.*;
 import javax.swing.*;
-import com.garretwilson.io.*;
-import com.garretwilson.lang.StringUtilities;
-import com.garretwilson.resources.icon.IconResources;
-import com.garretwilson.swing.*;
-import com.garretwilson.util.Debug;
 
 /**A panel that contains a toolbar and a status. The panel uses a border layout,
 	and content can be added by a component being placed in the panel center.
@@ -53,16 +45,16 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 		}
 
 	/**The application status bar.*/
-	private final JPanel statusBar;	//TODO create a StatusBar panel
+	private final StatusPanel statusBar;
 
 		/**@return The application status bar.*/
-		public JPanel getStatusBar() {return statusBar;}
+		public StatusPanel getStatusBar() {return statusBar;}
 
 	/**The label to display the status.*/
-	private final JLabel statusStatusLabel;
+//G***del when works	private final JLabel statusStatusLabel;
 
 	/**The progress bar label that appears on the status bar.*/
-	private final JProgressBar statusProgressBar;
+//G***del when works	private final JProgressBar statusProgressBar;
 
 	/**Default constructor.*/
 	public ApplicationPanel()
@@ -132,18 +124,22 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 		if(hasStatusBar)  //if we should have a status bar
 		{
 //G***del Debug.trace("creating status label"); //G***del
+/*G***del when works			
 			statusStatusLabel=new JLabel();  //create a status label G***this isn't really designed correctly
 		  statusProgressBar=new JProgressBar(); //create a status progress bar
 //G***del Debug.trace("creating status bar"); //G***del
-			statusBar=createStatusBar();  //create the menu bar
+*/
+			statusBar=createStatusBar();  //create the status bar
 //G***del Debug.trace("adding status bar"); //G***del
-	    add(statusBar, BorderLayout.SOUTH); //put the status bar in the south
+			add(statusBar, BorderLayout.SOUTH); //put the status bar in the south
 		}
 		else  //if we shouldn't have a status bar
 		{
 			statusBar=null; //show that we don't have a status bar
+/*G***del when works
 			statusStatusLabel=null; //show that we don't have a status label
 			statusProgressBar=null; //show that we don't have a status progress bar
+*/
 		}
 		if(initialize)  //if we should initialize the panel
 			initialize();   //initialize everything
@@ -165,7 +161,7 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 		added to the toolbar.</p>
 	<p>Any derived class that overrides this method should call this version.</p>
 	@see #initializeToolBar(JToolBar)
-	@see #initializeStatusBar(JPanel)
+	@see #initializeStatusBar(StatusPanel)
 	*/
   protected void initializeUI()
   {
@@ -210,9 +206,10 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 	}
 
 	/**@return A new status bar.*/
-	protected JPanel createStatusBar()
+	protected StatusPanel createStatusBar()
 	{
-	  final JPanel statusBar=new JPanel();  //create the status bar
+	  final StatusPanel statusBar=new StatusPanel();  //create the status bar
+/*G***del when works
 		final GridBagLayout statusGridBagLayout=new GridBagLayout();	//create a layout for the status bar
 		statusBar.setBorder(BorderFactory.createEtchedBorder());	//set the status border
 //G***fix		statusFlowLayout.setAlignment(FlowLayout.LEFT);	//align the status components to the left
@@ -222,6 +219,7 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 		statusProgressBar.setStringPainted(true); //G***fix; comment
 		statusProgressBar.setFont(statusProgressBar.getFont().deriveFont((float)statusProgressBar.getFont().getSize()-1));	//G***testing; fix
 		statusBar.add(statusProgressBar, new GridBagConstraints(1, 0, 1, 1, 0.5, 0, GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));	//G***testing
+*/
 		return statusBar; //return the status bar we created
 	}
 
@@ -235,7 +233,7 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 	/**Initializes the status bar components.
 	@param statusBar The status bar to be initialized.
 	*/
-	protected void initializeStatusBar(final JPanel statusBar)
+	protected void initializeStatusBar(final StatusPanel statusBar)
 	{
 	}
 
@@ -244,6 +242,7 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 	*/
 	public void setStatus(final String status)
 	{
+/*G***fix	
 //G***del Debug.trace("told to change status"); //G***del
 		if(statusStatusLabel!=null) //if we have a status label
 		{
@@ -252,6 +251,7 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 //G***del 			statusStatusLabel.repaint();  //G***del; testing
 //G***del 			statusBar.repaint();  //G***del; testing
 		}
+*/
 	}
 
 	/**Displays an error messages for an exception.
