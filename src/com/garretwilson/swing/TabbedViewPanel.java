@@ -135,6 +135,9 @@ public abstract class TabbedViewPanel extends ModelViewablePanel
 			case SOURCE_MODEL_VIEW:
 				icon=IconResources.getIcon(IconResources.MARKUP_ICON_FILENAME);
 				break;
+			case CONFIGURATION_MODEL_VIEW:
+				icon=IconResources.getIcon(IconResources.CONFIGURATION_ICON_FILENAME);
+				break;
 		}
 		addView(view, title, icon, component, tip, index);	//add the view with the default icon, if we found one
 	}

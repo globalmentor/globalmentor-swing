@@ -83,7 +83,7 @@ public class TextPanel extends ModelPanel
 	/**Loads the data from the model to the view, if necessary.
 	@exception IOException Thrown if there was an error loading the model.
 	*/
-	protected void loadModel() throws IOException
+	public void loadModel() throws IOException
 	{
 		super.loadModel();	//do the default loading
 		textPane.setText(getLocaleText().getText());	//get the text from the model
@@ -92,7 +92,7 @@ public class TextPanel extends ModelPanel
 	/**Stores the current data being edited to the model, if necessary.
 	@exception IOException Thrown if there was an error loading the model.
 	*/
-	protected void saveModel() throws IOException
+	public void saveModel() throws IOException
 	{
 		super.saveModel();	//do the default saving
 		getLocaleText().setText(textPane.getText());	//change the model's text to whatever is in the text pane 

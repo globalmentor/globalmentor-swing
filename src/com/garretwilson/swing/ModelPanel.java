@@ -117,14 +117,14 @@ public class ModelPanel extends ModifiablePanel implements ModelView
 	/**Loads the data from the model to the view, if necessary.
 	@exception IOException Thrown if there was an error loading the model.
 	*/
-	protected void loadModel() throws IOException
+	public void loadModel() throws IOException
 	{
 	}
 
 	/**Stores the current data being edited to the model, if necessary.
 	@exception IOException Thrown if there was an error saving the model.
 	*/
-	protected void saveModel() throws IOException
+	public void saveModel() throws IOException
 	{
 	}
 

@@ -189,7 +189,7 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 	@exception IOException Thrown if there was an error loading the model.
 	@see #loadModel(int)
 	*/
-	protected void loadModel() throws IOException
+	public void loadModel() throws IOException
 	{
 		super.loadModel();	//do the default loading
 		loadModel(getModelView());	//load the model into the current view
@@ -209,7 +209,7 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 	@exception IOException Thrown if there was an error saving the model.
 	@see #saveModel(int)
 	*/
-	protected void saveModel() throws IOException
+	public void saveModel() throws IOException
 	{
 		saveModel(getModelView());	//save the current view
 		super.saveModel();	//do the default saving

@@ -174,7 +174,7 @@ public class RDFPanel extends TabbedViewPanel
 	{
 		super.saveModel(modelView);	//do the default saving
 		final RDFResourceModel model=getRDFResourceModel();	//get the data model
-		switch(modelView)	//see which view of data we have, in order to get the current RDF
+		switch(modelView)	//see which view of data we should save
 		{
 			case TREE_MODEL_VIEW:	//if we should store the RDF currently in the tree
 				if(getRDFTree().getModel().getRoot() instanceof RDFObjectTreeNode)	//if this tree is showing an RDF object
