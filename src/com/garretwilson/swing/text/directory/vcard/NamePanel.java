@@ -59,7 +59,7 @@ public class NamePanel extends DefaultPanel
 		/**@return The additional name text field.*/
 		public JTextField getAdditionalNameTextField() {return additionalNameTextField;}
 
-	/**The label of the honorific prefix text field.*/
+	/**The label of the honorific prefix.*/
 	private final JLabel honorificPrefixLabel;
 
 	/**The honorific prefix combo box.*/
@@ -68,7 +68,7 @@ public class NamePanel extends DefaultPanel
 		/**@return The honorific prefix combo box.*/
 		public JComboBox getHonorificPrefixComboBox() {return honorificPrefixComboBox;}
 
-	/**The label of the honorific suffix text field.*/
+	/**The label of the honorific suffix.*/
 	private final JLabel honorificSuffixLabel;
 
 	/**The honorific suffix combo box.*/
@@ -77,7 +77,7 @@ public class NamePanel extends DefaultPanel
 		/**@return The honorific suffix combo box.*/
 		public JComboBox getHonorificSuffixComboBox() {return honorificSuffixComboBox;}
 
-	/**Places the name information in the various fields.
+	/**Places the name information into the various fields.
 	@param name The name to place in the fields, or <code>null</code> if no
 		information should be displayed.
 	*/
@@ -91,9 +91,12 @@ public class NamePanel extends DefaultPanel
 			honorificPrefixComboBox.setSelectedItem(StringUtilities.concat(name.getHonorificPrefixes(), VALUE_SEPARATOR));
 			honorificSuffixComboBox.setSelectedItem(StringUtilities.concat(name.getHonorificSuffixes(), VALUE_SEPARATOR));
 		}
-		else	//if there is no name
+		else	//if there is no name, clear the fields
 		{
-			honorificPrefixComboBox.setSelectedItem("");	//clear the fields
+			familyNameTextField.setText("");
+			givenNameTextField.setText("");
+			additionalNameTextField.setText("");
+			honorificPrefixComboBox.setSelectedItem("");
 			honorificSuffixComboBox.setSelectedItem("");
 		}
 	}
@@ -102,11 +105,11 @@ public class NamePanel extends DefaultPanel
 	public Name getVCardName()
 	{
 			//get the values from the components
-		final String[] familyNames=StringTokenizerUtilities.getTokens(new StringTokenizer(familyNameTextField.getText(), VALUE_DELIMITERS));
-		final String[] givenNames=StringTokenizerUtilities.getTokens(new StringTokenizer(givenNameTextField.getText(), VALUE_DELIMITERS));
-		final String[] additionalNames=StringTokenizerUtilities.getTokens(new StringTokenizer(additionalNameTextField.getText(), VALUE_DELIMITERS));
-		final String[] honorificPrefixes=StringTokenizerUtilities.getTokens(new StringTokenizer(honorificPrefixComboBox.getSelectedItem().toString(), VALUE_DELIMITERS));
-		final String[] honorificSuffixes=StringTokenizerUtilities.getTokens(new StringTokenizer(honorificSuffixComboBox.getSelectedItem().toString(), VALUE_DELIMITERS));
+		final String[] familyNames=StringTokenizerUtilities.getTokens(new StringTokenizer(familyNameTextField.getText().trim(), VALUE_DELIMITERS));
+		final String[] givenNames=StringTokenizerUtilities.getTokens(new StringTokenizer(givenNameTextField.getText().trim(), VALUE_DELIMITERS));
+		final String[] additionalNames=StringTokenizerUtilities.getTokens(new StringTokenizer(additionalNameTextField.getText().trim(), VALUE_DELIMITERS));
+		final String[] honorificPrefixes=StringTokenizerUtilities.getTokens(new StringTokenizer(honorificPrefixComboBox.getSelectedItem().toString().trim(), VALUE_DELIMITERS));
+		final String[] honorificSuffixes=StringTokenizerUtilities.getTokens(new StringTokenizer(honorificSuffixComboBox.getSelectedItem().toString().trim(), VALUE_DELIMITERS));
 		return new Name(familyNames, givenNames, additionalNames, honorificPrefixes, honorificSuffixes);	//create and return a name representing the entered information
 	}
 
@@ -156,11 +159,4 @@ public class NamePanel extends DefaultPanel
 		add(honorificSuffixComboBox, new GridBagConstraints(4, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		setVCardName(null);	//clear the fields
 	}
-
-	/**Updates the constructed URI based upon current user input.*/
-	protected void updateStatus()
-	{
-		super.updateStatus();	//do the default status updating
-	}
-	
 }

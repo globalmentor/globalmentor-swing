@@ -2,6 +2,7 @@ package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.*;
 import javax.swing.event.*;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.event.*;
@@ -32,7 +33,7 @@ public class IdentificationPanel extends DefaultPanel
 	/**Whether, the last time the formatted name was updated, it matched the
 		the default formatting of the name.
 	*/
-	private boolean formattedNameMatchesName=true;
+	private boolean shouldUpdateFormattedName=true;
 
 	/**Places the name information in the various fields.
 	@param name The name to place in the fields.
@@ -65,6 +66,8 @@ public class IdentificationPanel extends DefaultPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
+		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)));	//set a titled border
+		setTitle("Identification");	//G***i18n
 			//add listeners to all the components of the name panel to update the status when modified
 		namePanel.getFamilyNameTextField().getDocument().addDocumentListener(createUpdateStatusDocumentListener()); 		
 		namePanel.getGivenNameTextField().getDocument().addDocumentListener(createUpdateStatusDocumentListener()); 		
@@ -72,29 +75,30 @@ public class IdentificationPanel extends DefaultPanel
 		namePanel.getHonorificPrefixComboBox().addActionListener(createUpdateStatusActionListener());
 		namePanel.getHonorificSuffixComboBox().addActionListener(createUpdateStatusActionListener());
 		formattedNameLabel.setText("Formatted Name");	//G***i18n
-		formattedNameTextField.setColumns(20);
+		formattedNameTextField.setColumns(16);
 		formattedNameTextField.getDocument().addDocumentListener(new DocumentModifyAdapter()
 				{
 					public void modifyUpdate(final DocumentEvent documentEvent)	//if the formatted name text field is modified
 					{
-							//see if the formatted name matches the default formatted version of the information in the name field
-						formattedNameMatchesName=formattedNameTextField.getText().equals(namePanel.getVCardName().toString());
+							//see if the formatted name matches the default formatted version of the information in the name field, or if there's no information in the formatted text field
+						shouldUpdateFormattedName=formattedNameTextField.getText().equals(namePanel.getVCardName().toString())
+								|| formattedNameTextField.getText().trim().length()==0;
 					}
 				});
 		nicknameLabel.setText("Nickname");	//G***i18n
-		nicknameTextField.setColumns(20);
-		add(namePanel, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		add(formattedNameLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		add(formattedNameTextField, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		add(nicknameLabel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		add(nicknameTextField, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		nicknameTextField.setColumns(8);
+		add(namePanel, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		add(nicknameTextField, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		add(formattedNameLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		add(formattedNameTextField, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 	}
 
 	/**Updates the constructed URI based upon current user input.*/
 	protected void updateStatus()
 	{
 		super.updateStatus();	//do the default status updating
-		if(formattedNameMatchesName)	//if the formatted name matched the information in the name panel the last time the formatted name was modified
+		if(shouldUpdateFormattedName)	//if the formatted name matched the information in the name panel the last time the formatted name was modified
 		{
 			formattedNameTextField.setText(namePanel.getVCardName().toString());	//update the formatted name label to reflect the current state of the name information
 		}

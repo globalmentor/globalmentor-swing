@@ -4,8 +4,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.border.*;
 import javax.swing.event.*;
 import com.garretwilson.awt.*;
+import com.garretwilson.lang.*;
 import com.garretwilson.swing.event.*;
 import com.garretwilson.util.*;
 
@@ -15,12 +17,19 @@ import com.garretwilson.util.*;
 <p>The panel can indicate whether it can close.</p>
 <p>The panel can recognize when it is embedded in a <code>JOptionPane</code>
 	and can set certain option pane values accordingly.</p>
+<p>The panel can keep track of a title, and if the panel has a titled border,
+	it will automatically update the border's title when the title changes.</p> 
 <p>The panel can keep track of which child component should get the default
 	focus. An extended focus traversal policy is installed so that, if this
 	panel because a root focus traversal cycle, the correct default focus
 	component will be selected.</p>
 <p>The panel can create default listeners, such as <code>ActionListener</code>
 	and <code>DocumentListener</code>, that do nothing but update the status.</p> 
+<p>Bound properties:</p>
+<dl>
+	<dt><code>DefaultPanel.TITLE_PROPERTY_NAME</code> (<code>String</code>)</dt>
+	<dd>Indicates the title has been changed.</dd>
+</dl>
 @author Garret Wilson
 @see java.awt.Container#setFocusCycleRoot
 @see java.beans.PropertyChangeListener
@@ -28,6 +37,9 @@ import com.garretwilson.util.*;
 */
 public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusable
 {
+
+	/**The name of the bound title property.*/
+	public final String TITLE_PROPERTY_NAME=DefaultPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"title";	//G***maybe later move this to a titleable interface
 
 	/**The map of properties.*/
 	private final Map propertyMap=new HashMap();
@@ -70,6 +82,36 @@ public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusabl
 		public Object removeProperty(final Object key)
 		{
 			return propertyMap.remove(key);	//remove and return the property value keyed to the key
+		}
+		
+	/**The title of the panel, or <code>null</code> if there is no title.*/
+	private String title=null;
+
+		/**@return The title of the panel, or <code>null</code> if there is no title.*/
+		public String getTitle() {return title;}
+
+		/**Sets the title of the panel. If the panel border is a
+			<code>TitledBorder</code>, its title is updated.
+		This is a bound property.
+		@param newTitle The new title of the panel, or <code>null</code> for no title.
+		*/
+		public void setTitle(final String newTitle)
+		{
+			final String oldTitle=title; //get the old title value
+			final Border border=getBorder();	//get our current border
+			if(border instanceof TitledBorder)	//if the border is a titled border
+			{
+				final TitledBorder titledBorder=(TitledBorder)border;	//cast the border to a titled border
+				if(!ObjectUtilities.equals(titledBorder.getTitle(), newTitle))	//if the new title is different than the one currently on the border
+				{
+					titledBorder.setTitle(newTitle);	//update the title on the border
+				}
+			}
+			if(!ObjectUtilities.equals(oldTitle, newTitle))  //if the value is really changing
+			{
+				title=newTitle; //update the value					
+				firePropertyChange(TITLE_PROPERTY_NAME, oldTitle, newTitle);	//show that the title property has changed
+			}
 		}
 
 	/**The component that hsould get the default focus, or <code>null</code> if unknown.*/
@@ -174,9 +216,13 @@ public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusabl
 		{
 			return ((DefaultFocusable)defaultFocusComponent).requestDefaultFocusComponentFocus();	//pass the request on to the default focus component
 		}
-		else	//if the default focus component doesn't itself know about default focus components
+		else if(defaultFocusComponent!=null)	//if the default focus component doesn't itself know about default focus components, but there is a default focus component
 		{
 			return defaultFocusComponent.requestFocusInWindow();	//tell the default focus component to request the focus
+		}
+		else	//if there is no default focus component
+		{
+			return false;	//there was nothing to focus
 		}
 	}
 
