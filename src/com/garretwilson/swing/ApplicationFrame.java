@@ -2,6 +2,7 @@ package com.garretwilson.swing;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.*;
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
@@ -88,7 +89,13 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 				firePropertyChange("defaultCloseOperation", oldOperation, operation);	//notify listeners that the value changed
 			}
 		}
-	
+
+	/**The object that listens for resource modifications and updates the status.*/
+	private final PropertyChangeListener modifiedPropertyChangeListener;
+
+		/**@return The object that listens for resource modifications and updates the status.*/
+		protected PropertyChangeListener getModifiedPropertyChangeListener() {return modifiedPropertyChangeListener;}
+
 	/**The description used for the currently opened document.*/
 //G***del	private DocumentDescribable description=null;
 
@@ -279,6 +286,32 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	{
 		return getApplicationName();	//return the name of the application
 	}
+	
+	/**Sets the <code>contentPane</code> property. 
+	This version installs a property listener to listen for the content pane's
+		"modified" property being changed, if the content pane is
+		<code>Modifiable</code>.
+	@param contentPane the <code>contentPane</code> object for this frame
+	@exception java.awt.IllegalComponentStateException (a runtime
+		exception) if the content pane parameter is <code>null</code>
+	@see JFrame#getContentPane
+	@see Modifiable
+	@see Modifiable#MODIFIED_PROPERTY_NAME
+	@see #getModifiedPropertyChangeListener
+	*/
+	public void setContentPane(final Container contentPane)
+	{
+		final Container oldContentPane=getContentPane();	//get the current content pane
+		if(oldContentPane instanceof Modifiable)	//if the old content pane is modifiable
+		{
+			oldContentPane.removePropertyChangeListener(Modifiable.MODIFIED_PROPERTY_NAME, getModifiedPropertyChangeListener());	//remove the modified property change listener from the old content pane
+		}
+		super.setContentPane(contentPane);	//set the content pane normally
+		if(contentPane instanceof Modifiable)	//if the new content pane is modifiable
+		{
+			contentPane.addPropertyChangeListener(Modifiable.MODIFIED_PROPERTY_NAME, getModifiedPropertyChangeListener());	//add a listener to update the status when the "modified" property changes
+		}
+	}
 
 	/**Default constructor.
 	Enables window events.
@@ -333,6 +366,13 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 		  //don't do anything automatically on close; we'll handle responding to close events
 		super.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);	//tell the parent to set its default close operation G***this implementation depends on the fact that the super class doesn't use the accessor methods---that's probably dangerous
 		enableEvents(AWTEvent.WINDOW_EVENT_MASK); //enable window events, so that we can respond to close events
+		modifiedPropertyChangeListener=new PropertyChangeListener()	//create a property chnage listener to listen for resource modifications
+			{
+				public void propertyChange(final PropertyChangeEvent propertyChangeEvent) //if the "modified" property changes in the explore panel
+				{
+					updateStatus();  //update the status of our actions
+				}
+			};
 		setContentPane(contentPane); //set the container as the content pane
 		fileNewAction=new FileNewAction();  //create the new action G***maybe lazily create these
 		fileOpenAction=new FileOpenAction();  //create the open action
@@ -385,6 +425,7 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 //G***fix		setExtendedState(MAXIMIZED_BOTH);	//maximize the frame G***get this from preferences
 //G***transfer this to WindowUtilities, maybe		GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
 //G***fix		WindowUtilities.maximize(this); //maximize the frame G***remove this, as JDK 1.4 has a programmatic maximization
+//G***del; doesn't fix the problem		getContentPane().requestFocus();	//focus on the content pane
   }
 
 	/**Updates the states of the actions, including enabled/disabled status,
