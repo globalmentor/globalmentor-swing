@@ -98,9 +98,9 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 			final Iterator propertyIterator=((RDFResource)getUserObject()).getPropertyIterator();  //get an iterator to all properties
 			while(propertyIterator.hasNext()) //while there are more properties
 			{
-				final NameValuePair nameValuePair=(NameValuePair)propertyIterator.next(); //get the next name/value pair
-				final RDFResource property=(RDFResource)nameValuePair.getName();  //get the property resource
-				final RDFObject value=(RDFObject)nameValuePair.getValue();  //get the property value
+				final RDFPropertyValuePair propertyValuePair=(RDFPropertyValuePair)propertyIterator.next(); //get the next property/value pair
+				final RDFResource property=propertyValuePair.getProperty();  //get the property resource
+				final RDFObject value=propertyValuePair.getPropertyValue();  //get the property value
 					//create a new tree node to represent the property and value
 				final RDFObjectTreeNode rdfPropertyNode=new RDFObjectTreeNode(property, value, getXMLifier());
 				add(rdfPropertyNode); //add the property node to this resource node

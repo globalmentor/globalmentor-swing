@@ -9,7 +9,7 @@ import com.garretwilson.util.*;
 /**Base class for a panel that allows progression in a sequence.
 @author Garret Wilson
 */
-public abstract class AbstractSequencePanel extends ApplicationPanel
+public abstract class AbstractSequencePanel extends ApplicationPanel	//G***probably change this to ContentPanel
 {
 	
 	/**The action for going to the previous component.*/
