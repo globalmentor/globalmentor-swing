@@ -14,11 +14,13 @@ import com.garretwilson.resources.icon.IconResources;
 	prevents the JVM from exiting, even if the main program thread has finished
 	and the sole frame has closed.) If there is no <code>Application</code> set,
 	the close operation remains the default, <code>DISPOSE_ON_CLOSE</code>.</p>
-This class maintains the default close operation of
+<p>This class maintains the default close operation of
 	<code>DO_NOTHING_ON_CLOSE</code> . This allows the class listen to window
 	events and perform consistent <code>canClose()</code> checks for all methods
 	of closing. This is all handled transparently&mdash;once closing should occur,
 	the local default close operation setting is honored as normal.</p>
+<p>If an application is provided, the application's preference node is used
+	to store user preferences.</p> 
 @author Garret Wilson
 @see Application
 @see SwingApplication
@@ -193,7 +195,10 @@ public class ApplicationFrame extends BasicFrame
 		super(contentPane, false);	//construct the parent class with the given content pane, but don't initialize it
 		this.application=application;	//store the application
 		if(application!=null)	//if this frame represents an application
+		{
 			setDefaultCloseOperation(EXIT_ON_CLOSE);	//exit when the frame closes
+			setPreferences(application.getPreferences());	//use the application preference node
+		}
 		closeAction=new CloseAction();  //create the close action
 		exitAction=new ExitAction();  //create the exit action
 		closeProxyAction=new ProxyAction(application!=null ? exitAction : closeAction);	//create the close proxy action, proxying the exit action if we have an application
@@ -318,6 +323,7 @@ public class ApplicationFrame extends BasicFrame
 			putValue(LONG_DESCRIPTION, "Exit the application.");	//set the long description G***i18n
 			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_X));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.EXIT_ICON_FILENAME)); //load the correct icon
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.ALT_MASK)); //add the accelerator
 			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_EXIT_MENU_ACTION_ORDER));	//set the order
 		}
 

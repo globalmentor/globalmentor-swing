@@ -1,17 +1,19 @@
 package com.garretwilson.swing;
 
-import java.awt.Event;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.util.DefaultOrderComparator;
+import com.garretwilson.util.IteratorUtilities;
 
 /**Manages a set of actions for an application or a component.
 The actions are categorized into groups, and action managers may merge or
 	unmerge with actions from other action managers.
 <p>For consistency and merging, the provided actions should be used if possible
 	to represent top-level menus.</p>
+<p>To indicate that actions should be visibly separated in any menu or toolbar,
+	an instance of <code>SeparatorAction</code> should be used.</p>
 <p>Each menu action may have an action manager order property that will
 	determine its order within its group. Several default orders are provided and
 	should be used for consistency and to facility proper merging. The predefined
@@ -92,9 +94,14 @@ public class ActionManager implements Cloneable
 		return actionList;	//return the list of actions
 	}
 
+	/**The lazily-created list of tool actions.*/
+	private ArrayList toolActionList;
+
+
 	/**Default constructor.*/
 	public ActionManager()
 	{
+		toolActionList=null;	//we don't have a list of tool actions until we need one
 	}
 
 	/**Adds to the manager an action representing a top-level menu.
@@ -128,8 +135,7 @@ public class ActionManager implements Cloneable
 		top-level actions.
 	@param parentAction The action that serves as the parent of the actions, or
 		<code>null</code> if an iterator to top-level menu actions should be returned.
-	@return A read-only iterator to actions representing menus, or
-		<code>null</code> if the given parent action does not have child actions.
+	@return A read-only iterator to actions representing menus.
 	*/
 	public Iterator getMenuActionIterator(final Action parentAction)
 	{
@@ -139,7 +145,7 @@ public class ActionManager implements Cloneable
 		{
 			Collections.sort(sortedActionList, new ActionMenuOrderComparator(actionList));	//sort the actions by menu order, defaulting to the order they were in before sorting
 		}
-		return sortedActionList!=null ? Collections.unmodifiableList(sortedActionList).iterator() : null;	//return a read-only iterator to the sorted actions, if there are any
+		return sortedActionList!=null ? Collections.unmodifiableList(sortedActionList).iterator() : IteratorUtilities.getEmptyIterator();	//return a read-only iterator to the sorted actions, if there are any
 	}
 
 	/**Merges a given action manager with this one, creating a new, merged action
@@ -173,6 +179,43 @@ public class ActionManager implements Cloneable
 		return mergedActionManager;	//return the merged action manager
 	}
 
+	/**Adds to the manager an action representing a tool.
+	@param action The action to add as a tool action.
+	*/
+	public void addToolAction(final Action action)
+	{
+		if(toolActionList==null)	//if there is no tool action list
+		{
+			toolActionList=new ArrayList();	//create a new list of tool actions
+		}
+		toolActionList.add(action);	//add the action to the list of tool actions
+	}
+
+	/**@return A read-only iterator to actions representing tools.*/
+	public Iterator getToolActionIterator()
+	{
+		return toolActionList!=null ? Collections.unmodifiableList(toolActionList).iterator() : IteratorUtilities.getEmptyIterator();	//return a read-only iterator to the tool actions, if there are any
+	}
+
+	/**Returns a read-only sorted iterator to the given list of actions.
+	@param actionList The list of actions from which the iterator should return
+		actions, or <code>null</code> if no actions are available.
+	@return A read-only iterator to any actions, or <code>null</code> if there are
+		no actions.
+	@see ActionMen
+	 */
+/*G***del; this is only needed for menu items, so there's no point in splitting it out
+	protected static Iterator getSortedActionIterator(final List actionList)
+	{
+	final List actionList=(List)menuActionListMap.get(parentAction);	//see if there is a list of children for this parent
+	final List sortedActionList=actionList!=null ? new ArrayList(actionList) : null;	//if there's a list, place it in a separate list for sorting
+	if(sortedActionList!=null)	//if there are actions to sort
+	{
+		Collections.sort(sortedActionList, new ActionMenuOrderComparator(actionList));	//sort the actions by menu order, defaulting to the order they were in before sorting
+	}
+	return sortedActionList!=null ? Collections.unmodifiableList(sortedActionList).iterator() : null;	//return a read-only iterator to the sorted actions, if there are any
+*/
+
 	/**@return An independent copy of this action manager with the same action relationships.*/
 	public Object clone()
 	{
@@ -185,6 +228,10 @@ public class ActionManager implements Cloneable
 			{
 				final Map.Entry actionListEntry=(Map.Entry)actionListEntryIterator.next();	//get the next entry
 				actionManager.menuActionListMap.put(actionListEntry.getKey(), ((ArrayList)actionListEntry.getValue()).clone());	//clone the list and put it in the new map
+			}
+			if(toolActionList!=null)	//if we have a list of tool actions
+			{
+				actionManager.toolActionList=(ArrayList)toolActionList.clone();	//clone our list of tool actions
 			}
 			return actionManager;	//return the cloned action manager
 		}
@@ -291,6 +338,24 @@ public class ActionManager implements Cloneable
 //G***fix if needed			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
 //G***del			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK)); //add the accelerator G***i18n
 			putValue(MENU_ORDER_PROPERTY, new Integer(HELP_MENU_ACTION_ORDER));	//set the order
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+		}
+	}
+
+	/**Action that represents a separator.*/
+	public static class SeparatorAction extends AbstractAction
+	{
+		/**Default constructor.*/
+		public SeparatorAction()
+		{
+			super("-");	//create the base class
+//G***del if not needed			putValue(MENU_ORDER_PROPERTY, new Integer(HELP_MENU_ACTION_ORDER));	//set the order
 		}
 
 		/**Called when the action should be performed.

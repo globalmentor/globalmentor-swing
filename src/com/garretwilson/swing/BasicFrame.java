@@ -25,7 +25,8 @@ import com.garretwilson.util.prefs.*;
 	modified.</p>
 <p>This class can keep track of which component should get the focus by default,
 	and will focus that component when the frame is initially shown.</p>
-<p>This class allows a default set of frame preferences to be accessed.</p> 
+<p>The frame can store a preferences node to use for preference, or use the
+	default preferences node for the frame class.</p>
 <p>The class automatically remembers and restores its bounds by storing them
 	in preferences.</p>
 <p>The panel keeps a lazily-created manager that manages menu and tool actions.
@@ -52,11 +53,27 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 	/**The preference for storing the extended state.*/
 	protected final String EXTENDED_STATE_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "extended.state");
 
-	/**@return The default user preferences for this frame.*/
-	public Preferences getPreferences()
-	{
-		return Preferences.userNodeForPackage(getClass());	//return the user preferences node for whatever class extends this one 
-	}
+	/**The preferences that should be used for this frame, or <code>null</code>
+		if the default preferences for this class should be used.
+	*/
+	private Preferences preferences;
+
+		/**@return The preferences that should be used for this frame, or the default
+			preferences for this class if no preferences are specifically set.
+		*/
+		public Preferences getPreferences()
+		{
+			return preferences!=null ? preferences: Preferences.userNodeForPackage(getClass());	//return the user preferences node for whatever class extends this one 
+		}
+		
+		/**Sets the preferences to be used for this panel.
+		@param preferences The preferences that should be used for this panel, or
+			<code>null</code> if the default preferences for this class should be used
+		*/
+		public void setPreferences(final Preferences preferences)
+		{
+			this.preferences=preferences;	//store the preferences
+		}
 
 	/**The lazily-created manager of menu and tool actions.*/
 	private ActionManager actionManager;
@@ -267,6 +284,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 	public BasicFrame(final String title, final Container contentPane, final boolean initialize)
 	{
 		super(title);	//construct the parent class with this title, making sure we don't pass null (JFrame sometimes allows null titles, other times it converts them to the empty string)
+		preferences=null;	//show that we should use the default preferences for this class
 		actionManager=null;	//default to no action manager until one is asked for
 		  //don't do anything automatically on close; we'll handle responding to close events
 		super.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);	//tell the parent to set its default close operation G***this implementation depends on the fact that the super class doesn't use the accessor methods---that's probably dangerous
@@ -347,7 +365,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 			//set up the menu bar
 				//TODO put this in some convenience method, maybe---or maybe not, if the code is specific to frames
 		final Iterator menuActionIterator=actionManager.getMenuActionIterator();	//get the iterator to top-level menu actions
-		if(menuActionIterator!=null)	//if there are top-level menu actions
+		if(menuActionIterator.hasNext())	//if there are top-level menu actions
 		{
 			final JMenuBar menuBar=new JMenuBar();  //create a menu bar
 			while(menuActionIterator.hasNext())	//while there are more actions
@@ -375,17 +393,14 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 	protected static JMenuItem createMenuItem(final Action action, final ActionManager actionManager, final boolean isTopLevel)
 	{
 		final Iterator menuActionIterator=actionManager.getMenuActionIterator(action);	//get the iterator to children, if any, of the parent action
-		if(isTopLevel || menuActionIterator!=null)	//if the parent action has children, or if the action is a top-level action
+		if(isTopLevel || menuActionIterator.hasNext())	//if the parent action has children, or if the action is a top-level action
 		{
 			final JMenu menu=new JMenu(action);	//create a new menu from the action
-			if(menuActionIterator!=null)	//if we have child actions (we might not if this is a top-level menu action)
+			while(menuActionIterator.hasNext())	//while there are more actions
 			{
-				while(menuActionIterator.hasNext())	//while there are more actions
-				{
-					final Action childAction=(Action)menuActionIterator.next();	//get the next child action
-					final JMenuItem childMenuItem=createMenuItem(childAction, actionManager, false);	//create a new menu item and/or child menu items for the action, specifying that this is not a top-level action
-					menu.add(childMenuItem);	//add the child menu item
-				}
+				final Action childAction=(Action)menuActionIterator.next();	//get the next child action
+				final JMenuItem childMenuItem=createMenuItem(childAction, actionManager, false);	//create a new menu item and/or child menu items for the action, specifying that this is not a top-level action
+				menu.add(childMenuItem);	//add the child menu item
 			}
 			return menu;	//show that we created a complete menu to represent the action
 		}

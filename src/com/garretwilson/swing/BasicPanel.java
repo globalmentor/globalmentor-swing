@@ -79,7 +79,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 		
 		/**Sets the preferences to be used for this panel.
 		@param preferences The preferences that should be used for this panel, or
-			<code>null</code if the default preferences for this class should be used
+			<code>null</code> if the default preferences for this class should be used
 		*/
 		public void setPreferences(final Preferences preferences)
 		{

@@ -4,15 +4,13 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.net.URI;
 import javax.swing.*;
-
-import com.garretwilson.lang.ClassUtilities;
-import com.garretwilson.lang.StringUtilities;
+import com.garretwilson.lang.*;
 import com.garretwilson.util.*;
 
 /**An application that relies on Swing.
 @author Garret Wilson
 */
-public class SwingApplication extends Application
+public abstract class SwingApplication extends Application
 {
 
 	/**Reference URI constructor.
@@ -209,9 +207,9 @@ public class SwingApplication extends Application
 	public static SwingApplication getSwingApplication(final Component component)
 	{
 		final Frame frame=JOptionPane.getFrameForComponent(component);	//see if this component is in a frame
-		if(frame instanceof ObsoleteApplicationFrame)	//if the frame is an application frame
+		if(frame instanceof ApplicationFrame)	//if the frame is an application frame
 		{
-			return ((ObsoleteApplicationFrame)frame).getApplication();	//return the application, if any, of the application frame
+			return ((ApplicationFrame)frame).getApplication();	//return the application, if any, of the application frame
 		}
 		return null;	//show that we could not locate a Swing application
 	}

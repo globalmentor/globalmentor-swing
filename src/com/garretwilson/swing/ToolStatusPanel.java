@@ -202,14 +202,6 @@ public class ToolStatusPanel extends ContentPanel
 		}
   }
 
-	/**@return An array of actions to use in a toolbar, with any
-		<code>null</code> actions representing separators.
-	*/
-	public Action[] getToolBarActions()
-	{
-		return new Action[]{};	//return an empty array of actions
-	}
-	
 	/**@return A new toolbar.*/
 	protected JToolBar createToolBar()
 	{
@@ -217,12 +209,14 @@ public class ToolStatusPanel extends ContentPanel
 	}
 
 	/**Initializes the toolbar components.
-	<p>This version adds a toolbar component for each toolbar action.</p>
+	<p>This version adds a toolbar component for each tool action in the action manager.</p>
 	@param toolBar The toolbar to be initialized.
-	@see #getToolBarActions()
+	@see BasicPanel#getActionManager()
 	*/
 	public void initializeToolBar(final JToolBar toolBar)
 	{
+		ToolBarUtilities.setupToolBar(toolBar, getActionManager());	//setup the toolbar from the actions in the action manager
+/*G***del when works
 		final Action[] actions=getToolBarActions();	//get the actions for the toolbar
 		for(int i=0; i<actions.length; ++i)	//look at each action
 		{
@@ -236,6 +230,7 @@ public class ToolStatusPanel extends ContentPanel
 				toolBar.addSeparator();	//add a toolbar separator
 			}
 		}
+*/
 	}
 
 	/**@return A new status bar.*/

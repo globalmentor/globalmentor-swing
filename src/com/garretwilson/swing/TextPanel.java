@@ -80,16 +80,6 @@ public class TextPanel extends ModelPanel
 		add(scrollPane, BorderLayout.CENTER);	//place the text pane, in its scroll pane, in the center of the panel
 	}
 
-	/**@return An array of actions to use in a toolbar, with any
-		<code>null</code> actions representing separators.
-	*/
-/*G***fix
-	public Action[] getToolBarActions()
-	{
-		return new Action[]{getSaveAction()};	//return the toolbar actions for this panel
-	}
-*/
-
 	/**Loads the data from the model to the view, if necessary.
 	@exception IOException Thrown if there was an error loading the model.
 	*/

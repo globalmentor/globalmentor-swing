@@ -180,16 +180,6 @@ public class VCardPanel extends TabbedViewPanel implements Verifiable
 		getTabbedPane().setTabPlacement(JTabbedPane.TOP);	//place the tabs at the top of the panel
 	}
 
-	/**@return An array of actions to use in a toolbar, with any
-		<code>null</code> actions representing separators.
-	*/
-/*G***fix if needed
-	public Action[] getToolBarActions()
-	{
-		return new Action[]{getSaveAction()};	//return the toolbar actions for this panel
-	}
-*/
-
 //TODO---make the new ContainerUtilities.verifyDescendants() method select the tab if it desn't verify
 
 	/**Verifies the component.

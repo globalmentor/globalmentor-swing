@@ -1,9 +1,8 @@
 package com.garretwilson.swing;
 
 import java.awt.Dimension;
-import javax.swing.Action;
-import javax.swing.JSeparator;
-import javax.swing.JToolBar;
+import java.util.*;
+import javax.swing.*;
 
 /**Various convenience methods for working with Swing toolbars.
 @author Garret Wilson
@@ -22,25 +21,35 @@ public class ToolBarUtilities
 		return toolBar; //return the toolbar we created
 	}
 
-	/**Creates a default toolbar with the given actions.
-	@param actions An array of actions to use in the toolbar, with any
-		<code>null</code> actions representing separators.
-	@see #createDefaultToolBar()
+	/**Creates a default toolbar from the tool actions of the given action manager.
+	@param actionManager The manager that contains the tool actions
+	@see #setupToolBar
 	*/
-	public static JToolBar createToolBar(final Action[] actions)
+	public static JToolBar createToolBar(final ActionManager actionManager)
 	{
-		final JToolBar toolBar=createDefaultToolBar();	//create a new toolbar
-		for(int i=0; i<actions.length; ++i)	//look at each action
+		return setupToolBar(createDefaultToolBar(), actionManager);	//create a new toolbar and set it upt with the action manager tool actions
+	}
+
+	/**Sets up a toolbar from the tool actions of the given action manager.
+	@param toolBar The toolbar to set up.
+	@param actionManager The manager that contains the tool actions
+	@see #createDefaultToolBar()
+	@see ActionManager#getToolActionIterator()
+	*/
+	public static JToolBar setupToolBar(final JToolBar toolBar, final ActionManager actionManager)
+	{
+		final Iterator actionIterator=actionManager.getToolActionIterator();	//get an iterator to the tool actions
+		while(actionIterator.hasNext())	//while there are actions
 		{
-			final Action action=actions[i];	//get a reference to this action
-			if(action!=null)	//if this is a valid action
+			final Action action=(Action)actionIterator.next();	//get the next action
+			if(action instanceof ActionManager.SeparatorAction)		//if this is a separator action
 			{
-				toolBar.add(action);	//add this action
+				toolBar.addSeparator();	//add a toolbar separator				
 			}
-			else	//if this is a null action
+			else	//if this is a normal action
 			{
-				toolBar.addSeparator();	//add a toolbar separator
-			}
+				toolBar.add(action);	//add this action				
+			}			
 		}
 		return toolBar;	//return the toolbar we created
 	}

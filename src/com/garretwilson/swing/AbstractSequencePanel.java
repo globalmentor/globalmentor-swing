@@ -15,6 +15,12 @@ import com.garretwilson.util.*;
 */
 public abstract class AbstractSequencePanel extends ToolStatusPanel
 {
+
+	/**The action for starting the sequence.*/
+	private final Action startAction;
+
+		/**@return The action for starting the sequence.*/
+		public Action getStartAction() {return startAction;}
 	
 	/**The action for going to the previous component.*/
 	private final Action previousAction;
@@ -33,6 +39,27 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 
 		/**@return The action for finishing the sequence.*/
 		public Action getFinishAction() {return finishAction;}
+
+	/**The action for advancing; serves as a proxy for the start, next,
+		and finish actions, depending on the state of the sequence.
+	*/
+	private final ProxyAction advanceAction;
+
+		/**The action for advancing; serves as a proxy for the start, next,
+			and finish actions, depending on the state of the sequence.
+		@see #getStartAction()
+		@see #getNextAction()
+		@see #getFinishAction()
+		*/
+		public ProxyAction getAdvanceAction() {return advanceAction;}
+
+	/**The button for staring the sequence; created from the corresponding action.*/
+	private final JButton startButton;
+
+		/**@return The action for starting the sequence; created from the corresponding action.
+		@see #getStartAction
+		*/
+		public JButton getStartButton() {return startButton;}		
 
 	/**The button for going to the previous component; created from the corresponding action.*/
 	private final JButton previousButton;
@@ -58,6 +85,14 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		*/
 		public JButton getFinishButton() {return finishButton;}		
 
+	/**The button for advancing in the sequence; created from the corresponding action.*/
+	private final JButton advanceButton;
+
+		/**@return The action for advancing in sequence; created from the corresponding action.
+		@see #getAdvanceAction
+		*/
+		public JButton getAdvanceButton() {return advanceButton;}		
+
 	/**Default constructor.*/
 	public AbstractSequencePanel()
 	{
@@ -82,12 +117,16 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 	public AbstractSequencePanel(final boolean hasToolBar, final boolean hasStatusBar, boolean initialize)
 	{
 		super(hasToolBar, hasStatusBar, false);	//construct the panel, but don't initialize
-		previousAction=new PreviousAction();  //create the actions
+		startAction=new StartAction();			//create the actions
+		previousAction=new PreviousAction(); 
 		nextAction=new NextAction();
 		finishAction=new FinishAction();
-		previousButton=new JButton(previousAction);	//create the buttons
+		advanceAction=new ProxyAction(startAction);	//the advance action will initially proxy the start action
+		startButton=new JButton(startAction);	//create the buttons
+		previousButton=new JButton(previousAction);
 		nextButton=new JButton(nextAction);
 		finishButton=new JButton(finishAction);
+		advanceButton=new JButton(advanceAction);
 		setStatusBarPosition(BorderLayout.NORTH);  //put the status bar at the top of the panel by default
 		setToolBarPosition(BorderLayout.SOUTH);  //put the toolbar at the bottom of the panel by default
 		if(initialize)  //if we should initialize the panel
@@ -97,16 +136,12 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 	/**Initializes the user interface.*/
 	protected void initializeUI()
 	{
+			//TODO fix to only retrieve the actions that are allowed, maybe
+		final ActionManager actionManager=getActionManager();	//get our action manager and set up tool actions
+		actionManager.addToolAction(getPreviousAction());
+		actionManager.addToolAction(getNextAction());
 		super.initializeUI();	//do the default initialization
 		setPreferredSize(new Dimension(300, 200));	//set an arbitrary preferred size
-	}
-
-	/**@return An array of actions to use in a toolbar, with any
-		<code>null</code> actions representing separators.
-	*/
-	public Action[] getToolBarActions()	//TODO fix to only retrieve the actions that are allowed, maybe
-	{
-		return new Action[]{getPreviousAction(), getNextAction()};	//return the toolbar actions for this panel
 	}
 
 	/**Updates the states of the actions, including enabled/disabled status,
@@ -118,11 +153,17 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		getPreviousAction().setEnabled(hasPrevious()); //only allow going backwards if we have a previous step
 		getNextAction().setEnabled(hasNext()); //only allow going backwards if we have a next step
 		getFinishAction().setEnabled(!hasNext()); //only allow finishing if there are no next components
+		if(getAdvanceAction().getProxiedAction()!=getStartAction())	//if we've already started
+		{
+				//determine if advancing should go to the next item in the sequence or finish
+			getAdvanceAction().setProxiedAction(hasNext() ? getNextAction() : getFinishAction());			
+		}
 		final JRootPane rootPane=getRootPane();	//get the ancestor root pane, if there is one
 		if(rootPane!=null)	//if there is a root pane
 		{
 				//set the next button as the default unless we're finished; in that case, set the finish button as the default
 			rootPane.setDefaultButton(hasNext() ? getNextButton() : getFinishButton());
+					//TODO figure out how to get this to work with the new advance button
 		}
 	}
 
@@ -132,6 +173,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 	*/
 	public void goStart()
 	{
+		getAdvanceAction().setProxiedAction(getNextAction());	//from now on, advancing will go to the next item in the sequence
 		start();	//go the start
 	}
 	
@@ -200,7 +242,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		current component verifies.
 	@see Verifiable#verify
 	@see #finish
-	*	*/
+	*/
 	public void goFinish()
 	{
 		if(verifyCurrentComponent())	//if the current component verifies
@@ -248,6 +290,8 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 
 	/**Creates and displays a sequence dialog based upon <code>JOptionPane</code>,
 		showing this sequence panel.
+	<p>This method does not start the sequence. The calling method may start
+		the sequence before calling this method by invoking <code>goStart()</code>.</p>
 	@param parentComponent Determines the <code>Frame</code> in which the
 		dialog is displayed; if <code>null</code>, or if the
 		<code>parentComponent</code> has no <code>Frame</code>, a default
@@ -255,17 +299,42 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 	@param title The title string for the dialog.
 	@return One of the <code>JOptionPane</code> result constants.
 	@see JOptionPane#showOptionDialog
+	@see #goStart()
 	*/
 	public int showSequenceDialog(final Component parentComponent, final String title)
 	{	
 			//show an option pane in the parent component using the given title
 		return OptionPane.showOptionDialog(parentComponent, this, title,
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-				new Object[]{getPreviousButton(), getNextButton(), getFinishButton()}, getNextButton());	//TODO rather than keeping copies of the buttons, get the toolbar actions and create buttons on the fly
+				new Object[]{getPreviousButton(), getAdvanceButton()}, getAdvanceButton());	//TODO rather than keeping copies of the buttons, get the toolbar actions and create buttons on the fly
+//G***del when works		new Object[]{getPreviousButton(), getNextButton(), getFinishButton()}, getNextButton());	//TODO rather than keeping copies of the buttons, get the toolbar actions and create buttons on the fly
+	}
+
+	/**Action for starting the progression.*/
+	protected class StartAction extends AbstractAction
+	{
+
+		/**Default constructor.*/
+		public StartAction()
+		{
+			super("Start");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "Start sequence");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Start the sequence.");	//set the long description G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_S));  //set the mnemonic key G***i18n
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.ENTER_ICON_FILENAME)); //load the correct icon
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+			goStart(); //try to finish the sequence
+		}
 	}
 
 	/**Action for going to the previous component.*/
-	class PreviousAction extends AbstractAction
+	protected class PreviousAction extends AbstractAction
 	{
 		/**Default constructor.*/
 		public PreviousAction()
@@ -287,7 +356,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 	}
 
 	/**Action for going to the next component.*/
-	class NextAction extends AbstractAction
+	protected class NextAction extends AbstractAction
 	{
 		/**Default constructor.*/
 		public NextAction()
@@ -308,8 +377,8 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		}
 	}
 
-	/**Action for finishing the progresion.*/
-	class FinishAction extends AbstractAction
+	/**Action for finishing the progression.*/
+	protected class FinishAction extends AbstractAction
 	{
 
 		/**Default constructor.*/
