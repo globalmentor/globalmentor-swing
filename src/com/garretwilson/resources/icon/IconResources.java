@@ -12,8 +12,8 @@ import com.garretwilson.util.WeakValueHashMap;
 public class IconResources implements IconResourceConstants
 {
 
-	/**The map of references to icons, each keyed to an icon filename.*/
-	protected static final Map iconReferenceMap=new WeakValueHashMap();
+	/**The map of icons that will be released when no longer is use.*/
+	protected static final Map iconMap=new WeakValueHashMap();
 
 	/**This class cannot be publicly instantiated.*/
 	private IconResources() {}
@@ -26,11 +26,11 @@ public class IconResources implements IconResourceConstants
 	*/
 	public static ImageIcon getIcon(final String filename)
 	{
-		ImageIcon imageIcon=(ImageIcon)iconReferenceMap.get(filename); //see if we have the icon
+		ImageIcon imageIcon=(ImageIcon)iconMap.get(filename); //see if we have the icon
 		if(imageIcon==null)  //if we haven't loaded this icon yet, or the icon has been garage collected
 		{
 		  imageIcon=new ImageIcon(IconResources.class.getResource(filename));	//load the icon
-			iconReferenceMap.put(filename, imageIcon);  //store a weak reference to the icon
+			iconMap.put(filename, imageIcon);  //store a weak reference to the icon
 		}
 		return imageIcon;  //return the icon that we loaded or already had loaded
 	}

@@ -1842,7 +1842,8 @@ protected void appendElementSpecListContent(final List elementSpecList, final St
 
 //G***fix		final Element[] buff=new Element[1];  //create an element array for insertion of elements
 		final Element characterElement=getCharacterElement(60);
-		final AttributeSet emAttributeSet=createAttributeSet("em", XHTMLConstants.XHTML_NAMESPACE_URI.toString());	//G***testirng
+//G***fix		final AttributeSet emAttributeSet=createAttributeSet("em", XHTMLConstants.XHTML_NAMESPACE_URI.toString());	//G***testirng
+		final AttributeSet emAttributeSet=createAttributeSet("p", XHTMLConstants.XHTML_NAMESPACE_URI.toString());	//G***testirng
 //G***fix		final Element branchElement=createBranchElement(characterElement.getParentElement(), emAttributeSet);
 //G***fix		buff[0]=branchElement;
 

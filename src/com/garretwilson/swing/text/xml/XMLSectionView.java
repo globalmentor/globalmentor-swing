@@ -60,6 +60,10 @@ Debug.trace("loading children for page pool, offsets "+startOffset+" to "+endOff
 			final Element anonymousElement=new AnonymousElement(getElement(), null, viewChildElements, 0, viewChildElements.length);
 				//G***is it good to make an anonymous element simply for enumerating child elements to XMLBlockView?
 			final View[] createdViews=XMLBlockView.createBlockElementChildViews(anonymousElement, viewFactory);  //create the child views
+/*G***fix if needed
+				//G***testing last fake document view; comment
+			createdViews[createdViews.length-1]=new XMLHiddenView(viewChildElements[viewChildElements.length-1]);
+*/
 			this.replace(0, 0, createdViews);  //add the views as child views to this view pool (use this to show that we shouldn't use the XMLPagedView version)
 
 	}
@@ -87,6 +91,15 @@ Debug.trace("Getting view child elements"); //G***del
 				//if this document starts within our range
 			if(documentElement.getStartOffset()>=startOffset && documentElement.getStartOffset()<endOffset)
 			{
+					//if this "document" element ends where the entire section ends, it's
+					//	not a real document element but that fake document element tacked
+					//	on to the end G***try to keep that element from being generated to begin with, or do a better check here
+/*G***fix
+				if(documentElement.getEndOffset()==element.getEndOffset())
+				{
+StyleUtilities.setVisible((MutableAttributeSet)documentElement.getAttributes(), false);	//G***testing
+				}
+*/
 				final AttributeSet documentAttributeSet=documentElement.getAttributes();  //get the attributes of the document element
 				if(XMLStyleUtilities.isPageBreakView(documentAttributeSet)) //if this is a page break element
 				{
