@@ -22,10 +22,11 @@ import com.garretwilson.util.*;
 	<dt><code>RESOURCE_COMPONENT_STATE_PROPERTY</code> (<code>ResourceComponentManager.ResourceComponentState</code>)</dt>
 	<dd>Indicates that the resource component state has been changed.</dd>
 </dl>
+@param <R> The type of resource the components of which are being managed.
 @see ResourceComponentManager#ResourceComponentState
 @author Garret Wilson
 */
-public abstract class ResourceComponentManager extends BoundPropertyObject implements CanClosable
+public abstract class ResourceComponentManager<R extends Resource> extends BoundPropertyObject implements CanClosable
 {
 
 	/**The property indicating the current resource and component.*/
@@ -70,16 +71,16 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 		protected Component getParentComponent() {return parentComponent;}
 
 	/**The implementation for selecting resources.*/
-	private final ResourceSelector resourceSelector;
+	private final ResourceSelector<R> resourceSelector;
 
 		/**@return The implementation for selecting resources.*/
-		public ResourceSelector getResourceSelector() {return resourceSelector;}
+		public ResourceSelector<R> getResourceSelector() {return resourceSelector;}
 
 	/**The state of the resource and its view.*/
-	private ResourceComponentState resourceComponentState;
+	private ResourceComponentState<R> resourceComponentState;
 
 		/**@return The state of the resource and its view.*/
-		protected ResourceComponentState getResourceComponentState() {return resourceComponentState;}
+		protected ResourceComponentState<R> getResourceComponentState() {return resourceComponentState;}
 
 		/**Sets the state of the resource and its view.
 		<p>The component will be added appropriately to the parent component.</p>
@@ -87,9 +88,9 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 		@param newResourceComponentState The new state of the resource and its view.
 		@see #getParentComponent()
 		*/
-		public void setResourceComponentState(final ResourceComponentState newResourceComponentState)
+		public void setResourceComponentState(final ResourceComponentState<R> newResourceComponentState)
 		{
-			final ResourceComponentState oldResourceComponentState=resourceComponentState; //get the old value
+			final ResourceComponentState<R> oldResourceComponentState=resourceComponentState; //get the old value
 			if(oldResourceComponentState!=newResourceComponentState)  //if the value is really changing
 			{
 				if(oldResourceComponentState!=null && oldResourceComponentState.getComponent() instanceof Modifiable)	//if the old component was modifiable
@@ -117,7 +118,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	@param parentComponent The component to serve as a parent for error messages.
 	@param resourceSelector The implementation to use for selecting resources.
 	*/
-	public ResourceComponentManager(final Component parentComponent, final ResourceSelector resourceSelector)
+	public ResourceComponentManager(final Component parentComponent, final ResourceSelector<R> resourceSelector)
 	{
 		this.parentComponent=parentComponent;	//save the parent component
 		this.resourceSelector=resourceSelector;	//save the resource selector
@@ -137,12 +138,10 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 		revertAction.setEnabled(false);	//the revert action is disable by default, as there's nothing to revert
 	}
 
-	/**Updates the states of the actions, including enabled/disabled status,
-		proxied actions, etc.
-	*/
+	/**Updates the states of the actions, including enabled/disabled status, proxied actions, etc.*/
 	public void updateStatus()
 	{
-		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current state of the resource component
+		final ResourceComponentState<R> resourceComponentState=getResourceComponentState();	//get the current state of the resource component
 		getCloseAction().setEnabled(resourceComponentState!=null);	//only enable the close action when there is a component open
 		if(resourceComponentState!=null)	//if we have a resource and its component
 		{
@@ -174,7 +173,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	*/
 	public boolean canClose()
 	{
-		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
+		final ResourceComponentState<R> resourceComponentState=getResourceComponentState();	//get the current resource component state
 			//if we have a resource component state, see if we can close it
 		return resourceComponentState!=null? canClose(resourceComponentState) : true;
 	}
@@ -187,7 +186,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	@return <code>true</code> if the resource and its component can close.
 	@see CanClosable#canClose()
 	*/
-	protected boolean canClose(final ResourceComponentState resourceComponentState)
+	protected boolean canClose(final ResourceComponentState<R> resourceComponentState)
 	{
 		final Component component=resourceComponentState.getComponent();	//get the resource component
 			//if the component can be checked for closing, and it doesn't wish to close
@@ -197,7 +196,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 		}
 		if(component instanceof Modifiable && ((Modifiable)component).isModified())	//if the component says it can close, but it has been modified
 		{
-			final Resource resource=resourceComponentState.getResource();	//get the resource
+			final R resource=resourceComponentState.getResource();	//get the resource
 			final String resourceURIString=resource.getReferenceURI()!=null ? resource.getReferenceURI().toString() : "";	//get a string representing the resource URI, if there is one
 				//see if they want to save the changes
 			switch(BasicOptionPane.showConfirmDialog(component, "Save modified resource "+resourceURIString+ "?", "Resource Modified", BasicOptionPane.YES_NO_CANCEL_OPTION))	//G***i18n
@@ -229,7 +228,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 			}
 		}
 */
-		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
+		final ResourceComponentState<R> resourceComponentState=getResourceComponentState();	//get the current resource component state
 		if(resourceComponentState!=null)	//if a resource is open
 		{
 			close(resourceComponentState);	//close this resource component state
@@ -241,7 +240,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	@param resourceComponentState The state information of the resource that
 		should be checked for closing.
 	*/
-	protected void close(final ResourceComponentState resourceComponentState)
+	protected void close(final ResourceComponentState<R> resourceComponentState)
 	{
 		setResourceComponentState(null);	//close the resource by switching to no resource G***maybe transfer this up to close()---or maybe do nothing at all
 	}
@@ -253,7 +252,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	*/
 	public boolean open()
 	{
-		return open((Resource)null);	//open without yet knowing which resource to open
+		return open((R)null);	//open without yet knowing which resource to open
 	}
 
 	/**Opens a resource from the location specified.
@@ -265,7 +264,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	{
 		try
 		{
-			final Resource resource=getResourceSelector().getResource(referenceURI);	//get a description of the resource
+			final R resource=getResourceSelector().getResource(referenceURI);	//get a description of the resource
 			final Cursor originalCursor=ComponentUtilities.setPredefinedCursor(getParentComponent(), Cursor.WAIT_CURSOR);	//change the cursor
 			try
 			{
@@ -291,20 +290,20 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	@see ResourceSelector#selectInputResource(Resource)
 	@see #setResourceComponentState(ResourceComponentState)
 	*/
-	protected boolean open(Resource resource)
+	protected boolean open(R resource)
 	{
 		try
 		{
 			if(resource==null)	//if no resource was indicated
 			{
-				final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
+				final ResourceComponentState<R> resourceComponentState=getResourceComponentState();	//get the current resource component state
 					//ask for a resource for input
 				resource=getResourceSelector().selectInputResource(resourceComponentState!=null ? resourceComponentState.getResource() : null);
 			}
 			if(resource!=null)  //if we now have a valid resource
 			{
 				assert resource.getReferenceURI()!=null : "Selected resource has no URI.";
-				final ResourceComponentState newResourceComponentState=read(resource);	//try to open the resource
+				final ResourceComponentState<R> newResourceComponentState=read(resource);	//try to open the resource
 				if(newResourceComponentState!=null)	//if we succeed in opening the resource
 				{
 					setResourceComponentState(newResourceComponentState);	//change to the new state
@@ -329,7 +328,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 		<code>null</code> if the process was canceled.
 	@exception IOException Thrown if there was an error reading the resource.
 	*/
-	protected ResourceComponentState read(final Resource resource) throws IOException
+	protected ResourceComponentState<R> read(final R resource) throws IOException
 	{
 //TODO change the cursor while we open
 			//get an input stream to the resource
@@ -337,7 +336,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 		try
 		{
 			final Component component=read(resource, inputStream);	//read the component from the input stream
-			final ResourceComponentState resourceComponentState=new ResourceComponentState(resource, component);	//create a new state for the resource
+			final ResourceComponentState<R> resourceComponentState=new ResourceComponentState<R>(resource, component);	//create a new state for the resource
 			return resourceComponentState;	//return the component state
 		}
 		finally
@@ -351,7 +350,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	@param inputStream The input stream from which to read the data.
 	@throws IOException Thrown if there is an error reading the data.
 	*/ 
-	protected abstract Component read(final Resource resource, final InputStream inputStream) throws IOException;
+	protected abstract Component read(final R resource, final InputStream inputStream) throws IOException;
 
 	/**Saves the current resource.
 	<p>If the current resource component is verifiable, the component is first
@@ -368,7 +367,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	*/
 	public boolean save()
 	{
-		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
+		final ResourceComponentState<R> resourceComponentState=getResourceComponentState();	//get the current resource component state
 		if(resourceComponentState!=null)	//if a resource is open
 		{
 				//if the component is verifiable, make sure it verifies before we save the contents
@@ -402,7 +401,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	*/
 	public boolean saveAs()
 	{
-		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
+		final ResourceComponentState<R> resourceComponentState=getResourceComponentState();	//get the current resource component state
 		if(resourceComponentState!=null)	//if a resource is open
 		{
 			return saveAs(resourceComponentState); //save the resource using a user-specified URI
@@ -416,11 +415,11 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	@return <code>true</code> if the operation was not canceled.
 	@see #setResourceComponentState(ResourceComponentState)
 	*/
-	protected boolean saveAs(final ResourceComponentState resourceComponentState)
+	protected boolean saveAs(final ResourceComponentState<R> resourceComponentState)
 	{
 		try
 		{
-			final Resource resource=getResourceSelector().selectOutputResource(resourceComponentState.getResource());  //get the resource to use for saving
+			final R resource=getResourceSelector().selectOutputResource(resourceComponentState.getResource());  //get the resource to use for saving
 			if(resource!=null)  //if a valid resource was returned
 			{
 				write(resource, resourceComponentState.getComponent()); //save the resource
@@ -451,7 +450,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	@param component The component that contains the data to save.
 	@exception IOException Thrown if there was an error writing the resource.
 	*/
-	protected void write(final Resource resource, final Component component) throws IOException
+	protected void write(final R resource, final Component component) throws IOException
 	{
 //TODO change the cursor while we save
 		final OutputStream outputStream=getResourceSelector().getOutputStream(resource.getReferenceURI());	//get an output stream to this resource's URI
@@ -471,7 +470,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	@param outputStream The input stream to which to write the data.
 	@throws IOException Thrown if there is an error writing the data.
 	*/ 
-	protected abstract void write(final Resource resource, final Component component, final OutputStream outputStream) throws IOException;
+	protected abstract void write(final R resource, final Component component, final OutputStream outputStream) throws IOException;
 
 	/**Reverts the open resource, if any.
 	If no resource is open, no action occurs.
@@ -479,7 +478,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	*/
 	public void revert()
 	{
-		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
+		final ResourceComponentState<R> resourceComponentState=getResourceComponentState();	//get the current resource component state
 		if(resourceComponentState!=null)	//if a resource is open
 		{
 //G***del if not needed			if(canClose(resourceComponentState))	//if we can close the open resource
@@ -494,7 +493,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	@param resourceComponentState The state information of the resource that
 		should be checked for closing.
 	*/
-	protected void revert(final ResourceComponentState resourceComponentState)
+	protected void revert(final ResourceComponentState<R> resourceComponentState)
 	{
 	}
 
@@ -592,7 +591,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	}
 
 	/**Action for reverting a book.*/
-	protected class RevertAction extends AbstractAction	
+	protected class RevertAction extends AbstractAction
 	{
 		/**Default constructor.*/
 		public RevertAction()
@@ -617,9 +616,10 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	/**A representation of a resource and its associated view.
 	A resource component state always represents a valid resource and a valid
 		component, although the resource may be anonymous with no reference URI.
+	@param <R2> The type of resource the state of which is being stored.
 	@author Garret Wilson
 	*/
-	public class ResourceComponentState extends DefaultResourceState
+	public static class ResourceComponentState<R2 extends Resource> extends DefaultResourceState<R2>
 	{
 
 		/**Sets the resource being described.
@@ -628,7 +628,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 		@param resource The new resource to describe.
 		@exception NullPointerException Thrown if the resource is <code>null</code>.
 		*/
-		protected void setResource(final Resource resource)
+		protected void setResource(final R2 resource)
 		{
 			super.setResource(resource);	//set the resource object
 		}
@@ -644,7 +644,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 		@param component The component that represents a view of the resource.
 		@exception NullPointerException Thrown if the resource is <code>null</code>.
 		*/
-		public ResourceComponentState(final Resource resource, final Component component)
+		public ResourceComponentState(final R2 resource, final Component component)
 		{
 			super(resource);	//construct the parent class
 			this.component=component;	//save the resource component

@@ -59,6 +59,7 @@ import com.garretwilson.util.zip.*;
 
 import static com.garretwilson.io.ContentTypeConstants.*;
 import static com.garretwilson.text.xml.XMLUtilities.*;
+import com.globalmentor.mentoract.reader.ReaderFrame;
 
 /**A text component that can be marked up with attributes that are represented
 	graphically. Most importantly, this class supports paged XML information.
@@ -888,9 +889,10 @@ Debug.trace("found zip file: ", uri);  //G***del
 			if(URIConstants.FILE_SCHEME.equals(uri.getScheme()))  //if this is the file scheme
 			{
 				inputStream.close();  //close the input stream; we'll access the zip file directly G***testing
+				inputStream=null;	//indicate that we haven't found an input stream directly to the zip file, yet
 					//G***look for an OEB publication
 			  final File zipFile=new File(uri);  //create a file for accessing the zip file
-			  final ZipManager zipManager=new ZipManager(zipFile);  //create a zip manager for accessing the file
+			  final ZipManager zipManager=new ZipManager(zipFile, uri);  //create a zip manager for accessing the file
 				setURIInputStreamable(zipManager);  //we'll use the zip manager as our input stream locator
 				final Iterator zipEntryIterator=zipManager.getZipEntryIterator(); //get an iterator to look
 				while(zipEntryIterator.hasNext()) //while there are more zip entries
@@ -905,14 +907,20 @@ Debug.trace("found zip file: ", uri);  //G***del
 						try
 						{
 							Debug.trace("switching URI to: ", zipManager.getURI(zipEntry)); //G***del
-							uri=zipManager.getURI(zipEntry); //use the file inside the zip file instead of this one
-							inputStream=getStream(uri);  //get an input stream to the new URI; this should set the media type and install the correct editor kit
+//G***do we really want to change the URI, which will preclude reload?							uri=zipManager.getURI(zipEntry); //use the file inside the zip file instead of this one
+//TODO fix or del							inputStream=getStream(uri);  //get an input stream to the new URI; this should set the media type and install the correct editor kit
+							inputStream=getStream(zipManager.getURI(zipEntry));  //get an input stream to the new URI; this should set the media type and install the correct editor kit
+							break;	//stop looking for suitable zip entries
 						}
-						catch(URISyntaxException uriSyntaxException)	//if there is an error with the format of a URI (which shouldn't happen)
+						catch(IllegalArgumentException illegalArgumentException)	//if there is an error with the format of a URI (which shouldn't happen)
 						{
-							Debug.warn(uriSyntaxException);	//processing can still go on
-						} 
+							throw new AssertionError(illegalArgumentException);
+						}
 					}
+				}
+				if(inputStream==null)	//if we couldn't find an OEB file
+				{
+					throw new IOException("Could not find an OEB publication in zip file.");//TODO i18n
 				}
 			}
 			else  //if this is not a zip file, but some other sort of zip access, throw an exception
@@ -1005,9 +1013,9 @@ Debug.trace("reading from stream"); //G***del
 			{
 				load();	//load the document
 			}
-			catch(IOException ioException)	//if there are any IO errors
+			catch(final IOException exception)	//if there are any errors
 			{
-				Debug.error(ioException);	//TODO fix asynchronous loading error handling
+				SwingApplication.displayApplicationError(XMLTextPane.this, "Error opening document", exception); //G***do we need to clean up anything? G***i18n
 			}
 			finally
 			{

@@ -582,12 +582,12 @@ Debug.trace("Inside XMLDocument.getResource() with media type: ", mediaType);	//
 		absolute.
 	@param href The specified location of the resource.
 	@return The URI of the specified resource.
-	@exception URISyntaxException Thrown if the a URI could not be created.
+	@exception IllegalArgumentException if the given string violates RFC&nbsp;2396.
 	@see #getBaseURI
 	*/
-	public URI getResourceURI(final String href) throws URISyntaxException
+	public URI getResourceURI(final String href)
 	{
-		return URIUtilities.createURI(getBaseURI(), href);	//create and return a URI based upon the base URI, if any, and the given file location
+		return getBaseURI().resolve(href);	//create and return a URI based upon the base URI, if any, and the given file location
 	}
 
 	/**Gets the media type of a particular resource.

@@ -10,12 +10,14 @@ import static com.garretwilson.net.URIConstants.*;
 import com.garretwilson.net.http.HTTPClient;
 import com.garretwilson.rdf.DefaultRDFResource;
 import com.garretwilson.rdf.RDFFileProcessor;
+import com.garretwilson.rdf.RDFResource;
 
 /**An implementation of a resource selector that selects resources from a
 	file system and returns RDF resources as descriptions of selected files.
+@param <R> The type of resource being selected.
 @author Garret Wilson
 */
-public class FileRDFResourceSelector extends DefaultURIAccessible implements ResourceSelector
+public class FileRDFResourceSelector extends DefaultURIAccessible implements ResourceSelector<RDFResource>
 {
 
 	/**The component to serve as a parent for file dialogs.*/
@@ -48,7 +50,7 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 	@exception IOException Thrown if there is an error retrieving the resource
 		description.
 	*/
-	public Resource getResource(final URI referenceURI) throws IOException
+	public RDFResource getResource(final URI referenceURI) throws IOException
 	{
 		if(FILE_SCHEME.equals(referenceURI.getScheme()))	//if this is a file:// URI
 		{ 
@@ -69,7 +71,7 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 	@exception SecurityException Thrown if selecting an input resource is not allowed.
 	@exception IOException Thrown if there is an error locating a resource.
 	*/
-	public Resource selectInputResource(final Resource oldResource) throws SecurityException, IOException
+	public RDFResource selectInputResource(final RDFResource oldResource) throws SecurityException, IOException
 	{
 			//if we were given a resource with a valid file URI, create a file from that URI and get the parent directory of that file
 		final File currentDirectory=oldResource!=null && oldResource.getReferenceURI()!=null && FILE_SCHEME.equals(oldResource.getReferenceURI().getScheme())
@@ -99,7 +101,7 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 	@exception SecurityException Thrown if selecting an output resource is not allowed.
 	@exception IOException Thrown if there is an error locating a resource.
 	*/
-	public Resource selectOutputResource(final Resource oldResource) throws SecurityException, IOException
+	public RDFResource selectOutputResource(final RDFResource oldResource) throws SecurityException, IOException
 	{
 	return null;	//TODO fix save dialog
 	}

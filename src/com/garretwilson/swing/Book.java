@@ -1564,9 +1564,9 @@ Debug.trace("ready to call XMLTextPane.go(URI)");
 					final URI guideURI=((XMLDocument)document).getResourceURI(guide.getHRef()); //try to construct a URI from the guide's href
 					go(guideURI); //go to the URL specified by the guide
 		  	}
-		  	catch(URISyntaxException uriSyntaxException)
+		  	catch(final IllegalArgumentException illegalArgumentException)
 		  	{
-		  		SwingApplication.displayApplicationError(this, uriSyntaxException);
+		  		SwingApplication.displayApplicationError(this, illegalArgumentException);
 		  	}
 			}
 		}

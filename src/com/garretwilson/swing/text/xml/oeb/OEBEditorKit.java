@@ -260,10 +260,10 @@ Debug.trace("working on item: ", item); //G***del
 								itemInputStream.close();  //always close the input stream to the document
 							}
 						}
-						catch(URISyntaxException uriSyntaxException)	//if we can't get the item's URI
+						catch(final IllegalArgumentException illegalArgumentException)	//if we can't get the item's URI
 						{
-							final IOException ioException=new IOException(uriSyntaxException.getMessage());	//create an IO exception from the URI syntax exception
-							ioException.initCause(uriSyntaxException);	//show what caused the error
+							final IOException ioException=new IOException(illegalArgumentException.getMessage());	//create an IO exception from the URI syntax exception
+							ioException.initCause(illegalArgumentException);	//show what caused the error
 							throw ioException;	//throw an IO exception version of the error
 						}
 					}
