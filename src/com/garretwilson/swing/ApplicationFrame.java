@@ -828,11 +828,14 @@ public abstract class ApplicationFrame extends JFrame implements DefaultFocusabl
 			result=saveFile(description, uri); //save the file
 			if(result)  //if the file was saved without being canceled
 			{
-				if(!description.getRDFResource().getReferenceURI().equals(uri))	//if the URI wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)
+				if(!ObjectUtilities.equals(description.getRDFResource().getReferenceURI(), uri))	//if the URI wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)
 				{
+					description.getRDFResource().setReferenceURI(uri);	//update the resource description's URI
+/*G***del when works
 						//create a copy of the resource description, using the new URI
 					final RDFResource newResource=new DefaultRDFResource(description.getRDFResource(), uri);	//G***but what if the other resource was a special type?
 					documentDescription.setRDFResource(newResource);	//update the resource to the one with the new URI
+*/
 				}
 //G***fix or del				setFile(file);  //update the file, just in case they override saveFile() and don't call this version
 			}
@@ -850,11 +853,14 @@ public abstract class ApplicationFrame extends JFrame implements DefaultFocusabl
 	*/
 	protected boolean saveFile(final RDFResourceState description, final URI uri)
 	{
-		if(!description.getRDFResource().getReferenceURI().equals(uri))	//if the URI should be changed
+		if(!ObjectUtilities.equals(description.getRDFResource().getReferenceURI(), uri))	//if the URI should be changed
 		{
+			description.getRDFResource().setReferenceURI(uri);	//update the resource description's URI
+/*G***del when works
 				//create a copy of the resource description, using the new URI
 			final RDFResource newResource=new DefaultRDFResource(description.getRDFResource(), uri);	//G***but what if the other resource was a special type?
 			documentDescription.setRDFResource(newResource);	//update the resource to the one with the new URI
+*/
 		}
 		return true;  //this version always succeeds
 	}

@@ -134,7 +134,8 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 					stringBuffer.append(':'); //append a colon to separate the property from the reference URI
 				if(property!=null || type!=null) //if we had either a property or a type
 					stringBuffer.append(' '); //append a space to separate the property and/or type from the reference URI
-			  stringBuffer.append('[').append(resource.getReferenceURI()).append(']');  //append "[referenceURI]"
+				stringBuffer.append('[').append(getXMLifier().getLabel(resource)).append(']');  //append "[referenceURI]" label
+//G***del when works			  stringBuffer.append('[').append(resource.getReferenceURI()).append(']');  //append "[referenceURI]"
 			}
 			return stringBuffer.toString(); //return the resource string we constructed
 		}

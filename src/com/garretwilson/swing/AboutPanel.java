@@ -227,7 +227,7 @@ public class AboutPanel extends BasicPanel implements CharacterConstants
 				rdf.putResource(resource);	//put the resource in the data model 
 				final RDFTabbedPane rdfTabbedPane=new RDFTabbedPane(rdf, resource);  //create a new panel in which to show the resource
 					//show the properties in an information dialog, wrapping with a content panel so scrolling will occur properly
-				OptionPane.showMessageDialog(AboutPanel.this, new ContentPanel(rdfTabbedPane));
+				OptionPane.showMessageDialog(AboutPanel.this, new ContentPanel(rdfTabbedPane), (getTitle()!=null ? getTitle()+' ' : "")+"Properties", OptionPane.INFORMATION_MESSAGE);	//G***i18n
 //G***del if not needed				new JOptionPane(new ContentPanel(rdfTabbedPane), JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION).createDialog(Book.this, "Properties").show();  //G***i18n
 			}
 		}

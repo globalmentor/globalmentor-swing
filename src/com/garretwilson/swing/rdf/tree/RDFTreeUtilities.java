@@ -52,7 +52,7 @@ public class RDFTreeUtilities
 	{
 		final RDFResourceTreeNode rdfResourceTreeNode=new RDFResourceTreeNode(rdfResource); //create a new tree node to represent the RDF resource
 		  //if this is a folder
-		if(RDFUtilities.isType(rdfResource, FileOntologyConstants.FILE_NAMESPACE_URI, FileOntologyConstants.FOLDER_TYPE_NAME))
+		if(RDFUtilities.isType(rdfResource, FileOntologyConstants.FILE_ONTOLOGY_NAMESPACE_URI, FileOntologyConstants.FOLDER_TYPE_NAME))
 		{
 
 
