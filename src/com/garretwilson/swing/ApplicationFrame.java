@@ -10,6 +10,7 @@ import javax.swing.*;
 import com.garretwilson.awt.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.rdf.*;
+import com.garretwilson.rdf.dublincore.DCUtilities;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.*;
 import com.garretwilson.util.prefs.*;
@@ -48,21 +49,31 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 
 		//the bounds preferences
 	/**The preference for storing the horizontal position.*/
-	public final String BOUNDS_X_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.x");
+	protected final String BOUNDS_X_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.x");
 	/**The preference for storing the vertical position.*/
-	public final String BOUNDS_Y_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.y");
+	protected final String BOUNDS_Y_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.y");
 	/**The preference for storing the width.*/
-	public final String BOUNDS_WIDTH_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.width");
+	protected final String BOUNDS_WIDTH_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.width");
 	/**The preference for storing the height.*/
-	public final String BOUNDS_HEIGHT_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.height");
+	protected final String BOUNDS_HEIGHT_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.height");
 	/**The preference for storing the extended state.*/
-	public final String EXTENDED_STATE_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "extended.state");
+	protected final String EXTENDED_STATE_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "extended.state");
 
 	/**@return The default user preferences for this frame.*/
 	public Preferences getPreferences()
 	{
 		return Preferences.userNodeForPackage(getClass());	//return the user preferences node for whatever class extends this one 
 	}
+
+	/**The application this frame represents, or <code>null</code> if there is no
+		application information.
+	*/
+	private final SwingApplication application;
+
+		/**@return The application this frame represents, or <code>null</code> if
+			there is no application information.
+		*/
+		public final SwingApplication getApplication() {return application;}
 
 	/**The default close operation, which defaults to <code>DISPOSE_ON_CLOSE</code>.*/
 	private int defaultCloseOperation=DISPOSE_ON_CLOSE;
@@ -303,7 +314,18 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	*/
 	protected String constructTitle()
 	{
-		return getApplicationName();	//return the name of the application
+		final String title;
+		if(getApplication()!=null)	//if we have an application
+		{
+			final RDFObject titleObject=DCUtilities.getTitle(getApplication());	//get the application's title object
+			title=titleObject!=null ? titleObject.toString() : null;	//use the title
+		}
+		else	//if we have no application
+		{
+				//TODO maybe eventually remove all these legacy non-RDF stuff
+			title=getApplicationName();  //use the application name, if available
+		}
+		return title;	//return the title we discovered
 	}
 	
 	/**Sets the <code>contentPane</code> property. 
@@ -331,37 +353,73 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 			contentPane.addPropertyChangeListener(Modifiable.MODIFIED_PROPERTY_NAME, getModifiedPropertyChangeListener());	//add a listener to update the status when the "modified" property changes
 		}
 	}
-
 	/**Default constructor.
 	Enables window events.
 	*/
 	public ApplicationFrame()
 	{
+		this((SwingApplication)null);	//construct the frame with no application	
+	}
+
+	/**Application constructor.
+	Enables window events.
+	@param application The application this frame represents, or
+		<code>null</code> if there is no application information available or this
+		frame doesn't represent an application.
+	*/
+	public ApplicationFrame(final SwingApplication application)
+	{
 		this(true); //create an application frame with a default application panel
 	}
 
-	/**Constructor with a default panel.
+	/**Constructor with a default panel and optional initialization.
 	Enables window events.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
 	public ApplicationFrame(final boolean initialize)
 	{
+		this((SwingApplication)null, initialize);	//construct the frame with no application	
+	}
+
+	/**Application constructor with a default panel and optional initialization.
+	Enables window events.
+	@param application The application this frame represents, or
+		<code>null</code> if there is no application information available or this
+		frame doesn't represent an application.
+	@param initialize <code>true</code> if the panel should initialize itself by
+		calling the initialization methods.
+	*/
+	public ApplicationFrame(final SwingApplication application, final boolean initialize)
+	{
 		this(new ApplicationPanel(), initialize); //create an application frame with a default application panel
 	}
 
 	/**Application panel constructor.
-	  Enables window events.
+	Enables window events.
 	@param contentPane The container to be used as the content pane; usually
 		an <code>ApplicationPanel</code>.
 	*/
 	public ApplicationFrame(final Container contentPane)
 	{
+		this(null, contentPane);	//construct the frame with no application	
+	}
+
+	/**Application panel and application constructor.
+  Enables window events.
+	@param application The application this frame represents, or
+		<code>null</code> if there is no application information available or this
+		frame doesn't represent an application.
+	@param contentPane The container to be used as the content pane; usually
+		an <code>ApplicationPanel</code>.
+	*/
+	public ApplicationFrame(final SwingApplication application, final Container contentPane)
+	{
 		this(contentPane, true);  //construct and initialize the frame
 	}
 
 	/**Application panel constructor with optional initialization.
-		Enables window events.
+	Enables window events.
 	@param contentPane The container to be used as the content pane; usually
 		an <code>ApplicationPanel</code>.
 	@param initialize <code>true</code> if the panel should initialize itself by
@@ -369,11 +427,26 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	*/
 	public ApplicationFrame(final Container contentPane, final boolean initialize)
 	{
-		this(contentPane, true, initialize);	//construct the application frame with a menubar 
+		this(null, contentPane, initialize);	//construct the frame with no application	
 	}
-	
+
+	/**Application panel and application constructor with optional initialization.
+	Enables window events.
+	@param application The application this frame represents, or
+		<code>null</code> if there is no application information available or this
+		frame doesn't represent an application.
+	@param contentPane The container to be used as the content pane; usually
+		an <code>ApplicationPanel</code>.
+	@param initialize <code>true</code> if the panel should initialize itself by
+		calling the initialization methods.
+	*/
+	public ApplicationFrame(final SwingApplication application, final Container contentPane, final boolean initialize)
+	{
+		this(application, contentPane, true, initialize);	//construct the application frame with a menubar 
+	}
+
 	/**Application panel constructor with optional initialization.
-	  Enables window events.
+	Enables window events.
 	@param contentPane The container to be used as the content pane; usually
 		an <code>ApplicationPanel</code>.
 	@param hasMenuBar Whether this frame should have a menu bar.
@@ -382,6 +455,23 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	*/
 	public ApplicationFrame(final Container contentPane, final boolean hasMenuBar, final boolean initialize)
 	{
+		this(null, contentPane, hasMenuBar, initialize);	//construct the frame with no application	
+	}
+	
+	/**Application panel and application constructor with optional initialization.
+  Enables window events.
+	@param application The application this frame represents, or
+		<code>null</code> if there is no application information available or this
+		frame doesn't represent an application.
+	@param contentPane The container to be used as the content pane; usually
+		an <code>ApplicationPanel</code>.
+	@param hasMenuBar Whether this frame should have a menu bar.
+	@param initialize <code>true</code> if the panel should initialize itself by
+		calling the initialization methods.
+	*/
+	public ApplicationFrame(final SwingApplication application, final Container contentPane, final boolean hasMenuBar, final boolean initialize)
+	{
+		this.application=application;	//store the application
 		  //don't do anything automatically on close; we'll handle responding to close events
 		super.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);	//tell the parent to set its default close operation G***this implementation depends on the fact that the super class doesn't use the accessor methods---that's probably dangerous
 		enableEvents(AWTEvent.WINDOW_EVENT_MASK); //enable window events, so that we can respond to close events
@@ -711,16 +801,28 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	/**Shows information about the application.*/
 	public void helpAbout()
 	{
-		final AboutPanel aboutPanel=new AboutPanel();	//create a new about panel
-		aboutPanel.setTitle(getApplicationName());  //set the panel title to the application name, if available
-		aboutPanel.setVersion(getVersion());  //set the version information, if available
-		aboutPanel.setCopyright(getCopyright());  //set the copyright information, if available
-			//determine a title for the dialog, based upon the application name
-		final String dialogTitle="About"+(getApplicationName()!=null ? " "+getApplicationName() : "");
+		final AboutPanel aboutPanel=new AboutPanel(getApplication());	//create a new about panel for the application
+		if(getApplication()==null)	//if we have no application
+		{
+				//TODO maybe eventually remove all these legacy non-RDF stuff
+			aboutPanel.setTitle(getApplicationName());  //set the panel title to the application name, if available
+			aboutPanel.setVersion(getVersion());  //set the version information, if available
+			aboutPanel.setCopyright(getCopyright());  //set the copyright information, if available
+		}
+		//determine a title for the dialog, based upon the application name
+//G***del when works	final String dialogTitle="About"+(getApplicationName()!=null ? " "+getApplicationName() : "");
+			//determine a title for the dialog, based upon the application title
+		final String dialogTitle="About"+(aboutPanel.getTitle()!=null ? " "+aboutPanel.getTitle() : "");	//G***i18n
 		//have an option pane create and show a new dialog using our about panel
-		new JOptionPane(aboutPanel, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION).createDialog(this, dialogTitle).show();  //G***fix title
+		OptionPane.showMessageDialog(this, aboutPanel, dialogTitle, JOptionPane.INFORMATION_MESSAGE);	//G***check and see why we originally had a more complex version
+/*G***del if not needed
+			//create a new dialog for our about panel
+		final JDialog aboutDialog=new OptionPane(aboutPanel, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION).createDialog(this, dialogTitle);
+		aboutDialog.pack();	//pack the dialog
+		aboutDialog.setVisible(true);	//show the dialog
+*/
+//G***del if not needed		new OptionPane(aboutPanel, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION).createDialog(this, dialogTitle).show();  //G***check
 	}
-
 
 	/**Closes the frame, according to the default close settings.
 	@see #getDefaultCloseOperation
@@ -995,12 +1097,12 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 		final Rectangle bounds=getBounds();	//get the current bounds
 		final int extendedState=getExtendedState();	//get the current extended state
 		preferences.putInt(EXTENDED_STATE_PREFERENCE, extendedState);	//store the extended state
-		if((extendedState&MAXIMIZED_HORIZ)!=MAXIMIZED_HORIZ)	//if we aren't maximized horizontally
+		if(extendedState!=MAXIMIZED_HORIZ && extendedState!=MAXIMIZED_BOTH)	//if we aren't maximized horizontally
 		{
 			preferences.putInt(BOUNDS_X_PREFERENCE, bounds.x);	//save the horizontal bounds
 			preferences.putInt(BOUNDS_WIDTH_PREFERENCE, bounds.width);
 		}
-		if((extendedState&MAXIMIZED_VERT)!=MAXIMIZED_VERT)	//if we aren't maximized vertically
+		if(extendedState!=MAXIMIZED_VERT && extendedState!=MAXIMIZED_BOTH)	//if we aren't maximized vertically
 		{
 			preferences.putInt(BOUNDS_Y_PREFERENCE, bounds.y);	//save the vertical bounds
 			preferences.putInt(BOUNDS_HEIGHT_PREFERENCE, bounds.height);
@@ -1018,6 +1120,7 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 		final int height=preferences.getInt(BOUNDS_HEIGHT_PREFERENCE, -1);
 
 //TODO maybe the stuff gets changed around here---the height and width seem to be changed, but the x and y seem to be lost
+//G***there's some sort of timing issue: when debugging, the things get changed correctly, but in real time often the x and y coordinates get set before the extended state is updated to maximized
 
 		if(width>=0 && height>=0)	//if we had valid dimensions stored
 		{

@@ -153,11 +153,11 @@ public class TelephoneNumberPanel extends BasicPanel implements Verifiable
 //G***del when works		final JLabel imageLabel=new JLabel(IconResources.getIcon(IconResources.PHONE_ICON_FILENAME)); //create a label with the image		
 //G***del when works		add(imageLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(countryCodeLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(countryCodeComboBox, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(countryCodeComboBox, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
 		add(nationalDestinationCodeLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(nationalDestinationCodeTextField, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(nationalDestinationCodeTextField, new GridBagConstraints(1, 1, 1, 1, 0.5, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
 		add(subscriberNumberLabel, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(subscriberNumberTextField, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(subscriberNumberTextField, new GridBagConstraints(2, 1, 1, 1, 0.5, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
 		setTelephoneNumber(null);	//clear the fields
 	}
 
@@ -170,7 +170,7 @@ public class TelephoneNumberPanel extends BasicPanel implements Verifiable
 		final String countryCode=((String)countryCodeComboBox.getSelectedItem()).trim();
 		final String nationalDestinationCode=nationalDestinationCodeTextField.getText().trim();
 		final String subscriberNumber=subscriberNumberTextField.getText().trim();
-		if(countryCode.length()>0 && (nationalDestinationCode.length()>0 || subscriberNumber.length()>0))	//if a country code was given, along with information in either of the other fields
+		if(nationalDestinationCode.length()>0 || subscriberNumber.length()>0)	//if any part of the telephone number besides the country code was given
 		{
 			try
 			{

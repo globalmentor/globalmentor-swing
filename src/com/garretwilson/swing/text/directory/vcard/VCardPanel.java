@@ -85,6 +85,7 @@ public class VCardPanel extends ContentPanel implements Verifiable
 		getOrganizationPanel().setUnits(vcard.getOrganizationUnits());
 		getOrganizationPanel().setJobTitle(vcard.getTitle());
 		getOrganizationPanel().setRole(vcard.getRole());
+			//TODO create getTelephones() and getEmails() that return arrays
 		final Telephone[] telephones=(Telephone[])vcard.getTelephoneList().toArray(new Telephone[vcard.getTelephoneList().size()]);
 		final Email[] emails=(Email[])vcard.getEmailList().toArray(new Email[vcard.getEmailList().size()]);
 		getTelecommunicationsPanel().setTelecommunications(telephones, emails);

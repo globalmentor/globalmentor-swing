@@ -114,6 +114,8 @@ public class TelecommunicationsPanel extends ContentPanel implements Verifiable
 	}
 
 	/**Places telephones and emails in the panel.
+	If no telephones or emails are given, default telephone and email components
+		will be added.
 	@param telephones The telephone numbers to display, or <code>null</code> if
 		default telephones should be added.
 	@param emails The email addresses to display, or <code>null</code> if
@@ -129,7 +131,7 @@ public class TelecommunicationsPanel extends ContentPanel implements Verifiable
 				addTelephone(telephones[i]);	//add this telephone
 			}
 		}
-		else	//if no telephones were given, add the default telephones
+		if(telephones==null || telephones.length==0)	//if no telephones were given, add the default telephones
 		{
 				//add a work voice telephone
 			final TelephonePanel workTelephonePanel=new TelephonePanel(null, Telephone.WORK_TELEPHONE_TYPE|Telephone.VOICE_TELEPHONE_TYPE);
@@ -151,7 +153,7 @@ public class TelecommunicationsPanel extends ContentPanel implements Verifiable
 				addEmail(emails[i]);	//add this email
 			}
 		}
-		else	//if no emails were given, add the default emails
+		if(emails==null || emails.length==0)	//if no emails were given, add the default emails
 		{
 				//add an Internet email address
 			final EmailPanel internetEmailPanel=new EmailPanel(null, Email.INTERNET_EMAIL_TYPE);
