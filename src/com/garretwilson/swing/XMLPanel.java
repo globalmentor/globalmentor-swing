@@ -13,6 +13,7 @@ import com.garretwilson.io.URIInputStreamable;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.text.CharacterEncoding;
 import com.garretwilson.text.CharacterEncodingConstants;
+import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.util.Debug;
 
 /**Panel that displays XML and source code.
@@ -257,12 +258,15 @@ public class XMLPanel extends TabbedViewPanel implements DocumentListener
 			final Document document=sourceTextPane.getEditorKit().createDefaultDocument();	//create a new document
 			sourceTextPane.setDocument(document);	//remove the content from the editor kit by installing a new document
 			inputStream.reset();	//G***testing
-			final CharacterEncoding encoding=InputStreamUtilities.getBOMEncoding(inputStream);	//try to sense from the byte order mark the encoding of the text
+			final StringBuffer autodetectPrereadCharacters=new StringBuffer();	//this will receive whatever characters were read while prereading the encoding TODO it would be better to update the XML processor code to push these characters back automatically, as the InputStreamUtilities.getBOMEncoding() method does
+				//see if we can determine the XML encoding before we we parse the stream
+			final CharacterEncoding encoding=XMLProcessor.getXMLEncoding(inputStream, new StringBuffer(), autodetectPrereadCharacters);
 				//use the character encoding we sensed to create a reader, using a default encoding if we couldn't sense one from the byte order mark
 			final Reader reader=encoding!=null ? new InputStreamReader(inputStream, encoding.toString()) : new InputStreamReader(inputStream);
 			try
 			{		
 				sourceTextPane.getEditorKit().read(reader, document, 0);	//have the editor kit read the document from the reader
+				sourceTextPane.getDocument().insertString(0, autodetectPrereadCharacters.toString(), null);	//insert the preread characters at the front of the document G***check
 			}
 			catch(BadLocationException badLocationException)
 			{
