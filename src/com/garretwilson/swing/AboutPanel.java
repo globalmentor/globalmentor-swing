@@ -134,7 +134,7 @@ public class AboutPanel extends BasicPanel implements CharacterConstants
 	*/
 	public AboutPanel(final RDFResource resource)
 	{
-		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
+		super(false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		propertiesAction=new PropertiesAction();
 		titleLabel = new JTextArea();
 		versionLabel = new JLabel();

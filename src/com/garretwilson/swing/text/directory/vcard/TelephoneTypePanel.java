@@ -173,7 +173,7 @@ public class TelephoneTypePanel extends BasicPanel
 	*/
 	public TelephoneTypePanel(final int telephoneType)
 	{
-		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
+		super(false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		homeCheckBox=new JCheckBox();
 		messageCheckBox=new JCheckBox();
 		workCheckBox=new JCheckBox();

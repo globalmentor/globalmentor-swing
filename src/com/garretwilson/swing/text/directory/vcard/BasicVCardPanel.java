@@ -8,23 +8,25 @@ import com.garretwilson.swing.*;
 	<code>text/directory</code>	profile as defined in
 	<a href="http://www.ietf.org/rfc/rfc2426.txt">RFC 2426</a>,
 	"vCard MIME Directory Profile".
+<p>By default a <code>GridBagLayout</code> is used as a layout manager.</p>
 @author Garret Wilson
+@see java.awt.GridBagLayout
 */
 public class BasicVCardPanel extends BasicPanel
 {
-	/**Default constructor.*/
+	/**Default constructor that uses a <code>GridBagLayout</code>.*/
 	public BasicVCardPanel()
 	{
 		this(true); //initialize the panel
 	}
 
-	/**Constructor with optional initialization.
+	/**Constructor with optional initialization using a <code>GridBagLayout</code>.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
 	public BasicVCardPanel(final boolean initialize)
 	{
-		this(new FlowLayout(), initialize);	//construct the panel with a flow layout by default, as does JPanel
+		this(new GridBagLayout(), initialize);	//construct the panel with a grid bag layout by default
 	}
 
 	/**Layout constructor.

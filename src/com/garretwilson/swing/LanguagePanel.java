@@ -51,7 +51,7 @@ public class LanguagePanel extends BasicPanel
 	*/
 	public LanguagePanel(final Locale locale)
 	{
-		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
+		super(false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		languageLabel=new JLabel();
 		languageComboBox=new JComboBox();
 		setDefaultFocusComponent(languageComboBox);	//set the default focus component

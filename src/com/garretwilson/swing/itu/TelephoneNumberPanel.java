@@ -121,7 +121,7 @@ public class TelephoneNumberPanel extends BasicPanel implements Verifiable
 	*/
 	public TelephoneNumberPanel(final TelephoneNumber telephoneNumber)
 	{
-		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
+		super(false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		countryCodeLabel=new JLabel();
 		countryCodeComboBox=new JComboBox();
 		nationalDestinationCodeLabel=new JLabel();

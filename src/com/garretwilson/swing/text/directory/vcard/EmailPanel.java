@@ -126,7 +126,7 @@ public class EmailPanel extends BasicPanel
 	*/
 	public EmailPanel(final String emailAddress, final int emailType)
 	{
-		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
+		super(false);	//construct the panel using a grid bag layout, but don't initialize the panel
 //G***del		editTelephoneTypeAction=new EditTelephoneTypeAction();
 		addressTextField=new JTextField();
 		setDefaultFocusComponent(addressTextField);	//set the default focus component

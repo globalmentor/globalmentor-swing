@@ -39,7 +39,7 @@ public class NameAddressPanel extends BasicPanel implements Verifiable
 	/**Default constructor.*/
 	public NameAddressPanel()
 	{
-		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
+		super(false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		identificationPanel=new IdentificationPanel();
 		addressesPanel=new AddressesPanel();
 		organizationPanel=new OrganizationPanel();

@@ -90,7 +90,7 @@ public class ContentPanel extends BasicPanel implements CanClosable
 		return super.getDefaultFocusComponent();	//if we can't get the default focus component from the content component, return whatever had been set with this panel
 	}
 
-	/**Application component constructor with optional initialization.
+	/**Content component constructor with optional initialization.
 		The content component is guaranteed to be set before
 		<code>initializeUI</code> is called.
 	@param contentComponent The new component for the center of the panel.
@@ -116,7 +116,7 @@ public class ContentPanel extends BasicPanel implements CanClosable
 		this(contentComponent, true); //create and initialize the component
 	}
 
-	/**Initializes constructor.
+	/**Initialize constructor.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/

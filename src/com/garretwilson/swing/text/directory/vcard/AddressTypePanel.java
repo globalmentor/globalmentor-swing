@@ -110,7 +110,7 @@ public class AddressTypePanel extends BasicPanel
 	*/
 	public AddressTypePanel(final int addressType)
 	{
-		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
+		super(false);	//construct the panel using a grid bag layout
 		domesticCheckBox=new JCheckBox();
 		internationalCheckBox=new JCheckBox();
 		postalCheckBox=new JCheckBox();
