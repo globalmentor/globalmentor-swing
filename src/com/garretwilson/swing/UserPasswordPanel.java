@@ -57,7 +57,11 @@ public class UserPasswordPanel extends BasicPanel
 		/**Sets whether the username should be editable.
 		@param editable <code>true</code> if the user is allowed to edit the username.
 		*/
-		public void setUsernameEditable(final boolean editable) {usernameField.setEditable(editable);}
+		public void setUsernameEditable(final boolean editable)
+		{
+			usernameField.setEditable(editable);
+			setDefaultFocusComponent(editable ? usernameField : passwordPanel);	//set the default focus component depending on whether the username is editable
+		}
 
 	/**Default constructor with no password verification.*/
 	public UserPasswordPanel()

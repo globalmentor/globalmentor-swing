@@ -54,7 +54,7 @@ public class SwingAuthenticator /*G***fix extends Authenticator*/ implements Aut
 	}
 
 	/**Determines password information for a given user in relation to a given URI and description.
-	The user must not be allowed to change the username.
+	The user must not be allowed to change the username, if one is provided.
 	@param uri The URI for which authentication is requested.
 	@param prompt A description of the authentication.
 	@param username The user for which password information should be gathered, or <code>null</code> if the username is not restricted.
@@ -66,7 +66,13 @@ public class SwingAuthenticator /*G***fix extends Authenticator*/ implements Aut
 	}
 	
 	
-	public PasswordAuthentication askPasswordAuthentication(final String title, final String prompt, final String username)
+	/**Asks password authentication.
+	@param title The dialog title.
+	@param prompt A prompt string to present the user.
+	@param username The user for which password information should be gathered, or <code>null</code> if the username is not restricted.
+	@return The password authentication collected from the user, or <code>null</code> if none is provided.
+	*/
+	protected PasswordAuthentication askPasswordAuthentication(final String title, final String prompt, final String username)
 	{
 		final UserPasswordPanel userPasswordPanel=new UserPasswordPanel();	//create a password panel with verification
 		if(username!=null)	//if a username was given
@@ -74,9 +80,9 @@ public class SwingAuthenticator /*G***fix extends Authenticator*/ implements Aut
 			userPasswordPanel.setUsername(username);	//set the username in the panel
 			userPasswordPanel.setUsernameEditable(false);	//don't allow the username to be edited
 		}
-		//TODO set description
+		//TODO set prompt
 		//ask the user for a new password; if the user accepts the change
-		if(showConfirmDialog(null, userPasswordPanel, prompt, OK_CANCEL_OPTION)==OK_OPTION)
+		if(showConfirmDialog(null, userPasswordPanel, title, OK_CANCEL_OPTION)==OK_OPTION)
 		{
 			return new PasswordAuthentication(userPasswordPanel.getUsername(), userPasswordPanel.getPassword());	//return the password authentication from the panel
 		}

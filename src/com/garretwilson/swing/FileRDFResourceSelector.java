@@ -7,6 +7,7 @@ import javax.swing.*;
 import com.garretwilson.io.*;
 import com.garretwilson.model.*;
 import static com.garretwilson.net.URIConstants.*;
+import com.garretwilson.net.http.HTTPClient;
 import com.garretwilson.rdf.DefaultRDFResource;
 import com.garretwilson.rdf.RDFFileProcessor;
 
@@ -23,12 +24,21 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 		/**@return The component to serve as a parent for file dialogs.*/
 		protected Component getParentComponent() {return parentComponent;}
 
-	/**Parent component constructor.
+	/**Parent component constructor using a default HTTP client.
 	@param parentComponent The component to serve as a parent for file dialogs.
 	*/
 	public FileRDFResourceSelector(final Component parentComponent)
 	{
-		super();	//call the default constructor, using the default implementation for accessing files
+		this(parentComponent, HTTPClient.getInstance());	//construct the class with the default HTTP client
+	}
+
+	/**Parent component and HTTP client constructor.
+	@param parentComponent The component to serve as a parent for file dialogs.
+	@param httpClient The client used to access HTTP URIs.
+	*/
+	public FileRDFResourceSelector(final Component parentComponent, final HTTPClient httpClient)
+	{
+		super(httpClient);	//call the default constructor, using the default implementation for accessing files and the given HTTP client for accessing HTTP
 		this.parentComponent=parentComponent;	//save the parent component
 	}
 
