@@ -23,7 +23,6 @@ import com.garretwilson.swing.rdf.*;
 import com.garretwilson.swing.text.*;
 import com.garretwilson.swing.text.Annotation;
 import com.garretwilson.swing.text.xml.*;
-import com.garretwilson.swing.text.xml.oeb.OEBDocument; //G***eventually del
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.garretwilson.text.xml.oeb.*;
 import com.garretwilson.util.*;
@@ -504,17 +503,15 @@ Debug.trace("ready to fire property change");
 	  return null;  //show that we could not find an RDF data model
 	}
 
-	/**@return The OEB publication associated with the document, if this book's
-		text pane has an OEB document with an OEB publication.
-	@return The OEB publication associated with the book, or <code>null</code> if
-		there is none.
-//	G***this will eventually probably go somewhere else, when this turns into an XMLReader component or something; we'll probably store the publication in a property
+	/**@return The publication description associated with the document, if this book's
+		text pane has a document with a publication description.
+	@return The publication description associated with the book, or <code>null</code> if there is none.
 	*/
-	public OEBPublication getOEBPublication()
+	public RDFResource getPublication()
 	{
 		final Document document=getXMLTextPane().getDocument(); //get the document associated with the text pane
-		if(document instanceof OEBDocument) //if the document is an OEB document
-		  return ((OEBDocument)document).getPublication();  //get the OEB publication object from the OEB document G***why don't we get the property value directly?
+		if(document instanceof XMLDocument) //if the document is an XML document
+		  return ((XMLDocument)document).getPublication();  //get the OEB publication object from the OEB document G***why don't we get the property value directly?
 	  return null;  //show that we could not find a publication
 	}
 
@@ -1561,28 +1558,23 @@ Debug.trace("ready to call XMLTextPane.go(URI)");
 		getXMLTextPane().go(offset);  //tell the text pane to go to the specified position
 	}
 
-	/**Attempts to navigate to the target of the given OEB guide. This method
-		assumes an OEB publication is available.
+	/**Attempts to navigate to the target of the given OEB guide.
 	@param guide The OEB guide which contains the target href location.
 	*/
 	protected void go(final OEBGuide guide)
 	{
-		final OEBPublication publication=getOEBPublication(); //get the publication associated with the book, if there is one
-		if(publication!=null) //if there is a publication
+		final Document document=getXMLTextPane().getDocument(); //get a reference to the document
+	  if(document instanceof XMLDocument) //if this is an XML document
 		{
-			final Document document=getXMLTextPane().getDocument(); //get a reference to the document
-		  if(document instanceof XMLDocument) //if this is an XML document
-			{
-		  	try
-		  	{
-					final URI guideURI=((XMLDocument)document).getResourceURI(guide.getHRef()); //try to construct a URI from the guide's href
-					go(guideURI); //go to the URL specified by the guide
-		  	}
-		  	catch(final IllegalArgumentException illegalArgumentException)
-		  	{
-		  		SwingApplication.displayApplicationError(this, illegalArgumentException);
-		  	}
-			}
+	  	try
+	  	{
+				final URI guideURI=((XMLDocument)document).getResourceURI(guide.getHRef()); //try to construct a URI from the guide's href
+				go(guideURI); //go to the URL specified by the guide
+	  	}
+	  	catch(final IllegalArgumentException illegalArgumentException)
+	  	{
+	  		SwingApplication.displayApplicationError(this, illegalArgumentException);
+	  	}
 		}
 	}
 
@@ -2225,9 +2217,9 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 		  final RDF rdf=getRDF(); //get the loaded metadata
 			if(rdf!=null) //if we have RDF
 			{
-			  final OEBPublication oebPublication=getOEBPublication(); //get the loaded publication
+			  final RDFResource publication=getPublication(); //get the loaded publication
 					//create a new panel in which to show the RDF
-				final RDFPanel rdfPanel=new RDFPanel(new RDFResourceModel(oebPublication, getXMLTextPane().getBaseURI(), getXMLTextPane().getURIInputStreamable()));  
+				final RDFPanel rdfPanel=new RDFPanel(new RDFResourceModel(publication, getXMLTextPane().getBaseURI(), getXMLTextPane().getURIInputStreamable()));  
 				  //show the properties in an information dialog
 				new JOptionPane(rdfPanel, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION).createDialog(Book.this, "Properties").show();  //G***i18n
 			}

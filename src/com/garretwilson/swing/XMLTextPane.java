@@ -45,6 +45,7 @@ import com.garretwilson.swing.event.ProgressListener;
 import com.garretwilson.swing.text.*;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.oeb.OEBEditorKit;  //G***move elsewhere if we can
+import com.garretwilson.swing.text.xml.xeb.XEBEditorKit;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLLinkController;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLViewFactory;
@@ -83,15 +84,21 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 	/**The "application/zip" content type.*/
 	protected final static ContentType ZIP_MEDIA_TYPE=new ContentType(APPLICATION, ZIP_SUBTYPE, null);
 
+	/**The "application/x-oeb1-package+xml" content type.*/
+	protected final static ContentType OEB_PACKAGE_MEDIA_TYPE=new ContentType(APPLICATION, X_OEB1_PACKAGE_XML_SUBTYPE, null);
+
 	/**The "application/x-oeb-publication+xml+zip" content type.*/
 	protected final static ContentType OEB_ZIP_MEDIA_TYPE=new ContentType(APPLICATION, X_OEB_PUBLICATION_ZIP_SUBTYPE, null);
 
-	/**The highlighter used for highlighting search results.*/
-//G***del when works	protected final Highlighter searchHighlighter=new DefaultHighlighter();
+	/**The "application/x-xebook+rdf+xml" content type.*/
+	protected final static ContentType XEBOOK_MEDIA_TYPE=new ContentType(APPLICATION, X_XEBOOK_RDF_XML_SUBTYPE, null);
+
+	/**The "application/x-xebook+rdf+xml+zip" content type.*/
+	protected final static ContentType XEB_ZIP_MEDIA_TYPE=new ContentType(APPLICATION, X_XEBOOK_RDF_XML_ZIP_SUBTYPE, null);
+
 
 	//TODO fix asynchronous stop-gap kludge to correctly get the asynchronous setting from the document---if that's the best way to do it
 	protected boolean asynchronousLoad=false;
-	
 
 		public boolean isAsynchronousLoad() {return asynchronousLoad;}
 
@@ -914,7 +921,8 @@ Debug.trace("installed editor kit is first: ", getEditorKit().getClass().getName
 
 		final String contentType=getContentType();  //see what content type we decided on
 Debug.trace("content type is first: ", contentType);  //G***del
-		if(OEB_ZIP_MEDIA_TYPE.match(contentType) || ZIP_MEDIA_TYPE.match(contentType)) //if this appears to be an OEB publication zip file or an application/zip file
+			//if this appears to be an XEB book zip file, an OEB publication zip file or an application/zip file
+		if(OEB_ZIP_MEDIA_TYPE.match(contentType) || XEB_ZIP_MEDIA_TYPE.match(contentType) || ZIP_MEDIA_TYPE.match(contentType))
 		{
 Debug.trace("found zip file: ", uri);  //G***del
 			if(URIConstants.FILE_SCHEME.equals(uri.getScheme()))  //if this is the file scheme
@@ -929,21 +937,22 @@ Debug.trace("found zip file: ", uri);  //G***del
 				while(zipEntryIterator.hasNext()) //while there are more zip entries
 				{
 				  final ZipEntry zipEntry=(ZipEntry)zipEntryIterator.next();  //get the next zip entry
-					if(zipEntry.getName().endsWith(".opf")) //if this is an OEB publication G***fix to use the media type
-					{
-/*G***fix
-					final MediaType zipEntryMediaType=FileUtilities.getMediaType(zipEntry.getName()); //get the media type of the zip entry
-					getMediaType()
-*/
-						try
+				  final ContentType zipEntryContentType=FileUtilities.getMediaType(zipEntry.getName());	//see what content type this entry has TODO use XPackage if available
+				  if(zipEntryContentType!=null)	//if we know the content type of this zip entry
+				  {
+					  if((XEBOOK_MEDIA_TYPE.match(zipEntryContentType) && !OEB_ZIP_MEDIA_TYPE.match(contentType))	//if this is an XEbook that isn't in an OEB zip file
+					  		|| (OEB_PACKAGE_MEDIA_TYPE.match(zipEntryContentType) && !XEB_ZIP_MEDIA_TYPE.match(contentType)))	//or if this is an OEB package that isn't in a XEB zip file
 						{
-							Debug.trace("switching URI to: ", zipManager.getURI(zipEntry)); //G***del
-							inputStream=getStream(zipManager.getURI(zipEntry));  //get an input stream to the new URI; this should set the media type and install the correct editor kit
-							break;	//stop looking for suitable zip entries
-						}
-						catch(IllegalArgumentException illegalArgumentException)	//if there is an error with the format of a URI (which shouldn't happen)
-						{
-							throw new AssertionError(illegalArgumentException);
+							try
+							{
+								Debug.trace("switching URI to: ", zipManager.getURI(zipEntry)); //G***del
+								inputStream=getStream(zipManager.getURI(zipEntry));  //get an input stream to the new URI; this should set the media type and install the correct editor kit
+								break;	//stop looking for suitable zip entries
+							}
+							catch(IllegalArgumentException illegalArgumentException)	//if there is an error with the format of a URI (which shouldn't happen)
+							{
+								throw new AssertionError(illegalArgumentException);
+							}
 						}
 					}
 				}
@@ -1461,11 +1470,13 @@ Debug.trace("creating editor kit for content type: ", type);  //G***del; fix
 			{
 				return new XHTMLEditorKit(mediaType, this);	//create a new XHTML editor kit for this media type
 			}
-				//if this is an OEB package
-		  else if(/*G***fix mediaType.match(OEBConstants.OEB10_DOCUMENT_MEDIA_TYPE) || */mediaType.match(OEBConstants.OEB10_PACKAGE_MEDIA_TYPE))
+		  else if(OEB_PACKAGE_MEDIA_TYPE.match(mediaType))	//if this is an OEB package
 			{
-Debug.trace("creating OEB editor kit"); //G***del
 				return new OEBEditorKit(this);  //create a new OEB editor kit for the OEB package
+			}
+		  else if(XEBOOK_MEDIA_TYPE.match(mediaType))	//if this is an XEbook
+			{
+				return new XEBEditorKit(this);  //create a new XEB editor kit for the XEbook
 			}
 //TODO have a XMLUtilities.isXML(mediaType), and if not, create an editor kit normally using the parent class
 		  return new XMLEditorKit(mediaType, this); //create a new XML editor kit for the specified type

@@ -42,9 +42,12 @@ import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.stylesheets.StyleSheet;
 //G***del when works import com.garretwilson.awt.ImageUtilities;
 import com.garretwilson.io.*;
-import com.garretwilson.lang.JavaConstants;
+import com.garretwilson.lang.*;
+import static com.garretwilson.lang.ObjectUtilities.*;
 import com.garretwilson.net.URIUtilities;
-import com.garretwilson.rdf.RDF;  //G***move
+import com.garretwilson.rdf.*;
+import com.garretwilson.rdf.xpackage.MIMEOntologyUtilities;
+import com.garretwilson.rdf.xpackage.XPackageUtilities;
 import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.event.ProgressListener;
 import com.garretwilson.swing.text.AttributeSetUtilities;
@@ -52,28 +55,10 @@ import com.garretwilson.swing.text.DocumentConstants;
 import com.garretwilson.swing.text.DocumentUtilities;
 import com.garretwilson.swing.text.SwingTextUtilities;
 import com.garretwilson.text.CharacterConstants;
-import com.garretwilson.text.xml.XMLConstants;
-import com.garretwilson.text.xml.XMLDOMImplementation;
-import com.garretwilson.text.xml.XMLText; //G***remove these in favor of W3C DOM
-import com.garretwilson.text.xml.XMLElement;
-import com.garretwilson.text.xml.XMLNode;
-import com.garretwilson.text.xml.XMLUtilities;
-import com.garretwilson.text.xml.oeb.OEBConstants;  //G***move
-import com.garretwilson.text.xml.stylesheets.XMLStyleSheetConstants;
-import com.garretwilson.text.xml.stylesheets.XMLStyleSheetDescriptor;
-import com.garretwilson.text.xml.stylesheets.XMLStyleSheetList;
+import com.garretwilson.text.xml.oeb.OEBPublication;
 import com.garretwilson.text.xml.stylesheets.css.AbstractXMLCSSStylesheetApplier;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSStylesheetApplier;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSValue;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSProcessor;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSSelector; //G***del when fully switched to DOM
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleRule; //G***del when fully switched to DOM
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities; //G***maybe move
-import com.garretwilson.text.xml.xhtml.XHTMLConstants;  //G***move
-import com.garretwilson.text.xml.xhtml.XHTMLUtilities;
 import com.garretwilson.sound.sampled.SampledSoundUtilities;
 import com.garretwilson.swing.text.Bidi;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
@@ -82,11 +67,6 @@ import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.garretwilson.util.Debug;
 import com.garretwilson.util.NameValuePair;
 //G***del when works import com.garretwilson.swing.text.xml.css.XMLCSSSimpleAttributeSet;
-
-import static com.garretwilson.lang.ObjectUtilities.*;
-import com.garretwilson.lang.StringBuilderUtilities;
-import com.garretwilson.lang.StringUtilities;	//G***del when we can
-import com.garretwilson.lang.StringBufferUtilities;	//G***del if we don't need
 
 /**A document that models XML.
 	Implements <code>URIInputStreamable</code>, as this class knows how to
@@ -97,6 +77,9 @@ import com.garretwilson.lang.StringBufferUtilities;	//G***del if we don't need
 */
 public class XMLDocument extends DefaultStyledDocument implements URIInputStreamable
 {
+
+	/**The name of the document property which may contain the loaded publication description.*/
+	public final static String PUBLICATION_PROPERTY_NAME="publication";
 
 	/**The task of applying a stylesheet.*/
 	public final static String APPLY_STYLESHEET_TASK="applyStylesheet";
@@ -515,6 +498,20 @@ G***comment
 	public Object getResource(final String href)
 */
 
+	/**@return The description of the publication, or <code>null</code> if there is no publication associated with this document.*/
+	public RDFResource getPublication()
+	{
+		return asInstance(getProperty(PUBLICATION_PROPERTY_NAME), RDFResource.class); //get the publication from the document, if there is one
+	}
+	
+	/**Sets the description of the publication.
+	@param publication The publication description.
+	*/
+	public void setPublication(final RDFResource publication)
+	{
+		putProperty(PUBLICATION_PROPERTY_NAME, publication);
+	}
+
 	/**Gets a particular resource from the given location. If the resource is
 		cached, the cached copy will be returned. If the document is loaded, it will
 		be stored in the local weak cache.
@@ -531,9 +528,7 @@ G***comment
 	*/
 	public Object getResource(final String href) throws URISyntaxException, IOException
 	{
-Debug.trace("Inside XMLDocument.getResource() with href: ", href);	//G***del
 		final ContentType mediaType=getResourceMediaType(href);	//get the media type of the resource
-Debug.trace("Inside XMLDocument.getResource() with media type: ", mediaType);	//G***del
 		if(mediaType!=null)	//if we think we know the media type of the file involved
 		{
 			final URI resourceURI=getResourceURI(href);	//create a URI based upon the base URI and the given file location
@@ -597,20 +592,22 @@ Debug.trace("Inside XMLDocument.getResource() with media type: ", mediaType);	//
 	*/
 	public ContentType getResourceMediaType(final String href)
 	{
-//G***del Debug.trace("Getting ready to get media type for: ", href);  //G***del
-//G***fix with FileUtilities; fix uppercase/lowercase for file extensions		FileUtilities.getMediaType()
-		return FileUtilities.getMediaType(href);  //return the media type from the extension of the href, if any
-/*G***del; changed to FileUtilities
-		  //G***change all this to use the FileUtilites.getMediaType()
-		final int extensionSeparatorIndex=href.lastIndexOf('.');	//find the extension separator character, if there is one
-		if(extensionSeparatorIndex!=-1)	//if there is an extension
+		ContentType mediaType=null;	//we start out not knowing the media type of the resource
+		final RDFResource publication=getPublication();	//get the publication description
+		if(publication!=null)	//if there is a description of the publication
 		{
-			final String extension=href.substring(extensionSeparatorIndex+1);	//get the extension
-Debug.trace("extension: ", extension);  //G***del
-			return MediaType.getMediaType(extension);	//return the media type associated with this extension, if there is one
+				//get the manifest resource which represents the requested resource
+			final RDFResource resource=XPackageUtilities.getManifestItemByLocationHRef(publication, getBaseURI(), href);
+		  if(resource!=null) //if the item is listed in the manifest
+			{
+				mediaType=MIMEOntologyUtilities.getMediaType(resource);  //get the resource's media type
+			}
 		}
-		return null;	//show that, since this file doesn't have an extension, we don't even want to guess about what media type it represents
-*/
+		if(mediaType==null)	//if we couldn't find a media type from the publication description
+		{
+			mediaType=FileUtilities.getMediaType(href);  //get the media type from the extension of the href, if any
+		}
+		return mediaType;	//return the media type we found, if any
 	}
 
 	/**Opens an input stream to the given location, based upon the document's
