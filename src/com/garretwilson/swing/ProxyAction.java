@@ -96,6 +96,7 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 		{
 //G***don't change the name to work around a Java bug that adds the text to buttons even if they shouldn't be changed
 //G***fix; see above comment		  putValue(Action.NAME, action.getValue(Action.NAME));
+			putValue(Action.NAME, action.getValue(Action.NAME));	//G***see if this works in JDK 1.4.1
 		  putValue(Action.SMALL_ICON, action.getValue(Action.SMALL_ICON));
 		  putValue(Action.SHORT_DESCRIPTION, action.getValue(Action.SHORT_DESCRIPTION));
 		  putValue(Action.LONG_DESCRIPTION, action.getValue(Action.LONG_DESCRIPTION));
@@ -204,7 +205,7 @@ Debug.trace("proxied property changed: ", propertyName);  //G***del when fixed e
 		}
 		else if(!"proxiedAction".equals(propertyName)) //if the proxied action is itself proxied, don't respond when it changes its proxied action G***use constant here
 		{
-			if(!NAME.equals(propertyName)) //G***don't change the name to work around a Java bug that adds the text to buttons even if they shouldn't be changed
+			if(!NAME.equals(propertyName)) //G***don't change the name to work around a Java bug that adds the text to buttons even if they shouldn't be changed TODO check with JDK 1.4.x
 				putValue(propertyName, propertyChangeEvent.getNewValue());  //unconditionally update the value in the proxied action
 		}
 	}

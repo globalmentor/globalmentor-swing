@@ -1,21 +1,19 @@
 package com.garretwilson.resources.icon;
 
-import java.lang.ref.*;
 import java.util.*;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import com.garretwilson.util.WeakValueHashMap;
 
 /**Manages icon resources bundled with an application. This class keeps weak
 	references to the icons it loads so that they may be reused if they have not
-	been garbage collected. This class does have a small overhead of references
-	to icons that are no longer used and have been garbage collected.
+	been garbage collected.
 @author Garret Wilson
 */
 public class IconResources implements IconResourceConstants
 {
 
 	/**The map of references to icons, each keyed to an icon filename.*/
-	protected static final Map iconReferenceMap=new HashMap();
+	protected static final Map iconReferenceMap=new WeakValueHashMap();
 
 	/**This class cannot be publicly instantiated.*/
 	private IconResources() {}
@@ -28,16 +26,11 @@ public class IconResources implements IconResourceConstants
 	*/
 	public static ImageIcon getIcon(final String filename)
 	{
-		ImageIcon imageIcon=null; //we'll try to get the icon if we already have it loaded
-		final Reference iconReference=(Reference)iconReferenceMap.get(filename); //see if we have an icon reference
-		if(iconReference!=null) //if we have an icon reference
-		{
-			imageIcon=(ImageIcon)iconReference.get(); //get the icon stored in the reference
-		}
+		ImageIcon imageIcon=(ImageIcon)iconReferenceMap.get(filename); //see if we have the icon
 		if(imageIcon==null)  //if we haven't loaded this icon yet, or the icon has been garage collected
 		{
 		  imageIcon=new ImageIcon(IconResources.class.getResource(filename));	//load the icon
-			iconReferenceMap.put(filename, new WeakReference(imageIcon));  //store a weak reference to the icon
+			iconReferenceMap.put(filename, imageIcon);  //store a weak reference to the icon
 		}
 		return imageIcon;  //return the icon that we loaded or already had loaded
 	}
