@@ -302,28 +302,28 @@ Debug.trace("loading code2000");
   }
 
 	/**Creates an attribute set for the described element.
-	@param elementName The qualified name of the XML element.
-	@param elementNamespaceURI The namespace of the XMl element.
+	@param elementNamespaceURI The namespace of the XML element.
+	@param elementQName The qualified name of the XML element.
 	@return An attribute set reflecting the CSS attributes of the element.
 	*/
-	protected MutableAttributeSet createAttributeSet(final String elementName, final String elementNamespaceURI)
+	public static MutableAttributeSet createAttributeSet(final URI elementNamespaceURI, final String elementQName)
 	{
-		return createAttributeSet(elementName, elementNamespaceURI, null);  //create an attribute set with no style
+		return createAttributeSet(elementNamespaceURI, elementQName, null);  //create an attribute set with no style
 	}
 
 	/**Creates an attribute set for the described element.
-	@param elementName The qualified name of the XML element.
-	@param elementNamespaceURI The namespace of the XMl element.
+	@param elementNamespaceURI The namespace of the XML element.
+	@param elementQName The qualified name of the XML element.
 	@param style The CSS style to be used for the attribute set.
 	@return An attribute set reflecting the CSS attributes of the element.
 	*/
-	protected MutableAttributeSet createAttributeSet(final String elementName, final String elementNamespaceURI, final CSSStyleDeclaration style)
+	public static MutableAttributeSet createAttributeSet(final URI elementNamespaceURI, final String elementQName, final CSSStyleDeclaration style)
 	{
 		final SimpleAttributeSet attributeSet=new SimpleAttributeSet();	//create a new attribute for this element
-		XMLStyleUtilities.setXMLElementName(attributeSet, elementName);	//store the element's name in the attribute set
+		XMLStyleUtilities.setXMLElementName(attributeSet, elementQName);	//store the element's name in the attribute set
 		if(elementNamespaceURI!=null)  //if the element has a namespace URI specified
-			XMLStyleUtilities.setXMLElementNamespaceURI(attributeSet, elementNamespaceURI);	//store the element's namespace URI in the attribute set
-		final String localName=XMLUtilities.getLocalName(elementName);  //get the element's local name from the qualified name
+			XMLStyleUtilities.setXMLElementNamespaceURI(attributeSet, elementNamespaceURI.toString());	//store the element's namespace URI in the attribute set
+		final String localName=XMLUtilities.getLocalName(elementQName);  //get the element's local name from the qualified name
 		XMLStyleUtilities.setXMLElementLocalName(attributeSet, localName);	//store the element's local name in the attribute set
 		if(style!=null) //if style was given G***should we instead do this unconditionally?
 			XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, style);	//store the CSS style in the attribute set
@@ -1801,6 +1801,7 @@ Debug.trace("Context "+contextIndex+": "+selectorContext.getTagName());	//G***de
 @see XMLDocument#insert
 @see XMLDocument#appendElementSpecListContent
 */
+//TODO put this as a public static method somewhere
 protected void appendElementSpecListContent(final List elementSpecList, final String text, final AttributeSet attributeSet, final URI baseURI)
 {
 	final AttributeSet textAttributeSet;
@@ -1843,7 +1844,7 @@ protected void appendElementSpecListContent(final List elementSpecList, final St
 //G***fix		final Element[] buff=new Element[1];  //create an element array for insertion of elements
 		final Element characterElement=getCharacterElement(60);
 //G***fix		final AttributeSet emAttributeSet=createAttributeSet("em", XHTMLConstants.XHTML_NAMESPACE_URI.toString());	//G***testirng
-		final AttributeSet emAttributeSet=createAttributeSet("p", XHTMLConstants.XHTML_NAMESPACE_URI.toString());	//G***testirng
+		final AttributeSet emAttributeSet=createAttributeSet(XHTMLConstants.XHTML_NAMESPACE_URI, "em");	//G***testirng
 //G***fix		final Element branchElement=createBranchElement(characterElement.getParentElement(), emAttributeSet);
 //G***fix		buff[0]=branchElement;
 
@@ -1932,4 +1933,38 @@ fireUndoableEditUpdate(new UndoableEditEvent(this, evnt));
 		writeUnlock();
 		
 	}
+
+	/**Inserts an XML element into the document around the indicated selection.
+	@param offset The offset in the document (>=0).
+	@param length The length (>=0).
+	@param elementNamespaceURI The namespace of the XML element.
+	@param elementQName The qualified name of the XML element.
+	*/
+	public void insertXMLElement(final int offset, final int length, final URI elementNamespaceURI, final String elementQName)
+	{
+		writeLock();  //lock the document for writing
+		final Element characterElement=getCharacterElement(offset);	//get the element at the offset
+		final AttributeSet elementAttributeSet=createAttributeSet(elementNamespaceURI, elementQName);	//create an attribute set for the element
+		final List elementSpecList=new ArrayList();	//create an array to hold our element specs
+		elementSpecList.add(new DefaultStyledDocument.ElementSpec(elementAttributeSet, DefaultStyledDocument.ElementSpec.StartTagType));
+			//TODO use another Unicode character that has replacement semantics, just to make this neater and more readable
+		appendElementSpecListContent(elementSpecList, StringUtilities.makeString('*', length), null, null);	//G***fix; comment
+		elementSpecList.add(new DefaultStyledDocument.ElementSpec(elementAttributeSet, DefaultStyledDocument.ElementSpec.EndTagType));
+		final DefaultStyledDocument.ElementSpec[] elementSpecs=(DefaultStyledDocument.ElementSpec[])elementSpecList.toArray(new DefaultStyledDocument.ElementSpec[elementSpecList.size()]);
+		DefaultDocumentEvent evnt=new DefaultDocumentEvent(offset, length, DocumentEvent.EventType.INSERT);
+		buffer.insert(offset, length, elementSpecs, evnt);	//insert the element's specifications
+		insertUpdate(evnt, null);	//update after the insert
+		evnt.end();	//end the editing
+		fireInsertUpdate(evnt);	//notify listeners of the insert
+		fireUndoableEditUpdate(new UndoableEditEvent(this, evnt));	//notify listeners of the undoable edit
+		writeUnlock();	//unlock the document
+	}
+
+
+
+
+
+
+
+
 }
