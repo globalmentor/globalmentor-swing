@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
+import com.garretwilson.resources.icon.IconResources;
 
 /**Panel that contains a list and buttons for selecting and unselecting all items.
 @author Garret Wilson
@@ -74,18 +75,13 @@ public class ListPanel extends ContentPanel
 	/**Selects all list entries.*/
 	public void selectAll()
 	{
-		final JList list=getList();	//get the list
-		final ListModel listModel=list.getModel();	//get the list model
-		for(int i=listModel.getSize()-1; i>=0; i--)	//look at each item in the model
-		{
-			list.setSelectedValue(listModel.getElementAt(i), false);	//select this value without scrolling
-		}
+		getList().getSelectionModel().setSelectionInterval(0, getList().getModel().getSize()-1);	//select an interval containing all items
 	}
 
 	/**Selects no list entries.*/
 	public void selectNone()
 	{
-		getList().setSelectedIndices(new int[]{});	//select an empty array of indices
+		getList().getSelectionModel().clearSelection();	//clear the selection
 	}
 
 	/**Action for selecting all items in the list.*/
@@ -94,11 +90,11 @@ public class ListPanel extends ContentPanel
 		/**Default constructor.*/
 		public SelectAllAction()
 		{
-			super("Select All");	//create the base class G***i18n
+			super("All");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Select all");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Select all items in the list.");	//set the long description G***i18n
 			putValue(MNEMONIC_KEY, new Integer('a'));  //set the mnemonic key G***i18n
-//TODO add action icon			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SELECT_ITEM_ICON_FILENAME)); //load the correct icon
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.CHECK_MULTIPLE_ICON_FILENAME)); //load the correct icon
 		}
 	
 		/**Called when the action should be performed.
@@ -116,11 +112,11 @@ public class ListPanel extends ContentPanel
 		/**Default constructor.*/
 		public SelectNoneAction()
 		{
-			super("Select None");	//create the base class G***i18n
+			super("None");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Select none");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Select no items in the list.");	//set the long description G***i18n
 			putValue(MNEMONIC_KEY, new Integer('n'));  //set the mnemonic key G***i18n
-//TODO add action icon			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SELECT_ITEM_ICON_FILENAME)); //load the correct icon
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.UNCHECK_MULTIPLE_ICON_FILENAME)); //load the correct icon
 		}
 	
 		/**Called when the action should be performed.

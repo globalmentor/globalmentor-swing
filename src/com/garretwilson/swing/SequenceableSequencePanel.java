@@ -50,16 +50,32 @@ public class SequenceableSequencePanel extends AbstractComponentSequencePanel	//
 	/**Constructor that specifies the first component and allows optional
 		initialization.
 	@param firstComponent The first component in the sequence.
+	@param hasToolBar Whether this panel should have a toolbar.
+	@param hasStatusBar Whether this panel should have a status bar.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
 	public SequenceableSequencePanel(final Component firstComponent, final boolean initialize)
 	{
-		super(false);	//create a sequence panel but don't initialize
+		this(firstComponent, true, true, initialize);	//construct the panel with a toolbar and status bar
+	}
+
+	/**Constructor that specifies the first component and allows optional
+		initialization.
+	@param firstComponent The first component in the sequence.
+	@param hasToolBar Whether this panel should have a toolbar.
+	@param hasStatusBar Whether this panel should have a status bar.
+	@param initialize <code>true</code> if the panel should initialize itself by
+		calling the initialization methods.
+	*/
+	public SequenceableSequencePanel(final Component firstComponent, final boolean hasToolBar, final boolean hasStatusBar, final boolean initialize)
+	{
+		super(hasToolBar, hasStatusBar, false);	//create a sequence panel but don't initialize
 		this.firstComponent=firstComponent;	//save the first component
 		sequenceHistoryList=new LinkedList();	//create the list of visited components
 //G***del		sequenceHistoryList.addLast(initialComponent);	//push the initial component onto the stack
-		initialize();	//initialize the panel
+		if(initialize)  //if we should initialize the panel
+			initialize();   //initialize everything		
 	}
 	
 	/**@return The component that should get the initial focus.*/

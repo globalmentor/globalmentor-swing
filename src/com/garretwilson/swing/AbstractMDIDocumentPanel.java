@@ -17,7 +17,7 @@ import org.w3c.dom.*;
 	architecture.
 @author Garret Wilson
 */
-public abstract class AbstractMDIDocumentPanel extends ApplicationPanel implements RDFResourceState	//G***eventually delete this class and replace it with ResourceApplicationPanel
+public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implements RDFResourceState	//G***eventually delete this class and replace it with ResourceApplicationPanel
 {
 //TODO make this class implement com.garretwilson.io.Streamable as well (create that class)
 

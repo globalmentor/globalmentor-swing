@@ -7,7 +7,8 @@ import com.garretwilson.awt.*;
 import com.garretwilson.util.*;
 
 /**A generic panel that allows easy setup of a center content component.
-<p>This panel uses a <code>BasicGridBagLayout</code> as its layout manager.</p>
+<p>This panel uses a <code>BasicGridBagLayout</code> as its layout manager with
+	the border paradigm.</p>
 <p>If the panel is inside a <code>JOptionPane</code>, the window containing
 	to ensure the component has enough room every time the content
 	component changes.</p>  
@@ -156,8 +157,7 @@ public class ContentPanel extends BasicPanel implements CanClosable
 	{
 		super(new BasicGridBagLayout(), false);	//construct the default panel without initializing it
 		modifyModifiedChangeListener=null;	//start out without a property change listener for content component modifications
-		if(contentComponent!=null)  //if we were given a content component
-		  setContentComponent(contentComponent);  //set the content component
+	  setContentComponent(contentComponent);  //set the content component, if any
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel
 	}

@@ -47,30 +47,24 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 			{
 				if(!isModelViewsSupported(newView))	//if the new data view isn't supported
 					throw new IllegalArgumentException("Unsupported model view "+newView);
-				try
+				if(canChangeModelView(oldView, newView))	//if we can change the view
 				{
-					if(isModified())	//if the data has been modified
+					dataView=newView; //update the value
+					try
 					{
-						saveModel(oldView);	//store any model data that was being edited in the old view, if any
+						loadModel();	//load the model into the new view
 					}
+					catch(IOException ioException)	//if there were any problems saving the model
+					{
+						SwingApplication.displayApplicationError(this, ioException);	//display the error
+					}		
+					onModelViewChange(oldView, newView);	//show this class that the model is changing
+					firePropertyChange(MODEL_VIEW_PROPERTY, new Integer(oldView), new Integer(newView));	//show that the property has changed
 				}
-				catch(IOException ioException)	//if there were any problems saving the model
+				else	//if we shouldn't change the view
 				{
 					cancelModelViewChange(oldView, newView);	//cancel the change
-					SwingApplication.displayApplicationError(this, ioException);	//display the error
-					return;	//don't change the view
-				}		
-				dataView=newView; //update the value
-				try
-				{
-					loadModel(newView);	//load the model into the new view
 				}
-				catch(IOException ioException)	//if there were any problems saving the model
-				{
-					SwingApplication.displayApplicationError(this, ioException);	//display the error
-				}		
-				onModelViewChange(oldView, newView);	//show this class that the model is changing
-				firePropertyChange(MODEL_VIEW_PROPERTY, new Integer(oldView), new Integer(newView));	//show that the property has changed
 			}
 		}
 
@@ -125,52 +119,40 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 		setModelView(getDefaultModelView());	//set the default data view
 	}
 
-	/**@return The data model for which this component provides a view.*/
-	protected Model getModel()
-	{
-/*G***del if not needed
-		try
-		{
-			saveModel(getModelView());	//store the data that is being edited, if any data is being edited
-		}
-		catch(IOException ioException)	//if there were any problems saving the model TODO fix the way all this works
-		{
-			OptionPane.showMessageDialog(this, ioException.getMessage(), ioException.getClass().getName(), JOptionPane.ERROR_MESSAGE);	//G***i18n; TODO fix in a common routine
-		}
-*/
-		return super.getModel();	//return the data that was just stored or was already stored
-	}
-
 	/**Sets the data model.
 	This is a bound property.
 	@param newModel The data model for which this component provides a view.
 	*/
 	protected void setModel(final Model newModel)
 	{
-		super.setModel(newModel);	//save the model normally
-		try
+		final Model oldModel=getModel();	//get the current model
+		super.setModel(newModel);	//set the model normally
+		if(getModel()!=oldModel)	//if the model really changed
 		{
-			loadModel(getModelView());	//try to load the model into our current data view
-			newModel.setModified(false);	//show that the information has not been modified
-		}
-		catch(IOException ioException)	//if there were any problems saving the model
-		{
-			SwingApplication.displayApplicationError(this, ioException);	//display the error
+			try
+			{
+				loadModel();	//try to load the model into our current data view
+			}
+			catch(IOException ioException)	//if there were any problems saving the model
+			{
+				SwingApplication.displayApplicationError(this, ioException);	//display the error
+			}
 		}		
 	}
 
-	/**Loads the data from the model to the given view.
-	@param modelView The view of the data that should be loaded.
-	@exception IOException Thrown if there was an error loading the model.
+	/**Determines whether it is appropriate under the circumstances to change
+		the model view. This method may display any necessary dialog boxes in
+		response to any error conditions before returning.
+	<p>This version verifies the panel before allowing the change.</p>
+	@param oldView The view before the change.
+	@param newView The new view of the data
+	@return <code>true</code> if the model view change should be allowed, else
+		<code>false</code>.
 	*/
-	protected abstract void loadModel(final int modelView) throws IOException;
-
-	/**Stores the current data being edited to the model.
-	If no model is being edited or there is no valid view, no action occurs.
-	@param modelView The view of the model that should be stored.
-	@exception IOException Thrown if there was an error saving the model.
-	*/
-	protected abstract void saveModel(final int modelView) throws IOException;
+	protected boolean canChangeModelView(final int oldView, final int newView)
+	{
+		return verify();	//we can change views if the panel verifies
+	}
 
 	/**Called when the change in model view should be canceled.
 	@param oldView The view before the change.

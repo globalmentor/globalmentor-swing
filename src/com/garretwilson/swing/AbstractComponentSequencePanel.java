@@ -21,16 +21,27 @@ public abstract class AbstractComponentSequencePanel extends AbstractSequencePan
 	/**Default constructor.*/
 	public AbstractComponentSequencePanel()
 	{
-		this(true); //construct and initialize the panel
+		this(true, true); //construct and initialize the panel with toolbar and status bar
 	}
 
-	/**Constructor that allows optional initialization.
+	/**Toolbar and status bar option constructor.
+	@param hasToolBar Whether this panel should have a toolbar.
+	@param hasStatusBar Whether this panel should have a status bar.
+	*/
+	public AbstractComponentSequencePanel(final boolean hasToolBar, final boolean hasStatusBar)
+	{
+		this(hasToolBar, hasStatusBar, true); //do the default construction and initialize
+	}
+
+	/**Toolbar and status bar option constructor with optional initialization
+	@param hasToolBar Whether this panel should have a toolbar.
+	@param hasStatusBar Whether this panel should have a status bar.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public AbstractComponentSequencePanel(final boolean initialize)
+	public AbstractComponentSequencePanel(final boolean hasToolBar, final boolean hasStatusBar, boolean initialize)
 	{
-		super(false);	//construct the panel, but don't initialize
+		super(hasToolBar, hasStatusBar, false);	//construct the panel, but don't initialize
 //G***initialize something
 		if(initialize)  //if we should initialize the panel
 			initialize();   //initialize everything		
@@ -40,29 +51,19 @@ public abstract class AbstractComponentSequencePanel extends AbstractSequencePan
 	protected void initializeUI()
 	{
 		super.initializeUI();	//do the default initialization
-		setContentComponent(getFirstComponent());	//start with the first component in the sequence
+		start();	//start the sequence
 	}
 
-	/**Initializes the toolbar components.
-		Any derived class that overrides this method should call this version.
-	@param toolBar The toolbar to be initialized.
-	*/
-/*G***del
-	protected void initializeToolBar(final JToolBar toolBar)
+	/**Goes to the first step in the sequence.*/
+	protected void first()
 	{
-		super.initializeToolBar(toolBar); //do the default toolbar initialization
-		toolBar.setRollover(false);	//turn off rollovers on the toolbar
-		toolBar.add(getPreviousButton()); //previous
-		toolBar.add(getNextButton()); //next
-		toolBar.addSeparator();  //--
-		toolBar.add(getFinishButton()); //finish
+		setContentComponent(getFirstComponent());	//start with the first component in the sequence		
 	}
-*/
-	
+
 	/**Goes to the previous component in the sequence. If there is no previous
 		component, no action occurs.
 	*/
-	public void previous()
+	protected void previous()
 	{
 		setContentComponent(getPreviousComponent());	//go to the previous component in the sequence
 	}
@@ -71,35 +72,6 @@ public abstract class AbstractComponentSequencePanel extends AbstractSequencePan
 	protected void next()
 	{
 		setContentComponent(getNextComponent());	//go to the next component in the sequence
-	}
-	
-	/**Finishes the sequence by setting the option panel value to
-		<code>JOptionPane.OK_OPTION</code>, if this panel is embedded in an option
-		pane.
-	@see JOptionPane#OK_OPTION
-	@see BasicPanel#setOptionPaneValue
-	*/
-	protected void finish()
-	{
-		setOptionPaneValue(new Integer(JOptionPane.OK_OPTION));	//set the value of the option pane to OK, if we're embedded in an option pane
-	}
-	
-	/**Creates and displays a sequence dialog based upon <code>JOptionPane</code>,
-		showing this sequence panel.
-	@param parentComponent Determines the <code>Frame</code> in which the
-		dialog is displayed; if <code>null</code>, or if the
-		<code>parentComponent</code> has no <code>Frame</code>, a default
-		<code>Frame</code> is used.
-	@param title The title string for the dialog.
-	@return One of the <code>JOptionPane</code> result constants.
-	@see JOptionPane#showOptionDialog
-	*/
-	public int showSequenceDialog(final Component parentComponent, final String title)
-	{	
-			//show an option pane in the parent component using the given title
-		return OptionPane.showOptionDialog(parentComponent, this, title,
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-				new Object[]{getPreviousButton(), getNextButton(), getFinishButton()}, getNextButton());
 	}
 	
 	/**@return The first component to be displayed in the sequence.*/

@@ -6,15 +6,12 @@ import javax.swing.*;
 import javax.swing.event.DocumentListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
-
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.rdf.tree.*;
 import com.garretwilson.text.CharacterEncodingConstants;
 import com.garretwilson.text.xml.XMLDOMImplementation;
 import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.text.xml.XMLSerializer;
-import com.garretwilson.util.Debug;
-import com.garretwilson.io.*;
 import com.garretwilson.rdf.*;
 import org.w3c.dom.*;
 
@@ -153,14 +150,14 @@ public class RDFPanel extends TabbedViewPanel
 		addView(SOURCE_MODEL_VIEW, "RDF+XML", xmlScrollPane);	//add the XML component as the source view G***i18n
 	}
 
-	/**Loads the data from the model to the given view.
-	@param modelView The view of the data that should be loaded.
+	/**Loads the data from the model to the view, if necessary.
 	@exception IOException Thrown if there was an error loading the model.
 	*/
-	protected void loadModel(final int modelView) throws IOException
+	protected void loadModel() throws IOException
 	{
+		super.loadModel();	//do the default loading
 		final RDFResourceModel model=getRDFResourceModel();	//get the data model
-		switch(modelView)	//see which view of data we should load
+		switch(getModelView())	//see which view of data we should load
 		{
 			case TREE_MODEL_VIEW:	//if we're changing to the tree view
 				if(model.getRDFResource()!=null)	//if we have an RDF resource
@@ -194,15 +191,14 @@ public class RDFPanel extends TabbedViewPanel
 		}
 	}
 
-	/**Stores the current data being edited to the model.
-	If no model is being edited or there is no valid view, no action occurs.
-	@param modelView The view of the model that should be stored.
+	/**Stores the current data being edited to the model, if necessary.
 	@exception IOException Thrown if there was an error loading the model.
 	*/
-	protected void saveModel(final int modelView) throws IOException
+	protected void saveModel() throws IOException
 	{
+		super.saveModel();	//do the default saving
 		final RDFResourceModel model=getRDFResourceModel();	//get the data model
-		switch(modelView)	//see which view of data we have, in order to get the current RDF
+		switch(getModelView())	//see which view of data we have, in order to get the current RDF
 		{
 			case TREE_MODEL_VIEW:	//if we should store the RDF currently in the tree
 				if(getRDFTree().getModel().getRoot() instanceof RDFObjectTreeNode)	//if this tree is showing an RDF object

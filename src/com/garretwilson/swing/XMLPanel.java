@@ -206,14 +206,14 @@ public class XMLPanel extends TabbedViewPanel
 		getXMLTextPane().setContentType(mediaType.toString());	//set the content type of the text pane
 	}
 
-	/**Loads the data from the model to the given view.
-	@param modelView The view of the data that should be loaded.
+	/**Loads the data from the model to the view, if necessary.
 	@exception IOException Thrown if there was an error loading the model.
 	*/
-	protected void loadModel(final int modelView) throws IOException
+	protected void loadModel() throws IOException
 	{
+		super.loadModel();	//do the default loading
 		final XMLModel model=getXMLModel();	//get the data model
-		switch(modelView)	//see which view of data we should load
+		switch(getModelView())	//see which view of data we should load
 		{
 			case WYSIWYG_MODEL_VIEW:	//if we're changing to the WYSIWYG view
 				getXMLTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the XML text pane
@@ -246,15 +246,14 @@ public class XMLPanel extends TabbedViewPanel
 		}
 	}
 
-	/**Stores the current data being edited to the model.
-	If no model is being edited or there is no valid view, no action occurs.
-	@param modelView The view of the model that should be stored.
+	/**Stores the current data being edited to the model, if necessary.
 	@exception IOException Thrown if there was an error loading the model.
 	*/
-	protected void saveModel(final int modelView) throws IOException
+	protected void saveModel() throws IOException
 	{
+		super.saveModel();	//do the default saving
 		final XMLModel model=getXMLModel();	//get the data model
-		switch(modelView)	//see which view of data we have, in order to get the current XML
+		switch(getModelView())	//see which view of data we have, in order to get the current XML
 		{
 			case SOURCE_MODEL_VIEW:	//if we should store the XML source
 				{

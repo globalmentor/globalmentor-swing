@@ -121,6 +121,9 @@ public abstract class TabbedViewPanel extends ModelViewablePanel implements Mode
 			case WYSIWYG_MODEL_VIEW:
 				icon=IconResources.getIcon(IconResources.DOCUMENT_RICH_CONTENT_ICON_FILENAME);
 				break;
+			case SEQUENCE_MODEL_VIEW:
+				icon=IconResources.getIcon(IconResources.DOCUMENT_STACK_ICON_FILENAME);
+				break;
 			case SUMMARY_MODEL_VIEW:
 				//TODO add icon for summary data view
 				break;

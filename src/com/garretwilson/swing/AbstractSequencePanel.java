@@ -7,9 +7,13 @@ import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.*;
 
 /**Base class for a panel that allows progression in a sequence.
+<p>When progressing through the sequence, this panel attempts to verify
+	 the content component, if it is <code>Verifiable</code>, before changing
+	 position in the sequence and before finishing.</p>
 @author Garret Wilson
+@see Verifiable
 */
-public abstract class AbstractSequencePanel extends ContentPanel
+public abstract class AbstractSequencePanel extends ToolStatusPanel
 {
 	
 	/**The action for going to the previous component.*/
@@ -57,16 +61,27 @@ public abstract class AbstractSequencePanel extends ContentPanel
 	/**Default constructor.*/
 	public AbstractSequencePanel()
 	{
-		this(true); //construct and initialize the panel
+		this(true, true); //construct and initialize the panel with toolbar and status bar
 	}
 
-	/**Constructor that allows optional initialization.
+	/**Toolbar and status bar option constructor.
+	@param hasToolBar Whether this panel should have a toolbar.
+	@param hasStatusBar Whether this panel should have a status bar.
+	*/
+	public AbstractSequencePanel(final boolean hasToolBar, final boolean hasStatusBar)
+	{
+		this(hasToolBar, hasStatusBar, true); //do the default construction and initialize
+	}
+
+	/**Toolbar and status bar option constructor with optional initialization
+	@param hasToolBar Whether this panel should have a toolbar.
+	@param hasStatusBar Whether this panel should have a status bar.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public AbstractSequencePanel(boolean initialize)
+	public AbstractSequencePanel(final boolean hasToolBar, final boolean hasStatusBar, boolean initialize)
 	{
-		super(false);	//construct the panel, but don't initialize
+		super(hasToolBar, hasStatusBar, false);	//construct the panel, but don't initialize
 		previousAction=new PreviousAction();  //create the actions
 		nextAction=new NextAction();
 		finishAction=new FinishAction();
@@ -86,6 +101,14 @@ public abstract class AbstractSequencePanel extends ContentPanel
 		setPreferredSize(new Dimension(300, 200));	//set an arbitrary preferred size
 	}
 
+	/**@return An array of actions to use in a toolbar, with any
+		<code>null</code> actions representing separators.
+	*/
+	public Action[] getToolBarActions()	//TODO fix to only retrieve the actions that are allowed, maybe
+	{
+		return new Action[]{getPreviousAction(), getNextAction()};	//return the toolbar actions for this panel
+	}
+
 	/**Updates the states of the actions, including enabled/disabled status,
 		proxied actions, etc.
 	*/
@@ -102,8 +125,37 @@ public abstract class AbstractSequencePanel extends ContentPanel
 			rootPane.setDefaultButton(hasNext() ? getNextButton() : getFinishButton());
 		}
 	}
+
+	/**Starts the sequence by going to the first step in the sequence.
+	<p>Derived classes should override <code>start()</code>.</p>
+	@see #start
+	*/
+	public void goStart()
+	{
+		start();	//go the start
+	}
 	
+	/**Starts the sequence by going to the first step in the sequence.
+	@see #goFirst
+	*/
+	protected void start()
+	{
+		goFirst();	//go to the first step in the sequence
+	}
+
+	/**Goes to the first step in the sequence.
+	<p>Derived classes should override <code>first()</code>.</p>
+	@see #first
+	*/
+	public void goFirst()
+	{
+		first();	//go the first
+		updateStatus();	//update the status
+	}
 	
+	/**Goes to the first step in the sequence.*/
+	protected abstract void first();
+
 	/**Goes to the previous step in the sequence. If there is no previous
 		component, no action occurs.
 	<p>Derived classes should override <code>previous()</code>.</p>
@@ -111,7 +163,7 @@ public abstract class AbstractSequencePanel extends ContentPanel
 	*/
 	public void goPrevious()
 	{
-		if(hasPrevious())	//if there is a previous step
+		if(hasPrevious() && verifyCurrentComponent())	//if there is a previous step and the current component verifies
 		{
 			previous();	//go the previous step
 			updateStatus();	//update the status
@@ -130,7 +182,7 @@ public abstract class AbstractSequencePanel extends ContentPanel
 	*/
 	public void goNext()
 	{
-		if(hasNext())  //if there is a next step
+		if(hasNext() && verifyCurrentComponent())  //if there is a next step and the current component verifies
 		{
 			next();	//go the next step
 			updateStatus();	//update the status
@@ -151,15 +203,10 @@ public abstract class AbstractSequencePanel extends ContentPanel
 	*	*/
 	public void goFinish()
 	{
-		final Component currentComponent=getContentComponent();	//get the current content component
-		if(currentComponent instanceof Verifiable)	//if we can verify the component's contents
+		if(verifyCurrentComponent())	//if the current component verifies
 		{
-			if(!((Verifiable)currentComponent).verify())	//if the current component's contents do not verify
-			{
-				return;	//don't finish if the component's contents do not verify
-			}
+			finish();	//actually finish
 		}
-		finish();	//actually finish
 	}
 	
 	/**Finishes the sequence by setting the option panel value to
@@ -172,12 +219,50 @@ public abstract class AbstractSequencePanel extends ContentPanel
 	{
 		setOptionPaneValue(new Integer(JOptionPane.OK_OPTION));	//set the value of the option pane to OK, if we're embedded in an option pane
 	}
+
+	/**Verifies the contents of the current component, if the current component
+		can be verified.
+	@return <code>true</code> if the current component was verified or is not
+		verifiable, else <code>false</code> if the current component was verifiable
+		but returned <code>false</code> when verified.
+	@see Verifiable#verify
+	*/
+	protected boolean verifyCurrentComponent()
+	{
+		final Component currentComponent=getContentComponent();	//get the current content component
+		if(currentComponent instanceof Verifiable)	//if we can verify the component's contents
+		{
+			if(!((Verifiable)currentComponent).verify())	//if the current component's contents do not verify
+			{
+				return false;	//show that the component verified incorrectly
+			}
+		}
+		return true;	//show that the component didn't verify incorrectly
+	}
 	
 	/**@return <code>true</code> if there is a next step after the current one.*/
 	protected abstract boolean hasNext();
 
 	/**@return <code>true</code> if there is a previous step before the current one.*/
 	protected abstract boolean hasPrevious();
+
+	/**Creates and displays a sequence dialog based upon <code>JOptionPane</code>,
+		showing this sequence panel.
+	@param parentComponent Determines the <code>Frame</code> in which the
+		dialog is displayed; if <code>null</code>, or if the
+		<code>parentComponent</code> has no <code>Frame</code>, a default
+		<code>Frame</code> is used.
+	@param title The title string for the dialog.
+	@return One of the <code>JOptionPane</code> result constants.
+	@see JOptionPane#showOptionDialog
+	*/
+	public int showSequenceDialog(final Component parentComponent, final String title)
+	{	
+			//show an option pane in the parent component using the given title
+		return OptionPane.showOptionDialog(parentComponent, this, title,
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+				new Object[]{getPreviousButton(), getNextButton(), getFinishButton()}, getNextButton());	//TODO rather than keeping copies of the buttons, get the toolbar actions and create buttons on the fly
+	}
 
 	/**Action for going to the previous component.*/
 	class PreviousAction extends AbstractAction

@@ -12,7 +12,7 @@ import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.*;
 
 /**Main frame parent class for an application. This frame expects to contain
-	an <code>ApplicationPanel</code>.
+	an <code>ToolStatusPanel</code>.
 <p>If an <code>Application</code> is set for the frame, the close
 	operation changes to <code>EXIT_ON_CLOSE</code>. (This is essential to work
 	around a JDK bug that under certain instances runs a daemon thread that
@@ -26,7 +26,7 @@ This class maintains the default close operation of
 	the local default close operation setting is honored as normal.</p>
 <p>The class provides a method for displaying error messages.</p>
 @author Garret Wilson
-@see ApplicationPanel
+@see ToolStatusPanel
 @see Application
 @see #displayError
 */
@@ -284,13 +284,13 @@ public abstract class ApplicationFrame extends BasicFrame
 	*/
 	public ApplicationFrame(final SwingApplication application, final boolean initialize)
 	{
-		this(new ApplicationPanel(), initialize); //create an application frame with a default application panel
+		this(new ToolStatusPanel(), initialize); //create an application frame with a default application panel
 	}
 
 	/**Application panel constructor.
 	Enables window events.
 	@param contentPane The container to be used as the content pane; usually
-		an <code>ApplicationPanel</code>.
+		an <code>ToolStatusPanel</code>.
 	*/
 	public ApplicationFrame(final Container contentPane)
 	{
@@ -303,7 +303,7 @@ public abstract class ApplicationFrame extends BasicFrame
 		<code>null</code> if there is no application information available or this
 		frame doesn't represent an application.
 	@param contentPane The container to be used as the content pane; usually
-		an <code>ApplicationPanel</code>.
+		an <code>ToolStatusPanel</code>.
 	*/
 	public ApplicationFrame(final SwingApplication application, final Container contentPane)
 	{
@@ -313,7 +313,7 @@ public abstract class ApplicationFrame extends BasicFrame
 	/**Application panel constructor with optional initialization.
 	Enables window events.
 	@param contentPane The container to be used as the content pane; usually
-		an <code>ApplicationPanel</code>.
+		an <code>ToolStatusPanel</code>.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
@@ -328,7 +328,7 @@ public abstract class ApplicationFrame extends BasicFrame
 		<code>null</code> if there is no application information available or this
 		frame doesn't represent an application.
 	@param contentPane The container to be used as the content pane; usually
-		an <code>ApplicationPanel</code>.
+		an <code>ToolStatusPanel</code>.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
@@ -340,7 +340,7 @@ public abstract class ApplicationFrame extends BasicFrame
 	/**Application panel constructor with optional initialization.
 	Enables window events.
 	@param contentPane The container to be used as the content pane; usually
-		an <code>ApplicationPanel</code>.
+		an <code>ToolStatusPanel</code>.
 	@param hasMenuBar Whether this frame should have a menu bar.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
@@ -356,7 +356,7 @@ public abstract class ApplicationFrame extends BasicFrame
 		<code>null</code> if there is no application information available or this
 		frame doesn't represent an application.
 	@param contentPane The container to be used as the content pane; usually
-		an <code>ApplicationPanel</code>.
+		an <code>ToolStatusPanel</code>.
 	@param hasMenuBar Whether this frame should have a menu bar.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
@@ -687,7 +687,7 @@ public abstract class ApplicationFrame extends BasicFrame
 
 	/**Determines whether the frame and application can close.
 	@return <code>true</code> if the application frame and application can close.
-	@see ApplicationPanel#canClose
+	@see ToolStatusPanel#canClose
 	@see #getDocumentDescription
 	@see #canClose(RDFResourceState)
 	*/
@@ -698,7 +698,7 @@ public abstract class ApplicationFrame extends BasicFrame
 
 	/**@return <code>true</code> if the currently open file can be closed, else
 		<code>false</code> if closing should be cancelled.
-	If the content pane is an <code>ApplicationPanel</code>, its
+	If the content pane is an <code>ToolStatusPanel</code>, its
 		<code>canClose()</code> method is called.
 	If there is a document description, the frame's <code>canClose()</code> method
 		is called for the description. 

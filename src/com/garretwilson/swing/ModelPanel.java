@@ -2,6 +2,8 @@ package com.garretwilson.swing;
 
 import java.awt.FlowLayout;
 import java.awt.LayoutManager;
+import java.io.IOException;
+
 import com.garretwilson.lang.JavaConstants;
 import com.garretwilson.model.Model;
 
@@ -22,7 +24,12 @@ public class ModelPanel extends BasicPanel
 	/**The data model for which this component provides a view.*/
 	private Model model;
 
-		/**@return The data model for which this component provides a view.*/
+		/**Returns the component data model.
+		<p>A calling program should first call <code>verify()</code> to ensure
+			the data is valid and that the model reflects the currently entered data.
+		@return The data model for which this component provides a view.
+		@see #verify()
+		*/
 		protected Model getModel() {return model;}
 
 		/**Sets the data model.
@@ -80,6 +87,41 @@ public class ModelPanel extends BasicPanel
 		this.model=model;	//save the model
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel
+	}
+
+	/**Loads the data from the model to the view, if necessary.
+	@exception IOException Thrown if there was an error loading the model.
+	*/
+	protected void loadModel() throws IOException
+	{
+	}
+
+	/**Stores the current data being edited to the model, if necessary.
+	If no model is being edited or there is no valid view, no action occurs.
+	@exception IOException Thrown if there was an error saving the model.
+	*/
+	protected void saveModel() throws IOException
+	{
+	}
+
+	/**Verifies the component.
+	<p>This version saves any editing changes to the model.</p>
+	@return <code>true</code> if the component contents are valid, <code>false</code>
+		if not.
+	@see #saveModel()
+	*/
+	public boolean verify()
+	{
+		try
+		{
+			saveModel();	//store any model data that was being edited, if any
+		}
+		catch(IOException ioException)	//if there were any problems saving the model
+		{
+			SwingApplication.displayApplicationError(this, ioException);	//display the error
+			return false;	//show that the component didn't verify
+		}
+		return super.verify();	//perform the default verification and return the result
 	}
 
 }
