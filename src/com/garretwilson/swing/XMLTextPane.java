@@ -78,7 +78,7 @@ import edu.stanford.ejalbert.BrowserLauncher;
 @see com.garretwilson.swing.event.PageEvent
 @see com.garretwilson.swing.event.PageListener
 */
-public class XMLTextPane extends JTextPane implements AppletContext, /*G***del when works KeyListener, */MouseMotionListener, PageListener, ProgressListener//G***fix, URIAccessible
+public class XMLTextPane extends JTextPane implements AppletContext, /*G***del when works KeyListener, */ /*G***del JDK1.5 MouseMotionListener,*/ PageListener, ProgressListener//G***fix, URIAccessible
 {
 
 	/**The name of the property that indicates the current document.*/
@@ -156,15 +156,15 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		public void setURIOutputStreamable(final URIOutputStreamable outputStreamable) {uriOutputStreamable=outputStreamable;}
 
 	/**The current position of the mouse.*/
-	private Point mousePosition=new Point(0, 0);
+//G***del JDK1.5	private Point mousePosition=new Point(0, 0);
 
 		/**@return The current position of the mouse at its last movement.*/
-		protected Point getMousePosition() {return mousePosition;}
+//G***del JDK1.5		protected Point getMousePosition() {return mousePosition;}
 
 		/**Keeps a record of the current position of the mouse at its last movement.
 		@param pos The position of the mouse to record
 		*/
-		protected void setMousePosition(final Point pos) {mousePosition=pos;}
+//G***del JDK1.5		protected void setMousePosition(final Point pos) {mousePosition=pos;}
 
 	/**Whether this pane pages its information.*/
 	private boolean paged=false;
@@ -568,7 +568,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		loadKeymap(keymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap G***how do our actions get here from the editor kit?
 */
 //G***del; maybe delete class		setCaret(new XMLCaret(getCaret()));	//G***testing
-		addMouseMotionListener(this);	//keep track of mouse movements G***fix; currently used for updating hyperlink on page change
+//G***del JDK1.5		addMouseMotionListener(this);	//keep track of mouse movements G***fix; currently used for updating hyperlink on page change
 	}
 
 	/**Searches the view hierarchy for an XMLPagedView, and uses the first one
@@ -1600,11 +1600,15 @@ System.out.println("Inside XMLTextPage.insertUpdate(), fetching new paged view."
 		}
 		super.paint(g);	//paint normally
 			//create a fake mouse move event so that the current cursor will be updated and the hyperlink events fired
-				  //G***this is somewhat of a hack; do something better, such as having a locationChanged event on page changes and navigation (on non-paged compontents, for example)
-		final MouseEvent mouseEvent=new MouseEvent(this, MouseEvent.MOUSE_MOVED,
-			  System.currentTimeMillis(), 0,
-				getMousePosition().x, getMousePosition().y, 0, false);
-		processMouseMotionEvent(mouseEvent);  //process the mouse event
+		final Point mousePosition=getMousePosition();	//get the current mouse position
+		if(mousePosition!=null)	//if the mouse is over the component
+		{
+					  //G***this is somewhat of a hack; do something better, such as having a locationChanged event on page changes and navigation (on non-paged compontents, for example)
+			final MouseEvent mouseEvent=new MouseEvent(this, MouseEvent.MOUSE_MOVED,
+				  System.currentTimeMillis(), 0,
+					mousePosition.x, mousePosition.y, 0, false);
+			processMouseMotionEvent(mouseEvent);  //process the mouse event
+		}
 	}
 
 	/* ***Page-related methods*** */
@@ -1968,19 +1972,22 @@ Debug.notify("For target ID: "+url+" the text is "+getOEBTextPane().getDocument(
 	/**Called when the mouse is dragged. This version ignores mouse dragging.
 	@param mouseEvent The mouse event.
 	*/
+/*G***del JDK1.5
 	public void mouseDragged(final MouseEvent mouseEvent)
 	{
 		setMousePosition(mouseEvent.getPoint());  //update our record of the mouse position
 	}
+*/
 
 	/**Called when the mouse is moved.
 	@param mouseEvent The mouse event.
 	*/
+/*G***del JDK1.5
 	public void mouseMoved(final MouseEvent mouseEvent)
 	{
 		setMousePosition(mouseEvent.getPoint());  //update our record of the mouse position
 	}
-
+*/
 
 	/**The position in the document the user once was	at. Useful for going "back".
 	@author Garret Wilson
