@@ -95,6 +95,7 @@ public class ButtonContentPanel extends ContentPanel
 			super.setContentComponent(newContentComponent);	//set the content component normally
 			if(oldContentComponent!=newContentComponent) //if the content component really changed
 			{
+					//TODO fix for content components inside content components
 				if(oldContentComponent!=null)	//if we had a content component earlier
 				{
 					oldContentComponent.removeMouseListener(getMouseListener());	//remove the mouse listener from the old component

@@ -928,6 +928,36 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 
 
 		swingXMLDocument.create(elementSpecList);	//create the document from the element specs
+
+Debug.trace("Finished creating document, length: "+swingXMLDocument.getLength());
+
+//G***del elementSpecList[elementSpecList.length-1].setDirection(DefaultStyledDocument.ElementSpec.JoinPreviousDirection);	//G***fix
+
+/*G***fix---this seems to work! make sure there is an ending '\n' before deleting the last character
+try
+{
+Debug.trace("*****************\n****************\n***********");
+	if(swingXMLDocument.getLength()>0)
+		Debug.trace("last character: \""+swingXMLDocument.getText(swingXMLDocument.getLength()-1, 1)+"\"");
+	if(swingXMLDocument.getLength()>1)
+		Debug.trace("second to last character: \""+swingXMLDocument.getText(swingXMLDocument.getLength()-2, 1)+"\"");
+
+Debug.trace("removing after-last character");
+	if(swingXMLDocument.getLength()>0)
+		swingXMLDocument.remove(swingXMLDocument.getLength()-1, 1);
+
+	if(swingXMLDocument.getLength()>0)
+		Debug.trace("last character: \""+swingXMLDocument.getText(swingXMLDocument.getLength()-1, 1)+"\"");
+	if(swingXMLDocument.getLength()>1)
+		Debug.trace("second to last character: \""+swingXMLDocument.getText(swingXMLDocument.getLength()-2, 1)+"\"");
+
+}
+catch (BadLocationException e)
+{
+	Debug.error(e);	//G***del all this
+}
+*/
+
 	//G***testing; put in correct place		swingDocument.applyStyles(); //G***testing; put in the correct place, and make sure this gets called when repaginating, if we need to
 	}
 
