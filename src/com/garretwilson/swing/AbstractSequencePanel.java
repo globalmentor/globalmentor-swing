@@ -9,7 +9,7 @@ import com.garretwilson.util.*;
 /**Base class for a panel that allows progression in a sequence.
 @author Garret Wilson
 */
-public abstract class AbstractSequencePanel extends ApplicationPanel	//G***probably change this to ContentPanel
+public abstract class AbstractSequencePanel extends ContentPanel
 {
 	
 	/**The action for going to the previous component.*/
@@ -57,29 +57,16 @@ public abstract class AbstractSequencePanel extends ApplicationPanel	//G***proba
 	/**Default constructor.*/
 	public AbstractSequencePanel()
 	{
-		this(false, false); //default to having no toolbar or status bar
+		this(true); //construct and initialize the panel
 	}
 
-	/**Constructor that allows options to be set, such as	the presence of a
-		status bar.
-	@param hasToolBar Whether this panel should have a toolbar.
-	@param hasStatusBar Whether this panel should have a status bar.
-	*/
-	public AbstractSequencePanel(final boolean hasToolBar, final boolean hasStatusBar)
-	{
-		this(hasToolBar, hasStatusBar, true); //construct and automatically initialize the object
-	}
-	
-	/**Constructor that allows options to be set, such as the presence of a status
-		bar, and allows optional initialization.
-	@param hasToolBar Whether this panel should have a toolbar.
-	@param hasStatusBar Whether this panel should have a status bar.
+	/**Constructor that allows optional initialization.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public AbstractSequencePanel(final boolean hasToolBar, final boolean hasStatusBar, final boolean initialize)
+	public AbstractSequencePanel(boolean initialize)
 	{
-		super(hasToolBar, hasStatusBar, false);	//construct the panel with the first component, using a status bar and an optional toolbar, but don't initialize
+		super(false);	//construct the panel, but don't initialize
 		previousAction=new PreviousAction();  //create the actions
 		nextAction=new NextAction();
 		finishAction=new FinishAction();

@@ -21,29 +21,16 @@ public abstract class AbstractComponentSequencePanel extends AbstractSequencePan
 	/**Default constructor.*/
 	public AbstractComponentSequencePanel()
 	{
-		this(false, false); //default to having no toolbar or status bar
+		this(true); //construct and initialize the panel
 	}
 
-	/**Constructor that allows options to be set, such as	the presence of a
-		status bar.
-	@param hasToolBar Whether this panel should have a toolbar.
-	@param hasStatusBar Whether this panel should have a status bar.
-	*/
-	public AbstractComponentSequencePanel(final boolean hasToolBar, final boolean hasStatusBar)
-	{
-		this(hasToolBar, hasStatusBar, true); //construct and automatically initialize the object
-	}
-	
-	/**Constructor that allows options to be set, such as the presence of a status
-		bar, and allows optional initialization.
-	@param hasToolBar Whether this panel should have a toolbar.
-	@param hasStatusBar Whether this panel should have a status bar.
+	/**Constructor that allows optional initialization.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public AbstractComponentSequencePanel(final boolean hasToolBar, final boolean hasStatusBar, final boolean initialize)
+	public AbstractComponentSequencePanel(final boolean initialize)
 	{
-		super(hasToolBar, hasStatusBar, false);	//construct the panel with the first component, using a status bar and an optional toolbar, but don't initialize
+		super(false);	//construct the panel, but don't initialize
 //G***initialize something
 		if(initialize)  //if we should initialize the panel
 			initialize();   //initialize everything		

@@ -44,31 +44,18 @@ public class SequenceableSequencePanel extends AbstractComponentSequencePanel	//
 	*/
 	public SequenceableSequencePanel(final Component firstComponent)
 	{
-		this(firstComponent, false, false); //default to having no toolbar or status bar
+		this(firstComponent, true); //construct and automatically initialize the object
 	}
 
-	/**Application component constructor that allows options to be set, such as 
-		the presence of a status bar.
+	/**Constructor that specifies the first component and allows optional
+		initialization.
 	@param firstComponent The first component in the sequence.
-	@param hasToolBar Whether this panel should have a toolbar.
-	@param hasStatusBar Whether this panel should have a status bar.
-	*/
-	public SequenceableSequencePanel(final Component firstComponent, final boolean hasToolBar, final boolean hasStatusBar)
-	{
-		this(firstComponent, hasToolBar, hasStatusBar, true); //construct and automatically initialize the object
-	}
-
-	/**Constructor that allows options to be set, such as the presence of a status
-		bar, and allows optional initialization.
-	@param firstComponent The first component in the sequence.
-	@param hasToolBar Whether this panel should have a toolbar.
-	@param hasStatusBar Whether this panel should have a status bar.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public SequenceableSequencePanel(final Component firstComponent, final boolean hasToolBar, final boolean hasStatusBar, final boolean initialize)
+	public SequenceableSequencePanel(final Component firstComponent, final boolean initialize)
 	{
-		super(hasToolBar, hasStatusBar, false);	//create a sequence panel but don't initialize
+		super(false);	//create a sequence panel but don't initialize
 		this.firstComponent=firstComponent;	//save the first component
 		sequenceHistoryList=new LinkedList();	//create the list of visited components
 //G***del		sequenceHistoryList.addLast(initialComponent);	//push the initial component onto the stack
