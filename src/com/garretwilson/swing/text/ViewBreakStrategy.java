@@ -34,5 +34,5 @@ public interface ViewBreakStrategy
 	@return The view fragment, or the view itself if the view doesn't support breaking into fragments.
 	@see View#createFragment
 	*/
-	public View createFragment(final View view, int p0, int p1, final FragmentViewFactory fragmentViewFactory);
+	public View createFragment(final BoxView view, int p0, int p1, final FragmentViewFactory fragmentViewFactory);
 }

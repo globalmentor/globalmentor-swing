@@ -6,6 +6,9 @@ import static java.util.Collections.*;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import javax.swing.text.*;
+import static com.garretwilson.lang.ObjectUtilities.*;
+
+import com.garretwilson.awt.Inset;
 import com.garretwilson.util.Debug;
 
 /**Manages AWT/Swing components for a particular view.
@@ -19,37 +22,176 @@ import com.garretwilson.util.Debug;
 			<li>call <code>ViewComponentManager.setShowing()</code> as needed.</li>
 		</ul>
 	</p>
+	<p>If region-based positioning is used, the associated view should implement <code>Inset</code>.</p>
 @author Garret Wilson
+@see Inset
 */
 public class ViewComponentManager //G***finish the class comments with examples of usage
 {
-
-	/**A designation of a border position.*/
-	public enum Border
+	
+	/**A component position.
+	@author Garret Wilson
+	*/
+	public interface Position extends Cloneable
 	{
-		/**The top position.*/
-		NORTH,
-		/**The bottom position.*/
-		SOUTH,
-		/**The right position.*/
-		EAST,
-		/**The left position.*/
-		WEST,
-		/**The center position.*/
-		CENTER,
-		/**Before the first line of the layout's content; for left-to-right, top-to-bottom orientation, equivalient to <code>NORTH</code>.*/
-		PAGE_START,
-		/**After the first line of the layout's content; for left-to-right, top-to-bottom orientation, equivalient to <code>SOUTH</code>.*/
-		PAGE_END,
-		/**Beginning of the line direction for the layout; for left-to-right, top-to-bottom orientation, equivalient to <code>WEST</code>.*/
-		LINE_START,
-		/**End of the line direction for the layout; for left-to-right, top-to-bottom orientation, equivalient to <code>EAST</code>.*/
-		LINE_END;
-		
+		/**@return A clone of the position.
+		@exception CloneNotSupportedException if the clone operation fails.
+		*/
+    public Object clone() throws CloneNotSupportedException;		
 	}
 
+	/**A region-based location along an axis.
+	@author Garret Wilson
+	*/
+	public static class AxisLocation
+	{
+		/**The region along an axis relative to the origin.*/
+		public enum Region
+		{
+			/**The inset before the center of the content; "left" for left-to-right orientation.*/
+			BEFORE,
+			/**The center of the content.*/
+			MIDDLE,
+			/**The inset after the center of the content; "right" for left-to-right orientation.*/
+			AFTER
+		}
+		
+		/**The region along the axis relative to the origin.*/
+		private final Region region;
+			
+			/**@return The region along the axis relative to the origin.*/
+			public Region getRegion() {return region;}
+		
+		/**The alignment along the axis (-1.0 to +1.0) relative to the origin.*/
+		private final float alignment;
+			
+			/**@return The alignment along the axis (-1.0 to +1.0) relative to the origin.*/
+			public float getAlignment() {return alignment;}
+	
+		/**Constructs a location along an axis aligned in a region.
+		@param region The region along the axis relative to the origin.
+		@param alignment The alignment along the axis (-1.0 to +1.0) relative to the origin.
+		*/
+		public AxisLocation(final Region region, final float alignment)
+		{
+			this.region=region;	//save the region
+			this.alignment=alignment;	//save the alignment
+		}
+		
+		/**Determines the coordinate along the axis relative to the given origin and span based upon the region and alignment.
+		@param spanBefore The span in the near inset. 
+		@param spanMiddle The span in the middle inset.
+		@param spanAfter The span in the far inset. 
+		@param extent The extent of the object.
+		@return The absolute coordinate along the axis.
+		*/
+		public float getCoordinate(final float spanBefore, final float spanMiddle, final float spanAfter, final float extent)
+		{
+			final float origin; 	//we'll find the origin coordinate along the axis
+			final float span;	//we'll find the span into which the coordinate should be determined
+			final Region region=getRegion();	//get our region
+			switch(region)	//see which region is specified horizontally
+			{
+				case BEFORE:
+					origin=0;
+					span=spanBefore;
+					break;
+				case MIDDLE:
+					origin=spanBefore;
+					span=spanMiddle;
+					break;
+				case AFTER:
+					origin=spanBefore+spanMiddle;
+					span=spanAfter;
+					break;
+				default:
+					throw new AssertionError("Unknown region "+region);
+			}
+			return origin+getAlignment()*(span-extent);	//align the object in the span and then compensate for the origin
+		}
+	}
+
+	/**A position based upon a region.
+	@author Garret Wilson
+	*/
+	public static class RegionPosition implements Position
+	{
+		/**The region-based location along the X axis.*/
+		private final AxisLocation locationX;
+		
+			/**@return The region-based location along the X axis.*/
+			public AxisLocation getLocationX() {return locationX;}
+		
+		/**The region-based location along the Y axis.*/
+		private final AxisLocation locationY;
+		
+			/**@return The region-based location along the X axis.*/
+			public AxisLocation getLocationY() {return locationY;}
+			
+		/**Constructs a position aligned in a region.
+		@param locationX The region-based location along the X axis.
+		@param locationY The region-based location along the Y axis.
+		*/
+		public RegionPosition(final AxisLocation locationX, final AxisLocation locationY)
+		{
+			this.locationX=locationX;	//save the region location along the X axis
+			this.locationY=locationY;	//save the region location along the Y axis
+		}
+		
+		/**@return A clone of the position.
+		@exception CloneNotSupportedException if the clone operation fails.
+		*/
+    public Object clone() throws CloneNotSupportedException
+		{
+			return super.clone();	//return a clone of the position
+		}
+	}
+	
+	/**A position based upon a location.
+	@author Garret Wilson
+	*/
+	public static class LocationPosition implements Position
+	{
+	
+		/**The location coordinates.*/
+		private Point location;
+		
+			/**@return The location coordinates.*/
+			public Point getLocation() {return location;}
+
+		/**Whether the component should be centered at its location.*/
+		private final boolean centered;
+
+			/**@return Whether the component should be centered at its location.*/
+			public boolean isCentered() {return centered;}
+	
+		/**Constructs a position at a location.
+		@param location The location coordinates.
+		@param centered Whether the component should be centered at its location.
+		@exception NullPointerException if the location is <code>null</code>.
+		*/
+		public LocationPosition(final Point location, final boolean centered)
+		{
+			this.location=checkNull(location, "Location cannot be null.");	//save the location
+			this.centered=centered;	//save the centered specification
+		}
+
+		/**@return A clone of the position.
+		@exception CloneNotSupportedException if the clone operation fails.
+		*/
+    public Object clone() throws CloneNotSupportedException
+		{
+			final LocationPosition locationPosition=(LocationPosition)super.clone();	//create a clone of the position
+			locationPosition.location=(Point)location.clone();	//clone the location
+			return locationPosition;	//return the location
+		}
+	}
+	
 	/**The view for which components will be managed.*/
-	protected final View view;
+	private final View view;
+
+		/**@return The view for which components will be managed.*/
+		protected View getView() {return view;}
 
 	/**The map of component information, each keyed to a component being managed.
 	@see #ComponentInfo
@@ -139,13 +281,14 @@ public class ViewComponentManager //G***finish the class comments with examples 
 		Sets the component's visibility based upon the current showing status.
 	@param component The component to be managed.
 	*/
+/*TODO del
 	public synchronized void add(final Component component)
 	{
 		add(new ComponentInfo(component)); //add the component with default component info
 	}
+*/
 
-	/**Adds a component to be managed, along with its location, which will also
-		be managed.
+	/**Adds a component to be managed, along with its location, which will also be managed.
 		The component location will automatically be scaled when the view size
 		changes, provided the manager is notified of the size change.
 	@param component The component to be managed.
@@ -270,40 +413,49 @@ public class ViewComponentManager //G***finish the class comments with examples 
 		add(new ComponentInfo(component, x, y, width, height, centered)); //add the component with its component info
 	}
 
-	/**Adds a component to be managed, along with a border position.
+	/**Adds a component to be managed, along with a position.
 	@param component The component to be managed.
-	@param border The optional border of the component, which overrides its position, or <code>null</code> for no border position.
+	@param regionX The region along the X axis relative to the origin.
+	@param alignmentX The alignment along the X axis (-1.0 to +1.0) relative to the origin.
+	@param regionY The region along the Y axis relative to the origin.
+	@param alignmentY The alignment along the Y axis (-1.0 to +1.0) relative to the origin.
 	*/
-	public synchronized void add(final Component component, final Border border)
+	public synchronized void add(final Component component, final AxisLocation.Region regionX, final float alignmentX, final AxisLocation.Region regionY, final float alignmentY)
 	{
-		add(new ComponentInfo(component, border)); //add the component with its border information
+		add(new ComponentInfo(component, regionX, alignmentX, regionY, alignmentY)); //add the component with its position information
 	}
 
 	/**Adds a component to be managed, along with its size, which
-		will also be managed. The border position is also specified.
+		will also be managed. The position is also specified.
 		The component location and size will automatically be scaled when the view
 		size changes, provided the manager is notified of the size change.
 	@param component The component to be managed.
+	@param regionX The region along the X axis relative to the origin.
+	@param alignmentX The alignment along the X axis (-1.0 to +1.0) relative to the origin.
+	@param regionY The region along the Y axis relative to the origin.
+	@param alignmentY The alignment along the Y axis (-1.0 to +1.0) relative to the origin.
 	@param size The size of the component, relative to the view size.
-	@param border The optional border of the component, which overrides its position, or <code>null</code> for no border position.
 	*/
-	public synchronized void add(final Component component, final Dimension size, final Border border)
+	public synchronized void add(final Component component, final AxisLocation.Region regionX, final float alignmentX, final AxisLocation.Region regionY, final float alignmentY, final Dimension size)
 	{
-		add(component, size.width, size.height, border); //add the component with its size and border information
+		add(component, regionX, alignmentX, regionY, alignmentY, size.width, size.height); //add the component with its size and border information
 	}
 
 	/**Adds a component to be managed, along with its size, which
-		will also be managed. The border position is also specified.
+		will also be managed. The position is also specified.
 		The component location and size will automatically be scaled when the view
 		size changes, provided the manager is notified of the size change.
 	@param component The component to be managed.
+	@param regionX The region along the X axis relative to the origin.
+	@param alignmentX The alignment along the X axis (-1.0 to +1.0) relative to the origin.
+	@param regionY The region along the Y axis relative to the origin.
+	@param alignmentY The alignment along the Y axis (-1.0 to +1.0) relative to the origin.
 	@param width The width of the component, relative to the view width.
 	@param height The height of the component, relative to the view width.
-	@param border The optional border of the component, which overrides its position, or <code>null</code> for no border position.
 	*/
-	public synchronized void add(final Component component, final int width, final int height, final Border border)
+	public synchronized void add(final Component component, final AxisLocation.Region regionX, final float alignmentX, final AxisLocation.Region regionY, final float alignmentY, final int width, final int height)
 	{
-		add(new ComponentInfo(component, width, height, border)); //add the component with its component info
+		add(new ComponentInfo(component, regionX, alignmentX, regionY, alignmentY, width, height)); //add the component with its component info
 	}
 
 	/**Adds a component to be managed, along with its associated component information.
@@ -353,7 +505,7 @@ Debug.traceStack(); //G***del
 	{
 //G***del Debug.trace("setting component showing: ", new Boolean(showing)); //G***del
 		component.setVisible(showing); //show or hide the component appropriately
-		final Container container=view.getContainer();  //get the container the view is placed in
+		final Container container=getView().getContainer();  //get the container the view is placed in
 		if(showing) //if we're now showing the component
 		{
 //G***del Debug.trace("showing component"); //G***del
@@ -497,52 +649,28 @@ Debug.traceStack(); //G***del
 			{
 				actualSize=componentInfo.getComponent().getSize();	//just use the size of the component
 			}
-			final Border border=componentInfo.getBorder();	//see if there is a border specified
-			if(border!=null)	//if a border position is specified
+			final Position position=componentInfo.getPosition();	//get the position of the component
+			if(position instanceof RegionPosition)	//if the position specifies a region
 			{
-				final int width=actualSize.width;	//get the actual width and height
-				final int height=actualSize.height;	
-				final int x, y;	//determine the coordinates of the component
-				switch(border)	//see which border is specified
-				{
-					case NORTH:
-					case PAGE_START:	//TODO i81n
-						x=Math.round((scaledWidth-width)/2);	//center the component horizontally
-						y=0;	//place the component at the top
-						break;
-					case SOUTH:
-					case PAGE_END:	//TODO i81n
-						x=Math.round((scaledWidth-width)/2);	//center the component horizontally
-						y=Math.round(scaledHeight-height);	//place the component at the bottom
-						break;
-					case WEST:
-					case LINE_START:	//TODO i81n
-						x=0;	//place the component on the left
-						y=Math.round((scaledHeight-height)/2);	//center the component vertically TODO decide if we want to move this up or down
-						break;
-					case EAST:
-					case LINE_END:	//TODO i81n
-						x=Math.round(scaledWidth-width);	//place the component on the right
-						y=Math.round((scaledHeight-height)/2);	//center the component vertically TODO decide if we want to move this up or down
-						break;
-					case CENTER:
-						x=Math.round((scaledWidth-width)/2);	//center the component horizontally
-						y=Math.round((scaledHeight-height)/2);	//center the component vertically
-					default:	//we should have covered all the options
-						throw new AssertionError("Unknown border position "+border);
-				}
-				componentInfo.setScaledLocation(new Point(x, y));  //store the scaled location
+				final RegionPosition regionPosition=(RegionPosition)position;	//get the position as a region position
+				final View view=getView();	//get a reference to the view
+				final Insets insets=view instanceof Inset ? ((Inset)view).getInsets() : new Insets(0, 0, 0, 0);	//get the insets of the view, if the view reports its insets
+				final float x=regionPosition.getLocationX().getCoordinate(insets.left, scaledWidth-insets.left-insets.right, insets.right, actualSize.width);	//determine the X coordinate
+				final float y=regionPosition.getLocationY().getCoordinate(insets.top, scaledHeight-insets.top-insets.bottom, insets.bottom, actualSize.height);	//determine the Y coordinate
+				componentInfo.setScaledLocation(new Point(Math.round(x), Math.round(y)));  //store the scaled location
 			}
-			else	//if no border position is specified
+			else if(position instanceof LocationPosition)	//if the position specifies an absolute location
 			{
-				final Point location=componentInfo.getLocation(); //get the relative location of this component, if we have it
-				if(location!=null)  //if we have a preferred location for this component
+				final LocationPosition locationPosition=(LocationPosition)position;	//get the position as a location position
+				final Point location=locationPosition.getLocation();	//get the location position's location
+				float x=location.x*xMultiplier;  //scale the position horizontally
+				float y=location.y*yMultiplier;  //scale the position vertically
+				if(locationPosition.isCentered())	//if we should center the component at the location
 				{
-					final Point scaledLocation=new Point(location); //create a new scaled location based on the preferred location
-					scaledLocation.x=Math.round(scaledLocation.x*xMultiplier);  //scale the position horizontally
-					scaledLocation.y=Math.round(scaledLocation.y*yMultiplier);  //scale the position vertically
-					componentInfo.setScaledLocation(scaledLocation);  //store the scaled location
+					x-=scaledWidth/2;	//center the component horizontally
+					y-=scaledHeight/2;	//center the component vertically
 				}
+				componentInfo.setScaledLocation(new Point(Math.round(x), Math.round(y)));  //store the scaled location
 			}
 			updateComponentPosition(componentInfo); //update the component's absolute location and size
 		}
@@ -580,11 +708,13 @@ Debug.traceStack(); //G***del
 				{
 					int x=location.x+scaledLocation.x;  //offset the component from the horizontal view origin
 					int y=location.y+scaledLocation.y;  //offset the component from the vertial view origin
+/*TODO del when works
 					if(componentInfo.isCentered())  //if we should center the component at the location
 					{
 						x-=component.getWidth()/2;  //center the component horizontally
 						y-=component.getHeight()/2;  //center the component vertically
 					}
+*/
 					component.setLocation(x, y);  //update the component's absolute location to be its scaled location relative to the location of the view, centered if necessary
 					final Dimension scaledSize=componentInfo.getScaledSize();  //get the scaled size of this component, if we have it
 					if(scaledSize!=null)  //if we have a scaled size for this component
@@ -620,14 +750,12 @@ Debug.traceStack(); //G***del
 			/**@return The component being managed.*/
 			public Component getComponent() {return component;}
 
-		/**The preferred location of the component relative to the original size of
-		  the view, or <code>null</code> if the location isn't available.*/
-		private Point location=null;
+		/**The position of the component.*/
+		private Position position;
 
-			/**@return The preferred location of the component relative to the original size of
-				the view, or <code>null</code> if the location isn't available.*/
-			public Point getLocation() {return location;}
-
+			/**@return The position of the component.*/
+			public Position getPosition() {return position;}
+		
 		/**The scaled location of the component relative to the scaled size of the
 		  view, or <code>null</code> if the scaled location isn't available.*/
 		private Point scaledLocation=null;
@@ -666,27 +794,17 @@ Debug.traceStack(); //G***del
 		  */
 			protected void setScaledSize(final Dimension newScaledSize) {scaledSize=newScaledSize;}
 
-		/**The optional border of the component, which overrides its position, or <code>null</code> for no border position.*/
-		private final Border border;
-			
-			/**@erturn The optional border of the component, which overrides its position, or <code>null</code> for no border position.*/
-			public Border getBorder() {return border;}
-
-		/**Whether the component should be centered at its location.*/
-		private final boolean centered;
-
-			/**@return Whether the component should be centered at its location.*/
-			public boolean isCentered() {return centered;}
-
 		/**Component constructor.
 		@param component The component being managed.
 		*/
+/*TODO del
 		public ComponentInfo(final Component component)
 		{
 			this.component=component;	//save the component
 			border=null;	//show that there is no border specified
 			centered=false;	//show that the component is not centered
 		}
+*/
 
 		/**Position constructor.
 		@param component The component being managed.
@@ -707,9 +825,7 @@ Debug.traceStack(); //G***del
 		public ComponentInfo(final Component component, final int x, final int y, final boolean newCentered)
 		{
 			this.component=component;	//save the component
-			location=new Point(x, y); //store the component's preferred location
-			centered=newCentered; //store the centering status
-			border=null;	//show that no border position is specified
+			position=new LocationPosition(new Point(x, y), newCentered); //store the component's preferred location
 		}
 
 		/**Position and size constructor that accepts whether the component wants to be centered.
@@ -740,26 +856,29 @@ Debug.traceStack(); //G***del
 
 		/**Position constructor that accepts a border position.
 		@param component The component being managed.
-		@param border The optional border of the component, which overrides its position, or <code>null</code> for no border position.
+		@param regionX The region along the X axis relative to the origin.
+		@param alignmentX The alignment along the X axis (-1.0 to +1.0) relative to the origin.
+		@param regionY The region along the Y axis relative to the origin.
+		@param alignmentY The alignment along the Y axis (-1.0 to +1.0) relative to the origin.
 		*/
-		public ComponentInfo(final Component component, final Border border)
+		public ComponentInfo(final Component component, final AxisLocation.Region regionX, final float alignmentX, final AxisLocation.Region regionY, final float alignmentY)
 		{
 			this.component=component;	//save the component
-			this.border=border; //store the border position
-			centered=false;	//show that the component is not centered
+			position=new RegionPosition(new AxisLocation(regionX, alignmentX), new AxisLocation(regionY, alignmentY));	//create a position based upon the region
 		}
 
 		/**Size constructor with optional border specification.
 		@param component The component being managed.
-		@param x The horizontal position of the component, relative to the view.
-		@param y The vertical position of the component, relative to the view.
+		@param regionX The region along the X axis relative to the origin.
+		@param alignmentX The alignment along the X axis (-1.0 to +1.0) relative to the origin.
+		@param regionY The region along the Y axis relative to the origin.
+		@param alignmentY The alignment along the Y axis (-1.0 to +1.0) relative to the origin.
 		@param width The width of the component, relative to the view width.
 		@param height The height of the component, relative to the view width.
-		@param border The optional border of the component, which overrides its position, or <code>null</code> for no border position.
 		*/
-		public ComponentInfo(final Component component, final int width, final int height, final Border border)  //G***does this constructor even make sense?
+		public ComponentInfo(final Component component, final AxisLocation.Region regionX, final float alignmentX, final AxisLocation.Region regionY, final float alignmentY, final int width, final int height)
 		{
-			this(component, border);	//do the default construction
+			this(component, regionX, alignmentX, regionY, alignmentY);	//do the default construction
 			size=new Dimension(width, height);  //store the component's preferred size
 		}
 
@@ -769,10 +888,7 @@ Debug.traceStack(); //G***del
     public Object clone() throws CloneNotSupportedException
 		{
 			final ComponentInfo componentInfo=(ComponentInfo)super.clone();	//create a clone of the component info
-			if(componentInfo.location!=null)	//if there is a location associated with this component
-			{
-				componentInfo.location=(Point)location.clone();	//clone the location
-			}
+			componentInfo.position=(Position)position.clone();	//clone the position
 			if(componentInfo.scaledLocation!=null)	//if there is a scaled location associated with this component
 			{
 				componentInfo.scaledLocation=(Point)scaledLocation.clone();	//clone the scaled location

@@ -6,6 +6,7 @@ import javax.swing.SizeRequirements;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.*;
 
+import com.garretwilson.awt.Inset;
 import com.garretwilson.swing.text.ContainerBoxView;
 import com.garretwilson.swing.text.ContainerView;
 import com.garretwilson.swing.text.DocumentUtilities;
@@ -23,7 +24,7 @@ import com.garretwilson.util.Debug;
 /**A paragraph that understands CSS styles and knows how to be broken into fragments.
 @author Garret Wilson
 */
-public class XMLParagraphView extends ParagraphView implements XMLCSSView, FragmentViewFactory	//TODO del if not needed, ViewReleasable
+public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView, FragmentViewFactory	//TODO del if not needed, ViewReleasable
 {
 
 	/**The shared default break strategy for container views.*/
@@ -111,6 +112,12 @@ public class XMLParagraphView extends ParagraphView implements XMLCSSView, Fragm
 //G***del Debug.trace("Creating XMLParagraphView, i18n property: ", getDocument().getProperty("i18n")); //G***testing
 Debug.trace(); //G***testing
 //TODO fix antialias and fonts		  strategy=new com.garretwilson.swing.text.TextLayoutStrategy();  //G***fix; testing i18n
+	}
+
+	/**@return The insets of the view.*/
+	public Insets getInsets()
+	{
+		return new Insets(getTopInset(), getLeftInset(), getBottomInset(), getRightInset());	//return the insets of the view
 	}
 
 	/**Releases any cached information such as pooled views and flows. This

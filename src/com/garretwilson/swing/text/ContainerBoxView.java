@@ -1,9 +1,13 @@
 package com.garretwilson.swing.text;
 
+import java.awt.Insets;
 import java.util.*;
 
 import javax.swing.text.*;
+import static com.garretwilson.lang.ObjectUtilities.*;
 import static com.garretwilson.swing.text.ViewUtilities.*;
+
+import com.garretwilson.awt.Inset;
 import com.garretwilson.util.Debug;
 
 /**A view that contains other views, constrained in a box.
@@ -14,7 +18,7 @@ Beginning and ending offsets are determined based upon the contained views.
 This view knows how to break into fragments along the tiling axis.
 @author Garret Wilson
 */
-public class ContainerBoxView extends BoxView
+public class ContainerBoxView extends BoxView implements Inset
 {
 
 	/**The shared default break strategy for container views.*/
@@ -59,6 +63,12 @@ public class ContainerBoxView extends BoxView
 	public ContainerBoxView(final Element element, final int axis)
 	{
 		super(element, axis);	//construct the parent class
+	}
+
+	/**@return The insets of the view.*/
+	public Insets getInsets()
+	{
+		return new Insets(getTopInset(), getLeftInset(), getBottomInset(), getRightInset());	//return the insets of the view
 	}
 
 	/**Replaces child views, which can function as an insert or a remove.
@@ -247,35 +257,7 @@ public class ContainerBoxView extends BoxView
 					  }
 					}
 					final View fragmentView=createFragmentView(fragmentViewFactory, view, childViewList.toArray(new View[childViewList.size()]), isFirstFragment, isLastFragment);	//create a fragment view with the collected children
-					try	//TODO later modify this code to see if the component locations fall within our span
-					{
-						if(fragmentView instanceof ViewComponentManageable && view instanceof ViewComponentManageable)	//if the original view and the fragment both support managed components
-						{
-							final ViewComponentManager componentManager=((ViewComponentManageable)view).getComponentManager();	//get the original view's component manager
-							final ViewComponentManager fragmentComponentManager=((ViewComponentManageable)fragmentView).getComponentManager();	//get the fragment view's component manager
-							for(final ViewComponentManager.ComponentInfo componentInfo:componentManager.getComponentInfos())	//for each component information
-							{
-								final boolean transferComponent;	//we'll determine whether we should transfer this component
-								final ViewComponentManager.Border border=componentInfo.getBorder();	//get the component border
-								if(border==ViewComponentManager.Border.SOUTH || border==ViewComponentManager.Border.PAGE_END)	//if this component is at the bottom TODO update to match orientation
-								{
-									transferComponent=isLastFragment;	//only include bottom components in the last fragment
-								}
-								else	//for all other components
-								{
-									transferComponent=isFirstFragment;	//include all non-bottom components only in the first fragment
-								}
-								if(transferComponent)	//if we should transfer this component
-								{
-									fragmentComponentManager.add((ViewComponentManager.ComponentInfo)componentInfo.clone());	//add a clone of the component information								
-								}
-							}					
-						}
-					}
-					catch(final CloneNotSupportedException cloneNotSupportedException)	//cloning should always be supported for the objects we use
-					{
-						throw new AssertionError(cloneNotSupportedException);
-					}
+					fragmentComponents(view, fragmentView);	//fragment managed components if necessary
 					return fragmentView;	//return the fragment view we created
 				}
 			}
@@ -294,7 +276,7 @@ public class ContainerBoxView extends BoxView
 		@return The view fragment, or the view itself if the view doesn't support breaking into fragments.
 		@see View#createFragment
 		*/
-		public View createFragment(final View view, int p0, int p1, final FragmentViewFactory fragmentViewFactory)
+		public View createFragment(final BoxView view, int p0, int p1, final FragmentViewFactory fragmentViewFactory)
 		{
 			if(p0<=view.getStartOffset() && p1>=view.getEndOffset())	//if the range they want encompasses all of our view
 				return view;	//return the whole view; there's no use to try to break it up
@@ -322,35 +304,7 @@ public class ContainerBoxView extends BoxView
 					}
 				}
 				final View fragmentView=createFragmentView(fragmentViewFactory, view, childViewList.toArray(new View[childViewList.size()]), isFirstFragment, isLastFragment);	//create a fragment view with the collected children
-				try	//TODO later modify this code to check component locations
-				{
-					if(fragmentView instanceof ViewComponentManageable && view instanceof ViewComponentManageable)	//if the original view and the fragment both support managed components
-					{
-						final ViewComponentManager componentManager=((ViewComponentManageable)view).getComponentManager();	//get the original view's component manager
-						final ViewComponentManager fragmentComponentManager=((ViewComponentManageable)fragmentView).getComponentManager();	//get the fragment view's component manager
-						for(final ViewComponentManager.ComponentInfo componentInfo:componentManager.getComponentInfos())	//for each component information
-						{
-							final boolean transferComponent;	//we'll determine whether we should transfer this component
-							final ViewComponentManager.Border border=componentInfo.getBorder();	//get the component border
-							if(border==ViewComponentManager.Border.SOUTH || border==ViewComponentManager.Border.PAGE_END)	//if this component is at the bottom TODO update to match orientation
-							{
-								transferComponent=isLastFragment;	//only include bottom components in the last fragment
-							}
-							else	//for all other components
-							{
-								transferComponent=isFirstFragment;	//include all non-bottom components only in the first fragment
-							}
-							if(transferComponent)	//if we should transfer this component
-							{
-								fragmentComponentManager.add((ViewComponentManager.ComponentInfo)componentInfo.clone());	//add a clone of the component information								
-							}
-						}					
-					}
-				}
-				catch(final CloneNotSupportedException cloneNotSupportedException)	//cloning should always be supported for the objects we use
-				{
-					throw new AssertionError(cloneNotSupportedException);
-				}
+				fragmentComponents(view, fragmentView);	//fragment managed components if necessary
 				return fragmentView;	//return the fragment view we created
 			}
 		}
@@ -375,5 +329,63 @@ public class ContainerBoxView extends BoxView
 		  return fragmentView;	//return the fragment view we created
 		}
 
+		/**Fragments the managed components of a view, if supported, into its fragment view.
+		@param fromView The view being fragmented.
+		@param toFragmentView The fragment view into which the original view is being fragmented.
+		@exception ClassCastException if <code>toFragmentView</code> is not a <code>FragmentView</code>.
+		*/
+		protected void fragmentComponents(final BoxView fromView, final View toFragmentView)
+		{
+			final FragmentView fragmentView=checkType(toFragmentView, FragmentView.class);	//get the destination view as a fragment view
+			try	//TODO later modify this code to see if the component locations fall within our span
+			{
+				if(fragmentView instanceof ViewComponentManageable && fromView instanceof ViewComponentManageable)	//if the original view and the fragment both support managed components
+				{
+					final boolean isFirstFragment=fragmentView.isFirstFragment();	//see if this is the first fragment
+					final boolean isLastFragment=fragmentView.isLastFragment();	//see if this is the last fragment
+					final ViewComponentManager componentManager=((ViewComponentManageable)fromView).getComponentManager();	//get the original view's component manager
+					final ViewComponentManager fragmentComponentManager=((ViewComponentManageable)fragmentView).getComponentManager();	//get the fragment view's component manager
+					for(final ViewComponentManager.ComponentInfo componentInfo:componentManager.getComponentInfos())	//for each component information
+					{
+						final boolean transferComponent;	//we'll determine whether we should transfer this component
+						final ViewComponentManager.Position componentPosition=componentInfo.getPosition();	//get the component position
+						if(componentPosition instanceof ViewComponentManager.RegionPosition)	//if the position of the component is in a region
+						{
+								//get the position as a region position
+							final ViewComponentManager.RegionPosition regionPosition=(ViewComponentManager.RegionPosition)componentPosition;
+								//get the location of the relevant axis TODO i18n check orientation
+							final ViewComponentManager.AxisLocation axisLocation=fromView.getAxis()==View.X_AXIS ? regionPosition.getLocationX() : regionPosition.getLocationY();
+							final ViewComponentManager.AxisLocation.Region region=axisLocation.getRegion();	//see which region the component is in
+							switch(region)	//determine whether to transfer the component based upon its region
+							{
+								case BEFORE:
+									transferComponent=isFirstFragment;	//include all "before" components only in the first fragment
+									break;
+								case MIDDLE:
+									transferComponent=isFirstFragment;	//include all "middle" components only in the first fragment
+									break;
+								case AFTER:
+									transferComponent=isLastFragment;	//include all "after" components only in the last fragment
+									break;
+								default:
+									throw new AssertionError("Unrecognized region "+region);
+							}
+						}
+						else	//if the component is not in a specified region
+						{
+							transferComponent=isFirstFragment;	//include all non-region components only in the first fragment
+						}
+						if(transferComponent)	//if we should transfer this component
+						{
+							fragmentComponentManager.add((ViewComponentManager.ComponentInfo)componentInfo.clone());	//add a clone of the component information								
+						}
+					}					
+				}
+			}
+			catch(final CloneNotSupportedException cloneNotSupportedException)	//cloning should always be supported for the objects we use
+			{
+				throw new AssertionError(cloneNotSupportedException);
+			}			
+		}
 	}
 }
