@@ -933,6 +933,20 @@ Debug.trace("Non-collapsed text: "+text);
 		{
 			final String docTypePublicID=XMLStyleUtilities.getXMLDocTypePublicID(attributeSet); //get the document type public ID if there is one
 			documentType=domImplementation.createDocumentType(elementName, docTypePublicID, docTypeSystemID);	//create the document type
+/*G***fix some day to load the entities and use them in serialization			
+					//load the contents of the document type, if we can
+			final XMLProcessor xmlProcessor=new XMLProcessor();	//create a new XML processor TODO see that it gets the URIInputStreamable that was used to load this document in the first place---is that stored in the document or Swing element, perhaps? it should be
+				//get a reader from the XML processor to read the external document type
+			final XMLReader documentTypeReader=xmlProcessor.createReader(XMLStyleUtilities.getBaseURI(attributeSet), documentType.getPublicId(), documentType.getSystemId());
+			try
+			{
+				parseDocumentTypeContent(reader, ownerDocument, documentType.getEntities(), documentType.getParameterEntityXMLNamedNodeMap(), elementDeclarationList, attributeListDeclarationList);
+			}
+			finally
+			{
+				documentTypeReader.close();	//always close the document type reader
+			}	
+*/		
 		}
 		else  //if there was no system ID
 			documentType=null;  //show that we don't have a document type
@@ -961,6 +975,17 @@ Debug.trace("Non-collapsed text: "+text);
 	@return A DOM element representing the Swing node.
 	*/
 	public org.w3c.dom.Node createXMLNode(final org.w3c.dom.Document xmlDocument, final Element swingElement)
+	{
+		return createXMLNode(xmlDocument, swingElement, 0);	//create an XML node at the bottom level
+	}
+
+	/**Converts the given Swing element to an XML node indenting to the given level.
+	@param swingElement The Swing element containing the data to be converted to
+		an XML node.
+	@param level The zero-based level of indentation.
+	@return A DOM element representing the Swing node.
+	*/
+	public org.w3c.dom.Node createXMLNode(final org.w3c.dom.Document xmlDocument, final Element swingElement, final int level)
 	{
 		final AttributeSet attributeSet=swingElement.getAttributes();  //get the element's attribute set
 		final String elementKind=swingElement.getName();	//get the kind of element this is (based on the name of the Swing element, not the Swing element's attribute which holds the name of its corresponding XML element)
@@ -993,7 +1018,7 @@ Debug.trace("Non-collapsed text: "+text);
 			for(int childIndex=0; childIndex<swingElement.getElementCount(); ++childIndex)  //look at each of the child elements
 			{
 				final Element childSwingElement=swingElement.getElement(childIndex); //get this Swing child element
-				final org.w3c.dom.Node childXMLNode=createXMLNode(xmlDocument, childSwingElement); //create an XML node from the child Swing element
+				final org.w3c.dom.Node childXMLNode=createXMLNode(xmlDocument, childSwingElement, level+1); //create an XML node from the child Swing element, specifying that this node will be at the next hierarchy level
 				boolean isInlineChild=true; //start by assuming this is an inline child
 //G***del when works				final boolean isInlineChild; //we'll determine whether this is an inline node so that we can add EOLs for pretty prining if not
 				if(childXMLNode.getNodeType()==Node.ELEMENT_NODE) //if this is an element
@@ -1012,6 +1037,7 @@ Debug.trace("Non-collapsed text: "+text);
 				{
 					hasBlockChild=true;	//show that at least one child has block display
 					XMLUtilities.appendText(xmlElement, "\n");  //skip to the next line for a pretty formatted XML document
+					XMLUtilities.appendText(xmlElement, StringUtilities.makeString('\t', level+1));	//indent to the correct level
 				}
 				xmlElement.appendChild(childXMLNode);  //append the XML node we created
 	/*G***del if not needed
@@ -1021,7 +1047,10 @@ Debug.trace("Non-collapsed text: "+text);
 			}
 //*G**del when works			if(!isInlineChild)  //if the last child element was not inline
  			if(hasBlockChild)  //if any of the children were not inline
+ 			{
 				XMLUtilities.appendText(xmlElement, "\n");  //skip to the next line for a pretty formatted XML document
+				XMLUtilities.appendText(xmlElement, StringUtilities.makeString('\t', level));	//indent to the correct level
+ 			}
 		}
 
 
