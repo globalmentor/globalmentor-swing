@@ -72,7 +72,7 @@ public class XPackageTreeCellRenderer extends RDFResourceTreeCellRenderer
 		if(userObject instanceof RDFResource) //if this is an RDF resource
 		{
 			final RDFResource rdfResource=(RDFResource)userObject;  //cast the object to an RDF resource
-			final MediaType mediaType=XPackageUtilities.getMediaType(rdfResource);  //see if there is a media type for the resource
+			final MediaType mediaType=MIMEOntologyUtilities.getMediaType(rdfResource);  //see if there is a media type for the resource
 		  if(mediaType!=null) //if there is a media type
 				return mediaType; //use the media type as the key
 		}

@@ -260,7 +260,7 @@ Debug.trace("got spine list");  //G***del
 						while(manifestIterator.hasNext()) //while there are more manifest items
 						{
 							final RDFResource manifestItem=(RDFResource)manifestIterator.next(); //get the next OEB item
-							final MediaType mediaType=XPackageUtilities.getMediaType(manifestItem); //get the item's media type
+							final MediaType mediaType=MIMEOntologyUtilities.getMediaType(manifestItem); //get the item's media type
 							//if this is an OEB document that is not in the spine
 							if(OEB10_DOCUMENT_MEDIA_TYPE.equals(mediaType) && !spineList.contains(manifestItem))
 							{
@@ -291,7 +291,7 @@ Debug.trace("working on item: ", item); //G***del
 						  xmlDocument.normalize();  //normalize the document
 							tidyOEBXMLDocument((com.garretwilson.text.xml.XMLDocument)xmlDocument);	//tidy up the document (an important step if the document has text directly in the body and such) G***test, comment
 							baseURLArray[i]=itemURL;  //store the URL of the item
-							mediaTypeArray[i]=XPackageUtilities.getMediaType(item);  //store the media type of the item
+							mediaTypeArray[i]=MIMEOntologyUtilities.getMediaType(item);  //store the media type of the item
 							xmlDocumentArray[i]=xmlDocument;	//add the document to our array that we'll pass to the OEB document for insertion
 						}
 						finally
