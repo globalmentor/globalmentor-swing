@@ -35,6 +35,12 @@ public class IdentificationPanel extends DefaultPanel
 	/**The label of the formatted name.*/
 	private final JLabel formattedNameLabel;
 
+	/**The action for selecting the language of the formatted name.*/
+	private final SelectLanguageAction selectFormattedNameLanguageAction;
+
+		/**@return The action for selecting the language of the formatted name.*/
+		public SelectLanguageAction getSelectFormattedNameLanguageAction() {return selectFormattedNameLanguageAction;}
+
 	/**The formatted name text field.*/
 	private final JTextField formattedNameTextField;
 	
@@ -69,9 +75,18 @@ public class IdentificationPanel extends DefaultPanel
 	@param formattedName The name to place in the field, or <code>null</code> if
 		no information should be displayed.
 	*/
-	public void setFormattedName(final String formattedName)
+	public void setFormattedName(final LocaleText formattedName)
 	{
-		formattedNameTextField.setText(formattedName!=null ? formattedName : "");
+		if(formattedName!=null)	//if there is text
+		{
+			formattedNameTextField.setText(formattedName.getText());
+			selectFormattedNameLanguageAction.setLanguage(formattedName.getLocale());
+		}
+		else	//if there is no text
+		{
+			formattedNameTextField.setText("");
+			selectFormattedNameLanguageAction.setLanguage(null);
+		}
 	}
 	
 	/**@return The formatted name entered, or <code>null</code> if
@@ -113,6 +128,7 @@ public class IdentificationPanel extends DefaultPanel
 		namePanel=new NamePanel();
 		formattedNameLabel=new JLabel();
 		formattedNameTextField=new JTextField();
+		selectFormattedNameLanguageAction=new SelectLanguageAction(null, this);	//TODO fix modifiable
 		nicknameLabel=new JLabel();
 		nicknameTextField=new JTextField();
 		setDefaultFocusComponent(namePanel);	//set the default focus component
@@ -132,6 +148,9 @@ public class IdentificationPanel extends DefaultPanel
 		namePanel.getHonorificPrefixComboBox().addActionListener(createUpdateStatusActionListener());
 		namePanel.getHonorificSuffixComboBox().addActionListener(createUpdateStatusActionListener());
 		formattedNameLabel.setText("Formatted Name");	//G***i18n
+		final JButton selectFormattedNameLanguageButton=new JButton(getSelectFormattedNameLanguageAction());
+		selectFormattedNameLanguageButton.setText("");
+		selectFormattedNameLanguageButton.setBorder(null);
 		formattedNameTextField.setColumns(10);
 		formattedNameTextField.getDocument().addDocumentListener(new DocumentModifyAdapter()
 				{
@@ -144,11 +163,12 @@ public class IdentificationPanel extends DefaultPanel
 				});
 		nicknameLabel.setText("Nickname");	//G***i18n
 		nicknameTextField.setColumns(8);
-		add(namePanel, new GridBagConstraints(0, 0, 2, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		add(nicknameTextField, new GridBagConstraints(0, 2, 1, 1, 0.4, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		add(formattedNameLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		add(formattedNameTextField, new GridBagConstraints(1, 2, 1, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		add(namePanel, new GridBagConstraints(0, 0, 2, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
+		add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(nicknameTextField, new GridBagConstraints(0, 2, 1, 1, 0.4, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
+		add(formattedNameLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(selectFormattedNameLanguageButton, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(formattedNameTextField, new GridBagConstraints(1, 2, 2, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
 	}
 
 	/**Updates the constructed URI based upon current user input.*/
