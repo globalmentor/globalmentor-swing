@@ -421,7 +421,15 @@ System.out.println("Ready to parse stylesheets.");	//G***del
 		  tidyOEBXMLDocument((com.garretwilson.text.xml.XMLDocument)xmlDocument);	//tidy up the document (an important step if the document has text directly in the body and such) G***test, comment
 				//read and set any contained RDF
 			final RDFXMLProcessor rdfProcessor=new RDFXMLProcessor(); //create a new RDF processor
-			final RDF rdf=rdfProcessor.process(xmlDocument, baseURL.toString());  //process any contained RDF
+			final RDF rdf;
+			try
+			{
+				rdf=rdfProcessor.process(xmlDocument, URLUtilities.toURI(baseURL));	//process any contained RDF
+			}
+			catch (URISyntaxException e)
+			{
+				throw new IOException(e.toString());
+			}  
 		  swingXMLDocument.setRDF(rdf); //set the RDF in our document
 		  setXML(xmlDocument, baseURL, getMediaType(), swingXMLDocument);  //G***fix
 		}

@@ -1450,7 +1450,7 @@ Debug.trace("getting default namespace URI, found media type: ", mediaType);  //
 				if(mediaType.equals(mediaType.TEXT_HTML)) //if the media type is text/html
 					namespaceURI=XHTMLConstants.XHTML_NAMESPACE_URI;  //use the XHTML namespace
 				else if(mediaType.equals(mediaType.TEXT_X_OEB1_DOCUMENT)) //if the media type is for an OEB document
-					namespaceURI=OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI;  //use the OEB document namespace
+					namespaceURI=OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString();  //use the OEB document namespace
 Debug.trace("namespace URI: ", namespaceURI);  //G***del
 			}
 		}

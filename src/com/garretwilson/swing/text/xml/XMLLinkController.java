@@ -473,7 +473,7 @@ protected void activateLink(int pos, JEditorPane editor) {
 					if(mediaType.equals(MediaType.TEXT_HTML))
 						elementNamespaceURI=XHTMLConstants.XHTML_NAMESPACE_URI; //G***testing
 					else if(mediaType.equals(MediaType.TEXT_X_OEB1_DOCUMENT))
-						elementNamespaceURI=OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI; //G***testing
+						elementNamespaceURI=OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(); //G***testing
 				}
 			}
 //G***del Debug.trace("Decided namespace is really: ", elementNamespaceURI); //G***del

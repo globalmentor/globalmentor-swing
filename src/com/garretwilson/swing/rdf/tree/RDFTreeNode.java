@@ -1,5 +1,6 @@
 package com.garretwilson.swing.rdf.tree;
 
+import java.net.URI;
 import java.util.*;
 import com.garretwilson.swing.tree.*;
 import com.garretwilson.rdf.*;
@@ -50,7 +51,7 @@ public class RDFTreeNode extends DynamicTreeNode
 		while(resourceIterator.hasNext()) //while there are resources remaining
 		{
 			final RDFResource resource=(RDFResource)resourceIterator.next();  //get the next resource
-			final String referenceURI=resource.getReferenceURI(); //get the resource reference URI
+			final URI referenceURI=resource.getReferenceURI(); //get the resource reference URI
 			//G***in throwing away anonymous resources, some might have been described at the top of the hierarchy---we should really just check to see which resources are not referenced
 //G***check to see if there are no references to this node---if so, we'll probably want to display it anyway
 //G***since this exact functionality occurs in RDFXMLifier, create it there and access those methods here

@@ -2,6 +2,7 @@ package com.garretwilson.swing;
 
 import java.awt.*;
 import java.io.*;
+import java.net.URI;
 import javax.swing.*;
 import com.garretwilson.text.xml.XMLSerializer;
 import com.garretwilson.text.xml.qti.*;
@@ -44,7 +45,7 @@ public abstract class AbstractMDIDocumentPanel extends ApplicationPanel implemen
 	@exception IllegalArgumentException Thrown if the provided reference URI is
 		<code>null</code>.
 	*/
-	public void setReferenceURI(final String referenceURI) throws IllegalArgumentException
+	public void setReferenceURI(final URI referenceURI) throws IllegalArgumentException
 	{
 		resource=new DefaultRDFResource(resource, referenceURI); //create a new resource with a different URI G***change to get this from the data model
 	}
