@@ -98,15 +98,29 @@ public class TelephonePanel extends DefaultPanel
 		}
 	}
 	
-	/**@return An object representing the telephone information entered.
-	@exception TelephoneNumberSyntaxException Thrown if the values violate ITU-T
-		E.164.
+	/**@return An object representing the telephone information entered, or
+		<code>null</code> if no telephone number was entered or the values violate
+		ITU-T E.164.
 	*/
-	public Telephone getTelephone() throws TelephoneNumberSyntaxException
+	public Telephone getTelephone()
 	{
 		final TelephoneNumber telephoneNumber=telephoneNumberPanel.getTelephoneNumber();	//get the telephone number from the panel
-		final int telephoneType=getTelephoneType();	//get the telephone type
-		return new Telephone(telephoneNumber, telephoneType);	//create and return telephone information representing the entered information
+		if(telephoneNumber!=null)	//if a valid telephone number was entered
+		{		
+			final int telephoneType=getTelephoneType();	//get the telephone type
+			try
+			{
+				return new Telephone(telephoneNumber, telephoneType);	//create and return telephone information representing the entered information
+			}
+			catch(TelephoneNumberSyntaxException telephoneNumberSyntaxException)	//if the information isn't a valid telephone number (this should never happen, as we just received a valid telephone number)
+			{
+				return null;	//show that we don't understand the entered information
+			}
+		}
+		else	//if no telephone number was entered
+		{
+			return null;	//don't return a telephone number
+		}
 	}
 
 	/**The number of buttons on the panel.*/

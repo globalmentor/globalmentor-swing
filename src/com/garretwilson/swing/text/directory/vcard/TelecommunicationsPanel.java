@@ -1,7 +1,12 @@
 package com.garretwilson.swing.text.directory.vcard;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.*;
+import java.util.*;
 import javax.swing.*;
 import com.garretwilson.awt.*;
 import com.garretwilson.text.directory.vcard.*;
@@ -39,37 +44,114 @@ public class TelecommunicationsPanel extends ContentPanel
 	/**@return The content component in which the telecommunications panels will be placed.*/
 	protected DefaultPanel getContentPanel() {return (DefaultPanel)getContentComponent();}
 
-	/**Places the addresses into the tabs.
-	@param addresses The addresses to place in the tabs. If the array is empty,
-		a default address will be placed in the first tab.
+	/**Places the telephones in the panel.
+	@param telephones The telephone numbers to display, or <code>null</code> if
+		default telephones should be added.
 	*/
-/*G***fix
-	public void setAddresses(Address[] addresses)
+	public void setTelephones(final Telephone[] telephones)
 	{
-		if(addresses.length<1)	//if there isn't at least one address
-			addresses=new Address[]{new Address()};	//create a new array containing a single default address
-		getTabbedPane().removeAll();	//remove all tabs
-		for(int i=0; i<addresses.length; ++i)	//look at each of the addresses
-		{
-			addAddress(addresses[i]);	//add this address to the tabbed pane
-		}
-		setDefaultFocusComponent(getTabbedPane().getComponentAt(0));	//set the default focus component to be the first tab (we'll always have at least one tab)
+		final Email[] emails=getEmails();	//get the emails we currently have
+		setTelecommunications(telephones, emails);	//set the telephones and add back the emails
 	}
-*/
 	
-	/**@return An array of entered addresses.*/
-/*G***fix
-	public Address[] getAddresses()
+	/**@return An array of entered telephones.*/
+	public Telephone[] getTelephones()
 	{
-		final Address[] addresses=new Address[getTabbedPane().getTabCount()];	//create an array of addresses, based upon the number of tabs
-		for(int i=0; i<addresses.length; ++i)	//look at each tab
+		final List telephoneList=new ArrayList();	//create a list into which to place the telephones
+		final DefaultPanel contentPanel=getContentPanel();	//get our content panel
+		final int componentCount=contentPanel.getComponentCount();	//find out how many components there are
+		for(int i=0; i<componentCount; ++i)	//look at each component
 		{
-			final AddressPanel addressPanel=(AddressPanel)getTabbedPane().getComponentAt(i);	//get this address panel
-			addresses[i]=addressPanel.getAddress();	//get this address
+			final Component component=contentPanel.getComponent(i);	//get this component
+			if(component instanceof TelephonePanel)	//if this panel holds a telephone
+			{
+				final Telephone telephone=((TelephonePanel)component).getTelephone();	//get this telephone
+				if(telephone!=null)	//if a telephone was entered
+				{
+					telephoneList.add(telephone);	//add this telephone to our list
+				}
+			}
 		}
-		return addresses;	//return the addresses we collected
+		return (Telephone[])telephoneList.toArray(new Telephone[telephoneList.size()]);	//return an array of the telephones we collected
 	}
-*/
+
+	/**Places the emails in the panel.
+	@param emails The email addresses to display, or <code>null</code> if
+		default emails should be added.
+	*/
+	public void setEmails(final Email[] emails)
+	{
+		final Telephone[] telephones=getTelephones();	//get the telephones we currently have
+		setTelecommunications(telephones, emails);	//put the telephones back and add the emails
+	}
+
+	/**@return An array of entered emails.*/
+	public Email[] getEmails()
+	{
+		final List emailList=new ArrayList();	//create a list into which to place the emails
+		final DefaultPanel contentPanel=getContentPanel();	//get our content panel
+		final int componentCount=contentPanel.getComponentCount();	//find out how many components there are
+		for(int i=0; i<componentCount; ++i)	//look at each component
+		{
+			final Component component=contentPanel.getComponent(i);	//get this component
+			if(component instanceof EmailPanel)	//if this panel holds an email
+			{
+				final Email email=((EmailPanel)component).getEmail();	//get this email
+				if(email!=null)	//if an email was entered
+				{
+					emailList.add(email);	//add this email to our list
+				}
+			}
+		}
+		return (Email[])emailList.toArray(new Telephone[emailList.size()]);	//return an array of the emails we collected
+	}
+
+	/**Places telephones and emails in the panel.
+	@param telephones The telephone numbers to display, or <code>null</code> if
+		default telephones should be added.
+	@param emails The email addresses to display, or <code>null</code> if
+		default emails should be added.
+	*/
+	public void setTelecommunications(final Telephone[] telephones, final Email[] emails)
+	{
+		getContentPanel().removeAll();	//remove all the components from the content panel
+		if(telephones!=null)	//if telephones were given
+		{
+			for(int i=0; i<telephones.length; ++i)	//look at each telephone
+			{
+				addTelephone(telephones[i]);	//add this telephone
+			}
+		}
+		else	//if no telephones were given, add the default telephones
+		{
+				//add a work voice telephone
+			final TelephonePanel workTelephonePanel=new TelephonePanel(null, Telephone.WORK_TELEPHONE_TYPE|Telephone.VOICE_TELEPHONE_TYPE);
+			workTelephonePanel.setLabelsVisible(false);	//turn off the labels
+			addComponent(workTelephonePanel);	
+				//add a home voice telephone
+			final TelephonePanel homeTelephonePanel=new TelephonePanel(null, Telephone.HOME_TELEPHONE_TYPE|Telephone.VOICE_TELEPHONE_TYPE);
+			homeTelephonePanel.setLabelsVisible(false);	//turn off the labels
+			addComponent(homeTelephonePanel);
+				//add a mobile voice telephone
+			final TelephonePanel mobileTelephonePanel=new TelephonePanel(null, Telephone.CELL_TELEPHONE_TYPE|Telephone.VOICE_TELEPHONE_TYPE);
+			mobileTelephonePanel.setLabelsVisible(false);	//turn off the labels
+			addComponent(mobileTelephonePanel);
+		}
+		if(emails!=null)	//if emails were given
+		{
+			for(int i=0; i<emails.length; ++i)	//look at each email
+			{
+				addEmail(emails[i]);	//add this email
+			}
+		}
+		else	//if no emails were given, add the default emails
+		{
+				//add an Internet email address
+			final EmailPanel internetEmailPanel=new EmailPanel(null, Email.INTERNET_EMAIL_TYPE);
+			internetEmailPanel.setLabelsVisible(false);	//turn off the labels
+			addComponent(internetEmailPanel);
+		}
+	}
 
 	/**Default constructor.*/
 	public TelecommunicationsPanel()
@@ -83,14 +165,14 @@ public class TelecommunicationsPanel extends ContentPanel
 	@param emails The email addresses to display, or <code>null</code> if
 		default email addresses should be added.
 	*/
-	public TelecommunicationsPanel(final Telephone[] telephones, final String[] emails)
+	public TelecommunicationsPanel(final Telephone[] telephones, final Email[] emails)
 	{
 		super(new DefaultPanel(new GridBagLayout()), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		addTelephoneAction=new AddTelephoneAction();
 		addEmailAction=new AddEmailAction();
 //G***fix		removeAddressAction=new RemoveAddressAction();
 		initialize();	//initialize the panel
-//G***fix		setAddresses(addresses);	//set the addresses to those given
+		setTelecommunications(telephones, emails);	//set the given telephones and emails
 	}
 
 	/**Initializes the user interface.*/
@@ -99,22 +181,6 @@ public class TelecommunicationsPanel extends ContentPanel
 		super.initializeUI();	//do the default user interface initialization
 		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
 		setTitle("Telecommunications");	//G***i18n
-			//add a work voice telephone
-		final TelephonePanel workTelephonePanel=new TelephonePanel(null, Telephone.WORK_TELEPHONE_TYPE|Telephone.VOICE_TELEPHONE_TYPE);
-		workTelephonePanel.setLabelsVisible(false);	//turn off the labels
-		addComponent(workTelephonePanel);	
-			//add a home voice telephone
-		final TelephonePanel homeTelephonePanel=new TelephonePanel(null, Telephone.HOME_TELEPHONE_TYPE|Telephone.VOICE_TELEPHONE_TYPE);
-		homeTelephonePanel.setLabelsVisible(false);	//turn off the labels
-		addComponent(homeTelephonePanel);
-			//add a mobile voice telephone
-		final TelephonePanel mobileTelephonePanel=new TelephonePanel(null, Telephone.CELL_TELEPHONE_TYPE|Telephone.VOICE_TELEPHONE_TYPE);
-		mobileTelephonePanel.setLabelsVisible(false);	//turn off the labels
-		addComponent(mobileTelephonePanel);
-			//add an Internet email address
-		final EmailPanel internetEmailPanel=new EmailPanel(null, Email.INTERNET_EMAIL_TYPE);
-		internetEmailPanel.setLabelsVisible(false);	//turn off the labels
-		addComponent(internetEmailPanel);	
 		final JPanel buttonPanel=new JPanel(new FlowLayout(FlowLayout.CENTER));
 		buttonPanel.add(new JButton(getAddTelephoneAction()));
 		buttonPanel.add(new JButton(getAddEmailAction()));
@@ -137,7 +203,6 @@ public class TelecommunicationsPanel extends ContentPanel
 	@param telephone The telephone to add.
 	@return The telephone panel that represents the added telephone.
 	*/
-/*G***del or add parallel addEmail() method
 	public TelephonePanel addTelephone(final Telephone telephone)
 	{
 		final TelephonePanel telephonePanel=new TelephonePanel(telephone);	//create a new telephone panel for this telephone
@@ -145,7 +210,18 @@ public class TelecommunicationsPanel extends ContentPanel
 		addComponent(telephonePanel);	//add the panel to the content panel
 		return telephonePanel;	//return the panel we creatd for the telephone		
 	}
-*/
+
+	/**Adds an email to the content panel.
+	@param email The email to add.
+	@return The email panel that represents the added email.
+	*/
+	public EmailPanel addEmail(final Email email)
+	{
+		final EmailPanel emailPanel=new EmailPanel(email);	//create a new email panel for this email
+		emailPanel.setLabelsVisible(false);	//turn off the labels
+		addComponent(emailPanel);	//add the panel to the content panel
+		return emailPanel;	//return the panel we creatd for the email		
+	}
 
 	/**Adds a component to the content panel, positioning it correctly based upon
 		the other components present.

@@ -2,6 +2,7 @@ package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
 import javax.swing.*;
+import com.garretwilson.lang.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.text.directory.vcard.*;
@@ -82,12 +83,21 @@ public class EmailPanel extends DefaultPanel
 		}
 	}
 	
-	/**@return An object representing the email information entered.*/
-	public Email getEmail()	//TODO check for information entered, and return null if no information was entered
+	/**@return An object representing the email information entered, or
+		<code>null</code> if no email information was entered.
+	*/
+	public Email getEmail()
 	{
-		final String emailAddress=addressTextField.getText().trim();	//get the telephone number from the panel
-		final int emailType=getEmailType();	//get the email type
-		return new Email(emailAddress, emailType);	//create and return email information representing the entered information
+		final String emailAddress=StringUtilities.getNonEmptyString(addressTextField.getText().trim());	//get the email address number from the panel
+		if(emailAddress!=null)	//if an email address was given
+		{
+			final int emailType=getEmailType();	//get the email type
+			return new Email(emailAddress, emailType);	//create and return email information representing the entered information
+		}
+		else	//if no email address was given
+		{
+			return null;	//there's no email information to return
+		}
 	}
 
 	/**Default constructor.*/

@@ -14,14 +14,26 @@ public class NameAddressPanel extends DefaultPanel
 	/**The identification panel.*/
 	private final IdentificationPanel identificationPanel;
 
+		/**@return The identification panel.*/
+		public IdentificationPanel getIdentificationPanel() {return identificationPanel;}
+
 	/**The addresses panel.*/
 	private final AddressesPanel addressesPanel;
+
+		/**@return The addresses panel.*/
+		public AddressesPanel getAddressPanel() {return addressesPanel;}
 
 	/**The organization panel.*/
 	private final OrganizationPanel organizationPanel;
 
+		/**@return The organization panel.*/
+		public OrganizationPanel getOrganizationPanel() {return organizationPanel;}
+
 	/**The telecommunications panel.*/
 	private final TelecommunicationsPanel telecommunicationsPanel;
+
+		/**@return The telecommunications panel.*/
+		public TelecommunicationsPanel getTelecommunicationsPanel() {return telecommunicationsPanel;}
 	
 	/**Default constructor.*/
 	public NameAddressPanel()

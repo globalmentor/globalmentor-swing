@@ -81,16 +81,30 @@ public class TelephoneNumberPanel extends DefaultPanel
 		}
 	}
 	
-	/**@return An object representing the telephone number information entered.
-	@exception TelephoneNumberSyntaxException Thrown if the values violate ITU-T
-		E.164.
+	/**@return An object representing the telephone number information entered,
+		or <code>null</code> if no telephone number was entered or the values
+		violate ITU-T E.164.
 	*/
-	public TelephoneNumber getTelephoneNumber() throws TelephoneNumberSyntaxException
+	public TelephoneNumber getTelephoneNumber()
 	{
-		final String countryCode=(String)countryCodeComboBox.getSelectedItem();
-		final String nationalDestinationCode=nationalDestinationCodeTextField.getText();
-		final String subscriberNumber=subscriberNumberTextField.getText();
-		return new TelephoneNumber(countryCode, nationalDestinationCode, subscriberNumber);	//create and return a telephone number representing the entered information
+		final String countryCode=((String)countryCodeComboBox.getSelectedItem()).trim();
+		final String nationalDestinationCode=nationalDestinationCodeTextField.getText().trim();
+		final String subscriberNumber=subscriberNumberTextField.getText().trim();
+		if(countryCode.length()>0 || nationalDestinationCode.length()>0 || subscriberNumber.length()>0)	//if information was given in any of the fields
+		{
+			try
+			{
+				return new TelephoneNumber(countryCode, nationalDestinationCode, subscriberNumber);	//create and return a telephone number representing the entered information
+			}
+			catch(TelephoneNumberSyntaxException telephoneNumberSyntaxException)	//if the information isn't a valid telephone number
+			{
+				return null;	//show that we don't understand the entered information
+			}
+		}
+		else	//if no information was given in any of the fields
+		{
+			return null;	//show that we don't have a telephone number
+		}
 	}
 
 	/**Default constructor.*/

@@ -1,11 +1,15 @@
 package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
+import com.garretwilson.lang.*;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
 import com.garretwilson.swing.event.*;
+import com.garretwilson.text.directory.vcard.*;
+import com.garretwilson.util.*;
 
 /**A panel containing fields for the identification types of a vCard
 	<code>text/directory</code>	profile as defined in
@@ -15,6 +19,16 @@ import com.garretwilson.swing.event.*;
 */
 public class IdentificationPanel extends DefaultPanel
 {
+
+	/**The character to use when separating multiple values.*/
+	protected final static char VALUE_SEPARATOR_CHAR=',';
+
+	/**The string to use when separating multiple values.*/ 
+	protected final static String VALUE_SEPARATOR=""+VALUE_SEPARATOR_CHAR+" ";
+
+	/**The characters that can delimit values entered by users.*/
+	protected final static String VALUE_DELIMITERS=";"+VALUE_SEPARATOR_CHAR;
+
 	/**The name panel.*/
 	private final NamePanel namePanel;
 	
@@ -35,19 +49,62 @@ public class IdentificationPanel extends DefaultPanel
 	*/
 	private boolean shouldUpdateFormattedName=true;
 
-	/**Places the name information in the various fields.
-	@param name The name to place in the fields.
-	*/
-/*G***fix
-	public void setName(final Name name)
+	/**Places the name information into the various fields.
+	@param name The name to place in the fields, or <code>null</code> if no
+		information should be displayed.
+	@see NamePanel#setVCardName
+	*	*/
+	public void setVCardName(final Name name)
 	{
-		familyNameTextField.setText(StringUtilities.concat(name.getFamilyNames(), VALUE_SEPARATOR));
-		givenNameTextField.setText(StringUtilities.concat(name.getGivenNames(), VALUE_SEPARATOR));
-		additionalNameTextField.setText(StringUtilities.concat(name.getAdditionalNames(), VALUE_SEPARATOR));
-		honorificPrefixTextField.setText(StringUtilities.concat(name.getHonorificPrefixes(), VALUE_SEPARATOR));
-		honorificPrefixTextField.setText(StringUtilities.concat(name.getHonorificSuffixes(), VALUE_SEPARATOR));
+		namePanel.setVCardName(name);	//set the name in the name panel
 	}
-*/
+	
+	/**@return An object representing the VCard name information entered.*/
+	public Name getVCardName()
+	{
+		return namePanel.getVCardName();	//get the name from the name panel
+	}
+
+	/**Places the formatted name into the field.
+	@param formattedName The name to place in the field, or <code>null</code> if
+		no information should be displayed.
+	*/
+	public void setFormattedName(final String formattedName)
+	{
+		formattedNameTextField.setText(formattedName!=null ? formattedName : "");
+	}
+	
+	/**@return The formatted name entered, or <code>null</code> if
+		no formatted name was entered.
+	*/
+	public String getFormattedName()
+	{
+		return StringUtilities.getNonEmptyString(formattedNameTextField.getText().trim());
+	}
+
+	/**Places the nicknames into the field.
+	@param nicknames The nicknames to place in the field, or <code>null</code> if
+		no information should be displayed.
+	*/
+	public void setNicknames(final String[] nicknames)
+	{
+		if(nicknames!=null)	//if there are nicknames
+		{
+			nicknameTextField.setText(StringUtilities.concat(nicknames, VALUE_SEPARATOR));
+		}
+		else	//if there are no nicknames
+		{
+			nicknameTextField.setText("");
+		}
+	}
+	
+	/**@return The nicknames entered.
+	*/
+	public String[] getNicknames()
+	{
+			//get the nicknames TODO make sure each nickname is trimmed
+		return StringTokenizerUtilities.getTokens(new StringTokenizer(nicknameTextField.getText().trim(), VALUE_DELIMITERS));
+	}	
 
 	/**Default constructor.*/
 	public IdentificationPanel()
