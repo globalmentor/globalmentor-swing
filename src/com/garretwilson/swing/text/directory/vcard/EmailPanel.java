@@ -142,7 +142,7 @@ public class EmailPanel extends BasicPanel
 		final DocumentListener modifyDocumentListener=createModifyDocumentListener();	//create a document listener to change the modified status when the document is modified
 		addressTextField.setColumns(20);
 		addressTextField.getDocument().addDocumentListener(modifyDocumentListener);
-		final JLabel imageLabel=new JLabel(IconResources.getIcon(IconResources.MAIL_ICON_FILENAME)); //create a label with the image		
+		final JLabel imageLabel=new JLabel(IconResources.getIcon(IconResources.EMAIL_ICON_FILENAME)); //create a label with the image		
 		add(imageLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(addressTextField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
 	}

@@ -218,6 +218,7 @@ public class AddressPanel extends BasicVCardPanel
 		postalCodeTextField=new JTextField();
 		countryNameLabel=new JLabel();
 		countryNameComboBox=new JComboBox();
+		setIcon(IconResources.getIcon(IconResources.MAIL_ICON_FILENAME));
 		setDefaultFocusComponent(streetAddressTextPane);	//set the default focus component
 		initialize();	//initialize the panel
 		setAddress(address);	//set the address

@@ -27,10 +27,12 @@ import com.garretwilson.util.prefs.*;
 	<code>DISPOSE_ON_CLOSE</code>. The action returned by
 	<code>getFileExitAction()</code> will reflect the default close operation
 	in effect.</p>
+<p>This class can keep track of which component should get the focus by default,
+	and will focus that component when the frame is initially shown.</p>
 @author Garret Wilson
 @see ApplicationPanel
 */
-public abstract class ApplicationFrame extends JFrame implements CanClosable
+public abstract class ApplicationFrame extends JFrame implements DefaultFocusable, CanClosable
 {
 
 	//file menu identifiers
@@ -74,6 +76,23 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 			there is no application information.
 		*/
 		public final SwingApplication getApplication() {return application;}
+
+	/**The component that hsould get the default focus, or <code>null</code> if unknown.*/
+	private Component defaultFocusComponent;
+
+		/**@return The component that should get the default focus, or
+			<code>null</code> if no component should get the default focus or it is
+			unknown which component should get the default focus.
+		*/
+		public Component getDefaultFocusComponent() {return defaultFocusComponent;}
+		
+		/**Sets the component to get the focus by default.
+			If this panel becomes a root focus traversal cycle, the default installed
+			focus traversal policy will automatically allow this component to get
+			the default focus.
+		@param component The component to get the default focus.
+		*/
+		public void setDefaultFocusComponent(final Component component) {defaultFocusComponent=component;}
 
 	/**The default close operation, which defaults to <code>DISPOSE_ON_CLOSE</code>.*/
 	private int defaultCloseOperation=DISPOSE_ON_CLOSE;
@@ -483,11 +502,15 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 				}
 			};
 		setContentPane(contentPane); //set the container as the content pane
+		setDefaultFocusComponent(contentPane);	//default to focusing on the content pane
 		addComponentListener(new ComponentAdapter()	//listen for the window bounds changes and save or restore the bounds in the preferences
 				{
 					public void componentMoved(ComponentEvent e) {if(isVisible()) saveBoundsPreferences();}	//save the new bounds if we are visible
 					public void componentResized(ComponentEvent e) {if(isVisible()) saveBoundsPreferences();}	//save the new bounds if we are visible
-					public void componentShown(ComponentEvent e) {if(isVisible()) restoreBoundsPreferences();}	//restore the new bounds if we are visible
+					public void componentShown(ComponentEvent e) {
+						if(isVisible())
+							requestDefaultFocusComponentFocus();	//TODO fix; put back in windowGainedFocus() and find out why it is never called
+						if(isVisible()) restoreBoundsPreferences();}	//restore the new bounds if we are visible
 				});
 //TODO actually, this window state change needs to be fixed---it isn't working correctly
 //G***del		addWindowStateListener(new WindowStateListener()	//listen for the window state changing so that we can save it in the preferences
@@ -518,6 +541,30 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 /*G***fix
 		initializeUI(); //initialize the user interface
 		updateActions();  //update the actions
+*/
+//G***del		defaultFocusComponent=null;	//default to no default focus component
+			//create and install a new layout focus traversal policy that will
+			//automatically use the default focus component, if available
+/*G***fix
+		setFocusTraversalPolicy(new LayoutFocusTraversalPolicy()
+				{
+					public Component getDefaultComponent(final Container focusCycleRoot)	//if the default component is requested
+					{
+							//if we have a default focus component, return it; otherwise, use the value given by the parent traversal policy class
+						return getDefaultFocusComponent()!=null ? getDefaultFocusComponent() : super.getDefaultComponent(focusCycleRoot);
+					}
+				});
+*/
+/*G***fix; move from componentShown() to here and find out why this doesn't ever get called
+		addWindowListener(new WindowAdapter() {	//G***testing; tidy; comment
+				private boolean gotFocus = false;
+				public void windowGainedFocus(WindowEvent we) {
+						// Once window gets focus, set initial focus
+						if (!gotFocus) {
+							gotFocus=requestDefaultFocusComponentFocus();	//G***testing
+						}
+				}
+		});
 */
 		if(initialize)  //if we should initialize
 		  initialize(); //initialize the frame
@@ -684,6 +731,38 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 			}
 		}
 		return description;  //return the description
+	}
+
+	/**Requests that the default focus component should get the default.
+	<p>If the component is a tab in a tabbed pane, that tab in the tabbed pane
+		is selected.</p>
+	<p>If the default focus comonent is itself <code>DefaultFocusable</code>, that
+		component is asked to request focus for its default focus component, and
+		so on.</p>
+	@return <code>false</code> if the focus change request is guaranteed to
+		fail; <code>true</code> if it is likely to succeed.
+	@see Component#requestFocusInWindow
+	*/
+	public boolean requestDefaultFocusComponentFocus()	//TODO put this is some common class along with the version in BasicPanel
+	{
+		final Component defaultFocusComponent=getDefaultFocusComponent();	//get the default focus component
+		if(defaultFocusComponent!=null)	//if there is a default focus component, make sure its parent tabs are selected if it's in a tabbed pane
+		{
+			TabbedPaneUtilities.setSelectedParentTabs(defaultFocusComponent);	//select the tabs of any parent tabbed panes
+		}
+		if(defaultFocusComponent instanceof DefaultFocusable	//if the component is itself default focusable
+				&& ((DefaultFocusable)defaultFocusComponent).getDefaultFocusComponent()!=defaultFocusComponent)	//and the default focus component does not reference itself (which would create an endless loop)
+		{
+			return ((DefaultFocusable)defaultFocusComponent).requestDefaultFocusComponentFocus();	//pass the request on to the default focus component
+		}
+		else if(defaultFocusComponent!=null)	//if the default focus component doesn't itself know about default focus components, but there is a default focus component
+		{
+			return defaultFocusComponent.requestFocusInWindow();	//tell the default focus component to request the focus
+		}
+		else	//if there is no default focus component
+		{
+			return false;	//there was nothing to focus
+		}
 	}
 
 	/**Closes the open file.*/

@@ -247,8 +247,7 @@ public class AddressesPanel extends ContentPanel
 		addressPanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);	//listen for changes to the address and update the modified status in response
 		final String title="Address";	//get a title for the address G***i18n
 //G***del when works		final String title=getTabTitle(address);	//get an title for the address
-			//TODO add an icon to each tab
-		getTabbedPane().addTab(title, addressPanel);	//add the panel
+		getTabbedPane().addTab(title, addressPanel.getIcon(), addressPanel);	//add the panel
 		setModified(true);	//show that we've been modified
 		updateStatus();	//update the status
 	}
@@ -272,8 +271,7 @@ public class AddressesPanel extends ContentPanel
 	{
 		labelPanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);	//listen for changes to the label and update the modified status in response
 		final String title="Label";	//get a title for the address G***i18n
-			//TODO add an icon to each tab
-		getTabbedPane().addTab(title, labelPanel);	//add the panel
+		getTabbedPane().addTab(title, labelPanel.getIcon(), labelPanel);	//add the panel
 		setModified(true);	//show that we've been modified
 		updateStatus();	//update the status
 	}
@@ -348,7 +346,7 @@ public class AddressesPanel extends ContentPanel
 			putValue(SHORT_DESCRIPTION, "Add an address");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Add a new address.");	//set the long description G***i18n
 			putValue(MNEMONIC_KEY, new Integer('a'));  //set the mnemonic key G***i18n
-			putValue(SMALL_ICON, IconResources.getIcon(IconResources.ADD_ICON_FILENAME)); //load the correct icon TODO use a better icon
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.MAIL_ICON_FILENAME)); //load the correct icon
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.CTRL_MASK)); //add the accelerator
 		}
 	
@@ -377,7 +375,7 @@ public class AddressesPanel extends ContentPanel
 			putValue(SHORT_DESCRIPTION, "Add a label");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Add a new label.");	//set the long description G***i18n
 			putValue(MNEMONIC_KEY, new Integer('l'));  //set the mnemonic key G***i18n
-			putValue(SMALL_ICON, IconResources.getIcon(IconResources.ADD_ICON_FILENAME)); //load the correct icon TODO use a better icon
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.NOTE_ICON_FILENAME)); //load the correct icon
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.CTRL_MASK)); //add the accelerator
 		}
 	
@@ -406,7 +404,7 @@ public class AddressesPanel extends ContentPanel
 			putValue(SHORT_DESCRIPTION, "Remove this address or label");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Remove the selected address or label.");	//set the long description G***i18n
 			putValue(MNEMONIC_KEY, new Integer('e'));  //set the mnemonic key G***i18n
-			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SUBTRACT_ICON_FILENAME)); //load the correct icon
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.DELETE_ICON_FILENAME)); //load the correct icon
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.CTRL_MASK)); //add the accelerator
 		}
 	

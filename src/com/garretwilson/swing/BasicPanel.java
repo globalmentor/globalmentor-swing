@@ -38,6 +38,8 @@ import com.garretwilson.util.*;
 <dl>
 	<dt><code>BasicPanel.TITLE_PROPERTY_NAME</code> (<code>String</code>)</dt>
 	<dd>Indicates the title has been changed.</dd>
+	<dt><code>BasicPanel.ICON_PROPERTY_NAME</code> (<code>Icon</code>)</dt>
+	<dd>Indicates the icon has been changed.</dd>
 	<dt><code>Modifiable.MODIFIED_PROPERTY_NAME</code> (<code>Boolean</code>)</dt>
 	<dd>Indicates that the boolean modified property has been changed.</dd>
 </dl>
@@ -54,6 +56,8 @@ public class BasicPanel extends JPanel implements CanClosable, DefaultFocusable,
 
 	/**The name of the bound title property.*/
 	public final String TITLE_PROPERTY_NAME=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"title";	//G***maybe later move this to a titleable interface
+	/**The name of the bound icon property.*/
+	public final String ICON_PROPERTY_NAME=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"icon";
 
 	/**The preferences that should be used for this panel, or <code>null</code>
 		if the default preferences for this class should be used.
@@ -167,7 +171,27 @@ public class BasicPanel extends JPanel implements CanClosable, DefaultFocusable,
 			if(!ObjectUtilities.equals(oldTitle, newTitle))  //if the value is really changing
 			{
 				title=newTitle; //update the value					
-				firePropertyChange(TITLE_PROPERTY_NAME, oldTitle, newTitle);	//show that the title property has changed
+				firePropertyChange(TITLE_PROPERTY_NAME, oldTitle, newTitle);	//show that the property has changed
+			}
+		}
+
+	/**The icon of the panel, or <code>null</code> if there is no icon.*/
+	private Icon icon=null;
+
+		/**@return The icon of the panel, or <code>null</code> if there is no icon.*/
+		public Icon getIcon() {return icon;}
+
+		/**Sets the icon of the panel.
+		This is a bound property.
+		@param newIcon The new icon of the panel, or <code>null</code> for no icon.
+		*/
+		public void setIcon(final Icon newIcon)
+		{
+			final Icon oldIcon=icon; //get the old title value
+			if(oldIcon!=newIcon)  //if the value is really changing
+			{
+				icon=newIcon; //update the value					
+				firePropertyChange(ICON_PROPERTY_NAME, oldIcon, newIcon);	//show that the property has changed
 			}
 		}
 
@@ -260,9 +284,11 @@ public class BasicPanel extends JPanel implements CanClosable, DefaultFocusable,
 	}
 
 	/**Requests that the default focus component should get the default.
-	If the default focus comonent is itself <code>DefaultFocusable</code>, that
+	<p>If the component is a tab in a tabbed pane, that tab in the tabbed pane
+		is selected.</p>
+	<p>If the default focus comonent is itself <code>DefaultFocusable</code>, that
 		component is asked to request focus for its default focus component, and
-		so on.
+		so on.</p>
 	@return <code>false</code> if the focus change request is guaranteed to
 		fail; <code>true</code> if it is likely to succeed.
 	@see Component#requestFocusInWindow
@@ -270,6 +296,10 @@ public class BasicPanel extends JPanel implements CanClosable, DefaultFocusable,
 	public boolean requestDefaultFocusComponentFocus()
 	{
 		final Component defaultFocusComponent=getDefaultFocusComponent();	//get the default focus component
+		if(defaultFocusComponent!=null)	//if there is a default focus component, make sure its parent tabs are selected if it's in a tabbed pane
+		{
+			TabbedPaneUtilities.setSelectedParentTabs(defaultFocusComponent);	//select the tabs of any parent tabbed panes
+		}
 		if(defaultFocusComponent instanceof DefaultFocusable	//if the component is itself default focusable
 				&& ((DefaultFocusable)defaultFocusComponent).getDefaultFocusComponent()!=defaultFocusComponent)	//and the default focus component does not reference itself (which would create an endless loop)
 		{

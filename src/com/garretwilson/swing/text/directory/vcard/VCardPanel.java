@@ -98,7 +98,11 @@ public class VCardPanel extends ContentPanel implements Verifiable
 	public VCard getVCard()
 	{
 		final VCard vcard=new VCard();	//create a new vCard
-		vcard.setDisplayName(getIdentificationPanel().getFormattedName());	//TODO fix
+		final LocaleText displayName=getIdentificationPanel().getFormattedName()!=null
+				? getIdentificationPanel().getFormattedName()		//use the formatted name as the display name
+				: getOrganizationPanel().getOrganizationName();		//use the company name if there is no formatted name
+			//TODO decide how to come up with a display name if there is neither formatted name nor organization name
+		vcard.setDisplayName(displayName);
 		vcard.setName(getIdentificationPanel().getVCardName());
 		vcard.setFormattedName(getIdentificationPanel().getFormattedName());
 		vcard.setNicknames(getIdentificationPanel().getNicknames());
@@ -126,6 +130,7 @@ public class VCardPanel extends ContentPanel implements Verifiable
 		organizationPanel=nameAddressPanel.getOrganizationPanel();
 		telecommunicationsPanel=nameAddressPanel.getTelecommunicationsPanel();
 		explanatoryPanel=new ExplanatoryPanel();
+		setDefaultFocusComponent(nameAddressPanel);
 		initialize(); //initialize the panel
 	}
 

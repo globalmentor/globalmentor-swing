@@ -220,6 +220,7 @@ public class IdentificationPanel extends BasicVCardPanel
 		if(shouldUpdateFormattedName)	//if the formatted name matched the information in the name panel the last time the formatted name was modified
 		{
 			formattedNameTextField.setText(getVCardName()!=null ? getVCardName().toString() : "");	//update the formatted name label to reflect the current state of the name information
+			getSelectFormattedNameLanguageAction().setLocale(getVCardName()!=null ? getVCardName().getLocale() : null);	//update the formatted name language
 		}
 	}
 	

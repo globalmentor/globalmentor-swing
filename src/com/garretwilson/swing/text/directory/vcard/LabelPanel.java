@@ -124,6 +124,7 @@ public class LabelPanel extends BasicVCardPanel
 		addressTypeButton.setHorizontalTextPosition(SwingConstants.LEFT);
 		selectLanguageAction=new SelectLanguageAction(null, this);
 		labelTextPane=new JTextPane();
+		setIcon(IconResources.getIcon(IconResources.NOTE_ICON_FILENAME));
 		setDefaultFocusComponent(labelTextPane);	//set the default focus component
 		initialize();	//initialize the panel
 		setLabel(label);	//set the label
