@@ -18,6 +18,7 @@ import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.event.ProgressListener;
 import com.garretwilson.swing.text.AnonymousElement;
 //G***del if not needed import com.garretwilson.swing.text.ViewHidable;
+import com.garretwilson.swing.text.ContainerBoxView;
 import com.garretwilson.swing.text.ContainerView;
 import com.garretwilson.swing.text.ViewReleasable;
 import com.garretwilson.swing.text.ViewUtilities;
@@ -108,7 +109,7 @@ A copy of our...
 */
 
 	/**@return The layout pool for the pages.*/
-	protected View getPagePoolView() {return layoutPool;}
+	protected PagePoolView getPagePoolView() {return (PagePoolView)layoutPool;}
 
 	/**Sets the layout pool for the pages.
 	@param logicalView The logical view from which pages will be created.
@@ -418,8 +419,7 @@ A copy of our...
 	@param width <code>true</code> if the width preference should change.
 	@param height <code>true</code> if the height preference should change.
 	*/
-	public void preferenceChanged(View child, boolean width, boolean height) {} //G***testing
-
+//G***testing del	public void preferenceChanged(View child, boolean width, boolean height) {} //G***testing
 
 	/* ***View methods*** */
 
@@ -430,7 +430,7 @@ A copy of our...
 	@param area The area being changed.
 	@param viewFactory The view factory responsible for creating views
 	*/
-	public void insertUpdate(DocumentEvent changes, Shape area, ViewFactory viewFactory) {} //G***maybe later fix these to update appropriate cached layout pools
+//G***testing del	public void insertUpdate(DocumentEvent changes, Shape area, ViewFactory viewFactory) {} //G***maybe later fix these to update appropriate cached layout pools
 
 	/**Because a paged view merely uses its child views as cached pages, it is not
 		interested in knowing if have had updates. This method therefore does
@@ -439,7 +439,7 @@ A copy of our...
 	@param area The area being changed.
 	@param viewFactory The view factory responsible for creating views
 	*/
-	public void removeUpdate(DocumentEvent changes, Shape area, ViewFactory viewFactory) {}
+//G***testing del	public void removeUpdate(DocumentEvent changes, Shape area, ViewFactory viewFactory) {}
 
 	/**Because a paged view merely uses its child views as cached pages, it is not
 		interested in knowing if have had updates. This method therefore does
@@ -448,7 +448,26 @@ A copy of our...
 	@param area The area being changed.
 	@param viewFactory The view factory responsible for creating views
 	*/
-	public void changedUpdate(DocumentEvent changes, Shape a, ViewFactory f) {}
+//G***testing del	public void changedUpdate(DocumentEvent changes, Shape a, ViewFactory f) {}
+
+  /**
+   * Gives notification from the document that attributes were changed
+   * in a location that this view is responsible for.
+   *
+   * @param changes the change information from the 
+   *	associated document
+   * @param a the current allocation of the view
+   * @param f the factory to use to rebuild if the view has children
+   * @see View#changedUpdate
+   */
+  public void changedUpdate(DocumentEvent changes, Shape a, ViewFactory f) {
+      // update any property settings stored, and layout should be 
+// recomputed 
+//G***fix setPropertiesFromAttributes();
+layoutChanged(X_AXIS);
+layoutChanged(Y_AXIS);
+super.changedUpdate(changes, a, f);
+  }
 
 	/**Renders using the given rendering surface and area on that surface. This
 		function only paints the currently selected page.
@@ -741,14 +760,9 @@ Debug.trace("Ready to paint page "+pageIndex+" with parent: ", pageView.getParen
 			pageWidth=width;	//show that the widths will all be the same
 			pageHeight=(height/displayPageCount);	//show that the pages will each be a fraction of the total height
 		}
-		setPageSize(pageWidth, pageHeight);	//update the page size, which will update the page pool and the pooled child views TODO maybe do this when reparenting
-		super.setSize(width, height);
-//G***del		super.setSize(getPageWidth(), getPageHeight());
-/*G***fix
-layout((int)(width - getLeftInset() - getRightInset()), 
-       (int)(height - getTopInset() - getBottomInset()));
-*/
-  }
+		setPageSize(pageWidth, pageHeight);	//update the page size, which will update the page pool and the pooled child views
+		super.setSize(width, height);	//set the size normally
+	}
 
 	/**
 	 * Perform layout for the minor axis of the box (i.e. the
@@ -1270,7 +1284,7 @@ Debug.trace("pageWidth: "+pageWidth+" pageWidth/pos: "+pageWidth/(x-(alloc.x+get
 		it contains, not the element it represents.
 	@author Garret Wilson
 	*/
-	protected class Page extends ContainerView
+	protected class Page extends ContainerBoxView
 	{
 		/**Page constructor that specifies the element from which the information will come.
 		@param element The element that contains the information to display.
@@ -1548,7 +1562,7 @@ else	//if we're tiling on the Y axis
 	/**Strategy for pagination.
 	@author Garret Wilson
 	*/
-	public static class PaginateStrategy extends FlowStrategy
+	public class PaginateStrategy extends FlowStrategy
 	{
 
 /**
@@ -1625,15 +1639,30 @@ fv.layoutChanged(View.Y_AXIS);
 * @param fv the view to reflow
 */
 public void layout(FlowView fv) {
+/*G***testing vertical; del; fixed
+  fv.removeAll();
+	layoutPool=null;	//G***testing vertical position
+	loadChildren(getViewFactory());
+layoutPool.setSize((int)getWidth()-getPageLeftInset()-getPageRightInset(), (int)getHeight()-getPageTopInset()-getPageBottomInset());	//set the size of the page pool to be exactly the size of the displayed page; giving insets to the page pool results in incorrect layout
+*/
+
+
+
+
   int p0 = fv.getStartOffset(); 
   int p1 = fv.getEndOffset();
 
   // we want to preserve all views from the logicalView from being 
   // removed
   View lv = getLogicalView(fv);
+  	//G***del; fixed vertical bug
+//G***fix	lv.setSize((int)getWidth()-getPageLeftInset()-getPageRightInset(), (int)getHeight()-getPageTopInset()-getPageBottomInset());	//set the size of the page pool to be exactly the size of the displayed page; giving insets to the page pool results in incorrect layout
+//G***fix ViewUtilities.reparentHierarchy(lv); //make sure all the child views have correct parents (previous layouts could cause, for instance, a paragraph row to think it has a parent of a now-unused paragraph fragement)
+//G***fix	lv.setSize((int)getWidth()-getPageLeftInset()-getPageRightInset(), (int)getHeight()-getPageTopInset()-getPageBottomInset());	//set the size of the page pool to be exactly the size of the displayed page; giving insets to the page pool results in incorrect layout
   int n = lv.getViewCount();
   for( int i = 0; i < n; i++ ) {
 View v = lv.getView(i);
+//TODO del ViewUtilities.reparentHierarchy(v); //make sure all the child views have correct parents (previous layouts could cause, for instance, a paragraph row to think it has a parent of a now-unused paragraph fragement)
 v.setParent(lv);
   }
   fv.removeAll();
@@ -1863,7 +1892,7 @@ return v;
 	other flowing views, this view allows for pre-pagination by setting its size.
 	@author Garret Wilson
 	*/
-	protected class PagePoolView extends ContainerView
+	protected class PagePoolView extends ContainerBoxView
 	{
 
 		/**Constructor that uses a tiling axis orthogonal to the tiling axis of individual pages.
@@ -1917,9 +1946,24 @@ return v;
 		*/
 		protected void forwardUpdateToView(final View view, final DocumentEvent event, final Shape allocation, final ViewFactory factory)
 		{
-			view.setParent(this);	//reparent the view to the pool
+			view.setParent(this);	//reparent the view to the pool G***is this needed, with the new layout() below? should this reparent the hierarchy? investigate super versions to see exactly what this does
 			super.forwardUpdateToView(view, event, allocation, factory);	//forward the update normally
 		}
+
+		/**Performs layout on the page pool.
+		This implementation first takes the important step of reparenting the entire hierarchy of views in the pool.
+		Some whole views could have been parented to fragments, and without reparenting, layout cannot reliably
+		occur. Without this step, some views would prefer a size under the old layout, resulting in vertical
+		gaps if layout changed from small to large. 
+		@param width The width inside the insets (>=0).
+		@param height The height inside the insets (>=0).
+		*/
+		protected void layout(int width, int height)	//TODO eventually something similar should go into all layout-able views; this works here because it is in the top-most hierarchy and reparents the entire hierarchy
+		{
+			ViewUtilities.reparentHierarchy(this); //make sure all the child views have correct parents (previous layouts could cause, for instance, a paragraph row to think it has a parent of a now-unused paragraph fragement)
+			super.layout(width, height);	//do the default layout
+		}
+
 	}
 
 }

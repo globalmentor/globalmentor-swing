@@ -9,14 +9,14 @@ import javax.swing.text.*;
 
 import com.garretwilson.util.Debug;
 
-/**An unconstrained view that contains other views.
-No assumptions are made about the order, size, or offsets of the child views, unlike <code>CompositeView</code>.
+/**A view that contains other views, constrained in a box.
+No assumptions are made about the order, size, or offsets of the child views, unlike <code>BoxView</code>.
 This class consequently determines view index based upon document position without relying on underlying
 element order and offsets.
 Beginning and ending offsets are determined based upon the contained views.
 @author Garret Wilson
 */
-public class ContainerView extends CompositeView
+public class ContainerBoxView extends BoxView
 {
 
 	/**The shared default break strategy for container views.*/
@@ -55,9 +55,9 @@ public class ContainerView extends CompositeView
 	@param element The element this view is responsible for.
 	@param axis Either <code>View.X_AXIS</code> or <code>View.Y_AXIS</code>
 	*/
-	public ContainerView(final Element element, final int axis)
+	public ContainerBoxView(final Element element, final int axis)
 	{
-		super(element);	//construct the parent class
+		super(element, axis);	//construct the parent class
 	}
 
 	/**Replaces child views, which can function as an insert or a remove.
@@ -151,134 +151,6 @@ public class ContainerView extends CompositeView
 			}
 		}
 		return -1;	//if we make it to this point, we haven't been able to find a view with the specified position
-	}
-
-	/**
-	 * Determines the preferred span for this view along an
-	 * axis.
-	 *
-	 * @param axis may be either View.X_AXIS or View.Y_AXIS
-	 * @return   the span the view would like to be rendered into.
-	 *           Typically the view is told to render into the span
-	 *           that is returned, although there is no guarantee.  
-	 *           The parent may choose to resize or break the view.
-	 * @see View#getPreferredSpan
-	 */
-        public float getPreferredSpan(int axis) {	//TODO maybe cache these values
-	    float maxpref = 0;
-	    float pref = 0;
-	    int n = getViewCount();
-	    for (int i = 0; i < n; i++) {
-		View v = getView(i);
-		pref += v.getPreferredSpan(axis);
-		if (v.getBreakWeight(axis, 0, Integer.MAX_VALUE) >= ForcedBreakWeight) {
-		    maxpref = Math.max(maxpref, pref);
-		    pref = 0;
-		}
-	    }
-	    maxpref = Math.max(maxpref, pref);
-	    return maxpref;
-	}
-
-	/**
-	 * Determines the minimum span for this view along an
-	 * axis.  The is implemented to find the minimum unbreakable
-	 * span.
-	 *
-	 * @param axis may be either View.X_AXIS or View.Y_AXIS
-	 * @return  the span the view would like to be rendered into.
-	 *           Typically the view is told to render into the span
-	 *           that is returned, although there is no guarantee.  
-	 *           The parent may choose to resize or break the view.
-	 * @see View#getPreferredSpan
-	 */
-        public float getMinimumSpan(int axis) {	//TODO maybe cache these values
-	    float maxmin = 0;
-	    float min = 0;
-	    boolean nowrap = false;
-	    int n = getViewCount();
-	    for (int i = 0; i < n; i++) {
-		View v = getView(i);
-		if (v.getBreakWeight(axis, 0, Integer.MAX_VALUE) == BadBreakWeight) {
-		    min += v.getPreferredSpan(axis);
-		    nowrap = true;
-		} else if (nowrap) {
-		    maxmin = Math.max(min, maxmin);
-		    nowrap = false;
-		    min = 0;
-		}
-	    }
-	    maxmin = Math.max(maxmin, min);
-	    return maxmin;
-	}
-
-	//TODO recomment dummy methods
-
-	/**
-	 * Renders using the given rendering surface and area on that
-	 * surface.  This is implemented to do nothing, the logical
-	 * view is never visible.
-	 *
-	 * @param g the rendering surface to use
-	 * @param allocation the allocated region to render into
-	 * @see View#paint
-	 */
-        public void paint(Graphics g, Shape allocation) {
-	}
-
-	/**
-	 * Tests whether a point lies before the rectangle range.
-	 * Implemented to return false, as hit detection is not
-	 * performed on the logical view.
-	 *
-	 * @param x the X coordinate >= 0
-	 * @param y the Y coordinate >= 0
-	 * @param alloc the rectangle
-	 * @return true if the point is before the specified range
-	 */
-        protected boolean isBefore(int x, int y, Rectangle alloc) {
-	    return false;
-	}
-
-	/**
-	 * Tests whether a point lies after the rectangle range.
-	 * Implemented to return false, as hit detection is not
-	 * performed on the logical view.
-	 *
-	 * @param x the X coordinate >= 0
-	 * @param y the Y coordinate >= 0
-	 * @param alloc the rectangle
-	 * @return true if the point is after the specified range
-	 */
-        protected boolean isAfter(int x, int y, Rectangle alloc) {
-	    return false;
-	}
-
-	/**
-	 * Fetches the child view at the given point.
-	 * Implemented to return null, as hit detection is not
-	 * performed on the logical view.
-	 *
-	 * @param x the X coordinate >= 0
-	 * @param y the Y coordinate >= 0
-	 * @param alloc the parent's allocation on entry, which should
-	 *   be changed to the child's allocation on exit
-	 * @return the child view
-	 */
-        protected View getViewAtPoint(int x, int y, Rectangle alloc) {
-	    return null;
-	}
-
-	/**
-	 * Returns the allocation for a given child.
-	 * Implemented to do nothing, as the logical view doesn't
-	 * perform layout on the children.
-	 *
-	 * @param index the index of the child, >= 0 && < getViewCount()
-	 * @param a  the allocation to the interior of the box on entry, 
-	 *   and the allocation of the child view at the index on exit.
-	 */
-        protected void childAllocation(int index, Rectangle a) {
 	}
 
 	/**A break strategy for views that contain other views and may be parceled up into fragments.

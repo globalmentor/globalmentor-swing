@@ -7,11 +7,13 @@ import javax.swing.SizeRequirements;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.*;
 
+import com.garretwilson.swing.text.ContainerBoxView;
 import com.garretwilson.swing.text.ContainerView;
 import com.garretwilson.swing.text.FragmentView;
 import com.garretwilson.swing.text.FragmentViewFactory;
 import com.garretwilson.swing.text.SwingTextUtilities;
 import com.garretwilson.swing.text.ViewBreakStrategy;
+import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.text.ViewsFactory;
 import com.garretwilson.swing.text.ViewReleasable;
 import com.garretwilson.swing.text.ContainerView.ContainerBreakStrategy;
@@ -419,7 +421,7 @@ Debug.trace(); //G***testing
 	/**Internally created view that holds the views representing a paragraph line.
 	@author Garret Wilson
 	*/
-	protected class Line extends ContainerView
+	protected class Line extends ContainerBoxView
 	{
 		/**Constructor.
 		@param element The paragraph element.
@@ -845,20 +847,8 @@ Debug.trace(); //G***testing
 	/**The class that serves as a fragment if the paragraph is broken.
 	@author Garret Wilson
 	*/
-	protected class XMLParagraphFragmentView extends XMLBlockView implements FragmentView //G***descend from XMLFragmentBlockView
+	protected class XMLParagraphFragmentView extends XMLFragmentBlockView
 	{
-
-		/**Whether this is the first fragment of the original view.*/
-		private final boolean isFirstFragment;
-
-			/**@return <code>true</code> if this is the first fragment of the original view.*/
-			public boolean isFirstFragment() {return isFirstFragment;}
-
-		/**Whether this is the last fragment of the original view.*/
-		private final boolean isLastFragment;
-
-			/**@return <code>true</code> if this is the last fragment of the original view.*/
-			public boolean isLastFragment() {return isLastFragment;}
 
 		/**Constructs a fragment view for the paragraph.
 		@param element The element this view is responsible for.
@@ -868,9 +858,7 @@ Debug.trace(); //G***testing
 		*/
 		public XMLParagraphFragmentView(Element element, int axis, final boolean firstFragment, final boolean lastFragment)
 		{
-			super(element, axis); //do the default construction
-			isFirstFragment=firstFragment;  //save whether we are the first fragment of the original view
-			isLastFragment=lastFragment;  //save whether we are the last fragment of the original view
+			super(element, axis, firstFragment, lastFragment); //do the default construction
 		}
 
 		/**Perform layout for the minor axis of the box (i.e. the axis orthoginal to

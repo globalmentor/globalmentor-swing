@@ -515,7 +515,7 @@ Debug.trace("setting properties, background color: ", getBackgroundColor());  //
 	@param isLastFragment Whether this fragment holds the last part of the
 		original view.
 	*/
-	protected View createFragmentView(final boolean isFirstFragment, final boolean isLastFragment)
+	public View createFragmentView(final boolean isFirstFragment, final boolean isLastFragment)
 	{
 		//G***maybe instead of putting fragment functionality here, only copy components if they are to be used
 
@@ -531,7 +531,7 @@ Debug.trace("setting properties, background color: ", getBackgroundColor());  //
 		beforeLineBeginsComponent,
 		isFirstFragment, isLastFragment);
 
-		fragmentView.setParent(getParent());				  //G***testing; comment
+//G***del; make sure works with new BreakStrategy framework		fragmentView.setParent(getParent());				  //G***testing; comment
 
 /*G***del when works
 		fragmentView.afterLastLineComponent=afterLastLineComponent; //update the components in the fragment view

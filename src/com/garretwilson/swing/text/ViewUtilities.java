@@ -2,6 +2,7 @@ package com.garretwilson.swing.text;
 
 import java.io.PrintStream;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.BoxView;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Document;
 import javax.swing.text.View;
@@ -71,6 +72,13 @@ public class ViewUtilities
 		  if(childView.getParent()!=view)  //if this view has a different parent than this one
 		  {
 				childView.setParent(view);	//set this view's parent to the parent view
+/*G***del; trying to fix vertical bug
+				if(childView instanceof BoxView)	//G***testing vertical layout
+				{
+					((BoxView)childView).layoutChanged(View.X_AXIS);
+					((BoxView)childView).layoutChanged(View.Y_AXIS);
+				}
+*/
 		  }
 			reparentHierarchy(childView);  //reparent all views under this one
 		}

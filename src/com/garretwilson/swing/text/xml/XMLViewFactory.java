@@ -280,7 +280,9 @@ public class XMLViewFactory implements ViewsFactory
 //G***del Debug.trace("is Paragraph view:"+(!isTableRow && isBlockElement && hasInlineChildren && !hasBlockChildren));  //G***del
 			//a block element that has only inline children and no block children will be a paragraph view
 			if(!isTableRow && isBlockElement && hasInlineChildren && !hasBlockChildren)
+			{
 				return new XMLParagraphView(element);	//create and return a paragraph view G***change name to paragraph view
+			}
 /*G***del when works
 			//those elements marked to have paragraph views take precedence over their block/inline specification
 			if(XMLStyleConstants.isParagraphView(attributeSet))	//show that the anonymous block should be a paragraph view

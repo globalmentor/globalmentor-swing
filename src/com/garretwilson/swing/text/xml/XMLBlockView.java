@@ -21,7 +21,7 @@ Any non-block child views are wrapped in anonymous block views.
 @see javax.swing.text.BoxView
 */
 //G***fix public class XMLBlockView extends com.garretwilson.swing.text.CompositeView implements XMLCSSView	//G***newswing
-public class XMLBlockView extends ContainerView implements XMLCSSView, FragmentViewFactory
+public class XMLBlockView extends ContainerBoxView implements XMLCSSView, FragmentViewFactory
 {
 
 	/**The shared empty array of elements.*/
@@ -66,7 +66,7 @@ public class XMLBlockView extends ContainerView implements XMLCSSView, FragmentV
 	protected void loadChildren(final ViewFactory viewFactory)
 	{
 		final View[] createdViews=createBlockElementChildViews(getElement(), viewFactory);  //create the child views
-		replace(0, 0, createdViews);  //load our created views as children
+		replace(0, getViewCount(), createdViews);  //load our created views as children
 	}
 
 	/**Creates child views of a block element.
