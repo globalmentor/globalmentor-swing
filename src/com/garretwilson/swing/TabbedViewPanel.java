@@ -207,6 +207,7 @@ public abstract class TabbedViewPanel extends ModelViewablePanel implements Mode
 	protected void initializeUI()
 	{
 		super.initializeUI(); //do the default UI initialization
+		getTabbedPane().setTabPlacement(JTabbedPane.BOTTOM);	//put the tabs on the bottom
 		add(getTabbedPane(), BorderLayout.CENTER);	//add the tabbed pane to the center of the panel
 		getTabbedPane().addChangeListener(new ChangeListener()	//listen for tab changes
 				{

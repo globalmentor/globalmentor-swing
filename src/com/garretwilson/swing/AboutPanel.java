@@ -224,12 +224,9 @@ public class AboutPanel extends BasicPanel implements CharacterConstants
 			if(resource!=null)	//if we have a resource
 			{
 				final RDFPanel rdfPanel=new RDFPanel(new RDFResourceModel(resource));  //create a new panel in which to show the resource
+				rdfPanel.setEditable(false);	//don't allow this RDF to be edited
 					//show the properties in an information dialog
 				OptionPane.showMessageDialog(AboutPanel.this, rdfPanel, (getTitle()!=null ? getTitle()+' ' : "")+"Properties", OptionPane.INFORMATION_MESSAGE);	//G***i18n
-
-//TODO remove the new ContentPanel() when we've put the RDF tabbed pane into its own content panel 				
-				
-//G***del if not needed				new JOptionPane(new ContentPanel(rdfTabbedPane), JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION).createDialog(Book.this, "Properties").show();  //G***i18n
 			}
 		}
 	}

@@ -170,7 +170,6 @@ public class XMLPanel extends TabbedViewPanel
 	protected void initializeUI()
 	{
 		super.initializeUI(); //do the default UI initialization
-		getTabbedPane().setTabPlacement(JTabbedPane.BOTTOM);
 //G***fix		xmlTextPane.setContentType(MediaType.APPLICATION_XHTML_XML);	//set the content type to "application/xhtml+xml" G***maybe allow this panel to support multiple MIME types, and put the setting of the type back into XHTMLResourceKit
 		addView(WYSIWYG_MODEL_VIEW, getXMLTextPane().getContentType(), getXMLScrollPane());	//add the XML text pane as the WYSIWYG view G***i18n
 		addView(SOURCE_MODEL_VIEW, "XML", getSourceScrollPane());	//add the source XML text pane as the source view G***i18n
