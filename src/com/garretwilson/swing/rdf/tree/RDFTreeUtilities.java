@@ -3,7 +3,7 @@ package com.garretwilson.swing.rdf.tree;
 import java.util.*;
 import javax.swing.tree.*;
 import com.garretwilson.rdf.*;
-import com.garretwilson.rdf.xpackage.FilePropertiesConstants;
+import com.garretwilson.rdf.xpackage.FileOntologyConstants;
 import com.garretwilson.rdf.xpackage.XPackageUtilities;
 import com.garretwilson.util.*;
 
@@ -52,7 +52,7 @@ public class RDFTreeUtilities
 	{
 		final RDFResourceTreeNode rdfResourceTreeNode=new RDFResourceTreeNode(rdfResource); //create a new tree node to represent the RDF resource
 		  //if this is a folder
-		if(RDFUtilities.isType(rdfResource, FilePropertiesConstants.FILE_PROPERTIES_NAMESPACE_URI, FilePropertiesConstants.FOLDER_RESOURCE_TYPE_NAME))
+		if(RDFUtilities.isType(rdfResource, FileOntologyConstants.FILE_NAMESPACE_URI, FileOntologyConstants.FOLDER_TYPE_NAME))
 		{
 			final RDFBagResource manifest=XPackageUtilities.getManifest(rdfResource); //get the resource manifest
 			if(manifest!=null)  //if the resource has a manifest
