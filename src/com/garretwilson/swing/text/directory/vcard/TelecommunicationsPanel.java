@@ -110,7 +110,7 @@ public class TelecommunicationsPanel extends ContentPanel
 				}
 			}
 		}
-		return (Email[])emailList.toArray(new Telephone[emailList.size()]);	//return an array of the emails we collected
+		return (Email[])emailList.toArray(new Email[emailList.size()]);	//return an array of the emails we collected
 	}
 
 	/**Places telephones and emails in the panel.

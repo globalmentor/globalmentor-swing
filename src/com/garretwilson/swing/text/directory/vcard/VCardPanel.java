@@ -84,18 +84,36 @@ public class VCardPanel extends ContentPanel
 	*/
 	public void setVCard(final VCard vcard)
 	{
-		nameAddressPanel.getIdentificationPanel().setVCardName(vcard.getName());
-		nameAddressPanel.getIdentificationPanel().setFormattedName(vcard.getFormattedName());
-		nameAddressPanel.getIdentificationPanel().setNicknames(LocaleText.toLocaleTextArray(vcard.getNicknameList()));
-		nameAddressPanel.getOrganizationPanel().setOrganizationName(vcard.getOrganizationName());
-		nameAddressPanel.getOrganizationPanel().setUnits(vcard.getOrganizationUnits());
-		nameAddressPanel.getOrganizationPanel().setJobTitle(vcard.getTitle());
-		nameAddressPanel.getOrganizationPanel().setRole(vcard.getRole());
+		getIdentificationPanel().setVCardName(vcard.getName());
+		getIdentificationPanel().setFormattedName(vcard.getFormattedName());
+		getIdentificationPanel().setNicknames(LocaleText.toLocaleTextArray(vcard.getNicknameList()));
+		getOrganizationPanel().setOrganizationName(vcard.getOrganizationName());
+		getOrganizationPanel().setUnits(vcard.getOrganizationUnits());
+		getOrganizationPanel().setJobTitle(vcard.getTitle());
+		getOrganizationPanel().setRole(vcard.getRole());
 		final Telephone[] telephones=(Telephone[])vcard.getTelephoneList().toArray(new Telephone[vcard.getTelephoneList().size()]);
 		final Email[] emails=(Email[])vcard.getEmailList().toArray(new Email[vcard.getEmailList().size()]);
-		nameAddressPanel.getTelecommunicationsPanel().setTelecommunications(telephones, emails);
-		explanatoryPanel.setCategories(LocaleText.toLocaleTextArray(vcard.getCategoryList()));
-		explanatoryPanel.setNote(vcard.getNote());
+		getTelecommunicationsPanel().setTelecommunications(telephones, emails);
+		getExplanatoryPanel().setCategories(LocaleText.toLocaleTextArray(vcard.getCategoryList()));
+		getExplanatoryPanel().setNote(vcard.getNote());
+	}
+
+	/**@return A vCard object representing the information being edited.*/
+	public VCard getVCard()
+	{
+		final VCard vcard=new VCard();	//create a new vCard
+		vcard.setName(getIdentificationPanel().getVCardName());
+		vcard.setFormattedName(getIdentificationPanel().getFormattedName());
+		vcard.setNicknames(getIdentificationPanel().getNicknames());
+		vcard.setOrganizationName(getOrganizationPanel().getOrganizationName());
+		vcard.setOrganizationUnits(getOrganizationPanel().getUnits());
+		vcard.setTitle(getOrganizationPanel().getJobTitle());
+		vcard.setRole(getOrganizationPanel().getRole());
+		vcard.setTelephones(getTelecommunicationsPanel().getTelephones());
+		vcard.setEmails(getTelecommunicationsPanel().getEmails());
+		vcard.setCategories(getExplanatoryPanel().getCategories());
+		vcard.setNote(getExplanatoryPanel().getNote());
+		return vcard;	//return the vcard we constructed
 	}
 
 	/**Default constructor.*/
