@@ -733,7 +733,7 @@ Debug.trace("found input stream locator, getting input stream to URI: ", uri); /
 			else	//if we don't recognize this image type
 				throw new IOException("Unrecognized image type: \""+mediaType.getSubtype()+"\"; only \""+MediaType.JPEG+"\", \""+MediaType.PNG+"\", and \""+MediaType.GIF+"\" are currently supported.");	//G***i18n G***fix for other image types
 		}
-		else if(mediaType.getTopLevelType().equals(MediaType.AUDIO))	//if this is an audio media type
+		else if(MediaTypeUtilities.isAudio(mediaType))	//if this is an audio media type
 		{
 			final InputStream inputStream=new BufferedInputStream(getResourceAsInputStream(resourceURI));	//get a buffered input stream to the audio
 //G***we should really close the input stream if something goes wrong
@@ -745,11 +745,11 @@ Debug.trace("found input stream locator, getting input stream to URI: ", uri); /
 			}
 			catch(UnsupportedAudioFileException unsupportedAudioFileException)
 			{
-				throw new IOException("The format of "+resourceURI+" of type "+mediaType+" is unsupported: "+unsupportedAudioFileException.getMessage());	//G***i18n
+				throw (IOException)new IOException("The format of "+resourceURI+" of type "+mediaType+" is unsupported.").initCause(unsupportedAudioFileException);	//G***i18n
 			}
 			catch(LineUnavailableException lineUnavailableException)
 			{
-				throw new IOException("There is no line available to the audio file "+resourceURI+" of type "+mediaType+": "+lineUnavailableException.getMessage());	//G***i18n
+				throw (IOException)new IOException("There is no line available to the audio file "+resourceURI+" of type "+mediaType+".").initCause(lineUnavailableException);	//G***i18n
 			}
 		}
 		else	//if we don't recognize this media type

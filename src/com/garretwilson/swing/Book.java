@@ -1332,8 +1332,9 @@ Debug.trace("Inside OEBBook.activateLink().");
 Debug.trace("Media type: ", mediaType);	//G***del
 			if(mediaType!=null)	//if we think we know the media type of the file involved
 			{
+					//TODO create convenience utility methods similar to MediaTypeUtilities.isAudio() for all of these checks
 				final String topLevelType=mediaType.getTopLevelType();  //get the top-level media type
-				if(topLevelType.equals(MediaType.AUDIO))	//if this is an audio media type
+				if(MediaTypeUtilities.isAudio(mediaType))	//if this is an audio media type
 				{
 Debug.trace("found an audio file.");
 //G***del; fix				  mouseEvent.consume(); //consume the event so that the mouse click won't be interpreted elsewhere

@@ -1,5 +1,6 @@
 package com.garretwilson.swing.rdf.tree;
 
+import java.net.URI;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.tree.*;

@@ -247,11 +247,14 @@ Debug.trace("URI: ", uri);	//G***del
 	protected boolean isLinkElement(final Element element)
 	{
 		final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-		final String xlinkType=XMLStyleUtilities.getXMLAttributeValue(attributeSet, XLinkConstants.XLINK_NAMESPACE_URI.toString(), XLinkConstants.TYPE);	//get the xlink:type of this element (if there is one)
+		final String xlinkType=XMLStyleUtilities.getXMLAttributeValue(attributeSet, XLinkConstants.XLINK_NAMESPACE_URI.toString(), XLinkConstants.ATTRIBUTE_TYPE);	//get the xlink:type of this element (if there is one)
 		if(xlinkType!=null)	//if this is an XLink element
 			return true;	//show that this is a link element
-		else if(attributeSet.getAttribute(XLinkConstants.XLINK_HREF)!=null)	//G***for now, until we support default attributes in the DTD, accept a link that only has an href
-			return true;	//G***del when default attributes are supported in the DTD
+				//G***for now, until we support default attributes in the DTD, accept a link that only has an xlink:href
+				//G***do we even need this anymore? del this and make xlink:type mandatory like the specification says
+//G***del		else if XMLStyleUtilities.getXMLAttributeValue(attributeSet, XLinkConstants.XLINK_NAMESPACE_URI.toString(), XLinkConstants.ATTRIBUTE_HREF);	//if there is an xlink:href
+//G***dle		else if(attributeSet.getAttribute(XLinkConstants.XLINK_HREF)!=null)	
+//G***del			return true;	//G***del when default attributes are supported in the DTD
 		else	//if this is another element
 			return false;	//show that this element doesn't have the xlink:type attribute
 	}
@@ -267,10 +270,10 @@ Debug.trace("URI: ", uri);	//G***del
 	protected String getLinkElementHRef(final Element element)
 	{
 		final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-		final String xlinkType=XMLStyleUtilities.getXMLAttributeValue(attributeSet, XLinkConstants.XLINK_NAMESPACE_URI.toString(), XLinkConstants.TYPE);	//get the xlink:type of this element (if there is one)
+		final String xlinkType=XMLStyleUtilities.getXMLAttributeValue(attributeSet, XLinkConstants.XLINK_NAMESPACE_URI.toString(), XLinkConstants.ATTRIBUTE_TYPE);	//get the xlink:type of this element (if there is one)
 //G***bring back when the DTD supports default attributes			if(xlinkType!=null)	//if this is an XLink element
 				//G***use getDefinedAttribute(), so as not to search up the hierarchy
-			return XMLStyleUtilities.getXMLAttributeValue(attributeSet, XLinkConstants.XLINK_NAMESPACE_URI.toString(), XLinkConstants.HREF);	//return the xlink:href of this element (if there is one)
+			return XMLStyleUtilities.getXMLAttributeValue(attributeSet, XLinkConstants.XLINK_NAMESPACE_URI.toString(), XLinkConstants.ATTRIBUTE_HREF);	//return the xlink:href of this element (if there is one)
 //G***bring back when the DTD supports default attributes			return null;	//show that this isn't an XLink element, because it didn't have an "xlink:type" attribute
 	}
 
