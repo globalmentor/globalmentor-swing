@@ -1,8 +1,5 @@
 package com.garretwilson.swing;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 import com.garretwilson.model.Resource;
 import com.garretwilson.util.CanClosable;
 
@@ -28,22 +25,29 @@ public abstract class ResourceComponentDecorator<R extends Resource> implements 
 	public ResourceComponentDecorator(final ResourceComponentManager<R> resourceComponentManager)
 	{
 		this.resourceComponentManager=resourceComponentManager;	//save the resource component manager
-		resourceComponentManager.addPropertyChangeListener(ResourceComponentManager.RESOURCE_COMPONENT_STATE_PROPERTY, new PropertyChangeListener()
+		resourceComponentManager.addResourceComponentListener(new ResourceComponentListener<R>()	//listen for resource component changes, and forward to our local methods
 				{
-					public void propertyChange(final PropertyChangeEvent propertyChangeEvent)	//when the resource component state changes, call the appropriate method
-					{
-						onResourceComponentStateChange((ResourceComponentManager<R>.ResourceComponentState)propertyChangeEvent.getOldValue(), (ResourceComponentManager<R>.ResourceComponentState)propertyChangeEvent.getNewValue()); 
-					}
+					public void onResourceComponentAdded(final ResourceComponentManager<R>.ResourceComponentState resourceComponentState) {ResourceComponentDecorator.this.onResourceComponentAdded(resourceComponentState);}
+					public void onResourceComponentRemoved(final ResourceComponentManager<R>.ResourceComponentState resourceComponentState) {ResourceComponentDecorator.this.onResourceComponentRemoved(resourceComponentState);}
+					public void onResourceComponentSelected(final ResourceComponentManager<R>.ResourceComponentState oldResourceComponentState, final ResourceComponentManager<R>.ResourceComponentState newResourceComponentState) {ResourceComponentDecorator.this.onResourceComponentSelected(oldResourceComponentState, newResourceComponentState);}
 				});
 	}
 
-	/**Called in response to a change in resource component.
-	@param oldResourceComponentState The old resource and component, or
-		<code>null</code> if there is no old component.
-	@param newResourceComponentState The new resource and component, or
-		<code>null</code> if there is no new component.
+	/**Called when a resource component is added.
+	@param resourceComponentState The resource and component added.
 	*/
-	protected abstract void onResourceComponentStateChange(final ResourceComponentManager<R>.ResourceComponentState oldResourceComponentState, final ResourceComponentManager<R>.ResourceComponentState newResourceComponentState);
+	protected abstract void onResourceComponentAdded(final ResourceComponentManager<R>.ResourceComponentState resourceComponentState);
+
+	/**Called when a resource component is removed.
+	@param resourceComponentState The resource and component removed.
+	*/
+	protected abstract void onResourceComponentRemoved(final ResourceComponentManager<R>.ResourceComponentState resourceComponentState);
+
+	/**Called when a resource component is selected.
+	@param oldResourceComponentState The previously selected resource and component.
+	@param newResourceComponentState The newly selected resource and component.
+	*/
+	protected abstract void onResourceComponentSelected(final ResourceComponentManager<R>.ResourceComponentState oldResourceComponentState, final ResourceComponentManager<R>.ResourceComponentState newResourceComponentState);
 
 	/**Determines if the resource component manager can close.
 	@return <code>true</code> if resource component manager can close

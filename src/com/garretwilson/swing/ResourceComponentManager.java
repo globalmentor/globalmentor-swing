@@ -8,29 +8,28 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.net.URI;
+import java.util.*;
 import javax.swing.*;
+import javax.swing.event.EventListenerList;
+
 import com.garretwilson.model.*;
 import com.garretwilson.resources.icon.IconResources;
+import static com.garretwilson.swing.ComponentUtilities.*;
 import com.garretwilson.util.*;
 
 /**An abstract class that manages resources, their views, and their modified
 	states. This class does not actually change the displayed component in any
 	container, relying on some other class to perform that function in response
 	to a change in resource component state.
-<p>Bound properties:</p>
-<dl>
-	<dt><code>RESOURCE_COMPONENT_STATE_PROPERTY</code> (<code>ResourceComponentManager.ResourceComponentState</code>)</dt>
-	<dd>Indicates that the resource component state has been changed.</dd>
-</dl>
 @param <R> The type of resource the components of which are being managed.
 @see ResourceComponentManager#ResourceComponentState
 @author Garret Wilson
 */
-public abstract class ResourceComponentManager<R extends Resource> extends BoundPropertyObject implements CanClosable
+public abstract class ResourceComponentManager<R extends Resource> implements CanClosable
 {
 
-	/**The property indicating the current resource and component.*/
-	public final static String RESOURCE_COMPONENT_STATE_PROPERTY="resourceComponentState";
+	/**The list of event listeners.*/
+	protected final EventListenerList eventListenerList=new EventListenerList();
 
 	/**The action for opening a resource.*/
 	private final Action openAction;
@@ -76,6 +75,50 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 		/**@return The implementation for selecting resources.*/
 		public ResourceSelector<R> getResourceSelector() {return resourceSelector;}
 
+	/**The maximum number of resources (&gt;0) that can be loaded at one time, effectively determining SDI or MDI functionality.*/
+	private final int maxResourceCount;
+
+		/**@return The maximum number of resources (&gt;0) that can be loaded at one time, effectively determining SDI or MDI functionality.*/
+		public int getMaxResourceCount() {return maxResourceCount;}
+
+	/**The list of all resources and corresponding views.*/
+	private final List<ResourceComponentState> resourceComponentStateList;
+
+		/**Determines if a resource and component are already present for the given URI.
+		@param uri The reference URI of the resource to retrieve.
+		@return The component state of the resource, if that resource is already known,
+			or <code>null</code> if no resource with that URI is present.
+		*/
+		protected ResourceComponentState getResourceComponentState(final URI uri)
+		{
+			for(final ResourceComponentState resourceComponentState:resourceComponentStateList)	//for each known resource component state; this is an expensive iterative search, but a simple map won't help because some resources may not yet have assigned URIs
+			{
+				if(uri.equals(resourceComponentState.getResource().getReferenceURI()))	//if this resource has the requested URI
+				{
+					return resourceComponentState;	//return this resource and its component
+				}
+			}
+			return null;	//indicate that we could find no corresponding resource and component
+		}
+	
+		/**Adds a resource and its corresponding view and fires an event.
+		@param resourceComponentState The resource and component to add.
+		*/	
+		protected void addResourceComponentState(final ResourceComponentState resourceComponentState)
+		{
+			resourceComponentStateList.add(resourceComponentState);	//add the state to our list
+			fireResourceComponentAdded(resourceComponentState);	//indicate that the resource component state was added
+		}
+
+		/**Removes a resource and its corresponding view and fires an event.
+		@param resourceComponentState The resource and component to remove.
+		*/	
+		protected void removeResourceComponentState(final ResourceComponentState resourceComponentState)
+		{
+			resourceComponentStateList.remove(resourceComponentState);	//remove the state from our list
+			fireResourceComponentRemoved(resourceComponentState);	//indicate that the resource component state was removed
+		}
+	
 	/**The state of the resource and its view.*/
 	private ResourceComponentState resourceComponentState;
 
@@ -103,8 +146,8 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 					newResourceComponentState.getComponent().addPropertyChangeListener(Modifiable.MODIFIED_PROPERTY, getUpdateStatusModifiedPropertyChangeListener());	//listen for component modifications
 				}
 				updateStatus();	//update the status of the actions
-					//show that the property has changed
-				firePropertyChange(RESOURCE_COMPONENT_STATE_PROPERTY, oldResourceComponentState, newResourceComponentState);
+					//show that the selected resource has changed
+				fireResourceComponentSelected(oldResourceComponentState, newResourceComponentState);
 			}
 		}
 
@@ -114,14 +157,26 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 		/**@return The listener that updates the status when the component is modified.*/
 		protected PropertyChangeListener getUpdateStatusModifiedPropertyChangeListener() {return updateStatusModifiedPropertyChangeListener;}
 
-	/**Parent component and resource selector constructor
+	/**Parent component and resource selector constructor with unlimited resources (as many as an integer can hold) managed.
 	@param parentComponent The component to serve as a parent for error messages.
 	@param resourceSelector The implementation to use for selecting resources.
 	*/
 	public ResourceComponentManager(final Component parentComponent, final ResourceSelector<R> resourceSelector)
 	{
+		this(parentComponent, resourceSelector, Integer.MAX_VALUE);	//use the maximum number of resources
+	}
+
+	/**Parent component and resource selector constructor
+	@param parentComponent The component to serve as a parent for error messages.
+	@param resourceSelector The implementation to use for selecting resources.
+	@param maxResourceCount The maximum number of resources (&gt;0) that can be loaded at one time, effectively determining SDI or MDI functionality.
+	*/
+	public ResourceComponentManager(final Component parentComponent, final ResourceSelector<R> resourceSelector, final int maxResourceCount)
+	{
 		this.parentComponent=parentComponent;	//save the parent component
 		this.resourceSelector=resourceSelector;	//save the resource selector
+		this.maxResourceCount=maxResourceCount;	//save the maximum resource count
+		resourceComponentStateList=new ArrayList<ResourceComponentState>();	//create the list of resource component states; we can't use a map, because many of the states may not yet have URIs assigned
 		updateStatusModifiedPropertyChangeListener=new PropertyChangeListener()	//create a property change listener to update our status when modification occurs
 			{
 				public void propertyChange(final PropertyChangeEvent propertyChangeEvent)
@@ -181,8 +236,7 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 	/**Determines if a resource and its component can close.
 		This verion asks the resource component if it can close, if that component
 		implements <code>CanClosable</code>.
-	@param resourceComponentState The state information of the resource that
-		should be checked for closing.
+	@param resourceComponentState The state information of the resource that should be checked for closing.
 	@return <code>true</code> if the resource and its component can close.
 	@see CanClosable#canClose()
 	*/
@@ -202,7 +256,7 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 			switch(BasicOptionPane.showConfirmDialog(component, "Save modified resource "+resourceURIString+ "?", "Resource Modified", BasicOptionPane.YES_NO_CANCEL_OPTION))	//G***i18n
 			{
 				case BasicOptionPane.YES_OPTION:	//if they want to save the changes
-					return save();	//save the selected resource and report whether the save was successful TODO use a save method that allows the resource to be specified
+					return save(resourceComponentState);	//save the selected resource and report whether the save was successful
 				case BasicOptionPane.NO_OPTION:	//if they do not want to save the changes
 					return true;	//allow the resource to close
 				default:	//if they want to cancel (they pressed the cancel button *or* they just hit Esc)
@@ -212,6 +266,28 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 		return true;	//default to allowing the component to be closed
 	}
 
+	/**Ensures that less that <code>maxResourceCount</code> resources are loaded by closing resources as necessary.
+	@return <code>true</code> if the number of resources were successfully brought below the maximum.
+	@see #getMaxResourceCount()
+	*/
+	protected boolean ensureNotMaxCount()
+	{
+		while(resourceComponentStateList.size()>=getMaxResourceCount())	//while there are too many resources loaded
+		{
+			final ResourceComponentState resourceComponentState=resourceComponentStateList.get(0);	//get the first resource
+			if(canClose(resourceComponentState))	//if we can close this resource
+			{
+				close(resourceComponentState);	//close the resource
+			}
+			else	//if we can't close the resource
+			{
+				return false;	//show that we can't ensure that enough resources are closed
+			}
+		}
+		return true;	//show that there are less than the maximum number of resources
+	}
+
+	
 	/**Unloads the open resource, if any.
 	If no resource is open, no action occurs.
 	@see #getResourceComponentState()
@@ -235,14 +311,21 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 		}
 	}
 
-	/**Closes the given resource.
-	This version simply sets the current resource state to <code>null</code>.
-	@param resourceComponentState The state information of the resource that
-		should be checked for closing.
+	/**Closes the given resource, selecting a new resource if the closed resource was the selected resource.
+	@param oldResourceComponentState The state information of the resource that should be closed.
 	*/
-	protected void close(final ResourceComponentState resourceComponentState)
+	protected void close(final ResourceComponentState oldResourceComponentState)
 	{
-		setResourceComponentState(null);	//close the resource by switching to no resource G***maybe transfer this up to close()---or maybe do nothing at all
+		final int oldIndex=resourceComponentStateList.indexOf(oldResourceComponentState);	//see where the resource component state is in our list
+		assert oldIndex>=0 : "Unrecognized resource component state.";
+		final int newIndex=oldIndex<resourceComponentStateList.size()-1 ? oldIndex : oldIndex-1;	//if the last resource was removed, move back one, which may return a negative index if there are no more resource component states
+		final ResourceComponentState selectedResourceComponentState=getResourceComponentState();	//see which resource is selected
+		removeResourceComponentState(oldResourceComponentState);	//remove this resource component state
+		if(oldResourceComponentState==selectedResourceComponentState)	//if the closed resource was previously selected, switch to a different resource
+		{
+			final ResourceComponentState newResourceComponentState=newIndex>=0 ? resourceComponentStateList.get(newIndex) : null;	//get the new resource component state, if there is one left
+			setResourceComponentState(newResourceComponentState);	//switch to the new resource
+		}
 	}
 
 	/**Opens a resource.
@@ -257,8 +340,7 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 
 	/**Opens a resource from the location specified.
 	@param referenceURI The URI of the resource to open.
-	@return <code>true</code> if the resource was successfully opened, or
-		<code>false</code>if the operation was canceled.
+	@return <code>true</code> if the resource was successfully opened, or <code>false</code>if the operation was canceled.
 	*/
 	public boolean open(final URI referenceURI)
 	{
@@ -303,11 +385,22 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 			if(resource!=null)  //if we now have a valid resource
 			{
 				assert resource.getReferenceURI()!=null : "Selected resource has no URI.";
-				final ResourceComponentState newResourceComponentState=read(resource);	//try to open the resource
-				if(newResourceComponentState!=null)	//if we succeed in opening the resource
+				final ResourceComponentState existingResourceComponentState=getResourceComponentState(resource.getReferenceURI());	//see if there is already a resource with that URI
+				if(existingResourceComponentState!=null)	//if we already know about that resource
 				{
-					setResourceComponentState(newResourceComponentState);	//change to the new state
-					return true;	//show that we successfully opened the resource
+					setResourceComponentState(existingResourceComponentState);	//switch to the existing resource component state
+				}
+				else	//if this is a different resource
+				{
+					if(ensureNotMaxCount())	//make sure there aren't too many resources open already; if we can ensure that
+					{
+						final ResourceComponentState newResourceComponentState=read(resource);	//try to open the resource
+						if(newResourceComponentState!=null)	//if we succeed in opening the resource
+						{
+							setResourceComponentState(newResourceComponentState);	//change to the new state
+							return true;	//show that we successfully opened the resource
+						}
+					}
 				}
 			}
 		}
@@ -330,18 +423,26 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 	*/
 	protected ResourceComponentState read(final R resource) throws IOException
 	{
-//TODO change the cursor while we open
-			//get an input stream to the resource
-		final InputStream inputStream=getResourceSelector().getInputStream(resource.getReferenceURI());
+		final Cursor oldCursor=setCursor(getParentComponent(), Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));	//switch to the wait cursor on the parent component
 		try
 		{
-			final Component component=read(resource, inputStream);	//read the component from the input stream
-			final ResourceComponentState resourceComponentState=new ResourceComponentState(resource, component);	//create a new state for the resource
-			return resourceComponentState;	//return the component state
+				//get an input stream to the resource
+			final InputStream inputStream=getResourceSelector().getInputStream(resource.getReferenceURI());
+			try
+			{
+				final Component component=read(resource, inputStream);	//read the component from the input stream
+				final ResourceComponentState resourceComponentState=new ResourceComponentState(resource, component);	//create a new state for the resource
+				addResourceComponentState(resourceComponentState);	//add the resource component state
+				return resourceComponentState;	//return the component state
+			}
+			finally
+			{
+				inputStream.close();	//always close the input stream
+			}
 		}
 		finally
 		{
-			inputStream.close();	//always close the input stream
+			setCursor(getParentComponent(), oldCursor);	//always switch back to the original cursor
 		}
 	}
 
@@ -353,14 +454,12 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 	protected abstract Component read(final R resource, final InputStream inputStream) throws IOException;
 
 	/**Saves the current resource.
-	<p>If the current resource component is verifiable, the component is first
-		verified.</p>
+	<p>If the current resource component is verifiable, the component is first verified.</p>
 	<p>By default if no location is available, the <code>saveAs</code> method is
 		called. If a location is available, <code>save(Resource)</code> is called.</p> 
 	<p>For normal operation, this method should not be modified and
 		<code>save(Resource)</code> should be overridden.</p>
-	@return <code>true</code> if there was a resource to save and the operation
-		was not canceled.
+	@return <code>true</code> if there was a resource to save and the operation was not canceled.
 	@see #save(Resource)
 	@see #saveAs
 	@see #getResourceComponentState()
@@ -368,31 +467,45 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 	public boolean save()
 	{
 		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
-		if(resourceComponentState!=null)	//if a resource is open
+		return resourceComponentState!=null ? save(resourceComponentState) : false;	//save the resource, returning false if there is no resource to save
+	}
+
+	/**Saves the current resource.
+	<p>If the current resource component is verifiable, the component is first verified.</p>
+	<p>By default if no location is available, the <code>saveAs</code> method is
+		called. If a location is available, <code>save(Resource)</code> is called.</p> 
+	<p>For normal operation, this method should not be modified and
+		<code>save(Resource)</code> should be overridden.</p>
+	@param resourceComponentState The state information of the resource to be saved.
+	@return <code>true</code> if the operation was not canceled.
+	@see #save(Resource)
+	@see #saveAs
+	@see #getResourceComponentState()
+	*/
+	protected boolean save(final ResourceComponentState resourceComponentState)
+	{
+			//if the component is verifiable, make sure it verifies before we save the contents
+		if(!(resourceComponentState.getComponent() instanceof Verifiable) || ((Verifiable)resourceComponentState.getComponent()).verify())
 		{
-				//if the component is verifiable, make sure it verifies before we save the contents
-			if(!(resourceComponentState.getComponent() instanceof Verifiable) || ((Verifiable)resourceComponentState.getComponent()).verify())
+			assert resourceComponentState.getResource()!=null : "Resource component state does not represent a valid resource.";
+			if(resourceComponentState.getResource().getReferenceURI()!=null) //if we have a URI
 			{
-				assert resourceComponentState.getResource()!=null : "Resource component state does not represent a valid resource.";
-				if(resourceComponentState.getResource().getReferenceURI()!=null) //if we have a URI
+				try
 				{
-					try
-					{
-						write(resourceComponentState.getResource(), resourceComponentState.getComponent()); //save using the resource we already have
-						return true;
-					}
-					catch(IOException ioException)	//if there is an error saving the resource
-					{
-						SwingApplication.displayApplicationError(getParentComponent(), ioException);	//display the error to the user
-					}
+					write(resourceComponentState.getResource(), resourceComponentState.getComponent()); //save using the resource we already have
+					return true;
 				}
-				else  //if we don't have a URI
+				catch(IOException ioException)	//if there is an error saving the resource
 				{
-					return saveAs(resourceComponentState); //save with a user-specified URI
+					SwingApplication.displayApplicationError(getParentComponent(), ioException);	//display the error to the user
 				}
 			}
+			else  //if we don't have a URI
+			{
+				return saveAs(resourceComponentState); //save with a user-specified URI
+			}
 		}
-		return false;	//show that we couldn't save the contents because the component didn't verify or there was no resource to save, for example
+		return false;	//show that we couldn't save the contents because the component didn't verify or there was some other error
 	}
 
 	/**Saves the current resource after first asking the user for a URI.
@@ -452,15 +565,22 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 	*/
 	protected void write(final R resource, final Component component) throws IOException
 	{
-//TODO change the cursor while we save
-		final OutputStream outputStream=getResourceSelector().getOutputStream(resource.getReferenceURI());	//get an output stream to this resource's URI
+		final Cursor oldCursor=setCursor(getParentComponent(), Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));	//switch to the wait cursor on the parent component
 		try
 		{
-			write(resource, component, outputStream);	//write the component to the output stream
+			final OutputStream outputStream=getResourceSelector().getOutputStream(resource.getReferenceURI());	//get an output stream to this resource's URI
+			try
+			{
+				write(resource, component, outputStream);	//write the component to the output stream
+			}
+			finally
+			{
+				outputStream.close();	//always close the output stream
+			}
 		}
 		finally
 		{
-			outputStream.close();	//always close the output stream
+			setCursor(getParentComponent(), oldCursor);	//always switch back to the original cursor
 		}
 	}
 
@@ -496,6 +616,56 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 	protected void revert(final ResourceComponentState resourceComponentState)
 	{
 	}
+
+	/**Adds a <code>ResourceComponentListener</code> to the list.
+	@param resourceComponentListener The <code>ResourceComponentListener</code> to be added.
+	*/
+	public void addResourceComponentListener(final ResourceComponentListener<R> resourceComponentListener)
+	{
+		eventListenerList.add(ResourceComponentListener.class, resourceComponentListener);
+	}
+
+	/**Removes a <code>ResourceComponentListener</code> from the list.
+	@param resourceComponentListener the listener to be removed
+	*/
+	public void removeActionListener(final ResourceComponentListener<R> resourceComponentListener)
+	{
+		eventListenerList.remove(ResourceComponentListener.class, resourceComponentListener);
+	}
+
+	/**Notifies all listeners that a resource component has been added.
+	@param resourceComponentState The resource and component added.
+	*/
+  protected void fireResourceComponentAdded(final ResourceComponentState resourceComponentState)
+	{
+		for(final Object listener:eventListenerList.getListeners(ResourceComponentListener.class))  //for each resource component listener
+		{
+			((ResourceComponentListener<R>)listener).onResourceComponentAdded(resourceComponentState);	//notify this listener that this component state was added
+		}
+  }
+
+	/**Notifies all listeners that a resource component has been removed.
+	@param resourceComponentState The resource and component removed.
+	*/
+  protected void fireResourceComponentRemoved(final ResourceComponentState resourceComponentState)
+	{
+		for(final Object listener:eventListenerList.getListeners(ResourceComponentListener.class))  //for each resource component listener
+		{
+			((ResourceComponentListener<R>)listener).onResourceComponentRemoved(resourceComponentState);	//notify this listener that this component state was removed
+		}
+  }
+
+	/**Notifies all listeners that a resource component has been selected.
+	@param oldResourceComponentState The previously selected resource and component.
+	@param newResourceComponentState The newly selected resource and component.
+	*/
+  protected void fireResourceComponentSelected(final ResourceComponentState oldResourceComponentState, final ResourceComponentState newResourceComponentState)
+	{
+		for(final Object listener:eventListenerList.getListeners(ResourceComponentListener.class))  //for each resource component listener
+		{
+			((ResourceComponentListener<R>)listener).onResourceComponentSelected(oldResourceComponentState, newResourceComponentState);	//notify this listener that this component state was selected
+		}
+  }
 
 	/**Action for creating a new file.*/
 	public static class NewAction extends AbstractAction

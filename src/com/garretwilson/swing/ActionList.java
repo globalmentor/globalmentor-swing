@@ -119,7 +119,7 @@ public class ActionList extends JList
 	/**Removes an <code>ActionListener</code> from the list.
 	@param actionListener the listener to be removed
 	*/
-	public void removeActionListener(ActionListener actionListener)
+	public void removeActionListener(final ActionListener actionListener)
 	{
 		listenerList.remove(ActionListener.class, actionListener);
 	}
