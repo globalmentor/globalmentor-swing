@@ -6,11 +6,11 @@ import java.io.*;
 import java.net.*;
 import javax.swing.*;
 import com.garretwilson.awt.*;
-import com.garretwilson.lang.StringUtilities;
+import com.garretwilson.lang.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
-import com.garretwilson.util.Debug;
+import com.garretwilson.util.*;
 
 /**Main frame parent class for an application. This frame expects to contain
 	an <code>ApplicationPanel</code>.
@@ -151,16 +151,24 @@ public abstract class ApplicationFrame extends JFrame
 		/**@return The action for saving a file under a different name.*/
 		public Action getFileSaveAsAction() {return fileSaveAsAction;}
 
+	/**The action for file|exit; defaults to <code>getExitAction()</code>.*/
+	private Action fileExitAction;
+
 		/**@return The action for exiting, either <code>getCloseAction()</code> or
-			<code>getExitAction()</code>.
-		@see #getDefaultCloseOperation
+			<code>getExitAction()</code>. The default is <code>getExitAction()</code>.
 		@see #getCloseAction
 		@see #getExitAction
 		*/
-		public Action getFileExitAction()
-		{
-			return getDefaultCloseOperation()==EXIT_ON_CLOSE ? getExitAction() : getCloseAction();	//G***maybe check for DO_NOTHING_ON_CLOSE as well 
-		}
+		public Action getFileExitAction() {return fileExitAction;}
+		
+		
+		/**Sets the action to use for file|exit.
+		The default is <code>getExitAction()</code>.
+		@param action The action to use for file|exit.
+		@see #getCloseAction
+		@see #getExitAction
+		*/
+		public void setFileExitAction(final Action action) {fileExitAction=action;}
 
 	/**The action for showing help contents.*/
 	private final Action helpContentsAction;
@@ -249,6 +257,28 @@ public abstract class ApplicationFrame extends JFrame
 		*/
 		public void setVersion(final String newVersion) {version=newVersion;}
 
+	/**Sets the title for this frame to the specified string.
+	This version does not change the title unless the specified title is actually
+	different than the current title.
+	@param title The title to be displayed in the frame's border.
+		A <code>null</code> value is treated as an empty string, "".
+	@see JFrame#getTitle
+	@see JFrame#setTitle
+	*/
+	public void setTitle(final String title)
+	{
+		if(!ObjectUtilities.equals(getTitle(), title))	//if the title is really changing
+			super.setTitle(title);	//actually update the title
+	}
+	
+	/**Constructs a string appropriate for showing on the title of the frame.
+	This version returns the application name.
+	@return A title to display on the frame.
+	*/
+	protected String constructTitle()
+	{
+		return getApplicationName();	//return the name of the application
+	}
 
 	/**Default constructor.
 	Enables window events.
@@ -311,10 +341,11 @@ public abstract class ApplicationFrame extends JFrame
 		fileSaveAction=new FileSaveAction();  //create the save action
 		fileSaveAsAction=new FileSaveAsAction();  //create the save as action
 //G***del		fileSaveAction.setEnabled(false); //default to nothing to save
-		helpContentsAction=new HelpContentsAction();
-		aboutAction=new AboutAction();
 		closeAction=new CloseAction();  //create the close action
 		exitAction=new ExitAction();  //create the exit action
+		setFileExitAction(exitAction);	//default to using the exit action for file|exit
+		helpContentsAction=new HelpContentsAction();
+		aboutAction=new AboutAction();
 		if(hasMenuBar)  //if we should have a menu bar
 		{
 			menuBar=createMenuBar();  //create the menu bar
@@ -348,7 +379,7 @@ public abstract class ApplicationFrame extends JFrame
 	*/
   protected void initializeUI()
   {
-		setTitle(getApplicationName());  //set the frame to reflect the application name
+		setTitle(constructTitle());  //update the title
 		initializeMenuBar(getJMenuBar());	//initialize the menu bar
 //G***bring back		setSize(800, 600);	//default to 800X600; the window can be maximized after it's shown G***determine the initial size based upon the resolution
 //G***fix		setExtendedState(MAXIMIZED_BOTH);	//maximize the frame G***get this from preferences
@@ -361,6 +392,7 @@ public abstract class ApplicationFrame extends JFrame
 	*/
 	protected void updateStatus()
 	{
+		setTitle(constructTitle());  //update the title
 		final ResourceDescribable description=getDocumentDescription();	//see what document is being described
 		getFileSaveAction().setEnabled(description!=null && description.isModified());	//only enable saving when there is a document that's modified
 	}

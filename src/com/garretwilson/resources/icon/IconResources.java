@@ -26,20 +26,20 @@ public class IconResources implements IconResourceConstants
 	@param filename The filename of the icon.
 	@return An icon object representing the image.
 	*/
-	public static Icon getIcon(final String filename)
+	public static ImageIcon getIcon(final String filename)
 	{
-		Icon icon=null; //we'll try to get the icon if we already have it loaded
+		ImageIcon imageIcon=null; //we'll try to get the icon if we already have it loaded
 		final Reference iconReference=(Reference)iconReferenceMap.get(filename); //see if we have an icon reference
 		if(iconReference!=null) //if we have an icon reference
 		{
-			icon=(Icon)iconReference.get(); //get the icon stored in the reference
+			imageIcon=(ImageIcon)iconReference.get(); //get the icon stored in the reference
 		}
-		if(icon==null)  //if we haven't loaded this icon yet, or the icon has been garage collected
+		if(imageIcon==null)  //if we haven't loaded this icon yet, or the icon has been garage collected
 		{
-		  icon=new ImageIcon(IconResources.class.getResource(filename));	//load the icon
-			iconReferenceMap.put(filename, new WeakReference(icon));  //store a weak reference to the icon
+		  imageIcon=new ImageIcon(IconResources.class.getResource(filename));	//load the icon
+			iconReferenceMap.put(filename, new WeakReference(imageIcon));  //store a weak reference to the icon
 		}
-		return icon;  //return the icon that we loaded or already had loaded
+		return imageIcon;  //return the icon that we loaded or already had loaded
 	}
 
 }
