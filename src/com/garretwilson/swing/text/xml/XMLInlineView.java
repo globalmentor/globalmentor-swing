@@ -135,7 +135,7 @@ public class XMLInlineView extends GlyphView implements TabableView
 		final AttributeSet attributeSet=getAttributes();	//get our attributes
 		if(attributeSet!=null)	//if we have attributes
 		{
-Debug.trace("setting properties from inline attributes: ", AttributeSetUtilities.getAttributeSetString(getAttributes()));  //G***del
+//G***del Debug.trace("setting properties from inline attributes: ", AttributeSetUtilities.getAttributeSetString(getAttributes()));  //G***del
 			final Document document=getDocument();	//get our document
 			if(document instanceof StyledDocument)		//if this is a styled document
 			{
@@ -241,8 +241,8 @@ Debug.trace("setting properties from inline attributes: ", AttributeSetUtilities
 	public Color getBackground()
 	{
 		synchronize();	//make sure we have the correct cached property values.
-Debug.trace("getting inline background for attributes: ", AttributeSetUtilities.getAttributeSetString(getAttributes()));  //G***del
-Debug.trace("found color: ", BackgroundColor);  //G***del
+//G***del Debug.trace("getting inline background for attributes: ", AttributeSetUtilities.getAttributeSetString(getAttributes()));  //G***del
+//G***del Debug.trace("found color: ", BackgroundColor);  //G***del
 
 		return BackgroundColor;	//return the background color
 	}
@@ -254,8 +254,8 @@ Debug.trace("found color: ", BackgroundColor);  //G***del
 	public Color getForeground()
 	{
 		synchronize();	//make sure we have the correct cached property values.
-Debug.trace("getting inline foreground for attributes: ", AttributeSetUtilities.getAttributeSetString(getAttributes()));  //G***del
-Debug.trace("found color: ", ForegroundColor);  //G***del
+//G***del Debug.trace("getting inline foreground for attributes: ", AttributeSetUtilities.getAttributeSetString(getAttributes()));  //G***del
+//G***del Debug.trace("found color: ", ForegroundColor);  //G***del
 
 		return ForegroundColor;	//return the foreground color
 	}

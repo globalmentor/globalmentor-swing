@@ -1683,16 +1683,16 @@ Debug.trace("  View: "+XMLStyleConstants.getXMLElementName(getElement().getAttri
 	*/
 	protected int getViewIndexAtPosition(int pos)
 	{
-Debug.trace("looking for view at position: ", pos); //G***del
+//G***del Debug.trace("looking for view at position: ", pos); //G***del
 		//this is an expensive operation, but this class usually contains only a partial list of views, which may not correspond to the complete list of original elements
 		if(pos<getStartOffset() || pos>=getEndOffset())	//if the position is before or after the content
 			return -1;	//show that the given position is not on this page
 		for(int viewIndex=getViewCount()-1; viewIndex>=0; --viewIndex)	//look at all the views from the last to the first
 		{
 			final View view=getView(viewIndex);	//get a reference to this view
-Debug.trace("View "+viewIndex+" is of class: ", view.getClass().getName());
-Debug.trace("startoffset: ", view.getStartOffset());
-Debug.trace("endoffset: ", view.getEndOffset());
+//G***del Debug.trace("View "+viewIndex+" is of class: ", view.getClass().getName());
+//G***del Debug.trace("startoffset: ", view.getStartOffset());
+//G***del Debug.trace("endoffset: ", view.getEndOffset());
 			if(pos>=view.getStartOffset() && pos<view.getEndOffset())	//if this view holds the requested position
 				return viewIndex;	//return the index to this view
 		}
