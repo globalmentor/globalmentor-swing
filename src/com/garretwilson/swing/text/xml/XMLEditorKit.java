@@ -16,6 +16,7 @@ import com.garretwilson.io.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.net.*;
 import com.garretwilson.rdf.*;
+import static com.garretwilson.rdf.xpackage.XPackageUtilities.*;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.text.BasicStyledEditorKit;
 import com.garretwilson.swing.text.SwingTextUtilities;
@@ -831,7 +832,7 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 			final XMLCSSStylesheetApplier stylesheetApplier=getXMLStylesheetApplier();	//get the stylesheet applier
 			stylesheetApplier.clearStyles();	//clear any styles that were present before
 			//create a list of element specs for creating the document and store them here
-			final DefaultStyledDocument.ElementSpec[] elementSpecList=createElementSpecs(xmlDocumentArray, baseURIArray, mediaTypeArray);
+			final DefaultStyledDocument.ElementSpec[] elementSpecList=createElementSpecs(xmlDocumentArray, baseURIArray, mediaTypeArray, swingXMLDocument);
 			stylesheetApplier.clearStyles();	//clear the styles; we're done with the XML document so we don't need the mappings anymore
 			swingXMLDocument.create(elementSpecList);	//create the document from the element specs
 		}
@@ -872,22 +873,24 @@ catch (BadLocationException e)
 	@param xmlDocument The XML document tree.
 	@param baseURI The base URI of the document.
 	@param mediaType The media type of the document.
+	@param swingXMLDocument The Swing document into which the XML will be set.
 	@return Am array of element specs defining the XML document.
 	*/
-	protected DefaultStyledDocument.ElementSpec[] createElementSpecs(org.w3c.dom.Document xmlDocument, final URI baseURI, final ContentType mediaType)
+	protected DefaultStyledDocument.ElementSpec[] createElementSpecs(org.w3c.dom.Document xmlDocument, final URI baseURI, final ContentType mediaType, final XMLDocument swingXMLDocument)
 	{
-		return createElementSpecs(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new ContentType[]{mediaType});  //put the XML document into an array, create the element specs, and return them
+		return createElementSpecs(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new ContentType[]{mediaType}, swingXMLDocument);  //put the XML document into an array, create the element specs, and return them
 	}
 
 	/**Creates element spec objects from a list of XML document trees.
 	@param xmlDocumentArray The array of XML document trees.
 	@param baseURIArray The array of URIs representing the base URIs for each document.
 	@param mediaTypeArray The array of media types of the documents.
+	@param swingXMLDocument The Swing document into which the XML will be set.
 	@return An array of element specs defining the XML documents.
 	*/
-	protected DefaultStyledDocument.ElementSpec[] createElementSpecs(org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray)
+	protected DefaultStyledDocument.ElementSpec[] createElementSpecs(org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray, final XMLDocument swingXMLDocument)
 	{
-		final List elementSpecList=createElementSpecList(xmlDocumentArray, baseURIArray, mediaTypeArray); //create the list of element specs
+		final List elementSpecList=createElementSpecList(xmlDocumentArray, baseURIArray, mediaTypeArray, swingXMLDocument); //create the list of element specs
 			//convert the list to an array and return it
 		return (DefaultStyledDocument.ElementSpec[])elementSpecList.toArray(new DefaultStyledDocument.ElementSpec[elementSpecList.size()]);
 	}
@@ -898,9 +901,10 @@ catch (BadLocationException e)
 	@param xmlDocumentArray The array of XML document trees.
 	@param baseURIArray The array of URIs representing the base URIs for each document.
 	@param mediaTypeArray The array of media types of the documents.
+	@param swingXMLDocument The Swing document into which the XML will be set.
 	@return A list of element specs defining the XML documents.
 	*/
-	protected List createElementSpecList(org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray)
+	protected List createElementSpecList(org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray, final XMLDocument swingXMLDocument)
 	{
 		//G***maybe check to make sure both arrays are of the same length
 		final List elementSpecList=new ArrayList();	//create an array to hold our element specs
@@ -925,7 +929,11 @@ xmlDocument.normalize();	//G***do we want to do this here? probably not---or may
 			final org.w3c.dom.Element xmlDocumentElement=xmlDocument.getDocumentElement();	//get the root of the document
 
 
-			final CSSStyleSheet[] stylesheets=getXMLStylesheetApplier().getStylesheets(xmlDocument, baseURI, mediaType);	//G***testing
+			final RDFResource publication=swingXMLDocument.getPublication();	//see if we know about a publication
+			final URI publicationBaseURI=swingXMLDocument.getBaseURI();	//get the base URI of the publication TODO do we need to check this for null?
+				//if there is a publication, see if we have a description of this resource in the manifest
+			final RDFResource description=publication!=null ? getManifestItemByLocationHRef(publication, publicationBaseURI, baseURI) : null;
+			final CSSStyleSheet[] stylesheets=getXMLStylesheetApplier().getStylesheets(xmlDocument, baseURI, mediaType, description);	//G***testing
 			for(int i=0; i<stylesheets.length; getXMLStylesheetApplier().applyStyleSheet(stylesheets[i++], xmlDocumentElement));	//G***testing
 				//TODO make sure stylesheets get applied later, too, in our Swing stylesheet application routine
 			getXMLStylesheetApplier().applyLocalStyles(xmlDocumentElement);	//apply local styles to the document TODO why don't we create one routine to do all of this?
