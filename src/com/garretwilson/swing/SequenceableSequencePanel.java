@@ -24,7 +24,7 @@ import com.garretwilson.util.*;
 @see Sequenceable
 @see ContentPanel#getContentComponent()
 */
-public class SequenceableSequencePanel extends AbstractSequencePanel	//G***fix or del implements DefaultFocusable
+public class SequenceableSequencePanel extends AbstractComponentSequencePanel	//G***fix or del implements DefaultFocusable
 {
 
 	/**The first component in the sequence.*/
@@ -92,7 +92,7 @@ public class SequenceableSequencePanel extends AbstractSequencePanel	//G***fix o
 		<code>hasNext()</code>.
 	@see Sequenceable#hasNext()
 	*/
-	protected boolean hasNextComponent()
+	protected boolean hasNext()
 	{
 			//return true if the content component is sequenceable and has a next component
 		return getContentComponent() instanceof Sequenceable && ((Sequenceable)getContentComponent()).hasNext();
@@ -119,7 +119,7 @@ public class SequenceableSequencePanel extends AbstractSequencePanel	//G***fix o
 	/**@return <code>true</code> if there is a previous component before the
 		current one, in this case if there is at least one component on the stack.
 	*/
-	protected boolean hasPreviousComponent()
+	protected boolean hasPrevious()
 	{
 		return getSequenceHistoryList().size()>0;	//there is a previous component if there is a component on the stack
 	}
