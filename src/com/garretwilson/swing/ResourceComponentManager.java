@@ -477,7 +477,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 	}
 
 	/**Action for saving a resource.*/
-	class SaveAction extends AbstractAction
+	protected class SaveAction extends AbstractAction
 	{
 		/**Default constructor.*/
 		public SaveAction()

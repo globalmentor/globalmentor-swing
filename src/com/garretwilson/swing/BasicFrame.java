@@ -63,7 +63,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 		@exception SecurityException Thrown if a security manager is present and
 			it denies <code>RuntimePermission("preferences")</code>.
 		*/
-		public Preferences getPreferences()
+		public Preferences getPreferences() throws SecurityException
 		{
 			return preferences!=null ? preferences: Preferences.userNodeForPackage(getClass());	//return the user preferences node for whatever class extends this one 
 		}
@@ -134,7 +134,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 			specified and the SecurityManager will not allow the caller to invoke
 			<code>System.exit()</code>.
 		*/
-		public void setDefaultCloseOperation(final int operation)
+		public void setDefaultCloseOperation(final int operation) throws SecurityException
 		{
 			if(operation!=DO_NOTHING_ON_CLOSE && operation!=HIDE_ON_CLOSE && operation!=DISPOSE_ON_CLOSE && operation!=EXIT_ON_CLOSE)
 			{

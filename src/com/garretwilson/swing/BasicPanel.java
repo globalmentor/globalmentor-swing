@@ -74,7 +74,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 		@exception SecurityException Thrown if a security manager is present and
 			it denies <code>RuntimePermission("preferences")</code>.
 		*/
-		public Preferences getPreferences()
+		public Preferences getPreferences() throws SecurityException
 		{
 			return preferences!=null ? preferences: Preferences.userNodeForPackage(getClass());	//return the user preferences node for whatever class extends this one 
 		}

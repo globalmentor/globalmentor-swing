@@ -83,7 +83,7 @@ public class LanguagePanel extends BasicPanel
 //G***del		languageComboBox.setModel(new DefaultComboBoxModel(Locale.getAvailableLocales()));	//set up the available languages G***testing; create renderer
 		languageComboBox.setRenderer(new SimpleListCellRenderer()
 				{
-					protected String getListCellRendererString(final Object value)	//return the display language of each localez
+					protected String getListCellRendererString(final Object value)	//return the display language of each locales
 					{
 						if(value instanceof Locale)	//TODO fix all this better, and use a non-null object for the language
 						{

@@ -36,6 +36,9 @@ public class ActionManager implements Cloneable
 	public final static int EDIT_MENU_ACTION_ORDER=200;
 	public final static int INSERT_MENU_ACTION_ORDER=300;
 	public final static int VIEW_MENU_ACTION_ORDER=400;
+	public final static int TOOL_MENU_ACTION_ORDER=500;
+	public final static int CONFIGURE_MENU_ACTION_ORDER=600;
+	public final static int WINDOW_MENU_ACTION_ORDER=700;
 	public final static int HELP_MENU_ACTION_ORDER=1000;
 
 		//file menu order
@@ -100,6 +103,19 @@ public class ActionManager implements Cloneable
 			viewMenuAction=new ViewMenuAction();	//create a new action 
 		}
 		return viewMenuAction;	//return the action
+	}
+
+	/**The lazily-created action representing the top-level configure menu.*/
+	private static Action configureMenuAction=null;
+
+	/**@return The lazily-created action representing the top-level configure menu.*/
+	public static Action getConfigureMenuAction()
+	{
+		if(configureMenuAction==null)	//if there is no action, yet
+		{
+			configureMenuAction=new ConfigureMenuAction();	//create a new action 
+		}
+		return configureMenuAction;	//return the action
 	}
 
 	/**The lazily-created action representing the top-level help menu.*/
@@ -510,6 +526,29 @@ public class ActionManager implements Cloneable
 //G***fix if needed			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
 //G***fix			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, Event.ALT_MASK)); //add the accelerator G***i18n
 			putValue(MENU_ORDER_PROPERTY, new Integer(VIEW_MENU_ACTION_ORDER));	//set the order
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+		}
+	}
+
+	/**Action for a top-level configure menu.*/
+	protected static class ConfigureMenuAction extends AbstractAction
+	{
+		/**Default constructor.*/
+		public ConfigureMenuAction()
+		{
+			super("Configure");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "Configuration menu");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Configuration functions.");	//set the long description G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key G***i18n
+//G***fix if needed			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
+//G***fix			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, Event.ALT_MASK)); //add the accelerator G***i18n
+			putValue(MENU_ORDER_PROPERTY, new Integer(CONFIGURE_MENU_ACTION_ORDER));	//set the order
 		}
 
 		/**Called when the action should be performed.
