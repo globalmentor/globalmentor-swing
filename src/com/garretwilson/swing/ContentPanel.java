@@ -45,8 +45,7 @@ public class ContentPanel extends BasicPanel implements CanClosable
 				contentComponent=newContentComponent; //store the content component
 				if(newContentComponent!=null)	//if we were given a new content component
 				{
-			  	add(newContentComponent, ((BasicGridBagLayout)getLayout()).createBorderConstraints(BorderLayout.CENTER));  //put the content component in the center of the panel
-//G***del when works			  	add(newContentComponent, BorderLayout.CENTER);  //put the content component in the center of the panel
+					add(newContentComponent, BorderLayout.CENTER);  //put the content component in the center of the panel
 				}
 /*G***del when revalidate() works---maybe even remove WindowUtilities.packWindow()		  	
 		  	if(getParentOptionPane()!=null)	//if this panel is inside an option pane
@@ -124,13 +123,12 @@ public class ContentPanel extends BasicPanel implements CanClosable
 	*/
 	public ContentPanel(final boolean initialize)
 	{
+		super(new BasicGridBagLayout(), initialize);	//construct the panel with a basic grid bag layout and initialize if we should
+/*G***del if not needed
 		super(new BasicGridBagLayout(), false);	//construct the panel with a basic grid bag layout, but don't initialize
-/*G***del when works		
-    final BorderLayout borderLayout=new BorderLayout(); //create a border layout
-    setLayout(borderLayout);  //use the border layout
-*/
 		if(initialize)  //if we should initialize
 		  initialize(); //initialize the panel
+*/
 	}
 
 	/**Default constructor.*/

@@ -13,12 +13,6 @@ import com.garretwilson.awt.BasicGridBagLayout;
 public class ApplicationPanel extends ContentPanel //G***maybe replace the content pane in Application frame with this
 {
 
-	/**Whether this panel has a toolbar; defaults to <code>true</code>.*/
-//G***del if not needed	private boolean hasToolBar=true;
-
-	/**Whether this panel has a status bar; defaults to <code>true</code>.*/
-//G***del if not needed	private boolean hasStatusBar=true;
-
   /**The application toolbar.*/
 	private JToolBar toolBar=null;
 
@@ -47,10 +41,10 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 		}
 
 	/**The application status bar.*/
-	private final StatusPanel statusBar;
+	private final StatusBar statusBar;
 
 		/**@return The application status bar.*/
-		public StatusPanel getStatusBar() {return statusBar;}
+		public StatusBar getStatusBar() {return statusBar;}
 
 	/**The label to display the status.*/
 //G***del when works	private final JLabel statusStatusLabel;
@@ -164,7 +158,7 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 		added to the toolbar.</p>
 	<p>Any derived class that overrides this method should call this version.</p>
 	@see #initializeToolBar(JToolBar)
-	@see #initializeStatusBar(StatusPanel)
+	@see #initializeStatusBar(StatusBar)
 	*/
   protected void initializeUI()
   {
@@ -209,20 +203,9 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 	}
 
 	/**@return A new status bar.*/
-	protected StatusPanel createStatusBar()
+	protected StatusBar createStatusBar()
 	{
-	  final StatusPanel statusBar=new StatusPanel();  //create the status bar
-/*G***del when works
-		final GridBagLayout statusGridBagLayout=new GridBagLayout();	//create a layout for the status bar
-		statusBar.setBorder(BorderFactory.createEtchedBorder());	//set the status border
-//G***fix		statusFlowLayout.setAlignment(FlowLayout.LEFT);	//align the status components to the left
-		statusBar.setLayout(statusGridBagLayout);	//set the layout of the status bar
-		statusStatusLabel.setFont(statusBar.getFont().deriveFont((float)statusBar.getFont().getSize()-1));	//G***testing
-		statusBar.add(statusStatusLabel, new GridBagConstraints(0, 0, 1, 1, 0.5, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));	//add the status label to the status bar
-		statusProgressBar.setStringPainted(true); //G***fix; comment
-		statusProgressBar.setFont(statusProgressBar.getFont().deriveFont((float)statusProgressBar.getFont().getSize()-1));	//G***testing; fix
-		statusBar.add(statusProgressBar, new GridBagConstraints(1, 0, 1, 1, 0.5, 0, GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));	//G***testing
-*/
+	  final StatusBar statusBar=new StatusBar();  //create the status bar
 		return statusBar; //return the status bar we created
 	}
 
@@ -236,7 +219,7 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 	/**Initializes the status bar components.
 	@param statusBar The status bar to be initialized.
 	*/
-	protected void initializeStatusBar(final StatusPanel statusBar)
+	protected void initializeStatusBar(final StatusBar statusBar)
 	{
 	}
 
