@@ -14,7 +14,7 @@ import com.garretwilson.model.ModelView;
 </dl>
 @author Garret Wilson
 */
-public class ModelPanel<M extends Model> extends ModifiablePanel implements ModelView<M>
+public class ModelPanel<M> extends ModifiablePanel implements ModelView<M>
 {
 
 	/**The data model for which this component provides a view.*/
@@ -34,7 +34,7 @@ public class ModelPanel<M extends Model> extends ModifiablePanel implements Mode
 		*/
 		public void setModel(final M newModel)
 		{
-			final Model oldModel=model; //get the old value
+			final M oldModel=model; //get the old value
 			if(oldModel!=newModel)  //if the value is really changing
 			{
 				model=newModel; //update the value
@@ -94,12 +94,12 @@ public class ModelPanel<M extends Model> extends ModifiablePanel implements Mode
 			initialize();   //initialize the panel
 	}
 
-	/**Initialize the user interface.
+	/**Initializes the data.
 	<p>This version sets the data view to the default.</p>
 	*/
-	protected void initializeUI()
+	protected void initializeData()
 	{
-		super.initializeUI(); //do the default UI initialization
+		super.initializeData(); //do the default initialization
 		try
 		{
 			loadModel();	//try to load the model, since we're just now initializing

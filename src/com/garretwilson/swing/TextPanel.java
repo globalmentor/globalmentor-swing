@@ -5,7 +5,7 @@ import java.io.*;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.io.*;
-import com.garretwilson.model.Model;
+import com.garretwilson.swing.unicode.UnicodeStatusBar;
 import com.garretwilson.util.*;
 
 import static com.garretwilson.io.ContentTypeConstants.*;
@@ -13,11 +13,17 @@ import static com.garretwilson.io.ContentTypeConstants.*;
 /**A panel to edit plain text.
 @author Garret Wilson
 */
-public class TextPanel extends ModelPanel
+public class TextPanel extends ModelPanel<LocaleText>
 {
 
 	private final JScrollPane scrollPane;
 	private final JTextPane textPane;
+
+	/**The status bar showing information about the current Unicode character.*/
+	private final UnicodeStatusBar unicodeStatusBar;
+
+		/**@return The status bar showing information about the current Unicode character.*/
+		protected final UnicodeStatusBar getUnicodeStatusBar() {return unicodeStatusBar;}
 
 	/**@return <code>true</code> if the text can be edited.*/
 	public boolean isEditable() {return textPane.isEditable();}
@@ -33,29 +39,6 @@ public class TextPanel extends ModelPanel
 //G***del		textPane.setEnabled(editable);	//set the enabled status to match
 	}
 
-	/**@return The data model for which this component provides a view.
-	@see ModelViewablePanel#getModel()
-	*/
-	public LocaleText getLocaleText() {return (LocaleText)getModel();}
-
-	/**Sets the data model.
-	@param model The data model for which this component provides a view.
-	@see #setModel(Model)
-	*/
-	public void setLocaleText(final LocaleText model)
-	{
-		setModel(model);	//set the model
-	}
-
-	/**Sets the data model.
-	@param newModel The data model for which this component provides a view.
-	@exception ClassCastException Thrown if the model is not <code>Localetext</code>.
-	*/
-	public void setModel(final Model newModel)
-	{
-		super.setModel((LocaleText)newModel);	//set the model in the parent class
-	}
-
 	/**Default constructor.*/
 	public TextPanel()
 	{
@@ -68,8 +51,10 @@ public class TextPanel extends ModelPanel
 	public TextPanel(final LocaleText model)
 	{
 		super(new BasicGridBagLayout(), model, false);  //create the panel with the model without initializing
-		textPane=new JTextPane();	//create a new text pane
+//TODO fix		textPane=new JTextPane();	//create a new text pane
+		textPane=new XMLTextPane();	//create a new text pane
 		scrollPane=new JScrollPane(textPane);	//create the text pane
+		unicodeStatusBar=new UnicodeStatusBar();	//create a new Unicode status bar
 		initialize(); //initialize the panel
 	}
 
@@ -80,6 +65,8 @@ public class TextPanel extends ModelPanel
 		textPane.setContentType(ContentTypeUtilities.toString(TEXT, PLAIN_SUBTYPE));	//set the content type to "text/plain" G***maybe allow this panel to support multiple MIME types, and put the setting of the type back into TextResourceKit
 		textPane.getDocument().addDocumentListener(getModifyDocumentListener());	//show that we're modified whenever the text is edited (we never change the document, we just load and save text into the document)
 		add(scrollPane, BorderLayout.CENTER);	//place the text pane, in its scroll pane, in the center of the panel
+		add(unicodeStatusBar, BorderLayout.SOUTH);	//put the Unicode status bar in the south TODO make this an option
+		unicodeStatusBar.attach(textPane);	//set the Unicode status bar to track the XML text pane 
 	}
 
 	/**Loads the data from the model to the view, if necessary.
@@ -88,7 +75,7 @@ public class TextPanel extends ModelPanel
 	public void loadModel() throws IOException
 	{
 		super.loadModel();	//do the default loading
-		textPane.setText(getLocaleText().getText());	//get the text from the model
+		textPane.setText(getModel().getText());	//get the text from the model
 	}
 
 	/**Stores the current data being edited to the model, if necessary.
@@ -97,7 +84,7 @@ public class TextPanel extends ModelPanel
 	public void saveModel() throws IOException
 	{
 		super.saveModel();	//do the default saving
-		getLocaleText().setText(textPane.getText());	//change the model's text to whatever is in the text pane 
+		getModel().setText(textPane.getText());	//change the model's text to whatever is in the text pane 
 	}
 
 }

@@ -313,6 +313,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	{
 		initializeActions(getActionManager()); //initialize actions
 		initializeUI(); //initialize the user interface
+		initializeData(); //initialize the data
 		updateStatus();  //update the actions
 	}
 
@@ -330,6 +331,13 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
   protected void initializeUI()
   {
   }
+
+	/**Initializes the data.
+		Any derived class that overrides this method should call this version.
+	*/
+	protected void initializeData()
+	{
+	}
 
 	/**Updates the states of the actions, including enabled/disabled status,
 		proxied actions, etc.

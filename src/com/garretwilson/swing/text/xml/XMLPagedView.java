@@ -51,7 +51,7 @@ import com.garretwilson.util.Debug;
 public class XMLPagedView extends FlowView
 {
 
-	protected final static boolean THREADED=false;	//TODO fix threading; currently unstable
+	protected final static boolean THREADED=false;	//TODO fix threading; currently unstable; recheck after fixing ispaginating ? (pagecount-1) bug
 
 	/**The task of paginating a document.*/
 	public final static String PAGINATE_TASK="PAGINATE";
@@ -264,7 +264,7 @@ A copy of our...
 	{
 		final int firstPageIndex=getPageBeginIndex();	//get the index of the first visible page
 		final int displayPageCount=firstPageIndex==0 ? 1 : getDisplayPageCount();	//there's only one page in the first set
-		final int pageCount=isPaginating() ? getPageCount() : Math.max(getPageCount()-1, 0);	//don't count the last page if we are paginating---it is being laid out
+		final int pageCount=isPaginating() ? Math.max(getPageCount()-1, 0) : getPageCount();	//don't count the last page if we are paginating---it is being laid out
 		return Math.min(firstPageIndex+displayPageCount, pageCount);	//return the last visible page, making sure we don't go beyond our page count
 	}
 

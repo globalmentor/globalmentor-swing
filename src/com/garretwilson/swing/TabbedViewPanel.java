@@ -20,7 +20,7 @@ When the view value is changed, the appropriate tab is selected; when a new tab
 @author Garret Wilson
 @see BasicGridBagLayout
 */
-public abstract class TabbedViewPanel<M extends Model> extends ModelViewablePanel<M>
+public abstract class TabbedViewPanel<M> extends ModelViewablePanel<M>
 {
 
 	/**The center tabbed pane.*/

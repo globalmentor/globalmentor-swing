@@ -24,7 +24,7 @@ import com.garretwilson.util.ArrayUtilities;
 </dl>
 @author Garret Wilson
 */
-public abstract class ModelViewablePanel<M extends Model> extends ModelPanel<M> implements ModelViewable
+public abstract class ModelViewablePanel<M> extends ModelPanel<M> implements ModelViewable
 {
 
 	/**The default model views supported by this panel.*/

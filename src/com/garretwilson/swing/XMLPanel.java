@@ -156,7 +156,7 @@ public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeMo
 
 		add(unicodeStatusBar, BorderLayout.SOUTH);	//put the Unicode status bar in the south TODO make this an option
 
-		xmlTextPane.addCaretListener(unicodeStatusBar);	//initially set the Unicode status bar to track the XML text pane 
+		unicodeStatusBar.attach(xmlTextPane);	//initially set the Unicode status bar to track the XML text pane 
 		xmlTextPane.addCaretListener(new CaretListener()
 			{
 				public void caretUpdate(CaretEvent e)
@@ -350,23 +350,23 @@ updateStatus();	//testing; probably put a convenience method to create this list
 			case WYSIWYG_MODEL_VIEW:	//if we're changing from the WYSIWYG view
 				getXMLTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the XML text pane any more
 				getXMLTextPane().setDocument(getXMLTextPane().getEditorKit().createDefaultDocument());	//remove the content from the XML text pane by installing a new document
-				getXMLTextPane().removeCaretListener(getUnicodeStatusBar());	//remove the Unicode status bar as a listener from this text pane
+				getUnicodeStatusBar().detach(getXMLTextPane());	//remove the Unicode status bar as a listener from this text pane
 				break;
 			case SOURCE_MODEL_VIEW:	//if we're changing from the source view
 				getSourceTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the source text pane any more
 				getSourceTextPane().setDocument(getSourceTextPane().getEditorKit().createDefaultDocument());	//remove the content from the source text pane by installing a new document
-				getSourceTextPane().removeCaretListener(getUnicodeStatusBar());	//remove the Unicode status bar as a listener from this text pane
+				getUnicodeStatusBar().detach(getSourceTextPane());	//remove the Unicode status bar as a listener from this text pane
 				break;
 		}
 		switch(newView)	//see which view we're changing to
 		{
 			case WYSIWYG_MODEL_VIEW:	//if we're changing to the WYSIWYG view
 				getXMLTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to the XML text pane
-				getXMLTextPane().addCaretListener(getUnicodeStatusBar());	//add the Unicode status bar as a listener to the text pane
+				getUnicodeStatusBar().attach(getXMLTextPane());	//add the Unicode status bar as a listener to the text pane
 				break;
 			case SOURCE_MODEL_VIEW:	//if we're changing to the source view
 				getSourceTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to see if the source pane is modified
-				getSourceTextPane().addCaretListener(getUnicodeStatusBar());	//add the Unicode status bar as a listener to the text pane
+				getUnicodeStatusBar().attach(getSourceTextPane());	//add the Unicode status bar as a listener to the text pane
 				break;
 		}
 	}

@@ -1,31 +1,19 @@
 package com.garretwilson.swing;
 
 import java.applet.*;
-import java.awt.Graphics;
-import java.awt.*;  //G***del if not needed
-import java.awt.font.*; //G***del if not needed
-import java.awt.Shape;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent; //G***testing
-import java.awt.event.MouseMotionListener; //G***testing
-import java.awt.geom.AffineTransform; //G***del if not needed
-/*G***del when works
-import java.awt.event.KeyListener;
-*/
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
 import javax.mail.internet.ContentType;
+import javax.mail.internet.ParseException;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.text.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.EventListenerList;
+import javax.swing.event.*;
 
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.DocumentFragment;
@@ -33,7 +21,7 @@ import org.w3c.dom.DocumentFragment;
 import com.garretwilson.applet.*;
 import com.garretwilson.awt.EventQueueUtilities;
 import com.garretwilson.io.*;
-import com.garretwilson.lang.CharSequenceUtilities;
+import static com.garretwilson.io.ContentTypeUtilities.*;
 import com.garretwilson.net.BrowserLauncher;
 import com.garretwilson.net.URIConstants;
 import com.garretwilson.net.URIUtilities;
@@ -72,11 +60,8 @@ import static com.garretwilson.text.xml.XMLUtilities.*;
 @see com.garretwilson.swing.event.PageEvent
 @see com.garretwilson.swing.event.PageListener
 */
-public class XMLTextPane extends JTextPane implements AppletContext, /*G***del when works KeyListener, */ /*G***del JDK1.5 MouseMotionListener,*/ PageListener, ProgressListener, URIAccessible
+public class XMLTextPane extends JTextPane implements AppletContext, /*G***del when works KeyListener, */ /*G***del JDK1.5 MouseMotionListener,*/ PageListener, ProgressListener, URIAccessible	//TODO eventually change this to a BasicTextPane
 {
-
-	/**The name of the property that indicates the current document.*/
-	public final static String DOCUMENT_PROPERTY="document";
 
 	/**The name of the property that indicates the current editor kit.*/
 	public final static String EDITOR_KIT_PROPERTY="editorKit";
@@ -95,7 +80,6 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 
 	/**The "application/x-xebook+rdf+xml+zip" content type.*/
 	protected final static ContentType XEB_ZIP_MEDIA_TYPE=new ContentType(APPLICATION, X_XEBOOK_RDF_XML_ZIP_SUBTYPE, null);
-
 
 	//TODO fix asynchronous stop-gap kludge to correctly get the asynchronous setting from the document---if that's the best way to do it
 	protected boolean asynchronousLoad=false;
@@ -522,7 +506,7 @@ Debug.trace("Current installed editor kit: ", getEditorKit().getClass().getName(
 	{
 		this();	//do the default constructing
 
-//G***testing hint
+		//G***testing hint
 /*G***del
         Graphics2D graphics2D=(Graphics2D)getGraphics();
 
@@ -552,6 +536,15 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 //G***del when works		originalKeymap=getKeymap();  //get the current key map and store it for future use
 		uriInputStreamable=DefaultURIAccessible.getDefaultURIAccessible();	//start with a default method of getting input streams
 		uriOutputStreamable=DefaultURIAccessible.getDefaultURIAccessible();	//start with a default method of getting output streams
+		registerEditorKitForContentType(ContentTypeUtilities.toString(TEXT, PLAIN_SUBTYPE), StyledEditorKit.class.getName());	//text/plain
+		/*TODO use after fixing each editor kit to have a default constructor 
+				registerEditorKitForContentType(ContentTypeUtilities.toString(TEXT, XML_SUBTYPE), XMLEditorKit.class.getName());	//text/xml
+				registerEditorKitForContentType(ContentTypeUtilities.toString(TEXT, HTML_SUBTYPE), XHTMLEditorKit.class.getName());	//text/html
+				registerEditorKitForContentType(ContentTypeUtilities.toString(TEXT, X_OEB1_DOCUMENT_SUBTYPE), XHTMLEditorKit.class.getName());	//text/x-oeb1-document
+				registerEditorKitForContentType(ContentTypeUtilities.toString(APPLICATION, XHTML_XML_SUBTYPE), XHTMLEditorKit.class.getName());	//application/xhtml+xml
+				registerEditorKitForContentType(ContentTypeUtilities.toString(APPLICATION, X_OEB1_PACKAGE_XML_SUBTYPE), OEBEditorKit.class.getName());	//application/x-oeb1-package+xml
+				registerEditorKitForContentType(ContentTypeUtilities.toString(APPLICATION, X_XEBOOK_RDF_XML_SUBTYPE), XEBEditorKit.class.getName());	//application/x-xebook+rdf+xml
+		*/
 		final Keymap defaultKeymap=getKeymap();	//get the current keymap
 		final Keymap xmlKeymap=addKeymap(XML_KEYMAP_NAME, defaultKeymap); //create a new keymap for our custom actions
 		loadKeymap(defaultKeymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit changes?
@@ -809,11 +802,19 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	*/
 	public void setText(String text)
 	{
-		if(text.length()>0)	//if there is any text
+		try
 		{
-			if(text.charAt(0)!='<')	//if this text doesn't start with markup G***use a constant
-				text="<div xmlns=\""+XHTMLConstants.XHTML_NAMESPACE_URI+"\">"+text+"</div>";	//wrap the text with a <div> element G***this assumes a lot about HTML; make this more generic if we can---see the namespace code from XMLPanel
+			final ContentType contentType=new ContentType(getContentType());	//find out the content type
+			if(isXML(contentType))	//if this is XML TODO all this special handling needs to go in the editor kit; really, this should go in the code using the text pane, complementary to the decoding
+			{
+				if(text.length()>0)	//if there is any text
+				{
+					if(text.charAt(0)!='<')	//if this text doesn't start with markup G***use a constant
+						text="<div xmlns=\""+XHTMLConstants.XHTML_NAMESPACE_URI+"\">"+text+"</div>";	//wrap the text with a <div> element G***this assumes a lot about HTML; make this more generic if we can---see the namespace code from XMLPanel
+				}
+			}
 		}
+		catch(final ParseException parseException) {}	//if we don't recognize the content type, just set the text normally
 		super.setText(text);	//set the text normally
 	}
 
@@ -1378,143 +1379,63 @@ Debug.trace("reading from stream into document"); //G***del
     }
 */
 
-	/**This is called when a type is requested that doesn't match the currently
-		installed type.
-		If the component doesn't have an <code>EditorKit</code> registered for the
-		given type, it will try to create an <code>EditorKit</code> from the default
-		<code>EditorKit</code> registry.
-		If that fails, a <code>PlainEditorKit</code> is used on the assumption that
-		all text documents can be represented as plain text.
-		<p>This method is overridden because the custom
-		<code>createEditorKitForContentType()</code>, which is static, needs to be
-		called.</p>
-	@param type The non-</code>null</code> content type.
-	@return The editor kit for the specified requested content type.
-	*/
-  public EditorKit getEditorKitForContentType(String type)
+	/**The map of cached editor kits keyed to content type strings.*/
+	private final Map<String, EditorKit> editorKitMap=new HashMap<String, EditorKit>();
+	
+	/**Fetches the editor kit to use for the given type of content.
+	This version allows recognition of general XML (<code>*+xml</code>) content types
+	that haven't been registered.
+	@param type The non-<code>null</code> content type.
+	@return The editor kit.
+	*/  
+	public EditorKit getEditorKitForContentType(final String type)
 	{
+		EditorKit editorKit=null;	//we'll try to create an editor kit
+		final ContentType mediaType=ContentTypeUtilities.createContentType(type);  //create a new media type
+		if(XHTMLUtilities.isHTML(mediaType))	//if this is an XHTML media type
+		{
+			editorKit=new XHTMLEditorKit(mediaType, this);	//create a new XHTML editor kit for this media type
+		}
+	  else if(OEB_PACKAGE_MEDIA_TYPE.match(mediaType))	//if this is an OEB package
+		{
+			editorKit=new OEBEditorKit(this);  //create a new OEB editor kit for the OEB package
+		}
+	  else if(XEBOOK_MEDIA_TYPE.match(mediaType))	//if this is an XEbook
+		{
+			editorKit=new XEBEditorKit(this);  //create a new XEB editor kit for the XEbook
+		}
+		if(editorKit==null)	//if the editor kit is not for one of our recognized types
+		{
+			editorKit=editorKitMap.get(type);	//see if an editor kit is registered with this type
+			if(editorKit==null)	//if there is no registered editor kit
+			{
+				editorKit=createEditorKitForContentType(type);	//try to create an editor kit for this type
+				if(editorKit!=null)	//if we recognized the type
+				{
+					setEditorKitForContentType(type, editorKit);	//cache this editor kit
+				}
+				else if(isXML(createContentType(type)))	//if this type was not recognized, but it's an XML content type
+				{
+					editorKit=createEditorKitForContentType(ContentTypeUtilities.toString(TEXT, XML_SUBTYPE));//create a general text/xml editor kit
+				}
+			}
+		}
+		if(editorKit==null)	//if we couldn't find a cached editor kit or create a new one based upon the content type
+		{
+			editorKit=createDefaultEditorKit();	//create a default editor kit
+		}
+		return editorKit;	//return the editor kit we found or created
+	}
 
-	//G***fix
-//G***del		Debug.notify("GetEditorKitForContentType: "+type);  //G***del; fix
-//G***fix		  return super.getEditorKitForContentType(type);  //G***del
-/*G***fix
-      if (typeHandlers == null) {
-          typeHandlers = new Hashtable(3);
-      }
-      EditorKit k = (EditorKit) typeHandlers.get(type);
-      if (k == null) {
-*/
-		EditorKit editorKit;
-		editorKit=createEditorKit(type);  //create an editor kit for this type
-		if(editorKit!=null) //if we created an editor kit
-		{
-			setEditorKitForContentType(type, editorKit);  //set the editor kit so that we find it quickly in the future
-		}
-		if(editorKit==null) //if we still don't have an editor kit
-		{
-			editorKit=createDefaultEditorKit(); //create a default editor kit
-		}
-		return editorKit;
+	/**Directly sets the editor kit to use for the given type. 
+	@param type The non-<code>null</code> content type.
+	@param editorKit The editor kit to be set.
+	*/
+	public void setEditorKitForContentType(final String type, final EditorKit editorKit)
+	{
+		editorKitMap.put(type, editorKit);	//cache this editor based upon content type  
   }
-
-    /**
-     * Directly sets the editor kit to use for the given type.  A
-     * look-and-feel implementation might use this in conjunction
-     * with <code>createEditorKitForContentType</code> to install handlers for
-     * content types with a look-and-feel bias.
-     *
-     * @param type the non-<code>null</code> content type
-     * @param k the editor kit to be set
-     */
-/*G***fix to be consistent; right now, with the new getEditorKit...() the typeHandlers won't be used
-    public void setEditorKitForContentType(String type, EditorKit k) {
-        if (typeHandlers == null) {
-            typeHandlers = new Hashtable(3);
-        }
-        typeHandlers.put(type, k);
-    }
-*/
-
-
-    /**
-     * Creates a handler for the given type from the default registry
-     * of editor kits.  The registry is created if necessary.  If the
-     * registered class has not yet been loaded, an attempt
-     * is made to dynamically load the prototype of the kit for the
-     * given type.  If the type was registered with a <code>ClassLoader</code>,
-     * that <code>ClassLoader</code> will be used to load the prototype.
-     * If there was no registered <code>ClassLoader</code>,
-     * <code>Class.forName</code> will be used to load the prototype.
-     * <p>
-     * Once a prototype <code>EditorKit</code> instance is successfully
-     * located, it is cloned and the clone is returned.
-     *
-     * @param type the content type
-     * @return the editor kit, or <code>null</code> if there is nothing
-     *   registered for the given type
-     */
-    public EditorKit createEditorKit(String type)	//TODO investigate and synchronize with JEditorPane.createEditorKitForContentType() G***why doesn't this get called?
-		{
-			final ContentType mediaType=ContentTypeUtilities.createContentType(type);  //create a new media type
-/*G***make sure this is an XML media type; if not, call the base class
-			if(mediaType.getTopLevelType().eq
-*/
-/*G***del
-Debug.trace("creating editor kit for content type: ", type);  //G***del; fix
-		  if(mediaType.match(mediaType.APPLICATION_ZIP)) //if this is a zip file
-			{
-				return new OEBEditorKit();  //assume that this is an OEB file in a zip file G***allow for other types of files in zip files later by exploring the package
-			}
-*/
-			if(XHTMLUtilities.isHTML(mediaType))	//if this is an XHTML media type
-			{
-				return new XHTMLEditorKit(mediaType, this);	//create a new XHTML editor kit for this media type
-			}
-		  else if(OEB_PACKAGE_MEDIA_TYPE.match(mediaType))	//if this is an OEB package
-			{
-				return new OEBEditorKit(this);  //create a new OEB editor kit for the OEB package
-			}
-		  else if(XEBOOK_MEDIA_TYPE.match(mediaType))	//if this is an XEbook
-			{
-				return new XEBEditorKit(this);  //create a new XEB editor kit for the XEbook
-			}
-//TODO have a XMLUtilities.isXML(mediaType), and if not, create an editor kit normally using the parent class
-		  return new XMLEditorKit(mediaType, this); //create a new XML editor kit for the specified type
-
-
-/*G***fix
-        EditorKit k = null;
-        Hashtable kitRegistry = getKitRegisty();
-	k = (EditorKit) kitRegistry.get(type);
-        if (k == null) {
-            // try to dynamically load the support
-            String classname = (String) getKitTypeRegistry().get(type);
-	    ClassLoader loader = (ClassLoader) getKitLoaderRegistry().get(type);
-            try {
-		Class c;
-		if (loader != null) {
-		    c = loader.loadClass(classname);
-		} else {
-		    c = Class.forName(classname);
-		}
-                k = (EditorKit) c.newInstance();
-                kitRegistry.put(type, k);
-            } catch (Throwable e) {
-                k = null;
-            }
-        }
-
-        // create a copy of the prototype or null if there
-        // is no prototype.
-        if (k != null) {
-            return (EditorKit) k.clone();
-        }
-        return null;
-*/
-    }
-
-
-
+	
 	/**Updates the installed keymap based upon the current settings, such as
 		whether the text pane is currently paged.
 	*/

@@ -3,7 +3,6 @@ package com.garretwilson.swing.text.directory.vcard;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.JTabbedPane;
-import com.garretwilson.model.Model;
 import com.garretwilson.swing.*;
 import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.util.*;
@@ -13,7 +12,7 @@ import com.garretwilson.util.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class VCardPanel extends TabbedViewPanel implements Verifiable
+public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable
 {
 
 	/**The view in which the VCard name and address information is shown.*/
@@ -73,26 +72,6 @@ public class VCardPanel extends TabbedViewPanel implements Verifiable
 		}
 	}
 */
-
-	/**@return The data model for which this component provides a view.
-	@see ModelViewablePanel#getModel()
-	*/
-	public VCard getVCard() {return (VCard)getModel();}
-	
-	/**Sets the data model.
-	@param model The data model for which this component provides a view.
-	@see #setModel(Model)
-	*/
-	public void setVCard(final VCard vcard) {setModel(vcard);}
-	
-	/**Sets the data model.
-	@param newModel The data model for which this component provides a view.
-	@exception ClassCastException Thrown if the model is not a <code>VCard</code>.
-	*/
-	public void setModel(final Model newModel)
-	{
-		super.setModel((VCard)newModel);	//set the model in the parent class
-	}
 
 	/**Sets the vCard information that appears in the component.
 	@param vcard The vCard information to display, or <code>null</code> if
@@ -209,7 +188,7 @@ public class VCardPanel extends TabbedViewPanel implements Verifiable
 	public void loadModel() throws IOException
 	{
 		super.loadModel();	//do the default loading
-		final VCard vcard=getVCard();	//get the data model
+		final VCard vcard=getModel();	//get the data model
 		getIdentificationPanel().setVCardName(vcard.getName());
 		getIdentificationPanel().setFormattedName(vcard.getFormattedName());
 		getIdentificationPanel().setNicknames(LocaleText.toLocaleTextArray(vcard.getNicknameList()));
@@ -233,7 +212,7 @@ public class VCardPanel extends TabbedViewPanel implements Verifiable
 	public void saveModel() throws IOException
 	{
 		super.saveModel();	//do the default saving
-		final VCard vcard=getVCard();	//get the data model
+		final VCard vcard=getModel();	//get the data model
 		final LocaleText displayName=getIdentificationPanel().getFormattedName()!=null
 				? getIdentificationPanel().getFormattedName()		//use the formatted name as the display name
 				: getOrganizationPanel().getOrganizationName();		//use the company name if there is no formatted name

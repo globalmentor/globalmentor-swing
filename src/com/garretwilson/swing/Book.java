@@ -23,6 +23,7 @@ import com.garretwilson.swing.event.*;
 import com.garretwilson.swing.rdf.*;
 import com.garretwilson.swing.text.*;
 import com.garretwilson.swing.text.Annotation;
+import static com.garretwilson.swing.text.TextComponentConstants.*;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.garretwilson.text.xml.oeb.*;
@@ -852,7 +853,7 @@ Debug.trace();  //G***del
 		xmlTextPane.addProgressListener(this);	//listen for progress events
 		xmlTextPane.addHyperlinkListener(this);  //listen for hyperlink events
 			//catch all document changes in the text pane, since the document is actually changed in a separate thread
-		xmlTextPane.addPropertyChangeListener(XMLTextPane.DOCUMENT_PROPERTY, new PropertyChangeListener()
+		xmlTextPane.addPropertyChangeListener(DOCUMENT_PROPERTY, new PropertyChangeListener()
 			{
 			  //if the document property changes, call onDocumentChange()
 			  public void propertyChange(final PropertyChangeEvent event) {onDocumentChange();}
