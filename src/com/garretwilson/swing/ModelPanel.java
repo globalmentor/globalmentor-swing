@@ -3,23 +3,18 @@ package com.garretwilson.swing;
 import java.awt.FlowLayout;
 import java.awt.LayoutManager;
 import java.io.IOException;
-
-import com.garretwilson.lang.JavaConstants;
 import com.garretwilson.model.Model;
 
 /**Panel that provides one or more views to a data model.
 <p>Bound properties:</p>
 <dl>
-	<dt><code>ModelPanel.MODEL_PROPERTY</code> (<code>Model</code>)</dt>
+	<dt><code>Model.MODEL_PROPERTY</code> (<code>Model</code>)</dt>
 	<dd>Indicates the data model has been changed.</dd>
 </dl>
 @author Garret Wilson
 */
 public class ModelPanel extends ModifiablePanel
 {
-
-	/**The data model for which this component provides a view.*/
-	public final String MODEL_PROPERTY=ModelPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"model";
 
 	/**The data model for which this component provides a view.*/
 	private Model model;
@@ -51,7 +46,7 @@ public class ModelPanel extends ModifiablePanel
 					SwingApplication.displayApplicationError(this, ioException);	//display the error
 				}
 					//show that the property has changed
-				firePropertyChange(MODEL_PROPERTY, oldModel, newModel);
+				firePropertyChange(Model.MODEL_PROPERTY, oldModel, newModel);
 			}
 		}
 

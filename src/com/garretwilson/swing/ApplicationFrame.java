@@ -12,7 +12,7 @@ import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.*;
 
 /**Main frame parent class for an application. This frame expects to contain
-	an <code>ToolStatusPanel</code>.
+	a <code>ToolStatusPanel</code>.
 <p>If an <code>Application</code> is set for the frame, the close
 	operation changes to <code>EXIT_ON_CLOSE</code>. (This is essential to work
 	around a JDK bug that under certain instances runs a daemon thread that
@@ -30,7 +30,7 @@ This class maintains the default close operation of
 @see Application
 @see #displayError
 */
-public abstract class ApplicationFrame extends BasicFrame
+public class ApplicationFrame extends BasicFrame
 {
 
 	//file menu identifiers
@@ -261,7 +261,7 @@ public abstract class ApplicationFrame extends BasicFrame
 	*/
 	public ApplicationFrame(final SwingApplication application)
 	{
-		this(true); //create an application frame with a default application panel
+		this(application, true); //create an application frame with a default application panel and initialize
 	}
 
 	/**Constructor with a default panel and optional initialization.
@@ -284,7 +284,7 @@ public abstract class ApplicationFrame extends BasicFrame
 	*/
 	public ApplicationFrame(final SwingApplication application, final boolean initialize)
 	{
-		this(new ToolStatusPanel(), initialize); //create an application frame with a default application panel
+		this(application, new ToolStatusPanel(), initialize); //create an application frame with a default application panel
 	}
 
 	/**Application panel constructor.
@@ -307,7 +307,7 @@ public abstract class ApplicationFrame extends BasicFrame
 	*/
 	public ApplicationFrame(final SwingApplication application, final Container contentPane)
 	{
-		this(contentPane, true);  //construct and initialize the frame
+		this(application, contentPane, true);  //construct and initialize the frame
 	}
 
 	/**Application panel constructor with optional initialization.

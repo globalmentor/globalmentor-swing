@@ -145,6 +145,17 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		*/
 		public void setURIInputStreamable(final URIInputStreamable newURIInputStreamable) {uriInputStreamable=newURIInputStreamable;}
 
+	/**The implementation to use for retrieving an output stream to a URI.*/
+	private URIOutputStreamable uriOutputStreamable=this;
+
+		/**@return The implementation to use for retrieving an output stream to a URI.*/
+		public URIOutputStreamable getURIOutputStreamable() {return uriOutputStreamable;}
+		
+		/**Sets the implementation to use for retrieving an output stream to a URI.
+		@param outputStreamable The implementation to use for accessing a URI for output.
+		*/
+		public void setURIOutputStreamable(final URIOutputStreamable outputStreamable) {uriOutputStreamable=outputStreamable;}
+
 	/**The current position of the mouse.*/
 	private Point mousePosition=new Point(0, 0);
 
@@ -754,6 +765,17 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	public InputStream getInputStream(final URI uri) throws IOException
 	{
 		return uri.toURL().openConnection().getInputStream();	//G***testing---fix
+	}
+
+	/**Returns an output stream for the given URI.
+	The calling class has the responsibility for closing the output stream.
+	@param uri A URI to a resource.
+	@return An output stream to the contents of the resource represented by the given URI.
+	@exception IOException Thrown if an I/O error occurred.
+	*/
+	public OutputStream getOutputStream(final URI uri) throws IOException
+	{
+		return uri.toURL().openConnection().getOutputStream();	//TODO fix activity engine by delegating to default URIAccessible
 	}
 
 	/**Sets the text to the specified content, which must be well-formed XML.
