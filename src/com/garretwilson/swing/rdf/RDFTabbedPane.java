@@ -1,11 +1,8 @@
 package com.garretwilson.swing.rdf;
 
-import java.awt.*;
 import java.io.IOException;
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.tree.*;
-import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.rdf.tree.*;
 import com.garretwilson.text.xml.XMLDOMImplementation;
 import com.garretwilson.text.xml.XMLSerializer;

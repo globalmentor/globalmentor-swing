@@ -863,7 +863,8 @@ Debug.trace("Non-collapsed text: "+text);
 
 	/**Writes content from a document to the given stream in a format appropriate
 		for this kind of content handler. Currently the position and length are
-		ignored and the entire document is written.
+		ignored and the entire document is written. By default UTF-8 encoding
+		is used.
 	@param outputStream The stream to write to.
 	@param document The source of the data to write.
 	@param pos The location in the document to fetch the content (>=0).
@@ -874,11 +875,28 @@ Debug.trace("Non-collapsed text: "+text);
 	*/
 	public void write(final OutputStream outputStream, final Document document, final int pos, final int len) throws IOException, BadLocationException
 	{
+		write(outputStream, CharacterEncodingConstants.UTF_8, document, pos, len);	//write using UTF-8
+	}
+
+	/**Writes content from a document to the given stream in a format appropriate
+		for this kind of content handler. Currently the position and length are
+		ignored and the entire document is written.
+	@param outputStream The stream to write to.
+	@param encoding The encoding format to use when serializing.
+	@param document The source of the data to write.
+	@param pos The location in the document to fetch the content (>=0).
+	@param len The amount to write out (>=0).
+	@exception IOException Thrown if any I/O error occurs.
+	@exception BadLocationException Thrown if the position represents an invalid
+		location within the document.
+	*/
+	public void write(final OutputStream outputStream, final String encoding, final Document document, final int pos, final int len) throws IOException, BadLocationException
+	{
 		if(document instanceof XMLDocument) //if the document is an XML document
 		{
 			final org.w3c.dom.Document xmlDocument=createXMLDocument(document);  //create an XML document from given Swing document
 			final XMLSerializer xmlSerializer=new XMLSerializer();  //create an XML serializer G***fix the formatted argument
-			xmlSerializer.serialize(xmlDocument, outputStream);  //write the document to the output stream
+			xmlSerializer.serialize(xmlDocument, outputStream, encoding);  //write the document to the output stream using the specified encoding
 		}
 		else  //if the document is not an XML document
 			super.write(outputStream, document, pos, len);  //do the default writing
