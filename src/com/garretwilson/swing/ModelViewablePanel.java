@@ -4,9 +4,11 @@ import java.awt.FlowLayout;
 import java.awt.LayoutManager;
 import java.io.IOException;
 import javax.swing.*;
+
+import com.garretwilson.model.Model;
 import com.garretwilson.model.ModelViewable;
 
-/**Panel that allows multiple views of data to be displayed.
+/**Panel that allows multiple views of a data model to be displayed.
 <p>Bound properties:</p>
 <dl>
 	<dt><code>ModelViewable.MODEL_VIEW_PROPERTY</code> (<code>Integer</code>)</dt>
@@ -14,7 +16,7 @@ import com.garretwilson.model.ModelViewable;
 </dl>
 @author Garret Wilson
 */
-public abstract class ModelViewablePanel extends BasicPanel implements ModelViewable
+public abstract class ModelViewablePanel extends ModelPanel implements ModelViewable
 {
 
 	/**@return A value representing the supported data views ORed together.*/
@@ -75,38 +77,43 @@ public abstract class ModelViewablePanel extends BasicPanel implements ModelView
 			}
 		}
 
-	/**Default constructor.*/
-	public ModelViewablePanel()
+	/**Model constructor.
+	@param model The data model for which this component provides a view.
+	*/
+	public ModelViewablePanel(final Model model)
 	{
-		this(true); //initialize the panel
+		this(model, true); //initialize the panel
 	}
 
 	/**Constructor with optional initialization that uses a <code>FlowLayout</code>.
+	@param model The data model for which this component provides a view.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	@see #FlowLayout
 	*/
-	public ModelViewablePanel(final boolean initialize)
+	public ModelViewablePanel(final Model model, final boolean initialize)
 	{
-		this(new FlowLayout(), initialize);	//construct the panel with a flow layout by default
+		this(new FlowLayout(), model, initialize);	//construct the panel with a flow layout by default
 	}
 
 	/**Layout constructor.
 	@param layout The layout manager to use.
+	@param model The data model for which this component provides a view.
 	*/
-	public ModelViewablePanel(final LayoutManager layout)
+	public ModelViewablePanel(final LayoutManager layout, final Model model)
 	{
-		this(layout, true);	//construct the class with the layout, initializing the panel
+		this(layout, model, true);	//construct the class with the layout, initializing the panel
 	}
 
 	/**Layout constructor with optional initialization.
 	@param layout The layout manager to use.
+	@param model The data model for which this component provides a view.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public ModelViewablePanel(final LayoutManager layout, final boolean initialize)
+	public ModelViewablePanel(final LayoutManager layout, final Model model, final boolean initialize)
 	{
-		super(layout, false);	//construct the parent but don't initialize the panel
+		super(layout, model, false);	//construct the parent but don't initialize the panel
 		dataView=NO_MODEL_VIEW;	//default to no valid view
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel
@@ -119,6 +126,40 @@ public abstract class ModelViewablePanel extends BasicPanel implements ModelView
 	{
 		super.initializeUI(); //do the default UI initialization
 		setModelView(getDefaultModelView());	//set the default data view
+	}
+
+	/**@return The data model for which this component provides a view.*/
+	protected Model getModel()
+	{
+/*G***del if not needed
+		try
+		{
+			saveModel(getModelView());	//store the data that is being edited, if any data is being edited
+		}
+		catch(IOException ioException)	//if there were any problems saving the model TODO fix the way all this works
+		{
+			OptionPane.showMessageDialog(this, ioException.getMessage(), ioException.getClass().getName(), JOptionPane.ERROR_MESSAGE);	//G***i18n; TODO fix in a common routine
+		}
+*/
+		return super.getModel();	//return the data that was just stored or was already stored
+	}
+
+	/**Sets the data model.
+	This is a bound property.
+	@param newModel The data model for which this component provides a view.
+	*/
+	protected void setModel(final Model newModel)
+	{
+		super.setModel(newModel);	//save the model normally
+		try
+		{
+			loadModel(getModelView());	//try to load the model into our current data view
+			newModel.setModified(false);	//show that the information has not been modified
+		}
+		catch(IOException ioException)	//if there were any problems saving the model
+		{
+			OptionPane.showMessageDialog(this, ioException.getMessage(), ioException.getClass().getName(), JOptionPane.ERROR_MESSAGE);	//G***i18n; TODO fix in a common routine
+		}		
 	}
 
 	/**Loads the data from the model to the given view.

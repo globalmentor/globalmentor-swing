@@ -22,9 +22,6 @@ public class RDFTree extends JTree
 
 	RDFResourceTreeCellRenderer rdfResourceTreeCellRenderer=new RDFResourceTreeCellRenderer();
 
-	/**The DOM implementation used for serializing the RDF.*/
-	protected final DOMImplementation domImplementation=new XMLDOMImplementation();
-
 	/**The RDF data model being displayed.*/
 	private RDF rdf;
 

@@ -5,6 +5,7 @@ import java.awt.Component;
 import javax.swing.*;
 import javax.swing.event.*;
 import com.garretwilson.awt.BasicGridBagLayout;
+import com.garretwilson.model.Model;
 import com.garretwilson.model.ModelViewable;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.*;
@@ -178,19 +179,22 @@ public abstract class TabbedViewPanel extends ModelViewablePanel implements Mode
 		setViewComponent(view, component);	//associate that component with the view
 	}
 
-	/**Default constructor.*/
-	public TabbedViewPanel()
+	/**Model constructor.
+	@param model The data model for which this component provides a view.
+	*/
+	public TabbedViewPanel(final Model model)
 	{
-		this(true); //initialize the panel
+		this(model, true); //initialize the panel
 	}
 
 	/**Initialize constructor.
+	@param model The data model for which this component provides a view.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public TabbedViewPanel(final boolean initialize)
+	public TabbedViewPanel(final Model model, final boolean initialize)
 	{
-		super(new BasicGridBagLayout(), false);	//construct the parent class with a grid bag layout manager, but don't initialize the panel
+		super(new BasicGridBagLayout(), model, false);	//construct the parent class with a grid bag layout manager, but don't initialize the panel
 		tabbedPane=new JTabbedPane();	//create the center tabbed pane
 		viewComponentMap=new ReverseHashMap();	//create the reverse lookup map of components
 		if(initialize)  //if we should initialize

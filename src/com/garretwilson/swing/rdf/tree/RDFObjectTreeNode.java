@@ -21,12 +21,11 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 		<code>RDFObject</code>.
 	@see DefaultMutableTreeNode#getUserObject
 	*/
-/*G***del if not needed
 	public RDFObject getRDFObject()
 	{
 		return (RDFResource)getUserObject();  //return the user object cast to an RDF resource
 	}
-*/
+
 	/**The RDF data model to which the RDF object belongs.*/
 //G***del if not needed	private final RDF rdf;
 

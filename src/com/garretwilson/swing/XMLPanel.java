@@ -1,17 +1,14 @@
 package com.garretwilson.swing;
 
 import java.io.*;
-import java.net.URI;
 import javax.swing.*;
 import javax.swing.event.*;
 import com.garretwilson.io.MediaType;
-import com.garretwilson.io.URIInputStreamable;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.text.CharacterEncodingConstants;
+import com.garretwilson.text.xml.XMLModel;
 import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.text.xml.XMLSerializer;
-import com.garretwilson.util.Debug;
-import org.w3c.dom.Document;
 
 /**Panel that displays XML and source code.
 <p>The canonical XML tree is stored in the currently available view.</p>
@@ -96,28 +93,6 @@ public class XMLPanel extends TabbedViewPanel
 		/**@return The source scroll pane component.*/
 		protected JScrollPane getSourceScrollPane() {return sourceScrollPane;}
 
-	/**@return The base URI of the XML, or <code>null</code> if unknown.
-	@see XMLTextPane#getBaseURI
-	*/
-	public URI getBaseURI() {return xmlTextPane.getBaseURI();}
-
-	/**Sets the base URI.
-	@param baseURI The base URI of the XML, or <code>null</code> if unknown.
-	@see XMLTextPane#setBaseURI
-	*/
-	public void setBaseURI(final URI baseURI) {xmlTextPane.setBaseURI(baseURI);}
-
-	/**@return The implementation to use for retrieving an input stream to a URI.
-	@see XMLTextPane#getURIInputStreamable()
-	*/
-	public URIInputStreamable getURIInputStreamable() {return xmlTextPane.getURIInputStreamable();}
-		
-	/**Sets the implementation to use for retrieving an input stream to a URI.
-	@param inputStreamable The implementation to use for accessing a URI for input.
-	@see XMLTextPane#setURIInputStreamable()
-	*/
-	public void setURIInputStreamable(final URIInputStreamable inputStreamable) {xmlTextPane.setURIInputStreamable(inputStreamable);}
-
 	/**A listener that changes the modification status to <code>true</code> when
 		a document has been modified.
 	*/
@@ -128,42 +103,57 @@ public class XMLPanel extends TabbedViewPanel
 		*/
 		protected DocumentListener getModifyDocumentListener() {return modifyDocumentListener;}
 
-	/**The XML document representing the data model, or <code>null</code> if
-		there is no XML.
+	/**@return The data model for which this component provides a view.
+	@see ModelViewablePanel#getModel()
 	*/
-	private Document xml;
+	public XMLModel getXMLModel() {return (XMLModel)getModel();}
 
-	/**Default constructor.*/
-	public XMLPanel()
+	/**Sets the data model.
+	@param model The data model for which this component provides a view.
+	@see ModelViewablePanel#setModel(Model)
+	*/
+	public void setXMLModel(final XMLModel model)
 	{
-		this(true);	//construct and initialize the panel
+		xmlTextPane.setURIInputStreamable(model.getURIInputStreamable());	//make sure the text pane knows from where to get input streams
+		setModel(model);	//set the model
+	}
+
+	/**Model constructor.
+	@param model The data model for which this component provides a view.
+	*/
+	public XMLPanel(final XMLModel model)
+	{
+		this(model, true);	//construct and initialize the panel
 	}
 
 	/**Initialization constructor.
+	@param model The data model for which this component provides a view.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public XMLPanel(final boolean initialize)
+	public XMLPanel(final XMLModel model, final boolean initialize)
 	{
-		this(new MediaType(MediaType.TEXT, MediaType.XML), initialize);	//construct the panel with a default text/xml media type
+		this(model, new MediaType(MediaType.TEXT, MediaType.XML), initialize);	//construct the panel with a default text/xml media type
 	}
 
 	/**Content type constructor.
+	@param model The data model for which this component provides a view.
 	@param mediaType The content type of the XML.
 	*/
-	public XMLPanel(final MediaType mediaType)
+	public XMLPanel(final XMLModel model, final MediaType mediaType)
 	{
-		this(mediaType, true);	//construct and initialize the panel
+		this(model, mediaType, true);	//construct and initialize the panel
 	}
 
 	/**Content type and initialization constructor.
+	@param model The data model for which this component provides a view.
 	@param mediaType The content type of the XML.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public XMLPanel(final MediaType mediaType, final boolean initialize)
+	public XMLPanel(final XMLModel model, final MediaType mediaType, final boolean initialize)
 	{
-		super(false);	//construct the parent class without initializing the panel
+		super(model, false);	//construct the parent class without initializing the panel
 		supportedDataViews=DEFAULT_SUPPORTED_DATA_VIEWS;	//set the data views we support
 		defaultDataView=DEFAULT_DEFAULT_DATA_VIEW;	//set the default data view
 		xmlTextPane=new XMLTextPane();	//create a new XML text pane
@@ -217,51 +207,21 @@ public class XMLPanel extends TabbedViewPanel
 		getXMLTextPane().setContentType(mediaType.toString());	//set the content type of the text pane
 	}
 
-	/**@return The XML document representing the data model, or <code>null</code> if
-		there is no XML.
-	@exception IOException Thrown if there was an error loading the model.
-	*/
-	public Document getXML() throws IOException
-	{
-		saveModel(getModelView());	//store the data that is being edited, if any data is being edited
-		return xml;	//return the data that was just stored or was already stored
-	}
-
-	/**Sets the given XML data.
-	<p>The installed editor kit for the current content type will be used to
-		create a new document, into which the XML data will be loaded. If the
-		installed editor kit for the current content type is not an
-		<code>XMLEditorKit</code>, no action occurs.</p>
-	@param xml The XML document that contains the data.
-	@see #setContentType()
-	*/
-	public void setXML(final Document xml)
-	{
-		this.xml=xml;	//store the XML
-		try
-		{
-			loadModel(getModelView());	//try to load the model into our current data view
-			setModified(false);	//show that the information has not been modified
-		}
-		catch(IOException ioException)	//if there were any problems saving the model
-		{
-			OptionPane.showMessageDialog(this, ioException.getMessage(), ioException.getClass().getName(), JOptionPane.ERROR_MESSAGE);	//G***i18n; TODO fix in a common routine
-		}		
-	}
-
 	/**Loads the data from the model to the given view.
 	@param modelView The view of the data that should be loaded.
 	@exception IOException Thrown if there was an error loading the model.
 	*/
 	protected void loadModel(final int modelView) throws IOException
 	{
+		final XMLModel model=getXMLModel();	//get the data model
 		switch(modelView)	//see which view of data we should load
 		{
 			case WYSIWYG_MODEL_VIEW:	//if we're changing to the WYSIWYG view
 				getXMLTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the XML text pane
-				if(xml!=null)	//if we have XML
+				if(model.getXML()!=null)	//if we have XML
 				{
-					getXMLTextPane().setXML(xml, getBaseURI(), getContentType());	//put the XML into the XML text pane
+					getXMLTextPane().setURIInputStreamable(model.getURIInputStreamable());	//make sure the text pane knows from where to get input streams
+					getXMLTextPane().setXML(model.getXML(), model.getBaseURI(), getContentType());	//put the XML into the XML text pane
 				}
 				else	//if we don't have any XML
 				{
@@ -271,10 +231,10 @@ public class XMLPanel extends TabbedViewPanel
 				break;
 			case SOURCE_MODEL_VIEW:	//if we're changing to the source view
 				getSourceTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the source text pane
-				if(xml!=null)	//if we have XML
+				if(model.getXML()!=null)	//if we have XML
 				{
 					final XMLSerializer xmlSerializer=new XMLSerializer(true);	//create a formatted XML serializer
-					final String source=xmlSerializer.serialize(xml);	//serialize the XML to a string
+					final String source=xmlSerializer.serialize(model.getXML());	//serialize the XML to a string
 					getSourceTextPane().setText(source);	//show the XML source in the source text pane
 					getSourceTextPane().setCaretPosition(0);  //scroll to the top of the text
 				}
@@ -294,6 +254,7 @@ public class XMLPanel extends TabbedViewPanel
 	*/
 	protected void saveModel(final int modelView) throws IOException
 	{
+		final XMLModel model=getXMLModel();	//get the data model
 		switch(modelView)	//see which view of data we have, in order to get the current XML
 		{
 			case SOURCE_MODEL_VIEW:	//if we should store the XML source
@@ -301,13 +262,12 @@ public class XMLPanel extends TabbedViewPanel
 					final String sourceString=getSourceTextPane().getText();	//get the current source text
 					if(sourceString.length()>0)	//if there is source text
 					{
-						final XMLProcessor xmlProcessor=new XMLProcessor(getURIInputStreamable());	//create an XML processor to read the source
+						final XMLProcessor xmlProcessor=new XMLProcessor(model.getURIInputStreamable());	//create an XML processor to read the source
 						final byte[] sourceBytes=sourceString.getBytes(CharacterEncodingConstants.UTF_8);	//convert the string to a series of UTF-8 bytes
 						final InputStream inputStream=new BufferedInputStream(new ByteArrayInputStream(sourceBytes));	//create an input stream to the source as bytes
 						try
 						{
-							xml=xmlProcessor.parseDocument(inputStream, getBaseURI());	//parse the document into the XML data model
-		
+							model.setXML(xmlProcessor.parseDocument(inputStream, model.getBaseURI()));	//parse the document into the XML data model
 						}
 						finally
 						{
@@ -316,7 +276,7 @@ public class XMLPanel extends TabbedViewPanel
 					}
 					else	//if there is no source text
 					{
-						xml=null;	//there can be no XML
+						model.setXML(null);	//there can be no XML
 					}
 				}
 				break;
@@ -324,7 +284,7 @@ public class XMLPanel extends TabbedViewPanel
 				if(getXMLTextPane().getDocument() instanceof XMLDocument)	//if this is an Swing XML document
 				{
 					final XMLDocument xmlDocument=(XMLDocument)getXMLTextPane().getDocument();	//get the XML document
-					xml=xmlDocument.getXML();	//get the XML from the document
+					model.setXML(xmlDocument.getXML());	//get the XML from the document
 				}
 				break;
 		}
