@@ -958,7 +958,7 @@ Debug.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEn
 				}
 				catch (BadLocationException e)
 				{
-					Debug.error(e);	//G***fix
+					throw new AssertionError(e);	//G***fix
 				}
 			}
 			insertBlockElementEnds(childElement);	//insert block ends for this child element's children

@@ -297,7 +297,7 @@ childViewList.add(new XMLHiddenView(childElement));	//create a hidden view to hi
 						}
 						catch(BadLocationException badLocationException)  //if we tried to access an invalid location (this shouldn't happen unless there are problems internal to an element)
 						{
-							Debug.error(badLocationException);  //report the error
+							throw new AssertionError(badLocationException);  //report the error
 						}
 					}
 

@@ -1480,7 +1480,7 @@ else
 				}
 				catch(BadLocationException badLocationException)  //in the unlikely event that we try to access a bad location
 				{
-					Debug.error(badLocationException);  //report an error
+					throw new AssertionError(badLocationException);  //report an error
 				}
 			}
 		}

@@ -6,6 +6,7 @@ import java.util.*;
 import javax.swing.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.util.DefaultOrderComparator;
+import com.garretwilson.util.EmptyIterator;
 import com.garretwilson.util.IteratorUtilities;
 
 /**Manages a set of actions for an application or a component.
@@ -208,6 +209,8 @@ public class ActionManager implements Cloneable
 		return getMenuActionIterator(null);	//return an iterator to all menu actions that do not have parents---the top-level menus
 	}
 
+	private final static Iterator EMPTY_ITERATOR=new EmptyIterator();	//TODO fix to work with generics
+	
 	/**Returns an iterator to actions representing menus.
 	If no parent action is specified, the actions returned will retpresent
 		top-level actions.
@@ -223,7 +226,7 @@ public class ActionManager implements Cloneable
 		{
 			Collections.sort(sortedActionList, new ActionMenuOrderComparator(actionList));	//sort the actions by menu order, defaulting to the order they were in before sorting
 		}
-		return sortedActionList!=null ? Collections.unmodifiableList(sortedActionList).iterator() : IteratorUtilities.getEmptyIterator();	//return a read-only iterator to the sorted actions, if there are any
+		return sortedActionList!=null ? Collections.unmodifiableList(sortedActionList).iterator() : EMPTY_ITERATOR;	//return a read-only iterator to the sorted actions, if there are any
 	}
 
 	/**Merges a given action manager with this one, creating a new, merged action
@@ -298,7 +301,7 @@ public class ActionManager implements Cloneable
 	/**@return A read-only iterator to actions representing tools.*/
 	public Iterator getToolActionIterator()
 	{
-		return toolActionList!=null ? Collections.unmodifiableList(toolActionList).iterator() : IteratorUtilities.getEmptyIterator();	//return a read-only iterator to the tool actions, if there are any
+		return toolActionList!=null ? Collections.unmodifiableList(toolActionList).iterator() : EMPTY_ITERATOR;	//return a read-only iterator to the tool actions, if there are any
 	}
 
 	/**Returns a read-only sorted iterator to the given list of actions.
