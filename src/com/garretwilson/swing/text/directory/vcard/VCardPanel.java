@@ -87,6 +87,8 @@ public class VCardPanel extends ContentPanel
 		getIdentificationPanel().setVCardName(vcard.getName());
 		getIdentificationPanel().setFormattedName(vcard.getFormattedName());
 		getIdentificationPanel().setNicknames(LocaleText.toLocaleTextArray(vcard.getNicknameList()));
+		getAddressesPanel().setAddresses((Address[])vcard.getAddressList().toArray(new Address[vcard.getAddressList().size()]));
+		getAddressesPanel().setLabels((LocaleText[])vcard.getLabelList().toArray(new LocaleText[vcard.getLabelList().size()]));
 		getOrganizationPanel().setOrganizationName(vcard.getOrganizationName());
 		getOrganizationPanel().setUnits(vcard.getOrganizationUnits());
 		getOrganizationPanel().setJobTitle(vcard.getTitle());
@@ -105,6 +107,8 @@ public class VCardPanel extends ContentPanel
 		vcard.setName(getIdentificationPanel().getVCardName());
 		vcard.setFormattedName(getIdentificationPanel().getFormattedName());
 		vcard.setNicknames(getIdentificationPanel().getNicknames());
+		vcard.setAddresses(getAddressesPanel().getAddresses());
+		vcard.setLabels(getAddressesPanel().getLabels());
 		vcard.setOrganizationName(getOrganizationPanel().getOrganizationName());
 		vcard.setOrganizationUnits(getOrganizationPanel().getUnits());
 		vcard.setTitle(getOrganizationPanel().getJobTitle());

@@ -162,7 +162,9 @@ public class AddressPanel extends BasicVCardPanel
 		}
 	}
 	
-	/**@return An object representing the address information entered.*/
+	/**@return An object representing the address information entered, or
+		<code>null</code> if no address was entered.
+	*/
 	public Address getAddress()
 	{
 		final String postOfficeBox=StringUtilities.getNonEmptyString(postOfficeBoxTextField.getText().trim());
@@ -173,9 +175,16 @@ public class AddressPanel extends BasicVCardPanel
 		final String postalCode=StringUtilities.getNonEmptyString(postalCodeTextField.getText().trim());
 		final String countryName=StringUtilities.getNonEmptyString(countryNameComboBox.getSelectedItem().toString().trim());
 		final int addressType=getAddressType();
-//G***del		final int addressType=addressTypePanel.getAddressType();
 		final Locale locale=selectLanguageAction.getLocale();
-		return new Address(postOfficeBox, extendedAddresses, streetAddresses, locality, region, postalCode, countryName, addressType, locale);	//create and return an address representing the entered information
+			//if address information was entered
+		if(postOfficeBox!=null || streetAddresses.length>0 || locality!=null || region!=null || postalCode!=null || countryName!=null)
+		{
+			return new Address(postOfficeBox, extendedAddresses, streetAddresses, locality, region, postalCode, countryName, addressType, locale);	//create and return an address representing the entered information
+		}
+		else	//if no address information was entered
+		{
+			return null;	//show that there was no address
+		}
 	}
 
 	/**Default constructor.*/

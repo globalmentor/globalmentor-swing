@@ -3,6 +3,8 @@ package com.garretwilson.swing.text.directory.vcard;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.util.*;
@@ -44,6 +46,23 @@ public class AddressesPanel extends ContentPanel
 	/**@return The tabbed pane containing the address panels.*/
 	protected JTabbedPane getTabbedPane() {return (JTabbedPane)getContentComponent();}
 
+	/**The stored array of labels we keep so that they won't be lost.*/ 
+	private LocaleText[] labels=new LocaleText[]{};	//TODO allow these to be edited in the panel
+	
+	/**Places the labels into the tabs.
+	@param labels The labels to place in the tabs.
+	*/
+	public void setLabels(LocaleText[] labels)
+	{
+		this.labels=labels;	//save the labels for later
+	}
+	
+	/**@return An array of entered labels.*/
+	public LocaleText[] getLabels()
+	{
+		return labels;	//return the labels we stored
+	}
+	
 	/**Places the addresses into the tabs.
 	@param addresses The addresses to place in the tabs. If the array is empty,
 		a default address will be placed in the first tab.
@@ -63,13 +82,20 @@ public class AddressesPanel extends ContentPanel
 	/**@return An array of entered addresses.*/
 	public Address[] getAddresses()
 	{
-		final Address[] addresses=new Address[getTabbedPane().getTabCount()];	//create an array of addresses, based upon the number of tabs
-		for(int i=0; i<addresses.length; ++i)	//look at each tab
+		final List addressList=new ArrayList(getTabbedPane().getTabCount());	//create a list in which to store the addresses, making room for the maximum amout of addresses we could get 
+//G***del		final Address[] addresses=new Address[getTabbedPane().getTabCount()];	//create an array of addresses, based upon the number of tabs
+		for(int i=0; i<getTabbedPane().getTabCount(); ++i)	//look at each tab
 		{
 			final AddressPanel addressPanel=(AddressPanel)getTabbedPane().getComponentAt(i);	//get this address panel
-			addresses[i]=addressPanel.getAddress();	//get this address
+			final Address address=addressPanel.getAddress();	//get this address
+			if(address!=null)	//if an address was entered in this panel
+			{
+				addressList.add(address);	//add this address to our list
+			}
+//G***del			addresses[i]=addressPanel.getAddress();	//get this address
 		}
-		return addresses;	//return the addresses we collected
+//G***del		return addresses;	//return the addresses we collected
+		return (Address[])addressList.toArray(new Address[addressList.size()]);	//return an array of the addresses we collected
 	}
 
 	/**Sets whether the object has been modified.
@@ -190,7 +216,8 @@ public class AddressesPanel extends ContentPanel
 	/**Determines a title to use for the given address tab.
 	@param address The address for which a title should be returned.
 	@return An appropriate title for the address tab.
-	*/	
+	*/
+/*G***del if not needed
 	protected String getTabTitle(final Address address)	//G***i18n
 	{
 		final String title;	//TODO fix with a better tab label algorithm
@@ -216,6 +243,7 @@ public class AddressesPanel extends ContentPanel
 		}
 		return title;	//return the title
 	}
+*/
 
 	/**Action for adding an address.*/
 	class AddAddressAction extends AbstractAction
