@@ -200,7 +200,7 @@ public class IdentificationPanel extends BasicVCardPanel
 	}
 
 	/**Updates the constructed URI based upon current user input.*/
-	protected void updateStatus()
+	public void updateStatus()
 	{
 		super.updateStatus();	//do the default status updating
 		if(shouldUpdateFormattedName)	//if the formatted name matched the information in the name panel the last time the formatted name was modified

@@ -112,7 +112,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 	/**Updates the states of the actions, including enabled/disabled status,
 		proxied actions, etc.
 	*/
-	protected void updateStatus()
+	public void updateStatus()
 	{
 		super.updateStatus(); //update the default actions
 		getPreviousAction().setEnabled(hasPrevious()); //only allow going backwards if we have a previous step

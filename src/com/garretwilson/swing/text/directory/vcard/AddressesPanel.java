@@ -191,7 +191,7 @@ public class AddressesPanel extends ContentPanel
 	}
 
 	/**Updates the user interface.*/
-	protected void updateStatus()
+	public void updateStatus()
 	{
 		super.updateStatus();	//do the default status updating
 //G***del when works		getRemoveAddressAction().setEnabled(getTabbedPane().getTabCount()>1);	//don't allow all the tabs to be removed

@@ -97,15 +97,15 @@ public class BooleanPanel extends ModifiablePanel implements SwingConstants
 		add(falseRadioButton, ((BasicGridBagLayout)getLayout()).createNextBoxConstraints(axis));	//add the false button
 	}
 
-	/**Sets whether or not this component is enabled.
-		This implementation enables or disables child components appropriately.
-	@param enabled <code>true</code> if this component should be enabled,
-		<code>false</code> otherwise.
+	/**Updates the states of the actions, including enabled/disabled status,
+		proxied actions, etc.
 	*/
-	public void setEnabled(final boolean enabled)
+	public void updateStatus()
 	{
-		super.setEnabled(enabled);	//do the default enabling
-		trueRadioButton.setEnabled(enabled);	//enable or disable the true radio button
-		falseRadioButton.setEnabled(enabled);	//enable or disable the false radio button
+		super.updateStatus();	//do the default updating
+		final boolean isEnabled=isEnabled();	//see if we're enabled
+		trueRadioButton.setEnabled(isEnabled);	//enable or disable the true radio button
+		falseRadioButton.setEnabled(isEnabled);	//enable or disable the false radio button
 	}
+
 }

@@ -196,7 +196,7 @@ public class AboutPanel extends BasicPanel implements CharacterConstants
 	}
 
 	/**Updates the user interface.*/
-	protected void updateStatus()
+	public void updateStatus()
 	{
 		super.updateStatus();	//do the default status updating
 		getPropertiesAction().setEnabled(getResource()!=null);	//only allow access to properties if there is a resource

@@ -198,7 +198,7 @@ public class TelecommunicationsPanel extends ContentPanel
 	}
 
 	/**Updates the user interface.*/
-	protected void updateStatus()
+	public void updateStatus()
 	{
 		super.updateStatus();	//do the default status updating
 //G***fix		getRemoveAddressAction().setEnabled(getTabbedPane().getTabCount()>1);	//don't allow all the tabs to be removed

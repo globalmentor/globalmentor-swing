@@ -140,7 +140,7 @@ public class TelephoneNumberPanel extends ModifiablePanel
 		countryCodeComboBox.setEditable(true);
 		countryCodeComboBox.setPrototypeDisplayValue("000");	//G***testing
 //G***gix		honorificPrefixComboBox.setModel(new DefaultComboBoxModel(HONORIFIC_PREFIX_EXAMPLES));	//set up the example honorific prefixes
-		countryCodeComboBox.addItemListener(getModifyItemListener());
+		countryCodeComboBox.addActionListener(getModifyActionListener());
 		nationalDestinationCodeLabel.setText("Area Code");	//G***i18n
 		nationalDestinationCodeTextField.setColumns(8);
 		nationalDestinationCodeTextField.getDocument().addDocumentListener(getModifyDocumentListener());

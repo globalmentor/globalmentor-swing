@@ -166,7 +166,7 @@ public class ListPanel extends ContentPanel implements Editable
 	/**Updates the states of the actions, including enabled/disabled status,
 		proxied actions, etc.
 	*/
-	protected void updateStatus()
+	public void updateStatus()
 	{
 		super.updateStatus();	//do the default updating
 		final JList list=getList();	//get a reference to the list

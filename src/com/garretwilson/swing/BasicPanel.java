@@ -35,7 +35,9 @@ import com.garretwilson.util.*;
 	and <code>DocumentListener</code>, that do nothing but update the status.</p>
 <p>The panel is scrollable, and by default takes care of its own width and/or
 	height rather than allowing any parent scroll width and height. This behavior
-	can be modified.</p> 
+	can be modified.</p>
+<p>When this panel is enabled or disabled, it updates its status through
+	<code>updateStatus()</code>.</p> 
 <p>Bound properties:</p>
 <dl>
 	<dt><code>BasicPanel.ICON_PROPERTY</code> (<code>Icon</code>)</dt>
@@ -219,6 +221,23 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 			}
 		}
 
+	/**Sets whether or not this component is enabled.
+		This implementation enables calls <code>updateStatus()</code> if the
+		enabled status changes.
+	@param enabled <code>true</code> if this component should be enabled,
+		<code>false</code> otherwise.
+	@see #updateStatus()
+	*/
+	public void setEnabled(final boolean enabled)
+	{
+		final boolean oldEnabled=isEnabled();	//see whether we're currently enabled
+		super.setEnabled(enabled);	//do the default enabling
+		if(oldEnabled!=enabled)	//if the enabled state changed
+		{
+			updateStatus();	//update the status
+		}
+	}
+
 	/**Default constructor that uses a <code>FlowLayout</code>.
 	@see #FlowLayout
 	*/
@@ -289,7 +308,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	/**Updates the states of the actions, including enabled/disabled status,
 		proxied actions, etc.
 	*/
-	protected void updateStatus()
+	public void updateStatus()
 	{
 	}
 

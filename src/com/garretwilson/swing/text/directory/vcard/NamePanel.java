@@ -183,12 +183,12 @@ public class NamePanel extends BasicVCardPanel
 		honorificPrefixComboBox.setEditable(true);
 		honorificPrefixComboBox.setModel(new DefaultComboBoxModel(HONORIFIC_PREFIX_EXAMPLES));	//set up the example honorific prefixes
 		honorificPrefixComboBox.setPrototypeDisplayValue("Prof.");
-		honorificPrefixComboBox.addItemListener(getModifyItemListener());
+		honorificPrefixComboBox.addActionListener(getModifyActionListener());
 		honorificSuffixLabel.setText("Suffix");	//G***i18n
 		honorificSuffixComboBox.setEditable(true);
 		honorificSuffixComboBox.setModel(new DefaultComboBoxModel(HONORIFIC_SUFFIX_EXAMPLES));	//set up the example honorific suffixes
 		honorificSuffixComboBox.setPrototypeDisplayValue("Sr.");
-		honorificSuffixComboBox.addItemListener(getModifyItemListener());
+		honorificSuffixComboBox.addActionListener(getModifyActionListener());
 		getSelectLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectLanguageButton=createSelectLanguageButton(getSelectLanguageAction());
 /*G***del when works

@@ -60,6 +60,19 @@ public class ModifiablePanel extends BasicPanel implements Modifiable
 			}
 		}
 
+	/**The lazily-created listener that modifies this panel when an action occurs.*/
+	private ActionListener modifyActionListener;
+
+		/**@return The lazily-created listener that modifies this panel when an action occurs.*/
+		protected ActionListener getModifyActionListener()
+		{
+			if(modifyActionListener==null)	//if we haven't created the listener, yet
+			{
+				modifyActionListener=createModifyActionListener();	//create the listener
+			}
+			return modifyActionListener;	//return the listener
+		}
+
 	/**The lazily-created listener that modifies this panel when a document is modified.*/
 	private DocumentListener modifyDocumentListener;
 
