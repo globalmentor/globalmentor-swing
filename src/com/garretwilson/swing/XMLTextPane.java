@@ -1554,6 +1554,7 @@ System.out.println("Inside XMLTextPage.insertUpdate(), fetching new paged view."
 	*/
 	public void paint(Graphics g)
 	{
+/*TODO del if not needed after XMLPagedView rewrite; if needed, this will need to be updated to factor in the new page numbering scheme
 		if(isPaged()) //if we're paging our information
 		{
 			final int displayPageCount=getDisplayPageCount();	//see how many pages we're displaying at a time
@@ -1571,6 +1572,7 @@ System.out.println("Inside XMLTextPage.insertUpdate(), fetching new paged view."
 			if(pageIndex!=getPageIndex())	//if we've decided to change the page index
 				setPageIndex(pageIndex);	//change the page index
 		}
+*/
 		super.paint(g);	//paint normally
 			//create a fake mouse move event so that the current cursor will be updated and the hyperlink events fired
 		final Point mousePosition=getMousePosition();	//get the current mouse position
@@ -1666,6 +1668,29 @@ System.out.println("XMLTextPane just changed the page index from: "+oldPageIndex
 				invalidate();	//show that the text pane needs to be revalidated G***testing
 			}
 		}
+
+	/**Determines the absolute index from the beginning of allowable page display positions.
+	This implementation compensates for the empty page slots on the first set of pages.
+	@param logicalPageIndex The zero-based logical page index.
+	@return The absolute page index including all positions.
+	*/
+	public int getAbsolutePageIndex(final int logicalPageIndex)
+	{
+		final XMLPagedView pagedView=getPagedView();	//get our paged view
+		return pagedView!=null ? pagedView.getAbsolutePageIndex(logicalPageIndex) : logicalPageIndex;	//if there is no page view, logical and absolute are the same
+	}
+
+	/**Determines the logical index of available pages.
+	This implementation compensates for the empty page slots on the first set of pages.
+	@param absolutePageIndex The zero-based index taking into account all page positions.
+	@return The logical index of the position out of available pages, or <code>-1</code> if the
+		given absolute page index does not correspond to an available logical page index.
+	*/
+	public int getLogicalPageIndex(final int absolutePageIndex)
+	{
+		final XMLPagedView pagedView=getPagedView();	//get our paged view
+		return pagedView!=null ? pagedView.getLogicalPageIndex(absolutePageIndex) : absolutePageIndex==0 ? absolutePageIndex : -1;	//if there is no page view, there can only be one absolute (and logical) page index: 0
+	}
 
 	//G***fix this with the correct modelToView() stuff; make sure the error return value is correct
 	public int getPageStartOffset(final int pageIndex)

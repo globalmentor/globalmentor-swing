@@ -117,7 +117,7 @@ A copy of our...
 	protected void setPagePoolView(final View logicalView) {layoutPool=logicalView;}
 
 	/**A temporary rectangle object used for painting.*/
-	protected Rectangle TempRectangle=new Rectangle();
+	protected Rectangle tempRectangle=new Rectangle();
 
 	/**@return The number of pages this view contains.*/
 	public int getPageCount()
@@ -129,33 +129,35 @@ A copy of our...
 //TODO fix		return flowLayoutInfo!=null ? flowLayoutInfo.getLength() : 0;
 	}
 
-	/**The current index we're showing, or -1 for no page.*/
+	/**The first logical page index of the current set we're showing, or -1 for no page.*/
 	private int PageIndex=0;
 
-	/**@return The current index we're showing, or -1 for no page.*/
-	public int getPageIndex() {return getPageCount()>0 ? PageIndex : -1;}	//G***decide how we want to do all this
+	/**@return The first logical page index of the current set we're showing, or -1 for no page.*/
+	public int getPageIndex() {return getPageCount()>0 ? PageIndex : -1;}
 
-	/**Sets the new current page index. If necessary, the page index is modified
+	/**Sets the new current logical page index. If necessary, the page index is modified
 		so that the displayed page is within the page range and that the page index
 		represents the first of any set of displayed pages.
 	@param newPageIndex The index of the page which should be shown.
 	@see #getPageIndex
 	@see #getPageCount
 	@see #getDisplayPageCount
+	@see #getCanonicalPageIndex(int)
 	*/
 	public void setPageIndex(int newPageIndex)
 	{
+Debug.trace("requesting page", newPageIndex);
+/*G***del if not needed
 		if(getPageCount()>0)	//if we have pages
 		{
-			if(newPageIndex<0)		//if they want to set the page number to less than we have
-				newPageIndex=0;	//we'll go to the first page
-			else if(newPageIndex>getPageCount()-1)	//if they specified too high of a page number
-				newPageIndex=getPageCount()-1;	//we'll go to the last page
-			final int displayPageCount=getDisplayPageCount(); //get the number of pages being displayed
-			newPageIndex=(newPageIndex/displayPageCount)*displayPageCount;	//make sure the page index is on the first of any page sets
+			newPageIndex=getCanonicalPageIndex(newPageIndex);	//make sure the page passed is the canonical one
+Debug.trace("new new page index", newPageIndex);
 		}
 		else	//if we don't have any pages
+		{
 			newPageIndex=-1;	//we'll have to set the page index to -1
+		}
+*/
 		if(PageIndex!=newPageIndex)	//if we're really changing the page number
 		{
 //G***del Debug.trace("Changing from page: "+PageIndex+" to page "+newPageIndex+" pageCount: "+getPageCount()); //G***del
@@ -163,9 +165,11 @@ A copy of our...
 			if(PageIndex!=-1 && getPageCount()>0) //if there is a page already being displayed, and we have at least one page
 			{
 				final int pageBeginIndex=PageIndex;	//see which page we're showing first
-				final int pageEndIndex=pageBeginIndex+getDisplayPageCount();	//see which page we're showing last (actually, this is the page right *after* the page we're showing) G***what if
+					//see which page we're showing last (actually, this is the page right *after* the page we're showing)
+				final int displayPageCount=getDisplayPageCount(); //get the number of pages being displayed
+				final int pageEndIndex=pageBeginIndex==0 ? 1 : pageBeginIndex+displayPageCount;	//only one page is shown for the first page
 				final int pageCount=getPageCount();	//see how many pages we have
-				for(int i=pageBeginIndex; i<pageEndIndex; ++i)	//look at each page to paint
+				for(int i=pageBeginIndex; i<pageEndIndex; ++i)	//look at each page to hide
 				{
 					if(isLaidOut(i))	//if this page has been laid out (this function works for threading and non-threading situations)
 					{
@@ -179,8 +183,9 @@ A copy of our...
 					}
 				}
 			}
+			PageIndex=newPageIndex;	//actually change the page number, so firing the page event won't cause infinite loop backs when any sliders are updated, for instance
+			Debug.trace("ready to fire page event for new page index", newPageIndex, "out of page count", getPageCount());
 			firePageEvent(new PageEvent(this, newPageIndex, getPageCount())); //fire a page event with our new page number
-			PageIndex=newPageIndex;	//actually change the page number
 	//G***probably repaint in a separate thread
 			final Container container=getContainer();	//get a reference to our container
 			if(container!=null)	//if we're in a container
@@ -219,13 +224,68 @@ A copy of our...
 			}
 		}
 
+	/**Determines the base page index of the set of pages including the given index.
+	In this implementation, the base page index for the first page is always zero.
+	If the page index is less than zero, the zero page index will be returned.
+	If the page index is greater than the number of available pages,
+		the base index of the last logical page will be returned. 
+	@param pageIndex The logical page index to include.
+	@return The base logical page index of the set of pages including the given index. 
+	*/
+	protected int getCanonicalPageIndex(int pageIndex)
+	{
+		if(pageIndex<0)		//if they want to set the page number to less than we have
+		{
+			pageIndex=0;	//we'll go to the first page
+		}
+		else	//if the page number is not too low
+		{
+			final int pageCount=getPageCount();	//get the total page count
+			if(pageIndex>=pageCount)	//if they specified too high of a page number
+			{
+				pageIndex=pageCount-1;	//we'll go to the last page
+			}
+		}
+		if(pageIndex>0)	//if another page besides the first is being requested (there's only one page on the first set)
+		{
+			final int displayPageCount=getDisplayPageCount(); //get the number of pages being displayed
+			final int delta=displayPageCount-1;	//the first page will be displayed on the last of the displayed pages
+			pageIndex=((pageIndex+delta)/displayPageCount)*displayPageCount-delta;	//make sure the page index is on the first of any page sets
+		}
+		return pageIndex;	//return the canonical page index
+	}
+
+	/**Determines the absolute index from the beginning of allowable page display positions.
+	This implementation compensates for the empty page slots on the first set of pages.
+	@param logicalPageIndex The zero-based logical page index.
+	@return The absolute page index including all positions.
+	*/
+	public int getAbsolutePageIndex(final int logicalPageIndex)
+	{
+		final int delta=getDisplayPageCount()-1;	//see how many empty page slots are in the first set
+		return logicalPageIndex+delta;	//compensate for the empty page slots in the first set
+	}
+
+	/**Determines the logical index of available pages.
+	This implementation compensates for the empty page slots on the first set of pages.
+	@param absolutePageIndex The zero-based index taking into account all page positions.
+	@return The logical index of the position out of available pages, or <code>-1</code> if the
+		given absolute page index does not correspond to an available logical page index.
+	*/
+	public int getLogicalPageIndex(final int absolutePageIndex)
+	{
+		final int delta=getDisplayPageCount()-1;	//see how many empty page slots are in the first set
+		return absolutePageIndex>=delta && absolutePageIndex<getPageCount()+delta ? absolutePageIndex-delta : -1;	//compensate for the empty page slots in the first set
+	}
+
 	/**Advances to the next page(s), if one is available, correctly taking into
 		account the number of pages displayed.
 	*/
 	public void goNextPage()
 	{
 //G***del System.out.println("XMLPagedView.goNextPage(), pageIndex: "+getPageIndex()+" pageCount: "+getPageCount());	//G***del
-		final int nextPageIndex=getPageIndex()+getDisplayPageCount();	//see what our next page index would be
+		final int pageIndex=getPageIndex();	//get the current page index
+		final int nextPageIndex=pageIndex==0 ? 1 : pageIndex+getDisplayPageCount();	//see what our next page index would be, compensating for the first page set with only one page
 		if(nextPageIndex>=0 && nextPageIndex<getPageCount())	//if going to the next page would give us a valid index
 			setPageIndex(nextPageIndex);	//set the new page index
 	}
@@ -235,7 +295,8 @@ A copy of our...
 	*/
 	public void goPreviousPage()
 	{
-		final int previousPageIndex=getPageIndex()-getDisplayPageCount();	//see what our next page index would be
+		final int pageIndex=getPageIndex();	//get the current page index
+		final int previousPageIndex=pageIndex==1 ? 0 : pageIndex-getDisplayPageCount();	//see what our next page index would be, compensating for the first page set with only one page
 		if(previousPageIndex>=0 && previousPageIndex<getPageCount())	//if going to the previous page would give us a valid index
 			setPageIndex(previousPageIndex);	//set the new page index
 	}
@@ -307,7 +368,8 @@ A copy of our...
 	*/
 	public boolean isPageShowing(final int pageIndex)
 	{
-		return pageIndex>=getPageIndex() && pageIndex<getPageIndex()+getDisplayPageCount() && pageIndex<getPageCount();
+		final int currentPageIndex=getPageIndex();	//get the current page index
+		return pageIndex==0 ? pageIndex==currentPageIndex : pageIndex>=currentPageIndex && pageIndex<currentPageIndex+getDisplayPageCount() && pageIndex<getPageCount();
 	}
 
 	/**Returns whether or not a page index has been laid out.
@@ -359,7 +421,7 @@ A copy of our...
 		page is paginated and placed as a child view.
 	@param The paginated page, cached as a child view of this view.
 	*/
-	protected Page getPage(final int pageIndex) //G***change Page to PageView
+	protected Page getPage(final int pageIndex)
 	{
 		return (Page)getView(pageIndex);	//G***testing
 	}
@@ -376,12 +438,11 @@ A copy of our...
 	@see View#remove
 	@see #getPage
 	*/
-	public void remove(final int viewIndex)
+	public void remove(final int viewIndex)	//TODO move this to the replace() method
 	{
 		final View view=getView(viewIndex); //get the view at the given index
 		ViewUtilities.hideView(view); //tell the view that it is being hidden (this is important for applet views, for instance)
 		super.remove(viewIndex);  //remove the view normally
-//G***see if we really need this, now; will this help memory leaks? if so, why do we have to reparent everything, not just null parents?		ViewUtilities.setParentHierarchyNull(view); //set the entire parent hierarchy of the removed page to null
 	}
 
 	/*Invalidates the view and asks the container to repaint itself.
@@ -460,7 +521,7 @@ A copy of our...
    * @param f the factory to use to rebuild if the view has children
    * @see View#changedUpdate
    */
-  public void changedUpdate(DocumentEvent changes, Shape a, ViewFactory f) {
+  public void changedUpdate(DocumentEvent changes, Shape a, ViewFactory f) {	//TODO comment
       // update any property settings stored, and layout should be 
 // recomputed 
 //G***fix setPropertiesFromAttributes();
@@ -481,14 +542,16 @@ super.changedUpdate(changes, a, f);
 	*/
 	public void paint(final Graphics graphics, final Shape allocation)
 	{
+		setPageIndex(getCanonicalPageIndex(getPageIndex()));	//make sure the current page index is a canonical one, so that a page in the middle of the set won't be indicated, for instance
 			//get a rectangle that outlines our allocation
 		final Rectangle allocationRectangle=(allocation instanceof Rectangle) ? (Rectangle)allocation : allocation.getBounds();
 //G***del Debug.trace("Before setSize()");
-		setSize(allocationRectangle.width, allocationRectangle.height);	//make sure we're the correct size to cover the allocated area; this will reflow the contents if necessary
+//G***del if we don't need		setSize(allocationRectangle.width, allocationRectangle.height);	//make sure we're the correct size to cover the allocated area; this will reflow the contents if necessary
 //G***del Debug.trace("After setSize()");
 		final int displayPageCount=getDisplayPageCount();	//find out how many pages we should display at a time
 		final int pageBeginIndex=getPageIndex();	//see which page we're showing first
-		final int pageEndIndex=pageBeginIndex+displayPageCount;	//see which page we're showing last (actually, this is the page right *after* the page we're showing) G***what if
+			//see which page we're showing last (actually, this is the page right *after* the page we're showing)
+		final int pageEndIndex=pageBeginIndex==0 ? 1 : pageBeginIndex+displayPageCount;	//only one page is shown for the first page
 		final int pageCount=getPageCount();	//see how many pages we have
 //G***del Debug.trace("pageBeginIndex: ", pageBeginIndex);
 //G***del Debug.trace("pageEndIndex: ", pageBeginIndex);
@@ -498,12 +561,16 @@ super.changedUpdate(changes, a, f);
 		final int pageWidth=(int)getPageWidth();	//find out the width of each page
 		final int pageHeight=(int)getPageHeight();	//find out the height of each page
 */
-		TempRectangle.x=allocationRectangle.x+getLeftInset();	//find out where to start horizontally
-		TempRectangle.y=allocationRectangle.y+getTopInset();	//find out where to start vertically
-		TempRectangle.width=(int)getPageWidth();	//find out how wide to make each page
-		TempRectangle.height=(int)getPageHeight();	//find out how hight to make each page
-		final int xDelta=getAxis()==X_AXIS ? TempRectangle.width : 0;	//find out how much we should move each page horizontally
-		final int yDelta=getAxis()==Y_AXIS ? TempRectangle.height : 0;	//find out how much we should move each page vertically
+		final int left=allocationRectangle.x+getLeftInset();	//get the left side of the inside allocation
+		final int top=allocationRectangle.y+getTopInset();	//get the top of the inside allocation
+		tempRectangle.x=left;	//find out where to start horizontally
+		tempRectangle.y=top;	//find out where to start vertically
+		tempRectangle.width=(int)getPageWidth();	//find out how wide to make each page
+		tempRectangle.height=(int)getPageHeight();	//find out how hight to make each page
+/*G***del
+		final int xDelta=getAxis()==X_AXIS ? tempRectangle.width : 0;	//find out how much we should move each page horizontally
+		final int yDelta=getAxis()==Y_AXIS ? tempRectangle.height : 0;	//find out how much we should move each page vertically
+*/
 		final Rectangle clipRectangle=graphics.getClipBounds();	//find out the clipping bounds
 		//paint the dividers and page numbers for each page G***probably put this in a separate function
 		final Color originalColor=graphics.getColor();	//get the original graphics color
@@ -512,34 +579,25 @@ super.changedUpdate(changes, a, f);
 		graphics.setFont(PAGE_NUMBER_FONT);  //set the font for the page number
 		final Graphics2D graphics2D=(Graphics2D)graphics;  //cast to the 2D version of graphics
 		final FontRenderContext fontRenderContext=graphics2D.getFontRenderContext();  //get the font rendering context
-		for(int pageIndex=pageBeginIndex; pageIndex<pageEndIndex; ++pageIndex)	//look at each page (although this may be more pages than we have to paint)
+		for(int pageIndex=pageBeginIndex; pageIndex<pageEndIndex && isLaidOut(pageIndex); ++pageIndex)	//look at each page (although this may be more pages than we have to paint)
 		{
+			tempRectangle.x=left+getOffset(X_AXIS, pageIndex);	//calculate the page position and spans based upon our precalculated values
+			tempRectangle.y=top+getOffset(Y_AXIS, pageIndex);
+			tempRectangle.width=getSpan(X_AXIS, pageIndex);
+			tempRectangle.height=getSpan(Y_AXIS, pageIndex);
 			if(pageIndex<pageEndIndex-1)	//if this isn't the last page, draw the vertical divider between pages
 			{
 
 					//G***fix this so that we draw the divider nicely
 //G***shouldn't the first y argument not have "TempRectanglex+"?
 //G***fix				g.drawLine(TempRectangle.x+TempRectangle.width, TempRectangle.x+TempRectangle.y, TempRectangle.x+TempRectangle.width, TempRectangle.y+TempRectangle.height);
-				final int outerSpineHalfWidth=(int)Math.round(TempRectangle.width*0.025); //G***testing
-				final int innerSpineHalfWidth=(int)Math.round(TempRectangle.width*0.003); //G***testing
+				final int outerSpineHalfWidth=(int)Math.round(tempRectangle.width*0.025); //G***testing
+				final int innerSpineHalfWidth=(int)Math.round(tempRectangle.width*0.003); //G***testing
 
-				paintSpineSection(graphics2D, TempRectangle.x+TempRectangle.width, TempRectangle.y, TempRectangle.height, outerSpineHalfWidth, Color.lightGray, Color.white); //G***testnig
-				paintSpineSection(graphics2D, TempRectangle.x+TempRectangle.width, TempRectangle.y, TempRectangle.height, -outerSpineHalfWidth, Color.lightGray, Color.white); //G***testnig
-				paintSpineSection(graphics2D, TempRectangle.x+TempRectangle.width, TempRectangle.y, TempRectangle.height, innerSpineHalfWidth, Color.darkGray, Color.lightGray); //G***testnig
-				paintSpineSection(graphics2D, TempRectangle.x+TempRectangle.width, TempRectangle.y, TempRectangle.height, -innerSpineHalfWidth, Color.darkGray, Color.lightGray); //G***testnig
-/*G***del when works
-				final GradientPaint gradientPaint=new GradientPaint(TempRectangle.x+TempRectangle.width, TempRectangle.y, Color.lightGray, TempRectangle.x+TempRectangle.width+5, TempRectangle.y, Color.white);  //G***testing
-				graphics2D.setPaint(gradientPaint); //G***fix
-				graphics2D.fillRect(TempRectangle.x+TempRectangle.width, TempRectangle.y, 5, TempRectangle.height);
-
-				final GradientPaint gradientPaint2=new GradientPaint(TempRectangle.x+TempRectangle.width, TempRectangle.y, Color.lightGray, TempRectangle.x+TempRectangle.width-5, TempRectangle.y, Color.white);  //G***testing
-				graphics2D.setPaint(gradientPaint2); //G***fix
-				graphics2D.fillRect(TempRectangle.x+TempRectangle.width-5, TempRectangle.y, 5, TempRectangle.height);
-
-				g.drawLine(TempRectangle.x+TempRectangle.width, TempRectangle.y, TempRectangle.x+TempRectangle.width, TempRectangle.y+TempRectangle.height);
-*/
-
-
+				paintSpineSection(graphics2D, tempRectangle.x+tempRectangle.width, tempRectangle.y, tempRectangle.height, outerSpineHalfWidth, Color.lightGray, Color.white); //paint this section of the spine
+				paintSpineSection(graphics2D, tempRectangle.x+tempRectangle.width, tempRectangle.y, tempRectangle.height, -outerSpineHalfWidth, Color.lightGray, Color.white); //paint this section of the spine
+				paintSpineSection(graphics2D, tempRectangle.x+tempRectangle.width, tempRectangle.y, tempRectangle.height, innerSpineHalfWidth, Color.darkGray, Color.lightGray); //paint this section of the spine
+				paintSpineSection(graphics2D, tempRectangle.x+tempRectangle.width, tempRectangle.y, tempRectangle.height, -innerSpineHalfWidth, Color.darkGray, Color.lightGray); //paint this section of the spine
 			}
 			if(isLaidOut(pageIndex))	//if we actually have a page view for this page, and it has been laid out
 			{
@@ -553,36 +611,34 @@ super.changedUpdate(changes, a, f);
 	//G***del Debug.trace("page number left inset: "+getLeftInset()+" right inset: "+getRightInset());  //G***del
 				int pageNumberX;  //we'll determine which side of the page the number goes on
 				if(pageIndex==pageEndIndex-1)  //if we're on the last page
-					pageNumberX=TempRectangle.x+TempRectangle.width-pageRightInset+(int)((float)(pageRightInset-pageNumberBounds.getWidth())/2);	//G***fix; comment; use local variable
+					pageNumberX=tempRectangle.x+tempRectangle.width-pageRightInset+(int)((float)(pageRightInset-pageNumberBounds.getWidth())/2);	//G***fix; comment; use local variable
 				else  //if we're not on the last page G***put code here for the middle of a three-page spread
-					pageNumberX=TempRectangle.x+(int)((float)(pageLeftInset-pageNumberBounds.getWidth())/2);	//G***fix; comment; use local variable
-				final int pageNumberY=TempRectangle.y+TempRectangle.height-pageBottomInset+(int)((float)(pageBottomInset-pageNumberBounds.getHeight())/2);	//G***fix; comment; use local variable
+					pageNumberX=tempRectangle.x+(int)((float)(pageLeftInset-pageNumberBounds.getWidth())/2);	//G***fix; comment; use local variable
+				final int pageNumberY=tempRectangle.y+tempRectangle.height-pageBottomInset+(int)((float)(pageBottomInset-pageNumberBounds.getHeight())/2);	//G***fix; comment; use local variable
 					//G***take into account the size of the font, make it a nicer color, etc.
 				graphics.drawString(pageNumberString, pageNumberX, pageNumberY);	//G***testing; i18n
 			}
-			TempRectangle.x+=xDelta;	//advance to the next horizontal page position
-			TempRectangle.y+=yDelta;	//advance to the next vertical page position
+/*G***del
+			tempRectangle.x+=xDelta;	//advance to the next horizontal page position
+			tempRectangle.y+=yDelta;	//advance to the next vertical page position
+*/
 		}
 		graphics.setColor(originalColor);  //revert to the original color
 		graphics.setFont(originalFont);  //revert to the original font
 		//paint each page
-		TempRectangle.x=allocationRectangle.x+getLeftInset();	//reset the page rectangle
-		TempRectangle.y=allocationRectangle.y+getTopInset();	//reset the page rectangle
-		for(int pageIndex=pageBeginIndex; pageIndex<pageEndIndex; ++pageIndex)	//look at each page to paint (although this may be more pages than we have to paint)
-		{
+		for(int pageIndex=pageBeginIndex; pageIndex<pageEndIndex && isLaidOut(pageIndex); ++pageIndex)	//look at each page to paint (although this may be more pages than we have to paint)
+		{		
+			tempRectangle.x=left+getOffset(X_AXIS, pageIndex);	//calculate the page position and spans based upon our precalculated values
+			tempRectangle.y=top+getOffset(Y_AXIS, pageIndex);
+			tempRectangle.width=getSpan(X_AXIS, pageIndex);
+			tempRectangle.height=getSpan(Y_AXIS, pageIndex);
 			if(isLaidOut(pageIndex)/*G***del if we can && pageIndex>=0 && pageIndex<pageCount*/)	//if this page has been laid out (this function works for threading and non-threading situations) (newswing threadlayout)
 			{
-				if(TempRectangle.intersects(clipRectangle))	//if this area needs painted and this is a valid page
+				if(tempRectangle.intersects(clipRectangle))	//if this area needs painted and this is a valid page
 				{
-					final Page pageView=getPage(pageIndex); //get a reference to this page, which will paginate it if needed
-Debug.trace("Ready to paint page "+pageIndex+" with parent: ", pageView.getParent()!=null ? pageView.getParent().getClass().getName() : "null"); //G***del
-				//G***move this line up so that only pages that need to get repainted
-				  paintPage(graphics, TempRectangle, pageView, pageIndex); //paint this page
+					paintChild(graphics, tempRectangle, pageIndex);	//paint this page
 				}
-//G***del					paintChild(g, TempRectangle, childIndex);	//paint this child
 			}
-			TempRectangle.x+=xDelta;	//advance to the next horizontal page position
-			TempRectangle.y+=yDelta;	//advance to the next vertical page position
 		}
 	}
 
@@ -605,11 +661,13 @@ Debug.trace("Ready to paint page "+pageIndex+" with parent: ", pageView.getParen
 	@param pageView The that represents this page.
 	@param pageIndex The logical index of the page, (>=0 && <getPageCount()).
 	*/
+/*G***del when works
 	protected void paintPage(final Graphics graphics, final Rectangle allocation, final Page pageView, final int pageIndex)
 	{
 //G***del		final View childView=getView(index);  //G***comment
 		pageView.paint(graphics, allocation);  //paint the page view
 	}
+*/
 
 	/**Whether we are currently in the midst of paginating the document.*/
 	private boolean paginating=false;
@@ -760,119 +818,80 @@ Debug.trace("Ready to paint page "+pageIndex+" with parent: ", pageView.getParen
 		super.setSize(width, height);	//set the size normally
 	}
 
-	/**
-	 * Perform layout for the minor axis of the box (i.e. the
-	 * axis orthoginal to the axis that it represents).  The results 
-	 * of the layout should be placed in the given arrays which represent 
-	 * the allocations to the children along the minor axis.
-	 * <p>
-	 * This is implemented to do a baseline layout of the children
-	 * by calling BoxView.baselineLayout.
-	 *
-	 * @param targetSpan the total span given to the view, which
-	 *  whould be used to layout the children.
-	 * @param axis the axis being layed out.
-	 * @param offsets the offsets from the origin of the view for
-	 *  each of the child views.  This is a return value and is
-	 *  filled in by the implementation of this method.
-	 * @param spans the span of each child view.  This is a return
-	 *  value and is filled in by the implementation of this method.
-	 * @return the offset and span for each child view in the
-	 *  offsets and spans parameters
-	 */
-protected void layoutMajorAxis(int targetSpan, int axis, int[] offsets, int[] spans)
-{
-	final int pageWidth=(int)getPageWidth();
-	int offset=0;
-for(int i=0; i<offsets.length; ++i)
-{
-	offsets[i]=offset;
-	offset+=pageWidth;
-	spans[i]=pageWidth;
-}
-//G***del        	baselineLayout(targetSpan, axis, offsets, spans);
-	}
-
-protected SizeRequirements calculateMajorAxisRequirements(int axis, SizeRequirements r)
-{
-  if (r == null) {
-    r = new SizeRequirements();
-}
-//G***del  r=baselineRequirements(axis, r);
-r.alignment=0;
-r.minimum=0;
-r.maximum=(int)getPageWidth();
-r.preferred=(int)getPageWidth();
-return r;
-	}
-//G***fix getViewAtPoint()
-
-//G***fix childAllocation()
-
-	/**Sets the size of the view. This is overridden to support threading of the
-		layout routines.
-	@param width The new width (>=0).
-	@param height The new height (>=0).
+	/**Performs layout for the minor axis of the view (the page width).
+	This version assumes all pages have the same width and are layed out
+	<code>displayPageCount</code> at a time.
+	@param targetSpan The total span given to the view.
+	@param axis The axis being layed out.
+	@param offsets The offsets from the origin of the view for each of the child views to be calculated.
+	@param spans The span of each child view to be calculated.
 	*/
-/*G***determine if this needs to be used
-	public void setSize(float width, float height)	//(newswing threadlayout)
+	protected void layoutMajorAxis(final int targetSpan, final int axis, final int[] offsets, final int[] spans)
 	{
-//G***del Debug.trace("setSize(): width: "+width+", height: "+height+" from oldWidth:"+getWidth()+", oldHeight: "+getHeight());	//G***del
-		if(isPaginating())	//if we are currently laying out the view, either in a separate thread or periodically G***maybe take put the isThreaded() inside the block and decide how to restart paginating if we're simply repaginating later in the AWT thread
+		final int pageWidth=(int)getPageWidth();	//find out how wide the page is
+		final int displayPageCount=getDisplayPageCount();	//find out how many pages are displayed at a time
+		final int delta=displayPageCount-1;	//the first page will be displayed on the last of the displayed pages
+		for(int i=getViewCount()-1; i>=0; --i)	//for each view
 		{
-
-//G***important; this needs fixed, because it now thinks things are threaded if pagination is going on
-
-//G***del System.out.println("setSize(): layout already in progress");	//G***del
-			if(lastLayoutWidth!=width || lastLayoutHeight!=height)	//if our width or height is actually changing, we'll want to start the threading process over
-			{
-//G***del System.out.println("setSize(): new layout parameters: width: "+width+", height: "+height+" from oldWidth:"+lastLayoutWidth+", oldHeight: "+lastLayoutHeight);	//G***del
-
-//G***del				synchronized(this)	//G***test this!
-				{
-//G***del System.out.println("Setting stopLayout to true.");	//G***del
-					((PageFlowStrategy)strategy).stopLayout=true;	//show that we want to stop the layout process
-					try
-					{
-//G***del System.out.println("Thread "+Thread.currentThread().getName()+" joining layout thread: "+layoutStrategyThread.getName());	//G***del
-						if(layoutStrategyThread!=null)  //if there is a thread currently laying out
-						{
-							layoutStrategyThread.join();	//wait until the layout thread has stopped
-//G***del System.out.println("Joined layout thread.");	//G***del
-							layoutStrategyThread=null;
-						}
-					}
-					catch(InterruptedException e) 	//G***check this
-					{
-System.out.println(e);	//G***del
-					}
-//G***del					strategy=null;
-				}
-			}
+			offsets[i]=pageWidth*((i+delta)%displayPageCount);	//find out the index of the page out of displayPageCount total and multiply that by the page width
+Debug.trace("laying out major axis, page", i, "gets offset", offsets[i]);
+			spans[i]=pageWidth;	//every page is the same width
 		}
-		else  //if we're not paginating
-//G***del		if(!isThreaded() || layoutStrategyThread==null)	//if we don't support threading, or we aren't threading at the moment
-			super.setSize(width, height);
 	}
-*/
 
-
-	/**Returns the allocation for a specified child view.
-	@param pageIndex The index of the page to allocate, (>=0 &&
-		<getViewCount()).
-	@param alloc The allocated region caluclated and returned.
+	/**Performs layout for the minor axis of the view (the page height). 
+	This version assumes all pages are the same offset and height.
+	@param targetSpan The total span given to the view.
+	@param axis The axis being layed out.
+	@param offsets The offsets from the origin of the view for each of the child views to be calculated.
+	@param spans The span of each child view to be calculated.
 	*/
-	protected void childAllocation(final int pageIndex, Rectangle alloc)
+	protected void layoutMinorAxis(final int targetSpan, final int axis, final int[] offsets, final int[] spans)
 	{
-//G***del		final int displayPageCount=getDisplayPageCount();	//see how many pages we're displaying
-		final int displayIndex=pageIndex%getDisplayPageCount();	//find out which position this page would land in
-		final int xDelta=getAxis()==X_AXIS ? (int)getPageWidth() : 0;	//find out how much we should move each page horizontally G***do we want to cast to an int here?
-		final int yDelta=getAxis()==Y_AXIS ? (int)getPageHeight() : 0;	//find out how much we should move each page vertically
-			//G***it might be better in the long run to eventually actually update the xAlloc[] and such arrays, like BoxView does
-		alloc.x+=getLeftInset()+displayIndex*xDelta;	//calculate where this page would be horizontally
-		alloc.y+=getTopInset()+displayIndex*yDelta;	//calculate where this page would be vertically
-		alloc.width=(int)getPageWidth();	//each view has the same width
-		alloc.height=(int)getPageHeight();	//each view has the same height
+		final int pageHeight=(int)getPageHeight();	//get the page height
+		for(int i=getViewCount()-1; i>=0; --i)	//for each view
+		{
+			offsets[i]=0;	//each page starts at the same place vertically
+			spans[i]=pageHeight;	//each page is the same height
+		}
+  }
+
+	/**Calculates the size requirements for the major axis (the page width).
+	@param axis The axis being studied.
+	@param sizeRequirements The <code>SizeRequirements</code> object, or <code>null</code> if one should be created.
+	@return The newly initialized <code>SizeRequirements</code> object.
+	*/
+	protected SizeRequirements calculateMajorAxisRequirements(final int axis, SizeRequirements sizeRequirements)
+	{
+		if(sizeRequirements==null)	//if we don't have a requirements object
+		{
+			sizeRequirements=new SizeRequirements();	//create new size requirements
+		}
+		final int width=(int)(getDisplayPageCount()*getPageWidth());	//find out how wide all the displayed pages are in total
+		sizeRequirements.alignment=0;	//left-align
+		sizeRequirements.minimum=width;	//we require each page to be the same width
+		sizeRequirements.maximum=width;
+		sizeRequirements.preferred=width;
+		return sizeRequirements;	//return the size requirements
+	}
+
+	/**Calculates the size requirements for the minor axis (the page height).
+	@param axis The axis being studied.
+	@param sizeRequirements The <code>SizeRequirements</code> object, or <code>null</code> if one should be created.
+	@return The newly initialized <code>SizeRequirements</code> object.
+	*/
+	protected SizeRequirements calculateMinorAxisRequirements(final int axis, SizeRequirements sizeRequirements)
+	{
+		if(sizeRequirements==null)	//if we don't have a requirements object
+		{
+			sizeRequirements=new SizeRequirements();	//create new size requirements
+		}
+		final int height=(int)getPageHeight();	//find out how high the page is
+		sizeRequirements.alignment=0;	//top-align
+		sizeRequirements.minimum=height;	//we require each page to be the same height
+		sizeRequirements.maximum=height;
+		sizeRequirements.preferred=height;
+		return sizeRequirements;	//return the size requirements
 	}
 
 	/**Finds the child view at the given point.
@@ -882,7 +901,7 @@ System.out.println(e);	//G***del
 		be changed to the childs allocation on exit.
 	@return The child view at the specified point.
 	*/
-	protected View getViewAtPoint(int x, int y, Rectangle alloc)
+	protected View getViewAtPoint(final int x, final int y, final Rectangle alloc)	//TODO update to work with new offset and span indices
 	{
 		final int displayPageCount=getDisplayPageCount();	//see how many pages we're displaying
 		final int pageCount=getPageCount();	//see how many pages we have in total
@@ -1136,76 +1155,6 @@ Debug.trace("pageWidth: "+pageWidth+" pageWidth/pos: "+pageWidth/(x-(alloc.x+get
 	}
 */
 		}
-
-	/**Breaks this view on the given axis at the current length. Currently, since
-		an <code>XMLPagedView</code> is a top-level view which <em>does</em> all the
-		breaking, it itself does not support being broken.
-	@param axis The axis to break along, either View.X_AXIS or View.Y_AXIS.
-	@param len The location of a potential break along the given axis (>=0).
-	@param a The current allocation of the view.
-	@return the fragment of the view that represents the given span. Currently,
-		since this view cannot be broken, the view itself is returned.
-	@see View#breakView
-	*/
-	public View breakView(int axis, float len, Shape a)
-	{
-		return this;	//this view cannot be broken; return a reference to ourself
-	}
-
-	/**Calculates the break weight for a given location. Currently, since an
-		<code>XMLPagedView</code> is a top-level view which <em>does</em> all the
-		breaking, it itself does not support being broken.
-	@param axis The axis to break along, either View.X_AXIS or View.Y_AXIS.
-	@param len The location of the potential break (>=0).
-	@return A value indicating the attractiveness of breaking at the specified
-		location; currently returns BadBreakWeight for each axis.
-	@see View#getBreakWeight
-	*/
-	public int getBreakWeight(int axis, float len)
-	{
-		return BadBreakWeight;	//paged views cannot be broken
-	}
-
-
-	/**Because a paged view uses its child views as cached pages, adding or
-		removing pages does not affect our layout. Don't therefore allow
-		replacement operations to change whether our allocation is valid.
-	@param index The starting index into the child views to insert the new views
-		(>=0 && <=<code>getViewCount()</code>).
-	@param length The number of existing child views to remove (>=0 && <=
-		<code>(getViewCount()-offset)</code>).
-	@param views The child views to add, or <code>null</code> to indicate that no
-		children are being added (i.e. children are being removed).
-	*/
-/*G***decide what to do with this; (refactor)
-	public void replace(int index, int length, View[] views)
-	{
-		final boolean xValid=isXValid();  //make a note of all our allocation states so that we can restore them
-		final boolean yValid=isYValid();
-		final boolean xAllocValid=isXAllocValid();
-		final boolean yAllocValid=isYAllocValid();
-	  super.replace(index, length, views);  //do the default replacement
-		setXValid(xValid);    //reset all the allocation flags to how we found them
-		setYValid(yValid);
-		setXAllocValid(xAllocValid);
-		setYAllocValid(yAllocValid);
-	}
-*/
-
-	/**Notification from the document that attributes were changed in an area
-		this paged view is responsible for.
-	@param changes The change information from the associated document.
-	@param a The current allocation of the view.
-	@param f The factory to use to rebuild if the view has children.
-	@see View#changedUpdate
-	*/
-/*G***del	when do-nothing replacement works
-	public void changedUpdate(DocumentEvent changes, Shape a, ViewFactory f)
-	{
-//G***del if we don't need		setPropertiesFromAttributes();	//update our properties from the changed attributes G***do we need to do this on a paged view? can there be page-specific attributes?
-		super.changedUpdate(changes, a, f);	//do the default updating
-	}
-*/
 
 	//page events
 

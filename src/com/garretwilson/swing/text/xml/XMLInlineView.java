@@ -223,15 +223,13 @@ public class XMLInlineView extends GlyphView implements TabableView
 
 
 	/**Fetch the FontMetrics used for this view.
-	@deprecated FontMetrics are not used for glyph rendering when running in the
-		Java2 SDK.
+	@deprecated FontMetrics are not used for glyph rendering when running in the Java2 SDK.
 	*/
 	protected FontMetrics getFontMetrics()
 	{
 		synchronize();	//make sure we have the correct cached property values.
-		Debug.error("Java 2 should not use getFontMetrics()");
-		return null;  //this should never be called
-//G***del		return Toolkit.getDefaultToolkit().getFontMetrics(GlyphFont);	//G***check deprecated
+		Debug.warn("Java 2 should not use deprecated FontMetrics.");
+		return Toolkit.getDefaultToolkit().getFontMetrics(GlyphFont);
 	}
 
 	/**Gets the background color to use to render the glyphs. This implementation

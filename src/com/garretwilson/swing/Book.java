@@ -965,9 +965,25 @@ Debug.trace("display page count: ", displayPageCount);		  //G***del
 		final JScrollBar scrollBar=getScrollBar();  //get our scrollbar, if we have one
 		if(scrollBar!=null) //if we have a scrollbar
 		{
-			scrollBar.setMinimum(1); //show that we start with page one G***maybe put this somewhere else
-			scrollBar.setMaximum(pageCount);  //show how many pages there are
-			scrollBar.setValue(pageIndex+1);  //show which page we're on
+			final XMLTextPane textPane=getXMLTextPane();	//get a reference to our text pane
+/*G***del
+			final XMLTextPane textPane=getXMLTextPane();	//get a reference to our text pane
+			final int absolutePageIndex=textPane.getAbsolutePageIndex(pageIndex);
+*/
+			//find out how many partially-filled sets of pages there are by finding the absolute page index of the last available page
+			final int setCount=(textPane.getAbsolutePageIndex(pageCount-1)/displayPageCount)+1;
+Debug.trace("set count", setCount);
+			final int maximum=setCount*displayPageCount;	//the maximum page index is the base of the last set---one set less than all available (we already ignored the first set)
+Debug.trace("maximum", maximum);
+			final int newValue=pageIndex==0 ? pageIndex : textPane.getAbsolutePageIndex(pageIndex);	//other than the first page, the other pages will be offset by the extra space in the first set
+Debug.trace("new value", newValue);
+			scrollBar.setValues(newValue, displayPageCount, 0, maximum);	//update the scrollbar, pretending all the page sets are full of pages
+/*G***del when works
+			scrollBar.setMinimum(0); //show that we start with page one G***maybe put this somewhere else
+			scrollBar.setExtent(0); //show that we start with page one G***maybe put this somewhere else
+			scrollBar.setMaximum(pageCount-1);  //show how many pages there are
+			scrollBar.setValue(pageIndex);  //show which page we're on
+*/
 /*G***fix
 		statusSlider.setMinimum(1); //show that we start with page one G***maybe put this somewhere else
 		statusSlider.setMaximum(pageCount);  //show how many pages there are
@@ -993,14 +1009,15 @@ Debug.trace("display page count: ", displayPageCount);		  //G***del
 	*/
 	public void adjustmentValueChanged(final AdjustmentEvent adjustmentEvent)
 	{
-//G***del Debug.trace("Change event: "+changeEvent.toString());		  //G***testing
 		if(getPageCount()>0)  //if the book has pages
 		{
-			final int value=adjustmentEvent.getValue();  //get the new slider value
-			final int newPageIndex=value-1; //find out which page index this indicates
-//G***fix			if(newPageIndex>=0) //if the new index is a valid page index
-//G***del	Debug.trace("Slider change from page: "+book.getPageIndex()+" to "+newPageIndex);		  //G***del
-			setPageIndex(newPageIndex); //change to the specified page in the book G***check to see if we should do this in another thread
+			final int displayPageCount=getDisplayPageCount(); //find out how many pages at a time are being displayed
+			final int newValue=adjustmentEvent.getValue();  //get the new slider value
+Debug.trace("new adjustment value", newValue);
+				//besides the first page, the other pages will be offset by the number of empty pages in the first set
+			final int newPageIndex=newValue==0 ? newValue : getXMLTextPane().getLogicalPageIndex(newValue);
+Debug.trace("new page index", newPageIndex);
+			setPageIndex(newPageIndex); //change to the specified page in the book
 		}
 	}
 

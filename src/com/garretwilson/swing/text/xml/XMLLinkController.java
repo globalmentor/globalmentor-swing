@@ -407,7 +407,7 @@ protected void activateLink(int pos, JEditorPane editor) {
 		try
 		{
 			uri=getLinkElementURI(xmlDocument, element);  //get the link URI from the element
-			description=uri.toString();  //use the URI as the description //G***fix; this can throw a null pointer exception
+			description=uri.toString();  //use the URI as the description //TODO fix; this can throw a null pointer exception
 		}
 		catch(URISyntaxException uriSyntaxException)	//if there are any problems creating a URI
 		{

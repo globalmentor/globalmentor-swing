@@ -180,12 +180,6 @@ Debug.trace("created horizontal rule view");
 		return BadBreakWeight;  //don't break anywhere else
 	}
 
-	//G***comment
-	public View breakView(int axis, int offset, float pos, float len)
-	{
-		return null;
-	}
-
 	/**Provides a mapping from the document model coordinate space to the
 		coordinate space of the view mapped to it.
 	@param pos The position to convert.
