@@ -954,9 +954,7 @@ Debug.trace("Non-collapsed text: "+text);
 		}
 		else  //if there was no system ID
 			documentType=null;  //show that we don't have a document type
-//G***fix		final DocumentType documentType=domImplementation.createDocumentType(elementName, OEB101_DOCUMENT_PUBLIC_ID, OEB101_DOCUMENT_SYSTEM_ID);	//create an OEB document type
 		final org.w3c.dom.Document xmlDocument=domImplementation.createDocument(null, elementName, documentType);	//create the document
-//G***fix		final org.w3c.dom.Document xmlDocument=domImplementation.createDocument(OEB1_DOCUMENT_NAMESPACE_URI, ELEMENT_HTML, documentType);	//create an OEB XML document
 			//create any processing instructions
 		final NameValuePair[] processingInstructions=XMLStyleUtilities.getXMLProcessingInstructions(attributeSet);  //get the processing instructions, if any (this will never return null)
 		  //look at each processing instruction
@@ -965,11 +963,11 @@ Debug.trace("Non-collapsed text: "+text);
 			final NameValuePair processingInstructionNameValuePair=processingInstructions[processingInstructionIndex];  //get this processing instruction's values
 				//create a processing instruction with the correct value
 			final ProcessingInstruction processingInstruction=xmlDocument.createProcessingInstruction((String)processingInstructionNameValuePair.getName(), (String)processingInstructionNameValuePair.getValue());
-			xmlDocument.appendChild(processingInstruction); //add this processing instruction
+			xmlDocument.insertBefore(processingInstruction, xmlDocument.getDocumentElement()); //add this processing instruction G***do these have to be placed in a certain order---before the document element?
 		}
 		final org.w3c.dom.Node xmlNode=createXMLNode(xmlDocument, swingElement); //create the root element
-		Debug.assert(xmlNode.getNodeType()==xmlNode.ELEMENT_NODE, "Swing root XML node not an XML element."); //make sure we got back an XML element
-		xmlDocument.appendChild(xmlNode);	//add the root element to the document
+		Debug.assert(xmlNode.getNodeType()==Node.ELEMENT_NODE, "Swing root XML node not an XML element."); //make sure we got back an XML element
+		xmlDocument.replaceChild(xmlNode, xmlDocument.getDocumentElement());	//set the document element of the document
 		return xmlDocument; //return the document we constructed
 	}
 
