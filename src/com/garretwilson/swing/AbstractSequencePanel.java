@@ -16,6 +16,9 @@ import com.garretwilson.util.*;
 public abstract class AbstractSequencePanel extends ToolStatusPanel
 {
 
+	/**The lazily-created default default component.*/
+	private Component defaultComponent;
+
 	/**The action for starting the sequence.*/
 	private final Action startAction;
 
@@ -93,6 +96,21 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		*/
 		public JButton getAdvanceButton() {return advanceButton;}		
 
+	/**Whether the advance buttons are distinct or dual-duty.*/
+	private boolean distinctAdvance;
+
+		/**@return Whether the advance buttons are distinct or dual-duty;
+			this defaults to <code>false</code>.
+		*/
+		public boolean isDistinctAdvance() {return distinctAdvance;}
+
+		/**Sets whether the advance buttons are distinct or dual-duty.
+		@param distinct <code>true</code> if there should be distinct buttons for
+			start, next, and finish, or <code>false</code> if one button should share
+			these responsibilitiese.
+		*/
+		public void setDistinctAdvance(final boolean distinct) {distinctAdvance=distinct;}
+
 	/**Default constructor.*/
 	public AbstractSequencePanel()
 	{
@@ -117,6 +135,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 	public AbstractSequencePanel(final boolean hasToolBar, final boolean hasStatusBar, boolean initialize)
 	{
 		super(hasToolBar, hasStatusBar, false);	//construct the panel, but don't initialize
+		defaultComponent=null;	//show that we haven't used the default component, yet
 		startAction=new StartAction();			//create the actions
 		previousAction=new PreviousAction(); 
 		nextAction=new NextAction();
@@ -127,20 +146,41 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		nextButton=new JButton(nextAction);
 		finishButton=new JButton(finishAction);
 		advanceButton=new JButton(advanceAction);
+		distinctAdvance=false;	//default to shared actions for advancing
 		setStatusBarPosition(BorderLayout.NORTH);  //put the status bar at the top of the panel by default
 		setToolBarPosition(BorderLayout.SOUTH);  //put the toolbar at the bottom of the panel by default
-			//TODO fix to only retrieve the actions that are allowed, maybe
-		final ActionManager actionManager=getActionManager();	//get our action manager and set up tool actions TODO move this section to the constructor for all similar panels 
-		actionManager.addToolAction(getPreviousAction());
-		actionManager.addToolAction(getNextAction());
 		if(initialize)  //if we should initialize the panel
 			initialize();   //initialize everything		
+	}
+
+	/**Initializes actions in the action manager.
+	@param actionManager The implementation that manages actions.
+	*/
+	protected void initializeActions(final ActionManager actionManager)
+	{
+		super.initializeActions(actionManager);	//do the default initialization
+		if(isDistinctAdvance())	//if we should have distinct advance, use separate actions
+		{
+			actionManager.addToolAction(getStartAction());
+			actionManager.addToolAction(new ActionManager.SeparatorAction());
+			actionManager.addToolAction(getPreviousAction());
+			actionManager.addToolAction(getNextAction());
+		}
+		else	//if we should not have distinct advance, use a dual-use action
+		{
+			actionManager.addToolAction(getPreviousAction());
+			actionManager.addToolAction(getAdvanceAction());
+		} 
 	}
 
 	/**Initializes the user interface.*/
 	protected void initializeUI()
 	{
+		if(getToolBar()!=null)	//if we have a toolbar
+			getToolBar().setButtonTextVisible(true);	//show text on the toolbar buttons
 		super.initializeUI();	//do the default initialization
+		previousButton.setHorizontalTextPosition(SwingConstants.LEADING);	//change the text position of the previous button
+		setContentComponent(getDefaultComponent());	//start with the default component		
 		setPreferredSize(new Dimension(300, 200));	//set an arbitrary preferred size
 	}
 
@@ -150,6 +190,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 	public void updateStatus()
 	{
 		super.updateStatus(); //update the default actions
+		getStartAction().setEnabled(getAdvanceAction().getProxiedAction()!=getStartAction()); //only allow starting if we haven't started, yet
 		getPreviousAction().setEnabled(hasPrevious()); //only allow going backwards if we have a previous step
 		getNextAction().setEnabled(hasNext()); //only allow going backwards if we have a next step
 		getFinishAction().setEnabled(!hasNext()); //only allow finishing if there are no next components
@@ -161,10 +202,31 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		final JRootPane rootPane=getRootPane();	//get the ancestor root pane, if there is one
 		if(rootPane!=null)	//if there is a root pane
 		{
-				//set the next button as the default unless we're finished; in that case, set the finish button as the default
-			rootPane.setDefaultButton(hasNext() ? getNextButton() : getFinishButton());
-					//TODO figure out how to get this to work with the new advance button
+			final JButton defaultButton;	//determind the default button
+			if(isDistinctAdvance())	//if we're using distinct buttons for advance
+			{
+				defaultButton=hasNext() ? getNextButton() : getFinishButton();	//set the next button as the default unless we're finished; in that case, set the finish button as the default
+			}
+			else	//if we're using a dual-use button for advance
+			{					
+				defaultButton=getAdvanceButton();	//set the advance button as the default	
+			}
+			rootPane.setDefaultButton(defaultButton);	//update the default button	
 		}
+	}
+
+	/**Returns the default component displayed before the sequence begins or
+		if there is no sequence available.
+	<p>This implementation returns an empty spacer component.</p>
+	@return The default component displayed before the sequence begins.
+	*/
+	protected Component getDefaultComponent()
+	{
+		if(defaultComponent==null)	//if we haven't created the default component, yet
+		{
+			defaultComponent=Box.createGlue();	//create glue to fill the panel
+		}
+		return defaultComponent;	//return our shared default component
 	}
 
 	/**Starts the sequence by going to the first step in the sequence.
@@ -303,11 +365,22 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 	*/
 	public int showSequenceDialog(final Component parentComponent, final String title)
 	{	
+		final JButton[] buttons;
+		final JButton initialButton;
+		if(isDistinctAdvance())	//if we should have distinct advance, use separate actions
+		{
+			buttons=new JButton[]{getPreviousButton(), getNextButton(), getFinishButton()};
+			initialButton=getNextButton();
+		}
+		else	//if we should not have distinct advance, use a dual-use action
+		{
+			buttons=new JButton[]{getPreviousButton(), getAdvanceButton()};
+			initialButton=getAdvanceButton();
+		} 
 			//show an option pane in the parent component using the given title
 		return OptionPane.showOptionDialog(parentComponent, this, title,
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-				new Object[]{getPreviousButton(), getAdvanceButton()}, getAdvanceButton());	//TODO rather than keeping copies of the buttons, get the toolbar actions and create buttons on the fly
-//G***del when works		new Object[]{getPreviousButton(), getNextButton(), getFinishButton()}, getNextButton());	//TODO rather than keeping copies of the buttons, get the toolbar actions and create buttons on the fly
+				buttons, initialButton);
 	}
 
 	/**Action for starting the progression.*/

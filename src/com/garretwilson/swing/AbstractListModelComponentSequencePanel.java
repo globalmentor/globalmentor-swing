@@ -2,14 +2,24 @@ package com.garretwilson.swing;
 
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
+import javax.swing.event.*;
+import com.garretwilson.util.Editable;
 
 /**A component sequence panel that produces its sequence components from items
 	in a list model. (The list items are not necessarily components.)
+<p>In order to create and edit items, an editor must be set (besides setting
+	the list to be editable using <code>setEditable(true)</code>). Actual
+	modification of the list will only be performed if the list uses a list model
+	that implements either <code>javax.swing.DefaultListModel</code> or
+	<code>java.util.List</code>.</p>
+<p>Bound properties:</p>
+<dl>
+	<dt><code>Editable.EDITABLE_PROPERTY</code> (<code>Boolean</code>)</dt>
+	<dd>Indicates the editable status has changed.</dd>
+</dl>
 @author Garret Wilson
 */
-public abstract class AbstractListModelComponentSequencePanel extends AbstractComponentSequencePanel
+public abstract class AbstractListModelComponentSequencePanel extends AbstractComponentSequencePanel implements Editable
 {
 
 	/**The list model from which components are produced, or <code>null</code> for no list.*/
@@ -37,6 +47,28 @@ public abstract class AbstractListModelComponentSequencePanel extends AbstractCo
 					newListModel.addListDataListener(listDataListener);	//listen for changes to the list
 				}
 				goStart();	//go to the beginning which, if we don't have a list, will switch to the default component
+			}
+		}
+
+	/**Whether the items in the list can be edited.*/ 
+	private boolean editable;
+
+		/**@return Whether the items in the list can be edited.*/ 
+		public boolean isEditable() {return editable;}
+
+		/**Sets whether the items in the list can be edited.
+		This defaults to <code>false</code>.
+		This is a bound property.
+		@param newEditable <code>true</code> if the list can be edited.
+		*/
+		public void setEditable(final boolean newEditable)
+		{
+			final boolean oldEditable=editable; //get the old value
+			if(oldEditable!=newEditable)  //if the value is really changing
+			{
+				editable=newEditable; //update the value				
+				firePropertyChange(EDITABLE_PROPERTY, new Boolean(oldEditable), new Boolean(newEditable));	//show that the property has changed
+				updateStatus();	//update the status
 			}
 		}
 
@@ -99,18 +131,38 @@ public abstract class AbstractListModelComponentSequencePanel extends AbstractCo
 				};
 		this.listModel=null;	//start out with no list model
 		setListModel(listModel);	//set the list model we were given
+		setDistinctAdvance(true);	//use distinct buttons for advancing
+		editable=false;	//default to not being editable
 		if(initialize)  //if we should initialize the panel
 			initialize();   //initialize everything		
 	}
 
-	/**Initializes the user interface.*/
-/*G***del if not needed
-	protected void initializeUI()
+	/**Initializes actions in the action manager.
+	@param actionManager The implementation that manages actions.
+	*/
+	protected void initializeActions(final ActionManager actionManager)
 	{
-		super.initializeUI();	//do the default initialization
-		setContentComponent(getFirstComponent());	//start with the first component in the sequence
+		super.initializeActions(actionManager);	//do the default initialization
+		actionManager.removeToolAction(getStartAction());	//remove the start action
 	}
+
+	/**Updates the states of the actions, including enabled/disabled status,
+		proxied actions, etc.
+	*/
+	public void updateStatus()
+	{
+		super.updateStatus(); //update the default actions
+		getStartAction().setEnabled(getIndex()<0); //only allow starting if we haven't started, yet
+		final boolean isEditable=isEditable();	//see whether the list can be edited
+/*G***fix with edit strategy
+		editSeparator.setVisible(isEditable);	//only show the edit separator if editing is allowed
+		addButton.setVisible(isEditable);	//only show the add button if editing is allowed
+		deleteButton.setVisible(isEditable);	//only show the delete button if editing is allowed
+		deleteButton.setEnabled(getIndex()>=0);	//only enable the delete button if there is something selected to be deleted
+		editButton.setVisible(isEditable);	//only show the edit button if editing is allowed
+		editButton.setEnabled(getIndex()>=0);	//only enable the edit button if there is something selected to be edited
 */
+	}
 
 	/**Goes to the indicated step in the sequence.
 	@see #setIndex

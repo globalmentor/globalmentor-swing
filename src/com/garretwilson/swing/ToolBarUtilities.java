@@ -1,6 +1,6 @@
 package com.garretwilson.swing;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.util.*;
 import javax.swing.*;
 
@@ -10,14 +10,15 @@ import javax.swing.*;
 public class ToolBarUtilities
 {
 
-	/**Creates a default toolbar with rollover buttons.
+	/**Creates a default application toolbar with rollover buttons and no text.
 	Using this method promotes consistency across components.
 	@see JToolBar#setRollover(boolean)
 	*/
-	public static JToolBar createDefaultToolBar()
+	public static BasicToolBar createApplicationToolBar()
 	{
-		final JToolBar toolBar=new JToolBar();  //create the toolbar
+		final BasicToolBar toolBar=new BasicToolBar();  //create the toolbar
 		toolBar.setRollover(true);	//default to a rollover toolbar
+		toolBar.setButtonTextVisible(false);	//don't show text by default
 		return toolBar; //return the toolbar we created
 	}
 
@@ -25,9 +26,11 @@ public class ToolBarUtilities
 	@param actionManager The manager that contains the tool actions
 	@see #setupToolBar
 	*/
-	public static JToolBar createToolBar(final ActionManager actionManager)
+	public static BasicToolBar createApplicationToolBar(final ActionManager actionManager)
 	{
-		return setupToolBar(createDefaultToolBar(), actionManager);	//create a new toolbar and set it upt with the action manager tool actions
+		final BasicToolBar toolBar=createApplicationToolBar();	//create a default toolbar
+		setupToolBar(toolBar, actionManager);	//set up the toolbar with the action manager tool actions
+		return toolBar;	//return the toolbar we created and initialized
 	}
 
 	/**Sets up a toolbar from the tool actions of the given action manager.
@@ -38,17 +41,23 @@ public class ToolBarUtilities
 	*/
 	public static JToolBar setupToolBar(final JToolBar toolBar, final ActionManager actionManager)
 	{
+		Component lastComponent=null;	//keep track of the last component we added
 		final Iterator actionIterator=actionManager.getToolActionIterator();	//get an iterator to the tool actions
 		while(actionIterator.hasNext())	//while there are actions
 		{
 			final Action action=(Action)actionIterator.next();	//get the next action
 			if(action instanceof ActionManager.SeparatorAction)		//if this is a separator action
 			{
-				toolBar.addSeparator();	//add a toolbar separator				
+					//don't put two separators in a row, and don't put a separator as the first component 
+				if(lastComponent!=null && !(lastComponent instanceof JSeparator))	//if this isn't the first component and it doesn't come before a separator
+				{
+					lastComponent=createToolBarSeparator(toolBar);	//create a toolbar separator
+					toolBar.add(lastComponent);	//add the separator
+				}				
 			}
 			else	//if this is a normal action
 			{
-				toolBar.add(action);	//add this action				
+				lastComponent=toolBar.add(action);	//add this action				
 			}			
 		}
 		return toolBar;	//return the toolbar we created

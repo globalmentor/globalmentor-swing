@@ -15,10 +15,10 @@ public class ToolStatusPanel extends ContentPanel
 {
 
   /**The toolbar, or <code>null</code> if there is no toolbar.*/
-	private final JToolBar toolBar;
+	private final BasicToolBar toolBar;
 
 		/**@return The toolbar, or <code>null</code> if there is no toolbar.*/
-		public JToolBar getToolBar() {return toolBar;}
+		public BasicToolBar getToolBar() {return toolBar;}
 
 		/**Sets the toolbar.
 		@param newToolBar The new toolbar to use, or <code>null</code> if there should
@@ -200,9 +200,9 @@ public class ToolStatusPanel extends ContentPanel
   }
 
 	/**@return A new toolbar.*/
-	protected JToolBar createToolBar()
+	protected BasicToolBar createToolBar()
 	{
-		return ToolBarUtilities.createDefaultToolBar();	//create and return a default toolbar
+		return ToolBarUtilities.createApplicationToolBar();	//create and return a default toolbar
 	}
 
 	/**Initializes the toolbar components.
@@ -213,21 +213,6 @@ public class ToolStatusPanel extends ContentPanel
 	public void initializeToolBar(final JToolBar toolBar)
 	{
 		ToolBarUtilities.setupToolBar(toolBar, getActionManager());	//setup the toolbar from the actions in the action manager
-/*G***del when works
-		final Action[] actions=getToolBarActions();	//get the actions for the toolbar
-		for(int i=0; i<actions.length; ++i)	//look at each action
-		{
-			final Action action=actions[i];	//get a reference to this action
-			if(action!=null)	//if this is a valid action
-			{
-				toolBar.add(action);	//add this action
-			}
-			else	//if this is a null action
-			{
-				toolBar.addSeparator();	//add a toolbar separator
-			}
-		}
-*/
 	}
 
 	/**@return A new status bar.*/

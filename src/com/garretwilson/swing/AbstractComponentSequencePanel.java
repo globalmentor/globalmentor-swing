@@ -18,9 +18,6 @@ import javax.swing.*;
 public abstract class AbstractComponentSequencePanel extends AbstractSequencePanel
 {
 
-	/**The lazily-created default default component.*/
-	private Component defaultComponent;
-
 	/**Default constructor.*/
 	public AbstractComponentSequencePanel()
 	{
@@ -45,7 +42,6 @@ public abstract class AbstractComponentSequencePanel extends AbstractSequencePan
 	public AbstractComponentSequencePanel(final boolean hasToolBar, final boolean hasStatusBar, boolean initialize)
 	{
 		super(hasToolBar, hasStatusBar, false);	//construct the panel, but don't initialize
-		defaultComponent=null;	//show that we haven't used the default component, yet
 		if(initialize)  //if we should initialize the panel
 			initialize();   //initialize everything		
 	}
@@ -55,7 +51,6 @@ public abstract class AbstractComponentSequencePanel extends AbstractSequencePan
 	{
 		super.initializeUI();	//do the default initialization
 //G***del when works		start();	//start the sequence
-		setContentComponent(getDefaultComponent());	//start with the default component		
 	}
 
 	/**Goes to the first step in the sequence.*/
@@ -81,20 +76,6 @@ public abstract class AbstractComponentSequencePanel extends AbstractSequencePan
 		setContentComponent(nextComponent!=null ? nextComponent : getDefaultComponent());	//go to the next component in the sequence, if there is one
 	}
 	
-	/**Returns the default component displayed before the sequence begins or
-		if there is no sequence available.
-	<p>This implementation returns an empty spacer component.</p>
-	@return The default component displayed before the sequence begins.
-	*/
-	protected Component getDefaultComponent()
-	{
-		if(defaultComponent==null)	//if we haven't created the default component, yet
-		{
-			defaultComponent=Box.createGlue();	//create glue to fill the panel
-		}
-		return defaultComponent;	//return our shared default component
-	}
-
 	/**@return The first component to be displayed in the sequence.*/
 	protected abstract Component getFirstComponent();
 

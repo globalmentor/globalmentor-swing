@@ -309,8 +309,17 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	*/
 	public void initialize()	//TODO set a flag that will only allow initialization once per instance
 	{
+		initializeActions(getActionManager()); //initialize actions
 		initializeUI(); //initialize the user interface
 		updateStatus();  //update the actions
+	}
+
+	/**Initializes actions in the action manager.
+		Any derived class that overrides this method should call this version.
+	@param actionManager The implementation that manages actions.
+	*/
+	protected void initializeActions(final ActionManager actionManager)
+	{
 	}
 
 	/**Initializes the user interface.

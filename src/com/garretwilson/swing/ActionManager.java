@@ -198,6 +198,17 @@ public class ActionManager implements Cloneable
 		toolActionList.add(action);	//add the action to the list of tool actions
 	}
 
+	/**Removes from the manager an action representing a tool.
+	@param action The action to remove as a tool action.
+	*/
+	public void removeToolAction(final Action action)
+	{
+		if(toolActionList!=null)	//if there is a tool action list
+		{
+			toolActionList.remove(action);	//remove the action from the list of tool actions
+		}
+	}
+
 	/**@return A read-only iterator to actions representing tools.*/
 	public Iterator getToolActionIterator()
 	{
