@@ -104,6 +104,7 @@ public class VCardPanel extends ContentPanel
 	public VCard getVCard()
 	{
 		final VCard vcard=new VCard();	//create a new vCard
+		vcard.setDisplayName(getIdentificationPanel().getFormattedName());	//TODO fix
 		vcard.setName(getIdentificationPanel().getVCardName());
 		vcard.setFormattedName(getIdentificationPanel().getFormattedName());
 		vcard.setNicknames(getIdentificationPanel().getNicknames());
