@@ -86,35 +86,47 @@ public class UnicodeStatusBar extends StatusBar
 		addStatusComponent(unicodeCharacterNameLabel);	//add the Unicode character name label
 	}
 
-	/**Updates the status, such as the Unicode character information labels.*/
-/*G***del if not needed
-	protected void updateStatus()
+	/**The currently displayed Unicode character, or <code>null</code> if no character is currently being displayed.*/
+	private UnicodeCharacter unicodeCharacter=null;
+
+		/**@return The currently displayed Unicode character, or <code>null</code> if no character is currently being displayed.*/
+		public UnicodeCharacter getUnicodeCharacter() {return unicodeCharacter;}
+
+	/**The currently displayed Unicode code point, or <code>-1</code> if no code point is currently being displayed.*/
+	private int codePoint=-1;
+
+		/**@return The currently displayed Unicode code point, or <code>-1</code> if no code point is currently being displayed.*/
+		public int getCodePoint() {return codePoint;}
+
+	/**Sets the Unicode character status by changing the displayed code point.
+	@param codePoint The Unicode code point, or <code>-1</code> for no code point.
+	*/
+	public void setCodePoint(final int codePoint)
 	{
-		super.updateStatus(); //update the default actions
-		UnicodeCharacter unicodeCharacter;	//see if we can find a Unicode character under the caret
-		try
+		if(getCodePoint()!=codePoint)	//if the code point is really changing
 		{
-			final int caretDot=getXMLTextPane().getCaret().getDot();	//get the current caret position
-			final String caretCharacterString=getXMLTextPane().getText(caretDot, 1);	//get the single character under the caret
-			unicodeCharacter=UnicodeData.getUnicodeCharacter(caretCharacterString.charAt(0));	//get Unicode character data for the character under the cursor
-		}
-		catch(BadLocationException e)	//if the caret isn't at a valid position
-		{
-			unicodeCharacter=null;	//show that we don't have a Unicode character
-		}
-		if(unicodeCharacter!=null)	//if we found Unicode character information
-		{
-			unicodeCharacterValueLabel.setText(unicodeCharacter.toString());	//show the Unicode character value
-			unicodeCharacterNameLabel.setText(unicodeCharacter.getUniqueCharacterName());	//show the Unicode character name
-		}
-		else	//if we didn't find a Unicode character under the caret
-		{
-			unicodeCharacterValueLabel.setText("");	//show no Unicode character value
-			unicodeCharacterNameLabel.setText("");	//show no Unicode character name			
+			this.codePoint=codePoint;	//save the code point
+			unicodeCharacter=codePoint>=0 ? UnicodeData.getUnicodeCharacter(codePoint) : null;	//if a code point was indicated, try to get a character corresponding to the code point
+			if(codePoint>=0)	//if a valid code point was indicated
+			{
+				unicodeCharacterValueLabel.setText(UnicodeCharacter.getCodePointString(codePoint));	//show the Unicode character value
+				if(unicodeCharacter!=null)	//if we found Unicode character information
+				{
+					unicodeCharacterNameLabel.setText(unicodeCharacter.getUniqueCharacterName());	//show the Unicode character name
+				}
+				else	//if we didn't find a Unicode character
+				{
+					unicodeCharacterNameLabel.setText("");	//show no Unicode character name			
+				}
+			}
+			else	//if we don't have a valid Unicode code point
+			{
+				unicodeCharacterValueLabel.setText("");	//show no Unicode character value
+				unicodeCharacterNameLabel.setText("");	//show no Unicode character name			
+			}
 		}
 	}
-*/
-
+	
 	/**Updates the status, such as the Unicode character information labels, for
 		the text component character at the caret position.
 		@param textComponent The text component that holds Unicode characters.
@@ -132,25 +144,14 @@ public class UnicodeStatusBar extends StatusBar
 	*/
 	public void updateStatus(final Document document, final int position)
 	{
-		UnicodeCharacter unicodeCharacter;	//see if we can find a Unicode character under the caret
 		try
 		{
 			final String unicodeString=document.getText(position, 1);	//get the single character at the given position
-			unicodeCharacter=UnicodeData.getUnicodeCharacter(unicodeString.charAt(0));	//get Unicode character data for the character at the position
+			setCodePoint(unicodeString.charAt(0));	//set the code point to the character at the given position
 		}
 		catch(BadLocationException e)	//if the caret isn't at a valid position
 		{
 			unicodeCharacter=null;	//show that we don't have a Unicode character
-		}
-		if(unicodeCharacter!=null)	//if we found Unicode character information
-		{
-			unicodeCharacterValueLabel.setText(unicodeCharacter.toString());	//show the Unicode character value
-			unicodeCharacterNameLabel.setText(unicodeCharacter.getUniqueCharacterName());	//show the Unicode character name
-		}
-		else	//if we didn't find a Unicode character under the caret
-		{
-			unicodeCharacterValueLabel.setText("");	//show no Unicode character value
-			unicodeCharacterNameLabel.setText("");	//show no Unicode character name			
 		}
 		this.position=position;	//save the position
 	}
@@ -208,7 +209,6 @@ public class UnicodeStatusBar extends StatusBar
 		textComponent.getDocument().addDocumentListener(documentListener);	//listen for document changes in the document
 		textComponent.addPropertyChangeListener(DOCUMENT_PROPERTY, documentPropertyChangeListener);	//listen for document changes
 		updateStatus(textComponent);	//update the status for the text component, which will save the current caret position
-//G***del when works		position=textComponent.getCaretPosition();	//save the current position of the caret
 	}
 
 	/**Detaches this status bar from a text component so that it will no longer be be updated when the text component changes.

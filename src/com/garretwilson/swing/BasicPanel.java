@@ -388,9 +388,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	{
 	}
 
-	/**Updates the states of the actions, including enabled/disabled status,
-		proxied actions, etc.
-	*/
+	/**Updates the states of the user interface, including enabled/disabled status, proxied actions, etc.*/
 	public void updateStatus()
 	{
 	}

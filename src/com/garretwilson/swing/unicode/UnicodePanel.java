@@ -1,5 +1,6 @@
 package com.garretwilson.swing.unicode;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -14,6 +15,8 @@ import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 
 import com.garretwilson.awt.FontUtilities;
@@ -49,6 +52,12 @@ public class UnicodePanel extends ToolStatusPanel
 		/**@return The model of Unicode blocks for use in a combo box.*/
 		protected ComboBoxModel getUnicodeBlockComboBoxModel() {return unicodeBlockComboBoxModel;}
 
+	/**The status bar showing information about the current Unicode character.*/
+	private final UnicodeStatusBar unicodeStatusBar;
+
+		/**@return The status bar showing information about the current Unicode character.*/
+		protected final UnicodeStatusBar getUnicodeStatusBar() {return unicodeStatusBar;}
+
 	/**Default constructor.*/
 	public UnicodePanel()
 	{
@@ -57,6 +66,7 @@ public class UnicodePanel extends ToolStatusPanel
 		unicodeTable=new ActionTable(unicodeTableModel);	//create the Unicode table with a Unicode table model
 		final SortedSet<UnicodeBlock> unicodeBlockSet=UnicodeBlocks.getUnicodeBlocks();	//load the set of Unicode blocks
 		unicodeBlockComboBoxModel=new DefaultComboBoxModel(unicodeBlockSet.toArray(new UnicodeBlock[unicodeBlockSet.size()]));	//create a model from the set of Unicode blocks
+		unicodeStatusBar=new UnicodeStatusBar();	//create a new Unicode status bar
 		initialize(); //initialize the panel
 	}
 
@@ -91,6 +101,9 @@ public class UnicodePanel extends ToolStatusPanel
 		setContentComponent(new JScrollPane(unicodeTable));	//put the Unicode table in the center of the panel
 		setDefaultFocusComponent(unicodeTable);
 		unicodeTable.changeSelection(0, 0, false, false);	//select the origin cell
+		final ListSelectionListener updateStatusListSelectionListener=createUpdateStatusListSelectionListener();	//create a list selection listener to update the status when the selection changes
+		unicodeTable.getSelectionModel().addListSelectionListener(updateStatusListSelectionListener);	//update the status when the row selection changes
+		unicodeTable.getColumnModel().getSelectionModel().addListSelectionListener(updateStatusListSelectionListener);	//update the status when the column selection changes
 		unicodeBlockComboBoxModel.addListDataListener(new ListDataAdapter()	//synchronize the table with the combo box when the combo box changes
 				{
 					public void contentsChanged(final ListDataEvent listDataEvent) {synchronizeUnicodeTableToUnicodeBlockComboBox();}
@@ -105,6 +118,8 @@ public class UnicodePanel extends ToolStatusPanel
 						}
 					}
 				});
+		add(unicodeStatusBar, BorderLayout.SOUTH);	//put the Unicode status bar in the south
+//TODO fix		unicodeStatusBar.attach(textPane);	//set the Unicode status bar to track the XML text pane 
 	}
 
 	/**Initializes actions in the action manager.
@@ -124,6 +139,24 @@ public class UnicodePanel extends ToolStatusPanel
 */
 	}
 
+	/**Whether the status is being updated.*/
+//TODO fix	protected boolean updatingStatus=false;
+	
+	/**Updates the states of the user interface, including enabled/disabled status, proxied actions, etc.*/
+	public void updateStatus()
+	{
+//TODO fix		updatingStatus=true;	//show that we're updating the status, so that changing the combo box won't reposition the 
+		final int selectedCodePoint=getSelectedCodePoint();	//get the selected code point
+		getUnicodeStatusBar().setCodePoint(selectedCodePoint);	//set the selected code point
+		final UnicodeBlock selectedComboBoxUnicodeBlock=(UnicodeBlock)unicodeBlockComboBoxModel.getSelectedItem();	//see which block the combo box has selected
+				//if no block is currently selected, or the new selected code point is not within the current block's range
+		if(selectedComboBoxUnicodeBlock==null || !selectedComboBoxUnicodeBlock.contains(selectedCodePoint))
+		{
+			final UnicodeBlock unicodeBlock=UnicodeBlocks.getUnicodeBlockByCodePoint(selectedCodePoint);	//get the block in which the selected code point lies
+			unicodeBlockComboBoxModel.setSelectedItem(unicodeBlock);	//select the block that includes the selected code point
+		}
+	}
+
 	/**@return The value of the Unicode code point selected, or <code>-1</code> if no code point is selected.*/
 	public int getSelectedCodePoint()
 	{
@@ -141,15 +174,25 @@ public class UnicodePanel extends ToolStatusPanel
 		}
 	}
 
+	/**Synchronizes the Unicode table to match the currently selected Unicode code block.
+	If no block is selected, no action occurs.
+	*/
 	protected void synchronizeUnicodeTableToUnicodeBlockComboBox()
 	{
 		final UnicodeBlock block=(UnicodeBlock)getUnicodeBlockComboBoxModel().getSelectedItem();	//see which block is selected
-		final JTable table=getUnicodeTable();	//get the Unicode table
-		final int row=getUnicodeTableModel().getRow(block.getStartCode());
-		final int column=getUnicodeTableModel().getColumn(block.getStartCode());
-		table.changeSelection(row, column, false, false);	//select the new cell
-		final Rectangle rectangle=table.getCellRect(row, column, true);
-		scrollRectToOrigin(table, rectangle);	//scroll the cell to the origin
+		if(block!=null)	//if a known block is selected
+		{
+			if(!block.contains(getSelectedCodePoint()))	//if the selected code point is not within the new block range
+			{
+				final JTable table=getUnicodeTable();	//get the Unicode table
+				final int blockStartCode=block.getStartCode();	//see where this block starts 
+				final int row=getUnicodeTableModel().getRow(blockStartCode);	//get the row of this block's start
+				final int column=getUnicodeTableModel().getColumn(block.getStartCode());	//get the column of this block's start
+				table.changeSelection(row, column, false, false);	//select the start of the block
+				final Rectangle rectangle=table.getCellRect(row, column, true);	//get the rectangle representing the start of the block
+				scrollRectToOrigin(table, rectangle);	//scroll the cell representing the start of the block to the origin
+			}
+		}
 	}
 
 	/**Adds an <code>ActionListener</code> to the list.

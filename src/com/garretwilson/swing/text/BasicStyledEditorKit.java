@@ -244,7 +244,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 //TODO del when works					JOptionPane.showMessageDialog(UnicodePanel.this, e.getActionCommand());
 							}
 						});
-				frame=new BasicFrame("Unicode", new JScrollPane(unicodePanel));	//create a new frame showing Unicode G***i18n
+				frame=new BasicFrame("Unicode", unicodePanel);	//create a new frame showing Unicode G***i18n
 				try
 				{
 					frame.setPreferences(Preferences.userNodeForPackage(getClass()));	//give the frame unique preferences
