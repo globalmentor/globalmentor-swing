@@ -351,7 +351,7 @@ public abstract class ApplicationFrame extends BasicFrame
 	}
 	
 	/**Application panel and application constructor with optional initialization.
-  Enables window events.
+  <p>Enables window events.</p>
 	@param application The application this frame represents, or
 		<code>null</code> if there is no application information available or this
 		frame doesn't represent an application.
