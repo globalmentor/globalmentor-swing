@@ -104,7 +104,10 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 			if(oldView!=newView)  //if the value is really changing
 			{
 				if(!isModelViewSupported(newView))	//if the new data view isn't supported
+				{	
+					cancelModelViewChange(oldView, newView);	//cancel the change
 					throw new IllegalArgumentException("Unsupported model view "+newView);
+				}
 				if(canChangeModelView(oldView, newView))	//if we can change the view
 				{
 					modelView=newView; //update the value

@@ -2,7 +2,6 @@ package com.garretwilson.swing;
 
 import java.awt.*;
 import javax.swing.*;
-import com.garretwilson.util.Debug;
 
 /**An class for simple rendering of custom strings and icons in a list cell.
 	A child class should override <code>getListCellRendererString()</code> and
