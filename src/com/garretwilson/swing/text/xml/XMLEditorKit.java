@@ -927,7 +927,8 @@ xmlDocument.normalize();	//G***do we want to do this here? probably not---or may
 
 			final CSSStyleSheet[] stylesheets=getXMLStylesheetApplier().getStylesheets(xmlDocument, baseURI, mediaType);	//G***testing
 			for(int i=0; i<stylesheets.length; getXMLStylesheetApplier().applyStyleSheet(stylesheets[i++], xmlDocumentElement));	//G***testing
-
+				//TODO make sure stylesheets get applied later, too, in our Swing stylesheet application routine
+			getXMLStylesheetApplier().applyLocalStyles(xmlDocumentElement);	//apply local styles to the document TODO why don't we create one routine to do all of this?
 
 
 
