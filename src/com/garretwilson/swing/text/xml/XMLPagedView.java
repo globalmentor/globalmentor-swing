@@ -344,7 +344,7 @@ A copy of our...
 	//G***del Debug.trace("found ending offset: ", endOffset); //G***del
 				final FlowRange flowRange=flowLayoutInfo.getFlowRange(startOffset);  //find the range that matches this offset
 	//G***del Debug.trace("Found flow range: ", flowRange);
-				Debug.assert(flowRange!=null, "No flow range for position "+startOffset);
+				assert flowRange!=null : "No flow range for position "+startOffset;
 					//get a page pool view from which to paginate
 				final PagePoolView pagePoolView=getPagePoolView(flowRange.getStartOffset(), flowRange.getEndOffset());
 	//G***del Debug.trace("retrieved page pool view with parent: ", pagePoolView.getParent()!=null ? pagePoolView.getParent().getClass().getName() : "null"); //G***del
@@ -2483,7 +2483,7 @@ if(Debug.isDebug()) //G***del
 		return true;
 	}
 
-	Debug.assert(flowRange!=null, "No flow range for position "+p0);
+	assert flowRange!=null : "No flow range for position "+p0;
 //G***del Debug.trace("Flow view: ", flowView);
 
 

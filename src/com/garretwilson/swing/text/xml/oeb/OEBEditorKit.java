@@ -276,7 +276,7 @@ Debug.trace("got spine list");  //G***del
 					{
 	//G***del Debug.trace("OEBEditorKit.read() Getting item: "+i+" of "+publication.getSpineList().size());
 						final RDFResource item=(RDFResource)spineList.get(i);	//get a reference to this item
-	Debug.assert(item!=null, "Item is null");
+						assert item!=null : "Item is null";
 Debug.trace("working on item: ", item); //G***del
 	//G***del Debug.trace("OEBEditorKit.read() Got item: "+(item==null?"null":"not null"));
 	//G***if there is no href (the spine doesn't reference any ID in the manifest), this next line will throw a null-pointer exception

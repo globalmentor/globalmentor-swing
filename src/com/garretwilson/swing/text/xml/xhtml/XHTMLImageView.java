@@ -92,7 +92,7 @@ Debug.trace("XHTMLImageView.initialize() src: ", getHRef());
 			try
 			{
 				final Image image=getImage(); //get the image, loading it if needed (in initialize() it will usually have to be loaded)
-	Debug.assert(image!=null, "fImage is null");  //G***fix
+				assert image!=null : "fImage is null";  //G***fix
   			ImageUtilities.loadImage(image);  //load the image G***optimize: perhaps there's a way to just load part of the image, to get the image dimensions
 				height=image.getHeight(this);	//get the image's height
 				width=image.getWidth(this);	//get the image's width

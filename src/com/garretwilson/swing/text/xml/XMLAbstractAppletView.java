@@ -226,7 +226,7 @@ Debug.trace("Applet size before start() width: "+d3.getWidth()+" height: "+d3.ge
 		{
 		  final Class appletClass=getClass(getClassName());  //get the applet class name, and load that class
 		  final Object object=appletClass.newInstance();  //create a new instance of the applet class
-		  Debug.assert(object instanceof Applet, object.getClass().getName()+" is not an appplet.");  //G***fix
+		  assert object instanceof Applet : object.getClass().getName()+" is not an applet.";  //G***fix
 		  final Applet applet=(Applet)object; //cast the object to an applet
 		  applet.setStub(this); //tell the applet that it can use this view as the applet stub
 //G***del Debug.trace("applet setting size: currentWidth: "+currentWidth+" currentHeight: "+currentHeight);

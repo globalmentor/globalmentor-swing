@@ -33,7 +33,7 @@ public class SimpleListCellRenderer extends DefaultListCellRenderer
 		final String string=getListCellRendererString(list, value, index, isSelected, cellHasFocus);  //get the string to display
 		final Icon icon=getListCellRendererIcon(list, value, index, isSelected, cellHasFocus);  //get the icon to display
 //G***assert the string is not null
-		Debug.assert(component instanceof JLabel, "List cell renderer component not a JLabel");
+		assert component instanceof JLabel : "List cell renderer component is not a JLabel";
 		final JLabel label=(JLabel)component; //cast the component to a label, assuming that the component is a JLabel (which is likely the implementation used by the default)
 		label.setText(string);  //set the correct text
 		if(icon!=null)  //if we have an icon

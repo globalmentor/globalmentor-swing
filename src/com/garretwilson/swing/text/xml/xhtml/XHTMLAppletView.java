@@ -69,9 +69,9 @@ public class XHTMLAppletView extends XMLAbstractAppletView implements XHTMLConst
 		  if(childElementName.equals(ELEMENT_PARAM))  //if this is a param element
 			{
 				final String parameterName=XMLStyleUtilities.getXMLAttributeValue(childAttributeSet, null, ELEMENT_PARAM_ATTRIBUTE_NAME);	//get the param name attribute
-				Debug.assert(parameterName!=null, "<param> name is null");  //G***fix
+				assert parameterName!=null : "<param> name is null";  //G***fix
 				final String parameterValue=XMLStyleUtilities.getXMLAttributeValue(childAttributeSet, null, ELEMENT_PARAM_ATTRIBUTE_VALUE);	//get the param value attribute
-				Debug.assert(parameterValue!=null, "<param> value is null");  //G***fix
+				assert parameterValue!=null : "<param> value is null";  //G***fix
 //G***del Debug.trace("Param name: "+parameterName+" value: "+parameterValue); //G***del
 				final Parameter parameter=new Parameter(parameterName, parameterValue); //create a new parameter
 				setParameter(parameter);  //set the parameter

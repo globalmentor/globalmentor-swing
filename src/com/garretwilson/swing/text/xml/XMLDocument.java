@@ -1190,7 +1190,7 @@ Debug.trace("pos: ", pos);  //G***del
 		while(paragraphElement!=null && paragraphElement!=rootElement)  //stop looking when we've reached the root element or run out of elements
 		{
 			final AttributeSet paragraphAttributeSet=paragraphElement.getAttributes();  //get the paragraph's attributes
-			Debug.assert(paragraphAttributeSet!=null, "Paragraph has no attributes.");
+			assert paragraphAttributeSet!=null : "Paragraph has no attributes.";
 Debug.trace("this paragraph attribute set: ", com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(paragraphAttributeSet));  //G***del; use relative class name
 		  final CSSStyleDeclaration paragraphCSSStyle=XMLCSSStyleUtilities.getXMLCSSStyle(paragraphAttributeSet); //get the CSS style of the element (this method makes sure the attributes are present)
 		  if(!XMLCSSUtilities.isDisplayInline(paragraphCSSStyle))  //if this element is marked as a paragraph
@@ -1248,7 +1248,7 @@ Debug.trace("this paragraph attribute set: ", com.garretwilson.swing.text.Attrib
 	protected org.w3c.dom.Document createXMLDocument()
 	{
 		final Element rootSwingElement=getRootElements()[0]; //get the first root element of the document -- this contains an element tree for each document loaded
-		Debug.assert(rootSwingElement.getElementCount()>0, "No Swing root element.");  //assert there is at least one root element
+		assert rootSwingElement.getElementCount()>0 : "No Swing root element.";  //assert there is at least one root element
 //G***del		if(rootSwingElement.getElementCount()>0)  //if there is at least one root element
 		final Element swingDocumentElement=rootSwingElement.getElement(0);  //get the first element, which is the root of the document tree
 		return createXMLDocument(swingDocumentElement); //create and return a document from this element
@@ -1262,7 +1262,7 @@ Debug.trace("this paragraph attribute set: ", com.garretwilson.swing.text.Attrib
 	protected static org.w3c.dom.Document createXMLDocument(final Element swingElement)
 	{
 		final AttributeSet attributeSet=swingElement.getAttributes();  //get the element's attribute set
-		Debug.assert(attributeSet!=null, "Missing attributes for document element.");  //assert that we have an attribute set
+		assert attributeSet!=null : "Missing attributes for document element.";  //assert that we have an attribute set
 		final String elementName=XMLStyleUtilities.getXMLElementName(attributeSet); //get the name of this element
 		final XMLDOMImplementation domImplementation=new XMLDOMImplementation();	//create a new DOM implementation G***later use some Java-specific stuff
 		final DocumentType documentType;  //we'll create a document type only if we find a system ID
@@ -1300,7 +1300,7 @@ Debug.trace("this paragraph attribute set: ", com.garretwilson.swing.text.Attrib
 			xmlDocument.insertBefore(processingInstruction, xmlDocument.getDocumentElement()); //add this processing instruction G***do these have to be placed in a certain order---before the document element?
 		}
 		final org.w3c.dom.Node xmlNode=createXMLNode(xmlDocument, swingElement); //create the root element
-		Debug.assert(xmlNode.getNodeType()==Node.ELEMENT_NODE, "Swing root XML node not an XML element."); //make sure we got back an XML element
+		assert xmlNode.getNodeType()==Node.ELEMENT_NODE : "Swing root XML node not an XML element."; //make sure we got back an XML element
 		xmlDocument.replaceChild(xmlNode, xmlDocument.getDocumentElement());	//set the document element of the document
 		return xmlDocument; //return the document we constructed
 	}
@@ -1343,7 +1343,7 @@ Debug.trace("this paragraph attribute set: ", com.garretwilson.swing.text.Attrib
 				}
 			}
 		}
-		Debug.assert(attributeSet!=null, "Missing attributes for element.");  //assert that we have an attribute set
+		assert attributeSet!=null : "Missing attributes for element.";  //assert that we have an attribute set
 //G***fix		if(attributeSet!=null)  //if we have an attribute set
 		final String elementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(attributeSet); //get the namespace of this element, if it has one
 		final String elementName=XMLStyleUtilities.getXMLElementName(attributeSet); //get the name of this element
@@ -1627,7 +1627,7 @@ Debug.trace("Found default stylesheet for namespace: ", namespaceURI);  //G***de
 			{
 //G***del when not needed				final XMLStyleSheetDescriptor styleSheetDescriptor=(XMLStyleSheetDescriptor)styleSheetDescriptorIterator.next();  //get the next descriptor
 				final XMLStyleSheetDescriptor styleSheetDescriptor=styleSheetDescriptorArray[i];  //get the next descriptor
-				Debug.assert(styleSheetDescriptor.getHRef()!=null, "Stylesheet processing instruction has null href");  //G***fix
+				assert styleSheetDescriptor.getHRef()!=null : "Stylesheet processing instruction has null href";  //G***fix
 				//G***do whatever we need to do for the media type, title, etc.
 
 //G***del Debug.trace("Looking at stylesheet descriptor: ", styleSheetDescriptor.getHRef());  //G***del
@@ -1782,7 +1782,7 @@ Debug.trace("namespace URI: ", namespaceURI);  //G***del
 				  if(elementStyle==null) //if there is no existing style (usually the editor kit will have supplied one already to reduce the performance hit here)
 					{
 						elementStyle=new XMLCSSStyleDeclaration();  //create an empty default style
-						Debug.assert(attributeSet instanceof MutableAttributeSet, "Attribute set not mutable");
+						assert attributeSet instanceof MutableAttributeSet : "Attribute set not mutable";
 						XMLCSSStyleUtilities.setXMLCSSStyle((MutableAttributeSet)attributeSet, elementStyle);	//put the style in the attributes
 					}
 //G***del					Debug.trace("style rule is of type: ", cssStyleRule.getClass().getName());  //G***del
@@ -1841,7 +1841,7 @@ Debug.trace("namespace URI: ", namespaceURI);  //G***del
 				  if(elementStyle==null) //if there is no existing style (usually the editor kit will have supplied one already to reduce the performance hit here)
 					{
 						elementStyle=new XMLCSSStyleDeclaration();  //create an empty default style
-						Debug.assert(attributeSet instanceof MutableAttributeSet, "Attribute set not mutable");
+						assert attributeSet instanceof MutableAttributeSet : "Attribute set not mutable";
 						XMLCSSStyleUtilities.setXMLCSSStyle((MutableAttributeSet)attributeSet, elementStyle);	//put the style in the attributes
 					}
 					elementStyle.importStyle((XMLCSSStyleDeclaration)cssStyle);  //import the style G***use generic DOM and move this to a utility class
