@@ -10,6 +10,7 @@ import com.garretwilson.swing.text.FragmentView;
 	views as well. It is correctly marked as a fragment view by implementing
 	<code>FragmentView</code>, and keeps track of whether the view is the first
 	fragment.
+//TODO in this and all fragment views, fix the replace() method so that it reparents the view to the whole view if it was originally a child of the whole view; then, update the CompositeBoxView break strategy and see if we can remove the reparenting; make sure that any reparenting works with flow views with their logical view pools
 @author Garret Wilson
 */
 public class XMLFragmentBlockView extends XMLBlockView implements FragmentView

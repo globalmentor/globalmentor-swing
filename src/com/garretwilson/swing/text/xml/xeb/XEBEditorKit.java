@@ -410,17 +410,18 @@ Debug.trace(RDFUtilities.toString(rdf));
 	@param elementSpecList The list of element specs to be inserted into the document.
 	@param contentData The content to be inserted into the document.
 	@param swingXMLDocument The Swing document into which the content will be set.
+	@return The attribute set for the content data root.
 	@exception IllegalArgumentException if the given content data is not recognized or is not supported.
 	*/
-	protected void appendElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final ContentData<?> contentData, final XMLDocument swingXMLDocument)
+	protected MutableAttributeSet appendElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final ContentData<?> contentData, final XMLDocument swingXMLDocument)
 	{
 		if(contentData.getObject() instanceof Activity)	//if this is a MAQRO activity
 		{
-			appendMAQROActivityElementSpecList(elementSpecList, (ContentData<Activity>)contentData, swingXMLDocument);	//append MAQRO activity content
+			return appendMAQROActivityElementSpecList(elementSpecList, (ContentData<Activity>)contentData, swingXMLDocument);	//append MAQRO activity content
 		}
 		else	//if we don't recognize this content data
 		{
-			super.appendElementSpecList(elementSpecList, contentData, swingXMLDocument);	//append the content data normally
+			return super.appendElementSpecList(elementSpecList, contentData, swingXMLDocument);	//append the content data normally
 		}
 	}
 
@@ -428,8 +429,9 @@ Debug.trace(RDFUtilities.toString(rdf));
 	@param elementSpecList The list of element specs to be inserted into the document.
 	@param contentData The MAQRO activity content to be inserted into the document.
 	@param swingXMLDocument The Swing document into which the content will be set.
+	@return The attribute set for the MAQRO activity.
 	*/
-	protected void appendMAQROActivityElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final ContentData<? extends Activity> contentData, final XMLDocument swingXMLDocument)
+	protected MutableAttributeSet appendMAQROActivityElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final ContentData<? extends Activity> contentData, final XMLDocument swingXMLDocument)
 	{
 		final Activity activity=contentData.getObject();	//get a reference to this activity
 		final URI baseURI=contentData.getBaseURI(); //get a reference to the base URI
@@ -445,6 +447,8 @@ Debug.trace(RDFUtilities.toString(rdf));
 			//TODO make sure stylesheets get applied later, too, in our Swing stylesheet application routine
 		getXMLStylesheetApplier().applyLocalStyles(xmlDocumentElement);	//apply local styles to the document TODO why don't we create one routine to do all of this?
 */
+		return appendElementSpecList(elementSpecList, activity, baseURI);	//append the activity
+/*TODO del when works
 		final MutableAttributeSet activityAttributeSet=appendElementSpecList(elementSpecList, activity, baseURI);	//append the activity
 		if(baseURI!=null) //if there is a base URI
 		{
@@ -455,6 +459,7 @@ Debug.trace(RDFUtilities.toString(rdf));
 		{
 			XMLStyleUtilities.setMediaType(activityAttributeSet, mediaType); //add the media type as an attribute
 		}
+*/
 	}
 
 	/**Appends information from a MAQRO activity to a list of element specs.
@@ -467,17 +472,6 @@ Debug.trace(RDFUtilities.toString(rdf));
 	protected MutableAttributeSet appendElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final Activity activity, final URI baseURI)
 	{
 		final MutableAttributeSet attributeSet=createAttributeSet(activity, baseURI);	//create and fill an attribute set based upon the RDF resource
-
-		try	//TODO fix this hack to load styles automatically based upon the namespace
-		{
-			final CSSStyleDeclaration cssStyle=XMLCSSProcessor.parseRuleSet("display:block;background-color:silver;");	//create a CSS style for the attribute set
-			XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, cssStyle);	//store the constructed CSS style in the attribute set			
-		}
-		catch(final IOException ioException)  //if we have any errors reading the style
-		{
-		  Debug.warn(ioException);	//warn that we don't understand the style
-		}
-		
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(attributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a Swing element to model this resource
 		final List<RDFResource> interactions=activity.getInteractions();	//get the activity interactions
 		if(interactions!=null)	//if there are choices
@@ -514,17 +508,6 @@ Debug.trace(RDFUtilities.toString(rdf));
 	protected MutableAttributeSet appendElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final Question question, final URI baseURI)
 	{
 		final MutableAttributeSet attributeSet=createAttributeSet(question, baseURI);	//create and fill an attribute set based upon the RDF resource
-
-		try	//TODO fix this hack to load styles automatically based upon the namespace
-		{
-			final CSSStyleDeclaration cssStyle=XMLCSSProcessor.parseRuleSet("display:list-item;margin-left: 2em;list-style-type: decimal;");	//create a CSS style for the attribute set
-			XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, cssStyle);	//store the constructed CSS style in the attribute set			
-		}
-		catch(final IOException ioException)  //if we have any errors reading the style
-		{
-		  Debug.warn(ioException);	//warn that we don't understand the style
-		}
-		
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(attributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a Swing element to model this resource
 		final Dialogue query=question.getQuery();	//get the question query
 		if(query!=null)	//if the question has a query
@@ -534,37 +517,13 @@ Debug.trace(RDFUtilities.toString(rdf));
 		final List<RDFResource> choices=question.getChoices();	//get the question choices
 		if(choices!=null)	//if there are choices
 		{
-
-			
-
 			final MutableAttributeSet choicesAttributeSet=createAttributeSet(MAQRO_NAMESPACE_URI, CHOICES_PROPERTY_NAME);	//create and fill an attribute set for the choices property
-			
-			try	//TODO fix this hack to load styles automatically based upon the namespace
-			{
-				final CSSStyleDeclaration cssStyle=XMLCSSProcessor.parseRuleSet("display:block;");	//create a CSS style for the attribute set
-				XMLCSSStyleUtilities.setXMLCSSStyle(choicesAttributeSet, cssStyle);	//store the constructed CSS style in the attribute set			
-			}
-			catch(final IOException ioException)  //if we have any errors reading the style
-			{
-			  Debug.warn(ioException);	//warn that we don't understand the style
-			}
-			
 			elementSpecList.add(new DefaultStyledDocument.ElementSpec(choicesAttributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a Swing element to model this resource
 			for(final RDFResource choice:choices)	//for each choice
 			{
 				if(choice instanceof Dialogue)	//if this choice is dialogue
 				{
-					final MutableAttributeSet choiceAttributeSet=appendElementSpecList(elementSpecList, (Dialogue)choice, baseURI);	//append element specs for the dialogue
-					
-					try	//TODO fix this hack to load styles automatically based upon the namespace
-					{
-						final CSSStyleDeclaration cssStyle=XMLCSSProcessor.parseRuleSet("display:block;margin-left: 2em;");	//create a CSS style for the attribute set
-						XMLCSSStyleUtilities.setXMLCSSStyle(choiceAttributeSet, cssStyle);	//store the constructed CSS style in the attribute set			
-					}
-					catch(final IOException ioException)  //if we have any errors reading the style
-					{
-					  Debug.warn(ioException);	//warn that we don't understand the style
-					}
+					appendElementSpecList(elementSpecList, (Dialogue)choice, baseURI);	//append element specs for the dialogue
 				}
 				else
 				{
@@ -593,17 +552,6 @@ Debug.trace(RDFUtilities.toString(rdf));
 	protected MutableAttributeSet appendElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final Dialogue dialogue, final URI baseURI)
 	{
 		final MutableAttributeSet attributeSet=createAttributeSet(dialogue, baseURI);	//create and fill an attribute set based upon the RDF resource
-
-		try	//TODO fix this hack to load styles automatically based upon the namespace
-		{
-			final CSSStyleDeclaration cssStyle=XMLCSSProcessor.parseRuleSet("display:block;");	//create a CSS style for the attribute set
-			XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, cssStyle);	//store the constructed CSS style in the attribute set			
-		}
-		catch(final IOException ioException)  //if we have any errors reading the style
-		{
-		  Debug.warn(ioException);	//warn that we don't understand the style
-		}
-		
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(attributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a Swing element to model this resource
 		final RDFLiteral dialogueValue=dialogue.getValue();	//get the value of this dialogue
 		if(dialogueValue instanceof RDFPlainLiteral)	//if the dialogue is a plain literal

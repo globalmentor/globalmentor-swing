@@ -20,12 +20,12 @@ import com.garretwilson.rdf.RDFResource;
 */
 public class RDFStyleUtilities
 {
-	/**Gets the RDF resource the Swing attributes represent.]
+	/**Gets the RDF resource the Swing attributes represent.
 	The attribute is not resolved through the parent attribute set hierarchy.
 	@param attributeSet The attribute set.
 	@return The RDF resource, or <code>null</code> if the element has no RDF resource.
 	*/
-	public static RDFResource getRDFResource(AttributeSet attributeSet)
+	public static RDFResource getRDFResource(final AttributeSet attributeSet)
 	{
 		return asInstance(getDefinedAttribute(attributeSet, RDF_RESOURCE_ATTRIBUTE_NAME), RDFResource.class);	//get the RDF resource
 	}

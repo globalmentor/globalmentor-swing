@@ -4,6 +4,7 @@ import java.awt.Image;  //G***del when loading routines are placed elsewhere
 //G***del import java.awt.MediaTracker;  //G***del when loading routines are placed elsewhere
 import java.awt.Toolkit;  //G***del when loading routines are placed elsewhere
 import java.lang.ref.*;
+import static java.text.MessageFormat.*;
 import java.util.*;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,11 +17,14 @@ import javax.swing.text.Document;
 import javax.swing.text.Element;
 
 import org.w3c.dom.css.CSSStyleDeclaration;
+import org.w3c.dom.css.CSSStyleSheet;
+
 import com.garretwilson.io.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.xpackage.MIMEOntologyUtilities;
 import com.garretwilson.rdf.xpackage.XPackageUtilities;
+import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.text.BasicStyledDocument;
 import com.garretwilson.swing.text.SwingTextUtilities;
 import com.garretwilson.text.CharacterConstants;
@@ -28,10 +32,12 @@ import com.garretwilson.text.xml.stylesheets.css.AbstractXMLCSSStylesheetApplier
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities; //G***maybe move
 import com.garretwilson.sound.sampled.SampledSoundUtilities;
+import com.garretwilson.swing.text.rdf.RDFStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
 import com.garretwilson.util.Debug;
 import com.garretwilson.util.NameValuePair;
+import com.garretwilson.util.WeakValueHashMap;
 //G***del when works import com.garretwilson.swing.text.xml.css.XMLCSSSimpleAttributeSet;
 
 /**A document that models XML.
@@ -59,19 +65,17 @@ final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);
 //G***fix final static char ELEMENT_END_CHAR=CharacterConstants.ZERO_WIDTH_NO_BREAK_SPACE_CHAR;	
 //G***fix	final static char ELEMENT_END_CHAR=CharacterConstants.PARAGRAPH_SIGN_CHAR;	
 
-	/**A map of references to resources that have been loaded.*/
-	private final Map resourceReferenceMap=new HashMap();
+	/**A map of soft references to resources that have been loaded.*/
+	private final Map<URI, Reference<Object>> resourceReferenceMap=new HashMap<URI, Reference<Object>>();
 
-	/**Returns a cached resource identified by the URI, if the object's memory
-		has not been reclaimed.
+	/**Returns a cached resource identified by the URI, if the object's memory has not been reclaimed.
 	@param resourceURI The URI of the requested resource.
-	@return The resource, if it has been cached and is still referenced in the
-		JVM, or <code>null</code> if the resource's memory has been reclaimed or the
-		object has never been cached.
+	@return The resource, if it has been cached and is still referenced in the JVM,
+		or <code>null</code> if the resource's memory has been reclaimed or the object has never been cached.
 	*/
 	protected Object getCachedResource(final URI resourceURI)
 	{
-		final Reference resourceReference=(Reference)resourceReferenceMap.get(resourceURI); //return a reference to the cached resource, if available
+		final Reference<Object> resourceReference=resourceReferenceMap.get(resourceURI); //return a reference to the cached resource, if available
 		if(resourceReference!=null) //if we found a reference to the resource
 		{
 			final Object resource=resourceReference.get();  //get the resource itself
@@ -91,8 +95,14 @@ final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);
 	protected void putCachedResource(final URI resourceURI, final Object resource)
 	{
 			//store the resource in the map as a soft reference
-	  resourceReferenceMap.put(resourceURI, new SoftReference(resource));
+	  resourceReferenceMap.put(resourceURI, new SoftReference<Object>(resource));
 	}
+
+	/**The object that applies stylesheets to the document.*/
+	private final SwingXMLCSSStylesheetApplier swingStylesheetApplier;
+
+		/**@return The object that applies stylesheets to the document.*/
+		protected SwingXMLCSSStylesheetApplier getSwingStylesheetApplier() {return swingStylesheetApplier;}
 
 	/**Constructor.
 	@param uriInputStreamable The source of input streams for resources.
@@ -102,6 +112,7 @@ final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);
 	{
 //G***fix		super(new PureGapContent(BUFFER_SIZE_DEFAULT), new XMLCSSStyleContext());	//construct the parent class, specifying our own type of style context that knows how to deal with CSS attributes
 		super(new XMLCSSStyleContext(), uriInputStreamable);	//construct the parent class, specifying our own type of style context that knows how to deal with CSS attributes
+		swingStylesheetApplier=new SwingXMLCSSStylesheetApplier();	//create a new Swing stylesheet applier
 	}
 
 
@@ -1214,18 +1225,14 @@ Debug.trace("this paragraph attribute set: ", com.garretwilson.swing.text.Attrib
 		and applies the styles to the Swing element attributes.
 	@param swingDocument The Swing document containing the data.
 	*/
-/*TODO fix, relocate
 	public void applyStyles()
 	{
 Debug.trace("Ready to applystyles");  //G***fix
-//G***important; fix		writeLock();  //get a lock on the document
+		writeLock();  //get a lock on the document
 		try
 		{
 Debug.trace("looking at first root element");  //G***fix
 			final Element rootSwingElement=getRootElements()[0]; //get the first root element of the document -- this contains an element tree for each document loaded
-	//G***del		for(int swingRootElementIndex=0; swingRootElementIndex<rootSwingElement.getElementCount(); ++swingRootElementIndex) //look at each root element
-//G***del			Debug.assert(rootSwingElement.getElementCount()>0, "No Swing root element.");  //assert there is at least one root element
-	//G***del		if(rootSwingElement.getElementCount()>0)  //if there is at least one root element
 		  final int swingDocumentElementCount=rootSwingElement.getElementCount(); //find out how many root elements there are
 		  for(int swingDocumentElementIndex=0; swingDocumentElementIndex<swingDocumentElementCount; ++swingDocumentElementIndex) //look at each root element, each of which represents an XML document
 			{
@@ -1233,30 +1240,166 @@ Debug.trace("looking at first root element");  //G***fix
 				final AttributeSet documentAttributeSet=swingDocumentElement.getAttributes();	//get the attribute set of the document element
 				final URI documentBaseURI=XMLStyleUtilities.getBaseURI(documentAttributeSet);  //get the URI of this document
 				final ContentType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet); //see what media type this document is
-					//get all styelsheets for this document
-				final CSSStyleSheet[] styleSheets=getSwingStylesheetApplier().getStylesheets(swingDocumentElement, documentBaseURI, documentMediaType);
+				final RDFResource description=XMLStyleUtilities.getDocumentDescription(documentAttributeSet);	//see if there is an RDF resource describing this document
+				
+				final SwingXMLCSSStylesheetApplier stylesheetApplier=getSwingStylesheetApplier();	//get the stylesheet applier
+				//TODO make sure the stylesheet applier correctly distinguishes between document base URI for internal stylesheets and publication base URI for package-level base URIs
+					//get all stylesheets for this document
+				final CSSStyleSheet[] styleSheets=stylesheetApplier.getStylesheets(swingDocumentElement, documentBaseURI, documentMediaType, description);
 				//apply the stylesheets
 				for(int i=0; i<styleSheets.length; ++i) //look at each stylesheet
 				{
-				  //prepare a progress message: "Applying stylesheet X to XXXXX.html"
-					final String progressMessage=MessageFormat.format("Applying stylesheet {0} to {1}", new Object[]{new Integer(i+1), documentBaseURI!=null ? documentBaseURI.toString() : "unknown"}); //G***i18n; fix documentURI if null
+				  	//prepare a progress message: "Applying stylesheet X to XXXXX.html"
+					final String progressMessage=format("Applying stylesheet {0} to {1}", Integer.valueOf(i+1), documentBaseURI!=null ? documentBaseURI.toString() : "unknown"); //G***i18n; fix documentURI if null
 Debug.trace(progressMessage); //G***del
 					fireMadeProgress(new ProgressEvent(this, APPLY_STYLESHEET_TASK, progressMessage, swingDocumentElementIndex, swingDocumentElementCount));	//fire a progress message saying that we're applying a stylesheet
 //G***del System.out.println("applying stylesheet: "+i+" of "+styleSheetList.getLength());  //G***del
 					final CSSStyleSheet cssStyleSheet=styleSheets[i];  //get a reference to this stylesheet, assuming that it's a CSS stylesheet (that's all that's currently supported)
-					getSwingStylesheetApplier().applyStyleSheet(cssStyleSheet, swingDocumentElement);  //apply the stylesheet to the document
-//G***fix					applyStyleSheet(cssStyleSheet, swingDocumentElement);  //apply the stylesheet to the document
+					stylesheetApplier.applyStyleSheet(cssStyleSheet, swingDocumentElement);  //apply the stylesheet to the document
 				}
 Debug.trace("applying local styles"); //G***del
 				fireMadeProgress(new ProgressEvent(this, APPLY_STYLESHEET_TASK, "Applying local styles", swingDocumentElementIndex, swingDocumentElementCount));	//fire a progress message saying that we're applying local styles G***i18n
+				stylesheetApplier.applyLocalStyles(swingDocumentElement);	//apply local styles to the document TODO why don't we create one routine to do all of this?
 			}
 		}
 		finally
 		{
-//G***important; fix			writeUnlock();  //always release the lock on the document
+			writeUnlock();  //always release the lock on the document
 		}
 	}
+
+/*G***fix
+	public void emphasis()	//G***testing
+	{
+		writeLock();  //G***testing
+
+		
+
+
+//G***fix		final Element[] buff=new Element[1];  //create an element array for insertion of elements
+		final Element characterElement=getCharacterElement(60);
+//G***fix		final AttributeSet emAttributeSet=createAttributeSet("em", XHTMLConstants.XHTML_NAMESPACE_URI.toString());	//G***testirng
+		final AttributeSet emAttributeSet=createAttributeSet(XHTMLConstants.XHTML_NAMESPACE_URI, "em");	//G***testirng
+//G***fix		final Element branchElement=createBranchElement(characterElement.getParentElement(), emAttributeSet);
+//G***fix		buff[0]=branchElement;
+
+	final List elementSpecList=new ArrayList();	//create an array to hold our element specs
+	elementSpecList.add(new DefaultStyledDocument.ElementSpec(emAttributeSet, DefaultStyledDocument.ElementSpec.StartTagType));
+appendElementSpecListContent(elementSpecList, "test", null, null);	//G***fix
+	elementSpecList.add(new DefaultStyledDocument.ElementSpec(emAttributeSet, DefaultStyledDocument.ElementSpec.EndTagType));
+
+	final DefaultStyledDocument.ElementSpec[] elementSpecs=(DefaultStyledDocument.ElementSpec[])elementSpecList.toArray(new DefaultStyledDocument.ElementSpec[elementSpecList.size()]);
+
+
+DefaultDocumentEvent evnt =	new DefaultDocumentEvent(60, 4, DocumentEvent.EventType.INSERT);
+//G***fix		evnt.addEdit(cEdit);
+//G***fix		buffer.create(1, buff, evnt);
 */
+/*G***fix
+
+	try
+	{
+		insert(60, elementSpecs);
+	}
+	catch (BadLocationException e)
+	{
+		Debug.error(e);
+	}
+*/
+/*G***fix
+buffer.insert(60, 4, elementSpecs, evnt);
+
+// update bidi (possibly)
+insertUpdate(evnt, null);
+
+// notify the listeners
+evnt.end();
+fireInsertUpdate(evnt);
+fireUndoableEditUpdate(new UndoableEditEvent(this, evnt));
+
+*/
+
+/*G***fix
+		// update bidi (possibly)
+		super.insertUpdate(evnt, null);
+
+		// notify the listeners
+		evnt.end();
+		fireInsertUpdate(evnt);
+		fireUndoableEditUpdate(new UndoableEditEvent(this, evnt));
+*/
+
+/*G***del
+		final Element[] buff=new Element[1];  //create an element array for insertion of elements
+
+		createBranchElement()
+
+		final BranchElement section=new SectionElement(); //create a new section
+		final BranchElement html=new BranchElement(section, htmlAttributeSet); //create a new paragraph to represent the document
+		final BranchElement body=new BranchElement(html, bodyAttributeSet); //create a new paragraph to represent the HTML body
+		final BranchElement p=new BranchElement(body, pAttributeSet); //create a new paragraph to represent the paragraph
+		final LeafElement leaf=new LeafElement(p, null, 0, 1);  //create the leaf element
+		buff[0]=leaf; //insert the leaf
+		p.replace(0, 0, buff);
+		buff[0]=p;  //insert the p
+		body.replace(0, 0, buff);
+		buff[0]=body;  //insert the body
+		html.replace(0, 0, buff);
+
+			BranchElement paragraph = new BranchElement(section, null);
+
+			LeafElement brk = new LeafElement(paragraph, null, 0, 1);
+			buff[0] = brk;
+			paragraph.replace(0, 0, buff);
+
+			final Element[] sectionBuffer=new Element[2];  //G***testing
+			sectionBuffer[0] = html;
+			sectionBuffer[1] = paragraph;
+			section.replace(0, 0, sectionBuffer);
+*/
+/*G***fix
+		buff[0]=html;  //insert the html
+		section.replace(0, 0, buff);
+		writeUnlock();
+		return section;
+*/
+
+/*G***fix
+		writeUnlock();
+		
+	}
+*/
+
+	/**Inserts an XML element into the document around the indicated selection.
+	@param offset The offset in the document (>=0).
+	@param length The length (>=0).
+	@param elementNamespaceURI The namespace of the XML element.
+	@param elementQName The qualified name of the XML element.
+	*/
+/*G***fix
+	public void insertXMLElement(final int offset, final int length, final URI elementNamespaceURI, final String elementQName)
+	{
+		writeLock();  //lock the document for writing
+		final Element characterElement=getCharacterElement(offset);	//get the element at the offset
+		final AttributeSet elementAttributeSet=createAttributeSet(elementNamespaceURI, elementQName);	//create an attribute set for the element
+		final List elementSpecList=new ArrayList();	//create an array to hold our element specs
+		elementSpecList.add(new DefaultStyledDocument.ElementSpec(elementAttributeSet, DefaultStyledDocument.ElementSpec.StartTagType));
+			//TODO use another Unicode character that has replacement semantics, just to make this neater and more readable
+		appendElementSpecListContent(elementSpecList, StringUtilities.makeString('*', length), null, null);	//G***fix; comment
+		elementSpecList.add(new DefaultStyledDocument.ElementSpec(elementAttributeSet, DefaultStyledDocument.ElementSpec.EndTagType));
+		final DefaultStyledDocument.ElementSpec[] elementSpecs=(DefaultStyledDocument.ElementSpec[])elementSpecList.toArray(new DefaultStyledDocument.ElementSpec[elementSpecList.size()]);
+
+		DefaultDocumentEvent evnt=new DefaultDocumentEvent(offset, length, DocumentEvent.EventType.INSERT);
+		buffer.insert(offset, length, elementSpecs, evnt);	//insert the element's specifications
+	//G***fix	insertUpdate(evnt, null);	//update after the insert
+		evnt.end();	//end the editing
+		fireInsertUpdate(evnt);	//notify listeners of the insert
+		applyStyles();	//G***testing
+		fireUndoableEditUpdate(new UndoableEditEvent(this, evnt));	//notify listeners of the undoable edit
+		writeUnlock();	//unlock the document
+	}
+*/
+
 
 	/**Class to apply styles to Swing elements.
 	@author Garret Wilson
@@ -1398,141 +1541,6 @@ Debug.trace("applying local styles"); //G***del
 			importStyle(elementStyle, cssStyle);	//import the style
 		}
 	}
-
-
-
-/*G***fix
-	public void emphasis()	//G***testing
-	{
-		writeLock();  //G***testing
-
-		
-
-
-//G***fix		final Element[] buff=new Element[1];  //create an element array for insertion of elements
-		final Element characterElement=getCharacterElement(60);
-//G***fix		final AttributeSet emAttributeSet=createAttributeSet("em", XHTMLConstants.XHTML_NAMESPACE_URI.toString());	//G***testirng
-		final AttributeSet emAttributeSet=createAttributeSet(XHTMLConstants.XHTML_NAMESPACE_URI, "em");	//G***testirng
-//G***fix		final Element branchElement=createBranchElement(characterElement.getParentElement(), emAttributeSet);
-//G***fix		buff[0]=branchElement;
-
-	final List elementSpecList=new ArrayList();	//create an array to hold our element specs
-	elementSpecList.add(new DefaultStyledDocument.ElementSpec(emAttributeSet, DefaultStyledDocument.ElementSpec.StartTagType));
-appendElementSpecListContent(elementSpecList, "test", null, null);	//G***fix
-	elementSpecList.add(new DefaultStyledDocument.ElementSpec(emAttributeSet, DefaultStyledDocument.ElementSpec.EndTagType));
-
-	final DefaultStyledDocument.ElementSpec[] elementSpecs=(DefaultStyledDocument.ElementSpec[])elementSpecList.toArray(new DefaultStyledDocument.ElementSpec[elementSpecList.size()]);
-
-
-DefaultDocumentEvent evnt =	new DefaultDocumentEvent(60, 4, DocumentEvent.EventType.INSERT);
-//G***fix		evnt.addEdit(cEdit);
-//G***fix		buffer.create(1, buff, evnt);
-*/
-/*G***fix
-
-	try
-	{
-		insert(60, elementSpecs);
-	}
-	catch (BadLocationException e)
-	{
-		Debug.error(e);
-	}
-*/
-/*G***fix
-buffer.insert(60, 4, elementSpecs, evnt);
-
-// update bidi (possibly)
-insertUpdate(evnt, null);
-
-// notify the listeners
-evnt.end();
-fireInsertUpdate(evnt);
-fireUndoableEditUpdate(new UndoableEditEvent(this, evnt));
-
-*/
-
-/*G***fix
-		// update bidi (possibly)
-		super.insertUpdate(evnt, null);
-
-		// notify the listeners
-		evnt.end();
-		fireInsertUpdate(evnt);
-		fireUndoableEditUpdate(new UndoableEditEvent(this, evnt));
-*/
-
-/*G***del
-		final Element[] buff=new Element[1];  //create an element array for insertion of elements
-
-		createBranchElement()
-
-		final BranchElement section=new SectionElement(); //create a new section
-		final BranchElement html=new BranchElement(section, htmlAttributeSet); //create a new paragraph to represent the document
-		final BranchElement body=new BranchElement(html, bodyAttributeSet); //create a new paragraph to represent the HTML body
-		final BranchElement p=new BranchElement(body, pAttributeSet); //create a new paragraph to represent the paragraph
-		final LeafElement leaf=new LeafElement(p, null, 0, 1);  //create the leaf element
-		buff[0]=leaf; //insert the leaf
-		p.replace(0, 0, buff);
-		buff[0]=p;  //insert the p
-		body.replace(0, 0, buff);
-		buff[0]=body;  //insert the body
-		html.replace(0, 0, buff);
-
-			BranchElement paragraph = new BranchElement(section, null);
-
-			LeafElement brk = new LeafElement(paragraph, null, 0, 1);
-			buff[0] = brk;
-			paragraph.replace(0, 0, buff);
-
-			final Element[] sectionBuffer=new Element[2];  //G***testing
-			sectionBuffer[0] = html;
-			sectionBuffer[1] = paragraph;
-			section.replace(0, 0, sectionBuffer);
-*/
-/*G***fix
-		buff[0]=html;  //insert the html
-		section.replace(0, 0, buff);
-		writeUnlock();
-		return section;
-*/
-
-/*G***fix
-		writeUnlock();
-		
-	}
-*/
-
-	/**Inserts an XML element into the document around the indicated selection.
-	@param offset The offset in the document (>=0).
-	@param length The length (>=0).
-	@param elementNamespaceURI The namespace of the XML element.
-	@param elementQName The qualified name of the XML element.
-	*/
-/*G***fix
-	public void insertXMLElement(final int offset, final int length, final URI elementNamespaceURI, final String elementQName)
-	{
-		writeLock();  //lock the document for writing
-		final Element characterElement=getCharacterElement(offset);	//get the element at the offset
-		final AttributeSet elementAttributeSet=createAttributeSet(elementNamespaceURI, elementQName);	//create an attribute set for the element
-		final List elementSpecList=new ArrayList();	//create an array to hold our element specs
-		elementSpecList.add(new DefaultStyledDocument.ElementSpec(elementAttributeSet, DefaultStyledDocument.ElementSpec.StartTagType));
-			//TODO use another Unicode character that has replacement semantics, just to make this neater and more readable
-		appendElementSpecListContent(elementSpecList, StringUtilities.makeString('*', length), null, null);	//G***fix; comment
-		elementSpecList.add(new DefaultStyledDocument.ElementSpec(elementAttributeSet, DefaultStyledDocument.ElementSpec.EndTagType));
-		final DefaultStyledDocument.ElementSpec[] elementSpecs=(DefaultStyledDocument.ElementSpec[])elementSpecList.toArray(new DefaultStyledDocument.ElementSpec[elementSpecList.size()]);
-
-		DefaultDocumentEvent evnt=new DefaultDocumentEvent(offset, length, DocumentEvent.EventType.INSERT);
-		buffer.insert(offset, length, elementSpecs, evnt);	//insert the element's specifications
-	//G***fix	insertUpdate(evnt, null);	//update after the insert
-		evnt.end();	//end the editing
-		fireInsertUpdate(evnt);	//notify listeners of the insert
-		applyStyles();	//G***testing
-		fireUndoableEditUpdate(new UndoableEditEvent(this, evnt));	//notify listeners of the undoable edit
-		writeUnlock();	//unlock the document
-	}
-*/
-
 
 
 }

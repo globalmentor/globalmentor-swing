@@ -6,10 +6,13 @@ import javax.mail.internet.ContentType;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
+
+import static com.garretwilson.lang.ObjectUtilities.*;
 import static com.garretwilson.swing.text.StyleUtilities.*;
 import static com.garretwilson.swing.text.xml.XMLStyleConstants.*;
 
 import com.garretwilson.lang.ObjectUtilities;
+import com.garretwilson.rdf.RDFResource;
 import com.garretwilson.text.xml.XMLUtilities;
 import com.garretwilson.util.NameValuePair;
 
@@ -375,6 +378,25 @@ public class XMLStyleUtilities
 	public static void setTargetURI(final MutableAttributeSet attributeSet, final URI uri)
 	{
 		attributeSet.addAttribute(TARGET_URI_ATTRIBUTE_NAME, uri);	//add the attribute to the attribute set
+	}
+
+	/**Gets the RDF resource description of the document hierarchy the Swing attributes represent.
+	The attribute is not resolved through the parent attribute set hierarchy.
+	@param attributeSet The attribute set.
+	@return The RDF resource, or <code>null</code> if the element has no RDF resource.
+	*/
+	public static RDFResource getDocumentDescription(final AttributeSet attributeSet)
+	{
+		return asInstance(getDefinedAttribute(attributeSet, DOCUMENT_DESCRIPTION_ATTRIBUTE_NAME), RDFResource.class);	//get the document description
+	}
+
+	/**Sets the RDF resource description of the document hierarchy represented by the attribute set.
+	@param attributeSet The attribute set
+	@param rdfResource The RDF resource.
+	*/
+	public static void setDocumentDescription(final MutableAttributeSet attributeSet, final RDFResource documentDescription)
+	{
+		attributeSet.addAttribute(DOCUMENT_DESCRIPTION_ATTRIBUTE_NAME, documentDescription);	//add the attribute to the attribute set
 	}
 
 	/**Gets the public ID of the document type of the document, an element of

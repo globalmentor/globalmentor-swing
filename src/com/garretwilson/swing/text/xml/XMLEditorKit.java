@@ -21,6 +21,7 @@ import static com.garretwilson.rdf.xpackage.XPackageUtilities.*;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.text.BasicStyledEditorKit;
 import com.garretwilson.swing.text.SwingTextUtilities;
+import com.garretwilson.swing.text.rdf.RDFStyleUtilities;
 import com.garretwilson.swing.text.xml.css.*;
 import com.garretwilson.text.*;
 import com.garretwilson.text.xml.*;
@@ -477,6 +478,7 @@ catch (BadLocationException e)
 */
 
 	//G***testing; put in correct place		swingDocument.applyStyles(); //G***testing; put in the correct place, and make sure this gets called when repaginating, if we need to
+		swingXMLDocument.applyStyles(); //G***testing; put in the correct place, and make sure this gets called when repaginating, if we need to
 	}
 
 	/**Creates element spec objects from an XML document tree.
@@ -511,7 +513,25 @@ catch (BadLocationException e)
 						appendElementSpecListPageBreak(elementSpecList);  //append a page break
 			}
 			final ContentData<?> contentData=contentDataArray[i];	//get a reference to this content data
-			appendElementSpecList(elementSpecList, contentData, swingXMLDocument);	//append element specs for this document
+			final MutableAttributeSet contentDataAttributeSet=appendElementSpecList(elementSpecList, contentData, swingXMLDocument);	//append element specs for this content data
+				//add the document attributes to the base attribute set 
+			final URI baseURI=contentData.getBaseURI(); //get a reference to the base URI
+			final ContentType mediaType=contentData.getContentType(); //get a reference to the media type
+			final RDFResource description=contentData.getDescription();	//get a description of the content
+			if(baseURI!=null) //if there is a base URI
+			{
+				XMLStyleUtilities.setBaseURI(contentDataAttributeSet, baseURI); //add the base URI as an attribute
+				XMLStyleUtilities.setTargetURI(contentDataAttributeSet, baseURI);  //because this element is the root of the document, its base URI acts as a linking target as well; store the target URI for quick searching
+			}
+			if(mediaType!=null) //if there is a media type
+			{
+				XMLStyleUtilities.setMediaType(contentDataAttributeSet, mediaType); //add the media type as an attribute
+			}
+			if(description!=null) //if there is a description
+			{
+				XMLStyleUtilities.setDocumentDescription(contentDataAttributeSet, description); //add the description as an attribute
+			}
+			
 		}
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(null, DefaultStyledDocument.ElementSpec.EndTagType));	//finish the element that encloses all the documents
 		return (DefaultStyledDocument.ElementSpec[])elementSpecList.toArray(new DefaultStyledDocument.ElementSpec[elementSpecList.size()]);
@@ -522,13 +542,14 @@ catch (BadLocationException e)
 	@param elementSpecList The list of element specs to be inserted into the document.
 	@param contentData The content to be inserted into the document.
 	@param swingXMLDocument The Swing document into which the content will be set.
+	@return The attribute set for the content data root.
 	@exception IllegalArgumentException if the given content data is not recognized or is not supported.
 	*/
-	protected void appendElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final ContentData<?> contentData, final XMLDocument swingXMLDocument)
+	protected MutableAttributeSet appendElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final ContentData<?> contentData, final XMLDocument swingXMLDocument)
 	{
 		if(contentData.getObject() instanceof org.w3c.dom.Document)	//if this is XML document content data
 		{
-			appendXMLDocumentElementSpecList(elementSpecList, (ContentData<org.w3c.dom.Document>)contentData, swingXMLDocument);	//append XML content
+			return appendXMLDocumentElementSpecList(elementSpecList, (ContentData<org.w3c.dom.Document>)contentData, swingXMLDocument);	//append XML content
 		}
 		else	//if we don't recognize this content data
 		{
@@ -540,8 +561,9 @@ catch (BadLocationException e)
 	@param elementSpecList The list of element specs to be inserted into the document.
 	@param contentData The XML document content to be inserted into the document.
 	@param swingXMLDocument The Swing document into which the content will be set.
+	@return The attribute set for the XML document.
 	*/
-	protected void appendXMLDocumentElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final ContentData<? extends org.w3c.dom.Document> contentData, final XMLDocument swingXMLDocument)
+	protected MutableAttributeSet appendXMLDocumentElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final ContentData<? extends org.w3c.dom.Document> contentData, final XMLDocument swingXMLDocument)
 	{
 		final org.w3c.dom.Document xmlDocument=contentData.getObject();	//get a reference to this document
 		xmlDocument.normalize();	//G***do we want to do this here? probably not---or maybe so. Maybe we can normalize on the fly in the Swing document, not in the source
@@ -551,13 +573,16 @@ catch (BadLocationException e)
 		final URI publicationBaseURI=swingXMLDocument.getBaseURI();	//get the base URI of the publication TODO do we need to check this for null?
 			//if there is a publication, see if we have a description of this resource in the manifest
 		final RDFResource description=contentData.getDescription();
+//TODO put description in base element
+/*TODO fix
 			//TODO make sure the stylesheet applier correctly distinguishes between document base URI for internal stylesheets and publication base URI for package-level base URIs
 		final CSSStyleSheet[] stylesheets=getXMLStylesheetApplier().getStylesheets(xmlDocument, baseURI, mediaType, description);	//G***testing
 		for(int i=0; i<stylesheets.length; getXMLStylesheetApplier().applyStyleSheet(stylesheets[i++], xmlDocumentElement));	//G***testing
 			//TODO make sure stylesheets get applied later, too, in our Swing stylesheet application routine
 		getXMLStylesheetApplier().applyLocalStyles(xmlDocumentElement);	//apply local styles to the document TODO why don't we create one routine to do all of this?
-
+*/
 		final MutableAttributeSet documentAttributeSet=appendElementSpecList(elementSpecList, xmlDocumentElement, baseURI);	//insert this document's root element into our list our list of elements
+/*TODO del when works
 		if(baseURI!=null) //if there is a base URI
 		{
 			XMLStyleUtilities.setBaseURI(documentAttributeSet, baseURI); //add the base URI as an attribute
@@ -567,6 +592,11 @@ catch (BadLocationException e)
 		{
 			XMLStyleUtilities.setMediaType(documentAttributeSet, mediaType); //add the media type as an attribute
 		}
+		if(description!=null) //if there is a description
+		{
+			RDFStyleUtilities.setRDFResource(documentAttributeSet, description); //add the description as an attribute
+		}
+*/
 		final DocumentType documentType=xmlDocument.getDoctype(); //get the XML document's doctype, if any
 		if(documentType!=null) //if this document has a doctype
 		{
@@ -602,6 +632,7 @@ catch (BadLocationException e)
 				}
 			}
 */
+		return documentAttributeSet;	//return the attribute set of the document
 	}
 
 	/**Appends information from an XML element tree into a list of element specs.

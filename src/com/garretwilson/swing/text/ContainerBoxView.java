@@ -3,7 +3,7 @@ package com.garretwilson.swing.text;
 import java.util.*;
 
 import javax.swing.text.*;
-
+import static com.garretwilson.swing.text.ViewUtilities.*;
 import com.garretwilson.util.Debug;
 
 /**A view that contains other views, constrained in a box.
@@ -370,6 +370,8 @@ public class ContainerBoxView extends BoxView
 		  final View fragmentView=fragmentViewFactory.createFragmentView(isFirstFragment, isLastFragment);	//create a fragment of the view
 		  fragmentView.setParent(parentView);	//give the fragment the correct parent
 		  fragmentView.replace(0, fragmentView.getViewCount(), childViews);	//add the child views to the fragment
+				//TODO reparenting when fragmenting seems to fix the problems that have been encountered, but what other break strategies? what about unfragmented views whose children have been fragmented and then unfragmented, yet the parent views never see this method so they can never have their hierarchies reparented?
+			reparentHierarchy(fragmentView);	//reparent the entire hierarchy of the fragment view, because some of the children's children may have been fragmented and then unfragmented
 		  return fragmentView;	//return the fragment view we created
 		}
 
