@@ -263,7 +263,7 @@ Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.Attrib
 	//G***del Debug.trace("Looking at inline text: '"+text+"' character code: "+Integer.toHexString(text.charAt(0)));  //G***del
 	//G***bring back for efficiency				  document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset(), segment);
 								//if there are no visible characters (or the end-of-element character mark), and this isn't really just an empty element
-						if(CharSequenceUtilities.notCharIndexOf(text, CharacterConstants.WHITESPACE_CHARS+CharacterConstants.CONTROL_CHARS+XMLEditorKit.ELEMENT_END_CHAR)<0	
+						if(CharSequenceUtilities.notCharIndexOf(text, CharacterConstants.WHITESPACE_CHARS+CharacterConstants.CONTROL_CHARS+XMLDocument.ELEMENT_END_CHAR)<0	
 								&& !XMLStyleUtilities.isXMLEmptyElement(childAttributeSet))
 						{
 	//G***del Debug.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElementName(attributeSet)); //G***del

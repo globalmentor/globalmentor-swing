@@ -28,6 +28,7 @@ import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
@@ -37,6 +38,7 @@ import javax.swing.text.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.EventListenerList;
 import com.garretwilson.applet.*;
+import com.garretwilson.awt.EventQueueUtilities;
 import com.garretwilson.io.*;
 import com.garretwilson.net.URIConstants;
 import com.garretwilson.net.URIUtilities;
@@ -81,6 +83,14 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 
 	/**The highlighter used for highlighting search results.*/
 //G***del when works	protected final Highlighter searchHighlighter=new DefaultHighlighter();
+
+	//TODO fix asynchronous stop-gap kludge to correctly get the asynchronous setting from the document---if that's the best way to do it
+	protected boolean asynchronousLoad=false;
+	
+
+		public boolean isAsynchronousLoad() {return asynchronousLoad;}
+
+		public void setAsynchronousLoad(final boolean newAsynchronous) {asynchronousLoad=newAsynchronous;}
 
 	/**The highlight painter used for highlighting search results.*/
 	protected final static Highlighter.HighlightPainter searchHighlightPainter=new DefaultHighlighter.DefaultHighlightPainter(Color.blue);
@@ -602,7 +612,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 
 	/**Associates the editor with a text document. This must be a
 		<code>StyledDocument</code>.
-		This version ensures that properties such as zoom are set on the document.
+	<p>This version ensures that properties such as zoom are set on the document.</p>
 	@param document The document to display/edit.
 	@exception IllegalArgumentException Thrown if doc can't be narrowed to a
 		<code>StyledDocument</code> which is the required type of model for this
@@ -794,6 +804,7 @@ try {
 		a package or a .zip file. This creates a model of the type appropriate for
 		the component (such as an OEB document) and initializes the model using the
 		appropriate editor kit.
+	<p>This method must be called from inside the AWT event thread.</p>
 	<p>A default input stream locator is used.</p>
 	@param uri The URI of the resource which has the information to load.
 	@exception IOException as thrown by the stream being used to initialize.
@@ -811,6 +822,7 @@ try {
 		a package or a .zip file. This creates a model of the type appropriate for
 		the component (such as an OEB document) and initializes the model using the
 		appropriate editor kit.
+	<p>This method must be called from inside the AWT thread.</p>
 	@param uri The URI of the resource which has the information to load.
 	@param uriInputStreamable The input stream locator to use for looking up input streams.
 	@exception IOException as thrown by the stream being used to initialize.
@@ -892,9 +904,10 @@ Debug.trace("installed editor kit is now: ", getEditorKit().getClass().getName()
 		the component (such as an OEB document) and initializes the model using the
 		appropriate editor kit.
 	<p>The <code>URIInputStreamable</code> should have already been initialized.</p>
+	<p>This method must be called from inside the AWT thread.</p>
 	@param uri The URI of the resource which has the information to load.
 	@param inputStream The input stream from which the document content should be read.
-	@exception IOException as thrown by the stream being used to initialize.
+	@exception IOException Thrown if there is an error loading the document.
 	@see JEditorPane#setPage
 	@see EditorKit#createDefaultDocument
 	@see #setDocument
@@ -908,6 +921,12 @@ Debug.trace("installed editor kit is now: ", getEditorKit().getClass().getName()
 		document.putProperty(XMLDocument.BASE_URI_PROPERTY, uri);	//store the base URI in the document
 Debug.trace("reading from stream"); //G***del
 //G***del		read(inputStream, document);  //read the document from the input stream
+		if(document instanceof XMLDocument) //if this is an XML document
+		{
+			((XMLDocument)document).setURIInputStreamable(getURIInputStreamable()); //give the XML document any input stream locator that we might have, so that it can access files from within zip files, for instance
+		}
+
+/*G***del when works
 		xmlEditorKit.addProgressListener(this);	//show that we want to be notified of any progress the XML editor kit makes G***should one of these go in the XMLTextPane? will it conflict with this one?
 		if(document instanceof XMLDocument) //if this is an XML document
 		{
@@ -917,48 +936,125 @@ Debug.trace("reading from stream"); //G***del
 		}
 		try
 		{
-				//G***when does this get closed?
-			read(inputStream, document);  //read the document from the input stream
-			fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Constructing the document..."));	//G***testing i18n
-			final Cursor originalCursor=ComponentUtilities.setCursor(this, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); //show the wait cursor
-			try
-			{
-				//make sure the actual updating of the document gets done in the event thread to keep an exception from being thrown
-				SwingUtilities.invokeLater(new Runnable()	//invoke the updating of the status until later G***fix comment
-				{
-					public void run()
-					{
-	//G***fix					setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));	//show the wait cursor
-						try
-						{
-	Debug.trace("XMLTextPane ready to setDocument()");  //G***del
-							setDocument(document);	//show that the text pane is using this document (this actually creates the views)
-	Debug.trace("XMLTextPane firing progress finished constructing");  //G***del
-							fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Finished constructing the document...", true));	//G***testing i18n
-						}
-						finally
-						{
-	//G***fix						setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));	//go back to the default cursor
-						}
-					}
-				});
-			}
-			finally
-			{
-				ComponentUtilities.setCursorLater(this, originalCursor); //after the event thread is finished setting the document, always set the cursor back to its original form
-			}
-		}
-/*G***del
-		catch (BadLocationException e)	//if we received a bad location exception (which should never happen)
-		{
-			throw new IOException(e.getMessage());	//change the exception into an I/O exception and rethrow it
-		}
 */
+			final DocumentLoader documentLoader=new DocumentLoader(inputStream, document);	//create a thread for loading the document 
+			//TODO check for already loading asynchronously, as does JEditorPane
+			if(document instanceof AbstractDocument)	//if the document is an abstract document, which can give a load priority
+			{
+				final AbstractDocument abstractDocument=(AbstractDocument)document;	//cast to an abstract document
+				final int priority=abstractDocument.getAsynchronousLoadPriority();	//get the asychronous loading priority
+				if(isAsynchronousLoad())	//if we should load asynchronously
+//TODO fix the asynchronous flag				if(priority>=0)	//if we should load asynchronously
+				{
+					documentLoader.start();	//load the document in a separate thread
+					return;	//we're finished loading
+				}
+			}
+			documentLoader.load();	//if we shouldn't (or can't) load asynchronously, load the document in our own thread
+/*G***del when works
+		}
 		finally
 		{
 			xmlEditorKit.removeProgressListener(this);	//show the editor kit that we no longer want to be notified of any progress the XML editor kit makes
 			if(document instanceof XMLDocument) //if this is an XML document
 				((XMLDocument)document).removeProgressListener(this);	//show the document that we no longer want to be notified of any progress the document makes
+		}
+*/
+	}
+
+	/**Class that allows loading the document in a separate thread.*/
+	protected class DocumentLoader extends Thread
+	{
+
+		/**The input stream from which the document is to beloaded.*/
+		private final InputStream inputStream;
+		
+		/**The document to be loaded.*/
+		private final Document document;
+		
+		/**Constructs a thread for asynchronously loading a document from an input
+			stream.
+		@param inputStream The input stream from which the document is to be loaded.
+		@param document The document to be loaded.
+		 */
+		public DocumentLoader(final InputStream inputStream, final Document document)
+		{
+			super(DocumentLoader.class.getName());	//construct the thread with a user-friendly name
+			this.inputStream=inputStream;	//save the input stream
+			this.document=document;	//save the document
+		}		
+		
+		/**Reads the document from the input stream, handling any errors that occur.*/
+		public void run()
+		{
+			final EditorKit editorKit=getEditorKit();	//get the current editor kit
+			if(editorKit instanceof XMLEditorKit)	//if this is an XML editor kit
+			{
+					//G***this might all go away when we revamp progress management
+				((XMLEditorKit)editorKit).addProgressListener(XMLTextPane.this);	//show that we want to be notified of any progress the XML editor kit makes G***should one of these go in the XMLTextPane? will it conflict with this one?
+			}
+			if(document instanceof XMLDocument) //if this is an XML document
+			{
+				((XMLDocument)document).addProgressListener(XMLTextPane.this);	//show that we want to be notified of any progress the XML document makes G***should this go here or elsewhere? should this bubble up to the editor kit instead?
+			}
+			try
+			{
+				load();	//load the document
+			}
+			catch(IOException ioException)	//if there are any IO errors
+			{
+				Debug.error(ioException);	//TODO fix asynchronous loading error handling
+			}
+			finally
+			{
+				if(editorKit instanceof XMLEditorKit)	//if this is an XML editor kit
+				{
+					((XMLEditorKit)editorKit).removeProgressListener(XMLTextPane.this);	//show the editor kit that we no longer want to be notified of any progress the XML editor kit makes
+				}
+				if(document instanceof XMLDocument) //if this is an XML document
+				{
+					((XMLDocument)document).removeProgressListener(XMLTextPane.this);	//show the document that we no longer want to be notified of any progress the document makes
+				}
+			}
+		}
+
+		/**Reads the document from the input stream.
+		@exception IOException Thrown if there is an error loading the document.
+		*/
+		public void load() throws IOException
+		{
+				//show the wait cursor G***do we want to make sure the cursor is set from the AWT thread?
+			final Cursor originalCursor=ComponentUtilities.setCursor(XMLTextPane.this, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			try
+			{
+					//G***when does this get closed?
+				read(inputStream, document);  //read the document from the input stream
+				fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Constructing the document..."));	//G***testing i18n
+				try
+				{
+						//make sure the actual document change occurs in the event queue to prevent exceptions from occurring 
+					EventQueueUtilities.invokeInEventQueueAndWait(new Runnable()
+							{
+								public void run()
+								{
+									setDocument(document);	//show that the text pane is using this document (this actually creates the views)
+								}
+							});
+				}
+				catch(InterruptedException interruptedException)
+				{
+					Debug.error(interruptedException);	//G***fix
+				}
+				catch(InvocationTargetException invocationTargetException)
+				{
+					Debug.error(invocationTargetException);	//G***fix
+				}
+				fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Finished constructing the document...", true));	//G***testing i18n
+			}
+			finally
+			{
+				setCursor(originalCursor); //after the event thread is finished setting the document, always set the cursor back to its original form
+			}
 		}
 	}
 

@@ -81,6 +81,7 @@ Debug.trace("loading children for page pool, offsets "+startOffset+" to "+endOff
 	*/
 	protected Element[] getViewChildElements(final int startOffset, final int endOffset)
 	{
+			//TODO this is duplicated in XMLPagedView; make sure they are the same, and use some generic mehtod for both
 Debug.trace("Getting view child elements"); //G***del
 		final java.util.List viewChildElementList=new ArrayList();  //create a list in which to store the elements as we find them
 		final Element element=getElement(); //get a reference to our element
