@@ -15,13 +15,12 @@ import com.garretwilson.swing.event.*;
 import com.garretwilson.util.*;
 
 /**An extended panel that has extra features beyond those in <code>JPanel</code>.
-<p>The panel keeps track of the layout constraints used by the child
-	components.</p>
 <p>The panel stores properties and fires property change events when a
 	property is modified.</p>
 <p>The panel can keep track of whether its contents have been modified.</p>
 <p>The panel can store a preferences node to use for preference, or use the
 	default preferences node for the panel class.</p>
+<p>The panel keeps track of its current user mode and view of data.</p>
 <p>The panel can indicate whether it can close.</p>
 <p>The panel can recognize when it is embedded in a <code>JOptionPane</code>
 	and can set certain option pane values accordingly.</p>
@@ -40,10 +39,14 @@ import com.garretwilson.util.*;
 	can be modified.</p> 
 <p>Bound properties:</p>
 <dl>
-	<dt><code>BasicPanel.TITLE_PROPERTY_NAME</code> (<code>String</code>)</dt>
-	<dd>Indicates the title has been changed.</dd>
-	<dt><code>BasicPanel.ICON_PROPERTY_NAME</code> (<code>Icon</code>)</dt>
+	<dt><code>BasicPanel.ICON_PROPERTY</code> (<code>Icon</code>)</dt>
 	<dd>Indicates the icon has been changed.</dd>
+	<dt><code>BasicPanel.TITLE_PROPERTY</code> (<code>String</code>)</dt>
+	<dd>Indicates the title has been changed.</dd>
+	<dt><code>BasicPanel.USER_MODE_PROPERTY</code> (<code>Integer</code>)</dt>
+	<dd>Indicates the user mode has been changed.</dd>
+	<dt><code>BasicPanel.VIEW_PROPERTY</code> (<code>Integer</code>)</dt>
+	<dd>Indicates the view has been changed.</dd>
 	<dt><code>Modifiable.MODIFIED_PROPERTY_NAME</code> (<code>Boolean</code>)</dt>
 	<dd>Indicates that the boolean modified property has been changed.</dd>
 </dl>
@@ -56,44 +59,14 @@ import com.garretwilson.util.*;
 public class BasicPanel extends JPanel implements Scrollable, ContainerConstants, CanClosable, DefaultFocusable, Modifiable
 {
 
-	/**The name of the bound title property.*/
-	public final String TITLE_PROPERTY_NAME=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"title";	//G***maybe later move this to a titleable interface
 	/**The name of the bound icon property.*/
-	public final String ICON_PROPERTY_NAME=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"icon";
-
-
-	/**The weak map associating layout constraints with components.*/ 
-	private final Map constraintsMap;
-
-		/**Associates the given layout constraints with the specified child component.
-		@param component The child component being added.
-		@param constraints An object expressing layout constraints for this component.
-		*/
-		protected void putConstraints(final Component component, final Object constraints)
-		{
-			constraintsMap.put(component, constraints);	//associate the constraints with the component 
-		}
-
-		/**Determines which layout constraints are associated with the given child component
-		@param component The child component with which constraints are associated.
-		@return The constraints associated with the component, or <code>null</code>
-			if there are no constraints associated with the component.
-		*/
-		public Object getConstraints(final Component component)
-		{
-			return constraintsMap.get(component);	//get any constraints associated with the component 
-		}
-
-		/**Removes any layout constraints that are associated with the given component
-		@param component The child component with which constraints are associated.
-		@return Any constraints that were associated with the component, or
-			<code>null</code> if there were no constraints associated with the
-			component.
-		*/
-		protected Object removeConstraints(final Component component)
-		{
-			return constraintsMap.remove(component);	//remove any constraints associated with the component 
-		}
+	public final static String ICON_PROPERTY=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"icon";
+	/**The name of the bound title property.*/
+	public final static String TITLE_PROPERTY=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"title";	//G***maybe later move this to a titleable interface
+	/**The name of the bound user mode property.*/
+	public final static String USER_MODE_PROPERTY=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"userMode";
+	/**The name of the bound view property.*/
+	public final static String VIEW_PROPERTY=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"view";
 
 	/**The preferences that should be used for this panel, or <code>null</code>
 		if the default preferences for this class should be used.
@@ -207,7 +180,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 			if(!ObjectUtilities.equals(oldTitle, newTitle))  //if the value is really changing
 			{
 				title=newTitle; //update the value					
-				firePropertyChange(TITLE_PROPERTY_NAME, oldTitle, newTitle);	//show that the property has changed
+				firePropertyChange(TITLE_PROPERTY, oldTitle, newTitle);	//show that the property has changed
 			}
 		}
 
@@ -227,7 +200,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 			if(oldIcon!=newIcon)  //if the value is really changing
 			{
 				icon=newIcon; //update the value					
-				firePropertyChange(ICON_PROPERTY_NAME, oldIcon, newIcon);	//show that the property has changed
+				firePropertyChange(ICON_PROPERTY, oldIcon, newIcon);	//show that the property has changed
 			}
 		}
 
@@ -247,6 +220,64 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 		@param component The component to get the default focus.
 		*/
 		public void setDefaultFocusComponent(final Component component) {defaultFocusComponent=component;}
+
+	/**The mode in which the user can best view the contents of the panel.*/ 
+	public final static int VIEW_MODE=1<<0;
+	/**The mode in which the user can best modify the contents of the panel.*/ 
+	public final static int EDIT_MODE=1<<1;
+	/**The mode in which the user can interact with the contents of the panel.*/ 
+	public final static int INTERACT_MODE=1<<2;
+
+	/**The mode of interaction with the user, such as <code>EDIT_MODE</code>.*/
+	private int userMode;
+
+		/**@return The mode of interaction with the user, such as <code>EDIT_MODE</code>.*/
+		public int getUserMode() {return userMode;}
+
+		/**Sets the mode of user interaction.
+		@param newUserMode The mode of interaction with the user, such as <code>EDIT_MODE</code>.
+		*/
+		public void setUserMode(final int newUserMode)
+		{
+			final int oldUserMode=userMode; //get the old value
+			if(oldUserMode!=newUserMode)  //if the value is really changing
+			{
+				userMode=newUserMode; //update the value					
+				firePropertyChange(USER_MODE_PROPERTY, new Integer(oldUserMode), new Integer(newUserMode));	//show that the property has changed
+			}
+		}
+
+	/**Represents no valid view. Not a valid view value to set or get.*/
+	public final static int NO_VIEW=0;
+	/**The default view in which the data is shown normally.*/
+	public final static int NORMAL_VIEW=1<<0;
+	/**The view in which the data is shown in its best form for editing.*/
+	public final static int EDIT_VIEW=1<<1;
+	/**The view in which the data is shown as it would be in its final form.*/
+	public final static int PREVIEW_VIEW=1<<2;
+	/**The view in which the data is shown as a brief overview.*/
+	public final static int SUMMARY_VIEW=1<<3;
+	/**The view in which any source data used to generate the data is shown.*/
+	public final static int SOURCE_VIEW=1<<4;
+
+	/**The view of the data, such as <code>SUMMARY_VIEW</code>.*/
+	private int view;
+
+		/**@return The view of the data, such as <code>SUMMARY_VIEW</code>.*/
+		public int getView() {return view;}
+
+		/**Sets the view of the edata.
+		@param newView The view of the data, such as <code>SUMMARY_VIEW</code>.
+		*/
+		public void setView(final int newView)
+		{
+			final int oldView=view; //get the old value
+			if(oldView!=newView)  //if the value is really changing
+			{
+				view=newView; //update the value					
+				firePropertyChange(VIEW_PROPERTY, new Integer(oldView), new Integer(newView));	//show that the property has changed
+			}
+		}
 
 	/**Default constructor that uses a <code>FlowLayout</code>.
 	@see #FlowLayout
@@ -282,8 +313,9 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	public BasicPanel(final LayoutManager layout, final boolean initialize)
 	{
 		super(layout, false);	//construct the parent class but don't initialize
-		constraintsMap=new WeakHashMap();	//construct a map to associate layout constraints with child components, using a weak map so that we won't keep child components from being claimed by the garbage collector should we get out of synch with the actual child components
 		preferences=null;	//show that we should use the default preferences for this class
+		userMode=VIEW_MODE;	//default to viewing the data
+		view=NORMAL_VIEW;	//default to the normal view
 		defaultFocusComponent=null;	//default to no default focus component
 			//create and install a new layout focus traversal policy that will
 			//automatically use the default focus component, if available
@@ -321,41 +353,6 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	*/
 	protected void updateStatus()
 	{
-	}
-
-
-
-	/**Adds the specified component to this container at the specified
-		index.
-	<p>This version stores the layout constraints locally so they may be accessed
-		later.</p> 
-	@param component The component to be added.
-	@param constraints An object expressing layout constraints for this component.
-	@param index The position in the container's list at which to
-		insert the component, where <code>-1</code> means append to the end.
-	@exception IllegalArgumentException Thrown if <code>index</code> is invalid.
-	@exception IllegalArgumentException Thrown if adding the container's parent.
-		to itself.
-	@exception IllegalArgumentException Thrown if adding a window to a container.
-	@see #putConstraints
-	*/
-	protected void addImpl(final Component component, final Object constraints, final int index)
-	{
-		super.addImpl(component, constraints, index);	//add the component normally
-		putConstraints(component, constraints);	//associate the constraints with the component 
-	}
-
-	/**Removes the component, specified by <code>index</code>, from this container.
-	<p>This version removes any layout constraints locally associated with the
-		child component at the given index.</p> 
-	@param index The index of the component to be removed.
-	@see #removeConstraints
- 	*/
-	public void remove(final int index)
-	{
-		final Component component=getComponent(index);	//get a reference to the component to be removed; if there were no exceptions, the index was valid
-		super.remove(index);	//remove the component normally 
-		removeConstraints(component);	//remove any constraints associated with the component at the given index
 	}
 
 	/**Requests that the default focus component should get the default.

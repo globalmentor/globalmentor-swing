@@ -91,30 +91,21 @@ public class ContentPanel extends BasicPanel implements CanClosable
 		return super.getDefaultFocusComponent();	//if we can't get the default focus component from the content component, return whatever had been set with this panel
 	}
 
-	/**Content component constructor with optional initialization.
-		The content component is guaranteed to be set before
-		<code>initializeUI</code> is called.
-	@param contentComponent The new component for the center of the panel.
-	@param initialize <code>true</code> if the panel should initialize itself by
-		calling the initialization methods.
-	*/
-	public ContentPanel(final Component contentComponent, final boolean initialize)
+	/**Default constructor.*/
+	public ContentPanel()
 	{
-		this(false); //construct the default panel without initializing it
-		if(contentComponent!=null)  //if we were given a content component
-		  setContentComponent(contentComponent);  //set the content component
-		if(initialize)  //if we should initialize
-			initialize();   //initialize the panel
+		this(true); //initialize the panel
 	}
 
-	/**Application component constructor.
+	/**Content component constructor.
 		The content component is guaranteed to be set before
 		<code>initializeUI</code> is called.
-	@param contentComponent The new component for the center of the panel.
+	@param contentComponent The new component for the center of the panel, or
+		null if there should be no content component.
 	*/
 	public ContentPanel(final Component contentComponent)
 	{
-		this(contentComponent, true); //create and initialize the component
+		this(contentComponent, true); //create and initialize the panel
 	}
 
 	/**Initialize constructor.
@@ -123,18 +114,24 @@ public class ContentPanel extends BasicPanel implements CanClosable
 	*/
 	public ContentPanel(final boolean initialize)
 	{
-		super(new BasicGridBagLayout(), initialize);	//construct the panel with a basic grid bag layout and initialize if we should
-/*G***del if not needed
-		super(new BasicGridBagLayout(), false);	//construct the panel with a basic grid bag layout, but don't initialize
-		if(initialize)  //if we should initialize
-		  initialize(); //initialize the panel
-*/
+		this(null, initialize);	//construct the panel with no content component and initialize the panel if we should
 	}
 
-	/**Default constructor.*/
-	public ContentPanel()
+	/**Content component constructor with optional initialization.
+		The content component is guaranteed to be set before
+		<code>initializeUI</code> is called.
+	@param contentComponent The new component for the center of the panel, or
+		null if there should be no content component.
+	@param initialize <code>true</code> if the panel should initialize itself by
+		calling the initialization methods.
+	*/
+	public ContentPanel(final Component contentComponent, final boolean initialize)
 	{
-		this(true); //initialize the panel
+		super(new BasicGridBagLayout(), false);	//construct the default panel without initializing it
+		if(contentComponent!=null)  //if we were given a content component
+		  setContentComponent(contentComponent);  //set the content component
+		if(initialize)  //if we should initialize
+			initialize();   //initialize the panel
 	}
 
 	/**@return <code>true</code> if the panel can close.

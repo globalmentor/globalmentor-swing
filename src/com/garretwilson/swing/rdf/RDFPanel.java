@@ -2,7 +2,6 @@ package com.garretwilson.swing.rdf;
 
 import java.io.IOException;
 import javax.swing.*;
-import javax.swing.event.*;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.rdf.tree.*;
 import com.garretwilson.text.xml.XMLDOMImplementation;
@@ -14,11 +13,8 @@ import org.w3c.dom.*;
 	presented to allow viewing the RDF+XML source code.
 @author Garret Wilson
 */
-public class RDFPanel extends ContentPanel implements ChangeListener
+public class RDFPanel extends TabbedViewPanel
 {
-
-	/**@return The center tabbed pane.*/
-	protected JTabbedPane getTabbedPane() {return (JTabbedPane)getContentComponent();} 
 
 	/**The tree tab in which the RDF is displayed.*/
 	private final RDFTree rdfTree;
@@ -73,7 +69,7 @@ public class RDFPanel extends ContentPanel implements ChangeListener
 	*/
 	public RDFPanel(final RDF rdf, final RDFResource resource)
 	{
-		super(new JTabbedPane(), false);	//construct the parent class without initializing the panel
+		super(false);	//construct the parent class without initializing the panel
 		rdfTree=new RDFTree();	//create the RDF tree
 		rdfScrollPane=new JScrollPane(rdfTree);
 		xmlTextPane=new JTextPane();
@@ -88,9 +84,10 @@ public class RDFPanel extends ContentPanel implements ChangeListener
 	{
 		super.initializeUI(); //do the default UI initialization
 		xmlTextPane.setEditable(false);	//don't let the text pane be edited
-		getTabbedPane().addChangeListener(this);	//listen for tab changes
 		getTabbedPane().add(rdfScrollPane, "RDF"); //G**i18n
+		setViewComponent(NORMAL_VIEW, rdfScrollPane);	//associate the RDF component with the normal view
 		getTabbedPane().add(xmlScrollPane, "RDF+XML");  //G***i18n
+		setViewComponent(SOURCE_VIEW, xmlScrollPane);	//associate the XML component with the sourceview
 	}
 
 	/**Displays the resources of an RDF data model in the panel.
@@ -112,30 +109,37 @@ public class RDFPanel extends ContentPanel implements ChangeListener
 		rdfTree.setRDF(rdfModel, resource); //set the resource in the RDF tree
 	}
 
-	/**Called when the selected tab changes.
-	@param changeEvent The event indicating the change.
+	/**Indicates that the view of the data has changed.
+	@param oldView The view before the change.
+	@param newView The new view of the data
 	*/
-	public void stateChanged(final ChangeEvent changeEvent)
-	{
-		if(getTabbedPane().getSelectedComponent()==xmlScrollPane) //if the user has switched to the XML source panel
+	protected void onViewChanged(final int oldView, final int newView)
+	{		
+		switch(oldView)	//see what view we're changing from
 		{
-				//create an XML document containing the RDF information
-			final Document document=rdfTree.getRDFXMLifier().createDocument(getRDF(), getResource(), domImplementation);
-			final XMLSerializer xmlSerializer=new XMLSerializer(true);  //create a formatted serializer
-			try
-			{
-				final String xmlString=xmlSerializer.serialize(document); //serialize the document to a string
-				xmlTextPane.setText(xmlString); //set the text in the text area
-			}
-			catch(IOException ioException)  //if there is an error serializing the XML information
-			{
-				xmlTextPane.setText(ioException.getMessage());  //show the error message in the text area
-			}
-			xmlTextPane.setCaretPosition(0);  //scroll to the top of the text
+			case NORMAL_VIEW:	//if we're changing from the normal view
+				{
+						//create an XML document containing the RDF information
+					final Document document=rdfTree.getRDFXMLifier().createDocument(getRDF(), getResource(), domImplementation);
+					final XMLSerializer xmlSerializer=new XMLSerializer(true);  //create a formatted serializer
+					try
+					{
+						final String xmlString=xmlSerializer.serialize(document); //serialize the document to a string
+						xmlTextPane.setText(xmlString); //set the text in the text area
+					}
+					catch(IOException ioException)  //if there is an error serializing the XML information
+					{
+						xmlTextPane.setText(ioException.getMessage());  //show the error message in the text area
+					}
+					xmlTextPane.setCaretPosition(0);  //scroll to the top of the text				
+				}
+				break;
 		}
-		else  //if the user has switched to another panel
+		switch(newView)	//see what view we're changing to
 		{
-			xmlTextPane.setDocument(xmlTextPane.getEditorKit().createDefaultDocument());	//to conserve memory, remove the content from the editor kit by installing a new document
+			case NORMAL_VIEW:	//if we're changing tothe normal view
+				xmlTextPane.setDocument(xmlTextPane.getEditorKit().createDefaultDocument());	//to conserve memory, remove the content from the editor kit by installing a new document
+				break;
 		}
 	}
 
