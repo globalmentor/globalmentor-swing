@@ -382,7 +382,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	}
 
 	/**Initializes actions in the action manager.
-		Any derived class that overrides this method should call this version.
+	Any derived class that overrides this method should call this version.
 	@param actionManager The implementation that manages actions.
 	*/
 	protected void initializeActions(final ActionManager actionManager)
@@ -390,14 +390,14 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	}
 
 	/**Initializes the user interface.
-		Any derived class that overrides this method should call this version.
+	Any derived class that overrides this method should call this version.
 	*/
   protected void initializeUI()
   {
   }
 
 	/**Initializes the data.
-		Any derived class that overrides this method should call this version.
+	Any derived class that overrides this method should call this version.
 	*/
 	protected void initializeData()
 	{

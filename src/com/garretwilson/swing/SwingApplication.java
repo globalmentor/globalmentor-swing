@@ -10,6 +10,7 @@ import com.garretwilson.net.http.HTTPClient;
 import com.garretwilson.util.*;
 
 /**An application that relies on Swing.
+This version creates a default authenticator for client authentication using Swing.
 @param <C> The type of configuration object.
 @author Garret Wilson
 */
@@ -31,7 +32,7 @@ public abstract class SwingApplication<C> extends Application<C>
 	public SwingApplication(final URI referenceURI, final String[] args)
 	{
 		super(referenceURI, args);	//construct the parent class
-		HTTPClient.getInstance().setAuthenticator(new SwingAuthenticator());	//create a default authenticator for HTTP connections on the default HTTP client
+		setAuthenticator(new SwingAuthenticator());	//create a default authenticator for HTTP connections on the default HTTP client
 	}
 
 	/**Displays an error message to the user for a throwable object.

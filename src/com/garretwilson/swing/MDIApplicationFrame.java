@@ -112,7 +112,7 @@ public abstract class MDIApplicationFrame extends ObsoleteApplicationFrame
 //G***fix		super(hasMenuBar, hasStatusBar);  //construct the parent class
 		super(false);	//construct the parent class
 		desktopPane=new JDesktopPane(); //create the desktop pane
-		mdiManager=new MDIManager(this, desktopPane); //create a new MDI manager to manage the internal frames G***later create a custom one
+		mdiManager=new MDIManager(/*TODO fix this, */desktopPane); //create a new MDI manager to manage the internal frames G***later create a custom one
 		if(initialize)	//if we should initialize the frame
 			initialize();	//initialize the frame				
 	}

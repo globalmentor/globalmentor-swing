@@ -17,7 +17,7 @@ import com.garretwilson.util.ObjectState;
 /**Class that manages multiple documents in a <code>JDesktopPane</code>.
 @author Garret Wilson
 */
-public class MDIManager implements InternalFrameListener
+public class MDIManager implements InternalFrameListener	//TODO replace this class with a DesktopPaneResourceComponentDecorator
 {
 
   /**The main MDI pane in which internal frames will be displayed.*/
@@ -27,10 +27,10 @@ public class MDIManager implements InternalFrameListener
 		protected JDesktopPane getDesktopPane() {return desktopPane;}
 
 	/**The application frame for which this object is a manager.*/
-	private final ObsoleteApplicationFrame applicationFrame;
+//TODO fix	private final ObsoleteApplicationFrame applicationFrame;
 
 		/**@return The application frame for which this object is a manager.*/
-		protected ObsoleteApplicationFrame getApplicationFrame() {return applicationFrame;}
+//TODO fix		protected ObsoleteApplicationFrame getApplicationFrame() {return applicationFrame;}
 
 	/**Creates a MDI destop manager that manages internal framems in a desktop
 		pane.
@@ -38,10 +38,10 @@ public class MDIManager implements InternalFrameListener
 		manager.
 	@param newDesktopPane The desktop pane that will holds the internal frames.
 	*/
-	public MDIManager(final ObsoleteApplicationFrame newApplicationFrame, final JDesktopPane newDesktopPane)
+	public MDIManager(/*TODO fix final ObsoleteApplicationFrame newApplicationFrame, */final JDesktopPane newDesktopPane)
 	{
 		desktopPane=newDesktopPane; //save the desktop pane
-		applicationFrame=newApplicationFrame; //save the application frame
+//TODO fix		applicationFrame=newApplicationFrame; //save the application frame
 	}
 
 	/**Adds an internal frame to the desktop, adding the appropriate listeners to
@@ -80,7 +80,7 @@ Debug.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
     {
       public void propertyChange(final PropertyChangeEvent propertyChangeEvent) //if the "modified" property changes in the explore panel
       {
-				getApplicationFrame().updateStatus();  //update our actions
+//TODO fix				getApplicationFrame().updateStatus();  //update our actions
       }
     });
 		getDesktopPane().add(internalFrame, getDesktopPane().DEFAULT_LAYER);  //add the frame to the default layer
@@ -165,7 +165,7 @@ Debug.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
 		final ObjectState<RDFResource> mdiDocument=getMDIDocument(internalFrame);  //see if there is an MDI document in the frame
 		if(mdiDocument!=null) //if there is an MDI document
 		{
-			return getApplicationFrame().canClose(mdiDocument); //see if we can close the MDI document
+//TODO fix			return getApplicationFrame().canClose(mdiDocument); //see if we can close the MDI document
 		}
 		return true;  //default to allowing the frame to be closed
 	}
@@ -195,7 +195,7 @@ Debug.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
 	{
 Debug.trace("internal frame closed"); //G***del
 		if(getDesktopPane().getAllFrames().length==0) //if this is the last frame closed
-		  getApplicationFrame().updateStatus();  //update our actions to reflect that all frames have been closed
+;//TODO fix		  getApplicationFrame().updateStatus();  //update our actions to reflect that all frames have been closed
 	}
 
   /**Invoked when an internal frame is iconified.
@@ -220,7 +220,7 @@ Debug.trace("internal frame closed"); //G***del
 	*/
   public void internalFrameActivated(final InternalFrameEvent internalFrameEvent)
 	{
-		getApplicationFrame().updateStatus();  //update our actions to reflect the new frame selected
+//TODO fix		getApplicationFrame().updateStatus();  //update our actions to reflect the new frame selected
 	}
 
   /**Invoked when an internal frame is de-activated.

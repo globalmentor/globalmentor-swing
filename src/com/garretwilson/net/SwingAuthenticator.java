@@ -43,8 +43,17 @@ public class SwingAuthenticator /*G***fix extends Authenticator*/ implements Aut
 	}
 */
 
+	/**Determines password information in relation to a given description.
+	@param prompt A description of the authentication.
+	@return The password authentication collected from the user, or <code>null</code> if none is provided.
+	*/
+	public PasswordAuthentication getPasswordAuthentication(final String prompt)
+	{
+		return getPasswordAuthentication(null, prompt, null);	//get password authentication for no specific URI, allowing any user to be specified
+	}
+
 	/**Determines password information in relation to a given URI and description.
-	@param uri The URI for which authentication is requested.
+	@param uri The URI for which authentication is requested, or <code>null</code> if there is no relevant URI.
 	@param prompt A description of the authentication.
 	@return The password authentication collected from the user, or <code>null</code> if none is provided.
 	*/
@@ -55,14 +64,14 @@ public class SwingAuthenticator /*G***fix extends Authenticator*/ implements Aut
 
 	/**Determines password information for a given user in relation to a given URI and description.
 	The user must not be allowed to change the username, if one is provided.
-	@param uri The URI for which authentication is requested.
+	@param uri The URI for which authentication is requested, or <code>null</code> if there is no relevant URI.
 	@param prompt A description of the authentication.
 	@param username The user for which password information should be gathered, or <code>null</code> if the username is not restricted.
 	@return The password authentication collected from the user, or <code>null</code> if none is provided.
 	*/
 	public PasswordAuthentication getPasswordAuthentication(final URI uri, final String prompt, final String username)
 	{
-		return askPasswordAuthentication(uri.toString(), prompt, username);
+		return askPasswordAuthentication(uri!=null ? uri.toString() : prompt, prompt, username);
 	}
 	
 	

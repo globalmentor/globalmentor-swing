@@ -2,6 +2,7 @@ package com.garretwilson.swing.rdf.tree;
 
 import javax.swing.tree.*;
 import com.garretwilson.rdf.*;
+import static com.garretwilson.rdf.RDFUtilities.*;
 import com.garretwilson.rdf.rdfs.*;
 
 /**A tree node that represents a resource described in RDF.
@@ -34,9 +35,12 @@ public class RDFResourceTreeNode extends DefaultMutableTreeNode
 	/**@return A string representation to display as the tree node's label.*/
 	public String toString()
 	{
+		return getDisplayLabel(getRDFResource());	//return the display label of the resource
+/*TODO del; can reference null when there is no reference URI
 //G***del		final RDFResource rdfResource=(RDFResource)getUserObject(); //get the resource we're representing
 		final RDFResource rdfResource=getRDFResource(); //get the resource we're representing
 		final RDFLiteral labelLiteral=RDFSUtilities.getLabel(rdfResource);  //get the label of the resource, if it has one
 		return labelLiteral!=null ? labelLiteral.toString() : rdfResource.getReferenceURI().toString(); //return the label, or the reference URI if there is no label
+*/
 	}
 }

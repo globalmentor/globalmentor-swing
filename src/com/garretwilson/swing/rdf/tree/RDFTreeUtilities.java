@@ -26,14 +26,14 @@ public class RDFTreeUtilities
 	@see Resource#getReferenceURI
 	@see FilePropertiesConstants
 	*/
-	public static MutableTreeNode createFileResourceTreeNode(final RDF rdf, final List topLevelResourceList)
+	public static MutableTreeNode createFileResourceTreeNode(final RDF rdf, final List<? extends Resource> topLevelResourceList)
 	{
 		final DefaultMutableTreeNode rootNode=new DefaultMutableTreeNode("Resources");  //create the root node G***i18n; fix
 			//create the top-level resources
-		final Iterator topLevelResourceIterator=topLevelResourceList.iterator();  //get an iterator to all the top-level resources
+		final Iterator<? extends Resource> topLevelResourceIterator=topLevelResourceList.iterator();  //get an iterator to all the top-level resources
 		while(topLevelResourceIterator.hasNext()) //while there are more top-level resources
 		{
-			final Resource topLevelResource=(Resource)topLevelResourceIterator.next();  //get the next top-level resource
+			final Resource topLevelResource=topLevelResourceIterator.next();  //get the next top-level resource
 			final RDFResource topLevelRDFResource=rdf.getResource(topLevelResource.getReferenceURI());  //get the RDF resource representing the top-level resource
 			if(topLevelRDFResource!=null)  //if such an RDF resource exists G***fix error handling
 			{
