@@ -556,7 +556,7 @@ Debug.trace(RDFUtilities.toString(rdf));
 		final RDFLiteral dialogueValue=dialogue.getValue();	//get the value of this dialogue
 		if(dialogueValue instanceof RDFPlainLiteral)	//if the dialogue is a plain literal
 		{
-			final String text=dialogueValue!=null ? dialogueValue.getLexicalForm() : "X";	//TODO use an object replacement character
+			final String text=dialogueValue!=null ? dialogueValue.getLexicalForm() : "X";	//TODO use an object replacement character TODO fix for empty strings and remove redundant null check
 			appendElementSpecListContent(elementSpecList, null, null, baseURI, text);	//append the dialogue literal text
 		}
 		else if(dialogueValue instanceof RDFXMLLiteral)	//if the dialogue is an XML literal

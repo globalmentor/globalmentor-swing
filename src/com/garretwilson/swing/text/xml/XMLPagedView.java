@@ -393,6 +393,22 @@ A copy of our...
 */
 }
 
+  /**Sets the parent of the view.
+  This version hides the entire hierarchy if the parent is being set to <code>null</code>,
+  	meaning that the view hierchy is being unloaded. (This assumes this view is the direct
+  	parent of the UI root view.
+  @param parent The parent of the view, <code>null</code> if none.
+  @see ViewUtilities#hideView(View)
+	*/
+	public void setParent(final View parent)	//TODO maybe put this in some more primitive parent class
+	{
+		super.setParent(parent);	//set the parent normally
+		if(parent==null)	//if this view is being uninstalled
+		{
+			ViewUtilities.hideView(this); //hide this entire view hierarchy (this is important for component views, for instance)			
+		}
+  }
+
 	/**Replaces child views. If there are no views to remove this acts as an insert.
 	If there are no views to add this acts as a remove.
 	This version first hides the view hierarchy being removed so that views

@@ -7,6 +7,7 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 
 import com.garretwilson.swing.text.*;
+
 import static com.garretwilson.swing.text.SwingTextUtilities.*;
 import static com.garretwilson.swing.text.rdf.RDFStyleUtilities.*;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
@@ -30,6 +31,22 @@ public class XMLSectionView extends XMLBlockView
 	{
 		super(element, Y_AXIS); //default to tiling on the Y axis G***do we want to allow this to be specifie?
 	}
+
+  /**Sets the parent of the view.
+  This version hides the entire hierarchy if the parent is being set to <code>null</code>,
+  	meaning that the view hierchy is being unloaded. (This assumes this view is the direct
+  	parent of the UI root view.
+  @param parent The parent of the view, <code>null</code> if none.
+  @see ViewUtilities#hideView(View)
+	*/
+	public void setParent(final View parent)	//TODO maybe put this in some more primitive parent class
+	{
+		super.setParent(parent);	//set the parent normally
+		if(parent==null)	//if this view is being uninstalled
+		{
+			ViewUtilities.hideView(this); //hide this entire view hierarchy (this is important for component views, for instance)			
+		}
+  }
 
 	/**Loads all of the children to initialize the view.
 		This is called by the <a href="#setParent">setParent</a> method.
