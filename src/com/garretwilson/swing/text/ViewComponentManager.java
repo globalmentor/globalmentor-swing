@@ -769,10 +769,22 @@ Debug.traceStack(); //G***del
     public Object clone() throws CloneNotSupportedException
 		{
 			final ComponentInfo componentInfo=(ComponentInfo)super.clone();	//create a clone of the component info
-			componentInfo.location=(Point)location.clone();	//clone the location
-			componentInfo.scaledLocation=(Point)scaledLocation.clone();	//clone the scaled location
-			componentInfo.size=(Dimension)size.clone();	//clone the size
-			componentInfo.scaledSize=(Dimension)scaledSize.clone();	//clone the scaled size
+			if(componentInfo.location!=null)	//if there is a location associated with this component
+			{
+				componentInfo.location=(Point)location.clone();	//clone the location
+			}
+			if(componentInfo.scaledLocation!=null)	//if there is a scaled location associated with this component
+			{
+				componentInfo.scaledLocation=(Point)scaledLocation.clone();	//clone the scaled location
+			}
+			if(componentInfo.size!=null)	//if there is a size associated with this component
+			{
+				componentInfo.size=(Dimension)size.clone();	//clone the size
+			}
+			if(componentInfo.scaledSize!=null)	//if there is a scaled size associated with this component
+			{
+				componentInfo.scaledSize=(Dimension)scaledSize.clone();	//clone the scaled size
+			}
 			return componentInfo;	//return the cloned component information
 		}
 
