@@ -41,7 +41,7 @@ public class XMLEditorKit extends StyledEditorKit
 {
 
 	/**The XML media type this editor kit supports, defaulting to <code>text/xml</code>.*/
-	private ContentType mediaType=new ContentType(ContentTypeConstants.TEXT, ContentTypeConstants.XML, null);
+	private ContentType mediaType=new ContentType(ContentTypeConstants.TEXT, ContentTypeConstants.XML_SUBTYPE, null);
 
 		/**@return The XML media type this editor kit supports.*/
 		public ContentType getMediaType() {return mediaType;}

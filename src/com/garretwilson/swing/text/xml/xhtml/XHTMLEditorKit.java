@@ -24,7 +24,7 @@ public class XHTMLEditorKit extends XMLEditorKit implements XHTMLConstants
 {
 
 	/**The XHTML media type this editor kit supports, defaulting to <code>application/xhtml+xml</code>.*/
-	private ContentType mediaType=new ContentType(ContentTypeConstants.APPLICATION, ContentTypeConstants.XHTML_XML, null);
+	private ContentType mediaType=new ContentType(ContentTypeConstants.APPLICATION, ContentTypeConstants.XHTML_XML_SUBTYPE, null);
 
 		/**@return The XHTML media type this editor kit supports.*/
 		public ContentType getMediaType() {return mediaType;}

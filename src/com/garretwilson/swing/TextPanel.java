@@ -8,6 +8,8 @@ import com.garretwilson.io.*;
 import com.garretwilson.model.Model;
 import com.garretwilson.util.*;
 
+import static com.garretwilson.io.ContentTypeConstants.*;
+
 /**A panel to edit plain text.
 @author Garret Wilson
 */
@@ -75,7 +77,7 @@ public class TextPanel extends ModelPanel
 	protected void initializeUI()
 	{
 		super.initializeUI(); //do the default UI initialization
-		textPane.setContentType(ContentTypeConstants.TEXT_PLAIN);	//set the content type to "text/plain" G***maybe allow this panel to support multiple MIME types, and put the setting of the type back into TextResourceKit
+		textPane.setContentType(ContentTypeUtilities.toString(TEXT, PLAIN_SUBTYPE));	//set the content type to "text/plain" G***maybe allow this panel to support multiple MIME types, and put the setting of the type back into TextResourceKit
 		textPane.getDocument().addDocumentListener(getModifyDocumentListener());	//show that we're modified whenever the text is edited (we never change the document, we just load and save text into the document)
 		add(scrollPane, BorderLayout.CENTER);	//place the text pane, in its scroll pane, in the center of the panel
 	}

@@ -310,14 +310,14 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 		final String subType=mediaType.getSubType();  //get the subtype
 		if(ContentTypeConstants.APPLICATION.equals(topLevelType))  //application/*
 		{
-			if(ContentTypeConstants.JAVA.equals(subType))  //application/java
+			if(ContentTypeConstants.JAVA_SUBTYPE.equals(subType))  //application/java
 				return true;  //we support this media type
 		}
 		else if(ContentTypeConstants.IMAGE.equals(topLevelType))  //image/*
 		{
-			if(ContentTypeConstants.GIF.equals(subType)  //image/gif
-				  || ContentTypeConstants.PNG.equals(subType)  //image/png
-				  || ContentTypeConstants.JPEG.equals(subType))  //image/jpeg
+			if(ContentTypeConstants.GIF_SUBTYPE.equals(subType)  //image/gif
+				  || ContentTypeConstants.PNG_SUBTYPE.equals(subType)  //image/png
+				  || ContentTypeConstants.JPEG_SUBTYPE.equals(subType))  //image/jpeg
 				return true;  //we support this media type
 		}
 		return false; //show that we don't understand this media type

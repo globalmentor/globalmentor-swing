@@ -1,17 +1,5 @@
 package com.garretwilson.swing;
 
-/*G***bring back as needed
-import java.awt.*;
-import java.awt.event.ActionEvent;
-
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
-import java.io.IOException;
-
-import javax.swing.text.*;
-import javax.swing.event.*;
-import javax.swing.plaf.*;
-*/
 import java.applet.*;
 import java.awt.Graphics;
 import java.awt.*;  //G***del if not needed
@@ -68,6 +56,9 @@ import com.garretwilson.util.Debug;
 import com.garretwilson.util.zip.*;
 import edu.stanford.ejalbert.BrowserLauncher;
 
+import static com.garretwilson.io.ContentTypeConstants.*;
+import static com.garretwilson.text.xml.XMLUtilities.*;
+
 /**A text component that can be marked up with attributes that are represented
 	graphically. Most importantly, this class supports paged XML information.
 	<p>This component defines the left and right arrow keys and the PageUp/PageDown
@@ -87,6 +78,9 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 
 	/**The name of the property that indicates the current editor kit.*/
 	public final static String EDITOR_KIT_PROPERTY="editorKit";
+
+	/**The "application/zip" content type.*/
+	protected final static ContentType ZIP_MEDIA_TYPE=new ContentType(APPLICATION, ZIP_SUBTYPE, null);
 
 	/**The highlighter used for highlighting search results.*/
 //G***del when works	protected final Highlighter searchHighlighter=new DefaultHighlighter();
@@ -900,7 +894,7 @@ Debug.trace("installed editor kit is first: ", getEditorKit().getClass().getName
 
 		final String contentType=getContentType();  //see what content type we decided on
 Debug.trace("content type is first: ", contentType);  //G***del
-		if(ContentTypeConstants.APPLICATION_ZIP.equals(contentType)) //if this appears to be an application/zip file
+		if(ZIP_MEDIA_TYPE.match(contentType)) //if this appears to be an application/zip file
 		{
 Debug.trace("found zip file: ", uri);  //G***del
 			if(URIConstants.FILE_SCHEME.equals(uri.getScheme()))  //if this is the file scheme
@@ -1208,7 +1202,8 @@ Debug.trace("found input stream locator, getting input stream to URI: ", uri); /
 //G***del		final MediaType mediaType=new MediaType(contentType); //get a media type object to examine the content type
 //TODO eventually don't allow MediaType to compare with strings, if this is what's happening
 //G***should we check for application/xml or text/xml?
-		if(ContentTypeConstants.APPLICATION_XML.equals(contentType)) //if this appears to be an application/xml file
+//G***del when works		if(ContentTypeConstants.APPLICATION_XML.equals(contentType)) //if this appears to be an application/xml file
+		if(isXML(ContentTypeUtilities.createContentType(contentType))) //if this appears to be an XML file TODO make sure we want to check for all XML media types
 		{
 			final ContentType mediaType=URLUtilities.getMediaType(page);  //see if we know what media type this is
 			if(mediaType!=null) //if we have an idea of what media type this is

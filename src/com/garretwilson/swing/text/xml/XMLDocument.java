@@ -711,7 +711,7 @@ Debug.trace("found input stream locator, getting input stream to URI: ", uri); /
 		{
 			final String mediaSubType=mediaType.getSubType(); //get the media sub-type
 				//if this is a GIF, JPEG, PNG G***fix, or X_BITMAP image
-			if(mediaSubType.equals(ContentTypeConstants.GIF) || mediaSubType.equals(ContentTypeConstants.JPEG) || mediaSubType.equals(ContentTypeConstants.PNG)/*G***fix || mediaSubType.equals(MediaTypeConstants.X_BITMAP)*/)
+			if(mediaSubType.equals(ContentTypeConstants.GIF_SUBTYPE) || mediaSubType.equals(ContentTypeConstants.JPEG_SUBTYPE) || mediaSubType.equals(ContentTypeConstants.PNG_SUBTYPE)/*G***fix || mediaSubType.equals(MediaTypeConstants.X_BITMAP)*/)
 			{
 				//G***since we're opening directly from a file, maybe there is a better way to do this
 /*G***this works; fix to use our own caching
@@ -738,7 +738,7 @@ Debug.trace("found input stream locator, getting input stream to URI: ", uri); /
 //G***del when works				ImageUtilities.loadImage(image);  //load the image
 			}
 			else	//if we don't recognize this image type
-				throw new IOException("Unrecognized image type: \""+mediaType.getSubType()+"\"; only \""+ContentTypeConstants.JPEG+"\", \""+ContentTypeConstants.PNG+"\", and \""+ContentTypeConstants.GIF+"\" are currently supported.");	//G***i18n G***fix for other image types
+				throw new IOException("Unrecognized image type: \""+mediaType.getSubType()+"\"; only \""+ContentTypeConstants.JPEG_SUBTYPE+"\", \""+ContentTypeConstants.PNG_SUBTYPE+"\", and \""+ContentTypeConstants.GIF_SUBTYPE+"\" are currently supported.");	//G***i18n G***fix for other image types
 		}
 		else if(ContentTypeUtilities.isAudio(mediaType))	//if this is an audio media type
 		{

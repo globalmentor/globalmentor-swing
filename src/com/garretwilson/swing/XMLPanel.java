@@ -129,7 +129,7 @@ public class XMLPanel extends TabbedViewPanel	//TODO make the toolbar and status
 	*/
 	public XMLPanel(final XMLNodeModel model, final boolean initialize)
 	{
-		this(model, new ContentType(ContentTypeConstants.TEXT, ContentTypeConstants.XML, null), initialize);	//construct the panel with a default text/xml media type
+		this(model, new ContentType(ContentTypeConstants.TEXT, ContentTypeConstants.XML_SUBTYPE, null), initialize);	//construct the panel with a default text/xml media type
 	}
 
 	/**Content type constructor.

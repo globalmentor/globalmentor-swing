@@ -15,7 +15,7 @@ public class XHTMLViewFactory extends XMLViewFactory implements XHTMLConstants
 {
 
 	/**A static application/java media type for quick reference in the view factory.*/
-	protected final static ContentType APPLICATION_JAVA_MEDIA_TYPE=new ContentType(ContentTypeConstants.APPLICATION, ContentTypeConstants.JAVA, null);
+	protected final static ContentType APPLICATION_JAVA_MEDIA_TYPE=new ContentType(ContentTypeConstants.APPLICATION, ContentTypeConstants.JAVA_SUBTYPE, null);
 
 	/**Creates a view for the given element. If the element specifies a
 		namespace and a view factory has been registered for the given namespace,
