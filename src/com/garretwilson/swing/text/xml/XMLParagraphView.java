@@ -13,7 +13,6 @@ import com.garretwilson.swing.text.FragmentViewFactory;
 import static com.garretwilson.swing.text.ViewUtilities.*;
 import static com.garretwilson.swing.text.SwingTextUtilities.*;
 import com.garretwilson.swing.text.ViewBreakStrategy;
-import com.garretwilson.swing.text.ViewReleasable;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSView;
 import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
@@ -23,7 +22,7 @@ import com.garretwilson.util.Debug;
 /**A paragraph that understands CSS styles and knows how to be broken into fragments.
 @author Garret Wilson
 */
-public class XMLParagraphView extends ParagraphView implements XMLCSSView, FragmentViewFactory, ViewReleasable
+public class XMLParagraphView extends ParagraphView implements XMLCSSView, FragmentViewFactory	//TODO del if not needed, ViewReleasable
 {
 
 	/**The shared default break strategy for container views.*/
@@ -118,12 +117,14 @@ Debug.trace(); //G***testing
 	/**Releases any cached information such as pooled views and flows. This
 		version releases the entire pooled view.
 	*/
+/*TODO del if not needed
 	public void release()
 	{
 		layoutPool=null;  //release the pool of views
 		strategy=null;  //G***testing ViewReleasable
 		//G***later, maybe release the strategy and the child views as well
 	}
+*/
 
 	/**Sets the cached properties from the attributes. This overrides the version
 		in <code>ParagraphView</code> to work with CSS attributes.

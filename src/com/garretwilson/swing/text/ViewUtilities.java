@@ -110,37 +110,33 @@ public class ViewUtilities
 		}
 	}
 
-	/**Sets the parent view of the given view, and all views beneath it in the
-		view hierarchy, to <code>null</code>. No views are actually removed from
-		any others.
-	@param view The view the parent of which should be set to <code>null</code>,
-		along with the parents of all its children.
-	@see View#setParent
-	*/
-	public static void setParentHierarchyNull(final View view)	//TODO del if not needed
+	/**Invalidates the layout of an entire view hierarchy.
+	For each leaf view in the hierarchy, the parent <code>preferenceChanged()</code>
+	method is called. This will result in many branch views being repeatedly
+	notified of invalidation, but it guarantees that all views are invalidated.
+	This method internally reparents all views as needed.
+	@param view The parent of the view hierarchy to invalidate.
+	@see #reparentHierarchy(View)
+	*/ 
+	public static void invalidateHierarchy(final View view)
 	{
-//G***del Debug.trace("View has child views: ", view.getViewCount()); //G***del
-		for(int i=view.getViewCount()-1 ; i>=0; --i) //look at each child view
+		final int viewCount=view.getViewCount();	//see how many child views there are
+		if(viewCount>0)	//if there are children
 		{
-//G***del 			final View childView=view.getView(i);  //G***del; testing
-//G***del Debug.trace("Looking at view "+i+": ", view!=null ?	childView.getClass().getName() : "null");  //G***del
-			setParentHierarchyNull(view.getView(i));  //set the hierarchy of the child view to null
+			for(int i=view.getViewCount()-1 ; i>=0; --i) //look at each child view
+			{
+				final View childView=view.getView(i); //get a reference to the child view
+			  if(childView.getParent()!=view)  //if this view has a different parent than this one
+			  {
+					childView.setParent(view);	//set this view's parent to the parent view
+			  }
+				invalidateHierarchy(childView);	//invalidate the child hierarchy
+			}
 		}
-		view.setParent(null); //show that this view has no parent
-	}
-
-	/**Invalidates the given view and asks the container to repaint itself.
-	@param boxView The box view the layout of which should be recalculated.
-	@see BoxView#layoutChanged(int)
-	*/
-	public static void relayout(final BoxView boxView)
-	{
-		boxView.layoutChanged(BoxView.X_AXIS);	//invalidate the view's horizontal axis
-		boxView.layoutChanged(BoxView.Y_AXIS);	//invalidate the view's our vertical axis
-		final Container container=boxView.getContainer();	//get a reference to the view's container
-		if(container!=null)	//if the view is in a container
+		else	//if there are no children (i.e. this is a leaf view)
 		{
-			container.repaint();	//tell the container to repaint itself
+			final View parent=view.getParent();	//get this view's parent
+			parent.preferenceChanged(view, true, true);	//tell this leaf view's parent that its preferences have changed
 		}
 	}
 
@@ -159,39 +155,10 @@ public class ViewUtilities
 		  if(childView.getParent()!=view)  //if this view has a different parent than this one
 		  {
 				childView.setParent(view);	//set this view's parent to the parent view
-/*G***del; trying to fix vertical bug
-				if(childView instanceof BoxView)	//G***testing vertical layout
-				{
-					((BoxView)childView).layoutChanged(View.X_AXIS);
-					((BoxView)childView).layoutChanged(View.Y_AXIS);
-				}
-*/
 		  }
 			reparentHierarchy(childView);  //reparent all views under this one
 		}
 	}
-
-	/**Traverses the entire child hierarchy of the given view and, if any children
-		have a parent of <code>null</code>, resets the parent of that child to
-		correctly reference its parent.
-	@param view The view the children of which should be reparented down the hierarchy.
-	@see View#getParent
-	@see View#setParent
-	*/
-/**G***del if not needed
-	public static void reparentNullHierarchy(final View view)
-	{
-		for(int i=view.getViewCount()-1; i>=0; --i) //look at each child view
-		{
-			final View childView=view.getView(i); //get a reference to the child view
-		  if(childView.getParent()==null)  //if this view does not have a parent
-		  {
-				childView.setParent(view);	//set this view's parent to the parent view
-		  }
-			reparentNullHierarchy(childView);  //reparent all views under this one
-		}
-	}
-*/
 
 	//G***testing; code modified from _Core Swing Advanced Programming_ by Kim Topley; comment
 	public static void printViews(final JTextComponent component, final PrintStream printStream)

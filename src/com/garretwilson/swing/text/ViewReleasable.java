@@ -5,7 +5,7 @@ package com.garretwilson.swing.text;
 @author Garret Wilson
 @see com.garretwilson.swing.text.xml.XMLPagedView
 */
-public interface ViewReleasable
+public interface ViewReleasable	//TODO del if not needed
 {
 
 	/**Releases any cached information such as pooled views and flows.*/

@@ -4,13 +4,17 @@ import java.awt.*;
 import java.awt.font.*;
 import java.awt.geom.*;
 import java.lang.ref.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import javax.swing.SwingUtilities;
 import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.SizeRequirements;
 import javax.mail.internet.ContentType;
+
+import com.garretwilson.awt.EventQueueUtilities;
 import com.garretwilson.lang.JavaUtilities;
+import com.garretwilson.swing.ComponentUtilities;
 import com.garretwilson.swing.XMLTextPane;	//G***del when we can find a better place to set the paged view variable of XMLTextPane
 import com.garretwilson.swing.event.PageEvent;
 import com.garretwilson.swing.event.PageListener;
@@ -20,7 +24,6 @@ import com.garretwilson.swing.text.AnonymousElement;
 //G***del if not needed import com.garretwilson.swing.text.ViewHidable;
 import com.garretwilson.swing.text.ContainerBoxView;
 import com.garretwilson.swing.text.ContainerView;
-import com.garretwilson.swing.text.ViewReleasable;
 import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
@@ -153,22 +156,14 @@ A copy of our...
 				//first, tell all the views on the current pages they are about to be hidden
 			if(pageIndex!=-1 && getPageCount()>0) //if there is a page already being displayed, and we have at least one page
 			{
-				final int pageBeginIndex=pageIndex;	//see which page we're showing first
-					//see which page we're showing last (actually, this is the page right *after* the page we're showing)
-				final int displayPageCount=getDisplayPageCount(); //get the number of pages being displayed
-				final int pageEndIndex=pageBeginIndex==0 ? 1 : pageBeginIndex+displayPageCount;	//only one page is shown for the first page
-				final int pageCount=getPageCount();	//see how many pages we have
+				final int pageBeginIndex=getPageBeginIndex();	//see which page we're showing first
+				final int pageEndIndex=getPageEndIndex();	//see which page we're showing last (actually, this is the page right *after* the page we're showing)
 				for(int i=pageBeginIndex; i<pageEndIndex; ++i)	//look at each page to hide
 				{
 					if(isLaidOut(i))	//if this page has been laid out (this function works for threading and non-threading situations)
 					{
-//G***del	public int getChildIndex(final int pageIndex)
-						final int childIndex=getPageChildIndex(i);  //get the index of the child view that represents this page
-						if(childIndex>=0) //if we found a child view that represents this page
-						{
-							final View pageView=getView(childIndex); //get a reference to this view
-							ViewUtilities.hideView(pageView); //tell the view that it is being hidden
-						}
+						final View pageView=getView(i); //get a reference to this view
+						ViewUtilities.hideView(pageView); //tell the view that it is being hidden
 					}
 				}
 			}
@@ -326,7 +321,7 @@ A copy of our...
 		pageWidth=width;	//set the width
 		pageHeight=height;	//set the height
 			//make sure the layout pool has the correct dimensions of the page so that it will do unrestrained layout correctly
-getPagePoolView().setSize((int)width-getPageLeftInset()-getPageRightInset(), (int)height-getPageTopInset()-getPageBottomInset());	//set the size of the page pool to be exactly the size of the displayed page; giving insets to the page pool results in incorrect layout
+		getPagePoolView().setSize((int)width-getPageLeftInset()-getPageRightInset(), (int)height-getPageTopInset()-getPageBottomInset());	//set the size of the page pool to be exactly the size of the displayed page; giving insets to the page pool results in incorrect layout
 	}
 
 	/**Determines the index of the page at the given position
@@ -355,15 +350,15 @@ getPagePoolView().setSize((int)width-getPageLeftInset()-getPageRightInset(), (in
 			return childView!=null ? childView.getEndOffset() : -1;  //return the start offset of the page, or -1 if there is no such page G***testing
 		}
 
-	/**@return <code>true</code> if the specified page is one of the pages being displayed.
-	@see #getPageIndex
-	@see #getDisplayPageCount
-	@see #getPageCount
+	/**Determines if the page at the given index is currently showing
+	@Param pageIndex The logical index of the page to check.
+	@return <code>true</code> if the specified page is one of the pages being displayed.
+	@see #getPageBeginIndex()
+	@see #getPageEndIndex()
 	*/
 	public boolean isPageShowing(final int pageIndex)
 	{
-		final int currentPageIndex=getPageIndex();	//get the current page index
-		return pageIndex==0 ? pageIndex==currentPageIndex : pageIndex>=currentPageIndex && pageIndex<currentPageIndex+getDisplayPageCount() && pageIndex<getPageCount();
+		return pageIndex>=getPageBeginIndex() && pageIndex<getPageEndIndex();	//see if the given index is within our showing range
 	}
 
 	/**Returns whether or not a page index has been laid out.
@@ -384,151 +379,45 @@ getPagePoolView().setSize((int)width-getPageLeftInset()-getPageRightInset(), (in
 */
 }
 
-	/**Returns the child index of a particular page. Each page may or may not
-		have been prepaginated and added as a child view. If this page has, its
-		child index will be returned, otherwise -1.
-	@param pageIndex The logical index of this page.
-	@return The child index of the page, if it has been paginated, otherwise -1.
-	@exception IllegalArgumentException Thrown if the page layout information for
-		the given page has not yet been determined.
+	/**Replaces child views. If there are no views to remove this acts as an insert.
+	If there are no views to add this acts as a remove.
+	This version first hides the view hierarchy being removed so that views
+	may remove components and hide other information as needed. 
+	@param offset The starting index (0&lt;=<var>offset</var>&lt;<=<code>getViewCount()</code>) into the child views to insert the new views.
+	@param length the number of existing child views (0&lt;=<var>length</var>&lt;<=<code>getViewCount()-<var>offset</var></code>) to remove.
+	@param views the child views to add, or <code>null</code> if no children are being added.
+	@see ViewUtilities#hideView(View)
 	*/
-	protected int getPageChildIndex(final int pageIndex)
+	public void replace(final int offset, final int length, final View[] views)
 	{
-		return pageIndex;
-		/*G***fix
-			//find out where this page begins in the model
-		final int startOffset=flowLayoutInfo!=null ? flowLayoutInfo.getStartOffset(pageIndex) : 0;
-//G***del		int childIndex=-1; //we'll find the child using this variable; assume for now that we won't find it
-		final int childViewCount=getViewCount(); //find out how many child views we have
-		for(int childViewIndex=0; childViewIndex<childViewCount; ++childViewIndex)  //look at each of our children to see if we've already paginated this view
+		for(int i=offset+length-1; i>=offset; --i)	//look at each component to remove (order doesn't matter)
 		{
-			final View childView=getView(childViewIndex); //get a reference to this view
-			if(childView.getStartOffset()==startOffset) //if this view starts at the right place
-				return childViewIndex;  //return the index of this child
+			final View view=getView(i); //get the view at the given index
+			ViewUtilities.hideView(view); //tell the view that it is being hidden (this is important for applet views, for instance)
 		}
-		return -1;  //show that there is no child view starting at the correct index
-*/
+		super.replace(offset, length, views);	//do the default replacement
 	}
-
-	/**Retrieves a page by its index. The paged view is first checked to see if
-		the page has already been paginated and placed as a child view. If not, the
-		page is paginated and placed as a child view.
-	@param The paginated page, cached as a child view of this view.
-	*/
-	protected Page getPage(final int pageIndex)
-	{
-		return (Page)getView(pageIndex);	//G***testing
-	}
-
-	/**Removes one of the children at the given position. This is a convenience
-		call to replace.
-		Because this view uses its children as a type of cache for pages, removing
-		a page view will set the entire view hierarchy of the removed view to
-		<code>null</code>. This allows a newly created view to realize that some
-		child views have been cross-parented to an old page view during layout, and
-		to reparent then correctly.
-	@param viewIndex The index of the view to remove.
-	@see ViewUtilities.set
-	@see View#remove
-	@see #getPage
-	*/
-/*TODO fix
-	public void remove(final int viewIndex)	//TODO move this to the replace() method
-	{
-		final View view=getView(viewIndex); //get the view at the given index
-		ViewUtilities.hideView(view); //tell the view that it is being hidden (this is important for applet views, for instance)
-		super.remove(viewIndex);  //remove the view normally
-	}
-*/
 
 	/**Invalidates the view and schedules a repagination.*/
 	public void repaginate()
 	{
-/*G***fix		
-		ViewUtilities.relayout(this);	//invalidate the layout and tell the container to repaint itself
-		ViewUtilities.relayout(getPagePoolView());	//invalidate the layout and tell the container to repaint itself
-*/
-/*TODO fix
-		final int width=getWidth();
-		final int height=getHeight();
-		removeAll();
-		getPagePoolView().preferenceChanged(null, true, true);
-//G***del		getPagePoolView().preferenceChanged(null, (getAxis()==X_AXIS), (getAxis()==Y_AXIS));
-		ViewUtilities.reparentHierarchy(getPagePoolView()); //make sure all the child views have correct parents (previous layouts could cause, for instance, a paragraph row to think it has a parent of a now-unused paragraph fragement)
-//G***del		setPageSize(getPageWidth(), getPageHeight());
-		setSize(width, height);
-*/
-/*G***testing
-		getPagePoolView().preferenceChanged(null, true, true);
-		ViewUtilities.reparentHierarchy(getPagePoolView()); //make sure all the child views have correct parents (previous layouts could cause, for instance, a paragraph row to think it has a parent of a now-unused paragraph fragement)
-		setPageSize(getPageWidth(), getPageHeight());
-		getPagePoolView().preferenceChanged(null, true, true);
-
-//G***fix		getPagePoolView().layoutChanged(BoxView.X_AXIS);	//invalidate the view's horizontal axis
-//	G***fix		getPagePoolView().layoutChanged(BoxView.Y_AXIS);	//invalidate the view's our vertical axis
-//G***del		setPageSize(getPageWidth(), getPageHeight());
-		
-//	G***fix		layoutChanged(BoxView.X_AXIS);	//invalidate the view's horizontal axis
-//	G***fix		layoutChanged(BoxView.Y_AXIS);	//invalidate the view's our vertical axis
-//G***del		preferenceChanged(null, true, true);
-		setSize(width, height);
-		final Container container=getContainer();	//get a reference to the view's container
-		if(container!=null)	//if the view is in a container
+			//TODO is this more trouble than it's worth? check the time it takes to do this
+		final Container container=getContainer();	//see if the flow view has a container (it always should);
+		final Cursor originalCursor=container!=null ? ComponentUtilities.setCursor(container, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)) : null;	//show the wait cursor
+		try
 		{
-			container.repaint();	//tell the container to repaint itself
+			ViewUtilities.invalidateHierarchy(getPagePoolView());	//invalidate the page pool, which will notify this view that it needs laid out
 		}
-*/
-			//TODO fix; resetting allocation flags to false, reparenting, and repainting don't seem to work, but there must be a better way that two resizes
-		final int width=getWidth();
-		final int height=getHeight();
-		setSize(Integer.MAX_VALUE, Integer.MAX_VALUE);
-		setSize(width, height);
-	}
-
-	/**Invalidates the layout along an axis.
-	This version tells the layout pool its layout has changed as well.
-	@param axis either <code>View.X_AXIS</code> or <code>View.Y_AXIS</code>
-	*/
-	public void layoutChanged(final int axis)
-	{
-		super.layoutChanged(axis);	//do the default invalidation
-/*TODO del if not needed
-		final PagePoolView pagePoolView=getPagePoolView();	//see if we have a page pool
-		if(pagePoolView!=null)	//if we've created our layout pool, yet
+		finally	//always put the cursor back to how we found it
 		{
-			pagePoolView.layoutChanged(axis);	//tell the page pool its layout has changed as well
+			if(container!=null && originalCursor!=null)	//if there is a container and we know the original cursor
+			{
+				container.setCursor(originalCursor); //set the cursor back to its original form
+			}
 		}
-*/
 	}
 
 	/* ***View methods*** */
-
-	/**Because a paged view merely uses its child views as cached pages, it is not
-		interested in knowing if have had updates. This method therefore does
-		nothing.
-	@param changes The event containing change information.
-	@param area The area being changed.
-	@param viewFactory The view factory responsible for creating views
-	*/
-//G***testing del	public void insertUpdate(DocumentEvent changes, Shape area, ViewFactory viewFactory) {} //G***maybe later fix these to update appropriate cached layout pools
-
-	/**Because a paged view merely uses its child views as cached pages, it is not
-		interested in knowing if have had updates. This method therefore does
-		nothing.
-	@param changes The event containing change information.
-	@param area The area being changed.
-	@param viewFactory The view factory responsible for creating views
-	*/
-//G***testing del	public void removeUpdate(DocumentEvent changes, Shape area, ViewFactory viewFactory) {}
-
-	/**Because a paged view merely uses its child views as cached pages, it is not
-		interested in knowing if have had updates. This method therefore does
-		nothing.
-	@param changes The event containing change information.
-	@param area The area being changed.
-	@param viewFactory The view factory responsible for creating views
-	*/
-//G***testing del	public void changedUpdate(DocumentEvent changes, Shape a, ViewFactory f) {}
 
   /**
    * Gives notification from the document that attributes were changed
@@ -540,7 +429,7 @@ getPagePoolView().setSize((int)width-getPageLeftInset()-getPageRightInset(), (in
    * @param f the factory to use to rebuild if the view has children
    * @see View#changedUpdate
    */
-  public void changedUpdate(DocumentEvent changes, Shape a, ViewFactory f) {	//TODO comment
+  public void changedUpdate(DocumentEvent changes, Shape a, ViewFactory f) {	//TODO check; do we need this?
       // update any property settings stored, and layout should be 
 // recomputed 
 //G***fix setPropertiesFromAttributes();
@@ -564,34 +453,15 @@ super.changedUpdate(changes, a, f);
 		setPageIndex(getCanonicalPageIndex(getPageIndex()));	//make sure the current page index is a canonical one, so that a page in the middle of the set won't be indicated, for instance
 			//get a rectangle that outlines our allocation
 		final Rectangle allocationRectangle=(allocation instanceof Rectangle) ? (Rectangle)allocation : allocation.getBounds();
-//G***del Debug.trace("Before setSize()");
-//TODO testing
-//TODO del setSize(allocationRectangle.width, allocationRectangle.height);	//make sure we're the correct size to cover the allocated area; this will reflow the contents if necessary
-//G***del if we don't need		setSize(allocationRectangle.width, allocationRectangle.height);	//make sure we're the correct size to cover the allocated area; this will reflow the contents if necessary
-//G***del Debug.trace("After setSize()");
 		final int displayPageCount=getDisplayPageCount();	//find out how many pages we should display at a time
-		final int pageBeginIndex=getPageIndex();	//see which page we're showing first
-			//see which page we're showing last (actually, this is the page right *after* the page we're showing)
-		final int pageEndIndex=pageBeginIndex==0 ? 1 : pageBeginIndex+displayPageCount;	//only one page is shown for the first page
-		final int pageCount=getPageCount();	//see how many pages we have
-//G***del Debug.trace("pageBeginIndex: ", pageBeginIndex);
-//G***del Debug.trace("pageEndIndex: ", pageBeginIndex);
-//G***del Debug.trace("pageCount: ", pageCount);
-//G***del Debug.error("In XMLPagedView.paint(), page count: "+pageCount);		  //G***del
-/*G***del
-		final int pageWidth=(int)getPageWidth();	//find out the width of each page
-		final int pageHeight=(int)getPageHeight();	//find out the height of each page
-*/
+		final int pageBeginIndex=getPageBeginIndex();	//see which page we're showing first
+		final int pageEndIndex=getPageEndIndex();	//see which page we're showing last (actually, this is the page right *after* the page we're showing)
 		final int left=allocationRectangle.x+getLeftInset();	//get the left side of the inside allocation
 		final int top=allocationRectangle.y+getTopInset();	//get the top of the inside allocation
 		tempRectangle.x=left;	//find out where to start horizontally
 		tempRectangle.y=top;	//find out where to start vertically
 		tempRectangle.width=(int)getPageWidth();	//find out how wide to make each page
 		tempRectangle.height=(int)getPageHeight();	//find out how hight to make each page
-/*G***del
-		final int xDelta=getAxis()==X_AXIS ? tempRectangle.width : 0;	//find out how much we should move each page horizontally
-		final int yDelta=getAxis()==Y_AXIS ? tempRectangle.height : 0;	//find out how much we should move each page vertically
-*/
 		final Rectangle clipRectangle=graphics.getClipBounds();	//find out the clipping bounds
 		//paint the dividers and page numbers for each page G***probably put this in a separate function
 		final Color originalColor=graphics.getColor();	//get the original graphics color
@@ -623,7 +493,7 @@ super.changedUpdate(changes, a, f);
 			if(isLaidOut(pageIndex))	//if we actually have a page view for this page, and it has been laid out
 			{
 					//G***maybe put page number painting in each page; maybe not
-				final Page pageView=getPage(pageIndex); //get a reference to this view G***rename to PageView sometime
+				final View pageView=getView(pageIndex); //get a reference to this view
 				final int pageLeftInset=getPageLeftInset();  //get the page's left inset
 				final int pageRightInset=getPageRightInset();  //get the page's right inset
 				final int pageBottomInset=getPageBottomInset();  //get the page's right inset
@@ -639,10 +509,6 @@ super.changedUpdate(changes, a, f);
 					//G***take into account the size of the font, make it a nicer color, etc.
 				graphics.drawString(pageNumberString, pageNumberX, pageNumberY);	//G***testing; i18n
 			}
-/*G***del
-			tempRectangle.x+=xDelta;	//advance to the next horizontal page position
-			tempRectangle.y+=yDelta;	//advance to the next vertical page position
-*/
 		}
 		graphics.setColor(originalColor);  //revert to the original color
 		graphics.setFont(originalFont);  //revert to the original font
@@ -675,20 +541,6 @@ super.changedUpdate(changes, a, f);
 			graphics2D.fillRect(topX+horizontalDelta, topY, -horizontalDelta, height); //G***fix; comment
 		graphics2D.setPaint(originalPaint); //set the paint back to its original paint
 	}
-
-	/**Paints a page.
-	@param graphics The graphics context
-	@param allocation The allocated region to paint into.
-	@param pageView The that represents this page.
-	@param pageIndex The logical index of the page, (>=0 && <getPageCount()).
-	*/
-/*G***del when works
-	protected void paintPage(final Graphics graphics, final Rectangle allocation, final Page pageView, final int pageIndex)
-	{
-//G***del		final View childView=getView(index);  //G***comment
-		pageView.paint(graphics, allocation);  //paint the page view
-	}
-*/
 
 	/**Whether we are currently in the midst of paginating the document.*/
 	private boolean paginating=false;
@@ -1193,75 +1045,6 @@ return super.modelToView(pos, a, b);
 		
 	}
 
-/**
- * Lays out the children.  If the span along the flow
- * axis has changed, layout is marked as invalid which
- * which will cause the superclass behavior to recalculate
- * the layout along the box axis.  The FlowStrategy.layout
- * method will be called to rebuild the flow rows as 
- * appropriate.  If the height of this view changes 
- * (determined by the perferred size along the box axis),
- * a preferenceChanged is called.  Following all of that,
- * the normal box layout of the superclass is performed.
- *
- * @param width  the width to lay out against >= 0.  This is
- *   the width inside of the inset area.
- * @param height the height to lay out against >= 0 This
- *   is the height inside of the inset area.
- */
-/*G***del
-protected void layout(int width, int height) {
-final int faxis = getFlowAxis();
-int newSpan;
-if (faxis == X_AXIS) {
-  newSpan = (int)width;
-} else {
-  newSpan = (int)height;
-}
-if (layoutSpan != newSpan) {
-  layoutChanged(faxis);
-  layoutChanged(getAxis());
-  layoutSpan = newSpan;
-}
-
-// repair the flow if necessary
-if (! isLayoutValid(faxis)) {
-  final int heightAxis = getAxis();
-  int oldFlowHeight = (int)((heightAxis == X_AXIS)? getWidth() : getHeight());
-  strategy.layout(this);
-  int newFlowHeight = (int) getPreferredSpan(heightAxis);
-  if (oldFlowHeight != newFlowHeight) {
-View p = getParent();
-if (p != null) {
-    p.preferenceChanged(this, (heightAxis == X_AXIS), (heightAxis == Y_AXIS));
-}
-
-            // PENDING(shannonh)
-            // Temporary fix for 4250847
-            // Can be removed when TraversalContext is added
-Component host = getContainer();
-if (host != null) {
-    //nb idk 12/12/2001 host should not be equal to null. We need to add assertion here
-    host.repaint();
-}
-  }
-}
-super.layout(width, height);
-}
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
 	/**Strategy for pagination.
 	@author Garret Wilson
 	*/
@@ -1344,7 +1127,10 @@ fv.layoutChanged(View.Y_AXIS);
 public void layout(FlowView fv) {
 		//TODO move to subclass
 	fireMadeProgress(new ProgressEvent(fv, PAGINATE_TASK, "Repaginating pages...", 0, 1));	//show that we are ready to start paginating pages, but we haven't really started, yet G***i18n
-
+	final Container container=fv.getContainer();	//see if the flow view has a container (it always should);
+	final Cursor originalCursor=container!=null ? ComponentUtilities.setCursor(container, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)) : null;	//show the wait cursor
+	try
+	{
 	
 	/*G***testing vertical; del; fixed
   fv.removeAll();
@@ -1391,7 +1177,14 @@ if (next <= p0) {
 }
   }
 
-
+	}
+	finally	//always put the cursor back to how we found it
+	{
+		if(container!=null && originalCursor!=null)	//if there is a container and we know the original cursor
+		{
+			container.setCursor(originalCursor); //set the cursor back to its original form
+		}
+	}
 	fireMadeProgress(new ProgressEvent(fv, PAGINATE_TASK, "Paginated all "+fv.getViewCount()+" pages.", fv.getViewCount(), fv.getViewCount()));	//show that we paginated all the pages G***i18n
 	//fire a page event with our current page number, since our page count changed
 	firePageEvent(new PageEvent(this, getPageIndex(), getPageCount()));
