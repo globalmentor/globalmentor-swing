@@ -4,11 +4,21 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
 import javax.swing.*;
+import com.garretwilson.awt.*;
 import com.garretwilson.util.*;
 
 /**An option pane that knows how to verify its contents before closing the
 	dialog.
+<p>This class offers several improvements over <code>JOptionPane</code>:</p>
+<ul>
+	<li>If the message object implements <code>InitialFocusable</code>, the
+		initial focus component is given the focus when the pane is displayed.</li>  
+	<li>If the message object implements <code>Verifiable</code>, the input
+		is verified before the pane is allowed to close.</li>
+</ul>
 @author Garret Wilson
+@see InitialFocusable
+@see Verifiable
 */
 public class OptionPane extends JOptionPane
 {
@@ -292,6 +302,7 @@ public class OptionPane extends JOptionPane
         JDialog         dialog = pane.createDialog(parentComponent, title);
 
         pane.selectInitialValue();
+
         dialog.show();
 
         Object        selectedValue = pane.getValue();
@@ -390,6 +401,25 @@ public class OptionPane extends JOptionPane
         });
         return dialog;
     }
+    
+	/**Requests that the initial value be selected, which will set
+		focus to the initial value.
+	<p>This version first checks to see if the message implements
+		<code>InitialFocusable</code>, and if so the message is asked which
+		component should get the focus. Otherwise, the default initial value
+		is selected.</p>
+	@see #getMessage
+	@see InitialFocusable	
+	*/
+	public void selectInitialValue()
+	{
+		final Object message=getMessage();	//get the message object used in the pane 
+		if(message instanceof InitialFocusable)	//if the message object knows which component should first get the focus 
+			((InitialFocusable)message).getInitialFocusComponent().requestFocus();	//request focus for the initial component
+		else	//if the message object doesn't know what to focus
+			super.selectInitialValue();	//do the default initial value selection
+	}
+    
 
     /**
      * Returns the specified component's toplevel <code>Frame</code> or
