@@ -217,6 +217,22 @@ public class XMLPanel extends TabbedViewPanel
 		getXMLTextPane().setContentType(mediaType.toString());	//set the content type of the text pane
 	}
 
+	/**@return The XML document representing the data model, or <code>null</code> if
+		there is no XML.
+	*/
+	public Document getXML()
+	{
+		try
+		{
+			saveXML(getDataView());	//store any XML that is being edited, if any XML is being edited
+		}
+		catch(IOException ioException)	//if there were any problems storing the XML
+		{
+			return null;	//show that we don't have any XML to return, as we can't store it
+		}
+		return xml;	//return the XML that was just stored or was already stored
+	}
+
 	/**Sets the given XML data.
 	<p>The installed editor kit for the current content type will be used to
 		create a new document, into which the XML data will be loaded. If the
@@ -239,23 +255,46 @@ public class XMLPanel extends TabbedViewPanel
 		}
 	}
 
-	/**@return The XML document representing the data model, or <code>null</code> if
-		there is no XML.
+	/**Loads the stored XML from the local copy to the given view.
+	@param dataView The view of the data that should be loaded.
+	@exception IOException Thrown if there is an error loading the XML into the
+		data view.
 	*/
-	public Document getXML()
+	protected void loadXML(final int dataView) throws IOException
 	{
-		try
+		switch(dataView)	//see which view of data we should load
 		{
-			saveXML(getDataView());	//store any XML that is being edited, if any XML is being edited
+			case WYSIWYG_DATA_VIEW:	//if we're changing to the WYSIWYG view
+				getXMLTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the XML text pane
+				if(xml!=null)	//if we have XML
+				{
+					getXMLTextPane().setXML(xml, getBaseURI(), getContentType());	//put the XML into the XML text pane
+				}
+				else	//if we don't have any XML
+				{
+					getXMLTextPane().setDocument(getXMLTextPane().getEditorKit().createDefaultDocument());	//create a default document
+				}
+				getXMLTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to the XML text pane
+				break;
+			case SOURCE_DATA_VIEW:	//if we're changing to the source view
+				getSourceTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the source text pane
+				if(xml!=null)	//if we have XML
+				{
+					final XMLSerializer xmlSerializer=new XMLSerializer(true);	//create a formatted XML serializer
+					final String source=xmlSerializer.serialize(xml);	//serialize the XML to a string
+					getSourceTextPane().setText(source);	//show the XML source in the source text pane
+					getSourceTextPane().setCaretPosition(0);  //scroll to the top of the text
+				}
+				else	//if we don't have XML
+				{
+					getSourceTextPane().setDocument(getSourceTextPane().getEditorKit().createDefaultDocument());	//create a default document
+				}
+				getSourceTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to the source text pane
+				break;
 		}
-		catch(IOException ioException)	//if there were any problems storing the XML
-		{
-			return null;	//show that we don't have any XML to return, as we can't store it
-		}
-		return xml;	//return the XML that was just stored or was already stored
 	}
 
-	/**Stores the current XML being edited to the local variable.
+	/**Stores the current XML being edited to the local copy.
 	If no XML is being edited, no action occurs.
 	@param dataView The view of the data that should be stored.
 	@exception IOException Thrown if there is an error storing the XML from the
@@ -298,74 +337,6 @@ public class XMLPanel extends TabbedViewPanel
 				break;
 		}
 	}
-	
-	/**Loads the stored XML from the local variable to the given view.
-	@param dataView The view of the data that should be loaded.
-	@exception IOException Thrown if there is an error loading the XML into the
-		data view.
-	*/
-	protected void loadXML(final int dataView) throws IOException
-	{
-		switch(dataView)	//see which view of data we should load
-		{
-			case WYSIWYG_DATA_VIEW:	//if we're changing to the WYSIWYG view
-				getXMLTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the XML text pane
-				if(xml!=null)	//if we have XML
-				{
-					getXMLTextPane().setXML(xml, getBaseURI(), getContentType());	//put the XML into the XML text pane
-				}
-				else	//if we don't have any XML
-				{
-					getXMLTextPane().setDocument(getXMLTextPane().getEditorKit().createDefaultDocument());	//create a default document
-				}
-				getXMLTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to the XML text pane
-				break;
-			case SOURCE_DATA_VIEW:	//if we're changing to the source view
-				getSourceTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the source text pane
-				if(xml!=null)	//if we have XML
-				{
-					final XMLSerializer xmlSerializer=new XMLSerializer(true);	//create a formatted XML serializer
-					final String source=xmlSerializer.serialize(xml);	//serialize the XML to a string
-					getSourceTextPane().setText(source);	//show the XML source in the source text pane
-					getSourceTextPane().setCaretPosition(0);  //scroll to the top of the text
-				}
-				else	//if we don't have XML
-				{
-					getSourceTextPane().setDocument(getSourceTextPane().getEditorKit().createDefaultDocument());	//create a default document
-				}
-				getSourceTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to the source text pane
-				break;
-		}
-	}
-
-	/**Called when content is inserted into the document.
-	@param documentEvent Information about the event.
-	@see DocumentListener#insertUpdate(DocumentEvent)
-	*/
-	public void insertUpdate(final DocumentEvent documentEvent)
-	{
-		setModified(true);	//show that content has been modified
-	}
-
-	/**Called when content is removed from the document.
-	@param documentEvent Information about the event.
-	@see DocumentListener#removeUpdate(DocumentEvent)
-	*/
-	public void removeUpdate(final DocumentEvent documentEvent)
-	{
-		setModified(true);	//show that content has been modified
-	}
-
-	/**Called when document content is changed.
-	@param documentEvent Information about the event.
-	@see DocumentListener#changedUpdate(DocumentEvent)
-	*/
-	public void changedUpdate(final DocumentEvent documentEvent)
-	{
-//G***del Debug.trace("modified!");
-//G***del		Debug.traceStack("changed");	//G***del
-//G***del		setModified(true);	//show that content has been modified
-	}	
 
 	/**Indicates that the view of the data has changed.
 	@param oldView The view before the change.
@@ -376,7 +347,10 @@ public class XMLPanel extends TabbedViewPanel
 		super.onDataViewChanged(oldView, newView);	//perform the default functionality		
 		try
 		{
-			saveXML(oldView);	//store any XML that was being edited in the old view, if any
+			if(isModified())	//if the data has been modified
+			{
+				saveXML(oldView);	//store any XML that was being edited in the old view, if any				
+			}
 			switch(oldView)	//see which view we're changing from
 			{
 				case WYSIWYG_DATA_VIEW:	//if we're changing from the WYSIWYG view
