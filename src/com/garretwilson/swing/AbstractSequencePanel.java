@@ -145,7 +145,7 @@ public abstract class AbstractSequencePanel extends ApplicationPanel	//G***proba
 	{
 		if(hasNext())  //if there is a next step
 		{
-			previous();	//go the next step
+			next();	//go the next step
 			updateStatus();	//update the status
 		}
 	}

@@ -55,7 +55,7 @@ public class RDFResourceTreeCellRenderer extends UserObjectTreeCellRenderer
 		*/
 		public void registerRDFLiteralIcon(final Icon icon)
 		{
-			registerLeafIcon((Object)Literal.class, icon); //put the icon in the map, keyed to the Literal class (literals are always leaves)
+			registerLeafIcon((Object)RDFLiteral.class, icon); //put the icon in the map, keyed to the Literal class (literals are always leaves)
 		}
 
 
@@ -85,9 +85,9 @@ public class RDFResourceTreeCellRenderer extends UserObjectTreeCellRenderer
 //G***del			final RDFResource rdfResource=(RDFResource)userObject;  //cast the user object to an RDF resource
 			return RDFUtilities.getType((RDFResource)userObject); //return the resource's type
 		}
-		else if(userObject instanceof Literal)  //if this is an RDF literal
+		else if(userObject instanceof RDFLiteral)  //if this is an RDF literal
 		{
-			return Literal.class; //return the Literal class as the lookup object
+			return RDFLiteral.class; //return the Literal class as the lookup object
 		}
 		else  //if this is not an RDF resource or literal
 			return super.getUserObjectKey(userObject);  //get the default key

@@ -85,7 +85,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 	*/  //G***fix to compensate for type properties
 	public boolean isLeaf()
 	{
-		return getUserObject() instanceof Literal
+		return getUserObject() instanceof RDFLiteral
 			  || ((RDFResource)getUserObject()).getPropertyCount()==0;  //this is a leaf if this is a literal or a resource with no properties
 	}
 
@@ -139,12 +139,12 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 			}
 			return stringBuffer.toString(); //return the resource string we constructed
 		}
-		else if(userObject instanceof Literal) //if we're representing a literal
+		else if(userObject instanceof RDFLiteral) //if we're representing a literal
 		{
-			final Literal literal=(Literal)userObject;  //cast the user oject to an RDF literal
+			final RDFLiteral literal=(RDFLiteral)userObject;  //cast the user oject to an RDF literal
 			if(property!=null) //if we had a property
 				stringBuffer.append(':').append(' '); //append ": " to separate the property from the literal
-			stringBuffer.append('"').append(literal.getValue()).append('"');  //append the literal value in quotes
+			stringBuffer.append('"').append(literal.getLexicalForm()).append('"');  //append the literal value in quotes
 			return stringBuffer.toString(); //return the literal string we constructed
 		}
 		else  //if we're representing neither a resource nor a literal (this should logically never happen)
