@@ -74,10 +74,8 @@ public class XMLComponentParagraphView extends XMLParagraphView implements ViewC
 	}
 
 	/**Creates a fragment view into which pieces of this view will be placed.
-	@param isFirstFragment Whether this fragment holds the first part of the
-		original view.
-	@param isLastFragment Whether this fragment holds the last part of the
-		original view.
+	@param isFirstFragment Whether this fragment holds the first part of the original view.
+	@param isLastFragment Whether this fragment holds the last part of the original view.
 	*/
 	public View createFragmentView(final boolean isFirstFragment, final boolean isLastFragment)
 	{
@@ -165,7 +163,6 @@ public class XMLComponentParagraphView extends XMLParagraphView implements ViewC
 			componentManager.setSize(width, height); //tell the component manager our new size
 			super.setSize(width, height); //do the default size setting
 		}
-
 	}
 
 }

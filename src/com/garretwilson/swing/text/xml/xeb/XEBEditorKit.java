@@ -470,7 +470,7 @@ Debug.trace(RDFUtilities.toString(rdf));
 
 		try	//TODO fix this hack to load styles automatically based upon the namespace
 		{
-			final CSSStyleDeclaration cssStyle=XMLCSSProcessor.parseRuleSet("display:block;");	//create a CSS style for the attribute set
+			final CSSStyleDeclaration cssStyle=XMLCSSProcessor.parseRuleSet("display:block;background-color:silver;");	//create a CSS style for the attribute set
 			XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, cssStyle);	//store the constructed CSS style in the attribute set			
 		}
 		catch(final IOException ioException)  //if we have any errors reading the style

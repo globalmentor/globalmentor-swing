@@ -8,6 +8,7 @@ import javax.swing.text.*;
 
 import com.garretwilson.swing.text.*;
 import static com.garretwilson.swing.text.SwingTextUtilities.*;
+import static com.garretwilson.swing.text.rdf.RDFStyleUtilities.*;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
 import com.garretwilson.util.Debug;
@@ -79,6 +80,10 @@ public class XMLSectionView extends XMLBlockView
 				{
 					elementList.add(documentElement);  //add this element to our list of elements; it's not a top-level document like the others TODO this is a terrible hack; fix
 				}
+				else if(getRDFResource(documentAttributeSet)!=null)	//if this hierarchy represents a pseudo-XML representation of an RDF tree
+				{
+					elementList.add(documentElement);  //add this entire RDF tree TODO another hack; eventually, we'll probably add all elements and let the view factory worry about returning child views
+				}					
 				else
 				{
 //G***del if not needed					else if(XHTMLSwingTextUtilities.isHTMLDocumentElement(documentAttributeSet))	//if this is an HTML document G***this would probably go better in some XHTML-specific location

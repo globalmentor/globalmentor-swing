@@ -32,7 +32,7 @@ public class XMLFragmentBlockView extends XMLBlockView implements FragmentView
 		/**@return <code>true</code> if this is the last fragment of the original view.*/
 		public boolean isLastFragment() {return isLastFragment;}
 
-	/**Constructs a fragment block view..
+	/**Constructs a fragment block view.
 	@param element The element this view is responsible for.
 	@param axis The tiling axis, either View.X_AXIS or View.Y_AXIS.
 	@param wholeView The original, unfragmented view from which this fragment (or one or more intermediate fragments) was broken.
