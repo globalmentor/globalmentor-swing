@@ -496,10 +496,10 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		super();	//construct the parent class
 		originalKeymap=getKeymap();  //get the current key map and store it for future use
 		final ViewFactory xhtmlViewFactory=new XHTMLViewFactory();  //create a view factory fo XHTML
-		registerViewFactory(XHTMLConstants.XHTML_NAMESPACE_URI, xhtmlViewFactory);  //associate the XHTML view factory with XHTML elements
+		registerViewFactory(XHTMLConstants.XHTML_NAMESPACE_URI.toString(), xhtmlViewFactory);  //associate the XHTML view factory with XHTML elements
 		registerViewFactory(OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlViewFactory);  //associate the XHTML view factory with OEB elements
 		final XMLLinkController xhtmlLinkController=new XHTMLLinkController();  //create a link controller fo XHTML
-		registerLinkController(XHTMLConstants.XHTML_NAMESPACE_URI, xhtmlLinkController);  //associate the XHTML view factory with XHTML elements
+		registerLinkController(XHTMLConstants.XHTML_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML view factory with XHTML elements
 		registerLinkController(OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML link controller with OEB elements
 //G***del; doesn't work		setBackground(Color.white); //G***set to get the background color from the document itself
 		setEditorKit(new XMLEditorKit());	//create a new XML editor kit and use it
@@ -507,7 +507,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		final Keymap keymap=getKeymap();  //get the current key map
 		loadKeymap(keymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap G***how do our actions get here from the editor kit?
 */
-//G***fix		setCaret(new XMLCaret(getCaret()));	//G***testing
+//G***del; maybe delete class		setCaret(new XMLCaret(getCaret()));	//G***testing
 		addMouseMotionListener(this);	//keep track of mouse movements G***fix; currently used for updating hyperlink on page change
 	}
 

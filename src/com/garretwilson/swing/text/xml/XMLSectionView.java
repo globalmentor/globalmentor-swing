@@ -7,7 +7,6 @@ import javax.swing.text.*;
 import com.garretwilson.io.MediaType;
 import com.garretwilson.swing.text.*;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
-import com.garretwilson.text.xml.oeb.OEBConstants;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
 import com.garretwilson.util.Debug;
 
@@ -54,11 +53,11 @@ Debug.trace("section loading children");  //G***del
 			final int startOffset=getStartOffset(); //find out where we should start
 			final int endOffset=getEndOffset(); //find out where we should end
 Debug.trace("loading children for page pool, offsets "+startOffset+" to "+endOffset);
-			  //G***testing; comment; eventually put in the view factory
+				//G***testing; comment; eventually put in the view factory
 			final Element[] viewChildElements=getViewChildElements(startOffset, endOffset); //get the child elements that fall within our range
-		  //create an anonymous element that simply holds the elements we just loaded
+			//create an anonymous element that simply holds the elements we just loaded
 			//this temporary element will go away after we've created views
-		  final Element anonymousElement=new AnonymousElement(getElement(), null, viewChildElements, 0, viewChildElements.length);
+			final Element anonymousElement=new AnonymousElement(getElement(), null, viewChildElements, 0, viewChildElements.length);
 				//G***is it good to make an anonymous element simply for enumerating child elements to XMLBlockView?
 			final View[] createdViews=XMLBlockView.createBlockElementChildViews(anonymousElement, viewFactory);  //create the child views
 			this.replace(0, 0, createdViews);  //add the views as child views to this view pool (use this to show that we shouldn't use the XMLPagedView version)
@@ -84,10 +83,10 @@ Debug.trace("Getting view child elements"); //G***del
 		final int documentElementCount=element.getElementCount();  //find out how many child elements there are (representing XML documents)
 		for(int documentElementIndex=0; documentElementIndex<documentElementCount; ++documentElementIndex) //look at each element representing an XML document
 		{
-		  final Element documentElement=element.getElement(documentElementIndex); //get a reference to this child element
-		    //if this document starts within our range
+			final Element documentElement=element.getElement(documentElementIndex); //get a reference to this child element
+				//if this document starts within our range
 			if(documentElement.getStartOffset()>=startOffset && documentElement.getStartOffset()<endOffset)
-		  {
+			{
 				final AttributeSet documentAttributeSet=documentElement.getAttributes();  //get the attributes of the document element
 				if(XMLStyleUtilities.isPageBreakView(documentAttributeSet)) //if this is a page break element
 				{
@@ -130,42 +129,42 @@ Debug.trace("Getting view child elements"); //G***del
 						}
 					}
 				}
-		  }
+			}
 		}
-	  return (Element[])viewChildElementList.toArray(new Element[viewChildElementList.size()]); //return the views as an array of views
+		return (Element[])viewChildElementList.toArray(new Element[viewChildElementList.size()]); //return the views as an array of views
 	}
 
 
-    /**
-     * Updates the child views in response to receiving notification
-     * that the model changed, and there is change record for the
-     * element this view is responsible for.  This is implemented
-     * to assume the child views are directly responsible for the
-     * child elements of the element this view represents.  The
-     * ViewFactory is used to create child views for each element
-     * specified as added in the ElementChange, starting at the
-     * index specified in the given ElementChange.  The number of
-     * child views representing the removed elements specified are
-     * removed.
-     *
-     * @param ec The change information for the element this view
-     *  is responsible for.  This should not be null if this method
-     *  gets called.
-     * @param e the change information from the associated document
-     * @param f the factory to use to build child views
-     * @return whether or not the child views represent the
-     *  child elements of the element this view is responsible
-     *  for.  Some views create children that represent a portion
-     *  of the element they are responsible for, and should return
-     *  false.  This information is used to determine if views
-     *  in the range of the added elements should be forwarded to
-     *  or not.
-     * @see #insertUpdate
-     * @see #removeUpdate
-     * @see #changedUpdate
-     * @since 1.3
-     */
-    protected boolean updateChildren(DocumentEvent.ElementChange ec, DocumentEvent e, ViewFactory f)
+		/**
+		 * Updates the child views in response to receiving notification
+		 * that the model changed, and there is change record for the
+		 * element this view is responsible for.  This is implemented
+		 * to assume the child views are directly responsible for the
+		 * child elements of the element this view represents.  The
+		 * ViewFactory is used to create child views for each element
+		 * specified as added in the ElementChange, starting at the
+		 * index specified in the given ElementChange.  The number of
+		 * child views representing the removed elements specified are
+		 * removed.
+		 *
+		 * @param ec The change information for the element this view
+		 *  is responsible for.  This should not be null if this method
+		 *  gets called.
+		 * @param e the change information from the associated document
+		 * @param f the factory to use to build child views
+		 * @return whether or not the child views represent the
+		 *  child elements of the element this view is responsible
+		 *  for.  Some views create children that represent a portion
+		 *  of the element they are responsible for, and should return
+		 *  false.  This information is used to determine if views
+		 *  in the range of the added elements should be forwarded to
+		 *  or not.
+		 * @see #insertUpdate
+		 * @see #removeUpdate
+		 * @see #changedUpdate
+		 * @since 1.3
+		 */
+		protected boolean updateChildren(DocumentEvent.ElementChange ec, DocumentEvent e, ViewFactory f)
 		{
 Debug.trace("Section updating children"); //G***fix
 //G***fix ((XMLDocument)getElement().getDocument()).applyxStyles();  //G***testing
@@ -178,11 +177,11 @@ Debug.trace("children removed: ", removedElems.length);
 Debug.trace("children added: ", addedElems.length);
 	View[] added = null;
 	if (addedElems != null) {
-	    added = new View[addedElems.length];
-	    for (int i = 0; i < addedElems.length; i++) {
+			added = new View[addedElems.length];
+			for (int i = 0; i < addedElems.length; i++) {
 Debug.trace("Creating added element: ", addedElems[i].getClass().getName());  //G***del
 		added[i] = f.create(addedElems[i]);
-	    }
+			}
 	}
 	int nremoved = 0;
 	int index = ec.getIndex();
@@ -206,48 +205,47 @@ Debug.trace("Creating added element: ", addedElems[i].getClass().getName());  //
 		index+=extraElementCount;	//update the index to reflect the views before the body  
 	}
 
-	
 	if (removedElems != null) {
-	    nremoved = removedElems.length;
+			nremoved = removedElems.length;
 	}
 	replace(index, nremoved, added);
 	return true;
 
 
 //G***fix		  return super.updateChildren(ec, e, f); //G***fix
-    }
+		}
 
 
 
-    /**
-     * Gives notification that something was inserted into
-     * the document in a location that this view is responsible for.
-     * To reduce the burden to subclasses, this functionality is
-     * spread out into the following calls that subclasses can
-     * reimplement:
-     * <ol>
-     * <li><a href="#updateChildren">updateChildren</a> is called
-     * if there were any changes to the element this view is
-     * responsible for.  If this view has child views that are
-     * represent the child elements, then this method should do
-     * whatever is necessary to make sure the child views correctly
-     * represent the model.
-     * <li><a href="#forwardUpdate">forwardUpdate</a> is called
-     * to forward the DocumentEvent to the appropriate child views.
-     * <li><a href="#updateLayout">updateLayout</a> is called to
-     * give the view a chance to either repair it's layout, to reschedule
-     * layout, or do nothing.
-     * </ol>
-     *
-     * @param e the change information from the associated document
-     * @param a the current allocation of the view
-     * @param f the factory to use to rebuild if the view has children
-     * @see View#insertUpdate
-     */
-    public void insertUpdate(DocumentEvent e, Shape a, ViewFactory f) {
+		/**
+		 * Gives notification that something was inserted into
+		 * the document in a location that this view is responsible for.
+		 * To reduce the burden to subclasses, this functionality is
+		 * spread out into the following calls that subclasses can
+		 * reimplement:
+		 * <ol>
+		 * <li><a href="#updateChildren">updateChildren</a> is called
+		 * if there were any changes to the element this view is
+		 * responsible for.  If this view has child views that are
+		 * represent the child elements, then this method should do
+		 * whatever is necessary to make sure the child views correctly
+		 * represent the model.
+		 * <li><a href="#forwardUpdate">forwardUpdate</a> is called
+		 * to forward the DocumentEvent to the appropriate child views.
+		 * <li><a href="#updateLayout">updateLayout</a> is called to
+		 * give the view a chance to either repair it's layout, to reschedule
+		 * layout, or do nothing.
+		 * </ol>
+		 *
+		 * @param e the change information from the associated document
+		 * @param a the current allocation of the view
+		 * @param f the factory to use to rebuild if the view has children
+		 * @see View#insertUpdate
+		 */
+		public void insertUpdate(DocumentEvent e, Shape a, ViewFactory f) {
 	if (getViewCount() > 0) {
-	    Element elem = getElement();
-	    DocumentEvent.ElementChange ec = e.getChange(elem);
+			Element elem = getElement();
+			DocumentEvent.ElementChange ec = e.getChange(elem);
 
 
 //TODO combine and tidy all this section-specific calculation---probably best to even make an XHTMLSectionView that rides on top of this and is created in a view factory
@@ -287,47 +285,47 @@ Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; test
 	}
 }
 
-	    if (ec != null) {
+			if (ec != null) {
 		if (! updateChildren(ec, e, f)) {
-		    // don't consider the element changes they
-		    // are for a view further down.
-		    ec = null;
+				// don't consider the element changes they
+				// are for a view further down.
+				ec = null;
 		}
-	    }
-	    forwardUpdate(ec, e, a, f);
-	    updateLayout(ec, e, a);
+			}
+			forwardUpdate(ec, e, a, f);
+			updateLayout(ec, e, a);
 	}
-    }
+		}
 
-    /**
-     * Gives notification that something was removed from the document
-     * in a location that this view is responsible for.
-     * To reduce the burden to subclasses, this functionality is
-     * spread out into the following calls that subclasses can
-     * reimplement:
-     * <ol>
-     * <li><a href="#updateChildren">updateChildren</a> is called
-     * if there were any changes to the element this view is
-     * responsible for.  If this view has child views that are
-     * represent the child elements, then this method should do
-     * whatever is necessary to make sure the child views correctly
-     * represent the model.
-     * <li><a href="#forwardUpdate">forwardUpdate</a> is called
-     * to forward the DocumentEvent to the appropriate child views.
-     * <li><a href="#updateLayout">updateLayout</a> is called to
-     * give the view a chance to either repair it's layout, to reschedule
-     * layout, or do nothing.
-     * </ol>
-     *
-     * @param e the change information from the associated document
-     * @param a the current allocation of the view
-     * @param f the factory to use to rebuild if the view has children
-     * @see View#removeUpdate
-     */
-    public void removeUpdate(DocumentEvent e, Shape a, ViewFactory f) {
+		/**
+		 * Gives notification that something was removed from the document
+		 * in a location that this view is responsible for.
+		 * To reduce the burden to subclasses, this functionality is
+		 * spread out into the following calls that subclasses can
+		 * reimplement:
+		 * <ol>
+		 * <li><a href="#updateChildren">updateChildren</a> is called
+		 * if there were any changes to the element this view is
+		 * responsible for.  If this view has child views that are
+		 * represent the child elements, then this method should do
+		 * whatever is necessary to make sure the child views correctly
+		 * represent the model.
+		 * <li><a href="#forwardUpdate">forwardUpdate</a> is called
+		 * to forward the DocumentEvent to the appropriate child views.
+		 * <li><a href="#updateLayout">updateLayout</a> is called to
+		 * give the view a chance to either repair it's layout, to reschedule
+		 * layout, or do nothing.
+		 * </ol>
+		 *
+		 * @param e the change information from the associated document
+		 * @param a the current allocation of the view
+		 * @param f the factory to use to rebuild if the view has children
+		 * @see View#removeUpdate
+		 */
+		public void removeUpdate(DocumentEvent e, Shape a, ViewFactory f) {
 	if (getViewCount() > 0) {
-	    Element elem = getElement();
-	    DocumentEvent.ElementChange ec = e.getChange(elem);
+			Element elem = getElement();
+			DocumentEvent.ElementChange ec = e.getChange(elem);
 
 		Debug.trace("section view remove update");  //G***del; testing
 		if(ec==null)  //G***testing; fix; comment; G***we don't need this test; the test is in the for loop
@@ -366,47 +364,47 @@ Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; test
 
 
 
-	    if (ec != null) {
+			if (ec != null) {
 		if (! updateChildren(ec, e, f)) {
-		    // don't consider the element changes they
-		    // are for a view further down.
-		    ec = null;
+				// don't consider the element changes they
+				// are for a view further down.
+				ec = null;
 		}
-	    }
-	    forwardUpdate(ec, e, a, f);
-	    updateLayout(ec, e, a);
+			}
+			forwardUpdate(ec, e, a, f);
+			updateLayout(ec, e, a);
 	}
-    }
+		}
 
-    /**
-     * Gives notification from the document that attributes were changed
-     * in a location that this view is responsible for.
-     * To reduce the burden to subclasses, this functionality is
-     * spread out into the following calls that subclasses can
-     * reimplement:
-     * <ol>
-     * <li><a href="#updateChildren">updateChildren</a> is called
-     * if there were any changes to the element this view is
-     * responsible for.  If this view has child views that are
-     * represent the child elements, then this method should do
-     * whatever is necessary to make sure the child views correctly
-     * represent the model.
-     * <li><a href="#forwardUpdate">forwardUpdate</a> is called
-     * to forward the DocumentEvent to the appropriate child views.
-     * <li><a href="#updateLayout">updateLayout</a> is called to
-     * give the view a chance to either repair it's layout, to reschedule
-     * layout, or do nothing.
-     * </ol>
-     *
-     * @param e the change information from the associated document
-     * @param a the current allocation of the view
-     * @param f the factory to use to rebuild if the view has children
-     * @see View#changedUpdate
-     */
-    public void changedUpdate(DocumentEvent e, Shape a, ViewFactory f) {
+		/**
+		 * Gives notification from the document that attributes were changed
+		 * in a location that this view is responsible for.
+		 * To reduce the burden to subclasses, this functionality is
+		 * spread out into the following calls that subclasses can
+		 * reimplement:
+		 * <ol>
+		 * <li><a href="#updateChildren">updateChildren</a> is called
+		 * if there were any changes to the element this view is
+		 * responsible for.  If this view has child views that are
+		 * represent the child elements, then this method should do
+		 * whatever is necessary to make sure the child views correctly
+		 * represent the model.
+		 * <li><a href="#forwardUpdate">forwardUpdate</a> is called
+		 * to forward the DocumentEvent to the appropriate child views.
+		 * <li><a href="#updateLayout">updateLayout</a> is called to
+		 * give the view a chance to either repair it's layout, to reschedule
+		 * layout, or do nothing.
+		 * </ol>
+		 *
+		 * @param e the change information from the associated document
+		 * @param a the current allocation of the view
+		 * @param f the factory to use to rebuild if the view has children
+		 * @see View#changedUpdate
+		 */
+		public void changedUpdate(DocumentEvent e, Shape a, ViewFactory f) {
 	if (getViewCount() > 0) {
-	    Element elem = getElement();
-	    DocumentEvent.ElementChange ec = e.getChange(elem);
+			Element elem = getElement();
+			DocumentEvent.ElementChange ec = e.getChange(elem);
 
 		Debug.trace("section view changed update");  //G***del; testing
 		if(ec==null)  //G***testing; fix; comment; G***we don't need this test; the test is in the for loop
@@ -443,16 +441,16 @@ Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; test
 			}
 		}
 
-	    if (ec != null) {
+			if (ec != null) {
 		if (! updateChildren(ec, e, f)) {
-		    // don't consider the element changes they
-		    // are for a view further down.
-		    ec = null;
+				// don't consider the element changes they
+				// are for a view further down.
+				ec = null;
 		}
-	    }
-	    forwardUpdate(ec, e, a, f);
-	    updateLayout(ec, e, a);
+			}
+			forwardUpdate(ec, e, a, f);
+			updateLayout(ec, e, a);
 	}
-    }
+		}
 
 }

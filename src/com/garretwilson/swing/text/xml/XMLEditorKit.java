@@ -175,8 +175,8 @@ final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);
 	private static final Action[] DEFAULT_ACTIONS=
 	{
 		new PreviousPageAction(PREVIOUS_PAGE_ACTION),
-		new NextPageAction(NEXT_PAGE_ACTION),
-		new EndLineAction(endLineAction, false)	//G***testing
+		new NextPageAction(NEXT_PAGE_ACTION)
+//G***del		new EndLineAction(endLineAction, false)	//G***testing
 	};
 
 	/**Default constructor.*/
@@ -1931,139 +1931,6 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 		  }
 		}
 	}
-
-	/*
-	 * Position the caret to the end of the line.
-	 * @see DefaultEditorKit#endLineAction
-	 * @see DefaultEditorKit#selectEndLineAction
-	 * @see DefaultEditorKit#getActions
-	 */
-	public static class EndLineAction extends TextAction
-	{
-
-		private boolean select;
-
-			/** 
-			 * Create this action with the appropriate identifier. 
-			 * @param nm  the name of the action, Action.NAME.
-			 * @param select whether to extend the selection when
-			 *  changing the caret position.
-			 */
-			EndLineAction(String nm, boolean select) {
-					super(nm);
-					this.select = select;
-			}
-
-			/** The operation to perform when this action is triggered. */
-			public void actionPerformed(ActionEvent e)
-			{
-					JTextComponent target = getTextComponent(e);
-					if (target != null) {
-							try {
-									int offs = target.getCaretPosition();
-
-
-
-								final Caret caret=target.getCaret();
-								int p0 = Math.min(caret.getDot(), caret.getMark());
-								int p1 = Math.max(caret.getDot(), caret.getMark());
-/*G***fix									
-									final Caret caret=target.getCaret();
-									if(caret instanceof XMLCaret)	//if this is an XML caret
-									{
-										final XMLCaret xmlCaret=(XMLCaret)caret;
-										final Point endPoint=getRowEnd(target, offs);
-										if(endPoint!=null)	//G***testing
-										{
-											final MouseEvent mouseEvent=new MouseEvent(target, -1, System.currentTimeMillis(),
-													0, endPoint.x, endPoint.y, 1, false);
-											xmlCaret.positionCaret(mouseEvent);
-										}
-									}
-									else	//if this is a normal caret
-									{
-*/
-//G***fix int endOffs = getRowEnd(target, offs);
-
-
-
-
-										int endOffs = Utilities.getRowEnd(target, offs);
-										if (select) {
-												target.moveCaretPosition(endOffs);
-										} else {
-												target.setCaretPosition(endOffs);
-										}
-//G**fix									}
-							} catch (BadLocationException bl) {
-			UIManager.getLookAndFeel().provideErrorFeedback(target);
-							}
-					}
-			}
-			
-		/**
-		 * Determines the ending row model position of the row that contains
-		 * the specified model position.  The component given must have a
-		 * size to compute the result.  If the component doesn't have a size
-		 * a value of -1 will be returned.
-		 *
-		 * @param c the editor
-		 * @param offs the offset in the document >= 0
-		 * @return the position >= 0 if the request can be computed, otherwise
-		 *  a value of -1 will be returned.
-		 * @exception BadLocationException if the offset is out of range
-		 */
-		public static final int getRowEnd(JTextComponent c, int offs) throws BadLocationException
-		{
-			Rectangle r;
-			if(c instanceof XMLTextPane)	//G***newswing
-			{
-				r = ((XMLTextPane)c).modelToView(offs, Position.Bias.Backward);	//G***newswing
-			}
-			else
-			{
-				r = c.modelToView(offs);
-			}
-	if (r == null) {
-			return -1;
-	}
-	int n = c.getDocument().getLength();
-	int lastOffs = offs;
-	int y = r.y;
-	while ((r != null) && (y == r.y)) {
-			offs = lastOffs;
-			lastOffs += 1;
-			r = (lastOffs <= n) ? c.modelToView(lastOffs) : null;
-	}
-	return offs;
-		}
-
-
-/*G***del
-		public static final Point getRowEnd(JTextComponent c, int offs) throws BadLocationException {
-	Rectangle r = c.modelToView(offs);
-	Rectangle lastRectangle=r;
-	if (r == null) {
-		return null;
-//G***fix			return -1;
-	}
-	int n = c.getDocument().getLength();
-	int lastOffs = offs;
-	int y = r.y;
-	while ((r != null) && (y == r.y)) {
-			offs = lastOffs;
-			lastOffs += 1;
-			lastRectangle=r;
-			r = (lastOffs <= n) ? c.modelToView(lastOffs) : null;
-	}
-	return new Point(lastRectangle.x+10, lastRectangle.y);
-//G**testing	return offs;
-		}
-*/			
-
-	}
-
-
 
 
 	/**

@@ -475,7 +475,7 @@ protected void activateLink(int pos, JEditorPane editor) {
 				if(mediaType!=null) //if there is a media type defined for this element's document
 				{ //G***probably do all this differently later, like registering a view factory with a media type or something or, better yet, registering a namespace with a media type
 					if(mediaType.equals(MediaType.TEXT_HTML))
-						elementNamespaceURI=XHTMLConstants.XHTML_NAMESPACE_URI; //G***testing
+						elementNamespaceURI=XHTMLConstants.XHTML_NAMESPACE_URI.toString(); //G***testing
 					else if(mediaType.equals(MediaType.TEXT_X_OEB1_DOCUMENT))
 						elementNamespaceURI=OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(); //G***testing
 				}

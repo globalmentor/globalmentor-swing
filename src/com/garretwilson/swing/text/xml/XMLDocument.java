@@ -891,11 +891,13 @@ Debug.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEn
 			{
 				try
 				{
-					insertString(childElement.getEndOffset(), XMLEditorKit.ELEMENT_END_STRING, childAttributeSet);	//G***testing
+//G***del					insertString(childElement.getEndOffset(), XMLEditorKit.ELEMENT_END_STRING, childAttributeSet);	//G***testing
+					insertString(childElement.getEndOffset(), XMLEditorKit.ELEMENT_END_STRING, null);	//G***testing
 						//if an inline child came before a block child, it will make an anonymous view so add an end to it as well
 					if(previousChildElement!=null && isPreviousChildElementInline)
 					{
-						insertString(previousChildElement.getEndOffset(), XMLEditorKit.ELEMENT_END_STRING, previousChildAttributeSet);	//G***testing
+//G***del						insertString(previousChildElement.getEndOffset(), XMLEditorKit.ELEMENT_END_STRING, previousChildAttributeSet);	//G***testing
+						insertString(previousChildElement.getEndOffset(), XMLEditorKit.ELEMENT_END_STRING, null);	//G***testing
 					}
 				}
 				catch (BadLocationException e)
@@ -1525,7 +1527,7 @@ Debug.trace("Found default stylesheet for namespace: ", namespaceURI);  //G***de
 Debug.trace("getting default namespace URI, found media type: ", mediaType);  //G***del
 				if(XHTMLUtilities.isHTML(mediaType))	//if this is an HTML media type TODO this can probably be improved or the method placed elsewhere
 				{					
-					namespaceURI=XHTMLConstants.XHTML_NAMESPACE_URI;  //use the XHTML namespace
+					namespaceURI=XHTMLConstants.XHTML_NAMESPACE_URI.toString();  //use the XHTML namespace
 					if(mediaType.equals(MediaType.TEXT_X_OEB1_DOCUMENT)) //if the media type is for an OEB document
 						namespaceURI=OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString();  //use the OEB document namespace
 				}
