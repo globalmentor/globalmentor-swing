@@ -18,7 +18,7 @@ public class UserObjectTreeCellRenderer extends DefaultTreeCellRenderer
 {
 
 	/**The map used to hold the open icons, keyed to user object classes.*/
-	private final Map openIconMap=new HashMap();
+	private final Map<Object, Icon> openIconMap=new HashMap<Object, Icon>();
 
 		/**Retrieves the open icon for a user object of the indicated key.
 		@param userObjectKey The key of the user object.
@@ -27,7 +27,7 @@ public class UserObjectTreeCellRenderer extends DefaultTreeCellRenderer
 		*/
 		public Icon getOpenIcon(final Object userObjectKey)
 		{
-			return (Icon)openIconMap.get(userObjectKey);  //return whatever icon we find for this user object key
+			return openIconMap.get(userObjectKey);  //return whatever icon we find for this user object key
 		}
 
 		/**Registers an open icon to be used with a particular user object.
@@ -51,7 +51,7 @@ public class UserObjectTreeCellRenderer extends DefaultTreeCellRenderer
 		}
 
 	/**The map used to hold the closed icons, keyed to user object classes.*/
-	private final Map closedIconMap=new HashMap();
+	private final Map<Object, Icon> closedIconMap=new HashMap<Object, Icon>();
 
 		/**Retrieves the closed icon for a user object of the indicated key.
 		@param userObjectKey The key of the user object.
@@ -60,7 +60,7 @@ public class UserObjectTreeCellRenderer extends DefaultTreeCellRenderer
 		*/
 		public Icon getClosedIcon(final Object userObjectKey)
 		{
-			return (Icon)closedIconMap.get(userObjectKey);  //return whatever icon we find for this user object class
+			return closedIconMap.get(userObjectKey);  //return whatever icon we find for this user object class
 		}
 
 		/**Registers a closed icon to be used with a particular user object.
@@ -84,7 +84,7 @@ public class UserObjectTreeCellRenderer extends DefaultTreeCellRenderer
 		}
 
 	/**The map used to hold the leaf icons, keyed to user object classes.*/
-	private final Map leafIconMap=new HashMap();
+	private final Map<Object, Icon> leafIconMap=new HashMap<Object, Icon>();
 
 		/**Retrieves the leaf icon for a user object of the indicated key.
 		@param userObjectKey The class of the user object.
@@ -93,7 +93,7 @@ public class UserObjectTreeCellRenderer extends DefaultTreeCellRenderer
 		*/
 		public Icon getLeafIcon(final Object userObjectKey)
 		{
-			return (Icon)leafIconMap.get(userObjectKey);  //return whatever icon we find for this user object class
+			return leafIconMap.get(userObjectKey);  //return whatever icon we find for this user object class
 		}
 
 		/**Registers a leaf icon to be used with a particular user object.

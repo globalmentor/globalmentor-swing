@@ -366,7 +366,7 @@ public class ApplicationFrame extends BasicFrame
 		}
 		else	//if there is no application
 		{
-			super.exit(status);	//exit in the default way
+			super.exit(status);	//exit in the default way, if there is no application or the application couldn
 		}
 	}
 

@@ -2,7 +2,7 @@ package com.garretwilson.swing.rdf.tree;
 
 import javax.mail.internet.ContentType;
 import javax.swing.*;
-import com.garretwilson.io.*;
+import static com.garretwilson.io.ContentTypeUtilities.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.xpackage.*;
 import com.garretwilson.util.Debug;
@@ -28,7 +28,7 @@ public class XPackageTreeCellRenderer extends RDFResourceTreeCellRenderer
 		*/
 		public void registerOpenIcon(final ContentType contentType, final Icon icon)
 		{
-			registerOpenIcon((Object)contentType, icon); //put the icon in the map, keyed to the media type
+			registerOpenIcon((Object)contentType.getBaseType(), icon); //put the icon in the map, keyed to the base media type
 		}
 
 		/**Registers a closed icon to be used with a particular media type.
@@ -38,7 +38,7 @@ public class XPackageTreeCellRenderer extends RDFResourceTreeCellRenderer
 		*/
 		public void registerClosedIcon(final ContentType contentType, final Icon icon)
 		{
-			registerClosedIcon((Object)contentType, icon); //put the icon in the map, keyed to the media type
+			registerClosedIcon((Object)contentType.getBaseType(), icon); //put the icon in the map, keyed to the base media type
 		}
 
 		/**Registers a leaf icon to be used with a particular media type.
@@ -48,7 +48,7 @@ public class XPackageTreeCellRenderer extends RDFResourceTreeCellRenderer
 		*/
 		public void registerLeafIcon(final ContentType contentType, final Icon icon)
 		{
-			registerLeafIcon((Object)contentType, icon); //put the icon in the map, keyed to the media type
+			registerLeafIcon((Object)contentType.getBaseType(), icon); //put the icon in the map, keyed to the base media type
 		}
 
 	/**Default constructor.*/
@@ -59,7 +59,7 @@ public class XPackageTreeCellRenderer extends RDFResourceTreeCellRenderer
 
 	/**Retrieves the key used to lookup data, such as icons, specific for this
 		user object.
-		<p>If the user object is an RDF resource, its content type will be returned.
+		<p>If the user object is an RDF resource, the base content type of the content type will be returned.
 		If the resource has no content type, the RDF resource type will be returned.
 		If the resource has multiple types it is undefined which type will be
 		returned.</p>
@@ -68,6 +68,7 @@ public class XPackageTreeCellRenderer extends RDFResourceTreeCellRenderer
 	@return The key for looking up data for the user object, or <code>null</code>
 		if no key could be determined for the user object or if the user object
 		is <code>null</code>.
+	@see com.garretwilson.io.ContentTypeUtilities#getBaseContentType(ContentType)
 	*/
 	protected Object getUserObjectKey(final Object userObject)
 	{
@@ -77,7 +78,9 @@ public class XPackageTreeCellRenderer extends RDFResourceTreeCellRenderer
 Debug.trace("getting user object key for user object", RDFUtilities.toString(rdfResource));
 			final ContentType mediaType=MIMEOntologyUtilities.getMediaType(rdfResource);  //see if there is a media type for the resource
 		  if(mediaType!=null) //if there is a media type
-				return mediaType; //use the media type as the key
+			{
+				return mediaType.getBaseType(); //use the base content type of the media type as the key
+			}
 		}
 		return super.getUserObjectKey(userObject);  //if we can't find a media type, use the default key
 	}

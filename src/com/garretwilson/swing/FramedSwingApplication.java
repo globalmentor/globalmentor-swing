@@ -34,7 +34,7 @@ public abstract class FramedSwingApplication<C> extends SwingApplication<C>
 	*/
 	public FramedSwingApplication(final URI referenceURI)
 	{
-		super(referenceURI);	//construct the parent class
+		this(referenceURI, NO_ARGUMENTS);	//construct the class with no arguments
 	}
 
 	/**Reference URI and arguments constructor.
