@@ -3,11 +3,12 @@ package com.garretwilson.swing.text.directory.vcard;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.event.ActionEvent;
 import java.util.*;
 import javax.swing.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.text.directory.vcard.*;
+import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.util.*;
 
@@ -18,11 +19,42 @@ import com.garretwilson.util.*;
 */
 public class AddressPanel extends DefaultPanel
 {
+
+	/**The action for editing the address type.*/
+	private final Action editAddressTypeAction;
+
+		/**@return The action for editing the address type.*/
+		public Action getEditAddressTypeAction() {return editAddressTypeAction;}
+	
+	/**The address type button.*/
+	private final JButton addressTypeButton;
+
+	/**The local copy of the address type.*/
+	private int addressType;
+
+		/**@return The delivery address type, a combination of
+			<code>Address.XXX_ADDRESS_TYPE</code> constants ORed together.
+		*/
+		protected int getAddressType() {return addressType;}
+
+		/**Sets the address type.
+		@param addressType The delivery address type, one or more of the
+			<code>Address.XXX_ADDRESS_TYPE</code> constants ORed together.
+		*/
+		protected void setAddressType(final int addressType)
+		{
+			this.addressType=addressType;	//store the address type locally
+			addressTypeButton.setText(	//update the telephone type button
+					addressType!=Address.NO_ADDRESS_TYPE	//if there is an address type
+					? Address.getAddressTypeString(addressType)	//show it
+					: "");	//if there is no address type, show nothing
+		}
+
 	/**The panel allowing selection of the address type.*/
-	private final AddressTypePanel addressTypePanel;
+//G***del	private final AddressTypePanel addressTypePanel;
 
 		/**@return The panel allowing selection of the address type.*/
-		public AddressTypePanel getAddressTypePanel() {return addressTypePanel;}
+//G***del		public AddressTypePanel getAddressTypePanel() {return addressTypePanel;}
 
 	/**The label of the post office box.*/
 	private final JLabel postOfficeBoxLabel;
@@ -105,7 +137,8 @@ public class AddressPanel extends DefaultPanel
 			regionTextField.setText(address.getRegion()!=null ? address.getRegion() : "");
 			postalCodeTextField.setText(address.getPostalCode()!=null ? address.getPostalCode() : "");
 			countryNameComboBox.setSelectedItem(address.getCountryName()!=null ? address.getCountryName() : "");
-			addressTypePanel.setAddressType(address.getAddressType());
+			setAddressType(address.getAddressType());
+//G***del			addressTypePanel.setAddressType(address.getAddressType());
 			selectLanguageAction.setLocale(address.getLocale());
 		}
 		else	//if there is no address, clear the fields
@@ -116,7 +149,8 @@ public class AddressPanel extends DefaultPanel
 			regionTextField.setText("");
 			postalCodeTextField.setText("");
 			countryNameComboBox.setSelectedItem("");
-			addressTypePanel.setAddressType(Address.NO_ADDRESS_TYPE);
+			setAddressType(Address.DEFAULT_ADDRESS_TYPE);
+//G***del			addressTypePanel.setAddressType(Address.NO_ADDRESS_TYPE);
 			selectLanguageAction.setLocale(null);
 		}
 	}
@@ -131,7 +165,8 @@ public class AddressPanel extends DefaultPanel
 		final String region=StringUtilities.getNonEmptyString(regionTextField.getText().trim());
 		final String postalCode=StringUtilities.getNonEmptyString(postalCodeTextField.getText().trim());
 		final String countryName=StringUtilities.getNonEmptyString(countryNameComboBox.getSelectedItem().toString().trim());
-		final int addressType=addressTypePanel.getAddressType();
+		final int addressType=getAddressType();
+//G***del		final int addressType=addressTypePanel.getAddressType();
 		final Locale locale=selectLanguageAction.getLocale();
 		return new Address(postOfficeBox, extendedAddresses, streetAddresses, locality, region, postalCode, countryName, addressType, locale);	//create and return an address representing the entered information
 	}
@@ -149,7 +184,11 @@ public class AddressPanel extends DefaultPanel
 	public AddressPanel(final Address address)
 	{
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
-		addressTypePanel=new AddressTypePanel();
+		editAddressTypeAction=new EditAddressTypeAction();
+		addressTypeButton=new JButton(getEditAddressTypeAction());
+		addressTypeButton.setHorizontalTextPosition(SwingConstants.LEFT);
+		addressTypeButton.setBorder(null);
+//G***del		addressTypePanel=new AddressTypePanel();
 		postOfficeBoxLabel=new JLabel();
 		postOfficeBoxTextField=new JTextField();
 		streetAddressesLabel=new JLabel();
@@ -202,6 +241,9 @@ public class AddressPanel extends DefaultPanel
 
 		//TODO move everything up a row if we leave the address type panel at the bottom
 
+		add(addressTypeButton, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+
+
 		add(postOfficeBoxLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(postOfficeBoxTextField, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
 		add(streetAddressesLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
@@ -216,9 +258,50 @@ public class AddressPanel extends DefaultPanel
 		add(countryNameLabel, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(countryNameComboBox, new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
 
-		add(addressTypePanel, new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
+//G***del		add(addressTypePanel, new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
 //G***del when works		add(addressTypePanel, new GridBagConstraints(3, 2, 1, 7, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, NO_INSETS, 0, 0));
 
+	}
+
+	/**Asks the user for a new delivery address type and updates the value.
+	@return <code>true</code> if the user accepted the changes and the type was
+		updated, otherwise <code>false</code> if the user cancelled.
+	*/
+	public boolean editTelephoneType()
+	{
+		final AddressTypePanel addressTypePanel=new AddressTypePanel(getAddressType());	//create a new panel with our current address type 
+			//ask for the new address type; if they accept the changes
+		if(OptionPane.showConfirmDialog(this, addressTypePanel, "Delivery Address Type", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//G***i18n
+		{
+			setAddressType(addressTypePanel.getAddressType());	//update the address type
+			return true;	//show that the user accepted the changes and that they were updated		
+		}
+		else	//if the user cancels
+		{
+			return false;	//show that the action was cancelled
+		}
+	}
+
+	/**Action for editing the delivery address type.*/
+	class EditAddressTypeAction extends AbstractAction
+	{
+		/**Default constructor.*/
+		public EditAddressTypeAction()
+		{
+			super("Type");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "Edit type");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Edit the delivery address type for this address.");	//set the long description G***i18n
+			putValue(MNEMONIC_KEY, new Integer('t'));  //set the mnemonic key G***i18n
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.PROPERTY_ICON_FILENAME)); //load the correct icon
+		}
+	
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+			editTelephoneType();	//edit the telephone type
+		}
 	}
 
 }

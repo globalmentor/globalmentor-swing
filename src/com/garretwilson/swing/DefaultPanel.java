@@ -2,6 +2,8 @@ package com.garretwilson.swing;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -14,6 +16,7 @@ import com.garretwilson.util.*;
 /**An extended panel that has extra features beyond those in <code>JPanel</code>.
 <p>The panel stores properties and fires property change events when a
 	property is modified.</p>
+<p>The panel can keep track of whether its contents have been modified.</p>
 <p>The panel can indicate whether it can close.</p>
 <p>The panel can recognize when it is embedded in a <code>JOptionPane</code>
 	and can set certain option pane values accordingly.</p>
@@ -25,18 +28,22 @@ import com.garretwilson.util.*;
 	component will be selected.</p>
 <p>The panel can create default listeners, such as <code>ActionListener</code>
 	and <code>DocumentListener</code>, that do nothing but update the status.</p>
+<p>The panel can create a default <code>DocumentListener</code> that
+	automatically sets the modified status to <code>true</code>.</p>
 <p>The panel provides a shared constant inset object specifying no insets.</p> 
 <p>Bound properties:</p>
 <dl>
 	<dt><code>DefaultPanel.TITLE_PROPERTY_NAME</code> (<code>String</code>)</dt>
 	<dd>Indicates the title has been changed.</dd>
+	<dt><code>Modifiable.MODIFIED_PROPERTY_NAME</code> (<code>Boolean</code>)</dt>
+	<dd>Indicates that the boolean modified property has been changed.</dd>
 </dl>
 @author Garret Wilson
 @see java.awt.Container#setFocusCycleRoot
 @see java.beans.PropertyChangeListener
 @see javax.swing.JOptionPane
 */
-public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusable
+public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusable, Modifiable
 {
 
 	/**An object specifying no insets.*/
@@ -44,6 +51,27 @@ public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusabl
 
 	/**The name of the bound title property.*/
 	public final String TITLE_PROPERTY_NAME=DefaultPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"title";	//G***maybe later move this to a titleable interface
+
+	/**Whether the object has been modified; the default is not modified.*/
+	private boolean modified=false;
+
+		/**@return Whether the object been modified.*/
+		public boolean isModified() {return modified;}
+
+		/**Sets whether the object has been modified.
+			This is a bound property.
+		@param newModified The new modification status.
+		*/
+		public void setModified(final boolean newModified)
+		{
+			final boolean oldModified=modified; //get the old modified value
+			if(oldModified!=newModified)  //if the value is really changing
+			{
+				modified=newModified; //update the value
+					//show that the modified property has changed
+				firePropertyChange(MODIFIED_PROPERTY_NAME, BooleanUtilities.toBoolean(oldModified), BooleanUtilities.toBoolean(newModified));
+			}
+		}
 
 	/**The map of properties.*/
 	private final Map propertyMap=new HashMap();
@@ -188,6 +216,7 @@ public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusabl
 	{
 		initializeUI(); //initialize the user interface
 		updateStatus();  //update the actions
+		setModified(false);	//show that the information has not been modified G***maybe don't even update the modified status until initialization has occurred
 	}
 
 	/**Initializes the user interface.
@@ -292,13 +321,83 @@ public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusabl
 		return optionPane!=null ? optionPane.getValue() : null;	//return the value property of the option pane, or null if we are not embedded in a JOptionPane
 	}
 
+	/**Creates an action listener that, when an action occurs, updates the
+		modified status to <code>true</code>.
+	@see #setModified
+	*/
+	public ActionListener createModifyActionListener()
+	{
+		return new ActionListener()	//create a new action listener that will do nothing but set modified to true
+				{
+					public void actionPerformed(final ActionEvent actionEvent) {setModified(true);}	//if the action occurs, show that we've been modified
+				};
+	}
+
+	/**Creates a document listener that, when a document is modified, updates
+		the modified status to <code>true</code>.
+	@see #setModified
+	*/
+	public DocumentListener createModifyDocumentListener()
+	{
+		return new DocumentModifyAdapter()	//create a new document listener that will do nothing but set modified to true
+				{
+					public void modifyUpdate(final DocumentEvent documentEvent) {setModified(true);}	//if the document is modified, show that we've been modfied
+				};
+	}
+
+	/**Creates a property change listener that, when any property changes,
+		updates the modified status to <code>true</code>.
+	@see #setModified
+	*/
+	public PropertyChangeListener createModifyPropertyChangeListener()
+	{
+		return new PropertyChangeListener()	//create a new property change listener that will do nothing but set modified to true
+				{
+					public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {setModified(true);}	//if a property is modified, show that we've been modified
+				};
+	}
+
+	/**Creates a property change listener that, when the given property changes,
+		updates the modified status to <code>true</code>.
+	@param propertyName The name of the property that, when changed, will set
+		the modified status to <code>true</code>. 
+	@see #setModified
+	*/
+	public PropertyChangeListener createModifyPropertyChangeListener(final String propertyName)
+	{
+		return new PropertyChangeListener()	//create a new property change listener that will do nothing but set modified to true
+				{
+					public void propertyChange(final PropertyChangeEvent propertyChangeEvent)	//if a property is modified
+					{
+						if(propertyName.equals(propertyChangeEvent.getPropertyName()))	//if the property we're concerned about changed
+						{
+							setModified(true);	//show that we've been modified
+						}
+					}
+				};
+	}
+
+	/**Creates an item that, when an item is modified, updates
+		the modified status to <code>true</code>.
+	@see #setModified
+	*/
+/*G***fix or del
+	public DocumentListener createModifyDocumentListener()
+	{
+		return new DocumentModifyAdapter()	//create a new document listener that will do nothing but update the status
+				{
+					public void modifyUpdate(final DocumentEvent documentEvent) {setModified(true);}	//if the document is modified, show that we've been modfied
+				};
+	}
+*/
+
 	/**Creates an action listener that, when an action occurs, updates
 		the status.
 	@see #updateStatus
 	*/
 	public ActionListener createUpdateStatusActionListener()
 	{
-		return new ActionListener()	//create a new document listener that will do nothing but update the status
+		return new ActionListener()	//create a new action listener that will do nothing but update the status
 				{
 					public void actionPerformed(final ActionEvent actionEvent) {updateStatus();}	//if the action occurs, update the status
 				};

@@ -16,7 +16,6 @@ import com.garretwilson.util.*;
 </dl>
 @author Garret Wilson
 @see LocaleConstants#LOCALE_PROPERTY_NAME
-@author Garret Wilson
 @see LanguagePanel
 @see Locale
 */
@@ -80,7 +79,7 @@ public class SelectLanguageAction extends AbstractAction
 	public SelectLanguageAction(final Locale locale, final Component parentComponent)
 	{
 		super("Language");	//create the base class G***i18n
-		setLocale(locale);	//set the language
+		this.locale=locale;	//set the language (don't call the setter method, as superclasses might want to access other locale variables from inside a nested class from the outer class' constructor, which would result in a null-pointer exception even though the outer class' variable had been initialized) 
 		this.parentComponent=parentComponent;	//set the parent component
 		putValue(SHORT_DESCRIPTION, "Select language");	//set the short description G***i18n
 		putValue(LONG_DESCRIPTION, "Select the language.");	//set the long description G***i18n
@@ -94,7 +93,7 @@ public class SelectLanguageAction extends AbstractAction
 	*/
 	public void actionPerformed(final ActionEvent actionEvent)
 	{
-		final LanguagePanel languagePanel=new LanguagePanel(locale);	//create a new language panel
+		final LanguagePanel languagePanel=new LanguagePanel(getLocale());	//create a new language panel
 			//ask for a new language; if the user accepts the changes
 		if(OptionPane.showConfirmDialog(parentComponent, languagePanel, "Select language", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//G***i18n
 		{

@@ -144,10 +144,10 @@ public class IdentificationPanel extends DefaultPanel
 		namePanel=new NamePanel();
 		formattedNameLabel=new JLabel();
 		formattedNameTextField=new JTextField();
-		selectFormattedNameLanguageAction=new SelectLanguageAction(null, this);
+		selectFormattedNameLanguageAction=new SelectLanguageAction(null, formattedNameTextField);
 		nicknameLabel=new JLabel();
-		selectNicknameLanguageAction=new SelectLanguageAction(null, this);
 		nicknameTextField=new JTextField();
+		selectNicknameLanguageAction=new SelectLanguageAction(null, nicknameTextField);
 		setDefaultFocusComponent(namePanel);	//set the default focus component
 		initialize();	//initialize the panel
 	}

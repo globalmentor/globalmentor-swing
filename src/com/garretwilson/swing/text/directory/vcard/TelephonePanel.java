@@ -30,7 +30,7 @@ public class TelephonePanel extends DefaultPanel
 	private final TelephoneNumberPanel telephoneNumberPanel;
 	
 	/**The telephone type label.*/
-	private final JButton telephoneTypeLabel;
+	private final JButton telephoneTypeButton;
 
 	/**The local copy of the telephone type.*/
 	private int telephoneType;
@@ -47,7 +47,7 @@ public class TelephonePanel extends DefaultPanel
 		protected void setTelephoneType(final int telephoneType)
 		{
 			this.telephoneType=telephoneType;	//store the telephone type locally
-			telephoneTypeLabel.setText(	//update the telephone type label
+			telephoneTypeButton.setText(	//update the telephone type label
 					telephoneType!=Telephone.NO_TELEPHONE_TYPE	//if there is a telephone type
 					? /*G***del"("+*/Telephone.getTelephoneTypeString(telephoneType)/*G***del+")"*/	//show it surrounded by parentheses
 					: "");	//if there is no telephone type, show nothing
@@ -152,16 +152,11 @@ public class TelephonePanel extends DefaultPanel
 	{
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		editTelephoneTypeAction=new EditTelephoneTypeAction();
-		telephoneNumberPanel=new TelephoneNumberPanel();
-//G***fix		telephoneTypeLabel=new JTextField();
-		telephoneTypeLabel=new JButton(getEditTelephoneTypeAction());	//G***testing
-		telephoneTypeLabel.setHorizontalTextPosition(SwingConstants.LEFT);	//G***testing
-		telephoneTypeLabel.setBorder(null);	//G**testing
-//	G***fix		telephoneTypeLabel.setRolloverEnabled(true);	//G***testing
-//G***fix		telephoneTypeLabel.setRolloverIcon(IconResources.getIcon(IconResources.PROPERTY_ICON_FILENAME));
-//G***fix		telephoneTypeLabel.setRolloverSelectedIcon(IconResources.getIcon(IconResources.PROPERTY_ICON_FILENAME));
-		
-		buttonCount=0;
+		telephoneTypeButton=new JButton(getEditTelephoneTypeAction());
+		telephoneTypeButton.setHorizontalTextPosition(SwingConstants.LEFT);	//G***testing
+		telephoneTypeButton.setBorder(null);	//G**testing
+		telephoneNumberPanel=new TelephoneNumberPanel();	
+		buttonCount=0;	//G***fix all this now that we don't allow extra buttons
 		setDefaultFocusComponent(telephoneNumberPanel);	//set the default focus component
 		initialize();	//initialize the panel
 		setTelephoneNumber(telephoneNumber);	//set the given telephone number
@@ -176,7 +171,7 @@ public class TelephonePanel extends DefaultPanel
 //G***fix		telephoneTypeLabel.setFont(telephoneTypeLabel.getFont().deriveFont(Font.ITALIC, (float)(telephoneTypeLabel.getFont().getSize2D()*0.8)));
 //G***del		final JButton editTelephoneTypeButton=new JButton(getEditTelephoneTypeAction());	//create a button for editing the telephone type
 
-		add(telephoneTypeLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(telephoneTypeButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(telephoneNumberPanel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 /*G***fix
 		add(telephoneNumberPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));

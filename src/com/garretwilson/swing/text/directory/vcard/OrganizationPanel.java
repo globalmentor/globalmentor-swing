@@ -190,16 +190,16 @@ public class OrganizationPanel extends DefaultPanel
 	{
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		nameLabel=new JLabel();
-		selectOrganizationNameLanguageAction=new SelectLanguageAction(null, this);
 		nameTextField=new JTextField();
+		selectOrganizationNameLanguageAction=new SelectLanguageAction(null, nameTextField);
 		unitsLabel=new JLabel();
 		unitsTextField=new JTextField();
 		titleLabel=new JLabel();
-		selectTitleLanguageAction=new SelectLanguageAction(null, this);
 		titleTextField=new JTextField();
+		selectTitleLanguageAction=new SelectLanguageAction(null, titleTextField);
 		roleLabel=new JLabel();
-		selectRoleLanguageAction=new SelectLanguageAction(null, this);
 		roleTextField=new JTextField();
+		selectRoleLanguageAction=new SelectLanguageAction(null, roleTextField);
 		setDefaultFocusComponent(nameTextField);	//set the default focus component
 		initialize();	//initialize the panel
 		setOrganizationName(name);	//set the given name

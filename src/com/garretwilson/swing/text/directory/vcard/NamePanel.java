@@ -137,15 +137,21 @@ public class NamePanel extends DefaultPanel
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		familyNameLabel=new JLabel();
 		familyNameTextField=new JTextField();
+		familyNameTextField.getDocument().addDocumentListener(createModifyDocumentListener());
 		givenNameLabel=new JLabel();
 		givenNameTextField=new JTextField();
+		givenNameTextField.getDocument().addDocumentListener(createModifyDocumentListener());
 		additionalNameLabel=new JLabel();
 		additionalNameTextField=new JTextField();
+		additionalNameTextField.getDocument().addDocumentListener(createModifyDocumentListener());
 		honorificPrefixLabel=new JLabel();
 		honorificPrefixComboBox=new JComboBox();
+		honorificPrefixComboBox.addActionListener(createModifyActionListener());
 		honorificSuffixLabel=new JLabel();
 		honorificSuffixComboBox=new JComboBox();
+		honorificSuffixComboBox.addActionListener(createModifyActionListener());
 		selectLanguageAction=new SelectLanguageAction(null, this);
+		selectLanguageAction.addPropertyChangeListener(createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME));
 		setDefaultFocusComponent(givenNameTextField);	//set the default focus component
 		initialize();	//initialize the panel
 		setVCardName(name);	//set the given name
