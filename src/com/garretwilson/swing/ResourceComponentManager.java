@@ -9,6 +9,8 @@ import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.net.URI;
 import java.util.*;
+import java.util.prefs.Preferences;
+
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
 
@@ -17,6 +19,8 @@ import static com.garretwilson.net.URIUtilities.*;
 import com.garretwilson.resources.icon.IconResources;
 import static com.garretwilson.swing.ComponentUtilities.*;
 import com.garretwilson.util.*;
+import com.garretwilson.util.prefs.Preferenceable;
+import com.garretwilson.util.prefs.PreferencesUtilities;
 
 /**An abstract class that manages resources, their views, and their modified
 	states. This class does not actually change the displayed component in any
@@ -26,11 +30,30 @@ import com.garretwilson.util.*;
 @see ResourceComponentManager#ResourceComponentState
 @author Garret Wilson
 */
-public abstract class ResourceComponentManager<R extends Resource>
+public abstract class ResourceComponentManager<R extends Resource> implements Preferenceable
 {
 
 	/**The list of event listeners.*/
 	protected final EventListenerList eventListenerList=new EventListenerList();
+
+	/**The preferences that should be used for this object, or <code>null</code> if the default preferences for this class should be used.*/
+	private Preferences preferences=null;
+	
+		/**@return The preferences that should be used for this object, or the default preferences for this class if no preferences are specifically set.
+		@exception SecurityException Thrown if a security manager is present and it denies <code>RuntimePermission("preferences")</code>.
+		*/
+		public Preferences getPreferences() throws SecurityException
+		{
+			return preferences!=null ? preferences: Preferences.userNodeForPackage(getClass());	//return the user preferences node for whatever class extends this one 
+		}
+		
+		/**Sets the preferences to be used for this panel.
+		@param preferences The preferences that should be used for this panel, or <code>null</code> if the default preferences for this class should be used
+		*/
+		public void setPreferences(final Preferences preferences)
+		{
+			this.preferences=preferences;	//store the preferences
+		}
 
 	/**The action for opening a resource.*/
 	private final Action openAction;
@@ -221,6 +244,14 @@ public abstract class ResourceComponentManager<R extends Resource>
 		saveAction.setEnabled(false);	//the save action is disable by default, as there's nothing to save
 		revertAction=new RevertAction();  //create the revert action
 		revertAction.setEnabled(false);	//the revert action is disable by default, as there's nothing to revert
+		try
+		{
+			resourceSelector.setPreferences(getPreferences());	//tell the resource selector to use the same preferences we use
+		}
+		catch(final SecurityException securityException)	//if we can't get preferences
+		{
+			Debug.warn(securityException);	//don't do anything drastic
+		}		
 	}
 
 	/**Updates the states of the actions, including enabled/disabled status, proxied actions, etc.*/

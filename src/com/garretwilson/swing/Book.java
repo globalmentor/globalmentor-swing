@@ -72,7 +72,7 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 	public final static String ZOOM_PROPERTY="zoom";
 
 	/**The preference for storing the search text.*/
-	protected final String SEARCH_TEXT_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "searchText");
+	protected final String SEARCH_TEXT_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "search.text");
 
 	/**The highlight painter used for displaying bookmark locations.*/
 	protected final static BookmarkHighlightPainter bookmarkHighlightPainter=new BookmarkHighlightPainter();

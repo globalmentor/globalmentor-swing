@@ -245,6 +245,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 							}
 						});
 				frame=new BasicFrame("Unicode", unicodePanel);	//create a new frame showing Unicode G***i18n
+/*TODO fix; we need to either create a new Unicode panel class, or make a way to change the base preferences name
 				try
 				{
 					frame.setPreferences(Preferences.userNodeForPackage(getClass()));	//give the frame unique preferences
@@ -253,6 +254,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 				{
 					Debug.warn(securityException);	//don't do anything drastic
 				}
+*/
 				frame.setAlwaysOnTop(true);	//make the frame appear always on top
 			}
 			frame.setVisible(true);	//show the frame

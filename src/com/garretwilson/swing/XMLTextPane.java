@@ -1026,7 +1026,7 @@ Debug.trace("reading from stream"); //G***del
 			}
 			if(document instanceof BasicStyledDocument) //if this is a basic document
 			{
-				((BasicStyledEditorKit)document).addProgressListener(XMLTextPane.this);	//show that we want to be notified of any progress the XML document makes G***should this go here or elsewhere? should this bubble up to the editor kit instead?
+				((BasicStyledDocument)document).addProgressListener(XMLTextPane.this);	//show that we want to be notified of any progress the XML document makes G***should this go here or elsewhere? should this bubble up to the editor kit instead?
 			}
 			try
 			{

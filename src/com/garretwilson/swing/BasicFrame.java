@@ -56,7 +56,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 	/**The preferences that should be used for this frame, or <code>null</code>
 		if the default preferences for this class should be used.
 	*/
-	private Preferences preferences;
+	private Preferences preferences=null;
 
 		/**@return The preferences that should be used for this frame, or the default
 			preferences for this class if no preferences are specifically set.
@@ -65,6 +65,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 		*/
 		public Preferences getPreferences() throws SecurityException
 		{
+//TODO del; stay with the old method			return preferences!=null ? preferences: PreferencesUtilities.getUserNodeForClass(getClass());	//return the user preferences node for whatever class extends this one 
 			return preferences!=null ? preferences: Preferences.userNodeForPackage(getClass());	//return the user preferences node for whatever class extends this one 
 		}
 		

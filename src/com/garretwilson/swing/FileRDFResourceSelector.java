@@ -1,8 +1,11 @@
 package com.garretwilson.swing;
 
 import java.awt.Component;
+import java.awt.Rectangle;
 import java.io.*;
 import java.net.URI;
+import java.util.prefs.Preferences;
+
 import javax.swing.*;
 import com.garretwilson.io.*;
 import com.garretwilson.model.*;
@@ -11,6 +14,8 @@ import com.garretwilson.net.http.HTTPClient;
 import com.garretwilson.rdf.DefaultRDFResource;
 import com.garretwilson.rdf.RDFFileProcessor;
 import com.garretwilson.rdf.RDFResource;
+import com.garretwilson.util.Debug;
+import com.garretwilson.util.prefs.PreferencesUtilities;
 
 /**An implementation of a resource selector that selects resources from a
 	file system and returns RDF resources as descriptions of selected files.
@@ -19,6 +24,28 @@ import com.garretwilson.rdf.RDFResource;
 */
 public class FileRDFResourceSelector extends DefaultURIAccessible implements ResourceSelector<RDFResource>
 {
+
+	/**The preference for storing the current directory.*/
+	protected final String CURRENT_DIRECTORY_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "current.directory");
+
+	/**The preferences that should be used for this object, or <code>null</code> if the default preferences for this class should be used.*/
+	private Preferences preferences=null;
+	
+		/**@return The preferences that should be used for this object, or the default preferences for this class if no preferences are specifically set.
+		@exception SecurityException Thrown if a security manager is present and it denies <code>RuntimePermission("preferences")</code>.
+		*/
+		public Preferences getPreferences() throws SecurityException
+		{
+			return preferences!=null ? preferences: Preferences.userNodeForPackage(getClass());	//return the user preferences node for whatever class extends this one 
+		}
+		
+		/**Sets the preferences to be used for this panel.
+		@param preferences The preferences that should be used for this panel, or <code>null</code> if the default preferences for this class should be used
+		*/
+		public void setPreferences(final Preferences preferences)
+		{
+			this.preferences=preferences;	//store the preferences
+		}
 
 	/**The component to serve as a parent for file dialogs.*/
 	private final Component parentComponent;
@@ -74,15 +101,38 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 	public RDFResource selectInputResource(final RDFResource oldResource) throws SecurityException, IOException
 	{
 			//if we were given a resource with a valid file URI, create a file from that URI and get the parent directory of that file
-		final File currentDirectory=oldResource!=null && oldResource.getReferenceURI()!=null && FILE_SCHEME.equals(oldResource.getReferenceURI().getScheme())
+		File currentDirectory=oldResource!=null && oldResource.getReferenceURI()!=null && FILE_SCHEME.equals(oldResource.getReferenceURI().getScheme())
 				? new File(oldResource.getReferenceURI()).getParentFile()	//get the parent file
 				: null;	//if this was not a file URI, we can't get the current directory
-		final JFileChooser fileChooser=new JFileChooser(currentDirectory);	//create a new dialog for listing files TODO set the current directory
-//G***fix current directory				fileChooser.setCurrentDirectory(getReaderConfig().getFileLocations().getCurrentDirectory());	//change the file chooser directory to the reader's current directory
+		if(currentDirectory==null)	//if we don't know the current directory, try to use the one from the preferences
+		{
+			try
+			{
+				final Preferences preferences=getPreferences();	//get the preferences
+				final String currentDirectoryString=preferences.get(CURRENT_DIRECTORY_PREFERENCE, null);	//get the current directory from the preferences
+				if(currentDirectoryString!=null)	//if we know a current directory from the preferences
+				{
+					currentDirectory=new File(currentDirectoryString);	//create a file with the current directory
+				}
+			}
+			catch(SecurityException securityException)	//if we can't access preferences
+			{
+				Debug.warn(securityException);	//warn of the security problem			
+			}			
+		}
+		final JFileChooser fileChooser=new JFileChooser(currentDirectory);	//create a new dialog for listing files
 		final int option=fileChooser.showOpenDialog(getParentComponent());	//show the open dialog
 		if(option==JFileChooser.APPROVE_OPTION)	//if they chose a file
 		{
-//TODO update current directlry					getReaderConfig().getFileLocations().setCurrentDirectory(fileChooser.getCurrentDirectory());	//save the new directory they changed to
+			try
+			{
+				final Preferences preferences=getPreferences();	//get the preferences
+				preferences.put(CURRENT_DIRECTORY_PREFERENCE, fileChooser.getCurrentDirectory().toString());	//store the current directory name in the preferences
+			}
+			catch(SecurityException securityException)	//if we can't access preferences
+			{
+				Debug.warn(securityException);	//warn of the security problem			
+			}
 			final File selectedFile=fileChooser.getSelectedFile();	//get the file they chose
 			if(selectedFile!=null)	//if they chose a file
 			{
