@@ -16,7 +16,7 @@ import com.garretwilson.util.*;
 	and Web addresses".
 @author Garret Wilson
 */
-public class TelephoneNumberPanel extends BasicPanel implements Verifiable
+public class TelephoneNumberPanel extends GridBagPanel implements Verifiable
 {
 
 	/**The label of the country code.*/

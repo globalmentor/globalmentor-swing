@@ -15,8 +15,6 @@ import com.garretwilson.swing.event.*;
 import com.garretwilson.util.*;
 
 /**An extended panel that has extra features beyond those in <code>JPanel</code>.
-<p>Unlike <code>JPanel</code>, the constructors use a <code>GridBagLayout</code>
-	by default if no layout manager is specified.</p>
 <p>The component keeps track of the layout constraints used by the child
 	components.</p>
 <p>The panel stores properties and fires property change events when a
@@ -37,13 +35,6 @@ import com.garretwilson.util.*;
 	and <code>DocumentListener</code>, that do nothing but update the status.</p>
 <p>The panel can create a default <code>DocumentListener</code> that
 	automatically sets the modified status to <code>true</code>.</p>
-<p>The panel provides a shared constant inset object specifying no insets.</p>
-<p>A basic panel can be used in place of a horizontal or vertical
-	<code>Box</code>, with the added benefit that weights can be assigned to
-	each component, using <code>createNextBoxConstraints()</code> for layout
-	constraints when adding components. For example, a vertical layout might
-	add a <code>Box.createGlue()</code> at the end using constraints of
-	<code>createNextBoxConstraints(Box.X_AXIS, 1.0)</code>.</p>  
 <p>Bound properties:</p>
 <dl>
 	<dt><code>BasicPanel.TITLE_PROPERTY_NAME</code> (<code>String</code>)</dt>
@@ -59,11 +50,8 @@ import com.garretwilson.util.*;
 @see javax.swing.JOptionPane
 @see java.awt.GridBagLayout
 */
-public class BasicPanel extends JPanel implements CanClosable, DefaultFocusable, Modifiable
+public class BasicPanel extends JPanel implements ContainerConstants, CanClosable, DefaultFocusable, Modifiable
 {
-
-	/**An object specifying no insets.*/
-	public final static Insets NO_INSETS=new Insets(0, 0, 0, 0);
 
 	/**The name of the bound title property.*/
 	public final String TITLE_PROPERTY_NAME=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"title";	//G***maybe later move this to a titleable interface
@@ -103,78 +91,6 @@ public class BasicPanel extends JPanel implements CanClosable, DefaultFocusable,
 		{
 			return constraintsMap.remove(component);	//remove any constraints associated with the component 
 		}
-
-	/**Determines the largest x or y coordinate of all components that were added
-		using a <code>GridBagConstraint</code>.
-	@param axis The axis on which to determine the maximum coordinate, either
-		<code>BoxLayout.X_AXIS</code> or <code>BoxLayout.Y_AXIS</code>
-	@return The largest coordinate on the given axis, or <code>-1</code> if
-		no components were added using a <code>GridBagConstraint</code>.
-	@see BoxLayout#X_AXIS
-	@see BoxLayout#Y_AXIS
-	*/
-	protected int getMaxGrid(final int axis) 
-	{
-		int max=-1;	//start out not finding any coordinate 
-		for(int i=getComponentCount()-1; i>=0; --i)	//look at each child component
-		{
-			final Component component=getComponent(i);	//get a reference to this component
-			final Object constraints=getConstraints(component);	//get any layout constraints associated with this component
-			if(constraints instanceof GridBagConstraints)	//if these are grid bag constraints
-			{
-				final GridBagConstraints gridBagConstraints=(GridBagConstraints)constraints;	//cast the constraints to the appropriate type
-				switch(axis)	//see which axis we're looking at
-				{
-					case BoxLayout.X_AXIS:
-						max=Math.max(max, gridBagConstraints.gridx);	//see if we need to update the largest x coordinate
-						break;
-					case BoxLayout.Y_AXIS:
-						max=Math.max(max, gridBagConstraints.gridy);	//see if we need to update the largest y coordinate
-						break;
-				}
-			}
-		}
-		return max;	//return whatever max value we found
-	}
-
-	/**Creates constraints appropriate for laying out components in a row in a
-		single column or row on the horizontal or vertial axis.
-	The constraints will have a weight of 0.0.
-	@param axis The axis along which components are being laid out, either
-		<code>BoxLayout.X_AXIS</code> or <code>BoxLayout.Y_AXIS</code>
-	@return A grid bag constraint object for adding a new component in single
-		file along the horizontal or vertical axis.
-	@see BoxLayout#X_AXIS
-	@see BoxLayout#Y_AXIS
-	*/
-	public GridBagConstraints createNextBoxConstraints(final int axis) 
-	{
-		return createNextBoxConstraints(axis, 0.0);	//return box constraints with no weight
-	}
-
-	/**Creates constraints appropriate for laying out components in a row in a
-		single column or row on the horizontal or vertial axis.
-	@param axis The axis along which components are being laid out, either
-		<code>BoxLayout.X_AXIS</code> or <code>BoxLayout.Y_AXIS</code>
-	@param weight An amount specifying how to distribute the extra space along the
-		axis.
-	@return A grid bag constraint object for adding a new component in single
-		file along the horizontal or vertical axis.
-	@see BoxLayout#X_AXIS
-	@see BoxLayout#Y_AXIS
-	*/
-	public GridBagConstraints createNextBoxConstraints(final int axis, double weight) 
-	{
-		final int nextGrid=getMaxGrid(axis)+1;	//determine the next coordinate on the grid
-		return new GridBagConstraints(
-				axis==BoxLayout.X_AXIS ? nextGrid : 0,	//use the next coordinate for the appropriate axis
-				axis==BoxLayout.Y_AXIS ? nextGrid : 0,
-				1,
-				1,
-				axis==BoxLayout.X_AXIS ? weight : 1.0,	//use the weight for the appropriate axis
-				axis==BoxLayout.Y_AXIS ? weight : 1.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH, NO_INSETS, 0, 0);
-}
 
 	/**The preferences that should be used for this panel, or <code>null</code>
 		if the default preferences for this class should be used.
@@ -329,22 +245,22 @@ public class BasicPanel extends JPanel implements CanClosable, DefaultFocusable,
 		*/
 		public void setDefaultFocusComponent(final Component component) {defaultFocusComponent=component;}
 
-	/**Default constructor that uses a <code>GridBagLayout</code>.
-	@see #GridBagLayout
+	/**Default constructor that uses a <code>FlowLayout</code>.
+	@see #FlowLayout
 	*/
 	public BasicPanel()
 	{
 		this(true); //initialize the panel
 	}
 
-	/**Constructor with optional initialization that uses a <code>GridBagLayout</code>.
+	/**Constructor with optional initialization that uses a <code>FlowLayout</code>.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
-	@see #GridBagLayout
+	@see #FlowLayout
 	*/
 	public BasicPanel(final boolean initialize)
 	{
-		this(new GridBagLayout(), initialize);	//construct the panel with a grid bag layout by default
+		this(new FlowLayout(), initialize);	//construct the panel with a flow layout by default
 	}
 
 	/**Layout constructor.

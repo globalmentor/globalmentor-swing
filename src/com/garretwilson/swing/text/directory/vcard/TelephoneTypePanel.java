@@ -11,7 +11,7 @@ import com.garretwilson.swing.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class TelephoneTypePanel extends BasicPanel
+public class TelephoneTypePanel extends GridBagPanel
 {
 
 	/**The checkbox for a telephone number associated with a residence.*/

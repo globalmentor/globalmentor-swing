@@ -10,7 +10,7 @@ import com.garretwilson.util.*;
 /**A panel allowing selection of a language.
 @author Garret Wilson
 */
-public class LanguagePanel extends BasicPanel
+public class LanguagePanel extends GridBagPanel
 {
 	/**The label of the language combo box.*/
 	private final JLabel languageLabel;

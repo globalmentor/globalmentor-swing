@@ -15,7 +15,7 @@ import com.garretwilson.text.directory.vcard.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class EmailPanel extends BasicPanel
+public class EmailPanel extends GridBagPanel
 {
 
 	/**The email text field.*/

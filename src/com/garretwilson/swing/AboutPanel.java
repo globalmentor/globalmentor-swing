@@ -20,7 +20,7 @@ import com.garretwilson.text.CharacterConstants;
 </dl>
 @author Garret Wilson
 */
-public class AboutPanel extends BasicPanel implements CharacterConstants
+public class AboutPanel extends GridBagPanel implements CharacterConstants
 {
 
 	/**The action for showing the properties.*/

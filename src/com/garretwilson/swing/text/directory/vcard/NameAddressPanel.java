@@ -10,7 +10,7 @@ import com.garretwilson.util.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class NameAddressPanel extends BasicPanel implements Verifiable
+public class NameAddressPanel extends GridBagPanel implements Verifiable
 {
 	/**The identification panel.*/
 	private final IdentificationPanel identificationPanel;

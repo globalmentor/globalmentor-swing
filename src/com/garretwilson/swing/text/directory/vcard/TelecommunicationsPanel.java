@@ -49,7 +49,7 @@ public class TelecommunicationsPanel extends ContentPanel implements Verifiable
 	private final PropertyChangeListener modifyModifiedPropertyChangeListener;
 
 	/**@return The content component in which the telecommunications panels will be placed.*/
-	protected BasicPanel getContentPanel() {return (BasicPanel)getContentComponent();}
+	protected JPanel getContentPanel() {return (JPanel)getContentComponent();}	//G***why can't we return something else, here--why cast to a JPanel?
 
 	/**Places the telephones in the panel.
 	@param telephones The telephone numbers to display, or <code>null</code> if
@@ -65,7 +65,7 @@ public class TelecommunicationsPanel extends ContentPanel implements Verifiable
 	public Telephone[] getTelephones()
 	{
 		final List telephoneList=new ArrayList();	//create a list into which to place the telephones
-		final BasicPanel contentPanel=getContentPanel();	//get our content panel
+		final JPanel contentPanel=getContentPanel();	//get our content panel
 		final int componentCount=contentPanel.getComponentCount();	//find out how many components there are
 		for(int i=0; i<componentCount; ++i)	//look at each component
 		{
@@ -96,7 +96,7 @@ public class TelecommunicationsPanel extends ContentPanel implements Verifiable
 	public Email[] getEmails()
 	{
 		final List emailList=new ArrayList();	//create a list into which to place the emails
-		final BasicPanel contentPanel=getContentPanel();	//get our content panel
+		final JPanel contentPanel=getContentPanel();	//get our content panel
 		final int componentCount=contentPanel.getComponentCount();	//find out how many components there are
 		for(int i=0; i<componentCount; ++i)	//look at each component
 		{
@@ -197,7 +197,7 @@ public class TelecommunicationsPanel extends ContentPanel implements Verifiable
 	*/
 	public TelecommunicationsPanel(final Telephone[] telephones, final Email[] emails)
 	{
-		super(new BasicPanel(new GridBagLayout()), false);	//construct the panel using a grid bag layout, but don't initialize the panel
+		super(new GridBagPanel(), false);	//construct the panel using a grid bag layout, but don't initialize the panel G***is this right? double-check construction with a panel
 		addTelephoneAction=new AddTelephoneAction();
 		addEmailAction=new AddEmailAction();
 //G***fix		removeAddressAction=new RemoveAddressAction();
@@ -262,7 +262,7 @@ public class TelecommunicationsPanel extends ContentPanel implements Verifiable
 	{
 		component.addPropertyChangeListener(modifyModifiedPropertyChangeListener);	//listen for changes to the address and update the modified status in response
 			//add the component to the content panel, in a location based upon the components already present 
-		getContentPanel().add(component, new GridBagConstraints(0, getContentPanel().getComponentCount(), 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, NO_INSETS, 0, 0));
+		getContentPanel().add(component, new GridBagConstraints(0, getContentPanel().getComponentCount(), 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, NO_INSETS, 0, 0));
 		setModified(true);	//show that we've been modified by the addition of this component
 /*G***del; we may not even need this pack method any more, if revalidate() works
 		if(getParentOptionPane()!=null)	//if this panel is inside an option pane
@@ -305,7 +305,7 @@ public class TelecommunicationsPanel extends ContentPanel implements Verifiable
 	*/
 	public boolean verify()
 	{
-		final BasicPanel contentPanel=getContentPanel();	//get our content panel
+		final JPanel contentPanel=getContentPanel();	//get our content panel
 		final int componentCount=contentPanel.getComponentCount();	//find out how many components there are
 		for(int i=0; i<componentCount; ++i)	//look at each component
 		{

@@ -13,31 +13,72 @@ The button is connected to the content component; whenever the the content
 public class ButtonContentPanel extends ContentPanel
 {
 
+	/**The panel that allows a button and a label in the border.*/
+	private final ContentPanel buttonPanel;
+
+		/**@return The panel that allows a button and a label in the border.*/
+		protected ContentPanel getButtonPanel() {return buttonPanel;}
+
 	/**The object that listens for mouse events on the content component and
 		in response clicks the button.
 	*/
 	private MouseListener mouseListener=null;
 
-	/**The button to display in the border of the panel.*/
-	private AbstractButton button=null;
-
-		/**The button to display in the border of the panel.*/
-		public AbstractButton getButton() {return button;}
-
-		/**Sets the button to display in the border of the panel.
-		@param newButton The button to connect to the content component and display in
-			the border of the panel.
+		/**@return The object that listens for mouse events on the content component
+			and in response clicks the button.
 		*/
-		public void setButton(final AbstractButton newButton)
+		protected MouseListener getMouseListener()
 		{
-			if(button!=newButton) //if the buttonis really changing
+			if(mouseListener==null)	//if we haven't yet created a mouse listener (we must create it here, because this method is called from the constructor before the variable would be initialized)
 			{
-				if(button!=null)  //if we already have a button
-					remove(button);   //remove the current one
-				button=newButton;	//store the button
-				if(newButton!=null)	//if we were given a new button
+				mouseListener=new MouseAdapter()	//create a mouse listener to listen for mouse clicks on the component
+						{
+							public void mouseClicked(final MouseEvent mouseEvent)
+							{
+//G***test, maybe									getButton().dispatchEvent(mouseEvent)
+								getButton().doClick();	//G***testing
+								getButton().requestFocusInWindow();	//request focus for the button
+							}									
+						};
+			}
+			return mouseListener;	//return the mouse listener
+		}
+
+	/**The button to display in the border of the panel.*/
+	public AbstractButton getButton() {return (AbstractButton)getButtonPanel().getContentComponent();}
+
+	/**Sets the button to display in the border of the panel.
+	@param button The button to connect to the content component and display in
+		the border of the panel.
+	*/
+	public void setButton(final AbstractButton button)
+	{
+		getButtonPanel().setContentComponent(button);  //put the button in the button panel
+	}
+
+	/**The label to display in the border of the panel.*/
+	private JLabel label=null;
+
+		/**The label to display in the border of the panel.*/
+		public JLabel getLabel() {return label;}
+
+		/**Sets the label to display in the border of the panel.
+		@param newLabel The label to display in the border of the panel by the button.
+		*/
+		public void setLabel(final JLabel newLabel)
+		{
+			if(label!=newLabel) //if the label is really changing
+			{
+				if(label!=null)  //if we already have a button
 				{
-					add(newButton, BorderLayout.WEST);  //put the button in the west of the panel TODO i18n
+					label.removeMouseListener(getMouseListener());	//remove the mouse listener from the old label
+					remove(label);   //remove the current label
+				}
+				label=newLabel;	//store the label
+				if(newLabel!=null)	//if we were given a new label
+				{
+					newLabel.addMouseListener(getMouseListener());	//listen for mouse clicks on the component
+					getButtonPanel().add(newLabel, BorderLayout.EAST);  //put the label in the button panel TODO i18n
 				}
 			}
 		}
@@ -54,25 +95,13 @@ public class ButtonContentPanel extends ContentPanel
 			super.setContentComponent(newContentComponent);	//set the content component normally
 			if(oldContentComponent!=newContentComponent) //if the content component really changed
 			{
-				if(mouseListener==null)	//if we haven't yet created a mouse listener (we must create it here, because this method is called from the constructor before the variable would be initialized)
-				{
-					mouseListener=new MouseAdapter()	//create a mouse listener to listen for mouse clicks on the component
-							{
-								public void mouseClicked(final MouseEvent mouseEvent)
-								{
-//G***test, maybe									getButton().dispatchEvent(mouseEvent)
-									getButton().doClick();	//G***testing
-									getButton().requestFocusInWindow();	//request focus for the button
-								}									
-							};
-				}
 				if(oldContentComponent!=null)	//if we had a content component earlier
 				{
-					oldContentComponent.removeMouseListener(mouseListener);	//remove the mouse listener from the old component
+					oldContentComponent.removeMouseListener(getMouseListener());	//remove the mouse listener from the old component
 				}
 				if(newContentComponent!=null)	//if we were given a new content component
 				{
-					newContentComponent.addMouseListener(mouseListener);	//listen for mouse clicks on the component
+					newContentComponent.addMouseListener(getMouseListener());	//listen for mouse clicks on the component
 				}
 			}
 		}
@@ -99,6 +128,9 @@ public class ButtonContentPanel extends ContentPanel
 	public ButtonContentPanel(final Component contentComponent, final AbstractButton button, final boolean initialize)
 	{
 		super(contentComponent, false);	//construct the panel with the content component, but don't initialize
+		buttonPanel=new ContentPanel();	//create a new content panel for the border
+		buttonPanel.setOpaque(false);	//make the panel transparent---it's only there for layout
+		add(buttonPanel, BorderLayout.WEST);	//put the button panel in the border TODO i18n
 		setButton(button);	//set the button
 		if(initialize)  //if we should initialize
 			initialize(); //initialize the panel
