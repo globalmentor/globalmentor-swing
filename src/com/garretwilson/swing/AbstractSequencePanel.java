@@ -66,11 +66,11 @@ public abstract class AbstractSequencePanel extends ApplicationPanel
 	/**Default constructor.*/
 	public AbstractSequencePanel()
 	{
-		this(true, true); //default to having a toolbar but no status bar
+		this(false, false); //default to having no toolbar or status bar
 	}
 
-	/**Application component constructor that allows options to be set, such as 
-		the presence of a status bar.
+	/**Constructor that allows options to be set, such as	the presence of a
+		status bar.
 	@param hasToolBar Whether this panel should have a toolbar.
 	@param hasStatusBar Whether this panel should have a status bar.
 	*/
@@ -106,7 +106,7 @@ public abstract class AbstractSequencePanel extends ApplicationPanel
 //G***del; let child classes customize this		setStatusBarPosition(BorderLayout.NORTH);  //put the status bar at the top of the panel G***fix both of these
 //G***del; let child classes customize this		setToolBarPosition(BorderLayout.SOUTH);  //put the toolbar at the bottom of the panel
 		setPreferredSize(new Dimension(300, 200));	//set an arbitrary preferred size
-		setContentComponent(getCurrentComponent());	//start with the first component in the sequence TODO probably fix this to get the next component
+		setContentComponent(getFirstComponent());	//start with the first component in the sequence
 	}
 
 	/**Initializes the toolbar components.
@@ -175,8 +175,13 @@ public abstract class AbstractSequencePanel extends ApplicationPanel
 		}
 	}
 	
-	/**Finishes the sequence and exits.*/
-	public void finish()
+	/**Verifies the contents and finishes the sequence.
+	Usually a derived class will not modify this method and instead override
+		<code>finish()</code>, which this method calls if the contents of the
+		current component verifies.
+	@see Verifiable#verify
+	*/
+	public void goFinish()
 	{
 		final Component currentComponent=getContentComponent();	//get the current content component
 		if(currentComponent instanceof Verifiable)	//if we can verify the component's contents
@@ -186,9 +191,19 @@ public abstract class AbstractSequencePanel extends ApplicationPanel
 				return;	//don't finish if the component's contents do not verify
 			}
 		}
+		finish();	//actually finish
+	}
+	
+	/**Finishes the sequence by setting the option panel value to
+		<code>JOptionPane.OK_OPTION</code>, if this panel is embedded in an option
+		pane.
+	@see JOptionPane#OK_OPTION
+	@see DefaultPanel#setOptionPaneValue
+	*/
+	protected void finish()
+	{
 		setOptionPaneValue(new Integer(JOptionPane.OK_OPTION));	//set the value of the option pane to OK, if we're embedded in an option pane
 	}
-
 	
 	/**Creates and displays a sequence dialog based upon <code>JOptionPane</code>,
 		showing this sequence panel.
@@ -208,8 +223,8 @@ public abstract class AbstractSequencePanel extends ApplicationPanel
 				new Object[]{getPreviousButton(), getNextButton(), getFinishButton()}, getNextButton());
 	}
 	
-	/**@return The current component to be displayed in the sequence.*/
-	protected abstract Component getCurrentComponent();
+	/**@return The first component to be displayed in the sequence.*/
+	protected abstract Component getFirstComponent();
 
 	/**@return <code>true</code> if there is a next component after the current one.*/
 	protected abstract boolean hasNextComponent();
@@ -286,7 +301,7 @@ public abstract class AbstractSequencePanel extends ApplicationPanel
 		*/
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
-			finish(); //submit the assessment
+			goFinish(); //try to finish the sequence
 		}
 	}
 
