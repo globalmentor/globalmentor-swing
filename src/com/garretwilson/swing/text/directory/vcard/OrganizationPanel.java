@@ -4,7 +4,6 @@ import java.awt.*;
 import java.util.*;
 import javax.swing.*;
 import com.garretwilson.lang.*;
-import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
 import com.garretwilson.util.*;
@@ -28,6 +27,12 @@ public class OrganizationPanel extends DefaultPanel
 	/**The label of the organization name.*/
 	private final JLabel nameLabel;
 
+	/**The action for selecting the language of the organization name.*/
+	private final SelectLanguageAction selectOrganizationNameLanguageAction;
+
+		/**@return The action for selecting the language of the organization name.*/
+		public SelectLanguageAction getSelectOrganizationNameLanguageAction() {return selectOrganizationNameLanguageAction;}
+
 	/**The name text field.*/
 	private final JTextField nameTextField;
 
@@ -46,6 +51,12 @@ public class OrganizationPanel extends DefaultPanel
 	/**The label of the job title.*/
 	private final JLabel titleLabel;
 
+	/**The action for selecting the language of the title.*/
+	private final SelectLanguageAction selectTitleLanguageAction;
+
+		/**@return The action for selecting the language of the title.*/
+		public SelectLanguageAction getSelectTitleLanguageAction() {return selectTitleLanguageAction;}
+
 	/**The job title text field.*/
 	private final JTextField titleTextField;
 
@@ -54,6 +65,12 @@ public class OrganizationPanel extends DefaultPanel
 
 	/**The label of the organizational role.*/
 	private final JLabel roleLabel;
+
+	/**The action for selecting the language of the role.*/
+	private final SelectLanguageAction selectRoleLanguageAction;
+
+		/**@return The action for selecting the language of the role.*/
+		public SelectLanguageAction getSelectRoleLanguageAction() {return selectRoleLanguageAction;}
 
 	/**The role text field.*/
 	private final JTextField roleTextField;
@@ -64,70 +81,101 @@ public class OrganizationPanel extends DefaultPanel
 	/**Sets the organization name.
 	@param name The name of the organization, or <code>null</code> for no name.
 	*/
-	public void setOrganizationName(final String name)
+	public void setOrganizationName(final LocaleText name)
 	{
-		nameTextField.setText(name!=null ? name : "");
+		if(name!=null)	//if there is text
+		{
+			nameTextField.setText(name.getText());
+			selectOrganizationNameLanguageAction.setLocale(name.getLocale());
+		}
+		else	//if there is no text
+		{
+			nameTextField.setText("");
+			selectOrganizationNameLanguageAction.setLocale(null);
+		}
 	}
 
 	/**@return The organization name, or <code>null</code> for no name.
 	*/
-	public String getOrganizationName()
+	public LocaleText getOrganizationName()
 	{
-		return StringUtilities.getNonEmptyString(nameTextField.getText().trim());
+		final String name=StringUtilities.getNonEmptyString(nameTextField.getText().trim());
+		return name!=null ? new LocaleText(name, selectOrganizationNameLanguageAction.getLocale()) : null;
 	}
 
-	/**Sets the organizational units.
+	/**Sets the organizational units. The locales are ignored.
 	@param units The organizational units.
 	*/
-	public void setUnits(final String[] units)
+	public void setUnits(final LocaleText[] units)
 	{
 		unitsTextField.setText(StringUtilities.concat(units, UNIT_SEPARATOR));
 	}
 
 	/**@return The organizational units.*/
-	public String[] getUnits()
+	public LocaleText[] getUnits()
 	{
-		return StringTokenizerUtilities.getTokens(new StringTokenizer(unitsTextField.getText().trim(), UNIT_DELIMITERS));
+			//get the units TODO make sure each nickname is trimmed
+		return LocaleText.toLocaleTextArray(StringTokenizerUtilities.getTokens(new StringTokenizer(unitsTextField.getText().trim(), UNIT_DELIMITERS)), selectOrganizationNameLanguageAction.getLocale());
 	}
 
 	/**Sets the job title.
 	@param title The job title, functional position or function at the
 		organization, or <code>null</code> for no title.
 	*/
-	public void setTitle(final String title)
+	public void setJobTitle(final LocaleText title)
 	{
-		titleTextField.setText(title!=null ? title : "");
+		if(title!=null)	//if there is text
+		{
+			titleTextField.setText(title.getText());
+			selectTitleLanguageAction.setLocale(title.getLocale());
+		}
+		else	//if there is no text
+		{
+			titleTextField.setText("");
+			selectTitleLanguageAction.setLocale(null);
+		}
 	}
 
 	/**@return The job title, functional position or function at the,
 		organization or <code>null</code> for no title.
 	*/
-	public String getTitle()
+	public LocaleText getJobTitle()
 	{
-		return StringUtilities.getNonEmptyString(titleTextField.getText().trim());
+		final String title=StringUtilities.getNonEmptyString(titleTextField.getText().trim());
+		return title!=null ? new LocaleText(title, selectTitleLanguageAction.getLocale()) : null;
 	}
 
 	/**Sets the role.
 	@param role The role, occupation, or business category at the organization,
 		or <code>null</code> for no role.
 	*/
-	public void setRole(final String role)
+	public void setRole(final LocaleText role)
 	{
-		roleTextField.setText(role!=null ? role : "");
+		if(role!=null)	//if there is text
+		{
+			roleTextField.setText(role.getText());
+			selectRoleLanguageAction.setLocale(role.getLocale());
+		}
+		else	//if there is no text
+		{
+			roleTextField.setText("");
+			selectRoleLanguageAction.setLocale(null);
+		}
 	}
 
 	/**@return The role, occupation, or business category at the
 		organization, or <code>null</code> for no role.
 	*/
-	public String getRole()
+	public LocaleText getRole()
 	{
-		return StringUtilities.getNonEmptyString(roleTextField.getText().trim());
+		final String role=StringUtilities.getNonEmptyString(roleTextField.getText().trim());
+		return role!=null ? new LocaleText(role, selectRoleLanguageAction.getLocale()) : null;
 	}
 
 	/**Default constructor.*/
 	public OrganizationPanel()
 	{
-		this(null, new String[]{}, null, null);	//create a panel with no initial values
+		this(null, new LocaleText[]{}, null, null);	//create a panel with no initial values
 	}
 
 	/**Full organization constructor.
@@ -138,22 +186,25 @@ public class OrganizationPanel extends DefaultPanel
 	@param role The role, occupation, or business category at the organization,
 		or <code>null</code> for no role.
 	*/
-	public OrganizationPanel(final String name, final String[] units, final String title, final String role)
+	public OrganizationPanel(final LocaleText name, final LocaleText[] units, final LocaleText title, final LocaleText role)
 	{
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		nameLabel=new JLabel();
+		selectOrganizationNameLanguageAction=new SelectLanguageAction(null, this);
 		nameTextField=new JTextField();
-		unitsTextField=new JTextField();
 		unitsLabel=new JLabel();
-		titleTextField=new JTextField();
+		unitsTextField=new JTextField();
 		titleLabel=new JLabel();
-		roleTextField=new JTextField();
+		selectTitleLanguageAction=new SelectLanguageAction(null, this);
+		titleTextField=new JTextField();
 		roleLabel=new JLabel();
+		selectRoleLanguageAction=new SelectLanguageAction(null, this);
+		roleTextField=new JTextField();
 		setDefaultFocusComponent(nameTextField);	//set the default focus component
 		initialize();	//initialize the panel
 		setOrganizationName(name);	//set the given name
 		setUnits(units);	//set the given units
-		setTitle(title);	//set the given title
+		setJobTitle(title);	//set the given title
 		setRole(role);	//set the given role
 	}
 	
@@ -164,22 +215,33 @@ public class OrganizationPanel extends DefaultPanel
 		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
 		setTitle("Organization");	//G***i18n
 		nameLabel.setText("Organization Name");	//G***i18n
+		final JButton selectOrganizationNameLanguageButton=new JButton(getSelectOrganizationNameLanguageAction());
+		selectOrganizationNameLanguageButton.setText("");	//TODO create common routine for this
+		selectOrganizationNameLanguageButton.setBorder(null);
 		nameTextField.setColumns(16);
 		unitsLabel.setText("Unit(s)");	//G***i18n
 		unitsTextField.setColumns(10);
 		titleLabel.setText("Job Title");	//G***i18n
+		final JButton selectTitleLanguageButton=new JButton(getSelectTitleLanguageAction());
+		selectTitleLanguageButton.setText("");	//TODO create common routine for this
+		selectTitleLanguageButton.setBorder(null);
 		titleTextField.setColumns(16);
 		roleLabel.setText("Role");	//G***i18n
+		final JButton selectRoleLanguageButton=new JButton(getSelectRoleLanguageAction());
+		selectRoleLanguageButton.setText("");	//TODO create common routine for this
+		selectRoleLanguageButton.setBorder(null);
 		roleTextField.setColumns(12);
 		add(nameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(nameTextField, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
-		add(unitsLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(unitsTextField, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
+		add(selectOrganizationNameLanguageButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(nameTextField, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
+		add(unitsLabel, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(unitsTextField, new GridBagConstraints(2, 1, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
 		add(titleLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(titleTextField, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
-		add(roleLabel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(roleTextField, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
-
+		add(selectTitleLanguageButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(titleTextField, new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
+		add(roleLabel, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(selectRoleLanguageButton, new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(roleTextField, new GridBagConstraints(2, 3, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
 	}
 
 }

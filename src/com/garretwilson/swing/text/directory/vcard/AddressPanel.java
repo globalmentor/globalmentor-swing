@@ -1,5 +1,6 @@
 package com.garretwilson.swing.text.directory.vcard;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -41,32 +42,11 @@ public class AddressPanel extends DefaultPanel
 	/**The label of the first street address text field.*/
 //G***del	private final JLabel streetAddress1Label;
 
-	/**The first street address text field.*/
-	private final JTextField streetAddress1TextField;
+	/**The street address text pane.*/
+	private final JTextPane streetAddressTextPane;
 
-		/**@return The first street address text field.*/
-		public JTextField getStreetAddress1TextField() {return streetAddress1TextField;}
-		
-	/**The label of the second street address text field.*/
-//G***del	private final JLabel streetAddress2Label;
-
-	/**The second street address text field.*/
-	private final JTextField streetAddress2TextField;
-
-		/**@return The second street address text field.*/
-		public JTextField getStreetAddress2TextField() {return streetAddress2TextField;}
-
-	/**The label of the third street address text field.*/
-//G***del	private final JLabel streetAddress3Label;
-
-	/**The third street address text field.*/
-	private final JTextField streetAddress3TextField;
-
-		/**@return The third street address text field.*/
-		public JTextField getStreetAddress3TextField() {return streetAddress3TextField;}
-
-	/**An array of the street address text fields.*/
-	private final JTextField[] streetAddressTextFields;
+		/**@return The street address text pane.*/
+		public JTextPane getStreetAddressTextPane() {return streetAddressTextPane;}
 
 	/**The label of the locality.*/
 	private final JLabel localityLabel;
@@ -104,6 +84,12 @@ public class AddressPanel extends DefaultPanel
 		/**@return The country name combo box.*/
 		public JComboBox getCountryNameComboBox() {return countryNameComboBox;}
 
+	/**The action for selecting the language of the name.*/
+	private final SelectLanguageAction selectLanguageAction;
+
+		/**@return The action for selecting the language of the name.*/
+		public SelectLanguageAction getSelectLanguageAction() {return selectLanguageAction;}
+
 	/**Places the address information into the various fields.
 	@param address The address to place in the fields, or <code>null</code> if no
 		information should be displayed.
@@ -114,33 +100,24 @@ public class AddressPanel extends DefaultPanel
 		{
 			postOfficeBoxTextField.setText(address.getPostOfficeBox()!=null ? address.getPostOfficeBox() : "");
 			extendedAddresses=address.getExtendedAddresses();	//save the extended addresses so we won't lose them
-			final String[] streetAddresses=address.getStreetAddresses();	//get the street addresses
-			for(int i=0; i<streetAddressTextFields.length; ++i)	//look at each of the street address text fields
-			{
-				if(i<streetAddresses.length)	//if we have a street address for this text field
-				{
-					streetAddressTextFields[i].setText(streetAddresses[i]);	//set the text of this street address
-				}
-				else	//if there is no street address for this text field
-				{
-					streetAddressTextFields[i].setText("");	//clear the text field
-				}
-			}
+			streetAddressTextPane.setText(StringUtilities.concat(address.getStreetAddresses(), '\n'));	//separate the street addresses with newlines and place them in the text pane
 			localityTextField.setText(address.getLocality()!=null ? address.getLocality() : "");
 			regionTextField.setText(address.getRegion()!=null ? address.getRegion() : "");
 			postalCodeTextField.setText(address.getPostalCode()!=null ? address.getPostalCode() : "");
 			countryNameComboBox.setSelectedItem(address.getCountryName()!=null ? address.getCountryName() : "");
 			addressTypePanel.setAddressType(address.getAddressType());
+			selectLanguageAction.setLocale(address.getLocale());
 		}
 		else	//if there is no address, clear the fields
 		{
 			postOfficeBoxTextField.setText("");
-			for(int i=0; i<streetAddressTextFields.length; streetAddressTextFields[i++].setText(""));
+			streetAddressTextPane.setText("");
 			localityTextField.setText("");
 			regionTextField.setText("");
 			postalCodeTextField.setText("");
 			countryNameComboBox.setSelectedItem("");
 			addressTypePanel.setAddressType(Address.NO_ADDRESS_TYPE);
+			selectLanguageAction.setLocale(null);
 		}
 	}
 	
@@ -148,19 +125,15 @@ public class AddressPanel extends DefaultPanel
 	public Address getAddress()
 	{
 		final String postOfficeBox=StringUtilities.getNonEmptyString(postOfficeBoxTextField.getText().trim());
-		final List streetAddressList=new ArrayList();	//create a list in which to hold the street names that have content
-		for(int i=0; i<streetAddressTextFields.length; ++i)	//look at each of the street address text fields
-		{
-			if(streetAddressTextFields[i].getText().trim().length()>0)	//if the street address has content
-				streetAddressList.add(streetAddressTextFields[i].getText().trim());	//add the street address to the list
-		}
-		final String[] streetAddresses=(String[])streetAddressList.toArray(new String[streetAddressList.size()]);
+			//trim the string in the street address text field and tokenize the lines
+		final String[] streetAddresses=StringTokenizerUtilities.getTokens(new StringTokenizer(streetAddressTextPane.getText().trim(), "\r\n"));
 		final String locality=StringUtilities.getNonEmptyString(localityTextField.getText().trim());
 		final String region=StringUtilities.getNonEmptyString(regionTextField.getText().trim());
 		final String postalCode=StringUtilities.getNonEmptyString(postalCodeTextField.getText().trim());
 		final String countryName=StringUtilities.getNonEmptyString(countryNameComboBox.getSelectedItem().toString().trim());
 		final int addressType=addressTypePanel.getAddressType();
-		return new Address(postOfficeBox, extendedAddresses, streetAddresses, locality, region, postalCode, countryName, addressType);	//create and return an address representing the entered information
+		final Locale locale=selectLanguageAction.getLocale();
+		return new Address(postOfficeBox, extendedAddresses, streetAddresses, locality, region, postalCode, countryName, addressType, locale);	//create and return an address representing the entered information
 	}
 
 	/**Default constructor.*/
@@ -180,9 +153,8 @@ public class AddressPanel extends DefaultPanel
 		postOfficeBoxLabel=new JLabel();
 		postOfficeBoxTextField=new JTextField();
 		streetAddressesLabel=new JLabel();
-		streetAddress1TextField=new JTextField();
-		streetAddress2TextField=new JTextField();
-		streetAddress3TextField=new JTextField();
+		selectLanguageAction=new SelectLanguageAction(null, this);
+		streetAddressTextPane=new JTextPane();
 		localityLabel=new JLabel();
 		localityTextField=new JTextField();
 		regionLabel=new JLabel();
@@ -191,8 +163,7 @@ public class AddressPanel extends DefaultPanel
 		postalCodeTextField=new JTextField();
 		countryNameLabel=new JLabel();
 		countryNameComboBox=new JComboBox();
-		streetAddressTextFields=new JTextField[]{streetAddress1TextField, streetAddress2TextField, streetAddress3TextField};
-		setDefaultFocusComponent(streetAddress1TextField);	//set the default focus component
+		setDefaultFocusComponent(streetAddressTextPane);	//set the default focus component
 		initialize();	//initialize the panel
 		setAddress(address);	//set the address
 	}
@@ -203,15 +174,15 @@ public class AddressPanel extends DefaultPanel
 		super.initializeUI();	//do the default user interface initialization
 		postOfficeBoxLabel.setText("PO Box");	//G***i18n
 		postOfficeBoxTextField.setColumns(5);
-		streetAddressesLabel.setText("Street Addresses");	//G***i18n
-//G***del		streetAddress1Label.setText("Street Address 1");	//G***i18n
-		streetAddress1TextField.setColumns(16);
-//	G***del		streetAddress2Label.setText("Street Address 2");	//G***i18n
-		streetAddress2TextField.setColumns(16);
-//	G***del		streetAddress3Label.setText("Street Address 3");	//G***i18n
-		streetAddress3TextField.setColumns(16);
+		streetAddressesLabel.setText("Street Address");	//G***i18n
+			//TODO turn off tab-handling for streetAddressTextPane
+//G***del; fix; this doesn't work		streetAddressTextPane.setFocusTraversalKeysEnabled(true);
 		localityLabel.setText("City");	//G***i18n
 		localityTextField.setColumns(8);
+//G***fix		streetAddressTextPane.setMinimumSize(new Dimension(streetAddressTextPane.getMinimumSize().width, localityTextField.getPreferredSize().height*3));
+//G***fix		streetAddressTextPane.setPreferredSize(streetAddressTextPane.getMinimumSize());
+
+//G***del		streetAddressTextPane.setBorder(localityTextField.getBorder());
 		regionLabel.setText("State or Province");	//G***i18n
 		regionTextField.setColumns(8);
 		postalCodeLabel.setText("Postal Code");	//G***i18n
@@ -221,25 +192,32 @@ public class AddressPanel extends DefaultPanel
 		countryNameComboBox.setEditable(true);
 		countryNameComboBox.setModel(new DefaultComboBoxModel(LocaleUtilities.getAvailableDisplayCountries()));	//G***i18n
 
+		final JScrollPane streetAddressScrollPane=new JScrollPane(streetAddressTextPane);
+		streetAddressScrollPane.setMinimumSize(new Dimension(streetAddressScrollPane.getMinimumSize().width, localityTextField.getPreferredSize().height*3));
+		streetAddressScrollPane.setPreferredSize(streetAddressScrollPane.getMinimumSize());
+
+		final JButton selectLanguageButton=new JButton(getSelectLanguageAction());
+		selectLanguageButton.setText("");	//TODO create common routine for this
+		selectLanguageButton.setBorder(null);
+
 		//TODO move everything up a row if we leave the address type panel at the bottom
-		add(postOfficeBoxLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		add(postOfficeBoxTextField, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		add(streetAddressesLabel, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		add(streetAddress1TextField, new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		add(streetAddress2TextField, new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		add(streetAddress3TextField, new GridBagConstraints(0, 5, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		add(localityLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		add(localityTextField, new GridBagConstraints(0, 7, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		add(regionLabel, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		add(regionTextField, new GridBagConstraints(1, 7, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		add(postalCodeLabel, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		add(postalCodeTextField, new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		add(countryNameLabel, new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		add(countryNameComboBox, new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
-		add(addressTypePanel, new GridBagConstraints(0, 10, 2, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
+		add(postOfficeBoxLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(postOfficeBoxTextField, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
+		add(streetAddressesLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(selectLanguageButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(streetAddressScrollPane, new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, NO_INSETS, 0, 0));
+		add(localityLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(localityTextField, new GridBagConstraints(0, 5, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
+		add(regionLabel, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(regionTextField, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
+		add(postalCodeLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(postalCodeTextField, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
+		add(countryNameLabel, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(countryNameComboBox, new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
 
-//G***del when works		add(addressTypePanel, new GridBagConstraints(3, 2, 1, 7, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 0), 0, 0));
+		add(addressTypePanel, new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
+//G***del when works		add(addressTypePanel, new GridBagConstraints(3, 2, 1, 7, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, NO_INSETS, 0, 0));
 
 	}
 

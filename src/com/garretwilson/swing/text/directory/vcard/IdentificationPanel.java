@@ -47,6 +47,12 @@ public class IdentificationPanel extends DefaultPanel
 	/**The label of the nickname text field.*/
 	private final JLabel nicknameLabel;
 
+	/**The action for selecting the language of the nickname.*/
+	private final SelectLanguageAction selectNicknameLanguageAction;
+
+		/**@return The action for selecting the language of the nickname.*/
+		public SelectLanguageAction getSelectNicknameLanguageAction() {return selectNicknameLanguageAction;}
+
 	/**The nickname text field.*/
 	private final JTextField nicknameTextField;
 
@@ -80,45 +86,55 @@ public class IdentificationPanel extends DefaultPanel
 		if(formattedName!=null)	//if there is text
 		{
 			formattedNameTextField.setText(formattedName.getText());
-			selectFormattedNameLanguageAction.setLanguage(formattedName.getLocale());
+			selectFormattedNameLanguageAction.setLocale(formattedName.getLocale());
 		}
 		else	//if there is no text
 		{
 			formattedNameTextField.setText("");
-			selectFormattedNameLanguageAction.setLanguage(null);
+			selectFormattedNameLanguageAction.setLocale(null);
 		}
 	}
 	
 	/**@return The formatted name entered, or <code>null</code> if
 		no formatted name was entered.
 	*/
-	public String getFormattedName()
+	public LocaleText getFormattedName()
 	{
-		return StringUtilities.getNonEmptyString(formattedNameTextField.getText().trim());
+		final String fn=StringUtilities.getNonEmptyString(formattedNameTextField.getText().trim());
+		return fn!=null ? new LocaleText(fn, selectFormattedNameLanguageAction.getLocale()) : null;
 	}
 
 	/**Places the nicknames into the field.
 	@param nicknames The nicknames to place in the field, or <code>null</code> if
 		no information should be displayed.
 	*/
-	public void setNicknames(final String[] nicknames)
+	public void setNicknames(final LocaleText[] nicknames)
 	{
 		if(nicknames!=null)	//if there are nicknames
 		{
 			nicknameTextField.setText(StringUtilities.concat(nicknames, VALUE_SEPARATOR));
+			if(nicknames.length>0)	//if there is at least one nickname
+			{
+				selectNicknameLanguageAction.setLocale(nicknames[0].getLocale());
+			}
+			else
+			{
+				selectNicknameLanguageAction.setLocale(null);
+			}
 		}
 		else	//if there are no nicknames
 		{
 			nicknameTextField.setText("");
+			selectNicknameLanguageAction.setLocale(null);
 		}
 	}
 	
 	/**@return The nicknames entered.
 	*/
-	public String[] getNicknames()
+	public LocaleText[] getNicknames()
 	{
 			//get the nicknames TODO make sure each nickname is trimmed
-		return StringTokenizerUtilities.getTokens(new StringTokenizer(nicknameTextField.getText().trim(), VALUE_DELIMITERS));
+		return LocaleText.toLocaleTextArray(StringTokenizerUtilities.getTokens(new StringTokenizer(nicknameTextField.getText().trim(), VALUE_DELIMITERS)), selectNicknameLanguageAction.getLocale());
 	}	
 
 	/**Default constructor.*/
@@ -128,8 +144,9 @@ public class IdentificationPanel extends DefaultPanel
 		namePanel=new NamePanel();
 		formattedNameLabel=new JLabel();
 		formattedNameTextField=new JTextField();
-		selectFormattedNameLanguageAction=new SelectLanguageAction(null, this);	//TODO fix modifiable
+		selectFormattedNameLanguageAction=new SelectLanguageAction(null, this);
 		nicknameLabel=new JLabel();
+		selectNicknameLanguageAction=new SelectLanguageAction(null, this);
 		nicknameTextField=new JTextField();
 		setDefaultFocusComponent(namePanel);	//set the default focus component
 		initialize();	//initialize the panel
@@ -149,7 +166,7 @@ public class IdentificationPanel extends DefaultPanel
 		namePanel.getHonorificSuffixComboBox().addActionListener(createUpdateStatusActionListener());
 		formattedNameLabel.setText("Formatted Name");	//G***i18n
 		final JButton selectFormattedNameLanguageButton=new JButton(getSelectFormattedNameLanguageAction());
-		selectFormattedNameLanguageButton.setText("");
+		selectFormattedNameLanguageButton.setText("");	//TODO create common routine for this
 		selectFormattedNameLanguageButton.setBorder(null);
 		formattedNameTextField.setColumns(10);
 		formattedNameTextField.getDocument().addDocumentListener(new DocumentModifyAdapter()
@@ -162,13 +179,17 @@ public class IdentificationPanel extends DefaultPanel
 					}
 				});
 		nicknameLabel.setText("Nickname");	//G***i18n
+		final JButton selectNicknameLanguageButton=new JButton(getSelectNicknameLanguageAction());
+		selectNicknameLanguageButton.setText("");	//TODO create common routine for this
+		selectNicknameLanguageButton.setBorder(null);
 		nicknameTextField.setColumns(8);
-		add(namePanel, new GridBagConstraints(0, 0, 2, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
+		add(namePanel, new GridBagConstraints(0, 0, 4, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
 		add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(nicknameTextField, new GridBagConstraints(0, 2, 1, 1, 0.4, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
-		add(formattedNameLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(selectFormattedNameLanguageButton, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(formattedNameTextField, new GridBagConstraints(1, 2, 2, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
+		add(selectNicknameLanguageButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(nicknameTextField, new GridBagConstraints(0, 2, 2, 1, 0.4, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
+		add(formattedNameLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(selectFormattedNameLanguageButton, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(formattedNameTextField, new GridBagConstraints(2, 2, 2, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
 	}
 
 	/**Updates the constructed URI based upon current user input.*/

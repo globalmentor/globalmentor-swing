@@ -72,7 +72,7 @@ public class LanguagePanel extends DefaultPanel
 					public int compare(Object o1, Object o2) {return ((Locale)o1).toString().compareTo(((Locale)o2).toString());}
 				}
 		);	//TODO add a comparator here to sort the language display strings
-		languageList.add(0, null);
+		languageList.add(0, null);	//TODO add some non-null object that can be compared to allow proper UI functionality
 		final Locale[] languages=(Locale[])languageList.toArray(new Locale[languageList.size()]);
 		languageComboBox.setModel(new DefaultComboBoxModel(languages));	//set up the available languages G***testing; create renderer
 //G***del		languageComboBox.setModel(new DefaultComboBoxModel(Locale.getAvailableLocales()));	//set up the available languages G***testing; create renderer
