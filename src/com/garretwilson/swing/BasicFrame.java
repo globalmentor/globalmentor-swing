@@ -614,9 +614,9 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 	/**Saves the bounds in the preferences.*/
 	protected void saveBoundsPreferences()
 	{
-		final Preferences preferences=getPreferences();	//get the preferences
 		try
 		{
+			final Preferences preferences=getPreferences();	//get the preferences
 			final Rectangle bounds=getBounds();	//get the current bounds
 			final int extendedState=getExtendedState();	//get the current extended state
 			preferences.putInt(EXTENDED_STATE_PREFERENCE, extendedState);	//store the extended state

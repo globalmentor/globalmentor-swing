@@ -298,6 +298,30 @@ public class ApplicationFrame extends BasicFrame
 //G***del when works			exit(); //exit the application
 			close(); //close the frame; this assumes that setDefaultCloseOperation has been set to DISPOSE_ON_CLOSE or EXIT_ON_CLOSE
 		}
+
+/*TODO fix saving of application configuration, if necessary---code from Mentoract Reader
+		public void actionPerformed(ActionEvent e)
+		{
+			try
+			{
+				close();  //make sure the current book (if any) is closed; this will ensure that any user data associated with the book will be saved
+				final ReaderConfig config=getReaderConfig();  //get a reference to the reader configuration
+				if(config.isModified()) //if the configuration has been modified
+				{
+//G***del Debug.trace("Ready to save config");
+					MentoractReader.saveReaderConfig(config); //save the reader configuration
+				}
+//G***del				getReaderConfig().save(true);	//save the configuration file if it has been modified, making a backup copy
+			}
+			catch(Exception exception)	//if there was an error storing the configuration
+			{
+				Debug.error(exception);	//G***for now, we'll ignore the error
+			}
+			System.exit(0);	//close the program G***check
+		}
+	}
+*/
+	
 	}
 
 	/**Action for showing the help about dialog.*/

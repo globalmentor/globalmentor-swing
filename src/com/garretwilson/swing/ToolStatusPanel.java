@@ -205,23 +205,6 @@ public class ToolStatusPanel extends ContentPanel
 	{
 	}
 
-	/**Sets the application status label.
-	@param status The new status to display.
-	*/
-	public void setStatus(final String status)
-	{
-/*G***fix	
-//G***del Debug.trace("told to change status"); //G***del
-		if(statusStatusLabel!=null) //if we have a status label
-		{
-//G***del Debug.trace("changing status to: ", status); //G***del
-		  statusStatusLabel.setText(status);	//set the status
-//G***del 			statusStatusLabel.repaint();  //G***del; testing
-//G***del 			statusBar.repaint();  //G***del; testing
-		}
-*/
-	}
-
 	/**Sets the position of the toolbar. If there is no toolbar, no action occurs.
 	@param position The new position, one of the <code>BorderLayout</code> constants
 		such as <code>BorderLayout.NORTH</code>.

@@ -8,6 +8,8 @@ import java.net.*;
 import java.net.URI;
 import java.text.*;
 import java.util.*;
+import java.util.prefs.Preferences;
+
 import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -25,6 +27,8 @@ import com.garretwilson.swing.text.xml.oeb.OEBDocument; //G***eventually del
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.garretwilson.text.xml.oeb.*;
 import com.garretwilson.util.*;
+import com.garretwilson.util.prefs.PreferencesUtilities;
+
 import edu.stanford.ejalbert.*;
 
 /**A component shows information in book form. Has an XMLTextPane as a child.
@@ -40,7 +44,7 @@ import edu.stanford.ejalbert.*;
 @see javax.swing.JPanel
 @see com.garretwilson.swing.XMLTextPane
 */
-public class Book extends JComponent implements PageListener, AdjustmentListener, CaretListener, MouseListener  //G***testing MouseListener for image viewing
+public class Book extends ToolStatusPanel implements PageListener, AdjustmentListener, CaretListener, ProgressListener, HyperlinkListener, MouseListener  //G***testing MouseListener for image viewing
 {
 	/**The property representing bookmark changes.*/
 	public final static String BOOKMARKS_PROPERTY="bookmarks";
@@ -51,6 +55,9 @@ public class Book extends JComponent implements PageListener, AdjustmentListener
 	/**The property which stores the user data <code>File</code> object.*/
 	public final static String USER_DATA_FILE_PROPERTY="userData";
 
+	/**The preference for storing the search text.*/
+	protected final String SEARCH_TEXT_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "searchText");
+
 	/**The highlight painter used for displaying bookmark locations.*/
 	protected final static BookmarkHighlightPainter bookmarkHighlightPainter=new BookmarkHighlightPainter();
 
@@ -60,7 +67,7 @@ public class Book extends JComponent implements PageListener, AdjustmentListener
 	private boolean mousePressReleasePopupTrigger=false;
 
 	/**The text pane used to display information.*/
-	private XMLTextPane TextPane; //G***do we want this to just be a text pane? probably not
+	private XMLTextPane TextPane; //TODO make the text pane final
 
 		/**@return The text pane used to display information.*/
 		public XMLTextPane getXMLTextPane() {return TextPane;}	//G***maybe later change this to protected access
@@ -74,24 +81,25 @@ public class Book extends JComponent implements PageListener, AdjustmentListener
 				//catch all document changes in the text pane, since the document is actually changed in a separate thread
 			textPane.addPropertyChangeListener(XMLTextPane.DOCUMENT_PROPERTY, new PropertyChangeListener()
 				{
-				  //if the document property changes, call documentChange()
-				  public void propertyChange(final PropertyChangeEvent event) {documentChange();}
+				  //if the document property changes, call onDocumentChange()
+				  public void propertyChange(final PropertyChangeEvent event) {onDocumentChange();}
 				});
 		  textPane.addPageListener(this); //add ourselves as a page listener, so that we can update the forward and backwards actions G***we probably want to get the events directly from the book
 		}
 
 	/**The scrollbar for showing the position within the book.*/
-	private JScrollBar scrollBar=null;
+	private final JScrollBar scrollBar;
 
 		/**@return The scrollbar for showing the position within the book, or
 		  <code>null</code> if there is no scrollbar.
 		*/
-		public JScrollBar getScrollBar() {return scrollBar;}
+		protected JScrollBar getScrollBar() {return scrollBar;}
 
 		/**Sets the scrollbar for showing the position within the book.
 		@param newScrollBar The scrollbar to use for showing the book position.
 		*/
-		public void setScrollBar(final JScrollBar newScrollBar)
+/*G***del if not needed
+		protected void setScrollBar(final JScrollBar newScrollBar)
 		{
 			if(scrollBar!=newScrollBar) //if we're really changing scrollbars,
 		  {
@@ -103,47 +111,60 @@ public class Book extends JComponent implements PageListener, AdjustmentListener
 				newScrollBar.addAdjustmentListener(this); //tell the scrollbar we want to know when it changes
 		  }
 		}
+*/
 
 	/**The action for navigating to the previous page.*/
-	private final Action previousPageAction=new PreviousPageAction();
+	private final Action previousPageAction;
 
 		/**@return The action for navigating to the previous page.*/
 		public Action getPreviousPageAction() {return previousPageAction;}
 
 	/**The action for navigating to the next page.*/
-	private final Action nextPageAction=new NextPageAction();
+	private final Action nextPageAction;
 
 		/**@return The action for navigating to the next page.*/
 		public Action getNextPageAction() {return nextPageAction;}
 
 	/**The action for moving backwards in navigation history.*/
-	private final Action backAction=new BackAction();
+	private final Action backAction;
 
 		/**@return The action for moving backwards in navigation history.*/
 		public Action getBackAction() {return backAction;}
 
 	/**The action for closing a book.*/
-	private final Action closeAction=new CloseAction();
+	private final Action closeAction;
 
 		/**@return The action for closing a book.*/
 		public Action getCloseAction() {return closeAction;}
 
 	/**The action for copying text.*/
-	private final Action copyAction=new CopyAction();
+	private final Action copyAction;
 
 		/**@return The action for copying text.*/
 		public Action getCopyAction() {return copyAction;}
 
 	/**The action for inserting a highlight.*/
-	private final Action insertHighlightAction=new InsertHighlightAction();
+	private final Action insertHighlightAction;
 
 		/**@return The action for inserting a highlight, which is updated to be
 		  enabled or disabled at the appropriate times based upon the selection.
 		*/
 		public Action getInsertHighlightAction() {return insertHighlightAction;}
 
-	/**The action for displaying the book properties.*/
-	private final Action viewPropertiesAction=new ViewPropertiesAction();
+	/**The action for searching.*/
+	private final Action searchAction;
+
+		/**@return The action for searching.*/
+		public Action getSearchAction() {return searchAction;}
+
+	/**The action for searching for the next occurrence of text.*/
+	private final Action searchAgainAction;
+
+		/**@return The action for searching for the next occurrence of text.*/
+		public Action getSearchAgainAction() {return searchAgainAction;}
+
+		/**The action for displaying the book properties.*/
+	private final Action viewPropertiesAction;
 
 		/**@return The action for displaying the book properties.*/
 		public Action getViewPropertiesAction() {return viewPropertiesAction;}
@@ -164,7 +185,7 @@ public class Book extends JComponent implements PageListener, AdjustmentListener
 		highlights which correspond to those bookmarks. This tree map ensures
 		that the key set will always be in natural bookmark order, from lowest
 		to highest.*/  //G***maybe make this a bound property
-	private final Map bookmarkHighlightTagMap=new TreeMap();
+	private final Map bookmarkHighlightTagMap;
 
 		/**@return The list of bookmarks in the book.*/ //G***maybe later just make an Iterator available
 //G***del		protected List getBookmarkList() {return bookmarkList;}
@@ -311,7 +332,7 @@ Debug.trace("ready to fire property change");
 		highlights which correspond to those annotations. This tree map ensures
 		that the key set will always be in natural annotation order, from lowest
 		to highest.*/
-	private final Map annotationHighlightTagMap=new TreeMap();
+	private final Map annotationHighlightTagMap;
 
 		/**Adds an annotation with a specified starting and ending offsets in the
 		  document.
@@ -491,7 +512,7 @@ Debug.trace("ready to fire property change");
 	//G***tie the history to a property
 
 	/**The list of history positions.*/
-	private java.util.List historyList=new ArrayList();
+	private java.util.List historyList;
 
 	/**The index of the next history index to populate.*/
 	private int historyIndex=0;
@@ -595,33 +616,80 @@ Debug.trace();  //G***del
 		}
 	}
 
-	/**Constructs a new <code>Book</code> with the specified number of pages
+	/**Default constructor that displays two pages.*/
+	public Book()
+	{
+		this(2);	//default to showing two pages
+	}
+
+	/**Constructs a new book with the specified number of pages
 		displayed.
 	@param displayPageCount The number of pages to display.
-	@see com.garretwilson.swing.OEBTextPane
 	*/
 	public Book(final int displayPageCount)
 	{
-		super();	//construct the parent class
+		super(new XMLTextPane(), true, true, false);	//construct the parent class, but don't initialize the book
+		setXMLTextPane((XMLTextPane)getContentComponent());	//store the text pane for use in the future (it will be used by setDisplayPageCount())
+		previousPageAction=new PreviousPageAction();
+		nextPageAction=new NextPageAction();
+		backAction=new BackAction();
+		closeAction=new CloseAction();
+		copyAction=new CopyAction();
+		insertHighlightAction=new InsertHighlightAction();
+		searchAction=new SearchAction();
+		searchAgainAction=new SearchAgainAction();
+		viewPropertiesAction=new ViewPropertiesAction();
+		bookmarkHighlightTagMap=new TreeMap();
+		annotationHighlightTagMap=new TreeMap();
+		historyList=new ArrayList();
+		scrollBar=new JScrollBar(JScrollBar.HORIZONTAL);
+		setDisplayPageCount(displayPageCount);	//set the number of pages to display
+		initialize();	//initialize the book
+	}
+
+	/**Initializes actions in the action manager.
+	@param actionManager The implementation that manages actions.
+	*/
+	protected void initializeActions(final ActionManager actionManager)
+	{
+		super.initializeActions(actionManager);	//do the default initialization
+/*G***transfer to MentoractReaderPanel	
+		final Action fileMenuAction=ActionManager.getFileMenuAction();
+		actionManager.addMenuAction(fileMenuAction);	//file
+		actionManager.addMenuAction(fileMenuAction, sdiManager.getResourceComponentManager().getOpenAction());	//file|open
+*/
+			//set up the tool actions
+		actionManager.addToolAction(getBackAction());	//back
+		actionManager.addToolAction(new ActionManager.SeparatorAction());	//-
+		actionManager.addToolAction(getPreviousPageAction());	//previous
+		actionManager.addToolAction(getNextPageAction());	//next
+		actionManager.addToolAction(new ActionManager.SeparatorAction());	//-
+		actionManager.addToolAction(getSearchAction());	//search
+		actionManager.addToolAction(getSearchAgainAction());	//search again
+	}
+
+	/**Initializes the user interface.*/
+	protected void initializeUI()
+	{
+//	G***fix		setDefaultFocusComponent(burrowTreePanel);	//TODO put this in the constructor, maybe
+		super.initializeUI();	//do the default initialization
 		backAction.setEnabled(false); //default to no history
 		viewPropertiesAction.setEnabled(false); //default to having no properties to view
 		closeAction.setEnabled(false); //default to nothing to close
 		copyAction.setEnabled(false); //disable all our local actions based on selection state
 		insertHighlightAction.setEnabled(false); //disable all our local actions based on selection state
-//G***fix		setLayout(new GridBagLayout());	//create a grid bag layout for our book
-		setLayout(new BorderLayout());	//create a border layout for our book
-//G***del		setLayout(new FlowLayout());	//create a borderlayout for our book
+		searchAction.setEnabled(false); //default to not allowing searching
+		searchAgainAction.setEnabled(false); //default to not allowing searching
 		setDoubleBuffered(false);	//turn off double buffering G***do we want this?
 		setOpaque(true);	//show that we aren't transparent
-		updateUI();	//update the user interface
-		final XMLTextPane xmlTextPane=new XMLTextPane();  //create a new text pane
-		xmlTextPane.setAsynchronousLoad(true);	//turn on asynchronous loading TODO fix this better; tidy up throughout the code
-//G***del/*G***bring back
-		xmlTextPane.setPaged(true); //show that the text pane should page its information
-		setXMLTextPane(xmlTextPane);	//store the text pane for use in the future (it will be used by setDisplayPageCount())
+//G***del		updateUI();	//update the user interface
+		getXMLTextPane().setAsynchronousLoad(true);	//turn on asynchronous loading TODO fix this better; tidy up throughout the code
+		getXMLTextPane().setPaged(true); //show that the text pane should page its information
 		add(getXMLTextPane(), BorderLayout.CENTER);	//add the text pane to the center of our control
 		getXMLTextPane().setEditable(false);	//don't let the OEB text pane be edited in this implementation
-		setDisplayPageCount(displayPageCount);	//set the number of pages to display
+		getXMLTextPane().addProgressListener(this);	//listen for progress events
+		getXMLTextPane().addHyperlinkListener(this);  //listen for hyperlink events
+/*G***del when works
 		getXMLTextPane().addHyperlinkListener(  //add a listener for hyperlink events
 			new HyperlinkListener()
 			{
@@ -633,9 +701,89 @@ Debug.trace();  //G***del
 					}
 				}
 			});
+*/
 		getXMLTextPane().addCaretListener(this);	//listen for caret events so that we can enable or disable certain actions
 		getXMLTextPane().addMouseListener(this);	//G***testing
-//G***del*/
+//G***fix		statusBar.add(statusProgressBar, new GridBagConstraints(1, 0, 1, 1, 0.5, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));	//G***testing
+//G***fix		statusSlider.setPaintLabels(true);  //turn on label painting
+//G***fix		statusSlider.setPaintTicks(true); //turn on tick painting
+
+
+//G***fix		statusSlider.setPaintTrack(true); //turn on track painting
+//G***fix		statusSlider.setMajorTickSpacing(2);  //G***testing
+//G***fix		statusSlider.setMajorTickSpacing(1);
+
+		getStatusBar().setStatusVisible(true);	//always show the status label
+		getStatusBar().setProgressVisible(true);	//always show the progress bar
+		getStatusBar().validate();	//make sure the status bar is correctly sized
+		getStatusBar().setPreferredSize(getStatusBar().getPreferredSize());	//fix the status bar at its current preferred size so that it won't change the book dimensions when it's updated
+		scrollBar.addAdjustmentListener(this); //tell the scrollbar we want to know when it changes
+		add(scrollBar, BorderLayout.SOUTH);	//add the scroll bar to the panel
+	}
+
+	/**Invoked when progress has been made.
+	@param progressEvent The event object representing the progress made.
+	*/
+	public void madeProgress(final ProgressEvent progressEvent)
+	{
+		final StatusBar statusBar=getStatusBar();	//get our status bar
+//G***del Debug.trace("made progress: ", progressEvent.getTask());  //G**del
+		if(progressEvent.isFinished())  //if the progress is finished (whatever the progress is)
+		{
+//G***del Debug.trace("is finished: ", progressEvent.getTask());  //G**del
+		  if(progressEvent.getTask().equals(XMLTextPane.CONSTRUCT_TASK))  //if the document is finished being constructed, we'll treat this as a "finished loading" notification G***probably add some specific document setting event later, or something; actually, that's already there with the document property changing
+			{
+//TODO fix				refreshGoGuidesMenu();  //G***testing; comment; G***fix for multithreaded loading
+			}
+		  else if(progressEvent.getTask().equals(XMLTextPane.PAGINATE_TASK))  //if the document is finished being paginated G***probably add some specific document setting event later, or something; actually, that's already there with the document property changing
+			{
+//TODO fix				refreshGoBookmarksMenu(); //update the bookmarks menu, even though these were already set during document loading, because pagination changes the pages they point to
+			}
+//G***del when works			setStatus("");	//clear the status
+//G***del Debug.trace("setting status progress to zero"); //G***del
+		  statusBar.setProgress("", 0);  //set the value of the progress bar to zero
+		}
+		else  //if the progress is still ongoing
+		{
+		  final int value=Math.round(progressEvent.getValue());  //get the current value of the progress
+			if(value>=0)  //if they've given us a valid value
+			{
+				final int maximum=Math.round(progressEvent.getMaximum());  //get the maximum value of the progress
+				statusBar.setProgressRange(0, maximum);	//set the range
+				statusBar.setProgress(progressEvent.getStatus(), value); //show the progress status and progress value on the status bar
+			}
+			else	//if there is no progress value
+			{
+				statusBar.setProgress(progressEvent.getStatus()); //show the progress status on the status bar
+			}
+/*G***maybe fix for threaded pagination
+		  if(e.getTask().equals(XMLPagedView.PAGINATE_TASK))  //if we've paginated another page G***testing; maybe only do this if we have threaded pagination
+			{
+				final int pageIndex=book.getPageIndex(); //get our current page index
+				final int pageCount=book.getPageCount(); //get our current page count
+				final int displayPageCount=book.getDisplayPageCount(); //find out how many pages at a time are being displayed
+				previousPageAction.setEnabled(pageIndex>0); //we can only go back if the new page index is greater than zero
+				nextPageAction.setEnabled(pageIndex+displayPageCount<pageCount); //we can only go forwards if the turning the page would not be over the total number of pages
+			}
+*/
+		}
+//G***bring back, fix		setStatusLater(e.getStatus());	//update the status later
+	}
+
+	/**Invoked when a hyperlink action occurs.
+	@param hEvent The hyperlink event.
+	*/
+	public void hyperlinkUpdate(HyperlinkEvent hyperlinkEvent)
+	{
+		if(hyperlinkEvent.getEventType()==HyperlinkEvent.EventType.ENTERED)	//if the cursor is entering a hyperlink
+			getStatusBar().setStatus(hyperlinkEvent.getURL().toString());	//show the URL in the status
+		else if(hyperlinkEvent.getEventType()==HyperlinkEvent.EventType.EXITED)	//if the cursor is exiting a hyperlink
+			getStatusBar().setStatus("");	//G***testing
+				//G***check about the loadingPage flag
+		if(hyperlinkEvent.getEventType()==HyperlinkEvent.EventType.ACTIVATED)	//if the cursor is entering the
+		{
+			activateLink(hyperlinkEvent);	//activate the link
+		}
 	}
 
 	/**Called when the displayed page has changed, so that we can update the page
@@ -960,14 +1108,6 @@ Debug.trace("Relative offset: ", relativeOffset);
 		}
 	}
 
-	/**Constructs a new <code>Book</code> defaulting to displaying two pages.
-	@see com.garretwilson.swing.OEBTextPane
-	*/
-	public Book()
-	{
-		this(2);	//default to showing two pages
-	}
-
 	/**Sets the given XML data.
 	@param xmlDocument The XML document that contains the data.
 	@param baseURI The base URI, corresponding to the XML document.
@@ -1018,45 +1158,6 @@ Debug.trace("Relative offset: ", relativeOffset);
 				final UserData userData=getUserData(); //create a new user data object to represent the data in this book
 					//G***check the return value here
 			  XMLStorage.store(userData, userDataFile, true); //save the user data to the user data file, making a backup file in the process
-/*G***del when works
-				BeanUtilities.xmlEncode(userData, userDataFile);  //save the user data to the user data file
-
-
-
-				final XMLStorage xmlStorage=new XMLStorage(); //G***testing
-				final com.garretwilson.text.xml.XMLDocument xmlDocument=new com.garretwilson.text.xml.XMLDocument();  //G***testing
-				xmlStorage.store(userData, xmlDocument);
-
-Debug.trace("saved XML tree:");
-com.garretwilson.text.xml.XMLUtilities.printTree(xmlDocument, Debug.getOutput()); //G***del; testing
-
-try
-{
-	final UserData userData2=(UserData)XMLStorage.retrieve(xmlDocument, UserData.class);
-
-Debug.trace("userdata2: ", userData2);  //G***del
-Debug.trace("userdata2 bookmarks: ", userData2.getBookmarks());  //G***del
-Debug.trace("userdata2 bookmarks length: ", userData2.getBookmarks().length);  //G***del
-Debug.trace("userdata2 bookmarks 0: ", userData2.getBookmarks()[0]);  //G***del
-
-	final com.garretwilson.text.xml.XMLDocument xmlDocument2=new com.garretwilson.text.xml.XMLDocument();  //G***testing
-	xmlStorage.store(userData2, xmlDocument2);
-
-
-	Debug.trace("saved XML tree 2:");
-	com.garretwilson.text.xml.XMLUtilities.printTree(xmlDocument2, Debug.getOutput()); //G***del; testing
-}
-catch(Exception e)
-{
-	Debug.error(e);
-}
-
-
-		  XMLStorage.store(userData, new File("d:\\temp.xml")); //G***testing
-
-
-				BeanUtilities.xmlEncode(userData, userDataFile);  //save the user data to the user data file
-*/
 			}
 			catch(IOException e)  //if anything went wrong saving the user data
 			{
@@ -1085,6 +1186,51 @@ catch(Exception e)
 			open(uri);  //open the book from the same location
 		}
 	}
+
+	/**Reloads the open file.*/
+/*TODO move to MentoractReaderPanel
+	public void reload()
+	{
+		try
+		{
+//G***probably set a loading flag here, so that we won't recursively try to load
+
+		  final Cursor originalCursor=ComponentUtilities.setCursor(this, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); //show the wait cursor
+			try
+			{
+					//we'll reload the document in a separate non-AWT thread, so that status
+					//  updates occur correctly; the actual setting of the document, however,
+					//  will be performed in the AWT thread to prevent multithreading
+					//  conflicts.
+				final Thread loadThread=new Thread()
+					{
+						public void run()
+						{
+		//G***fix					setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));	//show the wait cursor
+							try
+							{
+								book.reload();	//G***testing
+							}
+							catch(IOException e)
+							{
+								SwingApplication.displayApplicationError(ReaderFrame.this, "Error opening document", e); //G***do we need to clean up anything? G***i18n
+		//G***fix						setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));	//go back to the default cursor
+							}
+						}
+					};
+				loadThread.start(); //start the loading process
+			}
+			finally
+			{
+				ComponentUtilities.setCursorLater(this, originalCursor); //put the cursor back to its original form, making sure it happens after all other AWT events
+			}
+		}
+		catch(Exception ex)
+		{
+			SwingApplication.displayApplicationError(this, "Error opening document", ex); //G***i18n
+		}
+	}
+*/
 
 	/**Reads the book content from a reader.
 	@param in The stream to read from.
@@ -1149,12 +1295,15 @@ catch(Exception e)
 		<code>open()</code>.
 	@see #open
 	*/
-	public void documentChange()
+	protected void onDocumentChange()
 	{
 		final URI uri=getURI(); //get our current URI
 Debug.trace("document change, URI: ", uri);
 			//update the actions
 		closeAction.setEnabled(uri!=null);  //only enable the close button if there is a book open
+		searchAction.setEnabled(uri!=null);  //only enable searching if there is a file open
+		searchAgainAction.setEnabled(uri!=null);  //only enable searching if there is a file open
+//TODO transfer this to MentoractReaderPanel		reloadAction.setEnabled(book.getURI()!=null);  //only enable the reload button if there is a file open
 	  final RDF rdf=getRDF(); //get the loaded metadata
 		getViewPropertiesAction().setEnabled(rdf!=null);  //only enable the properties button if there is RDF
 			//update the user data
@@ -1360,6 +1509,97 @@ Debug.trace("ready to start clip.");
 		{
 			Debug.traceStack(exception);  //G***fix
 			Debug.error("Error activating hyperlink "+hyperlinkURI+": "+exception);	//G***fix; this is an important error which should be reported back to the user in a consistent way
+		}
+	}
+
+	/**The text to search for, saved between searches.*/
+	protected String searchText="";
+
+	/**Ask the user for a search string and searches for text starting on the
+	current page.
+	*/
+	public void search()
+	{
+		search(getXMLTextPane().getPageStartOffset(getPageIndex()));	//we'll start searching at the beginning of whichever page is showing
+	}
+
+	/**Ask the user for a search string and searches for text at the given offset.
+	@param searchOffset The offset at which searching should begin, or
+		<code>XMLTextPane.NEXT_SEARCH_OFFSET</code> if searching should take place
+		where the last search left off.
+	@see XMLTextPane#NEXT_SEARCH_OFFSET
+	*/
+	public void search(final int searchOffset)
+	{
+		String defaultSearchText=searchText;	//get the current search text
+		if(defaultSearchText==null || defaultSearchText.length()==0)	//if there is no default search text, try to find default search text from the preferences
+		{
+			try
+			{
+				final Preferences preferences=getPreferences();	//get the preferences
+				defaultSearchText=preferences.get(SEARCH_TEXT_PREFERENCE, "");	//get the stored search text
+			}
+			catch(SecurityException securityException)	//if we can't access preferences
+			{
+				Debug.warn(securityException);	//warn of the security problem			
+			}
+		}
+		final String newSearchText=(String)JOptionPane.showInputDialog(this, "Enter search word or phrase:", "Search", JOptionPane.QUESTION_MESSAGE, null, null, defaultSearchText);	//G***i18n
+		if(newSearchText!=null && newSearchText.length()>0) //if they want to search
+		{
+			searchText=newSearchText;	//save the search text for other searches
+			try
+			{
+				final Preferences preferences=getPreferences();	//get the preferences
+				preferences.put(SEARCH_TEXT_PREFERENCE, searchText);	//store the search text for next time
+			}
+			catch(SecurityException securityException)	//if we can't access preferences
+			{
+				Debug.warn(securityException);	//warn of the security problem			
+			}
+			search(searchText, searchOffset); //search for the text
+		}
+	}
+
+	/**Searches for the current search text at the last search offset.
+	If there is no search text, the user is asked for search text.
+	@see #search()
+	@see #search(String, int)
+	*/
+	public void searchAgain()
+	{
+		if(searchText!=null && searchText.length()>0)  //if there is search text
+		{
+			search(searchText, XMLTextPane.NEXT_SEARCH_OFFSET); //search for the text at the next search position
+		}
+		else	//if there is no search text
+		{
+			search();	//start searching from scratch
+		}		
+	}
+
+	/**Searches for text at the given offset.
+	@param searchText The text for which to search.
+	@param searchOffset The offset at which searching should begin, or
+		<code>XMLTextPane.NEXT_SEARCH_OFFSET</code> if searching should take place
+		where the last search left off.
+	@see XMLTextPane#NEXT_SEARCH_OFFSET
+	*/
+	public void search(final String searchText, final int searchOffset)
+	{
+		final int matchOffset;  //G***testing; comment; don't access deeply
+		getStatusBar().setStatus("Searching...");	//G***testing; i18n G***doesn't work, because this is in a separate AWT thread
+		try
+		{
+			matchOffset=getXMLTextPane().search(searchText, searchOffset);  //G***testing; comment; don't access deeply
+		}
+		finally
+		{
+			getStatusBar().setStatus("");	//G***testing; comment
+		}
+		if(matchOffset<0) //if the text was not found
+		{
+			SwingApplication.displayApplicationError(this, "The requested text was not found.", "Search Results"); //show that the text was not found
 		}
 	}
 
@@ -1872,6 +2112,81 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 		public void actionPerformed(ActionEvent e)
 		{
 			viewImage(imageHRef); //view the image
+		}
+	}
+
+	/**Action for reloading a book.*/
+//TODO transfer this to MentoractReaderPanel	protected class ReloadAction extends AbstractAction	
+//TODO transfer this to MentoractReaderPanel	{
+		/**Default constructor.*/
+/*TODO transfer this to MentoractReaderPanel
+		public ReloadAction()
+		{
+			super("Reload");	//create the base class G***Int
+			putValue(SHORT_DESCRIPTION, "Reload the open eBook");	//set the short description G***Int
+			putValue(LONG_DESCRIPTION, "Reload the currently open eBook.");	//set the long description G***Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_R));  //set the mnemonic key G***i18n
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.REDO_ICON_FILENAME)); //load the correct icon
+		}
+*/
+
+		/**Called when the action should be performed.
+		@param e The event causing the action.
+		*/
+/*TODO transfer this to MentoractReaderPanel
+		public void actionPerformed(ActionEvent e)
+		{
+			reload();	//close the file
+//G***del			book.getXMLTextPane().requestFocus(); //put the focus back on the book, in case the focus was transferred G***fix the book's default focus somehow so that we don't have to access deep variables
+		}
+	}
+*/
+
+	/**Action for searching for text.*/
+	protected class SearchAction extends AbstractAction
+	{
+
+		/**Default constructor.*/
+		public SearchAction()
+		{
+			super("Find...");	//create the base class G***Int
+			putValue(SHORT_DESCRIPTION, "Find text");	//set the short description G***Int
+			putValue(LONG_DESCRIPTION, "Search for text within the book.");	//set the long description G***Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_F));  //set the mnemonic key G***i18n
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SEARCH_ICON_FILENAME)); //load the correct icon
+		  putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, Event.CTRL_MASK)); //add the accelerator
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+			search();	//start the search
+		}
+	}
+
+	/**Action for searching again for text.*/
+	protected class SearchAgainAction extends AbstractAction
+	{
+
+		/**Default constructor.*/
+		public SearchAgainAction()
+		{
+			super("Find Again");	//create the base class G***Int
+			putValue(SHORT_DESCRIPTION, "Find text again");	//set the short description G***Int
+			putValue(LONG_DESCRIPTION, "Search for text that occurs after the last search.");	//set the long description G***Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_A));  //set the mnemonic key G***i18n
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SEARCH_AGAIN_ICON_FILENAME)); //load the correct icon
+		  putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0)); //add the accelerator
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+			searchAgain();	//continue the search
 		}
 	}
 

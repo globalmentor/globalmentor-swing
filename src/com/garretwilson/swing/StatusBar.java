@@ -6,6 +6,7 @@ import com.garretwilson.awt.BasicGridBagLayout;
 
 /**A toolbar showing status, such as text labels and progress bars.
 <p>By default progress is not visible until some change in progress.</p>
+<p>By default status is not visible until some change in status.</p>
 @author Garret Wilson
 */
 public class StatusBar extends BasicToolBar
@@ -14,8 +15,17 @@ public class StatusBar extends BasicToolBar
 	/**Insets to use for the major status components.*/
 	protected final Insets STATUS_INSETS=new Insets(2, 2, 2, 2);
 
+	/**The zero-based relative size of the general status label font.*/
+//G***del	protected final int STATUS_LABEL_RELATIVE_FONT_SIZE=-1;
+
 	/**The zero-based relative size of the progress bar font.*/
 	protected final int PROGRESS_BAR_RELATIVE_FONT_SIZE=-1;
+
+	/**The status label.*/
+	private final JLabel statusLabel;
+
+		/**@return The status label.*/
+		protected JLabel getStatusLabel() {return statusLabel;}
 
 	/**The progress bar.*/
 	private final JProgressBar progressBar;
@@ -102,6 +112,7 @@ public class StatusBar extends BasicToolBar
 		super(name, orientation, false);	//construct the parent class without initializing it
 		setLayout(new BasicGridBagLayout());	//switch to a basic grid layout
 		statusComponentPanel=new BasicPanel(new BasicGridBagLayout());	//create the panel on which custom status components can be placed
+		statusLabel=createStatusLabel();	//create the status label
 		progressBar=new JProgressBar();	//create the progress bar
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel
@@ -113,7 +124,11 @@ public class StatusBar extends BasicToolBar
 		super.initializeUI();	//do the default user interface initialization
 //G**del if not needed		setBorder(BorderFactory.createEtchedBorder());	//set the status border
 		statusComponentPanel.setOpaque(false);	//the status component panel is only for layout
+		setStatusVisible(false);	//hide status until there is some change in status
 		setProgressVisible(false);	//hide progress until there is some change in progress
+			//change the font size of the status label
+//G***del if not needed		statusLabel.setFont(statusLabel.getFont().deriveFont((float)statusLabel.getFont().getSize()+STATUS_LABEL_RELATIVE_FONT_SIZE));
+		addStatusComponent(statusLabel);	//add the general status label
 //G***fix		statusStatusLabel.setFont(statusBar.getFont().deriveFont((float)statusBar.getFont().getSize()-1));	//G***testing
 //G**fix		statusBar.add(statusStatusLabel, new GridBagConstraints(0, 0, 1, 1, 0.5, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));	//add the status label to the status bar
 				//TODO i18n add these status components correctly west or east based upon component orientation, and make sure the orientation of the status component panel matches 
@@ -133,7 +148,31 @@ public class StatusBar extends BasicToolBar
 	public void addStatusComponent(final Component component)
 	{
 			//add the status component to the status component panel in the next position horizontally
-		getStatusComponentPanel().add(component, ((BasicGridBagLayout)getStatusComponentPanel().getLayout()).createNextBoxConstraints(BasicGridBagLayout.X_AXIS));
+		getStatusComponentPanel().add(component, ((BasicGridBagLayout)getStatusComponentPanel().getLayout()).createNextBoxConstraints(BasicGridBagLayout.X_AXIS));	//G***fix, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH));
+	}
+
+	/**Sets whether general status is visible.
+	@param visible <code>true</code> if general status should be visible, else
+		<code>false</code> if it should be hidden.
+	*/
+	public void setStatusVisible(final boolean visible)
+	{
+		getStatusLabel().setVisible(visible);	//show or hide the general status label		
+	}
+
+	/**Sets the text to be displayed on the general status label.
+	<p>If text is not <code>null</code>, status visibility is turned on if it
+		isn't already.</p>
+	@param text The text to be displayed on the status label, or <code>null</code>
+		if no text should be displayed.
+	*/
+	public void setStatus(final String text)
+	{
+		getStatusLabel().setText(text);	//set the text of the status label
+		if(text!=null)	//if there is text
+		{
+			setStatusVisible(true);	//show status
+		}
 	}
 
 	/**Sets whether progress is visible.
