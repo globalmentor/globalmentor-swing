@@ -434,8 +434,10 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	protected void updateStatus()
 	{
 		setTitle(constructTitle());  //update the title
+/*G***fix this; this isn't good, because if a child class uses another save action, such as a proxied action, this will screw things up
 		final RDFResourceState description=getDocumentDescription();	//see what document is being described
 		getFileSaveAction().setEnabled(description!=null && description.isModified());	//only enable saving when there is a document that's modified
+*/
 	}
 
 	/**@return A new menu bar with appropriate menus.*/

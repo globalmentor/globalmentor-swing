@@ -37,6 +37,7 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 	{
 		super();  //construct the parent
 		setProxiedAction(null); //show that we don't have a proxied action, yet (this will correctly disable the action)
+		setEnabled(true);	//G***testing
 	}
 
 	/**Defines a proxy action object with the specified description string and a
@@ -96,16 +97,18 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 		{
 //G***don't change the name to work around a Java bug that adds the text to buttons even if they shouldn't be changed
 //G***fix; see above comment		  putValue(Action.NAME, action.getValue(Action.NAME));
-			putValue(Action.NAME, action.getValue(Action.NAME));	//G***see if this works in JDK 1.4.1
-		  putValue(Action.SMALL_ICON, action.getValue(Action.SMALL_ICON));
-		  putValue(Action.SHORT_DESCRIPTION, action.getValue(Action.SHORT_DESCRIPTION));
-		  putValue(Action.LONG_DESCRIPTION, action.getValue(Action.LONG_DESCRIPTION));
+			putValue(NAME, action.getValue(NAME));	//G***see if this works in JDK 1.4.1
+		  putValue(SMALL_ICON, action.getValue(SMALL_ICON));
+		  putValue(SHORT_DESCRIPTION, action.getValue(SHORT_DESCRIPTION));
+		  putValue(LONG_DESCRIPTION, action.getValue(LONG_DESCRIPTION));
 /*G***fix; with a proxied action with a mnemonic key of Integer('s'), this traps Alt+F4
 		  if(action.getValue(Action.MNEMONIC_KEY)!=null)  //G***testing; why is this needed, and not for the others?
 		    putValue(Action.MNEMONIC_KEY, action.getValue(Action.MNEMONIC_KEY));
 */
 //G***fix; this gives strange results sometimes		  putValue(Action.ACTION_COMMAND_KEY, action.getValue(Action.ACTION_COMMAND_KEY));
 //G***fix; this gives strange results sometimes		  putValue(Action.ACCELERATOR_KEY, action.getValue(Action.ACCELERATOR_KEY));
+			putValue(ACCELERATOR_KEY, action.getValue(ACCELERATOR_KEY)); //G***is this fixed in JDK1.4.x?
+
 		  setEnabled(action.isEnabled()); //update the enabled property G***can this be done with a normal property?
 		}
 		else  //if there is no action
@@ -180,7 +183,7 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 	public void propertyChange(final PropertyChangeEvent propertyChangeEvent)
 	{
 		final String propertyName=propertyChangeEvent.getPropertyName();  //get the property name being changed
-Debug.trace("proxied property changed: ", propertyName);  //G***del when fixed enabled/disabled
+//G***del Debug.trace("proxied property changed: ", propertyName);  //G***del when fixed enabled/disabled
 //G***del Debug.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del when fixed enabled/disabled
 /*G***fix for when/if we have a weak reference to the proxied action
 		if(proxyAction==null) //if we no longer have a proxy action (its weak reference has been garbage collected)

@@ -426,6 +426,18 @@ public class BasicPanel extends JPanel implements CanClosable, DefaultFocusable,
 		return createModifyPropertyChangeListener(MODIFIED_PROPERTY_NAME, Boolean.TRUE);	//create a property change listener that will set modified to true if the modified property changes to true
 	}
 
+	/**Creates a property change listener that, when a property chnages,
+		updates the status.
+	@see #updateStatus
+	*/
+	public PropertyChangeListener createUpdateStatusPropertyChangeListener()
+	{
+		return new PropertyChangeListener()	//create a new property change listener that will do nothing but update the status
+				{
+					public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {updateStatus();}	//if a property is modified, update the status
+				};
+	}
+
 	/**Creates an item that, when an item is modified, updates
 		the modified status to <code>true</code>.
 	@see #setModified
