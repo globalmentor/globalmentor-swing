@@ -369,7 +369,7 @@ G***fix
 		{
 			final org.w3c.dom.Document xmlDocument=getXML(((XMLDocument)document));  //create an XML document from given Swing document
 			final XMLSerializer xmlSerializer=new XMLSerializer();  //create an XML serializer G***fix the formatted argument
-			xmlSerializer.serialize(xmlDocument, outputStream, encoding);  //write the document to the output stream using the specified encoding
+			xmlSerializer.serialize(xmlDocument, outputStream, new CharacterEncoding(encoding));  //write the document to the output stream using the specified encoding
 		}
 		else  //if the document is not an XML document
 			super.write(outputStream, document, pos, len);  //do the default writing
