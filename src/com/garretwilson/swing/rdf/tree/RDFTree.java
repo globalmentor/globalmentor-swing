@@ -11,7 +11,7 @@ import org.w3c.dom.*;
 /**Class that displays RDF in a tree and allows it to be explored.
 @author Garret Wilson
 */
-public class RDFTree extends JTree
+public class RDFTree extends JTree	//TODO eventually delete this class and just allow the model to be set
 {
 	private RDFXMLifier rdfXMLifier=new RDFXMLifier();  //create an object for serializing RDF G***maybe allow this to be specified externally
 

@@ -160,35 +160,50 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 		final StringBuffer stringBuffer=new StringBuffer(); //create a new string buffer
 		if(property!=null)  //if we we are the object of a property
 		{
-			stringBuffer.append(getXMLifier().getLabel(property)); //append "property:"
+			stringBuffer.append(getXMLifier().getLabel(property)); //append "property"
 		}
 		if(userObject instanceof RDFResource) //if we're representing a resource
 		{
 			final RDFResource resource=(RDFResource)userObject; //cast the user object to a resource
 			final RDFResource type=RDFUtilities.getType(resource);  //get the type of the resource
 			final RDFLiteral label=RDFSUtilities.getLabel(resource);	//get the label of the resource
+			boolean hasPredicateToken=false;	//we'll note whether we ever have something to represent the predicate of the statement
 			if(type!=null) //if we have a type
 			{
-				if(property!=null) //if we had a property
-					stringBuffer.append(':').append(' '); //append ": " to separate the property from the type
+				if(property!=null && !hasPredicateToken) //if we had a property but no predicate representation
+					stringBuffer.append(':'); //append a colon to separate the property from the rest
+				if(hasPredicateToken) //if we had something to represent the predicate
+					stringBuffer.append(' '); //append a space to separate the rest
 				stringBuffer.append('(').append(getXMLifier().getLabel(type)).append(')'); //append "(type)"
+				hasPredicateToken=true;	//show that we have something to represent the predicate
 			}
 			if(label!=null)	//if there is a label
 			{
-				if(property!=null && type==null)  //if we had a property, but no type
-					stringBuffer.append(':'); //append a colon to separate the property from the label
-				if(property!=null || type!=null) //if we had either a property or a type
-					stringBuffer.append(' '); //append a space to separate the property and/or type from the label
+				if(property!=null && !hasPredicateToken) //if we had a property but no predicate representation
+					stringBuffer.append(':'); //append a colon to separate the property from the rest
+				if(hasPredicateToken) //if we had something to represent the predicate
+					stringBuffer.append(' '); //append a space to separate the rest
 				stringBuffer.append(label);		//append the text of the label
+				hasPredicateToken=true;	//show that we have something to represent the predicate
 			} 
 			if(resource.getReferenceURI()!=null) //if there is no label and this is not a blank node resource
 			{
-				if(property!=null && type==null && label==null)  //if we had a property, but no type or label
-					stringBuffer.append(':'); //append a colon to separate the property from the reference URI
-				if(property!=null || type!=null || label!=null) //if we had a property or a type or a label
-					stringBuffer.append(' '); //append a space to separate the property and/or type from the reference URI
+				if(property!=null && !hasPredicateToken) //if we had a property but no predicate representation
+					stringBuffer.append(':'); //append a colon to separate the property from the rest
+				if(hasPredicateToken) //if we had something to represent the predicate
+					stringBuffer.append(' '); //append a space to separate the rest
 				stringBuffer.append('[').append(getXMLifier().getLabel(resource)).append(']');  //append "[referenceURI]" label
-//G***del when works			  stringBuffer.append('[').append(resource.getReferenceURI()).append(']');  //append "[referenceURI]"
+				hasPredicateToken=true;	//show that we have something to represent the predicate
+			}
+			final RDFLiteral literalValue=RDFUtilities.getValue(resource);	//get the literal rdf:value property value, if there is one
+			if(literalValue!=null)	//if this resource has a literal value
+			{
+				if(property!=null && !hasPredicateToken) //if we had a property but no predicate representation
+					stringBuffer.append(':'); //append a colon to separate the property from the rest
+				if(hasPredicateToken) //if we had something to represent the predicate
+					stringBuffer.append(' '); //append a space to separate the rest
+				stringBuffer.append('{').append(literalValue.getLexicalForm()).append('}');  //append "{lexicalForm}" label
+				hasPredicateToken=true;	//show that we have something to represent the predicate				
 			}
 			return stringBuffer.toString(); //return the resource string we constructed
 		}

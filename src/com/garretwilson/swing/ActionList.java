@@ -19,7 +19,7 @@ public class ActionList extends JList
 {
 
 	/**The list of action listeners.*/
-	private final EventListenerList actionListenerList=new EventListenerList();
+	protected final EventListenerList actionListenerList=new EventListenerList();
 
 	/**Constructs a list that displays the elements in the specified, non-null model.
 	@param dataModel The data model for this list.

@@ -590,6 +590,21 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 				};
 	}
 
+	/**Creates a list data listener that, when a list model is modified, updates
+		the status.
+	@see #updateStatus
+	*/
+	public ListDataListener createUpdateStatusListDataListener()
+	{
+		return new ListDataListener()	//create a new list data listener that will do nothing but update the status in response to changes
+				{
+					public void intervalAdded(final ListDataEvent listDataEvent) {updateStatus();}
+					public void intervalRemoved(final ListDataEvent listDataEvent) {updateStatus();}
+					public void contentsChanged(final ListDataEvent listDataEvent) {updateStatus();}
+				};
+	}
+
+
 		//Scrollable methods
 
 
