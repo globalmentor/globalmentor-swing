@@ -3,10 +3,7 @@ package com.garretwilson.swing;
 import java.awt.FlowLayout;
 import java.awt.LayoutManager;
 import java.io.IOException;
-import javax.swing.*;
-
-import com.garretwilson.model.Model;
-import com.garretwilson.model.ModelViewable;
+import com.garretwilson.model.*;
 
 /**Panel that allows multiple views of a data model to be displayed.
 <p>Bound properties:</p>
@@ -59,8 +56,8 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 				}
 				catch(IOException ioException)	//if there were any problems saving the model
 				{
-					cancelModelViewChange(oldView, newView);	//cancel the change					
-					OptionPane.showMessageDialog(this, ioException.getMessage(), ioException.getClass().getName(), JOptionPane.ERROR_MESSAGE);	//G***i18n; TODO fix in a common routine
+					cancelModelViewChange(oldView, newView);	//cancel the change
+					SwingApplication.displayApplicationError(this, ioException);	//display the error
 					return;	//don't change the view
 				}		
 				dataView=newView; //update the value
@@ -70,7 +67,7 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 				}
 				catch(IOException ioException)	//if there were any problems saving the model
 				{
-					OptionPane.showMessageDialog(this, ioException.getMessage(), ioException.getClass().getName(), JOptionPane.ERROR_MESSAGE);	//G***i18n; TODO fix in a common routine
+					SwingApplication.displayApplicationError(this, ioException);	//display the error
 				}		
 				onModelViewChange(oldView, newView);	//show this class that the model is changing
 				firePropertyChange(MODEL_VIEW_PROPERTY, new Integer(oldView), new Integer(newView));	//show that the property has changed
@@ -158,7 +155,7 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 		}
 		catch(IOException ioException)	//if there were any problems saving the model
 		{
-			OptionPane.showMessageDialog(this, ioException.getMessage(), ioException.getClass().getName(), JOptionPane.ERROR_MESSAGE);	//G***i18n; TODO fix in a common routine
+			SwingApplication.displayApplicationError(this, ioException);	//display the error
 		}		
 	}
 
