@@ -54,6 +54,9 @@ public class RDFTreeUtilities
 		  //if this is a folder
 		if(RDFUtilities.isType(rdfResource, FileOntologyConstants.FILE_NAMESPACE_URI, FileOntologyConstants.FOLDER_TYPE_NAME))
 		{
+
+
+//TODO after the manifest is converted to an rdf:List and changed to xpackage:children, move this whole class to RDFTree and give that class options for showing properties and/or children 
 			final RDFBagResource manifest=XPackageUtilities.getManifest(rdfResource); //get the resource manifest
 			if(manifest!=null)  //if the resource has a manifest
 			{

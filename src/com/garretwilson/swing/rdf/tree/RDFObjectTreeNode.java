@@ -92,6 +92,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 	/**Dynamically loads child nodes for all properties.*/
 	protected void loadChildNodes()
 	{
+		removeAllChildren();	//remove all children G***maybe put this in some common place
 		if(getUserObject() instanceof RDFResource)  //if we represent an RDF resource
 		{
 			final Iterator propertyIterator=((RDFResource)getUserObject()).getPropertyIterator();  //get an iterator to all properties
