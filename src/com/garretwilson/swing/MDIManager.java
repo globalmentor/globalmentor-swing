@@ -25,10 +25,10 @@ public class MDIManager implements InternalFrameListener
 		protected JDesktopPane getDesktopPane() {return desktopPane;}
 
 	/**The application frame for which this object is a manager.*/
-	private final ApplicationFrame applicationFrame;
+	private final ApplicationFrame2 applicationFrame;
 
 		/**@return The application frame for which this object is a manager.*/
-		protected ApplicationFrame getApplicationFrame() {return applicationFrame;}
+		protected ApplicationFrame2 getApplicationFrame() {return applicationFrame;}
 
 	/**Creates a MDI destop manager that manages internal framems in a desktop
 		pane.
@@ -36,7 +36,7 @@ public class MDIManager implements InternalFrameListener
 		manager.
 	@param newDesktopPane The desktop pane that will holds the internal frames.
 	*/
-	public MDIManager(final ApplicationFrame newApplicationFrame, final JDesktopPane newDesktopPane)
+	public MDIManager(final ApplicationFrame2 newApplicationFrame, final JDesktopPane newDesktopPane)
 	{
 		desktopPane=newDesktopPane; //save the desktop pane
 		applicationFrame=newApplicationFrame; //save the application frame
@@ -78,7 +78,7 @@ Debug.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
     {
       public void propertyChange(final PropertyChangeEvent propertyChangeEvent) //if the "modified" property changes in the explore panel
       {
-				getApplicationFrame().updateActions();  //update our actions
+				getApplicationFrame().updateStatus();  //update our actions
       }
     });
 		getDesktopPane().add(internalFrame, getDesktopPane().DEFAULT_LAYER);  //add the frame to the default layer
@@ -193,7 +193,7 @@ Debug.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
 	{
 Debug.trace("internal frame closed"); //G***del
 		if(getDesktopPane().getAllFrames().length==0) //if this is the last frame closed
-		  getApplicationFrame().updateActions();  //update our actions to reflect that all frames have been closed
+		  getApplicationFrame().updateStatus();  //update our actions to reflect that all frames have been closed
 	}
 
   /**Invoked when an internal frame is iconified.
@@ -218,7 +218,7 @@ Debug.trace("internal frame closed"); //G***del
 	*/
   public void internalFrameActivated(final InternalFrameEvent internalFrameEvent)
 	{
-		getApplicationFrame().updateActions();  //update our actions to reflect the new frame selected
+		getApplicationFrame().updateStatus();  //update our actions to reflect the new frame selected
 	}
 
   /**Invoked when an internal frame is de-activated.

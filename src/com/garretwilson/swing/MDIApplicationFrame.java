@@ -14,7 +14,7 @@ import com.garretwilson.util.Debug;
 /**Main frame parent class for a multiple document interface (MDI) application.
 @author Garret Wilson
 */
-public abstract class MDIApplicationFrame extends ApplicationFrame
+public abstract class MDIApplicationFrame extends ApplicationFrame2
 {
 
 	//window menu identifiers
@@ -27,33 +27,33 @@ public abstract class MDIApplicationFrame extends ApplicationFrame
 	public final static long MENU_FILE_EXIT=16;
 */
 
-	/**The map in which files are stored, usually keyed to internal frames.*/
-	private final Map fileMap=new WeakHashMap();
+	/**The map in which document description are stored, usually keyed to internal frames.*/
+	private final Map descriptionMap=new WeakHashMap();
 
-		/**Gets the file for a particular document.
+		/**Gets the description for a particular document.
 		@param key The key for the document, usually an internal frame.
-		@return The file used for the object, or <code>null</code> if the object  has
-			no associated file.
+		@return The description used for the object, or <code>null</code> if the
+			object has no associated description.
 		*/
-		protected File getFile(final Object key)
+		protected DocumentDescribable getDocumentDescription(final Object key)
 		{
-			return (File)fileMap.get(key);  //return the file associated with the kay
+			return (DocumentDescribable)descriptionMap.get(key);  //return the description associated with the kay
 		}
 
-		/**Associates a file with an object. The object is stored in a weak hash
-			map so that, if there are no other references to the object, the object
-			and its file will be removed.
-		@param key The object with which the file is being associated, such as an
-			internal frame.
-		@param file The file to associate with the object, or <code>null</code> if
-			thte file association should be removed.
+		/**Associates a description with an object. The object is stored in a weak
+			hash map so that, if there are no other references to the object, the
+			object and its description will be removed.
+		@param key The object with which the description is being associated, such
+			as an internal frame.
+		@param description The descrption to associate with the object, or
+			<code>null</code> if the file association should be removed.
 		*/
-		protected void setFile(final Object key, final File file)
+		protected void setDocumentDescription(final Object key, final DocumentDescribable description)
 		{
-			if(file!=null)  //if a valid file was passed
-			  fileMap.put(key, file); //put the file in the map, keyed to the key
-			else  //if null was passed for a file
-				fileMap.remove(key);  //remove whatever association is in the map
+			if(description!=null)  //if a valid description was passed
+			  descriptionMap.put(key, description); //put the description in the map, keyed to the key
+			else  //if null was passed for a description
+				descriptionMap.remove(key);  //remove whatever association is in the map
 		}
 
 	/**The MDI internal frame manager.*/
@@ -73,8 +73,18 @@ public abstract class MDIApplicationFrame extends ApplicationFrame
 	*/
 	public MDIApplicationFrame()
 	{
-		super();  //construct the parent class
+		this(true, true);  //construct the parent class G***fix
 	}
+	
+	/**Constructor with a default panel.
+	Enables window events.
+	@param initialize <code>true</code> if the panel should initialize itself by
+		calling the initialization methods.
+	*/
+	public MDIApplicationFrame(final boolean initialize)
+	{
+		this(true, true, initialize); //create an application frame with a default application panel G***fix default hasXXXs
+	}	
 
 	/**Constructor that allows options to be set, such as the presence of a status
 		bar.
@@ -84,15 +94,31 @@ public abstract class MDIApplicationFrame extends ApplicationFrame
 	*/
 	public MDIApplicationFrame(final boolean hasMenuBar, final boolean hasStatusBar)
 	{
-		super(hasMenuBar, hasStatusBar);  //construct the parent class
+		this(hasMenuBar, hasStatusBar, true);	//initialize the class
+	}
+	
+	/**Constructor that allows options to be set, such as the presence of a status
+		bar.
+		Enables window events.
+	@param hasMenuBar Whether this frame should have a menu bar.
+	@param hasStatusBar Whether this frame should have a status bar.
+	@param initialize <code>true</code> if the panel should initialize itself by
+		calling the initialization methods.
+	*/
+	public MDIApplicationFrame(final boolean hasMenuBar, final boolean hasStatusBar, final boolean initialize)
+	{
+//G***fix		super(hasMenuBar, hasStatusBar);  //construct the parent class
+		super(false);	//construct the parent class
+		desktopPane=new JDesktopPane(); //create the desktop pane
+		mdiManager=new MDIManager(this, desktopPane); //create a new MDI manager to manage the internal frames G***later create a custom one
+		if(initialize)	//if we should initialize the frame
+			initialize();	//initialize the frame				
 	}
 
 	/**Initializes the user interface.*/
   protected void initializeUI()
   {
 		super.initializeUI(); //do the default initialization
-		desktopPane=new JDesktopPane(); //create the desktop pane
-		mdiManager=new MDIManager(this, desktopPane); //create a new MDI manager to manage the internal frames G***later create a custom one
     getContentPane().add(desktopPane, BorderLayout.CENTER);
   }
 
@@ -110,31 +136,32 @@ public abstract class MDIApplicationFrame extends ApplicationFrame
 		}
 	}
 
-	/**Retrieves the file used for the currently opened document.
-		The currently open internal frame is used to lookup the file.
-	@return The file used for the currently opened document, or <code>null</code>
-		if no file is available.
-	@see #getFile(Object)
+	/**Retrieves the description used for the currently opened document.
+		The currently open internal frame is used to look up the file.
+	@return The description used for the currently opened document, or
+		<code>null</code> if no description is available (e.g. there is no document
+		opened).
+	@see #getDocumentDescription(Object)
 	*/
-	protected File getFile()
+	protected DocumentDescribable getDocumentDescription()
 	{
 		final JInternalFrame internalFrame=getDesktopPane().getSelectedFrame();  //get the currently selected internal frame
-		return internalFrame!=null ? getFile(internalFrame) : null;  //return a file for the frame, if it's available
+		return internalFrame!=null ? getDocumentDescription(internalFrame) : null;  //return a file for the frame, if it's available
 	}
 
-	/**Sets the file used for the currently opened document.
-		The currently open internal frame is used as a key to store the file.
-	@param newFile The file to use for saving the document.
-	@see #setFile(Object, File)
+	/**Sets the description of the currently opened document.
+		The currently open internal frame is used as a key to store the description.
+	@param description The description of the currently opened document.
+	@see #setDocumentDescription(Object, DocumentDescribable)
 	*/
-	protected void setFile(final File newFile)
+	protected void setDocumentDescription(final DocumentDescribable description)
 	{
-Debug.trace("setting file: ", newFile); //G***del
+Debug.trace("setting description: ", description); //G***del
 		final JInternalFrame internalFrame=getMDIManager().getSelectedFrame();  //get the currently selected internal frame
 		if(internalFrame!=null) //if there is an internal frame open
 		{
-		  setFile(internalFrame, newFile);  //store the file, keyed to the internal frame
-Debug.trace("setting frame title: ", newFile.getPath()); //G***del
+		  setDocumentDescription(internalFrame, description);  //store the description, keyed to the internal frame
+Debug.trace("setting frame title: ", description.getReferenceURI()); //G***del
 		  updateTitle(internalFrame);  //update the internal frame's title
 		}
 	}
@@ -195,18 +222,21 @@ Debug.trace("setting frame title: ", newFile.getPath()); //G***del
 	protected void updateTitle(final JInternalFrame internalFrame)
 	{
 		String title; //we'll assign a title to this string
-		final File file=getFile(internalFrame); //get the file associated with this frame
-		if(file!=null)  //if a file is available
+		final DocumentDescribable description=getDocumentDescription(internalFrame); //get the file associated with this frame
+		if(description!=null)  //if a description is available
 		{
-			try
+//G***del			try
 			{
-			  title=file.getCanonicalPath(); //show the canonical file path in the title
+			  title=description.getReferenceURI().toString(); //show the canonical file path in the title
+//G***del				title=file.getCanonicalPath(); //show the canonical file path in the title
 			}
+/*G***del			
 			catch(IOException ioException)  //if an I/O exception occurss while trying to get the canonical path
 			{
 				Debug.warn(ioException);  //warn that an error occurred
 				title=file.getPath(); //just use the file's normal path in the title
 			}
+*/
 		}
 		else  //if no file is availalbe
 		  title="(untitled)"; //create a title for unsaved files G***i81n
@@ -245,9 +275,9 @@ Debug.trace("setting frame title: ", newFile.getPath()); //G***del
 	/**Updates the states of the actions, including enabled/disabled status,
 		proxied actions, etc.
 	*/
-	protected void updateActions()
+	protected void updateStatus()
 	{
-		super.updateActions();  //do the default updating
+		super.updateStatus();  //do the default updating
 		final JInternalFrame internalFrame=getMDIManager().getSelectedFrame();  //get the currently selected internal frame
 		getFileCloseAction().setEnabled(internalFrame!=null); //enable or disable the close action
 	}
