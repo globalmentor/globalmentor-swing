@@ -20,6 +20,7 @@ import javax.swing.undo.UndoableEdit;
 
 import com.garretwilson.io.*;
 import com.garretwilson.lang.*;
+import static com.garretwilson.lang.ObjectUtilities.*;
 import com.garretwilson.net.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.sun.demo.jfc.notepad.ElementTreePanel;
@@ -42,7 +43,7 @@ import org.w3c.dom.css.CSSStyleSheet;
 @author Garret Wilson
 @see com.garretwilson.text.xml.XMLProcessor
 */
-public class XMLEditorKit extends StyledEditorKit
+public class XMLEditorKit extends StyledEditorKit implements URIInputStreamable
 {
 
 	/**The XML media type this editor kit supports, defaulting to <code>text/xml</code>.*/
@@ -194,23 +195,51 @@ public class XMLEditorKit extends StyledEditorKit
 //G***del		new EndLineAction(endLineAction, false)	//G***testing
 	};
 
-	/**Default constructor.*/
-	public XMLEditorKit() {}
+	/**The object that applies stylesheets to the document.*/
+//TODO bring back if needed	private final SwingXMLCSSStylesheetApplier swingStylesheetApplier;
+
+		/**@return The object that applies stylesheets to the document.*/
+//TODO bring back if needed		protected SwingXMLCSSStylesheetApplier getSwingStylesheetApplier() {return swingStylesheetApplier;}
+
+	/**The object that applies stylesheets to an XML document.*/
+	private final XMLCSSStylesheetApplier xmlStylesheetApplier;
+
+		/**@return The object that applies stylesheets to the XML document.*/
+		protected XMLCSSStylesheetApplier getXMLStylesheetApplier() {return xmlStylesheetApplier;}
+
+		/**The access to input streams via URIs.*/
+		private final URIInputStreamable uriInputStreamable;
+
+			/**@return The access to input streams via URIs.*/
+			protected URIInputStreamable getURIInputStreamable() {return uriInputStreamable;}
+
+	/**Constructor.
+	@param uriInputStreamable The source of input streams for resources.
+	@exception NullPointerException if the new source of input streams is <code>null</code>.
+	*/
+	public XMLEditorKit(final URIInputStreamable uriInputStreamable)
+	{
+		this.uriInputStreamable=checkNull(uriInputStreamable, "Missing URIInputStreamable");	//store the URIInputStreamable
+//	TODO bring back if needed		swingStylesheetApplier=new SwingXMLCSSStylesheetApplier();	//create a new Swing stylesheet applier
+		xmlStylesheetApplier=new XMLCSSStylesheetApplier(getURIInputStreamable());	//create a new XML stylesheet applier, using ourselves as the input stream locator
+	}
 
 	/**Constructor that specifies the specific XML media type supported.
 	@param mediaType The XML media type supported. In some instances, such as
 		<code>text/html</code>, this indicates a default namespace even in the
 		absence of a document namespace identfication.
+	@param uriInputStreamable The source of input streams for resources.
 	*/
-	public XMLEditorKit(final ContentType mediaType)
+	public XMLEditorKit(final ContentType mediaType, final URIInputStreamable uriInputStreamable)
 	{
+		this(uriInputStreamable);	//do the default construction
 		setMediaType(mediaType);  //set the requested media type
 	}
 
 	/**Creates a copy of the editor kit.
 	@return A copy of the XML editor kit.
 	*/
-	public Object clone() {return new XMLEditorKit(getMediaType());}  //G***why do we need this?
+	public Object clone() {return new XMLEditorKit(getMediaType(), getURIInputStreamable());}  //G***why do we need this?; make a real clone, or make sure XHTMLEditorKit overrides this
 
 	/**Returns the MIME type of the data the XML editor kit supports, such as
 		<code>text/xml</code>.
@@ -237,10 +266,10 @@ public class XMLEditorKit extends StyledEditorKit
 		 * @return the model
 		 */
 //G***fix
-	public Document createDefaultDocument()
+	public XMLDocument createDefaultDocument()
 	{
 //G***del Debug.traceStack("Creating default XML document");  //G***del
-		return new com.garretwilson.swing.text.xml.XMLDocument();	//G***fix, comment
+		return new XMLDocument(getURIInputStreamable());	//create an XML document, passing along our source of input streams
 /*G***fix
 	StyleSheet styles = getStyleSheet();
 	StyleSheet ss = new StyleSheet();
@@ -253,49 +282,17 @@ public class XMLEditorKit extends StyledEditorKit
 	doc.setTokenThreshold(100);
 	return doc;
 */
-		}
+	}
 
-
-	/**Tidies up an XML document containing OEB data so that we can display it better.
-	@param xmlDocument The document to tidy.
+	/**Returns an input stream from a given URI.
+	This implementation delegates to the editor kit's <code>URIInputStreamable</code>.
+	@param uri A complete URI to a resource.
+	@return An input stream to the contents of the resource represented by the given URI.
+	@exception IOException Thrown if an I/O error occurred.
 	*/
-//G***remove this method as soon as we can
-	protected static void tidyOEBXMLDocument(final com.garretwilson.text.xml.XMLDocument xmlDocument)  //G***eventually remove this if we can
+	public final InputStream getInputStream(final URI uri) throws IOException
 	{
-		final com.garretwilson.text.xml.XMLElement xmlRoot=xmlDocument.getDocumentXMLElement();	//get the root of the document
-		for(int i=0; i<xmlRoot.getChildNodes().getLength(); ++i)	//look at each of the first-level child nodes
-		{
-			final com.garretwilson.text.xml.XMLNode xmlNode=(com.garretwilson.text.xml.XMLNode)xmlRoot.getChildNodes().item(i);	//get a reference to this node
-			if(xmlNode.getNodeName().equals(OEBConstants.ELEMENT_BODY) || xmlNode.getNodeName().equals(OEBConstants.ELEMENT_HTML))	//if this is the body element G***testing HTML
-			{
-				final com.garretwilson.text.xml.XMLElement bodyElement=(com.garretwilson.text.xml.XMLElement)xmlNode;	//get a reference to the body element
-//G***del Debug.trace("Found body element.");
-				com.garretwilson.text.xml.XMLNode childNode=(com.garretwilson.text.xml.XMLNode)bodyElement.getFirstChild();	//get the first child
-				while(childNode!=null)	//while the body has child nodes
-				{
-//G***del System.out.println("Looking at node: "+childNode.getNodeName());
-					com.garretwilson.text.xml.XMLNode nextNode=(com.garretwilson.text.xml.XMLNode)childNode.getNextSibling();	//get a reference to the next sibling so we'll have it when we need it
-					if(childNode.getNodeType()==com.garretwilson.text.xml.XMLNode.TEXT_NODE)	//if this is a text node
-					{
-//G***del System.out.println("This is a text node");
-						if(((com.garretwilson.text.xml.XMLText)childNode).getData().trim().length()==0)	//if this text node has only whitespace
-						{
-//G***del System.out.println("The length of text is zero.");
-							childNode.getParentNode().removeChild(childNode);	//remove the text child from the list
-						}
-					}
-//G***del System.out.println("Going to next child.");
-					childNode=nextNode;	//look at the next node
-				}
-			}
-			else
-			{
-//G***fix				final boolean isHTMLDocument=XHTMLSwingTextUtilities.isHTMLDocumentElement(documentAttributeSet);	//see if this is an HTML document
-				
-				
-			}
-		}
-
+		return getURIInputStreamable().getInputStream(uri);	//delegate to our own URIInputStreamable
 	}
 
 	/**Reads a given publication and stores it in the given document.
@@ -360,7 +357,7 @@ G***fix
 			final XMLProcessor xmlProcessor=new XMLProcessor();	//create a new XML processor
 			final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(reader, baseURI);	//parse the document
 			xmlDocument.normalize();  //normalize the document
-			tidyOEBXMLDocument((com.garretwilson.text.xml.XMLDocument)xmlDocument);	//tidy up the document (an important step if the document has text directly in the body and such) G***test, comment
+//TODO del			tidyOEBXMLDocument((com.garretwilson.text.xml.XMLDocument)xmlDocument);	//tidy up the document (an important step if the document has text directly in the body and such) G***test, comment
 				//read and set any contained RDF
 			final RDFXMLProcessor rdfProcessor=new RDFXMLProcessor(); //create a new RDF processor
 			final RDF rdf;
@@ -439,7 +436,7 @@ System.out.println("Ready to parse stylesheets.");	//G***del
 			final XMLProcessor xmlProcessor=new XMLProcessor();	//create a new XML processor
 			final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(inputStream, baseURI);	//parse the document
 			xmlDocument.normalize();  //normalize the document
-		  tidyOEBXMLDocument((com.garretwilson.text.xml.XMLDocument)xmlDocument);	//tidy up the document (an important step if the document has text directly in the body and such) G***test, comment
+//TODO del		  tidyOEBXMLDocument((com.garretwilson.text.xml.XMLDocument)xmlDocument);	//tidy up the document (an important step if the document has text directly in the body and such) G***test, comment
 				//read and set any contained RDF
 			final RDFXMLProcessor rdfProcessor=new RDFXMLProcessor(); //create a new RDF processor
 			final RDF rdf;
@@ -914,8 +911,6 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new ContentType[]{mediaType}, swingXMLDocument); //set the XML data, creating arrays each with a single element
 	}
 
-	private XMLCSSStylesheetApplier xmlCSSStylesheetApplier=null;	//G***testing
-	
 	/**Sets the given XML data in the document.
 	@param xmlDocumentArray The array of XML documents to set in the Swing document.
 	@param baseURIArray The array of base URIs, corresponding to the XML documents.
@@ -924,21 +919,20 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 	*/
 	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray, final XMLDocument swingXMLDocument)
 	{
+/*G***fix
 		if(false)	//TODO testing newstuff 
 		{
 			swingXMLDocument.create(xmlDocumentArray, baseURIArray, mediaTypeArray);	//G***testing newstuff
 			
 		}
 		else
+*/
 		{
-			xmlCSSStylesheetApplier=new XMLCSSStylesheetApplier(swingXMLDocument);	//G***testing
-	
+			final XMLCSSStylesheetApplier stylesheetApplier=getXMLStylesheetApplier();	//get the stylesheet applier
+			stylesheetApplier.clearStyles();	//clear any styles that were present before
 			//create a list of element specs for creating the document and store them here
 			final DefaultStyledDocument.ElementSpec[] elementSpecList=createElementSpecs(xmlDocumentArray, baseURIArray, mediaTypeArray);
-	
-			xmlCSSStylesheetApplier=null;
-	
-	
+			stylesheetApplier.clearStyles();	//clear the styles; we're done with the XML document so we don't need the mappings anymore
 			swingXMLDocument.create(elementSpecList);	//create the document from the element specs
 		}
 
@@ -1031,8 +1025,8 @@ xmlDocument.normalize();	//G***do we want to do this here? probably not---or may
 			final org.w3c.dom.Element xmlDocumentElement=xmlDocument.getDocumentElement();	//get the root of the document
 
 
-			final CSSStyleSheet[] stylesheets=xmlCSSStylesheetApplier.getStylesheets(xmlDocument, baseURI, mediaType);	//G***testing
-			for(int i=0; i<stylesheets.length; xmlCSSStylesheetApplier.applyStyleSheet(stylesheets[i++], xmlDocumentElement));	//G***testing
+			final CSSStyleSheet[] stylesheets=getXMLStylesheetApplier().getStylesheets(xmlDocument, baseURI, mediaType);	//G***testing
+			for(int i=0; i<stylesheets.length; getXMLStylesheetApplier().applyStyleSheet(stylesheets[i++], xmlDocumentElement));	//G***testing
 
 
 
@@ -1108,7 +1102,7 @@ xmlDocument.normalize();	//G***do we want to do this here? probably not---or may
 	protected MutableAttributeSet appendElementSpecList(final List elementSpecList, final org.w3c.dom.Element xmlElement, final URI baseURI)
 	{
 //G***del Debug.trace("XMLDocument.appendElementSpecList: element ", xmlElement.getNodeName());	//G***del
-		final SimpleAttributeSet attributeSet=createAttributeSet(xmlElement, baseURI);	//create and fill an attribute set based upon this element's CSS style
+		final MutableAttributeSet attributeSet=createAttributeSet(xmlElement, baseURI);	//create and fill an attribute set based upon this element's CSS style
 //G***del Debug.trace("Attribute set: ", attributeSet);  //G***del
 //G***fix if(!"null".equals(xmlElement.getLocalName()))	//G***testing
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(attributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a Swing element to model this XML element
@@ -1258,7 +1252,7 @@ if(node!=null && node.getParentNode() instanceof org.w3c.dom.Element)
 	final org.w3c.dom.Element parentElement=(org.w3c.dom.Element)node.getParentNode();  //get the parent element
 	if(parentElement.getChildNodes().item(parentElement.getChildNodes().getLength()-1)==node)	//if this is the last node
 	{
-			final CSSStyleDeclaration cssStyle=xmlCSSStylesheetApplier.getStyle(parentElement);
+			final CSSStyleDeclaration cssStyle=getXMLStylesheetApplier().getStyle(parentElement);
 				//see if the element is inline (text is always inline
 			final boolean isInline=XMLCSSUtilities.isDisplayInline(cssStyle);
 			if(!isInline)
@@ -1296,6 +1290,35 @@ if(node!=null && node.getParentNode() instanceof org.w3c.dom.Element)
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(pageBreakAttributeSet, DefaultStyledDocument.ElementSpec.EndTagType));	//finish the page break element spec
 	}
 
+	/**Creates an attribute set for the described element.
+	@param elementNamespaceURI The namespace of the XML element, or <code>null</code> if the namespace is not known.
+	@param elementQName The qualified name of the XML element.
+	@return An attribute set reflecting the CSS attributes of the element.
+	*/
+	public static MutableAttributeSet createAttributeSet(final URI elementNamespaceURI, final String elementQName)
+	{
+		return createAttributeSet(elementNamespaceURI, elementQName, null);  //create an attribute set with no style
+	}
+
+	/**Creates an attribute set for the described element.
+	@param elementNamespaceURI The namespace of the XML element, or <code>null</code> if the namespace is not known.
+	@param elementQName The qualified name of the XML element.
+	@param style The CSS style to be used for the attribute set, or <code>null</code> if the CSS style is not known.
+	@return An attribute set reflecting the CSS attributes of the element.
+	*/
+	public static MutableAttributeSet createAttributeSet(final URI elementNamespaceURI, final String elementQName, final CSSStyleDeclaration style)
+	{
+		final SimpleAttributeSet attributeSet=new SimpleAttributeSet();	//create a new attribute for this element
+		XMLStyleUtilities.setXMLElementName(attributeSet, elementQName);	//store the element's name in the attribute set
+		if(elementNamespaceURI!=null)  //if the element has a namespace URI specified
+			XMLStyleUtilities.setXMLElementNamespaceURI(attributeSet, elementNamespaceURI.toString());	//store the element's namespace URI in the attribute set
+		final String localName=XMLUtilities.getLocalName(elementQName);  //get the element's local name from the qualified name
+		XMLStyleUtilities.setXMLElementLocalName(attributeSet, localName);	//store the element's local name in the attribute set
+		if(style!=null) //if style was given G***should we instead do this unconditionally?
+			XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, style);	//store the CSS style in the attribute set
+		return attributeSet;	//return the attribute set we created
+	}
+
 	/**Creates an attribute set for the given XML node.
 	@param node The XML node, such as an element or text.
 	@param baseURI The base URI of the document, used for generating full target
@@ -1303,52 +1326,28 @@ if(node!=null && node.getParentNode() instanceof org.w3c.dom.Element)
 		if the base URI is not applicable.
 	@return An attribute set reflecting the CSS attributes of the element.
 	*/
-	protected SimpleAttributeSet createAttributeSet(final Node xmlNode, final URI baseURI)
+	protected MutableAttributeSet createAttributeSet(final Node xmlNode, final URI baseURI)
 	{
-		//G***allow this to use the static XMLDocument.createAttributeSet after first extracting element information
-//G***del Debug.trace("Creating attribute set for node: ", xmlNode.getNodeName()); //G***del
-
-
-//TODO take advantage of XMLDocument.createAttributeSet
-
-
-		final SimpleAttributeSet attributeSet=new SimpleAttributeSet();	//create a new attribute for this element
-		XMLStyleUtilities.setXMLElementName(attributeSet, xmlNode.getNodeName());	//store the node's name in the attribute set
-//G***del		if(xmlNode.getNodeType()==xmlNode.ELEMENT_NODE) //if this node is an element
-//G***del			org.w3c.dom.Element xmlElement=(org.w3c.dom.Element)xmlNode;  //cast the node to an element
 		final String namespaceURI=xmlNode.getNamespaceURI();  //get the node namespace URI
-		if(namespaceURI!=null)  //if the node has a namespace URI specified
-			XMLStyleUtilities.setXMLElementNamespaceURI(attributeSet, namespaceURI);	//store the node's namespace URI in the attribute set
-		final String localName=xmlNode.getLocalName();  //get the node's local name
-		if(localName!=null) //if the node has a local name defined
-			XMLStyleUtilities.setXMLElementLocalName(attributeSet, localName);	//store the node's local name in the attribute set
-		else  //if this element has no local name defined, we'll use the normal name for the local name G***testing for styling; we should probably parse out the local name from the qname
-			XMLStyleUtilities.setXMLElementLocalName(attributeSet, xmlNode.getNodeName());	//store the node's local name in the attribute set G***fix
-
-
+		final MutableAttributeSet attributeSet=createAttributeSet(namespaceURI!=null ? URI.create(namespaceURI) : null, xmlNode.getNodeName());	//create a new attribute for this node
 		//G***give every attribute set a default empty CSS style; later fix this in the application section to create as needed and to clear them before application
-
 //G***del when moved to the set-style routines		XMLCSSStyleConstants.setXMLCSSStyle(attributeSet, new XMLCSSStyleDeclaration());	//give every attribute set a default empty CSS style
-
 		switch(xmlNode.getNodeType())	//see what type of node for which to create an attribute set
 		{
 			case Node.ELEMENT_NODE: //if this node is an element
 				{
-					org.w3c.dom.Element xmlElement=(org.w3c.dom.Element)xmlNode;  //cast the node to an element
-
-
-
-final CSSStyleDeclaration cssStyle=xmlCSSStylesheetApplier.getStyle(xmlElement);	//see if we've already applied a style to this element
-if(cssStyle!=null)
-{
-	XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, cssStyle);	
-}
-else
-{
-					//give every attribute set a default empty CSS style; if not, this will cause huge performance hits when trying to create them on the fly when styles are applied
-					XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, new XMLCSSStyleDeclaration());
-}
-					NamedNodeMap attributeNodeMap=xmlElement.getAttributes(); //get a reference to the attributes
+					final org.w3c.dom.Element xmlElement=(org.w3c.dom.Element)xmlNode;  //cast the node to an element
+					final CSSStyleDeclaration cssStyle=getXMLStylesheetApplier().getStyle(xmlElement);	//see if we've already applied a style to this element
+					if(cssStyle!=null)	//if we know the style of the XML element
+					{
+						XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, cssStyle);	//store the style in the attributes of our Swing element	
+					}
+					else
+					{
+						//give every attribute set a default empty CSS style; if not, this will cause huge performance hits when trying to create them on the fly when styles are applied TODO recheck
+						XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, new XMLCSSStyleDeclaration());
+					}
+					final NamedNodeMap attributeNodeMap=xmlElement.getAttributes(); //get a reference to the attributes
 					//store the XML attributes
 					for(int attributeIndex=0; attributeIndex<attributeNodeMap.getLength(); ++attributeIndex)	//look at each of the attributes
 					{
@@ -1356,12 +1355,6 @@ else
 							//add this XML attribute to the Swing atribute set as the value of our special XML attribute key
 						XMLStyleUtilities.addXMLAttribute(attributeSet, xmlAttribute.getNamespaceURI(), xmlAttribute.getNodeName(), xmlAttribute.getNodeValue());
 					}
-/*G***del when works
-					if(xmlElement.getChildNodes().getLength()==0)  //if the element has no child nodes
-					{
-						XMLStyleUtilities.setXMLEmptyElement(attributeSet, true); //show that this is an empty element (dummy child text may be added later, so without this it would be hard to tell)
-					}
-*/
 					final String targetID=getTargetID(attributeSet);  //get the target ID specified in the attribute set
 					if(targetID!=null)  //if this attribute set has a target ID
 					{

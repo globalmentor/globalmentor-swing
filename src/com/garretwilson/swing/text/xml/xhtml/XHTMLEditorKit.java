@@ -11,7 +11,6 @@ import com.garretwilson.io.*;
 import com.garretwilson.swing.text.StyleUtilities;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.text.xml.XMLDOMImplementation;
-import com.garretwilson.text.xml.XMLUtilities;
 import com.garretwilson.text.xml.xhtml.*;
 import org.w3c.dom.*;
 
@@ -34,29 +33,33 @@ public class XHTMLEditorKit extends XMLEditorKit implements XHTMLConstants
 		*/
 		protected void setMediaType(final ContentType newMediaType) {mediaType=newMediaType;}
 
-	/**Default constructor.*/
-	public XHTMLEditorKit()
+	/**Constructor.
+	@param uriInputStreamable The source of input streams for resources.
+	@exception NullPointerException if the new source of input streams is <code>null</code>.
+	*/
+	public XHTMLEditorKit(final URIInputStreamable uriInputStreamable)
 	{
+		super(uriInputStreamable);	//construct the parent class
 	}
 
 	/**Constructor that specifies the specific XHTML media type supported.
 	@param mediaType The XHTML media type supported. In some instances, such as
 		<code>application/xhtml+xml</code>, this indicates a default namespace even
 		in the absence of a document namespace identfication.
+	@param uriInputStreamable The source of input streams for resources.
 	*/
-	public XHTMLEditorKit(final ContentType mediaType)
+	public XHTMLEditorKit(final ContentType mediaType, final URIInputStreamable uriInputStreamable)
 	{
-		setMediaType(mediaType);  //set the requested media type
+		super(mediaType, uriInputStreamable);	//construct the parent class
 	}
-
 
 	/**Creates a default Swing document containing the minimum structure of an
 		XHTML document tree.
 	@return The new Swing document containing XHTML.
 	 */
-	public Document createDefaultDocument()
+	public XMLDocument createDefaultDocument()
 	{
-		final XMLDocument swingDocument=new XMLDocument();	//create a new XML Swing document
+		final XMLDocument swingDocument=super.createDefaultDocument();	//create a default document
 		final XMLDOMImplementation domImplementation=new XMLDOMImplementation();	//create a new DOM implementation G***later use some Java-specific stuff
 			//create an XML document for the XHTML <div> element
 		final org.w3c.dom.Document xhtml=domImplementation.createDocument(XHTML_NAMESPACE_URI.toString(), ELEMENT_DIV, null);	//create an XML document for XHTML <div>
@@ -69,7 +72,7 @@ public class XHTMLEditorKit extends XMLEditorKit implements XHTMLConstants
 	/**Creates a copy of the editor kit.
 	@return A copy of the XML editor kit.
 	*/
-	public Object clone() {return new XHTMLEditorKit(getMediaType());}  //G***why do we need this?
+	public Object clone() {return new XHTMLEditorKit(getMediaType(), getURIInputStreamable());}  //G***why do we need this?
 
 	/**Determines if the specified element represents an empty element&mdash;an
 		element that might be declared as <code>EMPTY</code> in a DTD.
@@ -120,4 +123,26 @@ public class XHTMLEditorKit extends XMLEditorKit implements XHTMLConstants
 		}
 		return attributeSet;	//return the attribute set
 	}
+
+	/**Gets the target ID of of the specified element. This ID represents the
+		target of a link. The default target ID (the value of the "id" attribute)
+		is located, and if it does not exist the value of the "name" attribute is
+		used. G***what about checking the DTD for an element of type ID?
+	@param attributeSet The attribute set of the element which may contain a
+		target ID.
+	//G***del when works	@param element The element which may contain a target ID.
+	@return The target ID value of the element, or <code>null</code> if the
+		element does not define a target ID.
+	*/
+	protected String getTargetID(final AttributeSet attributeSet)	//TODO probably put this in XHTMLEditorKit
+	{
+		String targetID=super.getTargetID(attributeSet); //get the standard "id" attribute value
+		if(targetID==null)  //if the "id" attribute didn't have a value
+		{
+	//G***del when works			final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
+			targetID=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, "name");  //return the value of the "name" attribute, if it exists G***use a constant here
+		}
+		return targetID;  //return whatever target ID we found, if any
+	}
+
 }

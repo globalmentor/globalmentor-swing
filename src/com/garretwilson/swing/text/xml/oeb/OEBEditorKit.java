@@ -25,13 +25,19 @@ public class OEBEditorKit extends XHTMLEditorKit implements OEBConstants	//TODO 
 	/**The task of reading a document.*/
 	public final static String READ_TASK="READ";
 
-	/**Default constructor.*/
-	public OEBEditorKit() {}
+	/**Constructor.
+	@param uriInputStreamable The source of input streams for resources.
+	@exception NullPointerException if the new source of input streams is <code>null</code>.
+	*/
+	public OEBEditorKit(final URIInputStreamable uriInputStreamable)
+	{
+		super(uriInputStreamable);	//construct the parent class
+	}
 
 	/**Creates a copy of the editor kit.
 	@return A copy of the XML editor kit.
 	*/
-	public Object clone() {return new OEBEditorKit();}
+	public Object clone() {return new OEBEditorKit(getURIInputStreamable());}
 
 	/**Returns the MIME type of the data the XML editor kit supports,
 		which is that of an OEB package.
@@ -50,10 +56,10 @@ public class OEBEditorKit extends XHTMLEditorKit implements OEBConstants	//TODO 
 	/**Creates an uninitialized OEB text storage model.
 	@return The new OEB document model.
 	*/
-	public Document createDefaultDocument()
+	public OEBDocument createDefaultDocument()
 	{
 //G***del Debug.traceStack("Creating default OEB document");  //G***del
-		return new com.garretwilson.swing.text.xml.oeb.OEBDocument();	//create a new Swing OEB document
+		return new com.garretwilson.swing.text.xml.oeb.OEBDocument(getURIInputStreamable());	//create a new Swing OEB document
 /*G***fix
 	StyleSheet styles = getStyleSheet();
 	StyleSheet ss = new StyleSheet();
@@ -244,7 +250,7 @@ Debug.trace("working on item: ", item); //G***del
 							{
 								final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(itemInputStream, itemURI);	//parse the document
 							  xmlDocument.normalize();  //normalize the document
-								tidyOEBXMLDocument((com.garretwilson.text.xml.XMLDocument)xmlDocument);	//tidy up the document (an important step if the document has text directly in the body and such) G***test, comment
+//TODO del								tidyOEBXMLDocument((com.garretwilson.text.xml.XMLDocument)xmlDocument);	//tidy up the document (an important step if the document has text directly in the body and such) G***test, comment
 								baseURIArray[i]=itemURI;  //store the URI of the item
 								mediaTypeArray[i]=MIMEOntologyUtilities.getMediaType(item);  //store the media type of the item
 								xmlDocumentArray[i]=xmlDocument;	//add the document to our array that we'll pass to the OEB document for insertion
@@ -268,27 +274,6 @@ Debug.trace("working on item: ", item); //G***del
 		}
 		else  //if this is not an OEB document we're reading into
 			super.read(inputStream, document, pos); //let the parent class do the reading
-	}
-
-	/**Gets the target ID of of the specified element. This ID represents the
-		target of a link. The default target ID (the value of the "id" attribute)
-		is located, and if it does not exist the value of the "name" attribute is
-		used. G***what about checking the DTD for an element of type ID?
-	@param attributeSet The attribute set of the element which may contain a
-		target ID.
-//G***del when works	@param element The element which may contain a target ID.
-	@return The target ID value of the element, or <code>null</code> if the
-		element does not define a target ID.
-	*/
-	protected String getTargetID(final AttributeSet attributeSet)	//TODO probably put this in XHTMLEditorKit
-	{
-		String targetID=super.getTargetID(attributeSet); //get the standard "id" attribute value
-		if(targetID==null)  //if the "id" attribute didn't have a value
-		{
-//G***del when works			final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-			targetID=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, "name");  //return the value of the "name" attribute, if it exists G***use a constant here
-		}
-		return targetID;  //return whatever target ID we found, if any
 	}
 
 }

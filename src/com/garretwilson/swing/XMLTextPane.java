@@ -70,7 +70,7 @@ import static com.garretwilson.text.xml.XMLUtilities.*;
 @see com.garretwilson.swing.event.PageEvent
 @see com.garretwilson.swing.event.PageListener
 */
-public class XMLTextPane extends JTextPane implements AppletContext, /*G***del when works KeyListener, */ /*G***del JDK1.5 MouseMotionListener,*/ PageListener, ProgressListener//G***fix, URIAccessible
+public class XMLTextPane extends JTextPane implements AppletContext, /*G***del when works KeyListener, */ /*G***del JDK1.5 MouseMotionListener,*/ PageListener, ProgressListener, URIAccessible
 {
 
 	/**The name of the property that indicates the current document.*/
@@ -557,7 +557,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		registerLinkController(XHTMLConstants.XHTML_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML view factory with XHTML elements
 		registerLinkController(OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML link controller with OEB elements
 //G***del; doesn't work		setBackground(Color.white); //G***set to get the background color from the document itself
-		setEditorKit(new XMLEditorKit());	//create a new XML editor kit and use it
+		setEditorKit(new XMLEditorKit(this));	//create a new XML editor kit and use it
 /*G***del when works
 		final Keymap keymap=getKeymap();  //get the current key map
 		loadKeymap(keymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap G***how do our actions get here from the editor kit?
@@ -691,9 +691,9 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		a com.garretwilson.swing.text.xml.XMLEditorKit
 	@return The default editor kit.
 	*/
-	protected EditorKit createDefaultEditorKit()
+	protected XMLEditorKit createDefaultEditorKit()
 	{
-		return new XMLEditorKit();	//create an XML editor kit and return it
+		return new XMLEditorKit(this);	//create an XML editor kit and return it
 	}
 
 	/**Sets the editor kit for handling content. Since an XMLTextPane requires a
@@ -752,6 +752,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 
 	/**Returns an input stream for the given URI.
 	The calling class has the responsibility for closing the input stream.
+	This implementation delegates to the internal <code>URIInputStreamable</code>.
 	@param uri A URI to a resource.
 	@return An input stream to the contents of the resource represented by the given URI.
 	@exception IOException Thrown if an I/O error occurred.
@@ -763,6 +764,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 
 	/**Returns an output stream for the given URI.
 	The calling class has the responsibility for closing the output stream.
+	This implementation delegates to the internal <code>URIOutputStreamable</code>.
 	@param uri A URI to a resource.
 	@return An output stream to the contents of the resource represented by the given URI.
 	@exception IOException Thrown if an I/O error occurred.
@@ -961,10 +963,6 @@ Debug.trace("installed editor kit is now: ", getEditorKit().getClass().getName()
 		document.putProperty(Document.StreamDescriptionProperty, URIUtilities.toValidURL(uri));	//store a URL version of the URI in the document, as getPage() expects this to be a URL
 		DocumentUtilities.setBaseURI(document, uri);	//store the base URI in the document
 Debug.trace("reading from stream"); //G***del
-		if(document instanceof XMLDocument) //if this is an XML document
-		{
-			((XMLDocument)document).setURIInputStreamable(getURIInputStreamable()); //give the XML document any input stream locator that we might have, so that it can access files from within zip files, for instance
-		}
 		final DocumentLoader documentLoader=new DocumentLoader(inputStream, document);	//create a thread for loading the document 
 		//TODO check for already loading asynchronously, as does JEditorPane
 		if(document instanceof AbstractDocument)	//if the document is an abstract document, which can give a load priority
@@ -1315,24 +1313,19 @@ Debug.trace("reading from stream into document"); //G***del
 		if(editorKit instanceof XMLEditorKit)	//if an XML editor kit is installed
 		{
 			final XMLEditorKit xmlEditorKit=(XMLEditorKit)getEditorKit();	//cast the editor kit to an XML editor kit
-			final Document document=xmlEditorKit.createDefaultDocument();	//create a default document
-			if(document instanceof XMLDocument) //if this is an XML document
+			final XMLDocument xmlDocument=xmlEditorKit.createDefaultDocument();	//create a default document
+			final Cursor originalCursor=ComponentUtilities.setCursor(XMLTextPane.this, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			try
 			{
-				final XMLDocument xmlDocument=(XMLDocument)document;	//cast the document to an XML document 
-				xmlDocument.setURIInputStreamable(getURIInputStreamable()); //give the XML document any input stream locator that we might have, so that it can access files from within zip files, for instance
-				final Cursor originalCursor=ComponentUtilities.setCursor(XMLTextPane.this, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-				try
-				{
-						//tell the editor kit to put the XML into the document
-					xmlEditorKit.setXML(xmlDocumentArray, baseURIArray, mediaTypeArray, xmlDocument);
+					//tell the editor kit to put the XML into the document
+				xmlEditorKit.setXML(xmlDocumentArray, baseURIArray, mediaTypeArray, xmlDocument);
 //TODO fix progress					fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Constructing the document..."));	//G***testing i18n
-					setDocument(document);	//show that the text pane is using this document (this actually creates the views)
+				setDocument(xmlDocument);	//show that the text pane is using this document (this actually creates the views)
 //TODO fix progress					fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Finished constructing the document...", true));	//G***testing i18n
-				}
-				finally
-				{
-					setCursor(originalCursor); //after the event thread is finished setting the document, always set the cursor back to its original form
-				}
+			}
+			finally
+			{
+				setCursor(originalCursor); //after the event thread is finished setting the document, always set the cursor back to its original form
 			}
 		}
 	}
@@ -1379,7 +1372,7 @@ Debug.trace("reading from stream into document"); //G***del
       if (k == null) {
 */
 		EditorKit editorKit;
-		editorKit=createEditorKitForContentType(type);  //create an editor kit for this type
+		editorKit=createEditorKit(type);  //create an editor kit for this type
 		if(editorKit!=null) //if we created an editor kit
 		{
 			setEditorKitForContentType(type, editorKit);  //set the editor kit so that we find it quickly in the future
@@ -1427,7 +1420,7 @@ Debug.trace("reading from stream into document"); //G***del
      * @return the editor kit, or <code>null</code> if there is nothing
      *   registered for the given type
      */
-    public static EditorKit createEditorKitForContentType(String type)
+    public EditorKit createEditorKit(String type)	//TODO investigate and synchronize with JEditorPane.createEditorKitForContentType() G***why doesn't this get called?
 		{
 			final ContentType mediaType=ContentTypeUtilities.createContentType(type);  //create a new media type
 /*G***make sure this is an XML media type; if not, call the base class
@@ -1442,16 +1435,16 @@ Debug.trace("creating editor kit for content type: ", type);  //G***del; fix
 */
 			if(XHTMLUtilities.isHTML(mediaType))	//if this is an XHTML media type
 			{
-				return new XHTMLEditorKit(mediaType);	//create a new XHTML editor kit for this media type
+				return new XHTMLEditorKit(mediaType, this);	//create a new XHTML editor kit for this media type
 			}
 				//if this is an OEB package
 		  else if(/*G***fix mediaType.match(OEBConstants.OEB10_DOCUMENT_MEDIA_TYPE) || */mediaType.match(OEBConstants.OEB10_PACKAGE_MEDIA_TYPE))
 			{
 Debug.trace("creating OEB editor kit"); //G***del
-				return new OEBEditorKit();  //create a new OEB editor kit for the OEB package
+				return new OEBEditorKit(this);  //create a new OEB editor kit for the OEB package
 			}
 //TODO have a XMLUtilities.isXML(mediaType), and if not, create an editor kit normally using the parent class
-		  return new XMLEditorKit(mediaType); //create a new XML editor kit for the specified type
+		  return new XMLEditorKit(mediaType, this); //create a new XML editor kit for the specified type
 
 
 /*G***fix

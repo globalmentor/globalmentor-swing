@@ -82,6 +82,7 @@ import com.garretwilson.util.Debug;
 import com.garretwilson.util.NameValuePair;
 //G***del when works import com.garretwilson.swing.text.xml.css.XMLCSSSimpleAttributeSet;
 
+import static com.garretwilson.lang.ObjectUtilities.*;
 import com.garretwilson.lang.StringBuilderUtilities;
 import com.garretwilson.lang.StringUtilities;	//G***del when we can
 import com.garretwilson.lang.StringBufferUtilities;	//G***del if we don't need
@@ -116,53 +117,11 @@ final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);
 	/**The list of progress event listeners.*/
 	private EventListenerList progressListenerList=new EventListenerList();
 
-	/**The object that applies stylesheets to the document.*/
-	private final SwingXMLCSSStylesheetApplier swingStylesheetApplier;
-
-		/**@return The object that applies stylesheets to the document.*/
-		protected SwingXMLCSSStylesheetApplier getSwingStylesheetApplier() {return swingStylesheetApplier;}
-
-	/**The object that applies stylesheets to an XML document.*/
-	private final XMLCSSStylesheetApplier xmlStylesheetApplier;
-
-		/**@return The object that applies stylesheets to the XML document.*/
-		protected XMLCSSStylesheetApplier getXMLStylesheetApplier() {return xmlStylesheetApplier;}
-
-	/**A map of all full element target IDs (URI+#+id).*/
-	private Map linkTargetMap=new HashMap();
-
-		/**Gets the element associated with the target ID.
-		@param targetID The full target ID (URI+#+element ID) of the element.
-		@return The element to which the target ID refers, or <code>null</code> if
-			there is no element associated with the target ID.
-		*/
-		public Element getLinkTarget(final String targetID)
-		{
-			return (Element)linkTargetMap.get(targetID);	//return whatever element is associated with the target ID
-		}
-
-		/**Associates a target ID with an element.
-		@param targetID The full target ID (URI+#+element ID) of the element.
-		@param element The element to which the target ID refers.
-		*/
-		public void setLinkTarget(final String targetID, final Element element)
-		{
-			linkTargetMap.put(targetID, element);	//put the element in the map, keyed to the target ID
-		}
-
 	/**The access to input streams via URIs, if one exists.*/
-	private URIInputStreamable uriInputStreamable=null;
+	private final URIInputStreamable uriInputStreamable;
 
-		/**@return The access to input streams via URIs, or <code>null</code> if
-		  none exists.
-		*/
+		/**@return The access to input streams via URIs*/
 		public URIInputStreamable getURIInputStreamable() {return uriInputStreamable;}
-
-		/**Sets the object for accessing input streams.
-		@param newURIInputStreamable The object that allows acces to input streams
-			via URIs.
-		*/
-		public void setURIInputStreamable(final URIInputStreamable newURIInputStreamable) {uriInputStreamable=newURIInputStreamable;}
 
 	/**A map of references to resources that have been loaded.*/
 	private final Map resourceReferenceMap=new HashMap();
@@ -221,13 +180,15 @@ final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);
 	//G***fix; comment
 	protected String[] sortedAvailableFontFamilyNameArray;
 
-	/**Default constructor.*/
-	public XMLDocument()
+	/**Constructor.
+	@param uriInputStreamable The source of input streams for resources.
+	@exception NullPointerException if the new source of input streams is <code>null</code>.
+	*/
+	public XMLDocument(final URIInputStreamable uriInputStreamable)
 	{
 //G***fix		super(new PureGapContent(BUFFER_SIZE_DEFAULT), new XMLCSSStyleContext());	//construct the parent class, specifying our own type of style context that knows how to deal with CSS attributes
 		super(new XMLCSSStyleContext());	//construct the parent class, specifying our own type of style context that knows how to deal with CSS attributes
-		swingStylesheetApplier=new SwingXMLCSSStylesheetApplier();	//create a new Swing stylesheet applier
-		xmlStylesheetApplier=new XMLCSSStylesheetApplier(this);	//create a new XML stylesheet applier, using ourselves as the input stream locator
+		this.uriInputStreamable=checkNull(uriInputStreamable, "Missing URIInputStreamable");	//store the URIInputStreamable
 //G***fix		setProperty(AbstractDocument.I18NProperty);  //G***testing i18n
 //G***fix		putProperty("i18n", Boolean.TRUE);  //G***testing i18n
 Debug.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n
@@ -308,35 +269,6 @@ Debug.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n
 */
   }
 
-	/**Creates an attribute set for the described element.
-	@param elementNamespaceURI The namespace of the XML element.
-	@param elementQName The qualified name of the XML element.
-	@return An attribute set reflecting the CSS attributes of the element.
-	*/
-	public static MutableAttributeSet createAttributeSet(final URI elementNamespaceURI, final String elementQName)
-	{
-		return createAttributeSet(elementNamespaceURI, elementQName, null);  //create an attribute set with no style
-	}
-
-	/**Creates an attribute set for the described element.
-	@param elementNamespaceURI The namespace of the XML element.
-	@param elementQName The qualified name of the XML element.
-	@param style The CSS style to be used for the attribute set.
-	@return An attribute set reflecting the CSS attributes of the element.
-	*/
-	public static MutableAttributeSet createAttributeSet(final URI elementNamespaceURI, final String elementQName, final CSSStyleDeclaration style)
-	{
-		final SimpleAttributeSet attributeSet=new SimpleAttributeSet();	//create a new attribute for this element
-		XMLStyleUtilities.setXMLElementName(attributeSet, elementQName);	//store the element's name in the attribute set
-		if(elementNamespaceURI!=null)  //if the element has a namespace URI specified
-			XMLStyleUtilities.setXMLElementNamespaceURI(attributeSet, elementNamespaceURI.toString());	//store the element's namespace URI in the attribute set
-		final String localName=XMLUtilities.getLocalName(elementQName);  //get the element's local name from the qualified name
-		XMLStyleUtilities.setXMLElementLocalName(attributeSet, localName);	//store the element's local name in the attribute set
-		if(style!=null) //if style was given G***should we instead do this unconditionally?
-			XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, style);	//store the CSS style in the attribute set
-		return attributeSet;	//return the attribute set we created
-	}
-
 	/**Creates an attribute set for the given XML node.
 	@param node The XML node, such as an element or text.
 	@param baseURI The base URI of the document, used for generating full target
@@ -344,6 +276,7 @@ Debug.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n
 		if the base URI is not applicable.
 	@return An attribute set reflecting the CSS attributes of the element.
 	*/
+/*TODO decide if we want this
 	protected MutableAttributeSet createAttributeSet(final Node xmlNode, final URI baseURI)
 	{
 		final String namespaceURI=xmlNode.getNamespaceURI();  //get the node namespace URI
@@ -373,7 +306,6 @@ Debug.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n
 							//add this XML attribute to the Swing atribute set as the value of our special XML attribute key
 						XMLStyleUtilities.addXMLAttribute(attributeSet, xmlAttribute.getNamespaceURI(), xmlAttribute.getNodeName(), xmlAttribute.getNodeValue());
 					}
-/**TODO fix
 					final String targetID=getTargetID(attributeSet);  //get the target ID specified in the attribute set
 					if(targetID!=null)  //if this attribute set has a target ID
 					{
@@ -384,7 +316,6 @@ Debug.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n
 						}
 						catch(IllegalArgumentException illegalArgumentException) {} //ignore any errors and simply don't store the target URL
 					}
-*/
 				}
 				break;
 			case Node.TEXT_NODE:	//if this is a text node
@@ -393,7 +324,7 @@ Debug.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n
 		}
 		return attributeSet;	//return the attribute set we created
 	}
-
+*/
 
 	/**Gets the font from an attribute set using CSS names instead of the default
 		Swing names. The actual font is obtained from the document's attribute context,
@@ -697,40 +628,28 @@ Debug.trace("extension: ", extension);  //G***del
 
 	/**Opens an input stream to the given URI. The input stream should be closed
 		when it is no longer needed.
+	This implementation delegates to <code>getInputStream()</code>.
 	@param uri The specified location of the resource.
 	@return An open input stream to the resource.
 	@exception IOException Thrown if an input stream to the specified resource
 		cannot be created.
 //G***check about returning null if the resource is not found
+ 	@see #getInputStream(URI)
 	*/
-	public InputStream getResourceAsInputStream(final URI uri) throws IOException
+	public InputStream getResourceAsInputStream(final URI uri) throws IOException	//TODO del when we can in favor of getInputStream()
 	{
-		final URIInputStreamable uriInputStreamable=getURIInputStreamable();  //see if we have an input stream locator
-		if(uriInputStreamable!=null)  //if we have an input stream locator (if we're reading from a zip file, for instance)
-		{
-Debug.trace("found input stream locator, getting input stream to URI: ", uri); //G***del
-			return uriInputStreamable.getInputStream(uri);  //get an input stream from the URI
-		}
-		else  //if we don't have an input stream locator
-		{
-			return uri.toURL().openConnection().getInputStream();	//open a connection to the URI (converted to a URL) and return an input stream to that connection
-		}
+		return getInputStream(uri);	//delegate to our URIInputStreamable method
 	}
 
-	/**Returns an input stream from given URI.
-		This method is supplied to fulfill the requirements of
-		<code>URIInputStreamLocator</code>; this method simply delegates to
-		<code>getResourceAsInputStream()</code>, which may be overridden in child
-		classes to retrieve input streams differently.
-	@param uri A complete URI to a file.
-	@return An input stream to the contents of the file represented by the given URI.
+	/**Returns an input stream from a given URI.
+	This implementation delegates to the editor kit's <code>URIInputStreamable</code>.
+	@param uri A complete URI to a resource.
+	@return An input stream to the contents of the resource represented by the given URI.
 	@exception IOException Thrown if an I/O error occurred.
-	@see URIInputStreamLocator
-	@see #getResourceAsInputStream
 	*/
 	public final InputStream getInputStream(final URI uri) throws IOException
 	{
-		return getResourceAsInputStream(uri); //use the method we already had
+		return getURIInputStreamable().getInputStream(uri);	//delegate to our own URIInputStreamable
 	}
 
 	/**Loads a particular resource from the given location. The loaded resource
@@ -979,6 +898,7 @@ Debug.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEn
 	@param mediaTypeArray The array of media types of the documents.
 	@param swingXMLDocument The Swing document into which the XML will be set.
 	*/
+/*TODO decide if we want this
 	public void create(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray)
 	{
 Debug.trace("creating document with XML documents", xmlDocumentArray.length);
@@ -1063,30 +983,28 @@ Debug.trace("tried to remove everything, new length is:", getLength());
 						{
 							final ProcessingInstruction processingInstruction=(ProcessingInstruction)processingInstructionList.get(processingInstructionIndex);	//get a reference to this processing instruction
 							processingInstructions[processingInstructionIndex]=new NameValuePair(processingInstruction.getTarget(), processingInstruction.getData()); //create a name/value pair from the processing instruction
-		/*G***del when works
+
 								//add an attribute representing the processing instruction, prepended by the special characters for a processing instruction
-							attributeSet.addAttribute(XMLStyleConstants.XML_PROCESSING_INSTRUCTION_ATTRIBUTE_START+processingInstruction.getTarget(), processingInstruction.getData());
-		*/
+//G***del when works							attributeSet.addAttribute(XMLStyleConstants.XML_PROCESSING_INSTRUCTION_ATTRIBUTE_START+processingInstruction.getTarget(), processingInstruction.getData());
+
 						}
 						XMLStyleUtilities.setXMLProcessingInstructions(documentAttributeSet, processingInstructions); //add the processing instructions
 					}
-		/*G***fix
-					if(XHTMLSwingTextUtilities.isHTMLDocumentElement(documentAttributeSet);	//see if this is an HTML document
-					{
-						if(childAttributeSet instanceof MutableAttributeSet)	//G***testing
-						{
-							final MutableAttributeSet mutableChildAttributeSet=(MutableAttributeSet)childAttributeSet;
-							mutableChildAttributeSet.addAttribute("$hidden", Boolean.TRUE);	//G***testing
-												
-						}
-					}
-		*/
-				}
+
+//G***fix					if(XHTMLSwingTextUtilities.isHTMLDocumentElement(documentAttributeSet);	//see if this is an HTML document
+//G***fix					{
+//G***fix						if(childAttributeSet instanceof MutableAttributeSet)	//G***testing
+//G***fix						{
+//G***fix							final MutableAttributeSet mutableChildAttributeSet=(MutableAttributeSet)childAttributeSet;
+//G***fix							mutableChildAttributeSet.addAttribute("$hidden", Boolean.TRUE);	//G***testing												
+//G***fix						}
+//G***fix					}
+//G***fix				}
 				sectionElement.replace(0, sectionElement.getChildCount(), childElements);	//add the document children to the section
-/*G***del
-				Debug.trace("before creating document, content has length", content.length());
-Debug.trace("ready to insert", stringBuilder.length());
-*/
+
+//G***del				Debug.trace("before creating document, content has length", content.length());
+//G***del Debug.trace("ready to insert", stringBuilder.length());
+
 //G***fix				content.insertString(0, stringBuilder.toString());	//TODO find a better way to replace the content
 				
 	
@@ -1102,14 +1020,13 @@ Debug.trace("we think the amount of content we added is", length);
 //G***fix		    event.addEdit(cEdit);
 //G***fix buffer.create(length, data, evnt);
 				buffer=new ElementBuffer(sectionElement);	//TODO testing
-/*G***fix
+
 		    // update bidi (possibly)
 	//G***del	    super.insertUpdate(evnt, null);
-		    insertUpdate(event, null);
+//G***fix		    insertUpdate(event, null);
 	//G***fix	    event.end();	//TODO notify the listeners?
-		    fireInsertUpdate(event);
-		    fireUndoableEditUpdate(new UndoableEditEvent(this, event));
-*/
+//G***fix		    fireInsertUpdate(event);
+//G***fix		    fireUndoableEditUpdate(new UndoableEditEvent(this, event));
 			}
 	    finally
 	    {
@@ -1158,6 +1075,7 @@ Debug.trace("after unlock, content is", getContent().length());
 		}
 		return childContentLength;
 	}
+*/
 
 	/**Appends information from an XML element tree into a list of element specs.
 	@param elementSpecList The list of element specs to be inserted into the document.
@@ -1169,11 +1087,13 @@ Debug.trace("after unlock, content is", getContent().length());
 	@exception BadLocationException for an invalid starting offset
 	@see XMLDocument#insert
 	*/
+/*TODO decide if we want this
 	protected Element createElement(final Element parentElement, final int offset, final org.w3c.dom.Document xmlDocument, final URI baseURI)
 	{
 		return createElement(parentElement, offset, xmlDocument.getDocumentElement(), baseURI);
 	}
-		
+*/
+
 	/**Appends information from an XML element tree into a list of element specs.
 	@param elementSpecList The list of element specs to be inserted into the document.
 	@param xmlElement The XML element tree.
@@ -1184,6 +1104,7 @@ Debug.trace("after unlock, content is", getContent().length());
 	@exception BadLocationException for an invalid starting offset
 	@see XMLDocument#insert
 	*/
+/*TODO decide if we want this
 	protected Element createElement(final Element parentElement, int offset, final org.w3c.dom.Element xmlElement, final URI baseURI)
 	{
 		final MutableAttributeSet attributeSet=createAttributeSet(xmlElement, baseURI);	//create an attribute set for this element
@@ -1227,6 +1148,7 @@ Debug.trace("we created a text element, we now think the offset is", offset);
 		branchElement.replace(0, branchElement.getChildCount(), childElements);	//add these children to the branch
 		return branchElement;	//return the element we created
 	}
+*/
 		
 	/**Appends information from an XML element tree into a list of element specs.
 	@param elementSpecList The list of element specs to be inserted into the document.
@@ -1238,6 +1160,7 @@ Debug.trace("we created a text element, we now think the offset is", offset);
 	@exception BadLocationException for an invalid starting offset
 	@see XMLDocument#insert
 	*/
+//TODO decide if we want this
 	protected Element createElement(final Element parentElement, final int offset, final String text, final AttributeSet attributeSet)
 	{
 Debug.trace("ready to append text", text, "at offset", offset);
@@ -1245,18 +1168,16 @@ Debug.trace("ready to append text", text, "at offset", offset);
 		{
 			throw new IllegalArgumentException("No text with which to create an element.");
 		}
-/*G***fix
-		final int begin=stringBuilder.length();	//get the insertion point TODO later add an offset parameter so that we can allow the leaf elements to point to non-zero-based offsets
-Debug.trace("begin", begin, "old length", text.length());
-
-		stringBuilder.append(text);	//append text
-*/
+//G***fix		final int begin=stringBuilder.length();	//get the insertion point TODO later add an offset parameter so that we can allow the leaf elements to point to non-zero-based offsets
+//G***fix Debug.trace("begin", begin, "old length", text.length());
+//G***fix		stringBuilder.append(text);	//append text
 final StringBuilder stringBuilder=new StringBuilder(text);	//create a string builder with the text
 //G***fix final int newLength=StringBuilderUtilities.collapse(stringBuilder, CharacterConstants.WHITESPACE_CHARS, " ", begin, text.length());	//collapse all whitespace into spaces TODO fix across element boundaries
 		final int newLength=StringBuilderUtilities.collapse(stringBuilder, CharacterConstants.WHITESPACE_CHARS, " ");	//collapse all whitespace into spaces TODO fix across element boundaries
 Debug.trace("new length", newLength);
 		final int end=offset+newLength;	//see where the inserted, collapsed text ends
 Debug.trace("end", end);
+
 /*G***del if not needed
 		try
 		{
@@ -1273,6 +1194,7 @@ Debug.trace("end", end);
 	
 	/**Creates and returns a page break element.
 	*/
+/*TODO decide if we want this
 	protected Element createPageBreakElement(final Element parentElement, final int offset)
 	{
 //G***del Debug.trace("XMLDocument.appendElementSpecListPageBreak()");	//G***del
@@ -1287,7 +1209,7 @@ Debug.trace("end", end);
 		pageBreakElement.replace(0, pageBreakElement.getChildCount(), new Element[]{childElement});	//add these dummy child element to the page break element
 		return pageBreakElement;	//return the page break element
 	}
-
+*/
 		
 	protected void insertBlockElementEnds(final Element element)	//G***testing
 	{
@@ -1631,6 +1553,7 @@ Debug.trace("this paragraph attribute set: ", com.garretwilson.swing.text.Attrib
 		and applies the styles to the Swing element attributes.
 	@param swingDocument The Swing document containing the data.
 	*/
+/*TODO fix, relocate
 	public void applyStyles()
 	{
 Debug.trace("Ready to applystyles");  //G***fix
@@ -1672,6 +1595,7 @@ Debug.trace("applying local styles"); //G***del
 //G***important; fix			writeUnlock();  //always release the lock on the document
 		}
 	}
+*/
 
 	/**Adds a progress listener.
 	@param listener The listener to be notified of progress.
