@@ -1,6 +1,5 @@
 package com.garretwilson.swing.rdf.tree;
 
-import java.net.URI;
 import java.util.*;
 import com.garretwilson.swing.tree.*;
 import com.garretwilson.rdf.*;
@@ -28,6 +27,22 @@ public class RDFTreeNode extends DynamicTreeNode
 		return (RDF)getUserObject();  //return the user object cast to an RDF
 	}
 
+	/**The object that determines how the resources will be sorted,
+		or <code>null</code> if the resources should not be sorted.
+	*/
+	private Comparator comparator=null;
+
+		/**@return The object that determines how the resources will be sorted,
+			or <code>null</code> if the resources should not be sorted.
+		*/
+		public Comparator getComparator() {return comparator;}
+
+		/**Sets the method of sorting the resources.
+		@param newComparator The object that determines how the resources will be
+			sorted, or <code>null</code> if the resources should not be sorted.
+		*/
+		public void setComparator(final Comparator newComparator) {comparator=newComparator;}
+
 	/**Constructs a tree node from an RDF data model.
 	@param rdf The RDF data model represented by this node.
 	@param rdfXMLifier The RDF XML-ifier to use for creating labels.
@@ -47,21 +62,14 @@ public class RDFTreeNode extends DynamicTreeNode
 	/**Dynamically loads child nodes for all resources.*/
 	protected void loadChildNodes()
 	{
-		final Iterator resourceIterator=getRDF().getResourceIterator();  //get an iterator to all the RDF resources
-		while(resourceIterator.hasNext()) //while there are resources remaining
+			//get an iterator to the root RDF resources, sorting them if requested
+		final Iterator rootResourceIterator=getRDF().getRootResourceIterator(getComparator());
+		while(rootResourceIterator.hasNext()) //while there are root resources remaining
 		{
-			final RDFResource resource=(RDFResource)resourceIterator.next();  //get the next resource
-			final URI referenceURI=resource.getReferenceURI(); //get the resource reference URI
-			//G***in throwing away anonymous resources, some might have been described at the top of the hierarchy---we should really just check to see which resources are not referenced
-//G***check to see if there are no references to this node---if so, we'll probably want to display it anyway
-//G***since this exact functionality occurs in RDFXMLifier, create it there and access those methods here
-			if(resource.getReferenceURI()!=null //if this is not a blank node
-				  && resource.getPropertyCount()>0)  //if this resource actually has properties (even properties such as type identifiers are resources, but they don't have properties)
-			{
-					//create a new tree node to represent the resource
-				final RDFObjectTreeNode rdfResourceNode=new RDFObjectTreeNode(resource, getXMLifier());
-				add(rdfResourceNode); //add the resource node to this RDF data model node
-			}
+			final RDFResource resource=(RDFResource)rootResourceIterator.next();  //get the next root resource
+				//create a new tree node to represent the resource
+			final RDFObjectTreeNode rdfResourceNode=new RDFObjectTreeNode(resource, getXMLifier());
+			add(rdfResourceNode); //add the resource node to this RDF data model node
 		}
 	}
 

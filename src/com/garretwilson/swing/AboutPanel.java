@@ -224,7 +224,7 @@ public class AboutPanel extends BasicPanel implements CharacterConstants
 			if(resource!=null)	//if we have a resource
 			{
 				final RDF rdf=new RDF(); //create a new RDF data model
-				rdf.putResource(resource);	//put the resource in the data model 
+				rdf.addResource(resource);	//put the resource in the data model 
 				final RDFPanel rdfPanel=new RDFPanel(rdf, resource);  //create a new panel in which to show the resource
 					//show the properties in an information dialog
 				OptionPane.showMessageDialog(AboutPanel.this, rdfPanel, (getTitle()!=null ? getTitle()+' ' : "")+"Properties", OptionPane.INFORMATION_MESSAGE);	//G***i18n

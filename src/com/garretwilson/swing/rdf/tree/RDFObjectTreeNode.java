@@ -1,13 +1,9 @@
 package com.garretwilson.swing.rdf.tree;
 
 import java.util.*;
-import javax.swing.tree.*;
 import com.garretwilson.swing.tree.*;
-import com.garretwilson.text.xml.XMLSerializer;
-import com.garretwilson.text.xml.XMLUtilities;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.rdfs.*;
-import com.garretwilson.util.*;
 
 /**A tree node that represents an object described in RDF.
 	The object can be either a literal or a resource; if a resource, any
@@ -122,17 +118,26 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 		{
 			final RDFResource resource=(RDFResource)userObject; //cast the user object to a resource
 			final RDFResource type=RDFUtilities.getType(resource);  //get the type of the resource
+			final RDFLiteral label=RDFSUtilities.getLabel(resource);	//get the label of the resource
 			if(type!=null) //if we have a type
 			{
 				if(property!=null) //if we had a property
 					stringBuffer.append(':').append(' '); //append ": " to separate the property from the type
 				stringBuffer.append('(').append(getXMLifier().getLabel(type)).append(')'); //append "(type)"
 			}
-			if(resource.getReferenceURI()!=null) //if this is not a blank node resource
+			if(label!=null)	//if there is a label
 			{
 				if(property!=null && type==null)  //if we had a property, but no type
-					stringBuffer.append(':'); //append a colon to separate the property from the reference URI
+					stringBuffer.append(':'); //append a colon to separate the property from the label
 				if(property!=null || type!=null) //if we had either a property or a type
+					stringBuffer.append(' '); //append a space to separate the property and/or type from the label
+				stringBuffer.append(label);		//append the text of the label
+			} 
+			if(resource.getReferenceURI()!=null) //if there is no label and this is not a blank node resource
+			{
+				if(property!=null && type==null && label==null)  //if we had a property, but no type or label
+					stringBuffer.append(':'); //append a colon to separate the property from the reference URI
+				if(property!=null || type!=null || label!=null) //if we had a property or a type or a label
 					stringBuffer.append(' '); //append a space to separate the property and/or type from the reference URI
 				stringBuffer.append('[').append(getXMLifier().getLabel(resource)).append(']');  //append "[referenceURI]" label
 //G***del when works			  stringBuffer.append('[').append(resource.getReferenceURI()).append(']');  //append "[referenceURI]"

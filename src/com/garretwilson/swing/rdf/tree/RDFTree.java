@@ -1,14 +1,9 @@
 package com.garretwilson.swing.rdf.tree;
 
-import java.awt.*;
-import java.io.IOException;
+import java.util.*;
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.tree.*;
-import com.garretwilson.resources.icon.IconResources;
-import com.garretwilson.swing.rdf.tree.*;
 import com.garretwilson.text.xml.XMLDOMImplementation;
-import com.garretwilson.text.xml.XMLSerializer;
 import com.garretwilson.rdf.*;
 import org.w3c.dom.*;
 
@@ -45,6 +40,22 @@ public class RDFTree extends JTree
 		*/
 		public RDFResource getResource() {return rdfResource;}
 
+	/**The object that determines how the resources will be sorted,
+		or <code>null</code> if the resources should not be sorted.
+	*/
+	private Comparator comparator=null;
+
+		/**@return The object that determines how the resources will be sorted,
+			or <code>null</code> if the resources should not be sorted.
+		*/
+		public Comparator getComparator() {return comparator;}
+
+		/**Sets the method of sorting the resources.
+		@param newComparator The object that determines how the resources will be
+			sorted, or <code>null</code> if the resources should not be sorted.
+		*/
+		public void setComparator(final Comparator newComparator) {comparator=newComparator;}
+
 	/**Default constructor.*/
 	public RDFTree()
 	{
@@ -68,11 +79,11 @@ public class RDFTree extends JTree
 	public RDFTree(final RDF rdf, final RDFResource resource)
 	{
 		setRDF(rdf, resource);  //set the resource being displayed
-		jbInit(); //initialize the UI
+		initializeUI(); //initialize the UI
 	}
 
 	/**Initializes the user interface.*/
-	private void jbInit()
+	private void initializeUI()
   {
 //G***del		  //setup the icon for RDF literals
 //G***del; this is now done by default		rdfResourceTreeCellRenderer.registerRDFLiteralIcon(IconResources.getIcon(IconResources.STRING_ICON_FILENAME));
@@ -81,6 +92,7 @@ public class RDFTree extends JTree
   }
 
 	/**Displays the resources of an RDF data model in the panel.
+	<p>The root node is hidden.</p>
 	@param rdfModel The RDF data model from which to display resources.
 	*/
 	public void setRDF(final RDF rdfModel)
@@ -88,7 +100,9 @@ public class RDFTree extends JTree
 		setRDF(rdfModel, null); //set the RDF without showing a particular resource
 	}
 
-	/**Displays a single resource in the panel.
+	/**Displays a single resource in the panel, or if no resource is given, all
+		the resources of the data model.
+	<p>If all resources are shown, the root node is hidden.</p>	
 	@param rdfModel The RDF data model in which the resource lies, or the data model
 		from which to display resources if no specific resource is specified.
 	@param resource The resource to display in the panel, or <code>null</code> if
@@ -99,6 +113,7 @@ public class RDFTree extends JTree
 		rdf=rdfModel; //save the RDF
 		rdfResource=resource; //save the resource
 		rdfXMLifier=new RDFXMLifier();  //switch to a new RDF XMLifier, so that new namespace prefixes can be created
+		setRootVisible(resource!=null);	//only show the root if we're showing a single resource
 		final TreeNode treeNode; //we'll create a resource tree node for either a specific resource for the entire RDF data model
 		if(resource!=null)  //if we were given a resource
 		{
