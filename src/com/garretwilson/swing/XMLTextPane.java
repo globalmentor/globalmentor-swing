@@ -72,7 +72,7 @@ import edu.stanford.ejalbert.BrowserLauncher;
 @see com.garretwilson.swing.event.PageEvent
 @see com.garretwilson.swing.event.PageListener
 */
-public class XMLTextPane extends JTextPane implements AppletContext, /*G***del when works KeyListener, */MouseMotionListener, PageListener, ProgressListener
+public class XMLTextPane extends JTextPane implements AppletContext, /*G***del when works KeyListener, */MouseMotionListener, PageListener, ProgressListener, URIAccessible
 {
 
 	/**The name of the property that indicates the current document.*/
@@ -620,6 +620,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	*/
 	public void setDocument(final Document document)
 	{
+		DocumentUtilities.setBaseURI(document, getBaseURI());	//store our base URI in the document
 		DocumentUtilities.setPaged(document, isPaged());  //store the new paged value in the document
 		DocumentUtilities.setZoomFactor(document, getZoomFactor());  //store the zoom factor in the document
 //G***del		document.putProperty(XMLDocument.ZOOM_FACTOR_PROPERTY, new Float(getZoomFactor())); //store the zoom factor in the document
@@ -712,24 +713,39 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	}
 */
 
-	/**Sets the location against which to resolve relative URIs. By default this
-		will be the document's URI.
-	@param baseURI The new location against which to resolve relative URIs.
-	@see #BASE_URI_PROPERTY
+	/**The base URI of the XML, or <code>null</code> if unknown.*/
+	private URI baseURI=null;
+
+		/**Sets the location against which to resolve relative URIs. By default this
+			will be the document's URI.
+		<p>The base URI is also updated in the currently loaded document.</p>
+		@param baseURI The new location against which to resolve relative URIs.
+		@see #BASE_URI_PROPERTY
+		*/
+		public void setBaseURI(final URI baseURI)
+		{
+			this.baseURI=baseURI;	//save the base URI
+			DocumentUtilities.setBaseURI(getDocument(), baseURI);	//store the base URI in the document
+		}
+		
+		/**Gets the location against which to resolve relative URIs.
+		@return The location against which to resolve relative URIs, or <code>null</code>
+			if there is no base URI.
+		*/
+		public URI getBaseURI()
+		{
+			return baseURI;	//return the base URI
+		}
+
+	/**Returns an input stream for the given URI.
+	The calling class has the responsibility for closing the input stream.
+	@param uri A URI to a resource.
+	@return An input stream to the contents of the resource represented by the given URI.
+	@exception IOException Thrown if an I/O error occurred.
 	*/
-	protected void setBaseURI(final URI baseURI)
+	public InputStream getInputStream(final URI uri) throws IOException
 	{
-		getDocument().putProperty(XMLDocument.BASE_URI_PROPERTY, baseURI);	//store the base URI
-	}
-	
-	/**Gets the location against which to resolve relative URIs.
-	@return The location against which to resolve relative URIs, or <code>null</code>
-		if there is no base URI.
-	@see #BASE_URI_PROPERTY
-	*/
-	protected URI getBaseURI()	//G***del throws URISyntaxException
-	{
-		return (URI)getDocument().getProperty(XMLDocument.BASE_URI_PROPERTY);	//return the value of the base URI property
+		return uri.toURL().openConnection().getInputStream();	//G***testing---fix
 	}
 
 	/**Sets the text to the specified content, which must be well-formed XML.
@@ -832,8 +848,8 @@ try {
 	*/
 	public void setPage(URI uri, final URIInputStreamable uriInputStreamable) throws IOException
 	{
+		baseURI=uri;	//update our base URI (don't call the setBaseURI() method, because we don't want to change the base URI of the old document
 		setURIInputStreamable(uriInputStreamable);  //use whatever input stream locator they specify
-		
 
 //G***make sure we set all the properties like the subclass uses
 //G***note that the underlying class calls this.read(), which performs similar but not identical functionality as code here -- it would be good to use that, if possible
@@ -914,11 +930,12 @@ Debug.trace("installed editor kit is now: ", getEditorKit().getClass().getName()
 	*/
 	public void setPage(final URI uri, final InputStream inputStream) throws IOException
 	{
+		baseURI=uri;	//update our base URI (don't call the setBaseURI() method, because we don't want to change the base URI of the old document
 		final XMLEditorKit xmlEditorKit=(XMLEditorKit)getEditorKit();	//get the current editor kit, and assume it's an XML editor kit G***we might want to check just to make sure
 		final Document document=xmlEditorKit.createDefaultDocument();	//create a default document
 
 		document.putProperty(Document.StreamDescriptionProperty, URIUtilities.toValidURL(uri));	//store a URL version of the URI in the document, as getPage() expects this to be a URL
-		document.putProperty(XMLDocument.BASE_URI_PROPERTY, uri);	//store the base URI in the document
+		DocumentUtilities.setBaseURI(document, uri);	//store the base URI in the document
 Debug.trace("reading from stream"); //G***del
 //G***del		read(inputStream, document);  //read the document from the input stream
 		if(document instanceof XMLDocument) //if this is an XML document

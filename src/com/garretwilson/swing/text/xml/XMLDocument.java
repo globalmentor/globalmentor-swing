@@ -93,9 +93,6 @@ import org.w3c.dom.stylesheets.StyleSheetList;
 public class XMLDocument extends DefaultStyledDocument implements URIInputStreamable
 {
 
-	/**The name of the property that indicates the base URI against which relative URIs should be referenced.*/
-	public final static String BASE_URI_PROPERTY="baseURI";
-
 	/**The task of applying a stylesheet.*/
 	public final static String APPLY_STYLESHEET_TASK="applyStylesheet";
 
@@ -800,7 +797,7 @@ Debug.trace("found input stream locator, getting input stream to URI: ", uri); /
 	*/
 	public void setBaseURI(final URI baseURI)
 	{
-		putProperty(BASE_URI_PROPERTY, baseURI);	//store the base URI
+		DocumentUtilities.setBaseURI(this, baseURI);	//store the base URI
 	}
 
 	/**Gets the location against which to resolve relative URIs.
@@ -809,9 +806,9 @@ Debug.trace("found input stream locator, getting input stream to URI: ", uri); /
 //G***del	@exception URISyntaxException Thrown if the a URI could not be created.
 	@see #BASE_URI_PROPERTY
 	*/
-	public URI getBaseURI()	//G***del throws URISyntaxException
+	public URI getBaseURI()
 	{
-		return (URI)getProperty(BASE_URI_PROPERTY);	//return the value of the base URI property
+		return DocumentUtilities.getBaseURI(this);	//return the value of the base URI property
 	}
 
 	/**Inserts a group of new elements into the document

@@ -1,6 +1,8 @@
 package com.garretwilson.swing;
 
 import java.awt.*;
+import java.beans.PropertyChangeListener;
+
 import com.garretwilson.awt.*;
 import com.garretwilson.util.*;
 
@@ -12,9 +14,15 @@ import com.garretwilson.util.*;
 <p>If the content component implements <code>DefaultFocusable</code> and knows
 	which component should get the default focus, any request for the default
 	focus component will be delegated to the content component.</p>
+<p>If the content component implements <code>Modifiable</code>, any
+	modifications of the content component will cause this panel to be
+	modified. Setting the modified status of this panel to <code>false</code>
+	will also set the modified status of any <code>Modifiable</code> content
+	component to <code>false</code>.</p>
 @author Garret Wilson
 @see BasicGridBagLayout
 @see DefaultFocusable
+@see com.garretwilson.util.Modifiable
 */
 public class ContentPanel extends BasicPanel implements CanClosable
 {
@@ -41,11 +49,25 @@ public class ContentPanel extends BasicPanel implements CanClosable
 			if(contentComponent!=newContentComponent) //if the content component is really changing
 			{
 			  if(contentComponent!=null)  //if we already have an content component
+			  {
+			  	if(contentComponent instanceof Modifiable)	//if the content component is modifiable
+			  	{
+			  		contentComponent.removePropertyChangeListener(modifyModifiedChangeListener);	//don't listen for its modifications anymore
+			  	}
 					remove(contentComponent);   //remove the current one
+			  }
 				contentComponent=newContentComponent; //store the content component
 				if(newContentComponent!=null)	//if we were given a new content component
 				{
 					add(newContentComponent, BorderLayout.CENTER);  //put the content component in the center of the panel
+					if(newContentComponent instanceof Modifiable)	//if the new content component is modifiable
+					{
+						if(modifyModifiedChangeListener==null)	//if we don't have a modified property change listener
+						{
+							modifyModifiedChangeListener=createModifyModifiedChangeListener();	//create a new property change listener for modifications
+						}
+						newContentComponent.addPropertyChangeListener(modifyModifiedChangeListener);	//listen for modifications in the content component, and update our modified status in response
+					}
 				}
 /*G***del when revalidate() works---maybe even remove WindowUtilities.packWindow()		  	
 		  	if(getParentOptionPane()!=null)	//if this panel is inside an option pane
@@ -91,6 +113,11 @@ public class ContentPanel extends BasicPanel implements CanClosable
 		return super.getDefaultFocusComponent();	//if we can't get the default focus component from the content component, return whatever had been set with this panel
 	}
 
+	/**The listener that listens for the modified property and, if it is changed
+		to <code>true</code>, sets our modified status to <code>true</code>.
+	*/
+	private PropertyChangeListener modifyModifiedChangeListener;
+
 	/**Default constructor.*/
 	public ContentPanel()
 	{
@@ -128,10 +155,25 @@ public class ContentPanel extends BasicPanel implements CanClosable
 	public ContentPanel(final Component contentComponent, final boolean initialize)
 	{
 		super(new BasicGridBagLayout(), false);	//construct the default panel without initializing it
+		modifyModifiedChangeListener=null;	//start out without a property change listener for content component modifications
 		if(contentComponent!=null)  //if we were given a content component
 		  setContentComponent(contentComponent);  //set the content component
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel
+	}
+
+	/**Sets whether the object has been modified.
+	<p>If the new modified status is false, also updates the content component if
+		it implements <code>Modifiable</code>.</p>
+	@param modified The new modification status.
+	*/
+	public void setModified(final boolean modified)
+	{
+		super.setModified(modified);	//set the modified status appropriately
+		if(!modified && getContentComponent() instanceof Modifiable)	//if we're no longer modified and the content component is modifiable
+		{
+			((Modifiable)getContentComponent()).setModified(false);	//unmodify the content component
+		}
 	}
 
 	/**@return <code>true</code> if the panel can close.

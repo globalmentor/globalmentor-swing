@@ -1,5 +1,7 @@
 package com.garretwilson.swing.text;
 
+import java.net.URI;
+
 import javax.swing.text.Document;
 import com.garretwilson.rdf.RDF;
 
@@ -10,6 +12,27 @@ import com.garretwilson.rdf.RDF;
 public class DocumentUtilities implements DocumentConstants
 {
 
+	/**Sets the location against which to resolve relative URIs. By default this
+		will be the document's URI.
+	@param document The document the property of which to set.
+	@param baseURI The new location against which to resolve relative URIs.
+	@see #BASE_URI_PROPERTY
+	*/
+	public static void setBaseURI(final Document document, final URI baseURI)
+	{
+		document.putProperty(BASE_URI_PROPERTY, baseURI);	//store the base URI
+	}
+		
+	/**Gets the location against which to resolve relative URIs.
+	@param document The document from which to retrieve the property.
+	@return The location against which to resolve relative URIs, or <code>null</code>
+		if there is no base URI.
+	@see #BASE_URI_PROPERTY
+	*/
+	public static URI getBaseURI(final Document document)
+	{
+		return (URI)document.getProperty(BASE_URI_PROPERTY);	//return the value of the base URI property
+	}
 	/**Retrieves whether the document should be paged.
 	@param document The document from which to retrieve the property.
 	@return <code>true</code> if the document should be paged, else

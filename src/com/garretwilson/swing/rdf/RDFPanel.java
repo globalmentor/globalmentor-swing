@@ -151,7 +151,7 @@ public class RDFPanel extends TabbedViewPanel
 	@param oldView The view before the change.
 	@param newView The new view of the data
 	*/
-	protected void onViewChanged(final int oldView, final int newView)
+	protected void onDataViewChanged(final int oldView, final int newView)
 	{		
 		switch(oldView)	//see what view we're changing from
 		{

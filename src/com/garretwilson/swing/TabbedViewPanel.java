@@ -61,6 +61,7 @@ public abstract class TabbedViewPanel extends ContentPanel implements DataViewab
 				if(!isDataViewsSupported(newView))	//if the new data view isn't supported
 					throw new IllegalArgumentException("Unsupported data view "+newView);
 				dataView=newView; //update the value					
+				updateComponent(newView);	//make sure the selected component matches the view; this will eventually re-enter this method before it returns, but as we've already changed the data view no action will occur
 				firePropertyChange(DATA_VIEW_PROPERTY, new Integer(oldView), new Integer(newView));	//show that the property has changed
 			}
 		}
@@ -293,7 +294,7 @@ public abstract class TabbedViewPanel extends ContentPanel implements DataViewab
 	@param oldView The view before the change.
 	@param newView The new view of the data
 	*/
-	protected void onViewChanged(final int oldView, final int newView)
+	protected void onDataViewChanged(final int oldView, final int newView)
 	{		
 	}
 
@@ -316,7 +317,7 @@ public abstract class TabbedViewPanel extends ContentPanel implements DataViewab
 				{
 					isViewChanging=true;	//set the flag to avoid reentry
 						//show that the view changed
-					onViewChanged(((Integer)viewChangeEvent.getOldValue()).intValue(), ((Integer)viewChangeEvent.getNewValue()).intValue());
+					onDataViewChanged(((Integer)viewChangeEvent.getOldValue()).intValue(), ((Integer)viewChangeEvent.getNewValue()).intValue());
 				}
 				finally
 				{
