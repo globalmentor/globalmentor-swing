@@ -161,7 +161,7 @@ Debug.trace("setting description: ", description); //G***del
 		if(internalFrame!=null) //if there is an internal frame open
 		{
 		  setDocumentDescription(internalFrame, description);  //store the description, keyed to the internal frame
-Debug.trace("setting frame title: ", description.getReferenceURI()); //G***del
+Debug.trace("setting frame title: ", description.getResource().getReferenceURI()); //G***del
 		  updateTitle(internalFrame);  //update the internal frame's title
 		}
 	}
@@ -227,7 +227,7 @@ Debug.trace("setting frame title: ", description.getReferenceURI()); //G***del
 		{
 //G***del			try
 			{
-			  title=description.getReferenceURI().toString(); //show the canonical file path in the title
+			  title=description.getResource().getReferenceURI().toString(); //show the canonical file path in the title G***maybe show something special for an anonymous resource
 //G***del				title=file.getCanonicalPath(); //show the canonical file path in the title
 			}
 /*G***del			
