@@ -19,6 +19,9 @@ import com.garretwilson.util.Debug;
 public abstract class ComponentAction<C extends Component> extends AbstractAction
 {
 
+	/**The property that represents the selected objects of the component, if the component implements <code>ItemSelectable</code>.*/
+//TODO del if not needed	public final static String SELECTED_OBJECTS_PROPERTY="selectedObjects";
+
 	/**The listener we use to find out when the proxied action is changing.*/
 //G***del if not needed	private PropertyChangeListener actionPropertyChangeListener;
 
@@ -160,7 +163,7 @@ public abstract class ComponentAction<C extends Component> extends AbstractActio
 				{
 					component.setEnabled(((Boolean)propertyChangeEvent.getNewValue()).booleanValue());	//update the enabled state
 				}
-				if(SHORT_DESCRIPTION.equals(propertyName))	//short description
+				else if(SHORT_DESCRIPTION.equals(propertyName))	//short description
 				{
 					if(jComponent!=null)	//if we have a JComponent
 					{

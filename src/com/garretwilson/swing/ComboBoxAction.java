@@ -23,7 +23,7 @@ public class ComboBoxAction extends ComponentAction<JComboBox>
 	private final ComboBoxModel comboBoxModel;
 
 		/**@return The model for combo box components.*/
-		protected ComboBoxModel getComboBoxModel() {return comboBoxModel;}
+		public ComboBoxModel getComboBoxModel() {return comboBoxModel;}
 
 	/**Defines a proxy action object with a default description string and default icon.
 	@param comboBoxModel The model for combo box components.

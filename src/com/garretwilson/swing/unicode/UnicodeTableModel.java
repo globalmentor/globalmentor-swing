@@ -36,6 +36,34 @@ public class UnicodeTableModel extends AbstractTableModel
 		return COLUMN_COUNT; //return the number of columns to display
 	}
 
+	/**Determines the row of a particular code point.
+	@param codePoint A Unicode code point.
+	@return The table row in which the code point is shown.
+	*/
+	public int getRow(final int codePoint)
+	{
+		return codePoint%ROW_COUNT;
+	}
+
+	/**Determines the column of a particular code point.
+	@param codePoint A Unicode code point.
+	@return The table column in which the code point is shown.
+	*/
+	public int getColumn(final int codePoint)
+	{
+		return codePoint/ROW_COUNT;
+	}
+
+	/**Returns the class of objects being displayed in a given column.
+	This version always returns the <code>Integer</code> class.
+	@param columnIndex The column being queried.
+	@return The <code>Integer</code> class.
+	*/
+	public Class<?> getColumnClass(int columnIndex)
+	{
+		return Integer.class;	//return the Integer class 
+	}
+
 	/**Returns the Unicode data to display in the given cell.
 	@param rowIndex The row of the cell.
 	@param columnIndex The column of the cell.
@@ -43,8 +71,8 @@ public class UnicodeTableModel extends AbstractTableModel
 	*/
   public Object getValueAt(int rowIndex, int columnIndex)
 	{
-		final char codePoint=(char)((ROW_COUNT*columnIndex)+rowIndex); //find out which Unicode code point should appear in this cell
-		return String.valueOf(codePoint);  //G***testing
+		final int codePoint=(ROW_COUNT*columnIndex)+rowIndex; //find out which Unicode code point should appear in this cell
+		return Integer.valueOf(codePoint);  //return an integer representing this code point
 	}
 
 	/**Returns the name of the column.

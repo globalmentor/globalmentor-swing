@@ -1,7 +1,9 @@
 package com.garretwilson.swing;
 
 import java.awt.*;
+
 import javax.swing.*;
+
 import com.garretwilson.util.Debug;
 
 /**Convenience methods to be used for Swing components.
@@ -68,6 +70,33 @@ Debug.trace("Ready to set cursor: ", cursor.getName());  //G***del
 			}
 		});
 		return originalCursor;  //return the original cursor used
+	}
+
+	/**Scrolls the given rectangle to the origin of the parent.
+	This is most useful if used with a component embedded in a <code>JViewport</code>.
+	@param component The component the rectangle represents.
+	@param rectangle The visible <code>Rectangle</code>.
+	@see JViewport
+	*/
+	public static void scrollRectToOrigin(final JComponent component, final Rectangle rectangle)	//TODO maybe search up the hierarchy for the viewport
+	{
+		final int originalWidth=rectangle.width;	//get the original rectangle width
+		final int originalHeight=rectangle.height;	//get the original rectangle height
+		try
+		{
+			final Container parent=component.getParent();	//get the parent
+			if(parent!=null)	//if there is a parent
+			{
+				rectangle.width=parent.getWidth();	//change the width of the rectangle to the width of the parent
+				rectangle.height=parent.getHeight();	//change the height of the rectangle to the height of the parent
+			}
+			component.scrollRectToVisible(rectangle);	//make the rectangle visible
+		}
+		finally
+		{
+			rectangle.width=originalWidth;	//reset the rectangle width
+			rectangle.height=originalHeight;	//reset the rectangle height
+		}
 	}
 
 }
