@@ -46,7 +46,7 @@ public class XHTMLLinkController extends XMLLinkController implements XHTMLConst
 		final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
 		final String elementLocalName=XMLStyleUtilities.getXMLElementLocalName(attributeSet); //get the local name of this element
 		if(ELEMENT_A.equals(elementLocalName))	//if this is an XHTML <a> element
-			return (String)attributeSet.getAttribute(ELEMENT_A_ATTRIBUTE_HREF);	//get the href value
+			return XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_A_ATTRIBUTE_HREF);	//get the href value
 		else	//if this is another element
 			return super.getLinkElementHRef(element);	//let the parent class try to find an href
 	}

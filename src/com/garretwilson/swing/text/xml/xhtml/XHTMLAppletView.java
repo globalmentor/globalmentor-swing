@@ -34,7 +34,7 @@ public class XHTMLAppletView extends XMLAbstractAppletView implements XHTMLConst
 		final AttributeSet attributeSet=element.getAttributes();  //get the element's attributes
 		final String javaPrefix="java:";  //the prefix the classid, as a URI, will probably have G***use a constant here
 //G***del when works		final String classPostfix=".class"; //the ending postfix the classid URI may have G***use a constant here
-		final String classID=(String)attributeSet.getAttribute(ELEMENT_OBJECT_ATTRIBUTE_CLASSID);	//get the classid of the applet G***check about resolving parents (we don't want to resolve), use namespaces, and comment
+		final String classID=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_CLASSID);	//get the classid of the applet
 		final String classHRef=StringUtilities.trimBeginning(classID, javaPrefix);  //remove the "java:" prefix if present
 		setClassHRef(classHRef);  //set the href to the class
 /*G***del when not needed
@@ -43,8 +43,8 @@ public class XHTMLAppletView extends XMLAbstractAppletView implements XHTMLConst
 */
 //G***del Debug.trace("Set class name: ", className);  //G***del
 		//check for errors here
-		final int height=Integer.parseInt((String)attributeSet.getAttribute(ELEMENT_OBJECT_ATTRIBUTE_HEIGHT));	//get the requested height of the applet G***check about resolving parents (we don't want to resolve), use namespaces, and comment
-		final int width=Integer.parseInt((String)attributeSet.getAttribute(ELEMENT_OBJECT_ATTRIBUTE_WIDTH));	//get the requested width of the applet G***check about resolving parents (we don't want to resolve), use namespaces, and comment
+		final int height=Integer.parseInt(XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_HEIGHT));	//get the requested height of the applet
+		final int width=Integer.parseInt(XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_WIDTH));	//get the requested width of the applet
 		setHeight(height);  //update the standard and current heights
 		setWidth(width);  //update the standard and current widths
 //G***del Debug.trace("OEBAppletView.initialize(), width: "+fWidth+", height: "+fHeight);	//G***del

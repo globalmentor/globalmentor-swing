@@ -247,7 +247,7 @@ Debug.trace("URI: ", uri);	//G***del
 	protected boolean isLinkElement(final Element element)
 	{
 		final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-		final String xlinkType=(String)attributeSet.getAttribute(XLinkConstants.XLINK_TYPE);	//get the xlink:type of this element (if there is one)
+		final String xlinkType=XMLStyleUtilities.getXMLAttributeValue(attributeSet, XLinkConstants.XLINK_NAMESPACE_URI.toString(), XLinkConstants.TYPE);	//get the xlink:type of this element (if there is one)
 		if(xlinkType!=null)	//if this is an XLink element
 			return true;	//show that this is a link element
 		else if(attributeSet.getAttribute(XLinkConstants.XLINK_HREF)!=null)	//G***for now, until we support default attributes in the DTD, accept a link that only has an href
@@ -267,10 +267,10 @@ Debug.trace("URI: ", uri);	//G***del
 	protected String getLinkElementHRef(final Element element)
 	{
 		final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-		final String xlinkType=(String)attributeSet.getAttribute(XLinkConstants.XLINK_TYPE);	//get the xlink:type of this element (if there is one) G***use a constant here
+		final String xlinkType=XMLStyleUtilities.getXMLAttributeValue(attributeSet, XLinkConstants.XLINK_NAMESPACE_URI.toString(), XLinkConstants.TYPE);	//get the xlink:type of this element (if there is one)
 //G***bring back when the DTD supports default attributes			if(xlinkType!=null)	//if this is an XLink element
 				//G***use getDefinedAttribute(), so as not to search up the hierarchy
-			return (String)attributeSet.getAttribute(XLinkConstants.XLINK_HREF);	//return the xlink:href of this element (if there is one) G***use a constant here
+			return XMLStyleUtilities.getXMLAttributeValue(attributeSet, XLinkConstants.XLINK_NAMESPACE_URI.toString(), XLinkConstants.HREF);	//return the xlink:href of this element (if there is one)
 //G***bring back when the DTD supports default attributes			return null;	//show that this isn't an XLink element, because it didn't have an "xlink:type" attribute
 	}
 

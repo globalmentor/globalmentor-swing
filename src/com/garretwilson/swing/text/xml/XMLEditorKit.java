@@ -987,13 +987,14 @@ Debug.trace("Non-collapsed text: "+text);
 		final org.w3c.dom.Element xmlElement=xmlDocument.createElementNS(elementNamespaceURI, elementName);	//create the element
 		if(!XMLStyleUtilities.isXMLEmptyElement(attributeSet))  //if this element isn't an empty element, we'll add children
 		{
-			boolean isInlineChild=true; //each time we'll determine whether this is an inline node so that we can add EOLs for pretty printing if not; for now, assume it is inline
+			boolean hasBlockChild=false;	//we'll see if any of the children have block display; start out assuming they don't
+//G***del when works			boolean isInlineChild=true; //each time we'll determine whether this is an inline node so that we can add EOLs for pretty printing if not; for now, assume it is inline
 				//create and append the child elements
 			for(int childIndex=0; childIndex<swingElement.getElementCount(); ++childIndex)  //look at each of the child elements
 			{
 				final Element childSwingElement=swingElement.getElement(childIndex); //get this Swing child element
 				final org.w3c.dom.Node childXMLNode=createXMLNode(xmlDocument, childSwingElement); //create an XML node from the child Swing element
-				isInlineChild=true; //start by assuming this is an inline child
+				boolean isInlineChild=true; //start by assuming this is an inline child
 //G***del when works				final boolean isInlineChild; //we'll determine whether this is an inline node so that we can add EOLs for pretty prining if not
 				if(childXMLNode.getNodeType()==Node.ELEMENT_NODE) //if this is an element
 				{
@@ -1008,14 +1009,18 @@ Debug.trace("Non-collapsed text: "+text);
 					isInlineChild=true;  //we'll still consider it to be "inline" (it might be just textual content, after all)
 */
 				if(!isInlineChild)  //if the child element is not inline
+				{
+					hasBlockChild=true;	//show that at least one child has block display
 					XMLUtilities.appendText(xmlElement, "\n");  //skip to the next line for a pretty formatted XML document
+				}
 				xmlElement.appendChild(childXMLNode);  //append the XML node we created
 	/*G***del if not needed
 				if(!isInlineChild)  //if the child element is not inline
 					XMLUtilities.appendText(xmlElement, "\n");  //skip to the next line for a pretty formatted XML document
 	*/
 			}
-			if(!isInlineChild)  //if the last child element was not inline
+//*G**del when works			if(!isInlineChild)  //if the last child element was not inline
+ 			if(hasBlockChild)  //if any of the children were not inline
 				XMLUtilities.appendText(xmlElement, "\n");  //skip to the next line for a pretty formatted XML document
 		}
 

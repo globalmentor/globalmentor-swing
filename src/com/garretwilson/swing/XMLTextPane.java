@@ -37,6 +37,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.EventListenerList;
 import com.garretwilson.applet.*;
 import com.garretwilson.io.*;
+import com.garretwilson.net.URIConstants;
 import com.garretwilson.net.URIUtilities;
 import com.garretwilson.net.URLUtilities;
 import com.garretwilson.swing.event.PageEvent;
@@ -653,21 +654,57 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 */
 //G***it might also be nice to override setEditorKit() and automatically update whether the editor kit should be paged
 
+	/**Gets the current URL being displayed. 
+	If a URL was not specified in the creation of the document, this
+		will return <code>null</code>, and relative URL's will not be resolved.
+	<p>This version knows how to convert a URI to a URL, if a URI is stored in
+		the stream description property.</p>
+	@return The page URL, or <code>null</code> if none.
+	*/
+/*G***del if not needed
+	public URL getPage() {
+			return (URL) getDocument().getProperty(Document.StreamDescriptionProperty);
+	}
+*/
+
+	/**Sets the location against which to resolve relative URIs. By default this
+		will be the document's URI.
+	@param baseURI The new location against which to resolve relative URIs.
+	@see #BASE_URI_PROPERTY
+	*/
+	protected void setBaseURI(final URI baseURI)
+	{
+		getDocument().putProperty(XMLDocument.BASE_URI_PROPERTY, baseURI);	//store the base URI
+	}
+	
+	/**Gets the location against which to resolve relative URIs.
+	@return The location against which to resolve relative URIs, or <code>null</code>
+		if there is no base URI.
+	@see #BASE_URI_PROPERTY
+	*/
+	protected URI getBaseURI()	//G***del throws URISyntaxException
+	{
+		return (URI)getDocument().getProperty(XMLDocument.BASE_URI_PROPERTY);	//return the value of the base URI property
+	}
+
 	/**Initializes from a URL to a file, which could be a document or, for OEB,
 		a package or a .zip file. This creates a model of the type appropriate for
 		the component (such as an OEB document) and initializes the model using the
 		appropriate editor kit.
 	@param url The URL of the file which has the information to load.
 	@exception IOException as thrown by the stream being used to initialize.
+	@deprecated Replaced with setPage(URI) because in ambiguities in URL
+		reserved character encoding.
 	@see JEditorPane#setPage
 	@see EditorKit#createDefaultDocument
 	@see #setDocument
+	@see #setPage(URI)
 	*/
 	public void setPage(final URL url) throws IOException
 	{
 		try
 		{
-			setPage(new URI(url.toString()));	//set the page using the URI version of the URL
+			setPage(URIUtilities.createURI(url));	//set the page using the URI version of the URL
 		}
 		catch(URISyntaxException uriSyntaxException)	//if the URL can't be converted to a URI (unlikely)
 		{
@@ -691,9 +728,6 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	{
 		setPage(uri, new URIUtilities());  //we'll use an instance of URIUtilities to make direct connections to URIs
 	}
-
-
-
 
 	/**Initializes from a URI to a resource, which could be a document or, for OEB,
 		a package or a .zip file. This creates a model of the type appropriate for
@@ -725,7 +759,7 @@ Debug.trace("setting page: ", uri);  //G***del
 
 //G***del		setURIInputStreamable(null);  //show that we don't yet know how to access streams from URIs
 Debug.trace("Getting input stream.");
-		InputStream inputStream=getStream(uri);  //get an input stream to the URL; this should set the media type and install the correct editor kit
+		InputStream inputStream=getStream(uri);  //get an input stream to the URI; this should set the media type and install the correct editor kit
 
 Debug.trace("installed editor kit is first: ", getEditorKit().getClass().getName());  //G***del
 
@@ -734,11 +768,11 @@ Debug.trace("content type is first: ", contentType);  //G***del
 		if(MediaTypeConstants.APPLICATION_ZIP.equals(contentType)) //if this appears to be an application/zip file
 		{
 Debug.trace("found zip file: ", uri);  //G***del
-			if(URLUtilities.FILE_PROTOCOL.equals(uri.getScheme()))  //if this is the file protocol
+			if(URIConstants.FILE_SCHEME.equals(uri.getScheme()))  //if this is the file scheme
 			{
 				inputStream.close();  //close the input stream; we'll access the zip file directly G***testing
 					//G***look for an OEB publication
-			  final File zipFile=new File(uri.getPath());  //create a file for accessing the zip file
+			  final File zipFile=new File(uri);  //create a file for accessing the zip file
 			  final ZipManager zipManager=new ZipManager(zipFile);  //create a zip manager for accessing the file
 				setURIInputStreamable(zipManager);  //we'll use the zip manager as our input stream locator
 				final Iterator zipEntryIterator=zipManager.getZipEntryIterator(); //get an iterator to look
@@ -755,18 +789,17 @@ Debug.trace("found zip file: ", uri);  //G***del
 						{
 							Debug.trace("switching URI to: ", zipManager.getURI(zipEntry)); //G***del
 							uri=zipManager.getURI(zipEntry); //use the file inside the zip file instead of this one
-							inputStream=getStream(uri);  //get an input stream to the new URL; this should set the media type and install the correct editor kit
+							inputStream=getStream(uri);  //get an input stream to the new URI; this should set the media type and install the correct editor kit
 						}
-						catch(URISyntaxException uriSyntaxException)	//if there is an error with the format of a URL (which shouldn't happen)
+						catch(URISyntaxException uriSyntaxException)	//if there is an error with the format of a URI (which shouldn't happen)
 						{
 							Debug.warn(uriSyntaxException);	//processing can still go on
 						} 
-//G***del when works						getStream(zipManager.getURL(zipEntry)); //get a stream to this entry in the zip file; in the future, all access to streams will come from the zip file itself
 					}
 				}
 			}
 			else  //if this is not a zip file, but some other sort of zip access, throw an exception
-				Debug.error("Zip file must use URL file: protocol");  //G***fix
+				Debug.error("Zip file must use URI file protocol");  //G***fix
 		}
 Debug.trace("installed editor kit is now: ", getEditorKit().getClass().getName());  //G***del
 		if(getURIInputStreamable()==null) //if we haven't established an input stream locator
@@ -793,13 +826,13 @@ Debug.trace("installed editor kit is now: ", getEditorKit().getClass().getName()
 		final XMLEditorKit xmlEditorKit=(XMLEditorKit)getEditorKit();	//get the current editor kit, and assume it's an XML editor kit G***we might want to check just to make sure
 		final Document document=xmlEditorKit.createDefaultDocument();	//create a default document
 
-		document.putProperty(Document.StreamDescriptionProperty, uri);	//store the URL in the document
+		document.putProperty(Document.StreamDescriptionProperty, URIUtilities.toValidURL(uri));	//store a URL version of the URI in the document, as getPage() expects this to be a URL
+		document.putProperty(XMLDocument.BASE_URI_PROPERTY, uri);	//store the base URI in the document
 Debug.trace("reading from stream"); //G***del
 //G***del		read(inputStream, document);  //read the document from the input stream
 		xmlEditorKit.addProgressListener(this);	//show that we want to be notified of any progress the XML editor kit makes G***should one of these go in the XMLTextPane? will it conflict with this one?
 		if(document instanceof XMLDocument) //if this is an XML document
 		{
-//G***del		  final MediaType mediaType=URLUtilities.getMediaType(page);  //see what media type the URL points to
 			final XMLDocument xmlDocument=(XMLDocument)document;  //cast the document to an XML document
 			xmlDocument.setURIInputStreamable(getURIInputStreamable()); //give the XML document any input stream locator that we might have, so that it can access files from within zip files, for instance
 			((XMLDocument)document).addProgressListener(this);	//show that we want to be notified of any progress the XML document makes G***should this go here or elsewhere? should this bubble up to the editor kit instead?
@@ -808,9 +841,6 @@ Debug.trace("reading from stream"); //G***del
 		{
 				//G***when does this get closed?
 			read(inputStream, document);  //read the document from the input stream
-
-
-//G***del			xmlEditorKit.read(url, document, 0);	//read the file from the given URL
 			fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Constructing the document..."));	//G***testing i18n
 			final Cursor originalCursor=ComponentUtilities.setCursor(this, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); //show the wait cursor
 			try
@@ -858,13 +888,15 @@ Debug.trace("reading from stream"); //G***del
 		be loaded by the <code>setPage</code> method.
 	<p>This version calls the URI version.</p>
 	@param url The URI of the page.
+	@deprecated Replaced with setPage(URI) because in ambiguities in URL
+		reserved character encoding.
 	@see #getStream(URI)
 	*/
 	protected InputStream getStream(final URL url) throws IOException
 	{
 		try
 		{
-			return getStream(new URI(url.toString()));	//create a URI from the page URL and get the stream from that
+			return getStream(URIUtilities.createURI(url));	//create a URI from the page URL and get the stream from that
 		}
 		catch(URISyntaxException uriSyntaxException)	//if the URL can't be converted to a URI (unlikely)
 		{
@@ -897,22 +929,11 @@ Debug.trace("reading from stream"); //G***del
 			if(uriInputStreamable!=null)  //if we have an input stream locator (if we're reading from a zip file, for instance)
 			{
 Debug.trace("found input stream locator, getting input stream to URI: ", uri); //G***del
-//G***del when works				try
-				{
-					final InputStream inputStream=uriInputStreamable.getInputStream(uri);  //get an input stream from the page
-					final MediaType mediaType=URIUtilities.getMediaType(uri);  //get the media type of the target
-					if(mediaType!=null) //if we know the media type of the URL
-			  		setContentType(mediaType.toString());  //set the content type based upon our best guess
-					return inputStream; //return the input stream we located (with an input stream locator, there's no need for us to try to open a connection to the URL ourselves
-				}
-/*G***del when works
-				catch(URISyntaxException uriSyntaxException)
-				{
-					final IOException ioException=new IOException(uriSyntaxException.getMessage());	//create a new IO exception
-					ioException.initCause(uriSyntaxException);	//show what caused the error
-					throw ioException;	//throw the exception
-				}
-*/
+				final InputStream inputStream=uriInputStreamable.getInputStream(uri);  //get an input stream from the page
+				final MediaType mediaType=URIUtilities.getMediaType(uri);  //get the media type of the target
+				if(mediaType!=null) //if we know the media type of the URL
+		  		setContentType(mediaType.toString());  //set the content type based upon our best guess
+				return inputStream; //return the input stream we located (with an input stream locator, there's no need for us to try to open a connection to the URL ourselves
 			}
 
 			URL page=uri.toURL();	//convert the URI to a URL (we assume that if the URI is not a URL, an input stream locator would have been provided
@@ -963,39 +984,14 @@ Debug.trace("found input stream locator, getting input stream to URI: ", uri); /
 	if(contentType!=null) //if we receive at least a guess of the content type
 	{
 //G***del		final MediaType mediaType=new MediaType(contentType); //get a media type object to examine the content type
+//TODO eventually don't allow MediaType to compare with strings, if this is what's happening
+//G***should we check for application/xml or text/xml?
 		if(MediaType.APPLICATION_XML.equals(contentType)) //if this appears to be an application/xml file
 		{
 			final MediaType mediaType=URLUtilities.getMediaType(page);  //see if we know what media type this is
 			if(mediaType!=null) //if we have an idea of what media type this is
 				contentType=mediaType.toString();  //our guess of the media type overrides "application/xml"
 		}
-/*G***del when move works
-		else if(MediaType.APPLICATION_ZIP.equals(contentType)) //if this appears to be an application/zip file
-		{
-Debug.trace("found zip file: ", page);  //G***del
-			if(URLUtilities.FILE_PROTOCOL.equals(page.getProtocol()))  //if this is the file protocol
-			{
-					//G***look for an OEB publication
-			  final File zipFile=new File(page.getPath());  //create a file for accessing the zip file
-			  final ZipManager zipManager=new ZipManager(zipFile);  //create a zip manager for accessing the file
-				setInputStreamLocator(zipManager);  //we'll use the zip manager as our input stream locator
-				final Iterator zipEntryIterator=zipManager.getZipEntryIterator(); //get an iterator to look
-				while(zipEntryIterator.hasNext()) //while there are more zip entries
-				{
-				  final ZipEntry zipEntry=(ZipEntry)zipEntryIterator.next();  //get the next zip entry
-					if(zipEntry.getName().endsWith(".opf")) //if this is an OEB publication G***fix to use the media type
-					{
-//G***fix					final MediaType zipEntryMediaType=FileUtilities.getMediaType(zipEntry.getName()); //get the media type of the zip entry
-//G***fix					getMediaType()
-Debug.trace("switching URL to: ", zipManager.getURL(zipEntry)); //G***del
-						getStream(zipManager.getURL(zipEntry)); //get a stream to this entry in the zip file; in the future, all access to streams will come from the zip file itself
-					}
-				}
-			}
-			else  //if this is not a zip file, but some other sort of zip access, throw an exception
-				Debug.error("Zip file must use URL file: protocol");  //G***fix
-		}
-*/
 		setContentType(contentType);  //set the content type based upon our best guess
 //G***fix	    pageProperties.put("content-type", type);
 	}

@@ -62,7 +62,7 @@ public class OEBEditorKit extends XMLEditorKit implements OEBConstants
 	*/
 	public Document createDefaultDocument()
 	{
-Debug.traceStack("Creating default OEB document");  //G***del
+//G***del Debug.traceStack("Creating default OEB document");  //G***del
 		return new com.garretwilson.swing.text.xml.oeb.OEBDocument();	//create a new Swing OEB document
 /*G***fix
 	StyleSheet styles = getStyleSheet();

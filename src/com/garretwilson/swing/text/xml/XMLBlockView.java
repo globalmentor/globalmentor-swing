@@ -383,11 +383,13 @@ Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.Attrib
      */
     public void layoutChanged(int axis) {
 //G***del Debug.stackTrace(); //G***del
+/*G***del
 if(this instanceof XMLPagedView)  //G***del
 {
 	Debug.traceStack();
 }
-Debug.trace(getClass().getName());  //G***del
+*/
+//G***del Debug.trace(getClass().getName());  //G***del
  	if (axis == X_AXIS) {
  	    xAllocValid = false;
  	} else {

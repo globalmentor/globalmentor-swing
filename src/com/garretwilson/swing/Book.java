@@ -30,9 +30,9 @@ import edu.stanford.ejalbert.*;
 /**A component shows information in book form. Has an XMLTextPane as a child.
 	<p>Bound properties:</p>
 	<ul>
-	  <li><code>BOOKMARKS_PROPERTY_NAME</code> Indicates the bookmarks have
+	  <li><code>BOOKMARKS_PROPERTY</code> Indicates the bookmarks have
 			chnaged. Returns <code>null</code> for old and new values.</li>
-	  <li><code>HISTORY_INDEX_PROPERTY_NAME</code> Indicates the history has
+	  <li><code>HISTORY_INDEX_PROPERTY</code> Indicates the history has
 			changed. Returns the old and new history index.</li>
 	</ul>
 @author Garret Wilson
@@ -43,13 +43,13 @@ import edu.stanford.ejalbert.*;
 public class Book extends JComponent implements PageListener, AdjustmentListener, CaretListener, MouseListener  //G***testing MouseListener for image viewing
 {
 	/**The property representing bookmark changes.*/
-	public final static String BOOKMARKS_PROPERTY_NAME="bookmarks";
+	public final static String BOOKMARKS_PROPERTY="bookmarks";
 
 	/**The property representing the history index.*/
-	public final static String HISTORY_INDEX_PROPERTY_NAME="historyIndex";
+	public final static String HISTORY_INDEX_PROPERTY="historyIndex";
 
 	/**The property which stores the user data <code>File</code> object.*/
-	public final static String USER_DATA_FILE_PROPERTY_NAME="userData";
+	public final static String USER_DATA_FILE_PROPERTY="userData";
 
 	/**The highlight painter used for displaying bookmark locations.*/
 	protected final static BookmarkHighlightPainter bookmarkHighlightPainter=new BookmarkHighlightPainter();
@@ -249,7 +249,7 @@ Debug.trace("after putting bookmark, found tag: ", bookmarkHighlightTagMap.get(b
 Debug.trace("contains bookmark key: ", new Boolean(bookmarkHighlightTagMap.containsKey(bookmark)));
 //G***del Debug.trace("contains value key: ", new Boolean(bookmarkHighlightTagMap.containsKey(bookmarkHighlight)));
 Debug.trace("contains value: ", new Boolean(bookmarkHighlightTagMap.containsValue(bookmarkHighlight)));
-				firePropertyChange(BOOKMARKS_PROPERTY_NAME, null, null); //fire an event showing that the bookmarks have changed
+				firePropertyChange(BOOKMARKS_PROPERTY, null, null); //fire an event showing that the bookmarks have changed
 			}
 		}
 
@@ -267,7 +267,7 @@ Debug.trace("ready to remove tag from map");
 				bookmarkHighlightTagMap.remove(bookmark);  //remove the bookmark and highlight tag from the map
 				getXMLTextPane().getHighlighter().removeHighlight(bookmarkHighlightTag);  //remove the highlight itself
 Debug.trace("ready to fire property change");
-				firePropertyChange(BOOKMARKS_PROPERTY_NAME, null, null); //fire an event showing that the bookmarks have changed
+				firePropertyChange(BOOKMARKS_PROPERTY, null, null); //fire an event showing that the bookmarks have changed
 			}
 		}
 
@@ -297,7 +297,7 @@ Debug.trace("ready to fire property change");
 		{
 			bookmarkHighlightTagMap.clear();  //clear the bookmarks and their corresponding highlights
 		  TextComponentUtilities.removeHighlights(getXMLTextPane(), bookmarkHighlightPainter);  //remove all bookmark highlights G***it would probably be better to remove them one at a time with the highlight tag
-			firePropertyChange(BOOKMARKS_PROPERTY_NAME, null, null); //fire an event showing that the bookmarks have changed
+			firePropertyChange(BOOKMARKS_PROPERTY, null, null); //fire an event showing that the bookmarks have changed
 		}
 
 		/**@return A read-only iterator of all available bookmarks in natural order.*/
@@ -400,17 +400,13 @@ Debug.trace("ready to fire property change");
 		  return Collections.unmodifiableSet(annotationHighlightTagMap.keySet()).iterator(); //return a read-only iterator to the annotations (the keys are already sorted because they are stored in a TreeMap)
 		}
 
-	/**@return The URL of the loaded publication or file, or <code>null</code> if
+	/**@return The URI of the loaded publication or file, or <code>null</code> if
 		there is no file loaded.
-	@see Document#StreamDescriptionProperty
+	@see XMLTextPane#getBaseURI()
 	*/
-	public URL getURL()
+	public URI getURI()
 	{
-		return getXMLTextPane().getPage();  //get the page property value, which return the Document.StreamDescriptionProperty value
-/*G***del when works
-		final Object url=getProperty(URL_PROPERTY_NAME); //get the URL from the document
-		return url instanceof URL ? (URL)url : null;  //return the URL, if that's really what it is; otherwise, return null
-*/
+		return getXMLTextPane().getBaseURI();  //get the base URI property value
 	}
 
 	/**@return The RDF data model, if this book's
@@ -444,11 +440,11 @@ Debug.trace("ready to fire property change");
 	/**@return The file object representing the user data file associated with
 		the loaded publication or file, or <code>null</code> if	there is no user
 		data file.
-	@see #USER_DATA_FILE_PROPERTY_NAME
+	@see #USER_DATA_FILE_PROPERTY
 	*/
 	public File getUserDataFile()
 	{
-		final Object userDataFile=getXMLTextPane().getDocument().getProperty(USER_DATA_FILE_PROPERTY_NAME); //get the user data file from the document
+		final Object userDataFile=getXMLTextPane().getDocument().getProperty(USER_DATA_FILE_PROPERTY); //get the user data file from the document
 		return userDataFile instanceof File ? (File)userDataFile : null;  //return the file, if that's really what it is; otherwise, return null
 	}
 
@@ -515,7 +511,7 @@ Debug.trace("ready to fire property change");
 			{
 				historyIndex=newHistoryIndex; //update the history index
 				getBackAction().setEnabled(hasPreviousHistory());  //only enable the back button if there is previous history
-				firePropertyChange(HISTORY_INDEX_PROPERTY_NAME, oldHistoryIndex, newHistoryIndex); //fire an event showing that the property changed
+				firePropertyChange(HISTORY_INDEX_PROPERTY, oldHistoryIndex, newHistoryIndex); //fire an event showing that the property changed
 			}
 		}
 
@@ -747,7 +743,7 @@ Debug.trace("display page count: ", displayPageCount);		  //G***del
 	//G***del Debug.notify("image from: "+src);	//G***fix
 							if(href!=null)  //if we found a reference to the image
 							{
-									//take into account that the href is relative to this file's base URL
+									//take into account that the href is relative to this file's base URI
 								try
 								{
 									final String baseRelativeHRef=XMLStyleUtilities.getBaseRelativeHRef(attributeSet, href);
@@ -971,12 +967,12 @@ Debug.trace("Relative offset: ", relativeOffset);
 		this(2);	//default to showing two pages
 	}
 
-	/**Reads the book content from a URL.
-	@param url The location of the book.
+	/**Reads the book content from a URI.
+	@param uri The location of the book.
 	@exception IOExeption Thrown if an I/O error occurs.
 	@see OEBTextPane#read
 	*/
-	public void open(final URL url) throws IOException
+	public void open(final URI uri) throws IOException
 	{
 		close();  //close whatever book is open
 
@@ -985,7 +981,7 @@ Debug.trace("Relative offset: ", relativeOffset);
 		  //register a QTI view factory with the QTI namespace, with the normal XML view factory as the fallback
 //G***if fix, register with the XMLTextPane, not the view factory		xmlViewFactory.registerViewFactory(QTIConstants.QTI_1_1_NAMESPACE_URI, new QTIViewFactory());
 */
-		getXMLTextPane().setPage(url/*G***del when works, url*/);	//tell the text pane to read from the URL, passing the URL as the description as well
+		getXMLTextPane().setPage(uri);	//tell the text pane to read from the URI
 	}
 
 	/**Closes the book, if one is open.*/
@@ -1053,17 +1049,17 @@ catch(Exception e)
 	/**Closes and opens the book content from the same location.
 		If no file is open, no action is taken.
 	@exception IOExeption Thrown if an I/O error occurs.
-	@see #getURL
+	@see #getURI
 	@see #open
 	@see #close
 	*/
 	public void reload() throws IOException
 	{
-		final URL url=getURL(); //get the current URL
-		if(url!=null) //if there is content loaded from some location
+		final URI uri=getURI(); //get the current URI
+		if(uri!=null) //if there is content loaded from some location
 		{
 			close();  //close the current book
-			open(url);  //open the book from the same location
+			open(uri);  //open the book from the same location
 		}
 	}
 
@@ -1132,19 +1128,22 @@ catch(Exception e)
 	*/
 	public void documentChange()
 	{
+		final URI uri=getURI(); //get our current URI
+Debug.trace("document change, URI: ", uri);
 			//update the actions
-		closeAction.setEnabled(getURL()!=null);  //only enable the close button if there is a book open
+		closeAction.setEnabled(uri!=null);  //only enable the close button if there is a book open
 	  final RDF rdf=getRDF(); //get the loaded metadata
 		getViewPropertiesAction().setEnabled(rdf!=null);  //only enable the properties button if there is RDF
 			//update the user data
-		final URL url=getURL(); //get our current URL
-			//if the URL specifies a file, we can have a user data file
-		if(url!=null && URLConstants.FILE_PROTOCOL.equals(url.getProtocol()))
+				//if the URI specifies a file, we can have a user data file
+		if(uri!=null && URIConstants.FILE_SCHEME.equals(uri.getScheme()))
 		{
-		  final File file=new File(url.getPath());  //create a file from the URL
+Debug.trace("the URI is a file");
+		  final File file=new File(uri);  //create a file from the URI
 				//create a userdata filename with ".userdata.xml" appended
 		  final File userDataFile=new File(file.getParent(), file.getName()+FileConstants.EXTENSION_SEPARATOR+"bookuserdata"+FileConstants.EXTENSION_SEPARATOR+"xml");
-			getXMLTextPane().getDocument().putProperty(USER_DATA_FILE_PROPERTY_NAME, userDataFile); //store the userdata file object in the document
+Debug.trace("user data file: ", userDataFile);
+			getXMLTextPane().getDocument().putProperty(USER_DATA_FILE_PROPERTY, userDataFile); //store the userdata file object in the document
 		  if(userDataFile.exists()) //if the user data file exists, try to load it
 			{
 				try
@@ -1262,7 +1261,7 @@ Debug.trace("ready to call XMLTextPane.go(URL)");
 		default browser. The previous location is stored in the history list.
 	@param uri The destination URI.
 	*/
-	public void go(final URI uri)	//G***fix all this -- this is just a quick kludge to see if it will work
+	public void go(final URI uri)
 	{
 Debug.trace("Inside OEBBook.goURI()");	//G***del
 	  storePositionHistory(); //store our position in the history list
@@ -1294,7 +1293,7 @@ Debug.trace("Inside OEBBook.activateLink().");
 		}
 		else
 		{
-			try
+			try	//TODO check that conversion from URL toURI happens correctly---as URL is ambiguous about encoding, we should probably note any syntax errors that occur when converting to URLs
 			{
 				hyperlinkURI=new URI(hyperlinkEvent.getURL().toString());	//get the hyperlink event's URI			
 			}
@@ -1326,13 +1325,12 @@ Debug.trace("ready to start clip.");
 					return;	//don't do any more processing
 				}
 			}
-			//G***add an option in goURL() to go later, in the AWT thread
+			//G***add an option in goURI() to go later, in the AWT thread
 			//G***check to see if we actually went to the hyperlink; if not, try to use the browser
 			SwingUtilities.invokeLater(new Runnable()	//invoke the hyperlink traversal until a later time in the event thread, so the mouse click won't be re-interpreted when we arrive at the hyperlink destination
 			{
-				public void run() {go(hyperlinkURI);}	//if the hyperlink was not for a special-case URL, just go to the URL
+				public void run() {go(hyperlinkURI);}	//if the hyperlink was not for a special-case URI, just go to the URI
 			});
-//G***del when works			go(hyperlinkURL);	//if the hyperlink was not for a special-case URL, just go to the URL
 		}
 		catch(Exception exception)	//if anything goes wrong with any of this G***is this too broad?
 		{

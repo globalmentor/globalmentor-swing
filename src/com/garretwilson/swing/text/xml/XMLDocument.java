@@ -61,6 +61,7 @@ import com.garretwilson.text.xml.stylesheets.css.XMLCSSSelector; //G***del when 
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleRule; //G***del when fully switched to DOM
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities; //G***maybe move
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;  //G***move
+import com.garretwilson.text.xml.xhtml.XHTMLUtilities;
 import com.garretwilson.sound.sampled.SampledSoundUtilities;
 import com.garretwilson.swing.text.Bidi;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleConstants;
@@ -85,6 +86,9 @@ import org.w3c.dom.stylesheets.StyleSheetList;
 */
 public class XMLDocument extends DefaultStyledDocument implements URIInputStreamable
 {
+
+	/**The name of the property that indicates the base URI against which relative URIs should be referenced.*/
+	public final static String BASE_URI_PROPERTY="baseURI";
 
 	/**The task of applying a stylesheet.*/
 	public final static String APPLY_STYLESHEET_TASK="applyStylesheet";
@@ -741,8 +745,11 @@ Debug.trace("found input stream locator, getting input stream to URI: ", uri); /
 //G***del	@exception URISyntaxException Thrown if the a URI could not be created.
 	@see Document#StreamDescriptionProperty
 	*/
+/*G***del when works
 	public URI getBaseURI()	//G***del throws URISyntaxException
 	{
+//TODO store the base URI in some other property, so we won't have to switch back and forth between URI and URL
+
 		final Object streamDescription=getProperty(StreamDescriptionProperty); //get the stream description property value
 			//G***maybe create a URIUtilities method to do this
 		if(streamDescription instanceof URI)	//if the stream description is a URI
@@ -764,17 +771,28 @@ Debug.trace("found input stream locator, getting input stream to URI: ", uri); /
 		else	//if we don't recognize the string description (or if there isn't one)
 			return null;	//show that there is no base URI
 	}
-
-	/**Sets the location against which to resolve relative URLs. By default this
-		will be the document's URL if the document was loaded from a URL.
-	@param newBaseURL The new location against which to resolve relative URLs.
-	*/
-/*G***del or fix to use streamdescriptionproperty
-	public void setBaseURL(final URL newBaseURL)
-	{
-		baseURL=newBaseURL;	//set the base URL
-	}
 */
+
+	/**Sets the location against which to resolve relative URIs. By default this
+		will be the document's URI.
+	@param baseURI The new location against which to resolve relative URIs.
+	@see #BASE_URI_PROPERTY
+	*/
+	public void setBaseURI(final URI baseURI)
+	{
+		putProperty(BASE_URI_PROPERTY, baseURI);	//store the base URI
+	}
+
+	/**Gets the location against which to resolve relative URIs.
+	@return The location against which to resolve relative URIs, or <code>null</code>
+		if there is no base URI.
+//G***del	@exception URISyntaxException Thrown if the a URI could not be created.
+	@see #BASE_URI_PROPERTY
+	*/
+	public URI getBaseURI()	//G***del throws URISyntaxException
+	{
+		return (URI)getProperty(BASE_URI_PROPERTY);	//return the value of the base URI property
+	}
 
 	/**Inserts a group of new elements into the document
 	@param offset the starting offset
@@ -1468,10 +1486,12 @@ Debug.trace("Found default stylesheet for namespace: ", namespaceURI);  //G***de
 			if(mediaType!=null) //if we have a media type G***change this so that these media types aren't hard-coded in
 			{
 Debug.trace("getting default namespace URI, found media type: ", mediaType);  //G***del
-				if(mediaType.equals(mediaType.TEXT_HTML)) //if the media type is text/html
+				if(XHTMLUtilities.isHTML(mediaType))	//if this is an HTML media type TODO this can probably be improved or the method placed elsewhere
+				{					
 					namespaceURI=XHTMLConstants.XHTML_NAMESPACE_URI;  //use the XHTML namespace
-				else if(mediaType.equals(mediaType.TEXT_X_OEB1_DOCUMENT)) //if the media type is for an OEB document
-					namespaceURI=OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString();  //use the OEB document namespace
+					if(mediaType.equals(mediaType.TEXT_X_OEB1_DOCUMENT)) //if the media type is for an OEB document
+						namespaceURI=OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString();  //use the OEB document namespace
+				}
 Debug.trace("namespace URI: ", namespaceURI);  //G***del
 			}
 		}
@@ -1549,9 +1569,10 @@ Debug.trace("namespace URI: ", namespaceURI);  //G***del
 	public static void applyLocalStyles(final Element swingElement)  //G***put in a separate utility class  //G**del exceptions throws IOException, ParseUnexpectedDataException, ParseEOFException
 	{
 		final AttributeSet attributeSet=swingElement.getAttributes(); //get the element's attributes
-		if(attributeSet.isDefined("style")) //if this element has the style attribute G***use a constant, fix for a general attribute name case
+			//TODO what if xhtml:style is placed on some element?
+		if(XMLStyleUtilities.isXMLAttributeDefined(attributeSet, null, "style")) //if this element has the style attribute G***use a constant, fix for a general attribute name case
 		{
-			final String styleValue=(String)attributeSet.getAttribute("style"); //get the value of the style attribute G***use a constant, fix for a general attribute name case
+			final String styleValue=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, "style"); //get the value of the style attribute G***use a constant, fix for a general attribute name case
 			if(styleValue.length()!=0)  //if there is a style value
 			{
 	//G***del Debug.trace("Found local style value: ", styleValue); //G***del
