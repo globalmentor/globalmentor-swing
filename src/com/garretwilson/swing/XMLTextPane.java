@@ -59,7 +59,6 @@ import com.garretwilson.util.zip.*;
 
 import static com.garretwilson.io.ContentTypeConstants.*;
 import static com.garretwilson.text.xml.XMLUtilities.*;
-import com.globalmentor.mentoract.reader.ReaderFrame;
 
 /**A text component that can be marked up with attributes that are represented
 	graphically. Most importantly, this class supports paged XML information.
@@ -83,6 +82,9 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 
 	/**The "application/zip" content type.*/
 	protected final static ContentType ZIP_MEDIA_TYPE=new ContentType(APPLICATION, ZIP_SUBTYPE, null);
+
+	/**The "application/x-oeb-publication+xml+zip" content type.*/
+	protected final static ContentType OEB_ZIP_MEDIA_TYPE=new ContentType(APPLICATION, X_OEB_PUBLICATION_ZIP_SUBTYPE, null);
 
 	/**The highlighter used for highlighting search results.*/
 //G***del when works	protected final Highlighter searchHighlighter=new DefaultHighlighter();
@@ -912,7 +914,7 @@ Debug.trace("installed editor kit is first: ", getEditorKit().getClass().getName
 
 		final String contentType=getContentType();  //see what content type we decided on
 Debug.trace("content type is first: ", contentType);  //G***del
-		if(ZIP_MEDIA_TYPE.match(contentType)) //if this appears to be an application/zip file
+		if(OEB_ZIP_MEDIA_TYPE.match(contentType) || ZIP_MEDIA_TYPE.match(contentType)) //if this appears to be an OEB publication zip file or an application/zip file
 		{
 Debug.trace("found zip file: ", uri);  //G***del
 			if(URIConstants.FILE_SCHEME.equals(uri.getScheme()))  //if this is the file scheme
@@ -936,8 +938,6 @@ Debug.trace("found zip file: ", uri);  //G***del
 						try
 						{
 							Debug.trace("switching URI to: ", zipManager.getURI(zipEntry)); //G***del
-//G***do we really want to change the URI, which will preclude reload?							uri=zipManager.getURI(zipEntry); //use the file inside the zip file instead of this one
-//TODO fix or del							inputStream=getStream(uri);  //get an input stream to the new URI; this should set the media type and install the correct editor kit
 							inputStream=getStream(zipManager.getURI(zipEntry));  //get an input stream to the new URI; this should set the media type and install the correct editor kit
 							break;	//stop looking for suitable zip entries
 						}

@@ -210,6 +210,12 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 		*/
 		public void setHighlightColor(final Color color) {highlightColor=color;}
 
+	/**Whether data saved in the user data file, such as bookmarks and annotations, have been modified.*/
+	private boolean userDataModified=false;
+
+		/**@return Whether data saved in the user data file, such as bookmarks and annotations, have been modified.*/
+		public boolean isUserDataModified() {return userDataModified;}
+
 	/**The map of highlight tags for the book, keyed to bookmarks. This map
 		therefore serves as both a definitive list of bookmarks and a map of
 		highlights which correspond to those bookmarks. This tree map ensures
@@ -300,6 +306,7 @@ Debug.trace("after putting bookmark, found tag: ", bookmarkHighlightTagMap.get(b
 Debug.trace("contains bookmark key: ", new Boolean(bookmarkHighlightTagMap.containsKey(bookmark)));
 //G***del Debug.trace("contains value key: ", new Boolean(bookmarkHighlightTagMap.containsKey(bookmarkHighlight)));
 Debug.trace("contains value: ", new Boolean(bookmarkHighlightTagMap.containsValue(bookmarkHighlight)));
+				userDataModified=true;	//show that the user data has been modified
 				firePropertyChange(BOOKMARKS_PROPERTY, null, null); //fire an event showing that the bookmarks have changed
 			}
 		}
@@ -317,6 +324,7 @@ Debug.trace("found highlight tag: ", bookmarkHighlightTag);
 Debug.trace("ready to remove tag from map");
 				bookmarkHighlightTagMap.remove(bookmark);  //remove the bookmark and highlight tag from the map
 				getXMLTextPane().getHighlighter().removeHighlight(bookmarkHighlightTag);  //remove the highlight itself
+				userDataModified=true;	//show that the user data has been modified
 Debug.trace("ready to fire property change");
 				firePropertyChange(BOOKMARKS_PROPERTY, null, null); //fire an event showing that the bookmarks have changed
 			}
@@ -348,6 +356,7 @@ Debug.trace("ready to fire property change");
 		{
 			bookmarkHighlightTagMap.clear();  //clear the bookmarks and their corresponding highlights
 		  TextComponentUtilities.removeHighlights(getXMLTextPane(), bookmarkHighlightPainter);  //remove all bookmark highlights G***it would probably be better to remove them one at a time with the highlight tag
+			userDataModified=true;	//show that the user data has been modified
 			firePropertyChange(BOOKMARKS_PROPERTY, null, null); //fire an event showing that the bookmarks have changed
 		}
 
@@ -415,6 +424,7 @@ Debug.trace("ready to fire property change");
 				//add an annotation highlighter to the text pane to show the annotation at the correct location
 				final Object annotationHighlight=getXMLTextPane().getHighlighter().addHighlight(annotation.getStartOffset(), annotation.getEndOffset(), annotationHighlightPainter);
 				annotationHighlightTagMap.put(annotation, annotationHighlight); //add the annotation highlight to the map, keyed to the annotation
+				userDataModified=true;	//show that the user data has been modified
 //G***fix				firePropertyChange(BOOKMARKS_PROPERTY_NAME, null, null); //fire an event showing that the bookmarks have changed
 			}
 		}
@@ -429,6 +439,7 @@ Debug.trace("ready to fire property change");
 			{
 				annotationHighlightTagMap.remove(annotation);  //remove the annotation and highlight tag from the map
 				getXMLTextPane().getHighlighter().removeHighlight(annotationHighlightTag);  //remove the highlight itself
+				userDataModified=true;	//show that the user data has been modified
 //G***fix				firePropertyChange(BOOKMARKS_PROPERTY_NAME, null, null); //fire an event showing that the bookmarks have changed
 			}
 		}
@@ -461,6 +472,7 @@ Debug.trace("ready to fire property change");
 		  final Annotation[] annotationArray=(Annotation[])annotationSet.toArray(new Annotation[annotationSet.size()]);
 			for(int i=annotationArray.length-1; i>=0; --i)  //look at each annotation
 				removeAnnotation(annotationArray[i]); //remove this annotation
+			userDataModified=true;	//show that the user data has been modified
 		}
 
 		/**@return A read-only iterator of all available annotations in natural order.*/
@@ -1333,6 +1345,7 @@ Debug.trace("Relative offset: ", relativeOffset);
 		clearBookmarks(); //clear the bookmark list
 		getXMLTextPane().setBaseURI(null);	//show that nothing is open (do this so that the new blank document will not have its base URI set automatically) 
 		getXMLTextPane().setDocument(getXMLTextPane().getEditorKit().createDefaultDocument());  //create a default document and assign it to the text pane
+		userDataModified=false;	//show that the user data has not been modified
 	}
 
 	/**Closes and opens the book content from the same location.
@@ -1407,6 +1420,7 @@ Debug.trace("Relative offset: ", relativeOffset);
 				Debug.warn(e); //ignore the error
 			}
 		}
+		userDataModified=false;	//show that the user data not has been modified
 	}
 
 	/**Called when the document has changed, so that we can update our record of
@@ -2067,7 +2081,7 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 					}
 					catch(BadLocationException badLocationException) //we should never have a bad location
 					{
-						throw (AssertionError)new AssertionError(badLocationException.getMessage()).initCause(badLocationException);
+						throw new AssertionError(badLocationException);
 					}
 				}
 				else	//if we don't have a particular location
@@ -2435,11 +2449,12 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 		*/
 		public GoBookmarkAction(final Bookmark bookmark)
 		{
-//G***del Debug.trace("ReaderFrame.GoBookmarkAction constructor, offset: ", bookmark.getOffset());
+Debug.trace("ReaderFrame.GoBookmarkAction constructor, offset:", bookmark.getOffset());
 			this.bookmark=bookmark;	//save the bookmark
 //G***del when works			setBookmark(bookmark);	//save the bookmark
 		  final int pageIndex=getPageIndex(bookmark.getOffset()); //get the page index of the bookmark
 			final Document document=getXMLTextPane().getDocument(); //get a reference to the document
+Debug.trace("document length", document.getLength());
 			final int bookmarkedTextLength=Math.min(document.getLength()-bookmark.getOffset(), 16); //find out how much text to show; make sure we don't go past the document G***use a constant here
 			final String bookmarkNameString=bookmark.getName()!=null ? bookmark.getName()+": " : "";  //if there is a bookmark name, include it
 			try
@@ -2452,7 +2467,7 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 			}
 			catch(BadLocationException badLocationException) //we should never get a bad location, since we test the offsets and lengths
 			{
-				throw (AssertionError)new AssertionError(badLocationException.getMessage()).initCause(badLocationException);
+				throw new AssertionError(badLocationException);
 			}
 		}
 
