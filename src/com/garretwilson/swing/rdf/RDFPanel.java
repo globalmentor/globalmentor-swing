@@ -36,6 +36,20 @@ public class RDFPanel extends TabbedViewPanel
 			supportedDataViews=dataViews;	//update the supported data views
 		}
 
+	/**The default default data view of this panel.*/
+	private final int DEFAULT_DEFAULT_DATA_VIEW=TREE_DATA_VIEW;
+
+	/**The default data view of this panel.*/
+	private int defaultDataView;
+
+		/**@return The default view of the data, such as <code>SUMMARY_DATA_VIEW</code>.*/
+		public int getDefaultDataView() {return defaultDataView;}
+
+		/**Sets the default data view.
+		@param dataView The default view of the data, such as <code>SUMMARY_DATA_VIEW</code>.
+		*/
+		public void setDefaultDataView(final int dataView) {defaultDataView=dataView;}
+
 	/**The tree tab in which the RDF is displayed.*/
 	private final RDFTree rdfTree;
 
@@ -108,6 +122,7 @@ public class RDFPanel extends TabbedViewPanel
 	{
 		super(false);	//construct the parent class without initializing the panel
 		supportedDataViews=DEFAULT_SUPPORTED_DATA_VIEWS;	//set the data views we support
+		defaultDataView=DEFAULT_DEFAULT_DATA_VIEW;	//set the default data view
 		rdfTree=new RDFTree();	//create the RDF tree
 		rdfScrollPane=new JScrollPane(rdfTree);
 		xmlTextPane=new JTextPane();
@@ -125,7 +140,6 @@ public class RDFPanel extends TabbedViewPanel
 		xmlTextPane.setEditable(false);	//don't let the text pane be edited
 		addView(TREE_DATA_VIEW, "RDF", rdfScrollPane);	//add the RDF component as the tree view G***i18n
 		addView(SOURCE_DATA_VIEW, "RDF+XML", xmlScrollPane);	//add the XML component as the source view G***i18n
-		setDataView(TREE_DATA_VIEW);	//set the default view
 	}
 
 	/**Displays the resources of an RDF data model in the panel.
@@ -153,6 +167,7 @@ public class RDFPanel extends TabbedViewPanel
 	*/
 	protected void onDataViewChanged(final int oldView, final int newView)
 	{		
+		super.onDataViewChanged(oldView, newView);	//perform the default functionality		
 		switch(oldView)	//see what view we're changing from
 		{
 			case TREE_DATA_VIEW:	//if we're changing from the souce view

@@ -11,6 +11,7 @@ import com.garretwilson.io.InputStreamUtilities;
 import com.garretwilson.io.MediaType;
 import com.garretwilson.io.URIInputStreamable;
 import com.garretwilson.swing.text.xml.*;
+import com.garretwilson.text.CharacterEncoding;
 import com.garretwilson.text.CharacterEncodingConstants;
 import com.garretwilson.util.Debug;
 
@@ -37,6 +38,20 @@ public class XMLPanel extends TabbedViewPanel implements DocumentListener
 		{
 			supportedDataViews=dataViews;	//update the supported data views
 		}
+
+	/**The default default data view of this panel.*/
+	private final int DEFAULT_DEFAULT_DATA_VIEW=WYSIWYG_DATA_VIEW;
+
+	/**The default data view of this panel.*/
+	private int defaultDataView;
+
+		/**@return The default view of the data, such as <code>SUMMARY_DATA_VIEW</code>.*/
+		public int getDefaultDataView() {return defaultDataView;}
+
+		/**Sets the default data view.
+		@param dataView The default view of the data, such as <code>SUMMARY_DATA_VIEW</code>.
+		*/
+		public void setDefaultDataView(final int dataView) {defaultDataView=dataView;}
 
 	/**The XML text pane.*/
 	private final XMLTextPane xmlTextPane; 
@@ -137,6 +152,7 @@ public class XMLPanel extends TabbedViewPanel implements DocumentListener
 	{
 		super(false);	//construct the parent class without initializing the panel
 		supportedDataViews=DEFAULT_SUPPORTED_DATA_VIEWS;	//set the data views we support
+		defaultDataView=DEFAULT_DEFAULT_DATA_VIEW;	//set the default data view
 		xmlTextPane=new XMLTextPane();	//create a new XML text pane
 		setContentType(mediaType);	//set the content type 
 		xmlScrollPane=new JScrollPane(xmlTextPane);	//create a new scroll pane with the XML text pane inside
@@ -168,8 +184,6 @@ public class XMLPanel extends TabbedViewPanel implements DocumentListener
 					((Document)propertyChangeEvent.getNewValue()).addDocumentListener(XMLPanel.this);	//add ourselves as a document listener
 				}
 			});	//TODO transfer to TextApplicationPanel
-
-		setDataView(WYSIWYG_DATA_VIEW);	//set the default view
 		setModified(false);	//show that the information has not been modified
 	}
 
@@ -243,10 +257,9 @@ public class XMLPanel extends TabbedViewPanel implements DocumentListener
 			final Document document=sourceTextPane.getEditorKit().createDefaultDocument();	//create a new document
 			sourceTextPane.setDocument(document);	//remove the content from the editor kit by installing a new document
 			inputStream.reset();	//G***testing
-				//G***create a BOMReader to take care of these steps
-			final String encoding=InputStreamUtilities.getBOMEncoding(inputStream);	//try to sense from the byte order mark the encoding of the text
+			final CharacterEncoding encoding=InputStreamUtilities.getBOMEncoding(inputStream);	//try to sense from the byte order mark the encoding of the text
 				//use the character encoding we sensed to create a reader, using a default encoding if we couldn't sense one from the byte order mark
-			final Reader reader=new InputStreamReader(inputStream, encoding!=null ? encoding : CharacterEncodingConstants.ISO_8859_1);	//G***use the system default instead of ISO-8859-1 as the default
+			final Reader reader=encoding!=null ? new InputStreamReader(inputStream, encoding.toString()) : new InputStreamReader(inputStream);
 			try
 			{		
 				sourceTextPane.getEditorKit().read(reader, document, 0);	//have the editor kit read the document from the reader
@@ -299,6 +312,7 @@ Debug.trace("modified!");
 	*/
 	protected void onDataViewChanged(final int oldView, final int newView)
 	{		
+		super.onDataViewChanged(oldView, newView);	//perform the default functionality		
 			//right now there are only two views; if we add another panel, we need to add more checks to make sure the source doesn't go away when switching to the third panel
 		switch(newView)	//see what view we're changing to
 		{

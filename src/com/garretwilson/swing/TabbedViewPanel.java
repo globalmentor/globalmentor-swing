@@ -244,7 +244,9 @@ public abstract class TabbedViewPanel extends ContentPanel implements DataViewab
 			initialize();   //initialize the panel
 	}
 
-	/**Initialize the user interface.*/
+	/**Initialize the user interface.
+	<p>This version sets the data view to the default.</p>
+	*/
 	protected void initializeUI()
 	{
 		super.initializeUI(); //do the default UI initialization
@@ -256,6 +258,7 @@ public abstract class TabbedViewPanel extends ContentPanel implements DataViewab
 						updateDataView(getTabbedPane().getSelectedComponent());	//update the view accordingly
 					}
 				});
+		setDataView(getDefaultDataView());	//set the default data view
 		updateComponent(getDataView());	//make sure the selected component matches the view
 	}
 
@@ -272,12 +275,13 @@ public abstract class TabbedViewPanel extends ContentPanel implements DataViewab
 	}
 
 	/**Updates the selected tab to reflect the current view.
+	If the correct tab is already selected, no action occurs.
 	@param view The new view of the data to be represented by one of the tabs.
 	*/
 	protected void updateComponent(final int view)
 	{
 		final Component component=getViewComponent(view);	//get the component associated with this view
-		if(component!=null)	//if there is a component to show the view
+		if(component!=null && getTabbedPane().getSelectedComponent()!=component)	//if there is a component to show the view, and we're not already showing it
 		{
 			getTabbedPane().setSelectedComponent(component);	//select the tabbed pane that represents the view 
 		}
@@ -289,13 +293,21 @@ public abstract class TabbedViewPanel extends ContentPanel implements DataViewab
 		from within this method without re-entry problems.
 		This is useful for undoing a view change by changing the view back to
 		its old value.</p>
-	<p>Derived classes must not call this method unless they guarantee
-		non-re-entrancy.</p>
+	<p>Derived classes should call this version if it is overridden.
+		Derived classes must not call this method from other methods unless they
+		guarantee non-re-entrancy.</p>
 	@param oldView The view before the change.
 	@param newView The new view of the data
 	*/
 	protected void onDataViewChanged(final int oldView, final int newView)
-	{		
+	{
+/*G***del; testing
+		for(int i=getTabbedPane().getTabCount()-1; i>=0; --i)	//G***testing
+		{
+			getTabbedPane().setTitleAt(i, "");	//G***testing
+			getTabbedPane().setIconAt(i, null);	//G***testing
+		}
+*/
 	}
 
 	/**The class that listens for view changes and calls the view change method
