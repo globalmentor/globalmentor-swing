@@ -20,10 +20,9 @@ public interface FragmentView
 	*/
 	public boolean isFirstFragment();
 
-	/**Returns whether this is the last fragment in relation to the original
-	  view.
+	/**Returns whether this is the last fragment in relation to the original view.
 	@return <code>true</code> if this is the last fragment of the original view.
 	*/
-//G***del if not needed	public boolean isLastFragment();
+	public boolean isLastFragment();
 
 }

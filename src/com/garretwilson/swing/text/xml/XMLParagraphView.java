@@ -1051,49 +1051,43 @@ Debug.trace("Inside XMLParagraphView.viewToModel for position x: "+x+" y: "+y);
 
 
 
-	/**Determines how attractive a break opportunity in this view is. This can be
-		used for determining which view is the most attractive to call
-		<code>breakView</code> on in the process of formatting.  The higher the
-		weight, the more attractive the break.  A value equal to or lower than
-		<code>View.BadBreakWeight</code> should not be considered for a break. A
-		value greater than or equal to <code>View.ForcedBreakWeight</code> should
-		be broken.<br/>
-		This is implemented to forward to the superclass for axis perpendicular to
-		the flow axis. Along the flow axis the following values may be returned:
-		<ul>
-//G***fix			<li>View.ExcellentBreakWeight: If there is whitespace proceeding the desired break
-//G***fix		 *   location.
-			<li>View.BadBreakWeight: If the desired break location results in a break
-				location of the starting offset (i.e. not even one child view can fit.</li>
-			<li>View.GoodBreakWeight: If the other conditions don't occur.
-		</ul>
-		This will result in the view being broken with the maximum number of child
-		views that can fit within the required span.
-		@param axis The breaking axis, either View.X_AXIS or View.Y_AXIS.
-		@param pos The potential location of the start of the broken view (>=0).
-			This may be useful for calculating tab positions.
-		@param len Specifies the relative length from <em>pos</em> where a potential
-			break is desired (>=0).
-		@return The weight, which should be a value between View.ForcedBreakWeight
-			and View.BadBreakWeight.
-		@see LabelView
-		@see ParagraphView
-		@see BadBreakWeight
-		@see GoodBreakWeight
-		@see ExcellentBreakWeight
-		@see ForcedBreakWeight
+	/**Determines how attractive a break opportunity in this view is.
+	This is implemented to forward to the superclass for axis perpendicular to
+	the flow axis. Along the flow axis the following values may be returned:
+	<dl>
+		<dt><code>View.BadBreakWeight</code></dt> <dd>If the desired break location
+			is less than the first child is comfortable with (i.e. not even one child view can fit),
+			or there are no child views</dd>
+		<dt><code>View.GoodBreakWeight</code></dt> <dd>If the other conditions don't occur.</dd>
+	</dl>
+	This will result in the view being broken with the maximum number of child
+	views that can fit within the required span.
+	@param axis The breaking axis, either View.X_AXIS or View.Y_AXIS.
+	@param pos The potential location of the start of the broken view (>=0).
+		This may be useful for calculating tab positions.
+	@param len Specifies the relative length from <var>pos</var> where a potential
+		break is desired (>=0).
+	@return The weight, which should be a value between <code>View.ForcedBreakWeight
+		and View.BadBreakWeight.</code>
 	*/
 	public int getBreakWeight(int axis, float pos, float len)
 	{
-//G***del Debug.trace("Inside XMLParagraphView.getBreakWeight axis: "+axis+" pos: "+pos+" len: "+len+" name: "+XMLStyleConstants.getXMLElementName(getAttributes()));  //G***del
-
-//G***del		final int tileAxis=getAxis();	//get our axis for tiling (this view's axis)
 		if(axis==getAxis())	//if they want to break along our tiling axis
 		{
-			return View.GoodBreakWeight;	//show that this break spot will work
+				//if we have at least one child view and the first view doesn't dislike the break weight	//TODO add support for requiring a certain number of child views (lines)
+			if(getViewCount()>0 && getView(0).getBreakWeight(axis, pos, len)>BadBreakWeight)	
+			{
+				return GoodBreakWeight;	//if our first child is happy with the break, we can always break by separating children
+			}
+			else	//if we have no child views, or we can't fit at least one child
+			{
+				return BadBreakWeight;	//we can't break if we don't have children				
+			}
 		}
-		else	//if they want to break along another axis besides the one we know about
+		else	//if they want to break along another axis
+		{
 			return super.getBreakWeight(axis, pos, len);	//return the default break weight
+		}
 	}
 
 	/**Breaks this view on the given axis at the given length. This is implemented
@@ -1127,7 +1121,7 @@ Debug.trace("Inside XMLParagraphView.viewToModel for position x: "+x+" y: "+y);
 			else if(childViewCount>0)	//if we have child views
 			{
 				final boolean isFirstFragment=p0<=getView(0).getStartOffset();  //see if we'll include the first child in any form; if so, we're the first fragment
-			  final XMLParagraphFragmentView fragmentView=new XMLParagraphFragmentView(getElement(), getAxis(), isFirstFragment);	//G***testing
+			  final XMLParagraphFragmentView fragmentView=new XMLParagraphFragmentView(getElement(), getAxis(), isFirstFragment, false);	//G***testing
 //G***del when works				final XMLParagraphFragmentView fragmentView=(XMLParagraphFragmentView)clone();	//create a clone of this view G***rename method
 
 
@@ -1254,7 +1248,7 @@ fragmentView.setParent(getParent());				  //G***testing; see if this fixes the p
 			final int childViewCount=getViewCount();  //find out how many child views there are
 				//see if we'll include the first child in any form; if so, we're the first fragment
 		  final boolean isFirstFragment=childViewCount>0 && p0<=getView(0).getStartOffset();
-		  final XMLParagraphFragmentView fragmentView=new XMLParagraphFragmentView(getElement(), getAxis(), isFirstFragment);	//G***testing
+		  final XMLParagraphFragmentView fragmentView=new XMLParagraphFragmentView(getElement(), getAxis(), isFirstFragment, false);	//G***testing
 //G***del when works			final XMLParagraphFragmentView fragmentView=(XMLParagraphFragmentView)clone();	//create a clone of this view G***rename method
 
 //G***don't we need to set the parent of the fragment somewhere, like for XMLBlockView?
@@ -1612,26 +1606,28 @@ if(Debug.isDebug()) //G***del
 //G***del when works	  int firstLineIndent=0; //G***fix; hacked; fix with new fragment index
 
 		/**Whether this is the first fragment of the original view.*/
-		private boolean isFirstFragment;
+		private final boolean isFirstFragment;
 
 			/**@return <code>true</code> if this is the first fragment of the original view.*/
 			public boolean isFirstFragment() {return isFirstFragment;}
 
 		/**Whether this is the last fragment of the original view.*/
-//G***del if not needed		private boolean isLastFragment;
+		private final boolean isLastFragment;
 
 			/**@return <code>true</code> if this is the last fragment of the original view.*/
-//G***del if not needed			public boolean isLastFragment() {return isLastFragment;}
+			public boolean isLastFragment() {return isLastFragment;}
 
 		/**Constructs a fragment view for the paragraph.
 		@param element The element this view is responsible for.
 		@param axis The tiling axis, either View.X_AXIS or View.Y_AXIS.
 		@param firstFragment Whether this is the first fragement of the original view.
+		@param lastFragment Whether this is the last fragment of the original view.
 		*/
-		public XMLParagraphFragmentView(Element element, int axis, final boolean firstFragment)
+		public XMLParagraphFragmentView(Element element, int axis, final boolean firstFragment, final boolean lastFragment)
 		{
 			super(element, axis); //do the default construction
 			isFirstFragment=firstFragment;  //save whether we are the first fragment of the original view
+			isLastFragment=lastFragment;  //save whether we are the last fragment of the original view
 		}
 
 		/**Perform layout for the minor axis of the box (i.e. the axis orthoginal to

@@ -55,26 +55,34 @@ public class XMLPagedView extends FlowView
 	/**The font used for painting page number.*/
 	private final static Font PAGE_NUMBER_FONT=new Font("Serif", Font.PLAIN, 12); //G***fix
 
-	/**Whether or not the flowing of this view is threaded.*/
-	private boolean threaded=false;	//(newswing threadlayout)
+	/**The insets for each page.*/
+	private short pageTopInset, pageLeftInset, pageBottomInset, pageRightInset; 
 
-		/**@return Whether the view flowing should be threaded.*/
-		public boolean isThreaded() {return threaded;}	//(newswing threadlayout)
+	/**Sets the insets for each page.
+	@param top The page top inset (>=0).
+	@param left The pageleft inset (>=0).
+	@param bottom The page bottom inset (>=0).
+	@param right The page right inset (>=0).
+	*/
+	protected void setPageInsets(final short top, final short left, final short bottom, final short right)
+	{
+		pageTopInset=top;
+		pageLeftInset=left;
+		pageRightInset=right;
+		pageBottomInset=bottom;
+	}
 
-		/**Sets whether the flowing of this view should be threaded.
-		@param newThreaded <code>true</code> if the view flowing should occur in a
-			separate thread.
-		*/
-		public void setThreaded(final boolean newThreaded) {threaded=newThreaded;}	//(newswing threadlayout)
+	/**@return The left inset of each page (>=0).*/
+	protected short getPageLeftInset() {return pageLeftInset;}
 
-	/**The width used the last time layout began.*/
-	protected int lastLayoutWidth=-1;	//(newswing threadlayout)
+	/**@return The right inset of each page (>=0).*/
+	protected short getPageRightInset() {return pageRightInset;}
 
-	/**The height used the last time layout began.*/
-	protected int lastLayoutHeight=-1;	//(newswing threadlayout)
+	/**@return The top inset of each page (>=0).*/
+	protected short getPageTopInset() {return pageTopInset;}
 
-	/**The thread used to create the flow, if threading is used.*/
-	protected Thread layoutStrategyThread=null;	//(newswing threadlayout)
+	/**@return The bottom inset of each page (>=0).*/
+	protected short getPageBottomInset() {return pageBottomInset;}
 
 	/**Constructor specifying an element.
 	@param element The element this view is responsible for.
@@ -85,20 +93,11 @@ public class XMLPagedView extends FlowView
 //G***del if we don't need		setPropertiesFromAttributes();	//set our properties from the attributes
 		//G***fix setting flow stategy if we need to
 //G***fix threadlayout		strategy=new PageFlowStrategy();	//G***testing
-		setThreaded(false);	//make this view threaded by default (newswing threadlayout)
-//G***bring back		setThreaded(true);	//make this view threaded by default (newswing threadlayout)
-		
 //TODO fix		strategy=new PageFlowStrategy(this);	//create a flow strategy which may or may not be used in a threaded way (newswing threadlayout)
 
 strategy=new PaginateStrategy();	//G***testing
 
-
-//G***del		strategy=null;	//the strategy will be created each time it is needed, whether or not threading is used (newswing threadlayout)
-/*G***del
-		setXAllocationValid(false);	//show that we need to update the X axis, since we're just getting created
-		setYAllocationValid(false);	//show that we need to update the Y axis, since we're just getting created
-*/
-//G***fix		setInsets((short)25, (short)25, (short)25, (short)25);	//G***fix; testing
+		setPageInsets((short)25, (short)25, (short)25, (short)25);	//set the page insets TODO allow this to be customized
 	}
 
 
@@ -260,7 +259,8 @@ A copy of our...
 	{
 		pageWidth=width;	//set the width
 		pageHeight=height;	//set the height
-		getPagePoolView().setSize((int)width-50, (int)height-50);	//make sure the layout pool has the correct dimensions of the page so that it will do unrestrained layout correctly
+			//make sure the layout pool has the correct dimensions of the page so that it will do unrestrained layout correctly
+		getPagePoolView().setSize((int)width-getPageLeftInset()-getPageRightInset(), (int)height-getPageTopInset()-getPageBottomInset());	//set the size of the page pool to be exactly the size of the displayed page; giving insets to the page pool results in incorrect layout
 	}
 
 
@@ -544,9 +544,9 @@ Debug.trace("Ready to paint page "+pageIndex+" with parent: ", pageView.getParen
 			{
 					//G***maybe put page number painting in each page; maybe not
 				final Page pageView=getPage(pageIndex); //get a reference to this view G***rename to PageView sometime
-				final int pageLeftInset=pageView.getPublicLeftInset();  //get the page's left inset
-				final int pageRightInset=pageView.getPublicRightInset();  //get the page's right inset
-				final int pageBottomInset=pageView.getPublicBottomInset();  //get the page's right inset
+				final int pageLeftInset=getPageLeftInset();  //get the page's left inset
+				final int pageRightInset=getPageRightInset();  //get the page's right inset
+				final int pageBottomInset=getPageBottomInset();  //get the page's right inset
 				final String pageNumberString=String.valueOf(pageIndex+1);  //create a string with the page number to paint G***use a getPageNumber() method instead
 				final Rectangle2D pageNumberBounds=graphics2D.getFont().getStringBounds(pageNumberString, fontRenderContext); //get the bounds of the string
 	//G***del Debug.trace("page number left inset: "+getLeftInset()+" right inset: "+getRightInset());  //G***del
@@ -657,18 +657,12 @@ Debug.trace("Ready to paint page "+pageIndex+" with parent: ", pageView.getParen
 		final Page page=(Page)childView;	//cast the child view to a page
 		if(getFlowAxis()==X_AXIS)	//if we're flowing horizontally
 		{
-			adjustAmount=page.getPublicLeftInset()+page.getPublicRightInset();	//add the left and right insets together
+			adjustAmount=getPageLeftInset()+getPageRightInset();	//add the left and right page insets together
 		}
 		else	//if we're flowing vertically
 		{
-			adjustAmount=page.getPublicTopInset()+page.getPublicBottomInset();	//add the top and bottom insets together
+			adjustAmount=getPageTopInset()+getPageBottomInset();	//add the top and bottom page insets together
 		}
-					//G***should we check for an invalid flow axis?
-//G***del System.out.println("XMLPagedView.getFlowSpan found an adjust amount of: "+adjustAmount);	//G***del
-//G***fix		return super.getFlowSpan(index)-(adjustAmount*4)/*G***testing *4*/;	//return the default span, accounting for any insets
-//G***fix		return layoutSpan-(adjustAmount*4)/*G***testing *4*/;	//return the default span, accounting for any insets
-//G***del		return layoutSpan;	//G***fix
-
 			//G***put this line in a lower view such as XMLBlockView
 //G***testing		return layoutSpan-adjustAmount;	//return the default span, accounting for any insets
 		return (int)getPageHeight()-adjustAmount;
@@ -687,17 +681,12 @@ Debug.trace("Ready to paint page "+pageIndex+" with parent: ", pageView.getParen
 		final Page page=(Page)childView;	//cast the child view to a page
 		if(getFlowAxis()==X_AXIS)	//if we're flowing horizontally
 		{
-			adjustAmount=page.getPublicLeftInset();	//compensate for the left inset
+			adjustAmount=getPageLeftInset();	//compensate for the left page inset
 		}
 		else	//if we're flowing vertically
 		{
-			adjustAmount=page.getPublicTopInset();	//compensate for the top inset
+			adjustAmount=getPageTopInset();	//compensate for the top page inset
 		}
-				//G***should we check for an invalid flow axis?
-//G***del System.out.println("XMLPagedView.getFlowStart found an adjust amount of: "+adjustAmount);	//G***del
-//G***fix		return super.getFlowStart(index)+adjustAmount;	//return the default star of the flow, accounting for any inset
-//G***fix		return adjustAmount;	//return the default star of the flow, accounting for any inset
-//G***del		return 0;
 			//G***put this line in a lower view such as XMLBlockView
 		return adjustAmount;	//return the default star of the flow, accounting for any inset
 	}
@@ -1289,7 +1278,7 @@ Debug.trace("pageWidth: "+pageWidth+" pageWidth/pos: "+pageWidth/(x-(alloc.x+get
 		public Page(final Element element)
 		{
 			super(element, View.Y_AXIS);	//the information inside each page will be flowed vertically
-			setInsets((short)25, (short)25, (short)25, (short)25);	//G***fix; testing; need here and in setPropertiesFromAttributes() for hack to work
+			setInsets(getPageTopInset(), getPageLeftInset(), getPageBottomInset(), getPageRightInset());	//set the page insets from the paged view
 		}
 
 		/**Returns the attributes to use for this container view.
@@ -1313,13 +1302,6 @@ Debug.trace("pageWidth: "+pageWidth+" pageWidth/pos: "+pageWidth/(x-(alloc.x+get
 			setInsets((short)25, (short)25, (short)25, (short)25);	//G***fix; testing
 		}
 */
-
-		//G***fix, comment; these are present because they aren't public in CompositeView
-		public short getPublicLeftInset() {return getLeftInset();}
-		public short getPublicRightInset() {return getRightInset();}
-		public short getPublicTopInset() {return getTopInset();}
-		public short getPublicBottomInset() {return getBottomInset();}
-
 		/**Each page does not need to fill its children, since its parent
 			<code>XMLPagedView</code> will load its children with the views it created.
 			This function therefore does nothing.

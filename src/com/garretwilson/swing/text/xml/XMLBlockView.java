@@ -1,24 +1,17 @@
 package com.garretwilson.swing.text.xml;
 
 import java.awt.*;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.swing.text.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.SizeRequirements;
 
 import com.garretwilson.lang.CharSequenceUtilities;
-import com.garretwilson.swing.text.AnonymousElement;
+import com.garretwilson.swing.text.*;
 import com.garretwilson.swing.text.ContainerView;
-import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;	//G***maybe change to XMLStyleConstants
-import com.garretwilson.swing.text.xml.css.XMLCSSView;
-import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
+import com.garretwilson.swing.text.xml.css.*;
 import com.garretwilson.text.CharacterConstants;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities;
+import com.garretwilson.text.xml.stylesheets.css.*;
 import com.garretwilson.util.Debug;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
@@ -278,192 +271,151 @@ public class XMLBlockView extends ContainerView implements XMLCSSView
 
 
 	/**Creates a fragment view into which pieces of this view will be placed.
+	The fragment view will be given the correct parent.
+	@param childViews the child views to include in the fragment
 	@param isFirstFragment Whether this fragment holds the first part of the
 		original view.
 	@param isLastFragment Whether this fragment holds the last part of the
 		original view.
 	*/
-	protected View createFragmentView(final boolean isFirstFragment, final boolean isLastFragment)
+	protected View createFragmentView(final View[] childViews, final boolean isFirstFragment, final boolean isLastFragment)
 	{
-	  return new XMLFragmentBlockView(getElement(), getAxis(), isFirstFragment, isLastFragment);	//create a fragment of the view
+	  final View fragmentView=new XMLFragmentBlockView(getElement(), getAxis(), isFirstFragment, isLastFragment);	//create a fragment of the view
+	  fragmentView.setParent(getParent());	//give the fragment the correct parent
+	  fragmentView.replace(0, fragmentView.getViewCount(), childViews);	//add the child views to the fragment
+	  return fragmentView;	//return the fragment view we created
 	}
 
-	/**Determines how attractive a break opportunity in this view is. This can be
-		used for determining which view is the most attractive to call
-		<code>breakView</code> on in the process of formatting.  The higher the
-		weight, the more attractive the break.  A value equal to or lower than
-		<code>View.BadBreakWeight</code> should not be considered for a break. A
-		value greater than or equal to <code>View.ForcedBreakWeight</code> should
-		be broken.<br/>
-		This is implemented to forward to the superclass for axis perpendicular to
-		the flow axis. Along the flow axis the following values may be returned:
-		<ul>
-//G***fix			<li>View.ExcellentBreakWeight: If there is whitespace proceeding the desired break
-//G***fix		 *   location.
-			<li>View.BadBreakWeight: If the desired break location results in a break
-				location of the starting offset (i.e. not even one child view can fit.</li>
-			<li>View.GoodBreakWeight: If the other conditions don't occur.
-		</ul>
-		This will result in the view being broken with the maximum number of child
-		views that can fit within the required span.
-		@param axis The breaking axis, either View.X_AXIS or View.Y_AXIS.
-		@param pos The potential location of the start of the broken view (>=0).
-			This may be useful for calculating tab positions.
-		@param len Specifies the relative length from <em>pos</em> where a potential
-			break is desired (>=0).
-		@return The weight, which should be a value between View.ForcedBreakWeight
-			and View.BadBreakWeight.
-		@see LabelView
-		@see ParagraphView
-		@see BadBreakWeight
-		@see GoodBreakWeight
-		@see ExcellentBreakWeight
-		@see ForcedBreakWeight
+	/**Determines how attractive a break opportunity in this view is.
+	This is implemented to forward to the superclass for axis perpendicular to
+	the flow axis. Along the flow axis the following values may be returned:
+	<dl>
+//G***TODO			<dt><code>View.ExcellentBreakWeight</code></dt> <dd>If there is whitespace proceeding the desired break location.</dd>
+		<dt><code>View.BadBreakWeight</code></dt> <dd>If the desired break location
+			is less than the first child is comfortable with (i.e. not even one child view can fit),
+			or there are no child views.</dd>
+		<dt><code>View.GoodBreakWeight</code></dt> <dd>If the other conditions don't occur.</dd>
+	</dl>
+	This will result in the view being broken with the maximum number of child
+	views that can fit within the required span.
+	@param axis The breaking axis, either View.X_AXIS or View.Y_AXIS.
+	@param pos The potential location of the start of the broken view (>=0).
+		This may be useful for calculating tab positions.
+	@param len Specifies the relative length from <var>pos</var> where a potential
+		break is desired (>=0).
+	@return The weight, which should be a value between <code>View.ForcedBreakWeight
+		and View.BadBreakWeight.</code>
 	*/
 	public int getBreakWeight(int axis, float pos, float len)
 	{
-//G***del System.out.println("Inside XMLBlockView.getBreakWeight axis: "+axis+" pos: "+pos+" len: "+len+" name: "+XMLStyleConstants.getXMLElementName(getElement().getAttributes()));	//G***del
-//G***del Debug.trace("Inside XMLBlockView.getBreakWeight axis: "+axis+" pos: "+pos+" len: "+len+" name: "+XMLStyleConstants.getXMLElementName(getAttributes()));	//G***del
-
-//G***del		final int tileAxis=getAxis();	//get our axis for tiling (this view's axis)
 		if(axis==getAxis())	//if they want to break along our tiling axis
 		{
-//G***bring back when works			return View.GoodBreakWeight;	//show that this break spot will work
-			return View.GoodBreakWeight;	//show that this break spot will work
-/*G***fix
-				//G***we should probably see if this is exactly the beginning of one of our views or something
-			if(getViewCount()==0 || len>getView(0).getPreferredSpan(axis))	//if we have no child views, or we can fit at least one view
-				return View.GoodBreakWeight;	//show that this break spot will work
-			else	//if we can't even fit one view
-				return View.BadBreakWeight;	//show that we don't want to break here
-*/
+				//if we have at least one child view and the first view doesn't dislike the break weight	//TODO add support for requiring a certain number of child views (lines)
+			if(getViewCount()>0 && getView(0).getBreakWeight(axis, pos, len)>BadBreakWeight)	
+			{
+				return GoodBreakWeight;	//if our first child is happy with the break, we can always break by separating children
+			}
+			else	//if we have no child views, or we can't fit at least one child
+			{
+				return BadBreakWeight;	//we can't break if we don't have children				
+			}
 		}
-		else	//if they want to break along another axis besides the one we know about
+		else	//if they want to break along another axis
+		{
 			return super.getBreakWeight(axis, pos, len);	//return the default break weight
+		}
 	}
 
 	/**Breaks this view on the given axis at the given length. This is implemented
 		to attempt to break on the largest number of child views that can fit within
 		the given length.
 	@param axis The axis to break along, either View.X_AXIS or View.Y_AXIS.
-	@param p0 the location in the model where the fragment should start its
+	@param offset the location in the model where the fragment should start its
 		representation (>=0).
 	@param pos the position along the axis that the broken view would occupy (>=0).
 		This may be useful for things like tab calculations.
-	@param len Specifies the distance along the axis where a potential break is
+	@param length Specifies the distance along the axis where a potential break is
 		desired (>=0).
 	@return The fragment of the view that represents the given span, if the view
 		can be broken. If the view doesn't support breaking behavior, the view itself
 		is returned.
 	@see View#breakView
 	*/
-	public View breakView(int axis, int p0, float pos, float len)
+	public View breakView(final int axis, final int offset, final float pos, final float length)
 	{
-Debug.trace("Inside XMLBlockView.breakView axis: ", axis, "p0:", p0, "pos:", pos, "len:", len, "name:", XMLStyleUtilities.getXMLElementName(getAttributes()));	//G***del
-
-	//G***important! if len is sufficiently large, just return ourselves
-		if(axis==getAxis())	//if they want to break along our tiling axis
+//G***del Debug.trace("Inside XMLBlockView.breakView axis: ", axis, "p0:", p0, "pos:", pos, "len:", len, "name:", XMLStyleUtilities.getXMLElementName(getAttributes()));	//G***del
+		if(axis==getAxis() && length<getPreferredSpan(axis))	//if they want to break along our tiling axis and they want less of us than we prefer, we'll try to break
 		{
-
-//G***del		System.out.println("breakView() p0: "+p0+" pos: "+pos+" len: "+len+" preferredSpan: "+getPreferredSpan(axis));	//G***del
-
 		  final int childViewCount=getViewCount();  //get the number of child views we have
-			if(len>=getPreferredSpan(axis))	//if the break is as large or larger than the view
-				return this;	//just return ourselves; there's no need to try to break anything
-			else if(childViewCount>0)	//if we have child views
+			if(childViewCount>0)	//if we have child views
 			{
-//G***del				final XMLBlockView fragmentView=(XMLBlockView)clone();	//create a clone of this view
-				final boolean isFirstFragment=p0<=getView(0).getStartOffset();  //see if we'll include the first child in any form; if so, we're the first fragment
-				final boolean isLastFragment=false;  //G***fix; can we ever create the last fragment here?
-//G***fix				final boolean isLastFragment=p1>=getView(childViewCount-1).getEndOffset();  //see if we'll include the last child in any form; if so, we're the last fragment
-				final View fragmentView=createFragmentView(isFirstFragment, isLastFragment);	//create a fragment view
-//G***del when works				final XMLFragmentBlockView fragmentView=new XMLFragmentBlockView(getElement(), getAxis(), isFirstFragment);	//create a fragment view
-fragmentView.setParent(getParent());				  //G***testing; comment
-//G***del when works				int p1=p0;	//we'll know if we've found views to include in our broken view when we change p1 to be greater than p0
+				final List<View> childViewList=new ArrayList<View>();	//create a new list for accumulating child views
+				boolean isFirstFragment=false;  //start out assuming this is not the first fragment
+				boolean isLastFragment=false;  //start out assuming this is not the last fragment
 				float totalSpan=0;	//we'll use this to accumulate the size of each view to be included
-				int startOffset=p0;	//we'll continually update this as we create new child view fragments
+				int startOffset=offset;	//we'll continually update this as we create new child view fragments
 				int childIndex;	//start looking at the first child to find one that can be included in our break
 				for(childIndex=0; childIndex<childViewCount && getView(childIndex).getEndOffset()<=startOffset; ++childIndex);	//find the first child that ends after our first model location
-				for(; childIndex<childViewCount && totalSpan<len; ++childIndex)	//look at each child view at and including the first child we found that will go inside this fragment, and keep adding children until we find enough views to fill up the space or we run out of views
+				for(; childIndex<childViewCount && totalSpan<length; ++childIndex)	//look at each child view at and including the first child we found that will go inside this fragment, and keep adding children until we find enough views to fill up the space or we run out of views
 				{
-					View childView=getView(childIndex);	//get a reference to this child view; we may change this variable if we have to break one of the child views
+					final View childView=getView(childIndex);	//get a reference to this child view; we may change this variable if we have to break one of the child views
+					final float childPreferredSpan=childView.getPreferredSpan(axis);	//get the child's preferred span along the axis
 Debug.trace("looking to include child view: ", childView.getClass().getName()); //G***del
-Debug.trace("child view preferred span: "+childView.getPreferredSpan(axis)); //G***del
-				  final int unbrokenChildEndOffset=childView.getEndOffset(); //see which content the unbroken view would cover
-					if(totalSpan+childView.getPreferredSpan(axis)>len)	//if this view is too big to fit into our space
+Debug.trace("child view preferred span: ", childPreferredSpan); //G***del
+					final float remainingSpan=length-totalSpan;	//calculate the span we have left
+					final View newChildView;	//we'll determine which child to add
+					final float newChildPreferredSpan;	//we'll determine the size of the new child
+					if(childPreferredSpan>remainingSpan)	//if this view is too big to fit into our space
 					{
-							//G***new code; testing
-/*G***bring back; see if we really need to add something -- we really only need to add something if this is the root XMLBlockView -- but how do we know that?
-						if(fragmentView.getViewCount()==0)	//if we haven't fit any views into our fragment, we must have at least one, even if it doesn't fit
-							childView=childView.breakView(axis, Math.max(childView.getStartOffset(), startOffset), pos, len-totalSpan);	//break the view to fit, taking into account that the view might have started before our break point
-*/
-//G***bring back						else if(childView.getBreakWeight(axis, pos, len-totalSpan)>BadBreakWeight)	//if this view can be broken to be made to fit
-						if(fragmentView.getViewCount()==0)	//if we haven't fit any views into our fragment, we must have at least one, even if it doesn't fit
-							childView=childView.breakView(axis, Math.max(childView.getStartOffset(), startOffset), pos, len-totalSpan);	//break the view to fit, taking into account that the view might have started before our break point
-						else if(childView.getBreakWeight(axis, pos, len-totalSpan)>BadBreakWeight)	//if this view can be broken to be made to fit
+//G***old comment: we really only need to add something if this is the root XMLBlockView -- but how do we know that?
+						final boolean mustBreak=childViewList.size()==0;	//if we haven't fit any views into our fragment, we must have at least one, even if it doesn't fit
+						final boolean canBreak=mustBreak || childView.getBreakWeight(axis, pos, remainingSpan)>BadBreakWeight;	//see if this view can be broken to be made to fit
+						if(canBreak)	//if we can break
 						{
-							childView=childView.breakView(axis, Math.max(childView.getStartOffset(), startOffset), pos, len-totalSpan);	//break the view to fit, taking into account that the view might have started before our break point
-							if(totalSpan+childView.getPreferredSpan(axis)>len)	//if this view is still too big to fit into our space
-								childView=null;	//show that we don't want to add this child
+							newChildView=childView.breakView(axis, Math.max(childView.getStartOffset(), startOffset), pos, remainingSpan);	//break the view to fit, taking into account that the view might have started before our break point
+							newChildPreferredSpan=newChildView.getPreferredSpan(axis);	//get the new child's preferred span along the axis
+							if(!mustBreak && newChildPreferredSpan>remainingSpan)	//if this view is still too big to fit into our space, and we don't have to break
+							{
+								break;	//stop trying to fit things
+							}
 						}
-						else	//if this view can't break and we already have views in the fragment
-							childView=null;	//show that we don't want to add this child
-
-
-/*G***del; old, working code that sometimes overshot allocated boundaries
-						if(childView.getBreakWeight(axis, pos, len-totalSpan)>BadBreakWeight || fragmentView.getViewCount()==0)	//if this view can be broken to be made to fit, or we haven't fit any views into our fragment
-							childView=childView.breakView(axis, Math.max(childView.getStartOffset(), startOffset), pos, len-totalSpan);	//break the view to fit, taking into account that the view might have started before our break point
-						else	//if this view can't break and we already have views in the fragment
-							childView=null;	//show that we don't want to add this child
-*/
+						else	//if this view can't break and we're not required to break
+						{
+							break;	//stop trying to fit things
+						}
 					}
-					if(childView!=null)	//if we have something to add
+					else	//if we can take the whole view
 					{
-						fragmentView.append(childView);	//add this child view, which could have been chopped up into a fragment itself
-						totalSpan+=childView.getPreferredSpan(axis);	//show that we've used up more space
-					  if(childView.getEndOffset()<unbrokenChildEndOffset) //if we were not able to return the whole view
-						  break;  //stop trying to add more child views; more views may fit (especially hidden views), but they would be skipping content that we've already lost by breaking this child view G***can we be sure the original view was unbroken?
+						newChildView=childView;	//take the whole view as it is
+						newChildPreferredSpan=childPreferredSpan;	//the view prefers as much as it originally did
 					}
-					else	//if we needed more room but couldn't break a view
-						break;	//stop trying to fit things
+					childViewList.add(newChildView);	//add the new child view, may could have been chopped up into a fragment itself
+					totalSpan+=newChildPreferredSpan;	//show that we've used up more space
+					final boolean representsFirst=!(this instanceof FragmentView) || ((FragmentView)this).isFirstFragment();	//see if we represent the first fragment
+					final boolean representsLast=!(this instanceof FragmentView) || ((FragmentView)this).isLastFragment();	//see if we represent the last fragment
+					if(representsFirst && childIndex==0)	//if we just added the first child and we would know if it really is the first
+					{
+						isFirstFragment=true;	//show that the new fragment will be the first fragment
+					}
+					if(representsLast && childIndex==childViewCount-1)	//if we just added the last child and we would know if it really is the last
+					{
+						isLastFragment=true;	//show that the new fragment will be the last fragment
+					}
+				  if(newChildView!=childView) //if we were not able to return the whole view
+				  {
+					  break;  //stop trying to add more child views; more views may fit (especially hidden views), but they would be skipping content that we've already lost by breaking this child view
+				  }
 				}
-//G***del; moved up fragmentView.setParent(getParent());				  //G***testing; comment
-//G***del when works fragmentView.setParent(this);				  //G***testing; comment
-				return fragmentView;	//return the new view that's a fragment of ourselves
+				return createFragmentView(childViewList.toArray(new View[childViewList.size()]), isFirstFragment, isLastFragment);	//create a fragment view with the collected children
 			}
 		}
 		return this;	//if they want to break along another axis or we weren't able to break, return our entire view
 	}
 
-
-		/**
-		 * Creates a shallow copy.  This is used by the
-		 * createFragment and breakView methods.
-		 *
-		 * @return the copy
-		 */
-//G***testing
-/*G***del
-		protected final Object clone()
-		{
-			return new XMLBlockView(getElement(), getAxis());	//G***testing
-*/
-/*G***fix
-	Object o;
-	try {
-			o = super.clone();
-	} catch (CloneNotSupportedException cnse) {
-			o = null;
-	}
-	return o;
-*/
-//G***ddl		}
-
-
 	/**Creates a view that represents a portion of the element. This is
 		potentially useful during formatting operations for taking measurements of
 		fragments of the view. If the view doesn't support fragmenting, it should
-		return itself.<br/>
+		return itself.
 		This view does support fragmenting. It is implemented to return a new view
 		that contains the required child views.
 		@param p0 The starting offset (>=0). This should be a value greater or equal
@@ -476,87 +428,33 @@ Debug.trace("child view preferred span: "+childView.getPreferredSpan(axis)); //G
 	*/
 	public View createFragment(int p0, int p1)
 	{
-//G***del System.out.println("Inside createFragment(), p0: "+p0+" p1: "+p1+" name: "+XMLStyleConstants.getXMLElementName(getElement().getAttributes()));	//G***del
-//G***del Debug.trace("Inside XMLBLockView.createFragment(), p0: "+p0+" p1: "+p1+" name: "+XMLStyleConstants.getXMLElementName(getAttributes())); //G***del)
-//G***del Debug.trace("Our startOffset: "+getStartOffset()+" endOffset: "+getEndOffset());	//G***del
-//G***del System.out.println("Inside createFragment(), p0: "+p0+" p1: "+p1);	//G***del
-//G***del System.out.println("Our startOffset: : "+getStartOffset()+" endOffset: "+getEndOffset());	//G***del
-
-//G***del		XMLBlockView fragmentView=(XMLBlockView)clone();	//create a clone of this view
 		if(p0<=getStartOffset() && p1>=getEndOffset())	//if the range they want encompasses all of our view
 			return this;	//return ourselves; there's no use to try to break ourselves up
 		else	//if the range they want only includes part of our view
 		{
-//G***del			final BoxView fragmentView=new BoxView(getElement(), getAxis());	//G***testing! highly unstable! trying to fix vertical spacing bug
-
+			final List<View> childViewList=new ArrayList<View>();	//create a new list for accumulating child views
+			final boolean representsFirst=!(this instanceof FragmentView) || ((FragmentView)this).isFirstFragment();	//see if we represent the first fragment
+			final boolean representsLast=!(this instanceof FragmentView) || ((FragmentView)this).isLastFragment();	//see if we represent the last fragment
 			final int childViewCount=getViewCount();  //find out how many child views there are
 				//see if we'll include the first child in any form; if so, we're the first fragment
-		  final boolean isFirstFragment=childViewCount>0 && p0<=getView(0).getStartOffset();
-				//see if we'll include the last child in any form; if so, we're the first fragment
-		  final boolean isLastFragment=childViewCount>0 && p1>=getView(childViewCount-1).getEndOffset();
-			final View fragmentView=createFragmentView(isFirstFragment, isLastFragment);	//create a fragment view
-//G***del when works			final XMLFragmentBlockView fragmentView=new XMLFragmentBlockView(getElement(), getAxis(), isFirstFragment);	//create a fragment of the view
-fragmentView.setParent(getParent());				  //G***testing; comment
-//G***del when works			final XMLBlockView fragmentView=(XMLBlockView)clone();	//create a clone of this view
-
-
-	//G***fix		final XMLBlockFragmentView fragmentView=new XMLBlockFragmentView(this);	//create a fragment to hold part of our content
+		  final boolean isFirstFragment=representsFirst && childViewCount>0 && p0<=getView(0).getStartOffset();
+				//see if we'll include the last child in any form; if so, we're the last fragment
+		  final boolean isLastFragment=representsLast && childViewCount>0 && p1>=getView(childViewCount-1).getEndOffset();
 			for(int i=0; i<childViewCount; ++i)	//look at each child view
 			{
 				final View childView=getView(i);	//get a reference to this child view
-				if(childView.getStartOffset()<p1 && childView.getEndOffset()>p0)	//if this view is within our range
+				final int childViewStartOffset=childView.getStartOffset();	//get the child view's starting offset
+				final int childViewEndOffset=childView.getEndOffset();	//get the child view's ending offset
+				if(childViewEndOffset>p0 && childViewStartOffset<p1)	//if this view is within our range
 				{
-	//G***del when works			if(childView.getStartOffset()>=p0 && childView.getEndOffset()<=p1)	//if this view is within our range
-					final int startPos=Math.max(p0, childView.getStartOffset());	//find out where we want to start, staying within this child view
-					final int endPos=Math.min(p1, childView.getEndOffset());	//find out where we want to end, staying within this child view
-					fragmentView.append(childView.createFragment(startPos, endPos));	//add a portion (or all) of this child to our fragment
+					final int startPos=Math.max(p0, childViewStartOffset);	//find out where we want to start, staying within this child view
+					final int endPos=Math.min(p1, childViewEndOffset);	//find out where we want to end, staying within this child view
+					childViewList.add(childView.createFragment(startPos, endPos));	//add a portion (or all) of this child to our list of views
 				}
 			}
-//G***del; moved up fragmentView.setParent(getParent());				  //G***testing; comment
-//G***del when works fragmentView.setParent(this);				  //G***testing; comment
-			return fragmentView;	//return the fragment view we constructed
+			return createFragmentView(childViewList.toArray(new View[childViewList.size()]), isFirstFragment, isLastFragment);	//create a fragment view with the collected children
 		}
 	}
-
-
-
-	//G***we may now want to put getViewIndexAtPosition, along with getStart/EndOffset(),
-	//  in XMLFragmentBlockView;
-
-	/**Returns the index of the child at the given model position in the pool.
-	@param pos The position (>=0) in the model.
-	@return The index of the view representing the given position, or -1 if there
-		is no view on this pool which represents that position.
-	*/
-	protected int getViewIndexAtPosition(int pos)
-	{
-//G***del Debug.trace("looking for view at position: ", pos); //G***del
-		//this is an expensive operation, but this class usually contains only a partial list of views, which may not correspond to the complete list of original elements
-		if(pos<getStartOffset() || pos>=getEndOffset())	//if the position is before or after the content
-			return -1;	//show that the given position is not on this page
-		for(int viewIndex=getViewCount()-1; viewIndex>=0; --viewIndex)	//look at all the views from the last to the first
-		{
-			final View view=getView(viewIndex);	//get a reference to this view
-//G***del Debug.trace("View "+viewIndex+" is of class: ", view.getClass().getName());
-//G***del Debug.trace("startoffset: ", view.getStartOffset());
-//G***del Debug.trace("endoffset: ", view.getEndOffset());
-			if(pos>=view.getStartOffset() && pos<view.getEndOffset())	//if this view holds the requested position
-				return viewIndex;	//return the index to this view
-		}
-		return -1;	//if we make it to this point, we haven't been able to find a view with the specified position
-	}
-
-
-/**G***fix; we shouldn't need this, since View.getAttributes() returns element.getAttributes.
-This is mystifying: currently View.getAttributes() returns null inside setPropertiesFromAttributes(),
-but getElement().getAttributes() returns the correct value.
-*/
-/*G***del
-    public AttributeSet getAttributes() {
-Debug.trace("XXXXXXXXXXXXXXXXXXX inside XMLBlockView.getAttributes()");	//G***del
-	return getElement().getAttributes();
-    }
-*/
 
 	/**Whether or not the cached values have been synchronized.*/
 	protected boolean cacheSynchronized=false;  //G***see if we should make this private with an accessor method
@@ -564,7 +462,7 @@ Debug.trace("XXXXXXXXXXXXXXXXXXX inside XMLBlockView.getAttributes()");	//G***de
 	/**Synchronizes the view's cached valiues with the model. This causes the
 		font, metrics, color, etc to be recached if the cache has been invalidated.
 	*/
-	protected void synchronize()
+	protected void synchronize()	//TODO maybe update all this with the ContainerView cache methods; or maybe not, if orthogonal information is being cached
 	{
 //G***del Debug.stackTrace(); //G***del
 		if(!cacheSynchronized)	//if the cache isn't synchronized
