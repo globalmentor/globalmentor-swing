@@ -15,7 +15,7 @@ import com.garretwilson.util.Debug;
 	and content can be added by a component being placed in the panel center.
 @author Garret Wilson
 */
-public class ApplicationPanel extends ContentPanel implements URIOutputStreamable //G***maybe replace the content pane in Application frame with this
+public class ApplicationPanel extends ContentPanel //G***maybe replace the content pane in Application frame with this
 {
 
 	/**Whether this panel has a toolbar; defaults to <code>true</code>.*/
@@ -31,42 +31,16 @@ public class ApplicationPanel extends ContentPanel implements URIOutputStreamabl
 		public JToolBar getToolBar() {return toolBar;}
 
 	/**The application status bar.*/
-	private final JPanel statusBar;
+	private final JPanel statusBar;	//TODO create a StatusBar panel
+
+		/**@return The application status bar.*/
+		public JPanel getStatusBar() {return statusBar;}
 
 	/**The label to display the status.*/
 	private final JLabel statusStatusLabel;
 
 	/**The progress bar label that appears on the status bar.*/
 	private final JProgressBar statusProgressBar;
-
-	/**The implementation to use for retrieving an output stream to a URI.*/
-	private URIOutputStreamable uriOutputStreamable=this;
-
-		/**@return The implementation to use for retrieving an output stream to a URI.*/
-		public URIOutputStreamable getURIOutputStreamable() {return uriOutputStreamable;}
-		
-		/**Sets the implementation to use for retrieving an output stream to a URI.
-		@param outputStreamable The implementation to use for accessing a URI.
-		*/
-		public void setURIOutputStreamable(final URIOutputStreamable outputStreamable) {uriOutputStreamable=outputStreamable;}
-
-	/**The action for saving the contents of the panel.*/
-	private Action saveAction=null;
-
-		/**@return The installed action for saving, or <code>null</code> if the
-			application panel has no saving action.*/
-		public Action getSaveAction() {return saveAction;}
-		
-		/**Installs an action for saving.
-			Reinitializes the toolbar so that the action may be added if needed.
-		@param action The new action for saving
-		@see #reinitializeToolBar
-		*/
-		public void setSaveAction(final Action action)
-		{
-			saveAction=action;	//save the save action
-//G***del			reinitializeToolBar();	//reinitialize the toolbar components G***maybe we want to make the caller reinitialize the toolbar
-		}
 
 	/**Default constructor.*/
 	public ApplicationPanel()
@@ -177,9 +151,10 @@ public class ApplicationPanel extends ContentPanel implements URIOutputStreamabl
   protected void initializeUI()
   {
 		super.initializeUI(); //do the default UI initialization
-		reinitializeToolBar();	//initialize the toolbar, if we have one
-		if(statusBar!=null) //if we have a status bar
-			initializeStatusBar(statusBar);  //initialize the status bar
+		if(getToolBar()!=null) //if we have a toolbar
+			initializeToolBar(getToolBar());  //initialize the toolbar
+		if(getStatusBar()!=null) //if we have a status bar
+			initializeStatusBar(getStatusBar());  //initialize the status bar
   }
 	
 	/**@return A new toolbar.*/
@@ -207,24 +182,11 @@ public class ApplicationPanel extends ContentPanel implements URIOutputStreamabl
 		return statusBar; //return the status bar we created
 	}
 
-	/**Reinitializes the toolbar, if there is one, by first removing all
-		toolbar components and then initializing the toolbar.
-	@see #getToolBar
-	@see #initializeToolBar
-	*/
-	public void reinitializeToolBar()
-	{
-		if(getToolBar()!=null) //if we have a toolbar
-			initializeToolBar(getToolBar());  //initialize the toolbar
-	}
-
 	/**Initializes the toolbar components.
 	@param toolBar The toolbar to be initialized.
 	*/
 	protected void initializeToolBar(final JToolBar toolBar)
 	{
-		if(getSaveAction()!=null)	//if we have a save action
-			toolBar.add(getSaveAction()); //add the save action
 	}
 
 	/**Initializes the status bar components.
@@ -306,18 +268,6 @@ public class ApplicationPanel extends ContentPanel implements URIOutputStreamabl
 		}
 	}
 	
-	/**Returns an output stream for the given URI.
-	The implementing class has the responsibility for closing the output stream.
-	@param uri A URI to a resource.
-	@return An output stream to the contents of the resource represented by the given URI.
-	@exception IOException Thrown if an I/O error occurred.
-	*/
-	public OutputStream getOutputStream(final URI uri) throws IOException
-	{
-		return uri.toURL().openConnection().getOutputStream();	//G***testing---fix
-	}
-
-
 	/**@return <code>true</code> if the panel can close.
 	@see ApplicationFrame2#canClose
 	*/
@@ -326,35 +276,4 @@ public class ApplicationPanel extends ContentPanel implements URIOutputStreamabl
 		return true;  //default to allowing the panel to be closed
 	}
 	
-	/**Saves the resource.
-	@return <code>true</code> if the operation was not cancelled.
-	*/
-	public boolean save()	//G***probably move all the other save stuff up into ApplicationPanel
-	{
-		return true;	//saving nothing always succeeds 
-	}
-
-	/**Action for saving a resource.*/
-	class SaveAction extends AbstractAction
-	{
-		/**Default constructor.*/
-		public SaveAction()
-		{
-			super("Save");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Save the open resource");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Save the currently open resource.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer('s'));  //set the mnemonic key G***i18n
-			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK)); //add the accelerator G***i18n
-		}
-
-		/**Called when the action should be performed.
-		@param e The event causing the action.
-		*/
-		public void actionPerformed(ActionEvent e)
-		{
-			save();	//save the resource
-		}
-	}
-
 }

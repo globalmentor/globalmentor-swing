@@ -35,9 +35,9 @@ public abstract class MDIApplicationFrame extends ApplicationFrame2
 		@return The description used for the object, or <code>null</code> if the
 			object has no associated description.
 		*/
-		protected DocumentDescribable getDocumentDescription(final Object key)
+		protected ResourceDescribable getDocumentDescription(final Object key)
 		{
-			return (DocumentDescribable)descriptionMap.get(key);  //return the description associated with the kay
+			return (ResourceDescribable)descriptionMap.get(key);  //return the description associated with the kay
 		}
 
 		/**Associates a description with an object. The object is stored in a weak
@@ -48,7 +48,7 @@ public abstract class MDIApplicationFrame extends ApplicationFrame2
 		@param description The descrption to associate with the object, or
 			<code>null</code> if the file association should be removed.
 		*/
-		protected void setDocumentDescription(final Object key, final DocumentDescribable description)
+		protected void setDocumentDescription(final Object key, final ResourceDescribable description)
 		{
 			if(description!=null)  //if a valid description was passed
 			  descriptionMap.put(key, description); //put the description in the map, keyed to the key
@@ -143,7 +143,7 @@ public abstract class MDIApplicationFrame extends ApplicationFrame2
 		opened).
 	@see #getDocumentDescription(Object)
 	*/
-	protected DocumentDescribable getDocumentDescription()
+	protected ResourceDescribable getDocumentDescription()
 	{
 		final JInternalFrame internalFrame=getDesktopPane().getSelectedFrame();  //get the currently selected internal frame
 		return internalFrame!=null ? getDocumentDescription(internalFrame) : null;  //return a file for the frame, if it's available
@@ -152,9 +152,9 @@ public abstract class MDIApplicationFrame extends ApplicationFrame2
 	/**Sets the description of the currently opened document.
 		The currently open internal frame is used as a key to store the description.
 	@param description The description of the currently opened document.
-	@see #setDocumentDescription(Object, DocumentDescribable)
+	@see #setDocumentDescription(Object, ResourceDescribable)
 	*/
-	protected void setDocumentDescription(final DocumentDescribable description)
+	protected void setDocumentDescription(final ResourceDescribable description)
 	{
 Debug.trace("setting description: ", description); //G***del
 		final JInternalFrame internalFrame=getMDIManager().getSelectedFrame();  //get the currently selected internal frame
@@ -222,7 +222,7 @@ Debug.trace("setting frame title: ", description.getResource().getReferenceURI()
 	protected void updateTitle(final JInternalFrame internalFrame)
 	{
 		String title; //we'll assign a title to this string
-		final DocumentDescribable description=getDocumentDescription(internalFrame); //get the file associated with this frame
+		final ResourceDescribable description=getDocumentDescription(internalFrame); //get the file associated with this frame
 		if(description!=null)  //if a description is available
 		{
 //G***del			try

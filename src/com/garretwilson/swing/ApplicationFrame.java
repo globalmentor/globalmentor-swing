@@ -573,7 +573,7 @@ public abstract class ApplicationFrame extends JFrame
 	@return <code>true</code> if the specified document can be closed, else
 		<code>false</code> if closing should be canceled.
 	*/
-	public boolean canClose(final DocumentDescribable description)
+	public boolean canClose(final ResourceDescribable description)
 	{
 		if(description.isModified()) //if the document has been modified
 		{

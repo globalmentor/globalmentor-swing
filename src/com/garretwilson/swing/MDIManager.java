@@ -107,7 +107,7 @@ Debug.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
 	@return The currently selected MDI document, or <code>null</code> if no
 		MDI document is selected.
 	*/
-	public MDIDocument getMDIDocument()
+	public StreamableResourceDescribable getMDIDocument()
 	{
 		return getMDIDocument(getSelectedFrame());  //get the MDI document from the currently selected internal frame
 	}
@@ -118,14 +118,14 @@ Debug.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
 	@return The internal frame's MDI document, or <code>null</code> if the
 		internal frame has no MDI document.
 	*/
-	public static MDIDocument getMDIDocument(final JInternalFrame internalFrame)
+	public static StreamableResourceDescribable getMDIDocument(final JInternalFrame internalFrame)
 	{
 		if(internalFrame!=null) //if there is an internal frame
 		{
 			final Container contentPane=internalFrame.getContentPane(); //get the content pane of the internal frame
-			if(contentPane instanceof MDIDocument) //if this is an MDI document
+			if(contentPane instanceof StreamableResourceDescribable) //if this is an MDI document
 			{
-				return (MDIDocument)contentPane; //return the content pane cast to an MDI document
+				return (StreamableResourceDescribable)contentPane; //return the content pane cast to an MDI document
 
 			}
 		}
@@ -160,7 +160,7 @@ Debug.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
 	*/
 	public boolean canCloseInternalFrame(final JInternalFrame internalFrame)
 	{
-		final MDIDocument mdiDocument=getMDIDocument(internalFrame);  //see if there is an MDI document in the frame
+		final StreamableResourceDescribable mdiDocument=getMDIDocument(internalFrame);  //see if there is an MDI document in the frame
 		if(mdiDocument!=null) //if there is an MDI document
 		{
 			return getApplicationFrame().canClose(mdiDocument); //see if we can close the MDI document
