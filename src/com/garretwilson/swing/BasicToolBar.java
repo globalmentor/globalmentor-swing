@@ -263,4 +263,27 @@ public class BasicToolBar extends JToolBar
 	}
 
 //TODO override removeNotify() to remove accelerators
+
+	/**Retrieves a toolbar component that represents the given action.
+	@param action The action for which a component should be returned.
+	@return The child component, such as a button, that represents the given
+		action, or <code>null</code> if no child component represents the given
+		action.
+	*/
+	public Component getComponent(final Action action)
+	{
+		for(int i=getComponentCount()-1; i>=0; --i)	//look at each component on the toolbar and add accelerators as needed
+		{
+			final Component component=getComponent(i);	//get this toolbar component
+			if(component instanceof AbstractButton)	//if this is a button on the toolbar
+			{
+				final AbstractButton button=(AbstractButton)component;	//cast the toolbar component to a button
+				if(button.getAction()==action)	//if this button has the correct action
+				{
+					return button;	//return the button 
+				}
+			}
+		}
+		return null;	//show that we found no component that represents the given action
+	}
 }

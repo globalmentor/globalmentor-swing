@@ -43,6 +43,12 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		/**@return The action for finishing the sequence.*/
 		public Action getFinishAction() {return finishAction;}
 
+	/**The action for confirming an action.*/
+	private final Action confirmAction;
+
+		/**@return The action for confirming an action.*/
+		public Action getConfirmAction() {return confirmAction;}
+
 	/**The action for advancing; serves as a proxy for the start, next,
 		and finish actions, depending on the state of the sequence.
 	*/
@@ -62,7 +68,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		/**@return The action for starting the sequence; created from the corresponding action.
 		@see #getStartAction
 		*/
-		public JButton getStartButton() {return startButton;}		
+		private JButton getStartButton() {return startButton;}		
 
 	/**The button for going to the previous component; created from the corresponding action.*/
 	private final JButton previousButton;
@@ -70,7 +76,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		/**@return The action for going to the previous component; created from the corresponding action.
 		@see #getPreviousAction
 		*/
-		public JButton getPreviousButton() {return previousButton;}
+		private JButton getPreviousButton() {return previousButton;}
 		
 	/**The button for going to the next component; created from the corresponding action.*/
 	private final JButton nextButton;
@@ -78,7 +84,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		/**@return The action for going to the next component; created from the corresponding action.
 		@see #getNextAction
 		*/
-		public JButton getNextButton() {return nextButton;}
+		private JButton getNextButton() {return nextButton;}
 		
 	/**The button for finishing the sequence; created from the corresponding action.*/
 	private final JButton finishButton;
@@ -86,7 +92,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		/**@return The action for finishing the sequence; created from the corresponding action.
 		@see #getFinishAction
 		*/
-		public JButton getFinishButton() {return finishButton;}		
+		private JButton getFinishButton() {return finishButton;}		
 
 	/**The button for advancing in the sequence; created from the corresponding action.*/
 	private final JButton advanceButton;
@@ -94,7 +100,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		/**@return The action for advancing in sequence; created from the corresponding action.
 		@see #getAdvanceAction
 		*/
-		public JButton getAdvanceButton() {return advanceButton;}		
+		private JButton getAdvanceButton() {return advanceButton;}		
 
 	/**Whether the advance buttons are distinct or dual-duty.*/
 	private boolean distinctAdvance;
@@ -110,6 +116,54 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 			these responsibilitiese.
 		*/
 		public void setDistinctAdvance(final boolean distinct) {distinctAdvance=distinct;}
+
+	/**The length of time, in milliseconds, to wait for confirmation when applicable.*/
+	protected final static int CONFIRM_DELAY=5000;
+
+	/**The timer that allows confirmation only within a specified time.*/
+	private final Timer confirmTimer;
+
+		/**@return The timer that allows confirmation only within a specified time.*/
+//G***del if not needed		protected Timer getConfirmTimer() {return confirmTimer;}
+
+	/**The action currently being confirmed and which, if confirmed, will be performed.*/
+	private Action confirmingAction;
+
+		/**The action currently being confirmed and which, if confirmed, will be performed.*/
+		protected Action getConfirmingAction() {return confirmingAction;}
+	
+		/**Starts the confirmation timer and, if confirmation is received within
+		 	the required amount of time, the given action is taken. Alternatively,
+		 	if no action is given, the confirmation process is stopped. If the action
+		 	is already waiting for confirmation, no action is taken.
+		@param newConfirmingAction The action to perform if confirmation is received,
+			or <code>null</code> if no action should be pending confirmation.
+		*/
+		protected void setConfirmingAction(final Action newConfirmingAction)
+		{
+			final Action oldConfirmingAction=confirmingAction;	//get the action currently waiting for confirmation
+			if(oldConfirmingAction!=newConfirmingAction)	//if the pending action is really changing
+			{
+				confirmTimer.stop();	//stop any confirmations currently pending
+				confirmingAction=newConfirmingAction;	//update the confirming action
+				if(newConfirmingAction!=null)	//if there is a new action waiting to be confirmed
+				{
+					confirmTimer.restart();	//start the confirmation countdown				
+				}
+				updateStatus();	//update the status to show whether an action is waiting to be confirmed
+			}
+		}
+
+	/**Whether each navigation of the sequence must be confirmed.*/
+	private boolean confirmNavigation=false;
+		
+		/**@return <code>true</code> if each navigation should be confirmed.*/
+		public boolean isConfirmNavigation() {return confirmNavigation;}
+	
+		/**Sets whether each navigation must be confirmed.
+		@param confirmNavigation<code>true</code> if each navigation must be confirmed.
+		*/
+		public void setConfirmNavigation(final boolean confirmNavigation) {this.confirmNavigation=confirmNavigation;}
 
 	/**Default constructor.*/
 	public AbstractSequencePanel()
@@ -141,6 +195,13 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		nextAction=new NextAction();
 		finishAction=new FinishAction();
 		advanceAction=new ProxyAction(startAction);	//the advance action will initially proxy the start action
+		confirmAction=new ConfirmAction();
+		confirmTimer=new Timer(CONFIRM_DELAY, new ActionListener()	//create a new action listener that will remove any confirming action after a delay
+				{
+					public void actionPerformed(final ActionEvent actionEvent) {setConfirmingAction(null);}	//if the timer runs out, show that there is no confirmation action
+				}); 
+		confirmTimer.setRepeats(false);	//we only have one waiting period for confirmation
+		confirmingAction=null;	//there is currently no action being confirmed
 		startButton=new JButton(startAction);	//create the buttons
 		previousButton=new JButton(previousAction);
 		nextButton=new JButton(nextAction);
@@ -171,6 +232,8 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 			actionManager.addToolAction(getPreviousAction());
 			actionManager.addToolAction(getAdvanceAction());
 		} 
+		actionManager.addToolAction(new ActionManager.SeparatorAction());
+		actionManager.addToolAction(getConfirmAction());
 	}
 
 	/**Initializes the user interface.*/
@@ -194,6 +257,12 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		getPreviousAction().setEnabled(hasPrevious()); //only allow going backwards if we have a previous step
 		getNextAction().setEnabled(hasNext()); //only allow going backwards if we have a next step
 		getFinishAction().setEnabled(!hasNext()); //only allow finishing if there are no next components
+		getConfirmAction().setEnabled(isConfirmNavigation() && getConfirmingAction()!=null); //only allow confirmation if confirmation is enabled and there is an action waiting to be confirmed
+		final Component confirmComponent=getToolBar().getComponent(getConfirmAction());	//see if the confirm action is on the toolbar
+		if(confirmComponent!=null)	//if the action has a corresponding component on the toolbar
+		{
+			confirmComponent.setVisible(isConfirmNavigation());	//only show the confirm action if navigation confirmation is enabled
+		}
 		if(getAdvanceAction().getProxiedAction()!=getStartAction())	//if we've already started
 		{
 				//determine if advancing should go to the next item in the sequence or finish
@@ -212,6 +281,11 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 				defaultButton=getAdvanceButton();	//set the advance button as the default	
 			}
 			rootPane.setDefaultButton(defaultButton);	//update the default button	
+		}
+		final Action confirmingAction=getConfirmingAction();	//see if there is an action waiting to be confirmed
+		if(confirmingAction!=null)	//if there is an action waiting to be confirmed
+		{
+			confirmingAction.setEnabled(false);	//disable the confirming action, because it will be accessed indirectly through the confirmation action
 		}
 	}
 
@@ -402,7 +476,15 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		*/
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
-			goStart(); //try to finish the sequence
+			if(!isConfirmNavigation() || getConfirmingAction()==this)	//if this action is waiting to be confirmed
+			{
+				goStart(); //try to finish the sequence
+				setConfirmingAction(null);	//show that we're not waiting for confirmation on anything
+			}
+			else	//if we should confirm this action
+			{
+				setConfirmingAction(this);	//perform this action subject to confirmation
+			}
 		}
 	}
 
@@ -424,7 +506,15 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		*/
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
-			goPrevious();  //go to the previous component
+			if(!isConfirmNavigation() || getConfirmingAction()==this)	//if this action is waiting to be confirmed
+			{
+				goPrevious();  //go to the previous component
+				setConfirmingAction(null);	//show that we're not waiting for confirmation on anything
+			}
+			else	//if we should confirm this action
+			{
+				setConfirmingAction(this);	//perform this action subject to confirmation
+			}
 		}
 	}
 
@@ -446,7 +536,15 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		*/
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
-			goNext();  //go to the next component
+			if(!isConfirmNavigation() || getConfirmingAction()==this)	//if this action is waiting to be confirmed
+			{
+				goNext();  //go to the next component
+				setConfirmingAction(null);	//show that we're not waiting for confirmation on anything
+			}
+			else	//if we should confirm this action
+			{
+				setConfirmingAction(this);	//perform this action subject to confirmation
+			}
 		}
 	}
 
@@ -469,7 +567,43 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		*/
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
-			goFinish(); //try to finish the sequence
+			if(!isConfirmNavigation() || getConfirmingAction()==this)	//if this action is waiting to be confirmed
+			{
+				goFinish(); //try to finish the sequence
+				setConfirmingAction(null);	//show that we're not waiting for confirmation on anything
+			}
+			else	//if we should confirm this action
+			{
+				setConfirmingAction(this);	//perform this action subject to confirmation
+			}
+		}
+	}
+
+	/**Action for confirming an action.*/
+	class ConfirmAction extends AbstractAction
+	{
+
+		/**Constructs an activity submit action.*/
+		public ConfirmAction()
+		{
+			super("Confirm");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "Confirm input.");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Confirm the input.");	//set the long description G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key G***i18n
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.ACCEPT_ICON_FILENAME)); //load the correct icon
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+			final Action confirmingAction=getConfirmingAction();	//see if there is an action waiting to be confirmed
+			if(confirmingAction!=null)	//if there is an action waiting to be confirmed
+			{
+				confirmTimer.stop();	//the action is confirmed; suspend waiting for confirmation
+				confirmingAction.actionPerformed(actionEvent);	//perform the confirming action
+			}
 		}
 	}
 
