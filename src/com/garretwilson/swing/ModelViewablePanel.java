@@ -235,7 +235,7 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 	*/
 	protected boolean canChangeModelView(final int oldView, final int newView)
 	{
-		return verify();	//we can change views if the panel verifies
+		return verify();	//we can change views if the panel verifies TODO this needs to be changed so that only the old view is saved; see TabbedViewPanel.canChangeModelView() 
 	}
 
 	/**Called when the change in model view should be canceled.

@@ -2,6 +2,8 @@ package com.garretwilson.swing;
 
 import java.awt.*;
 import java.awt.Component;
+import java.io.IOException;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import com.garretwilson.awt.BasicGridBagLayout;
@@ -231,6 +233,34 @@ public abstract class TabbedViewPanel extends ModelViewablePanel
 		updateComponent(getModelView());	//make sure the selected component matches the view
 	}
 
+	/**Determines whether it is appropriate under the circumstances to change
+		the model view. This method may display any necessary dialog boxes in
+		response to any error conditions before returning.
+	<p>This version verifies only the current view component.</p>
+	@param oldView The view before the change.
+	@param newView The new view of the data
+	@return <code>true</code> if the model view change should be allowed, else
+		<code>false</code>.
+	*/
+	protected boolean canChangeModelView(final int oldView, final int newView)
+	{
+		final Component oldViewComponent=getViewComponent(oldView);	//get the component that represents the view we're changing from
+		boolean verified=!(oldViewComponent instanceof Verifiable) || ((Verifiable)oldViewComponent).verify();	//verify the old view, if it can be verified
+		if(verified)	//if the default verification succeeded
+		{
+			try
+			{
+				saveModel(oldView);	//store the model data that was being edited for this view, if any
+			}
+			catch(IOException ioException)	//if there were any problems saving the model
+			{
+				SwingApplication.displayApplicationError(this, ioException);	//display the error
+				verified=false;	//show that the component didn't verify
+			}
+		}
+		return verified;	//show whether or not we successfully verified the component
+	}
+
 	/**Called when the change in model view should be canceled.
 	@param oldView The view before the change.
 	@param newView The new view of the data
@@ -275,5 +305,32 @@ public abstract class TabbedViewPanel extends ModelViewablePanel
 			getTabbedPane().setSelectedComponent(component);	//select the tabbed pane that represents the view 
 		}
 	}
+
+	/**Verifies the component.
+	<p>This version abandons default functionality and only verifies the current
+		view component and then saves the current viewsaves any editing changes to the model.</p>
+	@return <code>true</code> if the component contents are valid, <code>false</code>
+		if not.
+	@see #saveModel()
+	*/
+/*G***del; TODO modify the verify() method (shown here from ModelPanel) sow that it does not attempt to verify every tab on the panel
+	public boolean verify()
+	{
+		boolean verified=super.verify();	//perform the default verification---do this first so that any child components that we may need for our model can be verified, saving their models
+		if(verified)	//if the default verification succeeded
+		{
+			try
+			{
+				saveModel();	//store any model data that was being edited, if any
+			}
+			catch(IOException ioException)	//if there were any problems saving the model
+			{
+				SwingApplication.displayApplicationError(this, ioException);	//display the error
+				verified=false;	//show that the component didn't verify
+			}
+		}
+		return verified;	//show whether or not we successfully verified the component
+	}
+*/
 
 }
