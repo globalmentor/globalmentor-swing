@@ -2,7 +2,6 @@ package com.garretwilson.swing;
 
 import java.io.*;
 import java.net.URI;
-
 import javax.swing.*;
 import javax.swing.event.*;
 import com.garretwilson.io.MediaType;
@@ -15,12 +14,9 @@ import com.garretwilson.text.xml.XMLNodeModel;
 import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.text.xml.XMLSerializer;
 import com.garretwilson.text.xml.XMLUtilities;
-import com.garretwilson.util.Debug;
-
 import org.w3c.dom.*;
 
 /**Panel that displays XML and source code.
-<p>The canonical XML tree is stored in the currently available view.</p>
 @author Garret Wilson
 */
 public class XMLPanel extends TabbedViewPanel

@@ -471,6 +471,18 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 				};
 	}
 
+	/**Creates a list selection listener that, when the list selection changes,
+		updates the status.
+	@see #updateStatus
+	*/
+	public ListSelectionListener createUpdateStatusListSelectionListener()
+	{
+		return new ListSelectionListener()	//create a new list selection listener that will do nothing but update the status
+				{
+					public void valueChanged(final ListSelectionEvent listSelectionEvent) {updateStatus();}	//if the list selection changes, update the status
+				};
+	}
+
 	/**Creates a property change listener that, when any property changes,
 		updates the modified status to <code>true</code>.
 	@see #setModified

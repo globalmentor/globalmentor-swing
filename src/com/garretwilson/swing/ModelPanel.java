@@ -42,6 +42,14 @@ public class ModelPanel extends BasicPanel
 			if(oldModel!=newModel)  //if the value is really changing
 			{
 				model=newModel; //update the value
+				try
+				{
+					loadModel();	//try to load the model, as we've changed models
+				}
+				catch(IOException ioException)	//if there were any problems saving the model
+				{
+					SwingApplication.displayApplicationError(this, ioException);	//display the error
+				}
 					//show that the property has changed
 				firePropertyChange(MODEL_PROPERTY, oldModel, newModel);
 			}
@@ -89,6 +97,22 @@ public class ModelPanel extends BasicPanel
 			initialize();   //initialize the panel
 	}
 
+	/**Initialize the user interface.
+	<p>This version sets the data view to the default.</p>
+	*/
+	protected void initializeUI()
+	{
+		super.initializeUI(); //do the default UI initialization
+		try
+		{
+			loadModel();	//try to load the model, since we're just now initializing
+		}
+		catch(IOException ioException)	//if there were any problems saving the model
+		{
+			SwingApplication.displayApplicationError(this, ioException);	//display the error
+		}
+	}
+
 	/**Loads the data from the model to the view, if necessary.
 	@exception IOException Thrown if there was an error loading the model.
 	*/
@@ -112,16 +136,20 @@ public class ModelPanel extends BasicPanel
 	*/
 	public boolean verify()
 	{
-		try
+		boolean verified=super.verify();	//perform the default verification---do this first so that any child components that we may need for our model can be verified, saving their models
+		if(verified)	//if the default verification succeeded
 		{
-			saveModel();	//store any model data that was being edited, if any
+			try
+			{
+				saveModel();	//store any model data that was being edited, if any
+			}
+			catch(IOException ioException)	//if there were any problems saving the model
+			{
+				SwingApplication.displayApplicationError(this, ioException);	//display the error
+				verified=false;	//show that the component didn't verify
+			}
 		}
-		catch(IOException ioException)	//if there were any problems saving the model
-		{
-			SwingApplication.displayApplicationError(this, ioException);	//display the error
-			return false;	//show that the component didn't verify
-		}
-		return super.verify();	//perform the default verification and return the result
+		return verified;	//show whether or not we successfully verified the component
 	}
 
 }

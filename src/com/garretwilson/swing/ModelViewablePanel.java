@@ -165,29 +165,9 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 	*/
 	protected void initializeUI()
 	{
-		super.initializeUI(); //do the default UI initialization
-		setModelView(getDefaultModelView());	//set the default data view
-	}
-
-	/**Sets the data model.
-	This is a bound property.
-	@param newModel The data model for which this component provides a view.
-	*/
-	protected void setModel(final Model newModel)
-	{
-		final Model oldModel=getModel();	//get the current model
-		super.setModel(newModel);	//set the model normally
-		if(getModel()!=oldModel)	//if the model really changed
-		{
-			try
-			{
-				loadModel();	//try to load the model into our current data view
-			}
-			catch(IOException ioException)	//if there were any problems saving the model
-			{
-				SwingApplication.displayApplicationError(this, ioException);	//display the error
-			}
-		}		
+		assert isModelViewSupported(getDefaultModelView()) : "Specified default model view is not supported";
+		dataView=getDefaultModelView();	//default to the model view
+		super.initializeUI(); //do the default UI initialization, which will load the model into our new view
 	}
 
 	/**Determines whether it is appropriate under the circumstances to change

@@ -13,8 +13,11 @@ import com.garretwilson.util.*;
 /**Panel that allows multiple views of data to be displayed in separate tabs.
 When the view value is changed, the appropriate tab is selected; when a new tab
 	is selected, the view value is changed accordingly.
+<p>The tabbed view panel uses a <code>BasicGridBagLayout</code> with a border
+	paradigm.</p>
 <p>Subclasses should set the correct default view only after initializing the tabs.</p>
 @author Garret Wilson
+@see BasicGridBagLayout
 */
 public abstract class TabbedViewPanel extends ModelViewablePanel implements ModelViewable
 {
@@ -209,7 +212,6 @@ public abstract class TabbedViewPanel extends ModelViewablePanel implements Mode
 	*/
 	protected void initializeUI()
 	{
-		super.initializeUI(); //do the default UI initialization
 		getTabbedPane().setTabPlacement(JTabbedPane.BOTTOM);	//put the tabs on the bottom
 		add(getTabbedPane(), BorderLayout.CENTER);	//add the tabbed pane to the center of the panel
 		getTabbedPane().addChangeListener(new ChangeListener()	//listen for tab changes
@@ -219,7 +221,7 @@ public abstract class TabbedViewPanel extends ModelViewablePanel implements Mode
 						updateDataView(getTabbedPane().getSelectedComponent());	//update the view accordingly
 					}
 				});
-		setModelView(getDefaultModelView());	//set the default data view
+		super.initializeUI(); //do the default UI initialization, which will set the default model and initialize the default view
 		updateComponent(getModelView());	//make sure the selected component matches the view
 	}
 
