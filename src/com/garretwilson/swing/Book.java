@@ -975,111 +975,19 @@ Debug.trace("Relative offset: ", relativeOffset);
 	*/
 	public void setXML(final org.w3c.dom.Document xmlDocument, final URI baseURI, final MediaType mediaType)
 	{
-/*G***fix		
-		close();  //close whatever book is open
-*/
-		final XMLTextPane xmlTextPane=getXMLTextPane();	//get the XML text pane
-/*G***fix
-	//G***testing
-xmlTextPane.setContentType(MediaType.APPLICATION_XHTML_XML);	//set the text pane content type to "application/xhtml+xml"
-xmlTextPane.setEditable(false);	//don't let the WYSIWYG text pane be edited
-*/
-//G***fix		if(mediaType!=null)	//if a media type was given
-//G***fix			xmlTextPane.setContentType(mediaType.toString());	//set the text pane content type to the media type G***testing
-
-
-
-//TODO transfer this to a setXML() method in XMLTextPane, and put this document change sub-section into its own common method 
-
-
-
-
-		final XMLEditorKit xmlEditorKit=(XMLEditorKit)xmlTextPane.getEditorKit();	//get the current editor kit, and assume it's an XML editor kit G***we might want to check just to make sure
-		final XMLDocument swingDocument=(XMLDocument)xmlEditorKit.createDefaultDocument();	//create a default document
-
-//G***fix		document.putProperty(Document.StreamDescriptionProperty, URIUtilities.toValidURL(uri));	//store a URL version of the URI in the document, as getPage() expects this to be a URL
-//G***fix		document.putProperty(XMLDocument.BASE_URI_PROPERTY, uri);	//store the base URI in the document
-
-Debug.trace("reading from stream"); //G***del
-//G***del		read(inputStream, document);  //read the document from the input stream
-//G***fix		xmlEditorKit.addProgressListener(this);	//show that we want to be notified of any progress the XML editor kit makes G***should one of these go in the XMLTextPane? will it conflict with this one?
-/*G***fix
-		if(document instanceof XMLDocument) //if this is an XML document
-		{
-			final XMLDocument xmlDocument=(XMLDocument)document;  //cast the document to an XML document
-			xmlDocument.setURIInputStreamable(getURIInputStreamable()); //give the XML document any input stream locator that we might have, so that it can access files from within zip files, for instance
-			((XMLDocument)document).addProgressListener(this);	//show that we want to be notified of any progress the XML document makes G***should this go here or elsewhere? should this bubble up to the editor kit instead?
-		}
-*/
-		try
-		{
-//G***fix			final XMLDocument swingDocument=(XMLDocument)xmlTextPane.getDocument();	//get the Swing XML document G***this may change if setXML() moves from the editor kit to the document 
-				//put the XML into the text pane
-			((XMLEditorKit)xmlTextPane.getEditorKit()).setXML(xmlDocument, baseURI, mediaType, swingDocument);
-				//G***when does this get closed?
-//G***del			read(inputStream, document);  //read the document from the input stream
-
-//G***fix			fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Constructing the document..."));	//G***testing i18n
-//G***bring back			final Cursor originalCursor=ComponentUtilities.setCursor(this, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); //show the wait cursor
-			try
-			{
-				//make sure the actual updating of the document gets done in the event thread to keep an exception from being thrown
-//G***bring back				SwingUtilities.invokeLater(new Runnable()	//invoke the updating of the status until later G***fix comment
-				{
-//				G***bring back					public void run()
-//				G***bring back					{
-	//G***fix					setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));	//show the wait cursor
-						try
-						{
-	Debug.trace("XMLTextPane ready to setDocument()");  //G***del
-							xmlTextPane.setDocument(swingDocument);	//show that the text pane is using this document (this actually creates the views)
-	Debug.trace("XMLTextPane firing progress finished constructing");  //G***del
-//G***fix							fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Finished constructing the document...", true));	//G***testing i18n
-						}
-						finally
-						{
-	//G***fix						setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));	//go back to the default cursor
-						}
-					}
-//				G***bring back				});
-			}
-			finally
-			{
-//			G***bring back				ComponentUtilities.setCursorLater(this, originalCursor); //after the event thread is finished setting the document, always set the cursor back to its original form
-			}
-		}
-/*G***del
-		catch (BadLocationException e)	//if we received a bad location exception (which should never happen)
-		{
-			throw new IOException(e.getMessage());	//change the exception into an I/O exception and rethrow it
-		}
-*/
-		finally
-		{
-//G***fix			xmlEditorKit.removeProgressListener(this);	//show the editor kit that we no longer want to be notified of any progress the XML editor kit makes
-//G***fix			if(document instanceof XMLDocument) //if this is an XML document
-//G***fix				((XMLDocument)document).removeProgressListener(this);	//show the document that we no longer want to be notified of any progress the document makes
-		}
-
-
-
-
-//G***fix		final XMLDocument swingDocument=(XMLDocument)xmlTextPane.getDocument();	//get the Swing XML document G***this may change if setXML() moves from the editor kit to the document 
-			//put the XML into the text pane
-//G***fix		((XMLEditorKit)xmlTextPane.getEditorKit()).setXML(xmlDocument, baseURI, mediaType, swingDocument);
+		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new MediaType[]{mediaType}, mediaType);	//set the XML using arrays, specifying the media type
 	}
 
 	/**Sets the given XML data.
 	@param xmlDocumentArray The array of XML documents that contain the data.
 	@param baseURIArray The array of base URIs, corresponding to the XML documents.
 	@param mediaTypeArray The array of media types of the documents.
+	@param mediaType The media type of the book itself.
 	*/
-	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final MediaType[] mediaTypeArray)
+	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final MediaType[] mediaTypeArray, final MediaType mediaType)
 	{
-		final XMLTextPane xmlTextPane=getXMLTextPane();	//get the XML text pane
-		final XMLDocument swingDocument=(XMLDocument)xmlTextPane.getDocument();	//get the Swing XML document G***this may change if setXML() moves from the editor kit to the document 
-			//put the XML into the text pane
-		((XMLEditorKit)xmlTextPane.getEditorKit()).setXML(xmlDocumentArray, baseURIArray, mediaTypeArray, swingDocument);
+		getXMLTextPane().setContentType(mediaType.toString());	//set the content type of the text pane
+		getXMLTextPane().setXML(xmlDocumentArray, baseURIArray, mediaTypeArray);	//tell the XML text pane to set the XML
 	}
 
 	/**Reads the book content from a URI.

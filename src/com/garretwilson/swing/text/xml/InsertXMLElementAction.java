@@ -89,7 +89,7 @@ public class InsertXMLElementAction extends TextComponentFocusTargetAction
 					if(document instanceof XMLDocument)	//if this is an XML document
 					{
 						final XMLDocument xmlDocument=(XMLDocument)document;	//cast the document to an XML document
-						xmlDocument.insertXMLElement(start, end-start, getElementNamespaceURI(), getElementQName());
+//TODO fix XML element insertion						xmlDocument.insertXMLElement(start, end-start, getElementNamespaceURI(), getElementQName());
 					}
 				}
 			}						 

@@ -525,7 +525,7 @@ A copy of our...
 	@param area The area being changed.
 	@param viewFactory The view factory responsible for creating views
 	*/
-//G***fix	public void insertUpdate(DocumentEvent changes, Shape area, ViewFactory viewFactory) {} //G***maybe later fix these to update appropriate cached layout pools
+	public void insertUpdate(DocumentEvent changes, Shape area, ViewFactory viewFactory) {} //G***maybe later fix these to update appropriate cached layout pools
 
 	/**Because a paged view merely uses its child views as cached pages, it is not
 		interested in knowing if have had updates. This method therefore does
@@ -534,7 +534,7 @@ A copy of our...
 	@param area The area being changed.
 	@param viewFactory The view factory responsible for creating views
 	*/
-//G***fix	public void removeUpdate(DocumentEvent changes, Shape area, ViewFactory viewFactory) {}
+	public void removeUpdate(DocumentEvent changes, Shape area, ViewFactory viewFactory) {}
 
 	/**Because a paged view merely uses its child views as cached pages, it is not
 		interested in knowing if have had updates. This method therefore does
@@ -543,7 +543,7 @@ A copy of our...
 	@param area The area being changed.
 	@param viewFactory The view factory responsible for creating views
 	*/
-//G***fix	public void changedUpdate(DocumentEvent changes, Shape a, ViewFactory f) {}
+	public void changedUpdate(DocumentEvent changes, Shape a, ViewFactory f) {}
 
 	/**Renders using the given rendering surface and area on that surface. This
 		function only paints the currently selected page.

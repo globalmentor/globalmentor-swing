@@ -1249,6 +1249,56 @@ Debug.trace("reading from stream into document"); //G***del
 	}
 */
 	}
+
+	/**Sets the given XML data.
+	<p>The installed editor kit will be used to create a new document, into which
+		the XML data will be loaded. If the installed editor kit is not an
+		<code>XMLEditorKit</code>, no action occurs.</p>
+	@param document The XML document that contains the data.
+	@param baseURI The base URI, corresponding to the XML document.
+	@param mediaType The media type of the XML document.
+	*/
+	public void setXML(final org.w3c.dom.Document xmlDocument, final URI baseURI, final MediaType mediaType)
+	{
+		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new MediaType[]{mediaType});	//set the XML using arrays
+	}
+
+	/**Sets the given XML data.
+	<p>The installed editor kit will be used to create a new document, into which
+		the XML data will be loaded. If the installed editor kit is not an
+		<code>XMLEditorKit</code>, no action occurs.</p>
+	@param xmlDocumentArray The array of XML documents that contain the data.
+	@param baseURIArray The array of base URIs, corresponding to the XML documents.
+	@param mediaTypeArray The array of media types of the documents.
+	*/
+	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final MediaType[] mediaTypeArray)
+	{
+		final EditorKit editorKit=getEditorKit();	//get our current editor kit
+		if(editorKit instanceof XMLEditorKit)	//if an XML editor kit is installed
+		{
+			final XMLEditorKit xmlEditorKit=(XMLEditorKit)getEditorKit();	//cast the editor kit to an XML editor kit
+			final Document document=xmlEditorKit.createDefaultDocument();	//create a default document
+			if(document instanceof XMLDocument) //if this is an XML document
+			{
+				final XMLDocument xmlDocument=(XMLDocument)document;	//cast the document to an XML document 
+				xmlDocument.setURIInputStreamable(getURIInputStreamable()); //give the XML document any input stream locator that we might have, so that it can access files from within zip files, for instance
+				final Cursor originalCursor=ComponentUtilities.setCursor(XMLTextPane.this, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				try
+				{
+						//tell the editor kit to put the XML into the document
+					xmlEditorKit.setXML(xmlDocumentArray, baseURIArray, mediaTypeArray, xmlDocument);
+//TODO fix progress					fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Constructing the document..."));	//G***testing i18n
+					setDocument(document);	//show that the text pane is using this document (this actually creates the views)
+//TODO fix progress					fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Finished constructing the document...", true));	//G***testing i18n
+				}
+				finally
+				{
+					setCursor(originalCursor); //after the event thread is finished setting the document, always set the cursor back to its original form
+				}
+			}
+		}
+	}
+
 /*G***del
 		public final void setContentType(String type)
 		{

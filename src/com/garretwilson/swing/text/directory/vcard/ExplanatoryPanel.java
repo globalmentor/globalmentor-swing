@@ -72,7 +72,7 @@ public class ExplanatoryPanel extends BasicVCardPanel implements Verifiable
 		categoryList.setListData(availableCategoryList.toArray());	//put the available categories in the list
 		for(int i=categories.length-1; i>=0; --i)	//look at each category
 		{
-			categoryList.setSelectedValue(categories[i], false);	//select this category
+			categoryList.setSelectedValue(categories[i], false);	//select this category without scrolling
 		}
 	}
 	
