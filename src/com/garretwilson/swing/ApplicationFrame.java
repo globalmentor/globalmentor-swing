@@ -5,13 +5,14 @@ import java.awt.event.*;
 import java.beans.*;
 import java.io.*;
 import java.net.*;
+import java.util.prefs.*;
 import javax.swing.*;
 import com.garretwilson.awt.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.resources.icon.IconResources;
-import com.garretwilson.swing.*;
 import com.garretwilson.util.*;
+import com.garretwilson.util.prefs.*;
 
 /**Main frame parent class for an application. This frame expects to contain
 	an <code>ApplicationPanel</code>.
@@ -44,6 +45,24 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	public final static long MENU_HELP_NONE=0;
 	public final static long MENU_HELP_CONTENTS=1;
 	public final static long MENU_HELP_ABOUT=2;
+
+		//the bounds preferences
+	/**The preference for storing the horizontal position.*/
+	public final String BOUNDS_X_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.x");
+	/**The preference for storing the vertical position.*/
+	public final String BOUNDS_Y_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.x");
+	/**The preference for storing the width.*/
+	public final String BOUNDS_WIDTH_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.width");
+	/**The preference for storing the height.*/
+	public final String BOUNDS_HEIGHT_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.height");
+	/**The preference for storing the extended state.*/
+	public final String EXTENDED_STATE_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "extended.state");
+
+	/**@return The default user preferences for this frame.*/
+	public Preferences getPreferences()
+	{
+		return Preferences.userNodeForPackage(getClass());	//return the user preferences node for whatever class extends this one 
+	}
 
 	/**The default close operation, which defaults to <code>DISPOSE_ON_CLOSE</code>.*/
 	private int defaultCloseOperation=DISPOSE_ON_CLOSE;
@@ -374,6 +393,16 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 				}
 			};
 		setContentPane(contentPane); //set the container as the content pane
+		addComponentListener(new ComponentAdapter()	//listen for the window bounds changes and save or restore the bounds in the preferences
+				{
+					public void componentMoved(ComponentEvent e) {saveBoundsPreferences();}	//save the new bounds
+					public void componentResized(ComponentEvent e) {saveBoundsPreferences();}	//save the new bounds
+					public void componentShown(ComponentEvent e) {restoreBoundsPreferences();}	//restore the new bounds
+				});
+		addWindowStateListener(new WindowStateListener()	//listen for the window state changing so that we can save it in the preferences
+				{
+public void windowStateChanged(WindowEvent e) {/*G***fix saveStatePreferences();*/}	//save the new state
+				});
 		fileNewAction=new FileNewAction();  //create the new action G***maybe lazily create these
 		fileOpenAction=new FileOpenAction();  //create the open action
 		fileCloseAction=new FileCloseAction();  //create the close action
@@ -909,6 +938,91 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 		{
 			close();	//close the window
 		}
+	}
+
+	/**Makes the component visible or invisible.
+		This version resets the bounds of the frame to the last known bounds as
+		saved in the preferences. 
+	@param newVisible <code>true</code> to make the component visible;
+		<code>false</code> to make it invisible.
+	*/
+/*G***del when works
+	public void setVisible(final boolean newVisible)
+	{
+		super.setVisible(newVisible);	//update the visible status normally
+		if(newVisible)	//if the frame is now visible
+		{
+//G***del			final Rectangle bounds=getBounds();	//get the current bounds
+			final Preferences preferences=getPreferences();	//get the preferences
+			final int x=preferences.getInt(BOUNDS_X_PREFERENCE, -1);	//get the stored bounds, using invalid dimensions for defaults
+			final int y=preferences.getInt(BOUNDS_Y_PREFERENCE, -1);
+			final int width=preferences.getInt(BOUNDS_WIDTH_PREFERENCE, -1);
+			final int height=preferences.getInt(BOUNDS_HEIGHT_PREFERENCE, -1);
+			if(x>=0 && y>=0 && width>=0 && height>=0)	//if we had valid bounds stored
+			{
+				setBounds(x, y, width, height);	//restore the bounds we had saved in preferences
+			}
+			else	//if no bounds are stored in preferences
+			{
+				setSize(800, 600);	//set a default size, which will be saved
+				WindowUtilities.center(this);	//center the window, which will save the new location 
+			}
+			validate();	//make sure the components are all laid out correctly after was changed the size
+		}
+	}
+*/
+
+	/**If the window is visible, saves its bounds in the preferences.*/
+	protected void saveBoundsPreferences()
+	{
+		if(isVisible())	//if we are visible, save the new bounds in the preferences
+		{
+			final Preferences preferences=getPreferences();	//get the preferences
+			final Rectangle bounds=getBounds();	//get the current bounds
+			final int extendedState=getExtendedState();	//get the current extended state
+			preferences.putInt(EXTENDED_STATE_PREFERENCE, extendedState);	//store the extended state
+			if((extendedState|MAXIMIZED_HORIZ)==MAXIMIZED_HORIZ)	//if we aren't maximized horizontally
+			{
+				preferences.putInt(BOUNDS_X_PREFERENCE, bounds.x);	//save the horizontal bounds
+				preferences.putInt(BOUNDS_WIDTH_PREFERENCE, bounds.width);
+			}
+			if((extendedState|MAXIMIZED_VERT)==MAXIMIZED_VERT)	//if we aren't maximized vertically
+			{
+				preferences.putInt(BOUNDS_Y_PREFERENCE, bounds.y);	//save the vertical bounds
+				preferences.putInt(BOUNDS_HEIGHT_PREFERENCE, bounds.height);
+			}
+		}
+	}
+
+	/**If the window is visible, restores its bounds from the preferences.*/
+	public void restoreBoundsPreferences()
+	{
+		if(isVisible())	//if the frame is now visible
+		{
+			final Preferences preferences=getPreferences();	//get the preferences
+			final int extendedState=preferences.getInt(EXTENDED_STATE_PREFERENCE, NORMAL);	//get the stored extended state
+			final int x=preferences.getInt(BOUNDS_X_PREFERENCE, 0);	//get the stored bounds, using invalid dimensions for defaults
+			final int y=preferences.getInt(BOUNDS_Y_PREFERENCE, 0);
+			final int width=preferences.getInt(BOUNDS_WIDTH_PREFERENCE, -1);
+			final int height=preferences.getInt(BOUNDS_HEIGHT_PREFERENCE, -1);
+			if(width>=0 && height>=0)	//if we had valid dimensions stored
+			{
+				setBounds(x, y, width, height);	//restore the bounds we had saved in preferences
+				setExtendedState(extendedState);	//update the extended state to match that stored
+			}
+			else	//if no bounds are stored in preferences
+			{
+				setSize(800, 600);	//set a default size, which will be saved
+				WindowUtilities.center(this);	//center the window, which will save the new location
+				setExtendedState(MAXIMIZED_BOTH);	//maximize the window 
+			}
+			validate();	//make sure the components are all laid out correctly after was changed the size
+		}
+	}
+
+	public void setExtendedState(int state)
+	{
+		super.setExtendedState(state);	//G***testing	
 	}
 
 	/**Action for closing the frame.*/

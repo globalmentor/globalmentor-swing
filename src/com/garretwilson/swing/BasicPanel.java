@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.*;
+import java.util.prefs.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -17,6 +18,8 @@ import com.garretwilson.util.*;
 <p>The panel stores properties and fires property change events when a
 	property is modified.</p>
 <p>The panel can keep track of whether its contents have been modified.</p>
+<p>The panel can store a preferences node to use for preference, or use the
+	default preferences node for the panel class.</p>
 <p>The panel can indicate whether it can close.</p>
 <p>The panel can recognize when it is embedded in a <code>JOptionPane</code>
 	and can set certain option pane values accordingly.</p>
@@ -51,6 +54,28 @@ public class BasicPanel extends JPanel implements CanClosable, DefaultFocusable,
 
 	/**The name of the bound title property.*/
 	public final String TITLE_PROPERTY_NAME=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"title";	//G***maybe later move this to a titleable interface
+
+	/**The preferences that should be used for this panel, or <code>null</code>
+		if the default preferences for this class should be used.
+	*/
+	private Preferences preferences;
+
+		/**@return The preferences that should be used for this panel, or the default
+			preferences for this class if no preferences are specifically set.
+		*/
+		public Preferences getPreferences()
+		{
+			return preferences!=null ? preferences: Preferences.userNodeForPackage(getClass());	//return the user preferences node for whatever class extends this one 
+		}
+		
+		/**Sets the preferences to be used for this panel.
+		@param preferences The preferences that should be used for this panel, or
+			<code>null</code if the default preferences for this class should be used
+		*/
+		public void setPreferences(final Preferences preferences)
+		{
+			this.preferences=preferences;	//store the preferences
+		}
 
 	/**Whether the object has been modified; the default is not modified.*/
 	private boolean modified=false;
@@ -194,6 +219,7 @@ public class BasicPanel extends JPanel implements CanClosable, DefaultFocusable,
 	public BasicPanel(final LayoutManager layout, final boolean initialize)
 	{
 		super(layout, false);	//construct the parent class but don't initialize
+		preferences=null;	//show that we should use the default preferences for this class
 		defaultFocusComponent=null;	//default to no default focus component
 			//create and install a new layout focus traversal policy that will
 			//automatically use the default focus component, if available
