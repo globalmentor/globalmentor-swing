@@ -385,7 +385,7 @@ Debug.trace("loading code2000");
 		for(int i=0; i<fontFamilyNameArray.length; ++i) //look at each of the specified fonts
 		{
 		  final String fontFamilyName=fontFamilyNameArray[i]; //get this font family name
-Debug.trace("Looking for font family name: ", fontFamilyName);
+//G***del Debug.trace("Looking for font family name: ", fontFamilyName);
 		  if(fontFamilyName.equals("monospace"))  //G***fix all this; tidy; comment
 			{
 				family="Monospaced";
@@ -420,7 +420,7 @@ Debug.trace("Looking for font family name: ", fontFamilyName);
 //G***del			family="Code2000";   //G***testing
 //G***fix			family="Baraha Devanagari Unicode";   //G***testing
 			family="Serif";   //use the default G***use a constant; maybe use a different default
-Debug.trace("Decided on font family: ", family); //G***del
+//G***del Debug.trace("Decided on font family: ", family); //G***del
 //G***del when works		final String family=StyleConstants.getFontFamily(attributeSet);	//get the font family from the attributes (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set) G***change to use CSS attributes
 		float size=XMLCSSStyleUtilities.getFontSize(attributeSet);	//get the font size from the attributes (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
 
@@ -477,7 +477,7 @@ Debug.trace("Found undisplayable character in font: "+Integer.toHexString(undisp
 			}
 		}
 */
-Debug.trace("Finally chose font family name: ", font.getFamily()); //G***del
+//G***del Debug.trace("Finally chose font family name: ", font.getFamily()); //G***del
 		return font;  //return the font we found
 //G***del		return styleContext.getFont("Lucinda Sans Regular", style, Math.round(size));	//use the font which we know has Arabic characters G***use a constant here G***don't round each time; do it only once
 //G***del		return styleContext.getFont("Serif", 0, Math.round(size));	//use the font which we know has Arabic characters G***use a constant here G***don't round each time; do it only once

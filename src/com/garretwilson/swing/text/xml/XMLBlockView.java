@@ -647,10 +647,10 @@ if(this instanceof XMLPagedView)  //G***del
      * the old layout information is transferred to the new array.
      */
     int[] updateLayoutArray(int[] oldArray, int offset, int nInserted) {
-Debug.trace("updating layout array with inserted: ", nInserted);  //G***del
+//G***del Debug.trace("updating layout array with inserted: ", nInserted);  //G***del
 
 	int n = getViewCount();
-Debug.trace("view count: ", n);  //G***del
+//G***del Debug.trace("view count: ", n);  //G***del
 	int[] newArray = new int[n];
 
 	System.arraycopy(oldArray, 0, newArray, 0, offset);
@@ -678,7 +678,7 @@ Debug.trace("view count: ", n);  //G***del
      */
     protected void forwardUpdate(DocumentEvent.ElementChange ec,
 				     DocumentEvent e, Shape a, ViewFactory f) {
-Debug.trace("forward updating class: ", getClass().getName());  //G***del
+//G***del Debug.trace("forward updating class: ", getClass().getName());  //G***del
 //G***del	setPropertiesFromAttributes();	//reload our cached properties from the attributes (newswing)
 	cacheSynchronized=false;	//show that our cached values need to be reloaded (newswing) G***make an accessor function to do this, like invalidateChache
 	boolean wasValid = isAllocationValid();

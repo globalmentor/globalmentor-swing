@@ -158,7 +158,7 @@ public class XMLViewFactory implements ViewsFactory
 	*/
 	public View create(final Element element, final boolean indicateMultipleViews)
 	{
-Debug.trace("ready to create view for element: "+XMLStyleUtilities.getXMLElementLocalName(element.getAttributes())+" of class "+element.getClass().getName());  //G***
+//G***del Debug.trace("ready to create view for element: "+XMLStyleUtilities.getXMLElementLocalName(element.getAttributes())+" of class "+element.getClass().getName());  //G***
 		final AttributeSet attributeSet=element.getAttributes();  //get the element's attribute set
 		final String elementKind=element.getName();	//get the kind of element this is (based on the name of the Swing element, not the Swing element's attribute which holds the name of its corresponding XML element)
 		if(elementKind!=null) //if the element has a kind
@@ -250,8 +250,8 @@ Debug.trace("ready to create view for element: "+XMLStyleUtilities.getXMLElement
 			{
 				final Element childElement=element.getElement(childIndex);  //get a reference to this child element
 				final CSSStyleDeclaration childCSSStyle=XMLCSSStyleUtilities.getXMLCSSStyle(childElement.getAttributes()); //get the CSS style of the element (this method makes sure the attributes are present)
-Debug.trace("Child "+childIndex+" attributes: ", com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(childElement.getAttributes()));
-Debug.trace("Child "+childIndex+" style: ", childCSSStyle);
+//G***del Debug.trace("Child "+childIndex+" attributes: ", com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(childElement.getAttributes()));
+//G***del Debug.trace("Child "+childIndex+" style: ", childCSSStyle);
 					//if this element is inline (text is always inline, regardless of what the display property says)
 				if(XMLCSSUtilities.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName()))
 					hasInlineChildren=true;	//show that there are inline children

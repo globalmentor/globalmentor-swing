@@ -30,6 +30,7 @@ public class XMLHorizontalRuleView extends View
 	public XMLHorizontalRuleView(final Element element)
 	{
 		super(element); //construct the parent
+Debug.trace("created horizontal rule view");
 //G***del	setPropertiesFromAttributes();
 	}
 

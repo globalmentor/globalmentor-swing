@@ -23,12 +23,12 @@ public class ViewUtilities
 	*/
 	public static void hideView(final View view)
 	{
-Debug.trace("Hiding view: ", view); //G***del
+//G***del Debug.trace("Hiding view: ", view); //G***del
 		if(view!=null)  //if we have a valid view
 		{
 			if(view instanceof ViewHidable) //if this is a hidable view
 			{
-Debug.trace("Inside hideview(), found hidable: "+view);  //G**del
+//G***del Debug.trace("Inside hideview(), found hidable: "+view);  //G**del
 				((ViewHidable)view).setShowing(false); //tell the view to hide itself
 			}
 			final int viewCount=view.getViewCount();  //get the number of child views
