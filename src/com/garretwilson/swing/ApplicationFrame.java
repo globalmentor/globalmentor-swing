@@ -14,6 +14,16 @@ import com.garretwilson.util.Debug;
 
 /**Main frame parent class for an application. This frame expects to contain
 	an <code>ApplicationPanel</code>.
+<p>This class maintains its own local default close operation setting, and
+	sets the parent class default close operation to
+	<code>DO_NOTHING_ON_CLOSE</code>. This allows the class listen to window
+	events and perform consistent <code>canClose()</code> checks for all methods
+	of closing. This is all handled transparently&mdash;once closing should occur,
+	the local default close operation setting is honored as normal.</p>
+<p>The default close operation in this class by default is
+	<code>DISPOSE_ON_CLOSE</code>. The action returned by
+	<code>getFileExitAction()</code> will reflect the default close operation
+	in effect.</p>
 @author Garret Wilson
 @see ApplicationPanel
 */
@@ -34,7 +44,51 @@ public abstract class ApplicationFrame extends JFrame
 	public final static long MENU_HELP_CONTENTS=1;
 	public final static long MENU_HELP_ABOUT=2;
 
+	/**The default close operation, which defaults to <code>DISPOSE_ON_CLOSE</code>.*/
+	private int defaultCloseOperation=DISPOSE_ON_CLOSE;
 
+		/**@return An integer representing the operation that occurs when the user
+			closes the frame.
+		@see #setDefaultCloseOperation
+		*/
+		public int getDefaultCloseOperation() {return defaultCloseOperation;}
+
+		/**Sets the operation that will happen by default when the user closes the
+			frame.
+		The value is set to <code>DISPOSE_ON_CLOSE</code> by default.
+		@param operation The operation which should be performed when the user closes
+			the frame
+		@exception IllegalArgumentException Thrown if defaultCloseOperation value 
+			isn't a valid value.
+		@see JFrame#setDefaultCloseOperation
+		@throws SecurityException Thrown if <code>EXIT_ON_CLOSE</code> has been
+			specified and the SecurityManager will not allow the caller to invoke
+			<code>System.exit()</code>.
+		*/
+		public void setDefaultCloseOperation(final int operation)
+		{
+			if(operation!=DO_NOTHING_ON_CLOSE && operation!=HIDE_ON_CLOSE && operation!=DISPOSE_ON_CLOSE && operation!=EXIT_ON_CLOSE)
+			{
+				throw new IllegalArgumentException("defaultCloseOperation must be one of: DO_NOTHING_ON_CLOSE, HIDE_ON_CLOSE, DISPOSE_ON_CLOSE, or EXIT_ON_CLOSE");
+			}
+			if(defaultCloseOperation!=operation)	//if the operation is really changing
+			{
+				switch(operation)	//see which operation they want
+				{
+					case EXIT_ON_CLOSE:	//if they want to exit on close
+						{
+							final SecurityManager securityManager=System.getSecurityManager();	//get the security manager
+							if(securityManager!=null)	//if there is a security manager
+								securityManager.checkExit(0);	//see if we have the rights to exit
+						}
+						break;
+				}
+				final int oldOperation=defaultCloseOperation;	//save the old operation
+				defaultCloseOperation=operation;	//actually update the default close operation
+				firePropertyChange("defaultCloseOperation", oldOperation, operation);	//notify listeners that the value changed
+			}
+		}
+	
 	/**The description used for the currently opened document.*/
 //G***del	private DocumentDescribable description=null;
 
@@ -97,6 +151,17 @@ public abstract class ApplicationFrame extends JFrame
 		/**@return The action for saving a file under a different name.*/
 		public Action getFileSaveAsAction() {return fileSaveAsAction;}
 
+		/**@return The action for exiting, either <code>getCloseAction()</code> or
+			<code>getExitAction()</code>.
+		@see #getDefaultCloseOperation
+		@see #getCloseAction
+		@see #getExitAction
+		*/
+		public Action getFileExitAction()
+		{
+			return getDefaultCloseOperation()==EXIT_ON_CLOSE ? getExitAction() : getCloseAction();	//G***maybe check for DO_NOTHING_ON_CLOSE as well 
+		}
+
 	/**The action for showing help contents.*/
 	private final Action helpContentsAction;
 
@@ -114,6 +179,12 @@ public abstract class ApplicationFrame extends JFrame
 
 		/**@return The action for exiting the application.*/
 		public Action getExitAction() {return exitAction;}
+
+	/**The action for closing the application frame.*/
+	private final Action closeAction;
+
+		/**@return The action for closing the application frame.*/
+		public Action getCloseAction() {return closeAction;}
 
 	/**The application menu bar.*/
 	private final JMenuBar menuBar;
@@ -230,7 +301,7 @@ public abstract class ApplicationFrame extends JFrame
 	public ApplicationFrame(final Container contentPane, final boolean hasMenuBar, final boolean initialize)
 	{
 		  //don't do anything automatically on close; we'll handle responding to close events
-		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		super.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);	//tell the parent to set its default close operation G***this implementation depends on the fact that the super class doesn't use the accessor methods---that's probably dangerous
 		enableEvents(AWTEvent.WINDOW_EVENT_MASK); //enable window events, so that we can respond to close events
 		setContentPane(contentPane); //set the container as the content pane
 		fileNewAction=new FileNewAction();  //create the new action G***maybe lazily create these
@@ -242,6 +313,7 @@ public abstract class ApplicationFrame extends JFrame
 //G***del		fileSaveAction.setEnabled(false); //default to nothing to save
 		helpContentsAction=new HelpContentsAction();
 		aboutAction=new AboutAction();
+		closeAction=new CloseAction();  //create the close action
 		exitAction=new ExitAction();  //create the exit action
 		if(hasMenuBar)  //if we should have a menu bar
 		{
@@ -361,7 +433,7 @@ public abstract class ApplicationFrame extends JFrame
 		}
 		if((inclusions & MENU_FILE_EXIT)!=0) //file|exit
 		{
-			JMenuItem fileExitMenuItem=fileMenu.add(exitAction);
+			JMenuItem fileExitMenuItem=fileMenu.add(getFileExitAction());
 		}
 		return fileMenu;  //return the menu we created
 	}
@@ -544,8 +616,35 @@ public abstract class ApplicationFrame extends JFrame
 		new JOptionPane(aboutPanel, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION).createDialog(this, dialogTitle).show();  //G***fix title
 	}
 
+
+	/**Closes the frame, according to the default close settings.
+	@see #getDefaultCloseOperation
+	*/
+	public void close()
+	{
+		if(getDefaultCloseOperation()==DO_NOTHING_ON_CLOSE || canClose())	//if we should do something on close, make sure we can close
+		{
+			switch(getDefaultCloseOperation())	//see how we should close
+			{
+				case HIDE_ON_CLOSE:	//if we should hide
+					setVisible(false);	//hide the frame
+					break;
+				case DISPOSE_ON_CLOSE:	//if we should dispose the frame
+					setVisible(false);			//hide the frame
+					dispose();							//dispose the frame
+					break;
+				case EXIT_ON_CLOSE:	//if we should exit
+					exit();			//exit
+					break;
+				case DO_NOTHING_ON_CLOSE:	//if we should do nothing
+				default:
+					break;
+			}
+		}
+	}
+
 	/**Exits the application with no status.*/
-	public void exit()
+	protected void exit()
 	{
 		exit(0);	//exit with no status
 	}
@@ -553,10 +652,10 @@ public abstract class ApplicationFrame extends JFrame
 	/**Exits the application with the given status.
 	@param status The exit status.
 	*/
-	public void exit(final int status)
+	protected void exit(final int status)
 	{
-		if(canClose())	//if we can close	
-			System.exit(status);	//close the program with the given exit status
+//G***del when works		if(canClose())	//if we can close
+		System.exit(status);	//close the program with the given exit status
 	}
 
 	/**Determines whether the frame and application can close.
@@ -731,9 +830,32 @@ public abstract class ApplicationFrame extends JFrame
 	protected void processWindowEvent(final WindowEvent windowEvent)
 	{
 		super.processWindowEvent(windowEvent);  //do the default processing
-		if(windowEvent.getID()==WindowEvent.WINDOW_CLOSING)  //if this is a window closing event G***fix with the JDK 1.3 window close stuff
+		if(windowEvent.getID()==WindowEvent.WINDOW_CLOSING)  //if this is a window closing event
 		{
-			exit();	//exit
+			close();	//close the window
+		}
+	}
+
+	/**Action for closing the frame.*/
+	class CloseAction extends AbstractAction
+	{
+		/**Default constructor.*/
+		public CloseAction()
+		{
+			super("Close");	//create the base class G***Int
+			putValue(SHORT_DESCRIPTION, "Close the window");	//set the short description G***Int
+			putValue(LONG_DESCRIPTION, "Close the window.");	//set the long description G***Int
+			putValue(MNEMONIC_KEY, new Integer('o'));  //set the mnemonic key G***i18n
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.EXIT_ICON_FILENAME)); //load the correct icon
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.ALT_MASK)); //add the accelerator
+		}
+
+		/**Called when the action should be performed.
+		@param e The event causing the action.
+		*/
+		public void actionPerformed(ActionEvent e)
+		{
+			close(); //close the frame
 		}
 	}
 
@@ -755,7 +877,8 @@ public abstract class ApplicationFrame extends JFrame
 		*/
 		public void actionPerformed(ActionEvent e)
 		{
-			exit(); //exit the application
+//G***del when works			exit(); //exit the application
+			close(); //close the frame; this assumes that setDefaultCloseOperation has been set to DISPOSE_ON_CLOSE or EXIT_ON_CLOSE
 		}
 	}
 
