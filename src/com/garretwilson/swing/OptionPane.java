@@ -145,6 +145,83 @@ public class OptionPane extends JOptionPane
 //G***add other methods here
 
 
+	/**
+	 * Brings up an information-message dialog titled "Message".
+	 *
+	 * @param parentComponent determines the <code>Frame</code> in
+	 *		which the dialog is displayed; if <code>null</code>,
+	 *		or if the <code>parentComponent</code> has no
+	 *		<code>Frame</code>, a default <code>Frame</code> is used
+	 * @param message   the <code>Object</code> to display
+	 * @exception HeadlessException if
+	 *   <code>GraphicsEnvironment.isHeadless</code> returns
+	 *   <code>true</code>
+	 * @see java.awt.GraphicsEnvironment#isHeadless
+	 */
+	public static void showMessageDialog(Component parentComponent,
+			Object message) throws HeadlessException {
+//TODO fix UIManager.getString("OptionPane.messageDialogTitle", parentComponent)
+			showMessageDialog(parentComponent, message, "Message",
+									INFORMATION_MESSAGE);
+	}
+
+	/**
+	 * Brings up a dialog that displays a message using a default
+	 * icon determined by the <code>messageType</code> parameter.
+	 *
+	 * @param parentComponent determines the <code>Frame</code>
+	 *		in which the dialog is displayed; if <code>null</code>,
+	 *		or if the <code>parentComponent</code> has no
+	 *		<code>Frame</code>, a default <code>Frame</code> is used
+	 * @param message   the <code>Object</code> to display
+	 * @param title     the title string for the dialog
+	 * @param messageType the type of message to be displayed:
+	 *                  <code>ERROR_MESSAGE</code>,
+	 *			<code>INFORMATION_MESSAGE</code>,
+	 *			<code>WARNING_MESSAGE</code>,
+	 *                  <code>QUESTION_MESSAGE</code>,
+	 *			or <code>PLAIN_MESSAGE</code>
+	 * @exception HeadlessException if
+	 *   <code>GraphicsEnvironment.isHeadless</code> returns
+	 *   <code>true</code>
+	 * @see java.awt.GraphicsEnvironment#isHeadless
+	 */
+	public static void showMessageDialog(Component parentComponent,
+			Object message, String title, int messageType)
+			throws HeadlessException {
+			showMessageDialog(parentComponent, message, title, messageType, null);
+	}
+
+	/**
+	 * Brings up a dialog displaying a message, specifying all parameters.
+	 *
+	 * @param parentComponent determines the <code>Frame</code> in which the
+	 *			dialog is displayed; if <code>null</code>,
+	 *			or if the <code>parentComponent</code> has no
+	 *			<code>Frame</code>, a 
+	 *                  default <code>Frame</code> is used
+	 * @param message   the <code>Object</code> to display
+	 * @param title     the title string for the dialog
+	 * @param messageType the type of message to be displayed:
+	 *                  <code>ERROR_MESSAGE</code>,
+	 *			<code>INFORMATION_MESSAGE</code>,
+	 *			<code>WARNING_MESSAGE</code>,
+	 *                  <code>QUESTION_MESSAGE</code>,
+	 *			or <code>PLAIN_MESSAGE</code>
+	 * @param icon      an icon to display in the dialog that helps the user
+	 *                  identify the kind of message that is being displayed
+	 * @exception HeadlessException if
+	 *   <code>GraphicsEnvironment.isHeadless</code> returns
+	 *   <code>true</code>
+	 * @see java.awt.GraphicsEnvironment#isHeadless
+	 */
+	public static void showMessageDialog(Component parentComponent,
+			Object message, String title, int messageType, Icon icon)
+			throws HeadlessException {
+			showOptionDialog(parentComponent, message, title, DEFAULT_OPTION, 
+											 messageType, icon, null, null);
+	}
+
     /**
      * Brings up a modal dialog with the options Yes, No and Cancel; with the
      * title, "Select an Option".
