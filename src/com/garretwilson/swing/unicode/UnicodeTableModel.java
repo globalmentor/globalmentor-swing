@@ -54,7 +54,7 @@ public class UnicodeTableModel extends AbstractTableModel
 	public String getColumnName(int columnIndex)
 	{
 //G***fix		return Integer.toHexString(columnIndex%0x10).toUpperCase();  //show the hex values 0...F repeatedly
-		return IntegerUtilities.toHexString(ROW_COUNT*columnIndex, 4); //show the starting Unicode code point value of this row in hex
+		return IntegerUtilities.toHexString(ROW_COUNT*columnIndex, 4).toUpperCase(); //show the starting Unicode code point value of this row in hex
 //G***del 		return Integer.toHexString(ROW_COUNT*columnIndex).toUpperCase();
 	}
 
