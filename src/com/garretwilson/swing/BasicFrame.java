@@ -3,12 +3,12 @@ package com.garretwilson.swing;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
-import java.io.*;
 import java.util.Iterator;
 import java.util.prefs.*;
 import javax.swing.*;
 import com.garretwilson.awt.*;
 import com.garretwilson.lang.*;
+import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.*;
 import com.garretwilson.util.prefs.*;
 
@@ -89,6 +89,12 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 			}
 			return actionManager;	//return the action manager
 		}
+
+	/**The action for closing the frame.*/
+	private final Action closeAction;
+
+		/**@return The action for closing the frame.*/
+		public Action getCloseAction() {return closeAction;}
 
 	/**The component that hsould get the default focus, or <code>null</code> if unknown.*/
 	private Component defaultFocusComponent;
@@ -288,6 +294,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 		super(title);	//construct the parent class with this title, making sure we don't pass null (JFrame sometimes allows null titles, other times it converts them to the empty string)
 		preferences=null;	//show that we should use the default preferences for this class
 		actionManager=null;	//default to no action manager until one is asked for
+		closeAction=new CloseAction();  //create the close action
 		  //don't do anything automatically on close; we'll handle responding to close events
 		super.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);	//tell the parent to set its default close operation G***this implementation depends on the fact that the super class doesn't use the accessor methods---that's probably dangerous
 		enableEvents(AWTEvent.WINDOW_EVENT_MASK); //enable window events, so that we can respond to close events
@@ -342,6 +349,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 	*/
 	protected void initialize()
 	{
+		initializeActions(getActionManager()); //initialize actions
 		initializeUI(); //initialize the user interface
 		pack();	//set the initial size to its default
 		updateStatus();  //update the actions
@@ -350,6 +358,14 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 //G***transfer this to WindowUtilities, maybe		GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
 //G***fix		WindowUtilities.maximize(this); //maximize the frame G***remove this, as JDK 1.4 has a programmatic maximization
 //G***del; doesn't fix the problem		getContentPane().requestFocus();	//focus on the content pane
+	}
+
+	/**Initializes actions in the action manager.
+		Any derived class that overrides this method should call this version.
+	@param actionManager The implementation that manages actions.
+	*/
+	protected void initializeActions(final ActionManager actionManager)
+	{
 	}
 
 	/**Initializes the user interface.
@@ -645,6 +661,30 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 	public void setExtendedState(int state)
 	{
 		super.setExtendedState(state);	//G***testing	
+	}
+
+	/**Action for closing the frame.*/
+	protected class CloseAction extends AbstractAction
+	{
+		/**Default constructor.*/
+		public CloseAction()
+		{
+			super("Close");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "Close the window");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Close the window.");	//set the long description G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_O));  //set the mnemonic key G***i18n
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.EXIT_ICON_FILENAME)); //load the correct icon
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.ALT_MASK)); //add the accelerator
+			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_EXIT_MENU_ACTION_ORDER));	//set the order
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+			close(); //close the frame
+		}
 	}
 
 }

@@ -42,28 +42,6 @@ public class ApplicationFrame extends BasicFrame
 	/**The action for file|exit; defaults to <code>getExitAction()</code>.*/
 	private Action fileExitAction;
 
-		/**@return The action for exiting, either <code>getCloseAction()</code> or
-			<code>getExitAction()</code>. The default is <code>getExitAction()</code>.
-		@see #getCloseAction
-		@see #getExitAction
-		*/
-//G***del		public Action getFileExitAction() {return fileExitAction;}
-		
-		
-		/**Sets the action to use for file|exit.
-		The default is <code>getExitAction()</code>.
-		@param action The action to use for file|exit.
-		@see #getCloseAction
-		@see #getExitAction
-		*/
-//G***del		public void setFileExitAction(final Action action) {fileExitAction=action;}
-
-	/**The action for showing help contents.*/
-//G***del	private final Action helpContentsAction;
-
-		/**@return The action for showing help contents.*/
-//G***del		public Action getHelpContentsAction() {return helpContentsAction;}
-
 	/**The action for showing an about box.*/
 	private final Action aboutAction;
 
@@ -81,12 +59,6 @@ public class ApplicationFrame extends BasicFrame
 		@see #getApplication()
 		*/
 		public Action getCloseProxyAction() {return closeProxyAction;}
-
-	/**The action for closing the application frame.*/
-	private final Action closeAction;
-
-		/**@return The action for closing the application frame.*/
-		public Action getCloseAction() {return closeAction;}
 
 	/**The action for exiting the application.*/
 	private final Action exitAction;
@@ -207,20 +179,19 @@ public class ApplicationFrame extends BasicFrame
 				Debug.warn(securityException);	//warn of the security problem			
 			}
 		}
-		closeAction=new CloseAction();  //create the close action
 		exitAction=new ExitAction();  //create the exit action
-		closeProxyAction=new ProxyAction(application!=null ? exitAction : closeAction);	//create the close proxy action, proxying the exit action if we have an application
+		closeProxyAction=new ProxyAction(application!=null ? getExitAction() : getCloseAction());	//create the close proxy action, proxying the exit action if we have an application
 		aboutAction=new AboutAction();
 		if(initialize)  //if we should initialize
 		  initialize(); //initialize the frame
 	}
 
-	/**Initializes the user interface.
-		Any derived class that overrides this method should call this version.
+	/**Initializes actions in the action manager.
+	@param actionManager The implementation that manages actions.
 	*/
-  protected void initializeUI()
-  {
-		final ActionManager actionManager=getActionManager();	//get our action manager and create menus
+	protected void initializeActions(final ActionManager actionManager)
+	{
+		super.initializeActions(actionManager);	//do the default initialization
 		final SwingApplication application=getApplication();	//get our application, if there is one
 		final Action fileMenuAction=ActionManager.getFileMenuAction();
 		actionManager.addMenuAction(fileMenuAction);	//file
@@ -231,8 +202,17 @@ public class ApplicationFrame extends BasicFrame
 			actionManager.addMenuAction(helpMenuAction);	//help
 			actionManager.addMenuAction(helpMenuAction, getAboutAction());	//help|about
 		}
+	}
+
+	/**Initializes the user interface.
+		Any derived class that overrides this method should call this version.
+	*/
+/*G***del if not needed
+  protected void initializeUI()
+  {
   	super.initializeUI();	//do the default UI initialization
   }
+*/
 
 	/**Updates the states of the actions, including enabled/disabled status,
 		proxied actions, etc.
@@ -295,31 +275,6 @@ public class ApplicationFrame extends BasicFrame
 	}
 */
 	
-
-	/**Action for closing the frame.*/
-	protected class CloseAction extends AbstractAction
-	{
-		/**Default constructor.*/
-		public CloseAction()
-		{
-			super("Close");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Close the window");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Close the window.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_O));  //set the mnemonic key G***i18n
-			putValue(SMALL_ICON, IconResources.getIcon(IconResources.EXIT_ICON_FILENAME)); //load the correct icon
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.ALT_MASK)); //add the accelerator
-			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_EXIT_MENU_ACTION_ORDER));	//set the order
-		}
-
-		/**Called when the action should be performed.
-		@param actionEvent The event causing the action.
-		*/
-		public void actionPerformed(final ActionEvent actionEvent)
-		{
-			close(); //close the frame
-		}
-	}
-
 	/**Action for exiting the application.*/
 	protected class ExitAction extends AbstractAction
 	{

@@ -166,29 +166,6 @@ public class ToolStatusPanel extends ContentPanel
 		if(toolbar!=null) //if we have a toolbar
 		{
 			initializeToolBar(toolbar);  //initialize the toolbar
-/*G***is this still needed? del if not
-			for(int i=toolbar.getComponentCount()-1; i>=0; --i)	//look at each component on the toolbar and add accelerators as needed
-			{
-				final Component component=toolbar.getComponent(i);	//get this toolbar component
-				if(component instanceof AbstractButton)	//if this is a button on the toolbar
-				{
-					final AbstractButton button=(AbstractButton)component;	//cast the toolbar component to a button
-					final Action action=button.getAction();	//get the button's action, if there is one
-					if(action!=null)	//if this button has an action
-					{
-						final Object acceleratorValue=action.getValue(Action.ACCELERATOR_KEY);	//get this action's accelerator value
-						if(acceleratorValue instanceof KeyStroke)	//if this action has an accelerator keystroke
-						{
-							final KeyStroke keyStroke=(KeyStroke)acceleratorValue;	//cast the accelerator value to a keystroke
-								//store the keystroke in the input map pointing to the action name
-							getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(keyStroke, action.getValue(Action.NAME));
-								//place the action in the action map keyed to the action name
-							getActionMap().put(action.getValue(Action.NAME), action);
-						}
-					}
-				}
-			}
-*/
 			add(toolBar, toolBarPosition);  //put the toolbar in the correct position
 		}
 		final StatusBar statusBar=getStatusBar();	//get the status bar
@@ -202,7 +179,7 @@ public class ToolStatusPanel extends ContentPanel
 	/**@return A new toolbar.*/
 	protected BasicToolBar createToolBar()
 	{
-		return ToolBarUtilities.createApplicationToolBar();	//create and return a default toolbar
+		return new ApplicationToolBar();	//create and return a default application toolbar
 	}
 
 	/**Initializes the toolbar components.

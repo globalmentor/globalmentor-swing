@@ -68,6 +68,8 @@ public class AddressesPanel extends ContentPanel
 	}
 */
 
+	protected final JToolBar buttonToolBar;
+
 	/**Places the addresses and labels into the tabs.
 	If both arrays are empty, a default address will be placed in the first tab.
 	@param addresses The addresses to place in the tabs.
@@ -169,6 +171,7 @@ public class AddressesPanel extends ContentPanel
 		addAddressAction=new AddAddressAction();
 		addLabelAction=new AddLabelAction();
 		removeAddressAction=new RemoveAddressAction();
+		buttonToolBar=new JToolBar(JToolBar.HORIZONTAL);
 		initialize();	//initialize the panel
 		setAddresses(addresses, labels);	//set the addresses to those given
 	}
@@ -179,11 +182,13 @@ public class AddressesPanel extends ContentPanel
 		super.initializeUI();	//do the default user interface initialization
 		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
 		setTitle("Addresses");	//G***i18n
-		final JPanel buttonPanel=new JPanel(new FlowLayout(FlowLayout.CENTER));
-		buttonPanel.add(new JButton(getAddAddressAction()));
-		buttonPanel.add(new JButton(getAddLabelAction()));
-		buttonPanel.add(new JButton(getRemoveAddressAction()));
-		add(buttonPanel, BorderLayout.SOUTH);
+		buttonToolBar.setFloatable(false);
+		buttonToolBar.add(Box.createGlue());	//put glue before and after the button to center them 
+		buttonToolBar.add(new JButton(getAddAddressAction()));
+		buttonToolBar.add(new JButton(getAddLabelAction()));
+		buttonToolBar.add(new JButton(getRemoveAddressAction()));
+		buttonToolBar.add(Box.createGlue());	//put glue before and after the button to center them 
+		add(buttonToolBar, BorderLayout.SOUTH);
 /*G***fix gridbag
 		add(buttonPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		add(tabbedPane, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));

@@ -14,6 +14,7 @@ public class ToolBarUtilities
 	Using this method promotes consistency across components.
 	@see JToolBar#setRollover(boolean)
 	*/
+/*G***del when not needed
 	public static BasicToolBar createApplicationToolBar()
 	{
 		final BasicToolBar toolBar=new BasicToolBar();  //create the toolbar
@@ -21,17 +22,20 @@ public class ToolBarUtilities
 		toolBar.setButtonTextVisible(false);	//don't show text by default
 		return toolBar; //return the toolbar we created
 	}
+*/
 
 	/**Creates a default toolbar from the tool actions of the given action manager.
 	@param actionManager The manager that contains the tool actions
 	@see #setupToolBar
 	*/
+/*G***del when not needed
 	public static BasicToolBar createApplicationToolBar(final ActionManager actionManager)
 	{
 		final BasicToolBar toolBar=createApplicationToolBar();	//create a default toolbar
 		setupToolBar(toolBar, actionManager);	//set up the toolbar with the action manager tool actions
 		return toolBar;	//return the toolbar we created and initialized
 	}
+*/
 
 	/**Sets up a toolbar from the tool actions of the given action manager.
 	@param toolBar The toolbar to set up.

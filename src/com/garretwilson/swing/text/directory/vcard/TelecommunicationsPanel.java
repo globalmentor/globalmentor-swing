@@ -44,6 +44,8 @@ public class TelecommunicationsPanel extends ContentPanel
 		/**@return The action for removing an address.*/
 //G***fix		public Action getRemoveAddressAction() {return removeAddressAction;}
 
+	protected final JToolBar buttonToolBar;
+
 	/**@return The content component in which the telecommunications panels will be placed.*/
 	protected JPanel getContentPanel() {return (JPanel)getContentComponent();}	//G***why can't we return something else, here--why cast to a JPanel?
 
@@ -176,6 +178,7 @@ public class TelecommunicationsPanel extends ContentPanel
 		addTelephoneAction=new AddTelephoneAction();
 		addEmailAction=new AddEmailAction();
 //G***fix		removeAddressAction=new RemoveAddressAction();
+		buttonToolBar=new JToolBar(JToolBar.HORIZONTAL);
 		initialize();	//initialize the panel
 		setTelecommunications(telephones, emails);	//set the given telephones and emails
 	}
@@ -186,11 +189,13 @@ public class TelecommunicationsPanel extends ContentPanel
 		super.initializeUI();	//do the default user interface initialization
 		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
 		setTitle("Telecommunications");	//G***i18n
-		final JPanel buttonPanel=new JPanel(new FlowLayout(FlowLayout.CENTER));
-		buttonPanel.add(new JButton(getAddTelephoneAction()));
-		buttonPanel.add(new JButton(getAddEmailAction()));
+		buttonToolBar.setFloatable(false);
+		buttonToolBar.add(Box.createGlue());	//put glue before and after the button to center them 
+		buttonToolBar.add(new JButton(getAddTelephoneAction()));
+		buttonToolBar.add(new JButton(getAddEmailAction()));
 //G***fix		buttonPanel.add(new JButton(getRemoveAddressAction()));
-		add(buttonPanel, BorderLayout.SOUTH);
+		buttonToolBar.add(Box.createGlue());	//put glue before and after the button to center them 
+		add(buttonToolBar, BorderLayout.SOUTH);
 /*G***fix gridbag
 		add(buttonPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		add(tabbedPane, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -279,7 +284,7 @@ public class TelecommunicationsPanel extends ContentPanel
 		/**Default constructor.*/
 		public AddTelephoneAction()
 		{
-			super("Phone");	//create the base class G***i18n
+			super("Add Phone");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Add a telephone");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Add a new telephone number.");	//set the long description G***i18n
 			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key G***i18n
@@ -307,7 +312,7 @@ public class TelecommunicationsPanel extends ContentPanel
 		/**Default constructor.*/
 		public AddEmailAction()
 		{
-			super("Email");	//create the base class G***i18n
+			super("Add Email");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Add an email");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Add a new email address.");	//set the long description G***i18n
 			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_E));  //set the mnemonic key G***i18n
