@@ -18,7 +18,7 @@ import com.garretwilson.util.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class ExplanatoryPanel extends BasicVCardPanel implements Verifiable
+public class ExplanatoryPanel extends BasicVCardPanel
 {
 
 	/**The label of the categories list.*/
@@ -247,7 +247,7 @@ public class ExplanatoryPanel extends BasicVCardPanel implements Verifiable
 				return false; //show that verification failed
 			}
 		}
-		return true;  //if we couldn't find any problems, verification succeeded
+		return super.verify();  //if we couldn't find any problems, verify the parent class
 	}
 
 	/**Action for selecting a language for the selected category.

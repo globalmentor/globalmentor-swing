@@ -17,7 +17,7 @@ import com.garretwilson.util.*;
 	and Web addresses".
 @author Garret Wilson
 */
-public class TelephoneNumberPanel extends BasicPanel implements Verifiable
+public class TelephoneNumberPanel extends BasicPanel
 {
 
 	/**The label of the country code.*/
@@ -184,6 +184,6 @@ public class TelephoneNumberPanel extends BasicPanel implements Verifiable
 				return false; //show that verification failed
 			}
 		}
-		return true;  //if we couldn't find any problems, verification succeeded
+		return super.verify();  //if we couldn't find any problems, verify the parent class
 	}
 }

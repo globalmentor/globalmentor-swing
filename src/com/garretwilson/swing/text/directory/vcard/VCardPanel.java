@@ -164,7 +164,7 @@ public class VCardPanel extends ContentPanel implements Verifiable
 			getTabbedPane().setSelectedComponent(explanatoryPanel);	//select the explanatory panel
 			return false;	//show that verification failed
 		}
-		return true;  //if we couldn't find any problems, verification succeeded
+		return super.verify();  //if we couldn't find any problems, verify the parent class TODO we duplicate this functionality here to check and change the tabs if necessary---can we put something like this in BasicPanel, too? 
 	}
 
 }

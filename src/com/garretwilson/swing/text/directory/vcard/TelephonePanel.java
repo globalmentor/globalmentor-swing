@@ -19,7 +19,7 @@ import com.garretwilson.util.*;
 	buttons.</p>
 @author Garret Wilson
 */
-public class TelephonePanel extends BasicVCardPanel implements Verifiable
+public class TelephonePanel extends BasicVCardPanel
 {
 
 	/**The action for editing the telephone type.*/
@@ -246,15 +246,6 @@ public class TelephonePanel extends BasicVCardPanel implements Verifiable
 		{
 			return false;	//show that the action was cancelled
 		}
-	}
-
-	/**Verifies the component.
-	@return <code>true</code> if the component contents are valid, <code>false</code>
-		if not.
-	*/
-	public boolean verify()
-	{
-		return telephoneNumberPanel.verify();	//let the telephone number panel verify itself
 	}
 
 	/**Action for editing the telephone type.*/

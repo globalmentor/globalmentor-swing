@@ -3,7 +3,6 @@ package com.garretwilson.swing.text.directory.vcard;
 import java.awt.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.swing.*;
-import com.garretwilson.util.*;
 
 /**A panel containing fields for the identification and address types
 	of a vCard <code>text/directory</code>	profile as defined in
@@ -11,7 +10,7 @@ import com.garretwilson.util.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class NameAddressPanel extends BasicPanel implements Verifiable
+public class NameAddressPanel extends BasicPanel
 {
 	/**The identification panel.*/
 	private final IdentificationPanel identificationPanel;
@@ -63,15 +62,6 @@ public class NameAddressPanel extends BasicPanel implements Verifiable
 		add(organizationPanel, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 		add(telecommunicationsPanel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 */
-	}
-
-	/**Verifies the component.
-	@return <code>true</code> if the component contents are valid, <code>false</code>
-		if not.
-	*/
-	public boolean verify()
-	{
-		return getTelecommunicationsPanel().verify();	//verify all the subcomponents that can be verified
 	}
 
 }

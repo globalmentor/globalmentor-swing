@@ -18,6 +18,8 @@ import com.garretwilson.util.*;
 <p>The panel stores properties and fires property change events when a
 	property is modified.</p>
 <p>The panel can keep track of whether its contents have been modified.</p>
+<p>The panel is verifiable, and automatically verifies all child components
+	that are likewise verifiable.</p>
 <p>The panel can store a preferences node to use for preference, or use the
 	default preferences node for the panel class.</p>
 <p>The panel keeps track of its current user mode and view of data.</p>
@@ -54,7 +56,7 @@ import com.garretwilson.util.*;
 @see javax.swing.JOptionPane
 @see java.awt.GridBagLayout
 */
-public class BasicPanel extends JPanel implements Scrollable, ContainerConstants, CanClosable, DefaultFocusable, Modifiable
+public class BasicPanel extends JPanel implements Scrollable, ContainerConstants, CanClosable, DefaultFocusable, Verifiable, Modifiable
 {
 
 	/**The name of the bound icon property.*/
@@ -354,6 +356,27 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	public boolean canClose()
 	{
 		return true;	//default to always allowing closing
+	}
+
+	/**Verifies the component.
+	<p>This version verifies all child components that implement
+		<code>Verifiable</code>, and returns <code>true</code> if no child component
+		returns <code>false</code> from this method.</p>
+	@return <code>true</code> if the component contents are valid, <code>false</code>
+		if not.
+	*/
+	public boolean verify()
+	{
+		final Component[] components=getComponents();	//get all child components
+		for(int i=components.length-1; i>=0; --i)	//look at each child component
+		{
+			final Component component=components[i];	//get a reference to this component
+			if(component instanceof Verifiable && ((Verifiable)component).verify()==false)	//if this component is verifiable but doesn't verify
+			{
+				return false;	//show that a child component didn't verify
+			}
+		}
+		return true;  //if we couldn't find any problems, verification succeeded
 	}
 	
 	/**@return The component that should get the initial focus.*/

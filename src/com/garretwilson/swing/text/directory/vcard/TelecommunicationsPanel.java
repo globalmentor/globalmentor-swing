@@ -23,7 +23,7 @@ import com.garretwilson.util.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class TelecommunicationsPanel extends ContentPanel implements Verifiable
+public class TelecommunicationsPanel extends ContentPanel
 {
 
 	/**The action for adding a new telephone.*/
@@ -262,6 +262,7 @@ public class TelecommunicationsPanel extends ContentPanel implements Verifiable
 	protected void addComponent(final Component component)
 	{
 		component.addPropertyChangeListener(modifyModifiedPropertyChangeListener);	//listen for changes to the address and update the modified status in response
+				//TODO use the new BasicGridBagLayout methods here
 			//add the component to the content panel, in a location based upon the components already present 
 		getContentPanel().add(component, new GridBagConstraints(0, getContentPanel().getComponentCount(), 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, NO_INSETS, 0, 0));
 		setModified(true);	//show that we've been modified by the addition of this component
@@ -299,27 +300,6 @@ public class TelecommunicationsPanel extends ContentPanel implements Verifiable
 		return false;	//show that we didn't remove the address
 	}
 */
-
-	/**Verifies the component.
-	@return <code>true</code> if the component contents are valid, <code>false</code>
-		if not.
-	*/
-	public boolean verify()
-	{
-		final JPanel contentPanel=getContentPanel();	//get our content panel
-		final int componentCount=contentPanel.getComponentCount();	//find out how many components there are
-		for(int i=0; i<componentCount; ++i)	//look at each component
-		{
-			final Component component=contentPanel.getComponent(i);	//get this component
-			if(component instanceof TelephonePanel)	//if this panel holds a telephone
-			{
-				final TelephonePanel telephonePanel=(TelephonePanel)component;	//cast the component to a telephone panel
-				if(!telephonePanel.verify())	//if the telephone panel doesn't verify
-					return false;	//show that a telephone didn't verify
-			}
-		}
-		return true;  //if we couldn't find any problems, verification succeeded
-	}
 
 	/**Action for adding a telephone.*/
 	class AddTelephoneAction extends AbstractAction
