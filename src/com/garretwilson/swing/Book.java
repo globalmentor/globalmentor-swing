@@ -500,8 +500,8 @@ Debug.trace("ready to fire property change");
 	public RDF getRDF()
 	{
 		final Document document=getXMLTextPane().getDocument(); //get the document associated with the text pane
-		if(document instanceof XMLDocument) //if the document is an XML document
-		  return ((XMLDocument)document).getRDF();  //get the RDF data model from the XML document G***why don't we get the property value directly?
+		if(document instanceof BasicStyledDocument) //if the document is a basic styled document
+		  return ((BasicStyledDocument)document).getRDF();  //get the RDF data model from the XML document G***why don't we get the property value directly?
 	  return null;  //show that we could not find an RDF data model
 	}
 
@@ -1443,7 +1443,7 @@ Debug.trace("document change, URI: ", uri);
 		searchAgainAction.setEnabled(uri!=null);  //only enable searching if there is a file open
 //TODO transfer this to MentoractReaderPanel		reloadAction.setEnabled(book.getURI()!=null);  //only enable the reload button if there is a file open
 	  final RDF rdf=getRDF(); //get the loaded metadata
-		getViewPropertiesAction().setEnabled(rdf!=null);  //only enable the properties button if there is RDF
+		getViewPropertiesAction().setEnabled(rdf!=null);  //only enable the properties button if there is RDF TODO do we want to show the RDF or the publication description?
 	}
 
 	/**Paints the book-specific items such as bookmarks.

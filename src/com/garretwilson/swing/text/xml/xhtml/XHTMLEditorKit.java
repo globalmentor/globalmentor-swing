@@ -104,6 +104,7 @@ public class XHTMLEditorKit extends XMLEditorKit
 	@see XMLDocument#insert
 	@see XMLDocument#appendElementSpecListContent
 	*/
+/*TODO del when not needed; make sure default stylesheet hides the <head> element
 	protected MutableAttributeSet appendElementSpecListNode(final List elementSpecList, final Node node, final URI baseURI)
 	{
 		final MutableAttributeSet attributeSet=super.appendElementSpecListNode(elementSpecList, node, baseURI);	//create the default spec list for the node
@@ -122,6 +123,7 @@ public class XHTMLEditorKit extends XMLEditorKit
 		}
 		return attributeSet;	//return the attribute set
 	}
+*/
 
 	/**Gets the target ID of of the specified element. This ID represents the
 		target of a link. The default target ID (the value of the "id" attribute)

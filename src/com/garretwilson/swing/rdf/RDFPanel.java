@@ -179,7 +179,7 @@ public class RDFPanel<R extends RDFResource, M extends ResourceModel<R>> extends
 						{
 							final Document document=xmlProcessor.parseDocument(inputStream, model.getBaseURI());	//parse the document into the XML data model
 							final RDFXMLProcessor rdfXMLProcessor=new RDFXMLProcessor();	//create a new RDF processor
-							final RDF rdf=rdfXMLProcessor.process(document);	//process the RDF from the XML
+							final RDF rdf=rdfXMLProcessor.processRDF(document);	//process the RDF from the XML
 /*TODO find some way to find the original resource selected, if any
 							rdfResource=null;	//G***fix
 */

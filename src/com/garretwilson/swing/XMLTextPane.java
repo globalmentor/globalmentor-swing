@@ -978,9 +978,9 @@ Debug.trace("reading from stream"); //G***del
 			{
 				load();	//load the document
 			}
-			catch(final IOException exception)	//if there are any errors
+			catch(final Throwable throwable)	//if there are any errors
 			{
-				SwingApplication.displayApplicationError(XMLTextPane.this, "Error opening document", exception); //G***do we need to clean up anything? G***i18n
+				SwingApplication.displayApplicationError(XMLTextPane.this, "Error opening document", throwable); //G***do we need to clean up anything? G***i18n
 			}
 			finally
 			{
