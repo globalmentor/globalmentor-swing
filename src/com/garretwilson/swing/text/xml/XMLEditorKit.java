@@ -1,6 +1,5 @@
 package com.garretwilson.swing.text.xml;
 
-import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
@@ -9,29 +8,20 @@ import java.util.*;
 import java.util.List;
 import javax.mail.internet.ContentType;
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
-import javax.swing.text.AbstractDocument.Content;
-import javax.swing.text.AbstractDocument.DefaultDocumentEvent;
-import javax.swing.text.DefaultStyledDocument.ElementSpec;
-import javax.swing.undo.UndoableEdit;
 
 import com.garretwilson.io.*;
 import com.garretwilson.lang.*;
-import static com.garretwilson.lang.ObjectUtilities.*;
 import com.garretwilson.net.*;
 import com.garretwilson.rdf.*;
-import com.garretwilson.sun.demo.jfc.notepad.ElementTreePanel;
 import com.garretwilson.swing.*;
-import com.garretwilson.swing.event.*;
+import com.garretwilson.swing.text.BasicStyledEditorKit;
 import com.garretwilson.swing.text.SwingTextUtilities;
-import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.text.xml.css.*;
 import com.garretwilson.text.*;
 import com.garretwilson.text.xml.*;
-import com.garretwilson.text.xml.oeb.*;	//G***del
 import com.garretwilson.text.xml.stylesheets.css.*;	//G***del if we don't need
 import com.garretwilson.util.*;
 import org.w3c.dom.*;
@@ -43,63 +33,11 @@ import org.w3c.dom.css.CSSStyleSheet;
 @author Garret Wilson
 @see com.garretwilson.text.xml.XMLProcessor
 */
-public class XMLEditorKit extends StyledEditorKit implements URIInputStreamable
+public class XMLEditorKit extends BasicStyledEditorKit
 {
 
-	/**The XML media type this editor kit supports, defaulting to <code>text/xml</code>.*/
-	private ContentType mediaType=new ContentType(ContentTypeConstants.TEXT, ContentTypeConstants.XML_SUBTYPE, null);
-
-		/**@return The XML media type this editor kit supports.*/
-		public ContentType getMediaType() {return mediaType;}
-
-		/**Sets the media type this editor kit supports.
-		@param newMediaType The new XML media type.
-		*/
-		protected void setMediaType(final ContentType newMediaType) {mediaType=newMediaType;}
-
-	/**The default default cursor.*/
-	private static final Cursor DEFAULT_CURSOR=Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-
-	/**The default cursor to be used when moving items.*/
-	private static final Cursor DEFAULT_MOVE_CURSOR=Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-
-	/**The default cursor to be used when over links.*/
-	private static final Cursor DEFAULT_LINK_CURSOR=DEFAULT_MOVE_CURSOR;
-
-	/**The default cursor.*/
-	private Cursor defaultCursor=DEFAULT_CURSOR;
-
-		/**@return The default cursor.*/
-		public Cursor getDefaultCursor() {return defaultCursor;}
-
-		/**Sets the default cursor.
-		@param newDefaultCursor The cursor to use as the default.
-		*/
-		public void setDefaultCursor(final Cursor newDefaultCursor) {defaultCursor=newDefaultCursor;}
-
-	/**The default cursor to show when over hyperlinks.*/
-	private Cursor defaultLinkCursor=DEFAULT_LINK_CURSOR;
-
-		/**@return The default cursor to display when the mouse is over a link.*/
-		public Cursor getDefaultLinkCursor() {return defaultLinkCursor;}
-
-		/**Sets the default cursor used for hyperlink.
-		@param newDefaultCursor The cursor to display by default when the mouse is over a link.
-		*/
-		public void setDefaultLinkCursor(final Cursor newLinkCursor) {defaultLinkCursor=newLinkCursor;}
-
-		/**Determines the cursor to use when over a given link in a particular document.
-		@param xmlDocument The document in which the link appears.
-		@param uri The link for which a cursor should be obtained.
-		@return The cursor to display when the mouse is over the given link.
-		*/
-		public Cursor getLinkCursor(final XMLDocument xmlDocument, final URI uri)
-		{
-			return getDefaultLinkCursor();	//TODO load a custom cursor based upon the link's media type
-		}
-
-	/**The list of progress event listeners.*/
-	private EventListenerList progressListenerList=new EventListenerList();
+	/**The default media type this editor kit supports, <code>text/xml</code>.*/
+	protected final static ContentType DEFAULT_MEDIA_TYPE=new ContentType(ContentTypeConstants.TEXT, ContentTypeConstants.XML_SUBTYPE, null);
 
 	/**The default view factory for an XML editor kit.*/
 	private final ViewFactory defaultViewFactory=new DefaultXMLViewFactory();
@@ -179,9 +117,6 @@ public class XMLEditorKit extends StyledEditorKit implements URIInputStreamable
 	/**The identifier for the next page action.*/
 	public static final String NEXT_PAGE_ACTION_NAME="next-page-action";
 
-	/**The identifier for the action to display the element tree.*/
-	public static final String DISPLAY_ELEMENT_TREE_ACTION_NAME="display-element-tree-action";
-
 	/**Default actions used by this editor kit to augment the super class default
 		actions.
 	*/
@@ -189,7 +124,6 @@ public class XMLEditorKit extends StyledEditorKit implements URIInputStreamable
 	{
 		new PreviousPageAction(PREVIOUS_PAGE_ACTION_NAME),
 		new NextPageAction(NEXT_PAGE_ACTION_NAME),
-		new DisplayElementTreeAction(DISPLAY_ELEMENT_TREE_ACTION_NAME),
 		new BeginAction(beginAction, false),
 		new EndAction(endAction, false)
 //G***del		new EndLineAction(endLineAction, false)	//G***testing
@@ -207,21 +141,13 @@ public class XMLEditorKit extends StyledEditorKit implements URIInputStreamable
 		/**@return The object that applies stylesheets to the XML document.*/
 		protected XMLCSSStylesheetApplier getXMLStylesheetApplier() {return xmlStylesheetApplier;}
 
-		/**The access to input streams via URIs.*/
-		private final URIInputStreamable uriInputStreamable;
-
-			/**@return The access to input streams via URIs.*/
-			protected URIInputStreamable getURIInputStreamable() {return uriInputStreamable;}
-
-	/**Constructor.
+	/**Constructor which defaults to a content type of <code>text/xml</code>.
 	@param uriInputStreamable The source of input streams for resources.
 	@exception NullPointerException if the new source of input streams is <code>null</code>.
 	*/
 	public XMLEditorKit(final URIInputStreamable uriInputStreamable)
 	{
-		this.uriInputStreamable=checkNull(uriInputStreamable, "Missing URIInputStreamable");	//store the URIInputStreamable
-//	TODO bring back if needed		swingStylesheetApplier=new SwingXMLCSSStylesheetApplier();	//create a new Swing stylesheet applier
-		xmlStylesheetApplier=new XMLCSSStylesheetApplier(getURIInputStreamable());	//create a new XML stylesheet applier, using ourselves as the input stream locator
+		this(DEFAULT_MEDIA_TYPE, uriInputStreamable);	//construct the class with the default media type
 	}
 
 	/**Constructor that specifies the specific XML media type supported.
@@ -232,20 +158,15 @@ public class XMLEditorKit extends StyledEditorKit implements URIInputStreamable
 	*/
 	public XMLEditorKit(final ContentType mediaType, final URIInputStreamable uriInputStreamable)
 	{
-		this(uriInputStreamable);	//do the default construction
-		setMediaType(mediaType);  //set the requested media type
+		super(mediaType, uriInputStreamable);	//construct the parent class
+//	TODO bring back if needed		swingStylesheetApplier=new SwingXMLCSSStylesheetApplier();	//create a new Swing stylesheet applier
+		xmlStylesheetApplier=new XMLCSSStylesheetApplier(getURIInputStreamable());	//create a new XML stylesheet applier, using ourselves as the input stream locator
 	}
 
 	/**Creates a copy of the editor kit.
 	@return A copy of the XML editor kit.
 	*/
 	public Object clone() {return new XMLEditorKit(getMediaType(), getURIInputStreamable());}  //G***why do we need this?; make a real clone, or make sure XHTMLEditorKit overrides this
-
-	/**Returns the MIME type of the data the XML editor kit supports, such as
-		<code>text/xml</code>.
-	@return The MIME type this editor kit supports.
-	*/
-	public String getContentType() {return getMediaType().toString();}
 
 	/**Returns a factory for producing views for models that use this editor kit.
 	@return A factory to produce views for this editor kit.
@@ -282,17 +203,6 @@ public class XMLEditorKit extends StyledEditorKit implements URIInputStreamable
 	doc.setTokenThreshold(100);
 	return doc;
 */
-	}
-
-	/**Returns an input stream from a given URI.
-	This implementation delegates to the editor kit's <code>URIInputStreamable</code>.
-	@param uri A complete URI to a resource.
-	@return An input stream to the contents of the resource represented by the given URI.
-	@exception IOException Thrown if an I/O error occurred.
-	*/
-	public final InputStream getInputStream(final URI uri) throws IOException
-	{
-		return getURIInputStreamable().getInputStream(uri);	//delegate to our own URIInputStreamable
 	}
 
 	/**Reads a given publication and stores it in the given document.
@@ -2095,33 +2005,6 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 		}
 	}
 
-	/**Action to display the document element hierarchy.*/
-	protected static class DisplayElementTreeAction extends TextAction
-	{
-
-		/**Creates an element tree action with the appropriate name.
-		@param name The name of the action.
-		*/
-		public DisplayElementTreeAction(final String name)
-		{
-			super(name);  //do the default construction with the name
-		}
-
-		/**The operation to perform when this action is triggered.
-		@param actionEvent The action representing the event.
-		*/
-		public void actionPerformed(final ActionEvent actionEvent)
-		{
-//G***del Debug.notify("XMLEditorKit.PreviousPageAction.actionPerformed()");
-			final JTextComponent textComponent=getTextComponent(actionEvent);	//get the text component
-			if(Debug.isDebug())	//if debugging is turned on
-			{
-				Debug.log(ViewUtilities.toString(textComponent));	//log the views to the debug output
-			}
-			new BasicFrame("Elements", new ElementTreePanel(textComponent)).setVisible(true);	//show a new frame showing elements G***i18n
-		}
-	}
-
 	/**
 	 * @return HTMLDocument of <code>e</code>.
 	 */
@@ -2497,47 +2380,6 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 	}
 
 		}
-*/
-
-	/**Adds a progress listener.
-	@param listener The listener to be notified of progress.
-	*/
-	public void addProgressListener(ProgressListener listener)
-	{
-		progressListenerList.add(ProgressListener.class, listener);	//add this listener
-	}
-
-	/**Removes a progress listener.
-	@param listener The listener that should no longer be notified of progress.
-	*/
-	public void removeProgressListener(ProgressListener listener)
-	{
-		progressListenerList.remove(ProgressListener.class, listener);
-	}
-
-	/**Notifies all listeners that have registered interest for progress that
-		progress has been made.
-	@param status The status to display.
-	*/
-	protected void fireMadeProgress(final ProgressEvent progressEvent)
-	{
-//G***del if not needed		final ProgressEvent progressEvent=new ProgressEvent(this, status);	//create a new progress event
-		final Object[] listeners=progressListenerList.getListenerList();	//get the non-null array of listeners
-		for(int i=listeners.length-2; i>=0; i-=2)	//look at each listener, from last to first
-		{
-			if(listeners[i]==ProgressListener.class)	//if this is a progress listener (it should always be)
-				((ProgressListener)listeners[i+1]).madeProgress(progressEvent);
-     }
-	}
-
-	/**Invoked when progress has been made by, for example, the document.
-	@param e The event object representing the progress made.
-	*/
-/*G***del if no needed
-	public void madeProgress(final ProgressEvent e)
-	{
-		fireMadeProgress(e);	//refire that event to our listeners G***perhaps do some manipulation here
-	}
 */
 
 }

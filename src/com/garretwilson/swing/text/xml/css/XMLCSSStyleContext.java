@@ -1,19 +1,11 @@
 package com.garretwilson.swing.text.xml.css;
 
 import java.awt.*;
-import java.lang.ref.*;
 import java.util.*;
 import java.io.*;
 import javax.swing.text.StyleContext;
 import javax.swing.text.AttributeSet;
-import javax.swing.text.StyleConstants;
-/*G***bring back as needed
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.EventListenerList;
-import javax.swing.event.ChangeEvent;
-*/
-//G***del import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
+
 import com.garretwilson.awt.FontUtilities;
 import com.garretwilson.util.Debug;
 
@@ -29,6 +21,10 @@ import com.garretwilson.util.Debug;
 public class XMLCSSStyleContext extends StyleContext
 {
 
+	/**The available font family names in a sorted array.*/
+	protected final static String[] SORTED_AVAILABLE_FONT_FAMILY_NAMES;
+
+	
 	/**Map of font family names, keyed to either a Unicode block or a
 		<code>character</code>.
 	*/
@@ -80,26 +76,6 @@ public class XMLCSSStyleContext extends StyleContext
 	public Font getFont(final String family, final int style, final int size)
 	{
 		return FontUtilities.getFont(family, style, size);  //pass the request on the the font utilities
-/*G***del
-		searchFontKey.setValue(family, style, size);  //set the values of the font key for searching
-		final Reference fontReference=(Reference)fontReferenceMap.get(searchFontKey); //see if this font is already in the map
-		Font font=null;  //we'll assign a font to this variable; assume at first that we don't have a font
-		if(fontReference!=null) //if we had the font at one time in the cache
-		{
-			font=(Font)fontReference.get(); //see if the font is still there
-			if(font==null)  //if the memory has been reclaimed
-			{
-			  fontReferenceMap.remove(searchFontKey); //remove the key from the map, since it doesn't contain a reference to a font anymore
-			}
-		}
-		if(font==null)  //if we didn't have a font cached, or if we did but its memory has been reclaimed
-		{
-		  font=new Font(family, style, size); //create a new font with the desired characteristics
-		  final FontKey fontKey=new FontKey(family, style, size); //create a new font key to represent the font
-		  fontReferenceMap.put(fontKey, new SoftReference(font));  //store a soft reference to the font in the map, so that the font can be reclaimed, if necessary
-		}
-		return font;  //return the font we found in the map or created
-*/
 	}
 
 	/**Gets a new font for the specified character by searching all available fonts.
@@ -124,21 +100,77 @@ public class XMLCSSStyleContext extends StyleContext
 	@return The constructed font.
 	@see StyleContext#getFont
 	*/
-	public Font getFont(AttributeSet attributeSet)
+	public Font getFont(final AttributeSet attributeSet)
+	{
+		return getFont(attributeSet, 1.0f);	//get a font with 100% zoom
+	}
+
+	/**Gets the font from an attribute set using CSS names instead of the default
+		Swing names. This is implemented to try and fetch a cached font for the given
+		AttributeSet, and if that fails the font features are resolved and the font
+		is fetched from the low-level font cache.
+		Modified from javax.swing.text.StyleContext.getFont().
+	@param attributeSet The attribute set from which to retrieve values.
+	@param zoomFactor The relative increase or decrease in font size.
+	@return The constructed font.
+	@see StyleContext#getFont
+	*/
+	public Font getFont(final AttributeSet attributeSet, final float zoomFactor)
 	{
 		int style=Font.PLAIN;	//start out assuming we'll have a plain font
 		if(XMLCSSStyleUtilities.isBold(attributeSet))	//if the attributes specify bold (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
 			style|=Font.BOLD;	//add bold to our font style
 		if(XMLCSSStyleUtilities.isItalic(attributeSet))	//if the font attributes specify italics (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
 			style|=Font.ITALIC;	//add italics to our font style
-		final String family=StyleConstants.getFontFamily(attributeSet);	//get the font family from the attributes (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set) G***change to use CSS attributes
-		int size=Math.round(XMLCSSStyleUtilities.getFontSize(attributeSet));	//get the font size from the attributes (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
-/*G***del
-		//if the attributes specify either superscript or subscript (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
-		if(StyleConstants.isSuperscript(attributeSet) || StyleConstants.isSubscript(attributeSet))	//G***change to use CSS attributes
-			size-=2;	//reduce the font size by two
-*/
-		return FontUtilities.getFont(family, style, size);	//get the font based upon the specifications we just got from attribute set
+		String family=null; //show that we haven't found a font family
+		final String[] fontFamilyNameArray=XMLCSSStyleUtilities.getFontFamilyNames(attributeSet); //get the array of font family names
+		for(int i=0; i<fontFamilyNameArray.length; ++i) //look at each of the specified fonts
+		{
+		  final String fontFamilyName=fontFamilyNameArray[i]; //get this font family name
+	//G***del Debug.trace("Looking for font family name: ", fontFamilyName);
+		  if(fontFamilyName.equals("monospace"))  //G***fix all this; tidy; comment
+			{
+				family="Monospaced";
+				break;
+			}
+		  else if(fontFamilyName.equals("serif"))  //G***fix all this; tidy; comment
+			{
+				family="Serif";
+				break;
+			}
+		  else if(fontFamilyName.equals("sans-serif"))  //G***fix all this; tidy; comment
+			{
+	//G***fix				family="Lucinda Sans Regular";
+				family="SansSerif";
+				break;
+			}
+		  else if(fontFamilyName.equals("symbol"))  //G***fix all this; tidy; comment
+			{
+				family="Symbol";
+				break;
+			}
+			//G***maybe fix for "Symbol"
+				//see if we have the specified font
+			final int fontFamilyNameIndex=Arrays.binarySearch(SORTED_AVAILABLE_FONT_FAMILY_NAMES, fontFamilyName);
+			if(fontFamilyNameIndex>=0)  //if we have the specified font
+			{
+				family=fontFamilyName;  //show that we found a font family
+				break;  //stop searching
+			}
+		}
+		if(family==null)  //if we didn't find a font family
+	//G***del			family="Code2000";   //G***testing
+	//G***fix			family="Baraha Devanagari Unicode";   //G***testing
+			family="Serif";   //use the default G***use a constant; maybe use a different default
+		float size=XMLCSSStyleUtilities.getFontSize(attributeSet);	//get the font size from the attributes (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)		
+		/*G***put this in the style instead
+			//if the attributes specify either superscript or subscript (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
+			if(StyleConstants.isSuperscript(attributeSet) || StyleConstants.isSubscript(attributeSet))	//G***change to use CSS attributes
+				size-=2;	//reduce the font size by two
+		*/
+		size*=zoomFactor;	//increase the font size by the specified amout
+Debug.trace("new size", size);
+		return getFont(family, style, Math.round(size));	//get the font based upon the specifications we just got from attribute set
 	}
 
 	/**Gets the foreground color from a set of attributes.
@@ -171,4 +203,11 @@ public class XMLCSSStyleContext extends StyleContext
 		objectInputStream.defaultReadObject();  //read the object normally
 	}
 
+
+	static
+	{
+			//get the list of available font family names
+		SORTED_AVAILABLE_FONT_FAMILY_NAMES=GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+		Arrays.sort(SORTED_AVAILABLE_FONT_FAMILY_NAMES);  //sort the array of font family names		
+	}
 }

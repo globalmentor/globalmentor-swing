@@ -51,7 +51,7 @@ public class TextPanel extends ModelPanel<LocaleText>
 	public TextPanel(final LocaleText model)
 	{
 		super(new BasicGridBagLayout(), model, false);  //create the panel with the model without initializing
-//TODO fix		textPane=new JTextPane();	//create a new text pane
+//TODO del when works		textPane=new JTextPane();	//create a new text pane
 		textPane=new XMLTextPane();	//create a new text pane
 		scrollPane=new JScrollPane(textPane);	//create the text pane
 		unicodeStatusBar=new UnicodeStatusBar();	//create a new Unicode status bar

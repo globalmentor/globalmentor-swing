@@ -6,6 +6,8 @@ import javax.mail.internet.ContentType;
 import javax.swing.*;
 import javax.swing.event.*;
 import com.garretwilson.io.*;
+import static com.garretwilson.io.ContentTypeConstants.PLAIN_SUBTYPE;
+import static com.garretwilson.io.ContentTypeConstants.TEXT;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.unicode.UnicodeStatusBar;
 import com.garretwilson.text.CharacterEncodingConstants;
@@ -135,7 +137,8 @@ public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeMo
 		xmlTextPane=new XMLTextPane();	//create a new XML text pane
 		setContentType(mediaType);	//set the content type 
 		xmlScrollPane=new JScrollPane(xmlTextPane);	//create a new scroll pane with the XML text pane inside
-		sourceTextPane=new JTextPane();	//create a new text pane for editing the source
+//TODO del when works		sourceTextPane=new JTextPane();	//create a new text pane for editing the source
+		sourceTextPane=new XMLTextPane();	//create a new text pane for editing the source
 		sourceScrollPane=new JScrollPane(sourceTextPane);	//create a new scroll pane with the source text pane inside
 
 		unicodeStatusBar=new UnicodeStatusBar();	//create a new Unicode status bar
@@ -151,6 +154,7 @@ public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeMo
 	/**Initialize the user interface.*/
 	protected void initializeUI()
 	{
+		getSourceTextPane().setContentType(ContentTypeUtilities.toString(TEXT, PLAIN_SUBTYPE));	//set the content type of the source view to "text/plain"
 		addView(WYSIWYG_MODEL_VIEW, getXMLTextPane().getContentType(), getXMLScrollPane());	//add the XML text pane as the WYSIWYG view G***i18n
 		addView(SOURCE_MODEL_VIEW, "XML", getSourceScrollPane());	//add the source XML text pane as the source view G***i18n
 

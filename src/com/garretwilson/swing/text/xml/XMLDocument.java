@@ -1,10 +1,5 @@
 package com.garretwilson.swing.text.xml;
 
-import java.awt.Color;
-//G***del import java.awt.Component;  //G***del when loading routines are placed elsewhere
-import java.awt.Font;
-import java.awt.font.TextAttribute;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;  //G***del when loading routines are placed elsewhere
 //G***del import java.awt.MediaTracker;  //G***del when loading routines are placed elsewhere
 import java.awt.Toolkit;  //G***del when loading routines are placed elsewhere
@@ -12,74 +7,40 @@ import java.lang.ref.*;
 import java.util.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-/*G***bring back as needed
-import java.net.URL;
-import java.net.URLEncoder;
-*/
-import java.net.MalformedURLException;
 import java.io.*;
-import java.text.MessageFormat;
 import javax.mail.internet.ContentType;
 import javax.sound.sampled.*;
-import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
-import javax.swing.text.AbstractDocument.DefaultDocumentEvent;
-import javax.swing.text.DefaultStyledDocument.ElementBuffer;
-import javax.swing.undo.UndoableEdit;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.DocumentType;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.css.CSSStyleDeclaration;
-import org.w3c.dom.css.CSSStyleSheet;
-import org.w3c.dom.stylesheets.StyleSheet;
-//G***del when works import com.garretwilson.awt.ImageUtilities;
 import com.garretwilson.io.*;
 import com.garretwilson.lang.*;
-import static com.garretwilson.lang.ObjectUtilities.*;
-import com.garretwilson.net.URIUtilities;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.xpackage.MIMEOntologyUtilities;
 import com.garretwilson.rdf.xpackage.XPackageUtilities;
-import com.garretwilson.swing.event.ProgressEvent;
-import com.garretwilson.swing.event.ProgressListener;
-import com.garretwilson.swing.text.AttributeSetUtilities;
-import com.garretwilson.swing.text.DocumentConstants;
-import com.garretwilson.swing.text.DocumentUtilities;
+import com.garretwilson.swing.text.BasicStyledDocument;
 import com.garretwilson.swing.text.SwingTextUtilities;
 import com.garretwilson.text.CharacterConstants;
-import com.garretwilson.text.xml.oeb.OEBPublication;
 import com.garretwilson.text.xml.stylesheets.css.AbstractXMLCSSStylesheetApplier;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities; //G***maybe move
 import com.garretwilson.sound.sampled.SampledSoundUtilities;
-import com.garretwilson.swing.text.Bidi;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
-import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.garretwilson.util.Debug;
 import com.garretwilson.util.NameValuePair;
 //G***del when works import com.garretwilson.swing.text.xml.css.XMLCSSSimpleAttributeSet;
 
 /**A document that models XML.
-	Implements <code>URIInputStreamable</code>, as this class knows how to
-	retrieve streams to URIs.
 @see com.garretwilson.text.xml.XMLProcessor
 @see com.garretwilson.text.xml.XMLDocument
 @author Garret Wilson
 */
-public class XMLDocument extends DefaultStyledDocument implements URIInputStreamable
+public class XMLDocument extends BasicStyledDocument
 {
-
-	/**The name of the document property which may contain the loaded publication description.*/
-	public final static String PUBLICATION_PROPERTY_NAME="publication";
 
 	/**The task of applying a stylesheet.*/
 	public final static String APPLY_STYLESHEET_TASK="applyStylesheet";
@@ -97,15 +58,6 @@ final static char ELEMENT_END_CHAR=CharacterConstants.ZERO_WIDTH_SPACE_CHAR;
 final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);	
 //G***fix final static char ELEMENT_END_CHAR=CharacterConstants.ZERO_WIDTH_NO_BREAK_SPACE_CHAR;	
 //G***fix	final static char ELEMENT_END_CHAR=CharacterConstants.PARAGRAPH_SIGN_CHAR;	
-
-	/**The list of progress event listeners.*/
-	private EventListenerList progressListenerList=new EventListenerList();
-
-	/**The access to input streams via URIs, if one exists.*/
-	private final URIInputStreamable uriInputStreamable;
-
-		/**@return The access to input streams via URIs*/
-		public URIInputStreamable getURIInputStreamable() {return uriInputStreamable;}
 
 	/**A map of references to resources that have been loaded.*/
 	private final Map resourceReferenceMap=new HashMap();
@@ -142,28 +94,6 @@ final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);
 	  resourceReferenceMap.put(resourceURI, new SoftReference(resource));
 	}
 
-	/**@return The RDF data model where metadata is stored, or <code>null</code>
-		if there is no metadata document.*/
-	public RDF getRDF()
-	{
-		return DocumentUtilities.getRDF(this);  //retrieve the RDF property value
-	}
-
-	/**Sets the RDF data model where metadata is stored.
-	@param rdf The RDF data model.
-	*/
-	public void setRDF(final RDF rdf)
-	{
-		DocumentUtilities.setRDF(this, rdf);  //set the RDF
-	}
-
-//G***fix	private Map resourceMap
-
-	private Font CODE2000_FONT=null;  //G***testing; make final
-
-	//G***fix; comment
-	protected String[] sortedAvailableFontFamilyNameArray;
-
 	/**Constructor.
 	@param uriInputStreamable The source of input streams for resources.
 	@exception NullPointerException if the new source of input streams is <code>null</code>.
@@ -171,15 +101,7 @@ final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);
 	public XMLDocument(final URIInputStreamable uriInputStreamable)
 	{
 //G***fix		super(new PureGapContent(BUFFER_SIZE_DEFAULT), new XMLCSSStyleContext());	//construct the parent class, specifying our own type of style context that knows how to deal with CSS attributes
-		super(new XMLCSSStyleContext());	//construct the parent class, specifying our own type of style context that knows how to deal with CSS attributes
-		this.uriInputStreamable=checkNull(uriInputStreamable, "Missing URIInputStreamable");	//store the URIInputStreamable
-//G***fix		setProperty(AbstractDocument.I18NProperty);  //G***testing i18n
-//G***fix		putProperty("i18n", Boolean.TRUE);  //G***testing i18n
-Debug.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n
-
-		//get the list of available font family names
-		sortedAvailableFontFamilyNameArray=GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-		Arrays.sort(sortedAvailableFontFamilyNameArray);  //sort the array of font family names
+		super(new XMLCSSStyleContext(), uriInputStreamable);	//construct the parent class, specifying our own type of style context that knows how to deal with CSS attributes
 	}
 
 
@@ -310,186 +232,6 @@ Debug.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n
 	}
 */
 
-	/**Gets the font from an attribute set using CSS names instead of the default
-		Swing names. The actual font is obtained from the document's attribute context,
-		similar to <code>DefaultStyledDocument#getFont</code> (which this function
-		overrides), except that this function	may decide to change the font size
-		before actually creating the font using the attribute context. If the
-		attribute set specified several fonts, the first available one is used.
-	@param attributeSet The attribute set from which to retrieve values.
-	@return The constructed font.
-	@see DefaultStyledDocument.getFont
-	@see XMLStyleContext#getFont
-	*/
-	public Font getFont(AttributeSet attributeSet)
-	{
-Debug.trace("Getting font from attributes: ", AttributeSetUtilities.getAttributeSetString(attributeSet));  //G***del
-
-//G***maybe use		sun.java2d.SunGraphicsEnvironment.getLocalGraphicsEnvironment()
-
-/*G***maybe use
-		final Graphics2D graphics2D=(Graphics2D)g;  //cast to the 2D version of graphics
-		final FontRenderContext fontRenderContext=graphics2D.getFontRenderContext();  //get the font rednering context
-*/
-
-		int style=Font.PLAIN;	//start out assuming we'll have a plain font
-		if(XMLCSSStyleUtilities.isBold(attributeSet))	//if the attributes specify bold (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
-			style|=Font.BOLD;	//add bold to our font style
-//G***del Debug.trace("is bold: ", new Boolean(XMLCSSStyleConstants.isBold(attributeSet)));  //G***del
-		if(XMLCSSStyleUtilities.isItalic(attributeSet))	//if the font attributes specify italics (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
-			style|=Font.ITALIC;	//add italics to our font style
-		String family=null; //show that we haven't found a font family
-		final String[] fontFamilyNameArray=XMLCSSStyleUtilities.getFontFamilyNames(attributeSet); //get the array of font family names
-		for(int i=0; i<fontFamilyNameArray.length; ++i) //look at each of the specified fonts
-		{
-		  final String fontFamilyName=fontFamilyNameArray[i]; //get this font family name
-//G***del Debug.trace("Looking for font family name: ", fontFamilyName);
-		  if(fontFamilyName.equals("monospace"))  //G***fix all this; tidy; comment
-			{
-				family="Monospaced";
-				break;
-			}
-		  else if(fontFamilyName.equals("serif"))  //G***fix all this; tidy; comment
-			{
-				family="Serif";
-				break;
-			}
-		  else if(fontFamilyName.equals("sans-serif"))  //G***fix all this; tidy; comment
-			{
-//G***fix				family="Lucinda Sans Regular";
-				family="SansSerif";
-				break;
-			}
-		  else if(fontFamilyName.equals("symbol"))  //G***fix all this; tidy; comment
-			{
-				family="Symbol";
-				break;
-			}
-			//G***maybe fix for "Symbol"
-				//see if we have the specified font
-			final int fontFamilyNameIndex=Arrays.binarySearch(sortedAvailableFontFamilyNameArray, fontFamilyName);
-			if(fontFamilyNameIndex>=0)  //if we have the specified font
-			{
-				family=fontFamilyName;  //show that we found a font family
-				break;  //stop searching
-			}
-		}
-		if(family==null)  //if we didn't find a font family
-//G***del			family="Code2000";   //G***testing
-//G***fix			family="Baraha Devanagari Unicode";   //G***testing
-			family="Serif";   //use the default G***use a constant; maybe use a different default
-//G***del Debug.trace("Decided on font family: ", family); //G***del
-//G***del when works		final String family=StyleConstants.getFontFamily(attributeSet);	//get the font family from the attributes (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set) G***change to use CSS attributes
-		float size=XMLCSSStyleUtilities.getFontSize(attributeSet);	//get the font size from the attributes (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
-
-/*G***put this in the style instead
-		//if the attributes specify either superscript or subscript (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
-		if(StyleConstants.isSuperscript(attributeSet) || StyleConstants.isSubscript(attributeSet))	//G***change to use CSS attributes
-			size-=2;	//reduce the font size by two
-*/
-		final float zoomFactor=DocumentUtilities.getZoom(this, DocumentConstants.DEFAULT_ZOOM);  //get the zoom factor, assuming a default value if no value is specified
-Debug.trace("zoom factor", zoomFactor);
-/*G***del
-		  //we'll try to get the zoom factor from the text pane we're embedded in
-		final float zoomFactor=DocumentUtilities.hasZoomFactor(this)
-			  ? DocumentUtilities.getZoomFactor(this) //get the zoom factor value
-				: 1.20f;   //assume a zoom of 120%
-*/
-/*G***del
-		final Object zoomFactorObject=getProperty(ZOOM_FACTOR_PROPERTY); //get the zoom factor from the document
-		if(zoomFactorObject instanceof Float) //if this is a float, as we expect
-			zoomFactor=((Float)zoomFactorObject).floatValue();  //get the zoom factor value
-		else  //if we don't get a valid zoom factor back
-			zoomFactor=1.20f; //assume a zoom of 120%
-*/
-		size*=zoomFactor;	//increase the font size by the specified amout
-Debug.trace("new size", size);
-
-		StyleContext styleContext=((StyleContext)getAttributeContext());  //get the style context to be used for retrieving fonts
-
-
-
-		Font font=styleContext.getFont(family, style, Math.round(size));	//use the attribute context to get the font based upon the specifications we just got from attribute set
-/*G***fix
-Debug.trace("after getting font, font is: "+font);
-	if(family.equalsIgnoreCase("Code2000") && CODE2000_FONT!=null)  //G***testing
-	{
-		Debug.trace("Trying to use code2000 font");
-		font=CODE2000_FONT.deriveFont(style, size);
-	}
-*/
-/*G***del when works, remove segment parameter
-//G***fix Debug.trace("Font has Devanagari ka: "+font.canDisplay((char)0x0915));
-//G***put in TextLayout /*G***fix
-		//now that we've found a font, make sure the font can show all of the characters in the given segment, if any
-		if(segment!=null) //if a segment of text is available
-		{
-Debug.trace("Looking at text: "+Integer.toHexString(segment.array[segment.getBeginIndex()]));
-			  //find the first character this font can't display
-			final int undisplayableCharIndex=font.canDisplayUpTo(segment.array, segment.getBeginIndex(), segment.getEndIndex());
-		  if(undisplayableCharIndex>=0) //if there's a character this font can't display
-			{
-				final char undisplayableChar=segment.array[undisplayableCharIndex]; //get the character that can't be displayed
-Debug.trace("Found undisplayable character in font: "+Integer.toHexString(undisplayableChar));
-				  //G***don't hard-code the ranges in
-				if(undisplayableChar>=0x0600 && undisplayableChar<=0x06FF)  //if this is an Arabic character
-		  		font=styleContext.getFont("Lucinda Sans Regular", style, Math.round(size));	//use the font which we know has Arabic characters G***use a constant here G***don't round each time; do it only once
-			}
-		}
-*/
-//G***del Debug.trace("Finally chose font family name: ", font.getFamily()); //G***del
-		return font;  //return the font we found
-//G***del		return styleContext.getFont("Lucinda Sans Regular", style, Math.round(size));	//use the font which we know has Arabic characters G***use a constant here G***don't round each time; do it only once
-//G***del		return styleContext.getFont("Serif", 0, Math.round(size));	//use the font which we know has Arabic characters G***use a constant here G***don't round each time; do it only once
-
-	}
-
-	/**Gets a specific font based upon the font name, style, and size. This
-		implementation passes the request on to the associated
-		<code>StyleContext</code> which provides a cache of fonts. This method is
-		used indirectly through the associated view by
-		<code>TextLayoutStrategy</code> to get a font for characters that cannot
-		be displayed in the specified font.
-	@param family The font family (such as "Monospaced")
-	@param style The style of the font (such as <code>Font.PLAIN</code>).
-	@param size The point size (>=1)
-	@return The new font.
-	@see DefaultStyledDocument.getFont
-	@see XMLStyleContext#getFont
-	*/
-	public Font getFont(final String family, final int style, final int size)
-	{
-		//use the attribute context to get the font based upon the specifications
-		return ((StyleContext)getAttributeContext()).getFont(family, style, size);
-	}
-
-	/**Gets a new font for the specified character by searching all available fonts.
-		Fonts are cached by Unicode block and character, for faster searching in
-		future queries.
-	@param c The character for which a font should be returned.
-	@param style The style of the font (such as <code>Font.PLAIN</cod>).
-	@param size The point size (>=1).
-	@return The new font, or <code>null</code> if a font could not be found to
-		display this character.
-	@see XMLCSSStyleContext#getFont
-	*/
-	public Font getFont(final char c, final int style, final int size)
-	{
-		return ((XMLCSSStyleContext)getAttributeContext()).getFont(c, style, size);  //return a font that supports the character
-	}
-
-	/**Returns a sorted array of names of available fonts. The returned array is
-		shared by other objects in the system, and should not be modified.
-	@return A sorted array of names of available fonts.
-	@see XMLCSSStyleContext#getAvailableFontFamilyNames
-	*/
-/*G***del when works
-	public String[] getAvailableFontFamilyNames()
-	{
-		return ((XMLCSSStyleContext)getAttributeContext()).getAvailableFontFamilyNames();  //return the array of font family names from the syle context
-	}
-*/
-
 	/**Gets a particular resource from the given location.
 	@param href
 G***comment
@@ -497,20 +239,6 @@ G***comment
 /*G***fix
 	public Object getResource(final String href)
 */
-
-	/**@return The description of the publication, or <code>null</code> if there is no publication associated with this document.*/
-	public RDFResource getPublication()
-	{
-		return asInstance(getProperty(PUBLICATION_PROPERTY_NAME), RDFResource.class); //get the publication from the document, if there is one
-	}
-	
-	/**Sets the description of the publication.
-	@param publication The publication description.
-	*/
-	public void setPublication(final RDFResource publication)
-	{
-		putProperty(PUBLICATION_PROPERTY_NAME, publication);
-	}
 
 	/**Gets a particular resource from the given location. If the resource is
 		cached, the cached copy will be returned. If the document is loaded, it will
@@ -641,17 +369,6 @@ G***comment
 		return getInputStream(uri);	//delegate to our URIInputStreamable method
 	}
 
-	/**Returns an input stream from a given URI.
-	This implementation delegates to the editor kit's <code>URIInputStreamable</code>.
-	@param uri A complete URI to a resource.
-	@return An input stream to the contents of the resource represented by the given URI.
-	@exception IOException Thrown if an I/O error occurred.
-	*/
-	public final InputStream getInputStream(final URI uri) throws IOException
-	{
-		return getURIInputStreamable().getInputStream(uri);	//delegate to our own URIInputStreamable
-	}
-
 	/**Loads a particular resource from the given location. The loaded resource
 		will be stored in the local weak cache.
 	The return types for particular media types are as follows:
@@ -724,62 +441,6 @@ G***comment
 			throw new IOException("Unrecognized media type: "+mediaType);	//G***i18n
 		putCachedResource(resourceURI, resource); //cache the resource in case we need to use it again
 		return resource;  //return the resource we found
-	}
-
-	/**Gets the location against which to resolve relative URIs. By default this
-		will be the document's URI if the document was loaded from a URI.
-	@return The location against which to resolve relative URIs, or <code>null</code>
-		if there is no base URI.
-//G***del	@exception URISyntaxException Thrown if the a URI could not be created.
-	@see Document#StreamDescriptionProperty
-	*/
-/*G***del when works
-	public URI getBaseURI()	//G***del throws URISyntaxException
-	{
-//TODO store the base URI in some other property, so we won't have to switch back and forth between URI and URL
-
-		final Object streamDescription=getProperty(StreamDescriptionProperty); //get the stream description property value
-			//G***maybe create a URIUtilities method to do this
-		if(streamDescription instanceof URI)	//if the stream description is a URI
-			return (URI)streamDescription;	//return the stream description as-is
-		else if(streamDescription instanceof URL)	//if the stream description is a URL
-		{
-			try
-			{
-				return new URI(streamDescription.toString());	//create a URI from the stream description URL
-			}
-			catch(URISyntaxException uriSyntaxException)	//if we couldn't create a URI from the URL
-			{
-				Debug.error(uriSyntaxException);	//if it's a URL, we expect to be able to create a URI from it
-				return null;	//don't return any URI
-			}
-		}
-		else if (streamDescription instanceof File)	//if the stream description is a File
-			return ((File)streamDescription).toURI();		//convert the File to a URI
-		else	//if we don't recognize the string description (or if there isn't one)
-			return null;	//show that there is no base URI
-	}
-*/
-
-	/**Sets the location against which to resolve relative URIs. By default this
-		will be the document's URI.
-	@param baseURI The new location against which to resolve relative URIs.
-	@see #BASE_URI_PROPERTY
-	*/
-	public void setBaseURI(final URI baseURI)
-	{
-		DocumentUtilities.setBaseURI(this, baseURI);	//store the base URI
-	}
-
-	/**Gets the location against which to resolve relative URIs.
-	@return The location against which to resolve relative URIs, or <code>null</code>
-		if there is no base URI.
-//G***del	@exception URISyntaxException Thrown if the a URI could not be created.
-	@see #BASE_URI_PROPERTY
-	*/
-	public URI getBaseURI()
-	{
-		return DocumentUtilities.getBaseURI(this);	//return the value of the base URI property
 	}
 
 	/**Inserts a group of new elements into the document
@@ -1596,37 +1257,6 @@ Debug.trace("applying local styles"); //G***del
 		}
 	}
 */
-
-	/**Adds a progress listener.
-	@param listener The listener to be notified of progress.
-	*/
-	public void addProgressListener(ProgressListener listener)
-	{
-		progressListenerList.add(ProgressListener.class, listener);	//add this listener
-	}
-
-	/**Removes a progress listener.
-	@param listener The listener that should no longer be notified of progress.
-	*/
-	public void removeProgressListener(ProgressListener listener)
-	{
-		progressListenerList.remove(ProgressListener.class, listener);
-	}
-
-	/**Notifies all listeners that have registered interest for progress that
-		progress has been made.
-	@param status The status to display.
-	*/
-	protected void fireMadeProgress(final ProgressEvent progressEvent)
-	{
-//G***del if not needed		final ProgressEvent progressEvent=new ProgressEvent(this, status);	//create a new progress event
-		final Object[] listeners=progressListenerList.getListenerList();	//get the non-null array of listeners
-		for(int i=listeners.length-2; i>=0; i-=2)	//look at each listener, from last to first
-		{
-			if(listeners[i]==ProgressListener.class)	//if this is a progress listener (it should always be)
-				((ProgressListener)listeners[i+1]).madeProgress(progressEvent);
-     }
-	}
 
 	/**Class to apply styles to Swing elements.
 	@author Garret Wilson

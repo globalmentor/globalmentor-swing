@@ -22,6 +22,7 @@ import com.garretwilson.applet.*;
 import com.garretwilson.awt.EventQueueUtilities;
 import com.garretwilson.io.*;
 import static com.garretwilson.io.ContentTypeUtilities.*;
+import static com.garretwilson.lang.ObjectUtilities.*;
 import com.garretwilson.net.BrowserLauncher;
 import com.garretwilson.net.URIConstants;
 import com.garretwilson.net.URIUtilities;
@@ -81,6 +82,9 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 	/**The "application/x-xebook+rdf+xml+zip" content type.*/
 	protected final static ContentType XEB_ZIP_MEDIA_TYPE=new ContentType(APPLICATION, X_XEBOOK_RDF_XML_ZIP_SUBTYPE, null);
 
+	/**The "text/plain" content type.*/
+	protected final static ContentType TEXT_PLAIN_MEDIA_TYPE=new ContentType(TEXT, PLAIN_SUBTYPE, null);
+
 	//TODO fix asynchronous stop-gap kludge to correctly get the asynchronous setting from the document---if that's the best way to do it
 	protected boolean asynchronousLoad=false;
 
@@ -121,8 +125,17 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 //G***del when keymap works
 //G***del	protected final static KeyStroke RIGHT_KEY_STROKE=KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0);
 
-	/**The access to input streams via URIs.*/
-	protected URIInputStreamable baseURIInputStreamable;	//TODO testing reload; comment
+	/**The access to input streams via URIs based upon the first document loaded; used to reload.*/
+	protected URIInputStreamable baseURIInputStreamable;
+
+		/**@return The access to input streams via URIs based upon the first document loaded; used to reload.*/
+		protected URIInputStreamable getBaseURIInputStreamable() {return baseURIInputStreamable;}
+
+		/**Sets the base object for accessing input streams.
+		@param newURIInputStreamable The access to input streams via URIs based upon the first document loaded
+		@exception NullPointerException if the given object is <code>null</code>.
+		*/
+		public void setBaseURIInputStreamable(final URIInputStreamable newURIInputStreamable) {baseURIInputStreamable=checkNull(newURIInputStreamable);}
 
 	/**The access to input streams via URIs.*/
 	private URIInputStreamable uriInputStreamable;
@@ -131,10 +144,10 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		public URIInputStreamable getURIInputStreamable() {return uriInputStreamable;}
 
 		/**Sets the object for accessing input streams.
-		@param newURIInputStreamable The object that allows acces to input streams
-			via URIs.
+		@param newURIInputStreamable The object that allows acces to input streams via URIs.
+		@exception NullPointerException if the given object is <code>null</code>.
 		*/
-		public void setURIInputStreamable(final URIInputStreamable newURIInputStreamable) {uriInputStreamable=newURIInputStreamable;}
+		public void setURIInputStreamable(final URIInputStreamable newURIInputStreamable) {uriInputStreamable=checkNull(newURIInputStreamable);}
 
 	/**The implementation to use for retrieving an output stream to a URI.*/
 	private URIOutputStreamable uriOutputStreamable;
@@ -143,10 +156,10 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		public URIOutputStreamable getURIOutputStreamable() {return uriOutputStreamable;}
 		
 		/**Sets the implementation to use for retrieving an output stream to a URI.
-		@param outputStreamable The implementation to use for accessing a URI for
-			output.
+		@param outputStreamable The implementation to use for accessing a URI for output.
+		@exception NullPointerException if the given object is <code>null</code>.
 		*/
-		public void setURIOutputStreamable(final URIOutputStreamable outputStreamable) {uriOutputStreamable=outputStreamable;}
+		public void setURIOutputStreamable(final URIOutputStreamable outputStreamable) {uriOutputStreamable=checkNull(outputStreamable);}
 
 	/**The current position of the mouse.*/
 //G***del JDK1.5	private Point mousePosition=new Point(0, 0);
@@ -536,14 +549,14 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 //G***del when works		originalKeymap=getKeymap();  //get the current key map and store it for future use
 		uriInputStreamable=DefaultURIAccessible.getDefaultURIAccessible();	//start with a default method of getting input streams
 		uriOutputStreamable=DefaultURIAccessible.getDefaultURIAccessible();	//start with a default method of getting output streams
-		registerEditorKitForContentType(ContentTypeUtilities.toString(TEXT, PLAIN_SUBTYPE), StyledEditorKit.class.getName());	//text/plain
 		/*TODO use after fixing each editor kit to have a default constructor 
-				registerEditorKitForContentType(ContentTypeUtilities.toString(TEXT, XML_SUBTYPE), XMLEditorKit.class.getName());	//text/xml
-				registerEditorKitForContentType(ContentTypeUtilities.toString(TEXT, HTML_SUBTYPE), XHTMLEditorKit.class.getName());	//text/html
-				registerEditorKitForContentType(ContentTypeUtilities.toString(TEXT, X_OEB1_DOCUMENT_SUBTYPE), XHTMLEditorKit.class.getName());	//text/x-oeb1-document
-				registerEditorKitForContentType(ContentTypeUtilities.toString(APPLICATION, XHTML_XML_SUBTYPE), XHTMLEditorKit.class.getName());	//application/xhtml+xml
-				registerEditorKitForContentType(ContentTypeUtilities.toString(APPLICATION, X_OEB1_PACKAGE_XML_SUBTYPE), OEBEditorKit.class.getName());	//application/x-oeb1-package+xml
-				registerEditorKitForContentType(ContentTypeUtilities.toString(APPLICATION, X_XEBOOK_RDF_XML_SUBTYPE), XEBEditorKit.class.getName());	//application/x-xebook+rdf+xml
+		registerEditorKitForContentType(ContentTypeUtilities.toString(TEXT, PLAIN_SUBTYPE), StyledEditorKit.class.getName());	//text/plain
+		registerEditorKitForContentType(ContentTypeUtilities.toString(TEXT, XML_SUBTYPE), XMLEditorKit.class.getName());	//text/xml
+		registerEditorKitForContentType(ContentTypeUtilities.toString(TEXT, HTML_SUBTYPE), XHTMLEditorKit.class.getName());	//text/html
+		registerEditorKitForContentType(ContentTypeUtilities.toString(TEXT, X_OEB1_DOCUMENT_SUBTYPE), XHTMLEditorKit.class.getName());	//text/x-oeb1-document
+		registerEditorKitForContentType(ContentTypeUtilities.toString(APPLICATION, XHTML_XML_SUBTYPE), XHTMLEditorKit.class.getName());	//application/xhtml+xml
+		registerEditorKitForContentType(ContentTypeUtilities.toString(APPLICATION, X_OEB1_PACKAGE_XML_SUBTYPE), OEBEditorKit.class.getName());	//application/x-oeb1-package+xml
+		registerEditorKitForContentType(ContentTypeUtilities.toString(APPLICATION, X_XEBOOK_RDF_XML_SUBTYPE), XEBEditorKit.class.getName());	//application/x-xebook+rdf+xml
 		*/
 		final Keymap defaultKeymap=getKeymap();	//get the current keymap
 		final Keymap xmlKeymap=addKeymap(XML_KEYMAP_NAME, defaultKeymap); //create a new keymap for our custom actions
@@ -787,7 +800,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		final URI uri=getBaseURI(); //get the current base URI
 		if(uri!=null) //if there is content loaded from some location
 		{		
-			setPage(getBaseURI(), baseURIInputStreamable);	//read from the same URI
+			setPage(getBaseURI(), getBaseURIInputStreamable());	//read from the same URI
 		}
 	}
 	
@@ -893,6 +906,7 @@ try {
 	@param uri The URI of the resource which has the information to load.
 	@param uriInputStreamable The input stream locator to use for looking up input streams.
 	@exception IOException as thrown by the stream being used to initialize.
+	@exception NullPointerException if the given URI accessor is <code>null</code>.
 	@see JEditorPane#setPage
 	@see EditorKit#createDefaultDocument
 	@see #setDocument
@@ -900,42 +914,25 @@ try {
 	public void setPage(URI uri, final URIInputStreamable uriInputStreamable) throws IOException
 	{
 		baseURI=uri;	//update our base URI (don't call the setBaseURI() method, because we don't want to change the base URI of the old document
-		baseURIInputStreamable=uriInputStreamable;	//TODO testing reload
+		setBaseURIInputStreamable(uriInputStreamable);	//show the base URI accessor
 		setURIInputStreamable(uriInputStreamable);  //use whatever input stream locator they specify
-
 //G***make sure we set all the properties like the subclass uses
 //G***note that the underlying class calls this.read(), which performs similar but not identical functionality as code here -- it would be good to use that, if possible
-Debug.trace();  //G***del
-/*G***del when works
-		final XMLEditorKit xmlEditorKit=(XMLEditorKit)getUI().getEditorKit(this);	//get the current editor kit, and assume it's an XML editor kit G***we might want to check just to make sure
-		final Document document=xmlEditorKit.createDefaultDocument();	//create a default document
-		document.putProperty(Document.StreamDescriptionProperty, page);	//store the URL in the document
-*/
-Debug.trace("setting page: ", uri);  //G***del
-
-
-
-Debug.trace("Getting input stream.");
-		InputStream inputStream=getStream(uri);  //get an input stream to the URI; this should set the media type and install the correct editor kit
-
-Debug.trace("installed editor kit is first: ", getEditorKit().getClass().getName());  //G***del
-
-		final String contentType=getContentType();  //see what content type we decided on
-Debug.trace("content type is first: ", contentType);  //G***del
-			//if this appears to be an XEB book zip file, an OEB publication zip file or an application/zip file
+		ContentType contentType=URIUtilities.getMediaType(uri);  //get the media type of the URI
+		Debug.trace("content type is first: ", contentType);  //G***del
+		InputStream inputStream=null;	//we'll attempt to get an input stream based upon the content type
+			//if this appears to be an XEB book zip file, an OEB publication zip file or an application/zip file, change our input stream locator and switch to a URI inside the file
 		if(OEB_ZIP_MEDIA_TYPE.match(contentType) || XEB_ZIP_MEDIA_TYPE.match(contentType) || ZIP_MEDIA_TYPE.match(contentType))
 		{
 Debug.trace("found zip file: ", uri);  //G***del
 			if(URIConstants.FILE_SCHEME.equals(uri.getScheme()))  //if this is the file scheme
 			{
-				inputStream.close();  //close the input stream; we'll access the zip file directly G***testing
-				inputStream=null;	//indicate that we haven't found an input stream directly to the zip file, yet
-					//G***look for an OEB publication
 			  final File zipFile=new File(uri);  //create a file for accessing the zip file
 			  final ZipManager zipManager=new ZipManager(zipFile, uri);  //create a zip manager for accessing the file
 				setURIInputStreamable(zipManager);  //we'll use the zip manager as our input stream locator
+				boolean foundZipEntry=false;	//we'll determine which entry to use
 				final Iterator zipEntryIterator=zipManager.getZipEntryIterator(); //get an iterator to look
-				while(zipEntryIterator.hasNext()) //while there are more zip entries
+				while(!foundZipEntry && zipEntryIterator.hasNext()) //while there are more zip entries and we haven't found one to use
 				{
 				  final ZipEntry zipEntry=(ZipEntry)zipEntryIterator.next();  //get the next zip entry
 				  final ContentType zipEntryContentType=FileUtilities.getMediaType(zipEntry.getName());	//see what content type this entry has TODO use XPackage if available
@@ -946,9 +943,9 @@ Debug.trace("found zip file: ", uri);  //G***del
 						{
 							try
 							{
-								Debug.trace("switching URI to: ", zipManager.getURI(zipEntry)); //G***del
-								inputStream=getStream(zipManager.getURI(zipEntry));  //get an input stream to the new URI; this should set the media type and install the correct editor kit
-								break;	//stop looking for suitable zip entries
+								uri=zipManager.getURI(zipEntry);  //change our URI to point inside the zip file
+								contentType=zipEntryContentType;	//change the content to that of the zip entry
+								foundZipEntry=true;	//show that a zip entry was found
 							}
 							catch(IllegalArgumentException illegalArgumentException)	//if there is an error with the format of a URI (which shouldn't happen)
 							{
@@ -957,45 +954,37 @@ Debug.trace("found zip file: ", uri);  //G***del
 						}
 					}
 				}
-				if(inputStream==null)	//if we couldn't find an OEB file
+				if(!foundZipEntry)	//if no suitable zip entry was found
 				{
-					throw new IOException("Could not find an OEB publication in zip file.");//TODO i18n
+					throw new IOException("Could not find an appropriate publication in zip file.");	//TODO i18n
 				}
 			}
 			else  //if this is not a zip file, but some other sort of zip access, throw an exception
 				Debug.error("Zip file must use URI file protocol");  //G***fix
 		}
-Debug.trace("installed editor kit is now: ", getEditorKit().getClass().getName());  //G***del
-/*G***del if not needed
-		if(getURIInputStreamable()==null) //if we haven't established an input stream locator
-		{
-			setURIInputStreamable(new URIUtilities());  //we'll use an instance of URIUtilities to make direct connections to URIs
-		}
-*/
-		setPage(uri, inputStream);	//set the page using the given input stream
+		inputStream=getInputStream(uri);	//get an input stream to the URI
+		setContentType(contentType.toString());	//set the content type, which will select the appropriate editor kit
+		load(baseURI, inputStream);	//load the content using the given input stream
 	}
 
 	/**Initializes from a URI with its input stream already provided.
-		This creates a model of the type appropriate for
-		the component (such as an OEB document) and initializes the model using the
-		appropriate editor kit.
-	<p>The <code>URIInputStreamable</code> should have already been initialized.</p>
+		This creates a model of the type appropriate for the component (such as an OEB document)
+		and initializes the model using the current editor kit.
+	<p>The <code>URIInputStreamable</code> and editor kit should have already been initialized.</p>
 	<p>This method must be called from inside the AWT thread.</p>
-	@param uri The URI of the resource which has the information to load.
+	@param baseURI The URI of the resource which has the information to load.
 	@param inputStream The input stream from which the document content should be read.
 	@exception IOException Thrown if there is an error loading the document.
 	@see JEditorPane#setPage
 	@see EditorKit#createDefaultDocument
 	@see #setDocument
 	*/
-	public void setPage(final URI uri, final InputStream inputStream) throws IOException
+	protected void load(final URI baseURI, final InputStream inputStream) throws IOException
 	{
-		baseURI=uri;	//update our base URI (don't call the setBaseURI() method, because we don't want to change the base URI of the old document
 		final XMLEditorKit xmlEditorKit=(XMLEditorKit)getEditorKit();	//get the current editor kit, and assume it's an XML editor kit G***we might want to check just to make sure
 		final Document document=xmlEditorKit.createDefaultDocument();	//create a default document
-
-		document.putProperty(Document.StreamDescriptionProperty, URIUtilities.toValidURL(uri));	//store a URL version of the URI in the document, as getPage() expects this to be a URL
-		DocumentUtilities.setBaseURI(document, uri);	//store the base URI in the document
+		document.putProperty(Document.StreamDescriptionProperty, URIUtilities.toValidURL(baseURI));	//store a URL version of the URI in the document, as getPage() expects this to be a URL
+		DocumentUtilities.setBaseURI(document, baseURI);	//store the base URI in the document
 Debug.trace("reading from stream"); //G***del
 		final DocumentLoader documentLoader=new DocumentLoader(inputStream, document);	//create a thread for loading the document 
 		//TODO check for already loading asynchronously, as does JEditorPane
@@ -1069,7 +1058,7 @@ Debug.trace("reading from stream"); //G***del
 			}
 		}
 
-		/**Reads the document from the input stream.
+		/**Reads the document from the input stream and then closes the stream.
 		@exception IOException Thrown if there is an error loading the document.
 		*/
 		public void load() throws IOException
@@ -1105,6 +1094,7 @@ Debug.trace("reading from stream"); //G***del
 			finally
 			{
 				setCursor(originalCursor); //after the event thread is finished setting the document, always set the cursor back to its original form
+				inputStream.close();	//always close the input stream
 			}
 		}
 	}
@@ -1117,6 +1107,7 @@ Debug.trace("reading from stream"); //G***del
 		reserved character encoding.
 	@see #getStream(URI)
 	*/
+/*G***del
 	protected InputStream getStream(final URL url) throws IOException
 	{
 		try
@@ -1128,109 +1119,35 @@ Debug.trace("reading from stream"); //G***del
 			throw (IOException)new IOException(uriSyntaxException.getMessage()).initCause(uriSyntaxException);	//convert the exception to an IO exception
 		}
 	}
-
-    /**
-     * Fetches a stream for the given URI, which is about to
-     * be loaded by the <code>setPage</code> method.  By
-     * default, this simply opens the URL and returns the
-     * stream.  This can be reimplemented to do useful things
-     * like fetch the stream from a cache, monitor the progress
-     * of the stream, etc.
-     * <p>
-     * This method is expected to have the the side effect of
-     * establishing the content type, and therefore setting the
-     * appropriate <code>EditorKit</code> to use for loading the stream.
-     * <p>
-     * If this the stream was an http connection, redirects
-     * will be followed and the resulting URL will be set as
-     * the <code>Document.StreamDescriptionProperty</code> so that relative
-     * URL's can be properly resolved.
-     *
-     * @param uri The URI of the page
-     */
-    protected InputStream getStream(final URI uri) throws IOException
-		{
-			final URIInputStreamable uriInputStreamable=getURIInputStreamable();  //see if we have an input stream locator
-			if(uriInputStreamable!=null)  //if we have an input stream locator (if we're reading from a zip file, for instance)
-			{
-Debug.trace("found input stream locator, getting input stream to URI: ", uri); //G***del
-				final InputStream inputStream=getInputStream(uri);  //get an input stream from the page
-				final ContentType mediaType=URIUtilities.getMediaType(uri);  //get the media type of the target
-				if(mediaType!=null) //if we know the media type of the URL
-		  		setContentType(mediaType.toString());  //set the content type based upon our best guess
-				return inputStream; //return the input stream we located (with an input stream locator, there's no need for us to try to open a connection to the URL ourselves
-			}
-
-			URL page=uri.toURL();	//convert the URI to a URL (we assume that if the URI is not a URL, an input stream locator would have been provided
-
-			URLConnection conn = page.openConnection();
-			if (conn instanceof HttpURLConnection) {
-					HttpURLConnection hconn = (HttpURLConnection) conn;
-					hconn.setInstanceFollowRedirects(false);
-					int response = hconn.getResponseCode();
-					boolean redirect = (response >= 300 && response <= 399);
-
-					/*
-					 * In the case of a redirect, we want to actually change the URL
-					 * that was input to the new, redirected URL
-					 */
-					if (redirect) {
-				String loc = conn.getHeaderField("Location");
-				if (loc.startsWith("http", 0)) {
-						page = new URL(loc);
-				} else {
-						page = new URL(page, loc);
-				}
-				return getStream(page);
-					}
-			}
-/*G***fix
-			if (pageProperties == null) {
-					pageProperties = new Hashtable();
-			}
-			String type = conn.getContentType();
-			if (type != null) {
-					setContentType(type);
-					pageProperties.put("content-type", type);
-			}
-			pageProperties.put(Document.StreamDescriptionProperty, page);
-			String enc = conn.getContentEncoding();
-			if (enc != null) {
-					pageProperties.put("content-encoding", enc);
-			}
-			InputStream in = conn.getInputStream();
-			return in;
-
 */
 
-
-
-	String contentType = conn.getContentType();
-	if(contentType!=null) //if we receive at least a guess of the content type
+	/**Fetches a stream for the given URL, which is about to be loaded by the <code>setPage</code> method.
+	This method has the the side effect of establishing the content type, and therefore setting the
+	appropriate <code>EditorKit</code> to use for loading the stream.
+	This implementation is only provided for completeness; the <code>setPage()</code> method uses its
+	own determination of the stream and sets the content type.
+	@param page The URL of the page.
+	@exception IOException if there is an error getting a stream to the page.
+	*/
+	protected InputStream getStream(final URL page) throws IOException	//TODO fix setting the Document.StreamDescriptionProperty and update comment
 	{
-//G***del		final MediaType mediaType=new MediaType(contentType); //get a media type object to examine the content type
-//TODO eventually don't allow MediaType to compare with strings, if this is what's happening
-//G***should we check for application/xml or text/xml?
-//G***del when works		if(ContentTypeConstants.APPLICATION_XML.equals(contentType)) //if this appears to be an application/xml file
-		if(isXML(ContentTypeUtilities.createContentType(contentType))) //if this appears to be an XML file TODO make sure we want to check for all XML media types
+		try
 		{
-			final ContentType mediaType=URLUtilities.getMediaType(page);  //see if we know what media type this is
-			if(mediaType!=null) //if we have an idea of what media type this is
-				contentType=mediaType.toString();  //our guess of the media type overrides "application/xml"
+			final URI uri=page.toURI();	//create a URI from the page URL
+			final InputStream inputStream=getInputStream(page.toURI());	//get the stream from the URI
+			final ContentType mediaType=URIUtilities.getMediaType(uri);  //get the media type of the target
+			if(mediaType!=null) //if we know the media type of the URL
+			{
+	  		setContentType(mediaType.toString());  //set the content type based upon our best guess
+			}
+			return inputStream; //return the input stream we located (with an input stream locator, there's no need for us to try to open a connection to the URL ourselves)
 		}
-		setContentType(contentType);  //set the content type based upon our best guess
-//G***fix	    pageProperties.put("content-type", type);
+		catch(URISyntaxException uriSyntaxException)	//if the URL can't be converted to a URI (unlikely)
+		{
+			throw (IOException)new IOException(uriSyntaxException.getMessage()).initCause(uriSyntaxException);	//convert the exception to an IO exception
+		}
 	}
-//G***fix	pageProperties.put(Document.StreamDescriptionProperty, page);
-	String enc = conn.getContentEncoding();
-	if (enc != null) {
-//G***fix	    pageProperties.put("content-encoding", enc);
-	}
-	InputStream in = conn.getInputStream();
-	return in;
-    }
-
-
+	
 	/**This method initializes from a stream. If the kit is set to be of type
 		<code>XMLEditorKit</code>, and the <code>desc</code> parameter is an
 		<code>XMLDocument</code>, then it invokes the <code>XMLEditorKit</code> to
@@ -1403,6 +1320,10 @@ Debug.trace("reading from stream into document"); //G***del
 	  else if(XEBOOK_MEDIA_TYPE.match(mediaType))	//if this is an XEbook
 		{
 			editorKit=new XEBEditorKit(this);  //create a new XEB editor kit for the XEbook
+		}
+	  else if(TEXT_PLAIN_MEDIA_TYPE.match(mediaType))	//if this is a plain text document
+		{
+	  	editorKit=new BasicStyledEditorKit(this);  //create a new basic styled editor kit for the text
 		}
 		if(editorKit==null)	//if the editor kit is not for one of our recognized types
 		{
