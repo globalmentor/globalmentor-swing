@@ -217,7 +217,7 @@ if(viewChildElementList.size()>0)
 	final Element[] elements=(Element[])viewChildElementList.toArray(new Element[viewChildElementList.size()]);
 	for(int i=0; i<elements.length; ++i)
 	{
-		viewList.add(new XMLHiddenView(elements[i]));
+		viewList.add(new InvisibleView(elements[i]));
 	}
 	viewChildElementList.clear();
 }
@@ -271,7 +271,7 @@ if(viewChildElementList.size()>0)
 				{
 					for(int i=0; i<elements.length; ++i)
 					{
-						viewList.add(new XMLHiddenView(elements[i]));
+						viewList.add(new InvisibleView(elements[i]));
 					}
 					
 				}

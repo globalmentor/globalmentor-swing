@@ -45,6 +45,7 @@ import com.garretwilson.swing.XMLTextPane;
 import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.event.ProgressListener;
 import com.garretwilson.swing.text.DocumentUtilities;
+import com.garretwilson.swing.text.InvisibleView;
 import com.garretwilson.swing.text.StyleUtilities;
 import com.garretwilson.swing.text.ViewsFactory;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
@@ -127,7 +128,7 @@ public class XMLViewFactory implements ViewsFactory
 	@param element The element the view or views will represent.
 	@param addViewList The list of views to which the views should be added.
 	*/
-	public void create(final Element element, final List addViewList)
+	public void create(final Element element, final List<View> addViewList)
 	{
 //G***del Debug.trace();  //G***del
 		final View view=create(element, true);  //create a view for the element, if we can, but get an indication of if there should be several views
@@ -195,7 +196,7 @@ public class XMLViewFactory implements ViewsFactory
 				//check the visibility status before going to any registered view factories
 			if(!StyleUtilities.isVisible(attributeSet))	//if for some reason this element should not be visible
 			{
-				return new XMLHiddenView(element);	//create a hidden view
+				return new InvisibleView(element);	//create a hidden view
 			}
 				//delegate to the registered view factory if we can
 			/*G***fix final */String elementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(attributeSet); //get the namespace of this element, if it has one
@@ -378,7 +379,7 @@ Debug.trace("Found display property: ", cssDisplayProperty);
 				else if(cssDisplayString.equals(XMLCSSConstants.CSS_DISPLAY_TABLE_CELL))	//if this should be table cell
 					return new XMLBlockView(element, View.Y_AXIS);	//create a table cell view G***change to the correct table cell view class
 				else if(XMLCSSConstants.CSS_DISPLAY_NONE.equals(cssDisplayString))	//if this element should have no display
-					return new XMLHiddenView(element);	//create a hidden view
+					return new InvisibleView(element);	//create a hidden view
 /*G***important; fix
 
 

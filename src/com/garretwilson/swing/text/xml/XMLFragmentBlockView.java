@@ -1,5 +1,6 @@
 package com.garretwilson.swing.text.xml;
 
+import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
@@ -55,6 +56,15 @@ public class XMLFragmentBlockView extends XMLBlockView implements FragmentView
 	public View createFragmentView(final boolean isFirstFragment, final boolean isLastFragment)
 	{
 	  return new XMLFragmentBlockView(getElement(), getAxis(), getWholeView(), isFirstFragment, isLastFragment);	//create a fragment of this view, indicating the original view
+	}
+
+	/**Returns the attributes to use for this view.
+ 	This version returns the attributes of the whole view.
+	@return The attributes of the parent view, or the attributes of the underlying element if there is no parent.
+	*/
+	public AttributeSet getAttributes()
+	{
+		return getWholeView().getAttributes();	//return the attributes of the whole view
 	}
 
 	/**Fragment views do not load their own children. Instead, the method

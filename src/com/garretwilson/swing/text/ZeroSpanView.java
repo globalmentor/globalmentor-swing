@@ -1,29 +1,20 @@
-package com.garretwilson.swing.text.xml;
+package com.garretwilson.swing.text;
 
 import java.awt.*;
 import javax.swing.text.*;
 
-/**View class of an invisible element.
+/**View class with no span that paints no content, but that nevertheless is considered visible.
 @author Garret Wilson
 */
-public class XMLHiddenView extends View //G***should this be put in com.garretwilson.swing.text?
+public abstract class ZeroSpanView extends View
 {
 
 	/**Constructor which specifies an element.
 	@param element The element this view represents.
 	*/
-	public XMLHiddenView(Element element)
+	public ZeroSpanView(Element element)
 	{
 		super(element);	//construct the parent class
-	}
-
-	/**Returns a boolean value that indicates whether the view is visible or not.
-	<p>Hidden views always return <code>false</code>.</p> 
-	@return <code>false</code>, indicating that the view is not visible.
-	*/
-	public boolean isVisible()
-	{
-		return false;
 	}
 
 	/**Performs no rendering for the hidden view.
@@ -33,8 +24,7 @@ public class XMLHiddenView extends View //G***should this be put in com.garretwi
 	*/
 	public void paint(Graphics graphics, Shape allocation) {}
 
-	/**Determines the preferred span for this view. Returns 0 as the view is not
-		visible.
+	/**Determines the preferred span for this view. Returns 0.
 	@param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS<code>).
 	@return The span the view would like to be rendered into.
 	@see View#getPreferredSpan
@@ -44,51 +34,24 @@ public class XMLHiddenView extends View //G***should this be put in com.garretwi
 		return 0;  //return 0 because the view isn't visible
 	}
 
-	/**Determines the minimum span for this view along an axis. Returns 0 as the
-		view is not visible.
+	/**Determines the minimum span for this view along an axis. Returns 0.
 	@param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS<code>).
 	@return The minimum span the view can be rendered into.
 	@see View#getMinimumSpan
 	*/
 	public float getMinimumSpan(int axis)
 	{
-		return 0;  //return 0 because the view isn't visible
+		return 0;  //return no span
 	}
 
-	/**Determines the maximum span for this view along an axis. Returns 0 as the
-		view is not visible.
+	/**Determines the maximum span for this view along an axis. Returns 0.
 	@param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS<code>).
 	@return The maximum span the view can be rendered into.
 	@see View#getMaximumSpan
 	*/
 	public float getMaximumSpan(int axis)
 	{
-		return 0;  //return 0 because the view isn't visible
-	}
-
-	/**Provides a way to determine the next visually represented model 
-		location at which one might place a caret.
-	<p>As this view is always hidden, it always returns -1.</p>
-	@param pos The position to convert (>=0).
-	@param a The allocated region in which to render.
-	@param direction The direction from the current position that can
-		be thought of as the arrow keys typically found on a keyboard.
-		This will be one of the following values:
-		<ul>
-			<li>SwingConstants.WEST</li>
-			<li>SwingConstants.EAST</li>
-			<li>SwingConstants.NORTH</li>
-			<li>SwingConstants.SOUTH</li>
-	</ul>
-	@return The location within the model that best represents the next
-		location visual position. This version always returns -1.
-	@exception BadLocationException
-	@exception IllegalArgumentException if <code>direction</code>
-		doesn't have one of the legal values above
-	*/
-	public int getNextVisualPositionFrom(int pos, Position.Bias b, Shape a, int direction, Position.Bias[] biasRet) throws BadLocationException
-	{
-		return -1;	//show that no visual positions are valid in a hidden view
+		return 0;  //return no span
 	}
 
 	/**Provides a mapping from the view coordinate space to the logical coordinate
@@ -115,8 +78,7 @@ public class XMLHiddenView extends View //G***should this be put in com.garretwi
 		}
 	}
 
-	/**Provides a mapping from the coordinate space of the model to that of the
-		view.
+	/**Provides a mapping from the coordinate space of the model to that of the view.
 	@param pos The position to convert (>=0).
 	@param allocation The allocated region to render into.
 	@return The bounding box of the given position.

@@ -12,11 +12,13 @@ import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 */
 import javax.swing.text.Element;
 
+import com.garretwilson.swing.text.InvisibleView;
+
 /**View class that causes a page break.
 @see XMLBlockView
 @author Garret Wilson
 */
-public class XMLPageBreakView extends XMLHiddenView	//G***maybe go back to XMLParagraphView, if that class knows how to be hidden, but what are the consequences of either? XMLParagraphView
+public class XMLPageBreakView extends InvisibleView	//G***maybe go back to XMLParagraphView, if that class knows how to be hidden, but what are the consequences of either? XMLParagraphView
 {
 
 	/**Constructor which specifies an element.

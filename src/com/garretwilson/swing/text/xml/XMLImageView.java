@@ -914,6 +914,7 @@ Debug.trace("image finished loading, ready to repaint\n{0}, infoflags: {1}"+
 			{
 Debug.trace("Is showing ", getHRef());
 //G***del Debug.trace("*********OEBImageView.imageUpdate(), SOMEBITS: "+(infoflags & SOMEBITS)+" ALLBITS: "+(infoflags & ALLBITS)+" FRAMEBITS: "+(infoflags & FRAMEBITS));	//G***del
+/*G***del; Debug no longer has a format trace method
 Debug.trace("image finished loading, ready to repaint\n{0}, infoflags: {1}"+
 		" isShowing: {2} finishedLoading: {3}\n parent: {4}\n parent parent: {5}"+
 		"\n parent parent parent: {6}"+
@@ -932,6 +933,7 @@ Debug.trace("image finished loading, ready to repaint\n{0}, infoflags: {1}"+
 				getContainer()
 			}
 		);
+*/
 				if(getContainer()!=null)  //G***testing
 				{
 Debug.trace("Have container ", getHRef());

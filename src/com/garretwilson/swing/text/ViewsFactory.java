@@ -21,7 +21,7 @@ public interface ViewsFactory extends ViewFactory
 	@param element The element the view or views will represent.
 	@param addViewList The list of views to which the views should be added.
 	*/
-	public void create(final Element element, final List addViewList);
+	public void create(final Element element, final List<View> addViewList);
 
 	/**Creates a view for the given element. This method can optionally indicate
 		multiple views are needed by returning <code>null</code>.

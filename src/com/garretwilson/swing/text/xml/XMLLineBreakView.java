@@ -1,21 +1,12 @@
 package com.garretwilson.swing.text.xml;
 
-/*G***bring back as needed
+import java.awt.Graphics;
 import java.awt.Shape;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.text.BreakIterator;
-import javax.swing.event.DocumentEvent;
-import javax.swing.text.*;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
-*/
-import javax.swing.text.Element;
-import javax.swing.text.Segment;
 
-/**View class that causes a line break. Meant to be a child view of
-	<code>XMLInlineView</code>.
-@see XMLInlineView
+import javax.swing.text.Element;
+import javax.swing.text.View;
+
+/**View that causes a line break.
 @author Garret Wilson
 */
 public class XMLLineBreakView extends XMLInlineView
@@ -27,29 +18,45 @@ public class XMLLineBreakView extends XMLInlineView
 	public XMLLineBreakView(Element element)
 	{
 		super(element);	//construct the parent class
-//G***del System.out.println("Creating view for element: "+element.getAttributes().getAttribute(StyleConstants.NameAttribute));	//G***del
-//G***del		StyleSheet sheet = getStyleSheet();
-//G***del	attr = sheet.getViewAttributes(this);
-//G***del		AttributeSet=new SimpleAttributeSet(element.getAttributes());	//G***testing
-
-//G***del		changedUpdate(null, null, null);	//G***testing
 	}
 
+	/**Performs no rendering for the line break view.
+	@param graphics The rendering surface to use.
+	@param allocation The allocated region to render into.
+	@see View#paint
+	*/
+	public void paint(Graphics graphics, Shape allocation) {}
 
-//TODO fix visibility---this doesn't turn off displaying of content, apparently
-
-	/**@return <code>false</code> to indicate that line breaks are not themselves visible.*/
-	public boolean isVisible()
+	/**Determines the preferred span for this view. Returns 0 for the X axis.
+	@param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS<code>).
+	@return The span the view would like to be rendered into.
+	@see View#getPreferredSpan
+	*/
+	public float getPreferredSpan(final int axis)
 	{
-		return false;	//show that line breaks views are not visibles G***does this change processing of line breaks?
+		return axis==X_AXIS ? 0 : super.getPreferredSpan(axis);  //return 0 for the X axis
 	}
 
-/*G***del; this doesn't work
-	public Segment getText(int p0, int p1)
+	/**Determines the minimum span for this view along an axis. Returns 0 for the X axis.
+	@param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS<code>).
+	@return The minimum span the view can be rendered into.
+	@see View#getMinimumSpan
+	*/
+	public float getMinimumSpan(int axis)
 	{
-		return new Segment(new char[]{'X'}, 0, 1);	//G***testing
+		return axis==X_AXIS ? 0 : super.getMinimumSpan(axis);  //return 0 for the X axis
 	}
-*/
+
+	/**Determines the maximum span for this view along an axis. Returns 0 for the X axis.
+	@param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS<code>).
+	@return The maximum span the view can be rendered into.
+	@see View#getMaximumSpan
+	*/
+	public float getMaximumSpan(int axis)
+	{
+		return axis==X_AXIS ? 0 : super.getMinimumSpan(axis);  //return 0 for the X axis
+	}
+
 
 	/**Forces a line break on the horizontal axis.
 	@param axis The axis to get the break weight for.
@@ -62,11 +69,12 @@ public class XMLLineBreakView extends XMLInlineView
 	{
 		if(axis==X_AXIS)	//if they want the break weight for the X axis
 		{
-//G***del System.out.println("<br> is trying to work by returning ForcedBreakWeight.");	//G***del
 			return ForcedBreakWeight;	//show that we're forcing a break on this axis
 		}
 		else	//if they want the break weight on the Y axis
+		{
 			return super.getBreakWeight(axis, pos, len);	//let our parent class determine the break weight
+		}
 	}
 
 }

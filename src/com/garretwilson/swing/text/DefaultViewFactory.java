@@ -60,7 +60,7 @@ public abstract class DefaultViewFactory implements ViewsFactory //G***maybe use
 	@param element The element the view or views will represent.
 	@param addViewList The list of views to which the views should be added.
 	*/
-	public void create(final Element element, final List addViewList)
+	public void create(final Element element, final List<View> addViewList)
 	{
 		final View view=create(element, true);  //create a view for the element, if we can, but get an indication of if there should be several views
 		if(view!=null)  //if there is only one view

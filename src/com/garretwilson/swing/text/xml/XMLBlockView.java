@@ -107,7 +107,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 									&& !XMLStyleUtilities.isXMLEmptyElement(childAttributeSet))
 							{
 		//G***del Debug.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElementName(attributeSet)); //G***del
-								childViewList.add(new XMLHiddenView(childElement));  //create a hidden view for the whitespace inline elements and add it to our list of views
+								childViewList.add(new InvisibleView(childElement));  //create a hidden view for the whitespace inline elements and add it to our list of views
 								continue;	//skip further processing of this child and go to the next one								
 		//G***fix	childViewList.add(viewFactory.create(childElement)); //create a view normally for the child element and add the view to our list
 		//G***fix							childViewList.add(new XMLParagraphView(childElement));  //G***testing
