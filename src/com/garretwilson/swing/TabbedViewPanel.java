@@ -6,6 +6,8 @@ import java.beans.PropertyChangeListener;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
+
+import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.DataViewable;
 
 /**Panel that allows multiple views of data to be displayed in separate tabs.
@@ -68,7 +70,7 @@ public abstract class TabbedViewPanel extends ContentPanel implements DataViewab
 
 		/**Retrieves a component tab for a given view.
 		@param view The view for which a tab should be returned; one of the
-		<code>BasicPanel.XXX_DATA_VIEW</code> values.
+		<code>DataViewable.XXX_DATA_VIEW</code> values.
 		@return The component that represents the given view, or <code>null</code>
 			if no tab component has been associated with the given view.
 		*/
@@ -83,7 +85,7 @@ public abstract class TabbedViewPanel extends ContentPanel implements DataViewab
 		/**Retrieves a view corresponding to a component tab.
 		@param component The component that represents a view.
 		@return The view represented by the given component (one of the
-		<code>BasicPanel.XXX_DATA_VIEW</code> values), or <code>BasicPanel.NO_DATA_VIEW</code>
+		<code>DataViewable.XXX_DATA_VIEW</code> values), or <code>DataViewable.NO_DATA_VIEW</code>
 			if there is no view associated with the given component
 		*/
 		protected int getComponentView(final Component component)
@@ -99,15 +101,126 @@ public abstract class TabbedViewPanel extends ContentPanel implements DataViewab
 		multiple components with a view or multiples views with a component will
 		likely result in errant functionality.</p>
 	@param view The view to associate with a component; one of the
-		<code>BasicPanel.XXX_DATA_VIEW</code> values.
+		<code>DataViewable.XXX_DATA_VIEW</code> values.
 	@param component The component in the tabbed pane that represents the given
 		view.
 	*/
-	public void setViewComponent(final int view, final Component component)
+	private void setViewComponent(final int view, final Component component)
 	{
 		final Integer viewObject=new Integer(view);	//create an integer object to represent the view
 		viewComponentMap.put(viewObject, component);	//associate the component with the view TODO maybe create a ReverseLookupHashMap that updates internally its own reverse lookup table
 		componentViewMap.put(component, viewObject);	//associate the view with the component		
+	}
+
+	/**Adds a tab to the tabbed pane representing a view of the data.
+	<p>An appropriate default icon is used for the given view if possible.
+		@param view The view to associate with a component; one of the
+		<code>DataViewable.XXX_DATA_VIEW</code> values.
+	@param title The title to be displayed on the tab.
+	@param component The component to be displayed on the tab that represents the
+		given view.
+	*/
+	public void addView(final int view, final String title, final Component component)
+	{
+		addView(view, title, component, null);	//add the view with a default icon and no tooltip
+	}
+
+	/**Adds a tab to the tabbed pane representing a view of the data.
+	<p>An appropriate default icon is used for the given view if possible.
+		@param view The view to associate with a component; one of the
+		<code>DataViewable.XXX_DATA_VIEW</code> values.
+	@param title The title to be displayed on the tab.
+	@param component The component to be displayed on the tab that represents the
+		given view.
+	@param tip The tooltip to be displayed on the tab, or <code>null</code> for no
+		tip.
+	*/
+	public void addView(final int view, final String title, final Component component, final String tip)
+	{
+		addView(view, title, component, tip, getTabbedPane().getTabCount());	//add the view as the last tab
+	}
+
+	/**Adds a tab to the tabbed pane representing a view of the data.
+	<p>An appropriate default icon is used for the given view if possible.
+		@param view The view to associate with a component; one of the
+		<code>DataViewable.XXX_DATA_VIEW</code> values.
+	@param title The title to be displayed on the tab.
+	@param component The component to be displayed on the tab that represents the
+		given view.
+	@param tip The tooltip to be displayed on the tab, or <code>null</code> for no
+		tip.
+	@param index The zero-based tab position at which to insert the new view.
+	*/
+	public void addView(final int view, final String title, final Component component, final String tip, final int index)
+	{
+		Icon icon=null;	//we'll try to determine an icon for the view
+		switch(view)	//see which view we have
+		{
+			case TREE_DATA_VIEW:
+				icon=IconResources.getIcon(IconResources.TREE_ICON_FILENAME);
+				break;
+			case GRAPH_DATA_VIEW:
+				//TODO add icon for graph data view
+				break;
+			case WYSIWYG_DATA_VIEW:
+				icon=IconResources.getIcon(IconResources.DOCUMENT_RICH_CONTENT_ICON_FILENAME);
+				break;
+			case SUMMARY_DATA_VIEW:
+				//TODO add icon for summary data view
+				break;
+			case SOURCE_DATA_VIEW:
+				icon=IconResources.getIcon(IconResources.MARKUP_ICON_FILENAME);
+				break;
+		}
+		addView(view, title, icon, component, tip, index);	//add the view with the default icon, if we found one
+	}
+
+	/**Adds a tab to the tabbed pane representing a view of the data.
+	@param view The view to associate with a component; one of the
+		<code>DataViewable.XXX_DATA_VIEW</code> values.
+	@param title The title to be displayed on the tab.
+	@param icon The icon to be displayed on the tab, or <code>null</code> for no
+		icon.
+	@param component The component to be displayed on the tab that represents the
+		given view.
+	*/
+	public void addView(final int view, final String title, final Icon icon, final Component component)
+	{
+		addView(view, title, icon, component, null);	//add the view with no tooltip
+	}
+
+	/**Adds a tab to the tabbed pane representing a view of the data.
+	@param view The view to associate with a component; one of the
+		<code>DataViewable.XXX_DATA_VIEW</code> values.
+	@param title The title to be displayed on the tab.
+	@param icon The icon to be displayed on the tab, or <code>null</code> for no
+		icon.
+	@param component The component to be displayed on the tab that represents the
+		given view.
+	@param tip The tooltip to be displayed on the tab, or <code>null</code> for no
+		tip.
+	*/
+	public void addView(final int view, final String title, final Icon icon, final Component component, final String tip)
+	{
+		addView(view, title, icon, component, tip, getTabbedPane().getTabCount());	//add the view as the last tab		
+	}
+
+	/**Adds a tab to the tabbed pane representing a view of the data.
+	@param view The view to associate with a component; one of the
+		<code>DataViewable.XXX_DATA_VIEW</code> values.
+	@param title The title to be displayed on the tab.
+	@param icon The icon to be displayed on the tab, or <code>null</code> for no
+		icon.
+	@param component The component to be displayed on the tab that represents the
+		given view.
+	@param tip The tooltip to be displayed on the tab, or <code>null</code> for no
+		tip.
+	@param index The zero-based tab position at which to insert the new view.
+	*/
+	public void addView(final int view, final String title, final Icon icon, final Component component, final String tip, final int index)
+	{
+		getTabbedPane().insertTab(title, icon, component, tip, index);	//add the component to the tabbed pane
+		setViewComponent(view, component);	//associate that component with the view
 	}
 
 	/**Default constructor.*/

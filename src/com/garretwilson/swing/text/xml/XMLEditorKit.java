@@ -11,7 +11,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.text.Document;
-import javax.swing.text.Element;
 import com.garretwilson.io.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.net.*;
@@ -28,8 +27,6 @@ import com.garretwilson.text.xml.oeb.*;	//G***del
 import com.garretwilson.text.xml.stylesheets.css.*;	//G***del if we don't need
 import com.garretwilson.util.*;
 import org.w3c.dom.*;
-import org.w3c.dom.css.*;
-//G***maybe import all the DOM classes
 
 /**An editor kit for XML.
 @author Garret Wilson
@@ -49,11 +46,14 @@ public class XMLEditorKit extends StyledEditorKit
 		*/
 		protected void setMediaType(final MediaType newMediaType) {mediaType=newMediaType;}
 
-	/**The default cursor to be used when moving items.*/
-	private static final Cursor MOVE_CURSOR=Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-
 	/**The default default cursor.*/
 	private static final Cursor DEFAULT_CURSOR=Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+
+	/**The default cursor to be used when moving items.*/
+	private static final Cursor DEFAULT_MOVE_CURSOR=Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+
+	/**The default cursor to be used when over links.*/
+	private static final Cursor DEFAULT_LINK_CURSOR=DEFAULT_MOVE_CURSOR;
 
 	/**The default cursor.*/
 	private Cursor defaultCursor=DEFAULT_CURSOR;
@@ -66,16 +66,26 @@ public class XMLEditorKit extends StyledEditorKit
 		*/
 		public void setDefaultCursor(final Cursor newDefaultCursor) {defaultCursor=newDefaultCursor;}
 
-	/**The cursor to show when over hyperlinks.*/
-	private Cursor linkCursor=MOVE_CURSOR;
+	/**The default cursor to show when over hyperlinks.*/
+	private Cursor defaultLinkCursor=DEFAULT_LINK_CURSOR;
 
-		/**@return The cursor to display when the mouse is over a link.*/
-		public Cursor getLinkCursor() {return linkCursor;}
+		/**@return The default cursor to display when the mouse is over a link.*/
+		public Cursor getDefaultLinkCursor() {return defaultLinkCursor;}
 
-		/**Sets the cursor used for hyperlink.
-		@param newDefaultCursor The cursor to display when the mouse is over a link.
+		/**Sets the default cursor used for hyperlink.
+		@param newDefaultCursor The cursor to display by default when the mouse is over a link.
 		*/
-		public void setLinkCursor(final Cursor newLinkCursor) {linkCursor=newLinkCursor;}
+		public void setDefaultLinkCursor(final Cursor newLinkCursor) {defaultLinkCursor=newLinkCursor;}
+
+		/**Determines the cursor to use when over a given link in a particular document.
+		@param xmlDocument The document in which the link appears.
+		@param uri The link for which a cursor should be obtained.
+		@return The cursor to display when the mouse is over the given link.
+		*/
+		public Cursor getLinkCursor(final XMLDocument xmlDocument, final URI uri)
+		{
+			return getDefaultLinkCursor();	//TODO load a custom cursor based upon the link's media type
+		}
 
 	/**The list of progress event listeners.*/
 	private EventListenerList progressListenerList=new EventListenerList();

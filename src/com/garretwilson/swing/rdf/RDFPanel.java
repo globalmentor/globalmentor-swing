@@ -123,10 +123,8 @@ public class RDFPanel extends TabbedViewPanel
 	{
 		super.initializeUI(); //do the default UI initialization
 		xmlTextPane.setEditable(false);	//don't let the text pane be edited
-		getTabbedPane().add(rdfScrollPane, "RDF"); //G**i18n
-		setViewComponent(TREE_DATA_VIEW, rdfScrollPane);	//associate the RDF component with the tree view
-		getTabbedPane().add(xmlScrollPane, "RDF+XML");  //G***i18n
-		setViewComponent(SOURCE_DATA_VIEW, xmlScrollPane);	//associate the XML component with the source view
+		addView(TREE_DATA_VIEW, "RDF", rdfScrollPane);	//add the RDF component as the tree view G***i18n
+		addView(SOURCE_DATA_VIEW, "RDF+XML", xmlScrollPane);	//add the XML component as the source view G***i18n
 		setDataView(TREE_DATA_VIEW);	//set the default view
 	}
 

@@ -127,7 +127,7 @@ Debug.trace("URI: ", uri);	//G***del
 										fireEntryExitEvents(editorPane, xmlDocument, currentURI, uri, element);	//fire the appropriate events for exiting and entering a link
 										currentURI=uri;	//update which link we're over
 										if(uri!=null)	//if we're now over a link
-											newCursor=editorKit.getLinkCursor();	//we'll show the link cursor
+											newCursor=editorKit.getLinkCursor(xmlDocument, uri);	//we'll show the appropriate link cursor
 									}
 									else  //if we're still over the same link
 									{
@@ -150,17 +150,6 @@ Debug.trace("URI: ", uri);	//G***del
 							fireEntryExitEvents(editorPane, xmlDocument, currentURI, null, null);	//fire the appropriate events for exiting and entering a link
 							currentURI=null; //show that we don't currently have a URI
 						}
-/*G***del when works
-						final String href=getLinkElementHRef(element);	//get the href for the element we're over (we don't know if this is a link element, so this may return null)
-//G***del Debug.trace("href: "+href);	//G***del
-						if(href!=currentHRef)	//if we're over a different link
-						{
-							fireEntryExitEvents(editorPane, xmlDocument, href);	//fire the appropriate events for exiting and entering a link
-							currentHRef=href;	//update which link we're over
-							if(href!=null)	//if we're now over a link
-								newCursor=editorKit.getLinkCursor();	//we'll show the link cursor
-						}
-*/
 					}
 					else	//if we're not over a different element
 						adjustCursor=false;	//don't adjust the cursor
