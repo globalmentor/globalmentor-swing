@@ -1,8 +1,6 @@
 package com.garretwilson.swing.text.xml;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.SizeRequirements;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.*;
@@ -10,9 +8,9 @@ import javax.swing.text.*;
 import com.garretwilson.swing.text.ContainerBoxView;
 import com.garretwilson.swing.text.ContainerView;
 import com.garretwilson.swing.text.FragmentViewFactory;
-import com.garretwilson.swing.text.SwingTextUtilities;
+import static com.garretwilson.swing.text.ViewUtilities.*;
+import static com.garretwilson.swing.text.SwingTextUtilities.*;
 import com.garretwilson.swing.text.ViewBreakStrategy;
-import com.garretwilson.swing.text.ViewsFactory;
 import com.garretwilson.swing.text.ViewReleasable;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSView;
@@ -549,10 +547,6 @@ Debug.trace(); //G***testing
 
 		public float getPreferredSpan(int axis)
 		{
-final float ps=super.getPreferredSpan(axis);
-final float ls=getLineSpacing();
-Debug.trace("preferred span", ps, "line spacing", ls);	//G***del
-			
 			return axis==Y_AXIS ? super.getPreferredSpan(axis)*getLineSpacing() : super.getPreferredSpan(axis);	//G***testing
 		}
 
@@ -615,51 +609,12 @@ Debug.trace("preferred span", ps, "line spacing", ls);	//G***del
 		*/
 		protected void loadChildren(ViewFactory viewFactory)
 		{
-//G***del Debug.trace("XMLParagraphView.LayoutView.loadChildren() in");
 		  if(viewFactory==null) //if there is no view factory, the parent view has somehow changed
 		    return; //don't create children
-		  final Element element=getElement(); //get the element for which we're loading child views
-//G***del Debug.trace("loading child views for element: ", XMLStyleUtilities.getXMLElementLocalName(element.getAttributes()));  //G***del
-		  int childElementCount=element.getElementCount();  //see how many child elements there are
-			if(childElementCount>0) //if there are child elements
-			{
-				final Element[] childElements=SwingTextUtilities.getChildElements(element);	//put our child elements into an array
-				final View[] addViewArray=createViews(childElements, viewFactory);	//create views for the child elements
-//G***del Debug.trace("XMLParagraphView.LayoutView.loadChildren() getting ready to add views: "+addViewArray.length);
-		    replace(0, getViewCount(), addViewArray);  //add the views to our view
-			}
-//G***del Debug.trace("XMLParagraphView.LayoutView.loadChildren() out");
+			final Element[] childElements=getChildElements(getElement());	//put our child elements into an array
+			final View[] views=createViews(childElements, viewFactory);	//create views for the child elements
+	    replace(0, getViewCount(), views);  //add the views to our view
     }
-
-		/**Creates views for the given elements.
-		<p>If the given view factory implements <code>ViewsFactory</code>, this
-			implementation will ask the views factory to create as many views as
-			needed for the entire element hierarchy, essentially collapsing all child
-			elements into a single level.</p> 
-		@param elements The elements for each of which one or more views should be
-			created.
-		@param viewFactory The view factory to use for creating views. For correct
-			formatting, this should be a <code>ViewsFactory</code>.
-		@return An array of views representing the given elements.
-		@see ViewsFactory
-		*/
-		protected View[] createViews(final Element[] elements, final ViewFactory viewFactory)
-		{
-			final List<View> viewList=new ArrayList<View>(elements.length); //create a new list in which to store views to add; we know there will be at least as many views as elements---maybe more
-			if(viewFactory instanceof ViewsFactory) //if this view factory knows how to create multiple views
-			{
-				final ViewsFactory viewsFactory=(ViewsFactory)viewFactory;  //cast the view factory to a views factory
-				for(int i=0; i<elements.length; ++i)  //look at each child element
-					viewsFactory.create(elements[i], viewList);  //create one or more views and add them to our list
-			}
-			else  //if this is a normal view factory
-			{
-				for(int i=0; i<elements.length; ++i)  //look at each child element
-					viewList.add(viewFactory.create(elements[i]));  //create a single view for this element and add it to our list
-			}
-			//create an array of views, making it the correct size (we now know how many views there will be), and placing the contents of the list into the array
-			return viewList.toArray(new View[viewList.size()]);
-		}
 
 		/**Updates the child views in response to receiving notification that the 
 			model changed, and there is change record for the element this view is

@@ -1,11 +1,11 @@
 package com.garretwilson.swing.text;
 
 import java.io.PrintStream;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.BoxView;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.Document;
-import javax.swing.text.View;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.text.*;
+
 import com.garretwilson.util.Debug;
 
 /**Utilities for manipulating views and view hierarchies.
@@ -15,8 +15,64 @@ public class ViewUtilities
 {
 
 	/**Default constructor.*/
-	public ViewUtilities() {} //G***do we want to allow the view utilities class to be instantiated?
+	private ViewUtilities() {}
 
+	/**Creates views for the given elements.
+	<p>If the given view factory implements <code>ViewsFactory</code>, this
+		implementation will ask the views factory to create as many views as
+		needed for the entire element hierarchy, essentially collapsing all child
+		elements into a single level.</p> 
+	@param elements The elements for each of which one or more views should be
+		created.
+	@param viewFactory The view factory to use for creating views. For correct
+		formatting, this should be a <code>ViewsFactory</code>.
+	@return An array of views representing the given elements.
+	@see ViewsFactory
+	*/
+	public static View[] createViews(final Element[] elements, final ViewFactory viewFactory)
+	{
+		final List<View> viewList=new ArrayList<View>(elements.length); //create a new list in which to store views to add; we know there will be at least as many views as elements---maybe more
+		if(viewFactory instanceof ViewsFactory) //if this view factory knows how to create multiple views
+		{
+			final ViewsFactory viewsFactory=(ViewsFactory)viewFactory;  //cast the view factory to a views factory
+			for(int i=0; i<elements.length; ++i)  //look at each child element
+			{
+				viewsFactory.create(elements[i], viewList);  //create one or more views and add them to our list
+			}
+		}
+		else  //if this is a normal view factory
+		{
+			for(int i=0; i<elements.length; ++i)  //look at each child element
+			{
+				viewList.add(viewFactory.create(elements[i]));  //create a single view for this element and add it to our list
+			}
+		}
+		//create an array of views, making it the correct size (we now know how many views there will be), and placing the contents of the list into the array
+		return viewList.toArray(new View[viewList.size()]);
+	}
+
+	/**Creates one or more views for the given element and adds them to the given list.
+	<p>If the given view factory implements <code>ViewsFactory</code>, this
+		implementation will ask the views factory to create as many views as
+		needed for the entire element hierarchy, essentially collapsing all child
+		elements into a single level.</p> 
+	@param elements The elements for which one or more views should be created.
+	@param viewFactory The view factory to use for creating views, preferably a <code>ViewsFactory</code>.
+	@param viewList The list of views to which the views should be added.
+	@see ViewsFactory
+	*/
+	public static void createViews(final Element element, final ViewFactory viewFactory, final List<View> viewList)
+	{
+		if(viewFactory instanceof ViewsFactory) //if this view factory knows how to create multiple views
+		{
+			final ViewsFactory viewsFactory=(ViewsFactory)viewFactory;  //cast the view factory to a views factory
+			viewsFactory.create(element, viewList);  //create one or more views and add them to our list
+		}
+		else  //if this is a normal view factory
+		{
+			viewList.add(viewFactory.create(element));  //create a single view for this element and add it to our list
+		}
+	}
 
 	/**Determines the logical parent of the view.
 	This returns the actual parent unless the view is a fragment,

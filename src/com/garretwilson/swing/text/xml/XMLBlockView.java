@@ -8,7 +8,8 @@ import javax.swing.text.*;
 
 import com.garretwilson.lang.CharSequenceUtilities;
 import com.garretwilson.swing.text.*;
-import com.garretwilson.swing.text.ContainerView;
+import static com.garretwilson.swing.text.SwingTextUtilities.*;
+import static com.garretwilson.swing.text.ViewUtilities.*;
 import com.garretwilson.swing.text.xml.css.*;
 import com.garretwilson.text.CharacterConstants;
 import com.garretwilson.text.xml.stylesheets.css.*;
@@ -65,52 +66,51 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 	*/
 	protected void loadChildren(final ViewFactory viewFactory)
 	{
-		final View[] createdViews=createBlockElementChildViews(getElement(), viewFactory);  //create the child views
-		replace(0, getViewCount(), createdViews);  //load our created views as children
+		final Element parentElement=getElement();	//get the parent element
+		final Element[] childElements=getChildElements(parentElement);	//put our child elements into an array
+		final View[] views=createBlockViews(parentElement, childElements, viewFactory);  //create the child views
+		replace(0, getViewCount(), views);  //load our created views as children
 	}
 
-	/**Creates child views of a block element.
+	/**Creates block views for given elements.
 		This is called by the <a href="#loadChildren">loadChildren</a> method as
 		well as other block-like classes such as tables.
 		Inline children will not be created normally but will be wrapped in one or
 		more anonymous views. Inline views consisting only of whitespace will be
 		given hidden views.
-	@param element The element representing a block view.
+	@param parentElement The element that will be used as the parent of any anonymous block children created.
+	@param elements The elements to convert to block elements and then create block views.
 	@param viewFactory The factory used to create child views.
-	@return An array of created child views, which may be empty if there are no
-		child elements or an invalid view factory was passed.
-	@see CompositeView#setParent
-	@see #loadChildren
+	@return An array of created child views, which may be empty if there are no elements or an invalid view factory was passed.
+	@see #getBlockElements(Element, Element[])
 	*/
-	public static View[] createBlockElementChildViews(final Element element, final ViewFactory viewFactory)
+	public static View[] createBlockViews(final Element parentElement, Element[] elements, final ViewFactory viewFactory)
 	{
 		if(viewFactory!=null) //if we have a view factory
 		{
-			final Document document=element.getDocument();  //get a reference to the document
-			final Element[] childElements=getChildElementsAsBlockElements(element);	//get the child elements, making sure they are all block elements
-			final int childElementCount=childElements.length;  //find out how many child elements there are
-			if(childElementCount>0)	//if there are child elements
+			final Document document=parentElement.getDocument();  //get a reference to the document
+			elements=getBlockElements(parentElement, elements);	//making sure all the elements are block elements
+			final int elementCount=elements.length;  //find out how many child elements there are
+			if(elementCount>0)	//if there are child elements
 			{
-				final List<View> childViewList=new ArrayList<View>(childElementCount);  //create a list in which to store elements, knowing that we won't have more views than child elements
-				for(int i=0; i<childElementCount; ++i)	//look at each of the child elements
+				final List<View> viewList=new ArrayList<View>(elementCount);  //create a list in which to store elements, knowing that we won't have more views than elements
+				for(int i=0; i<elementCount; ++i)	//look at each of the child elements
 				{
-					final Element childElement=childElements[i];	//get a reference to his child element
-					final AttributeSet childAttributeSet=childElement.getAttributes();	//get the attribute set of this child
-					if(childElementCount>1 && XMLCSSStyleUtilities.isAnonymous(childAttributeSet))	//if this is an anonymous element, but it's not the only child element
+					final Element element=elements[i];	//get a reference to this element
+					final AttributeSet attributeSet=element.getAttributes();	//get the attribute set of this element
+					if(elementCount>1 && XMLCSSStyleUtilities.isAnonymous(attributeSet))	//if this is an anonymous element, but it's not the only element
 					{
 						try
 						{
-							final String text=document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset());
-							//G***bring back for efficiency				  document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset(), segment);
+							final String text=document.getText(element.getStartOffset(), element.getEndOffset()-element.getStartOffset());
+							//TODO bring back for efficiency				  document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset(), segment);
 									//if there are no visible characters (or the end-of-element character mark), and this isn't really just an empty element
 							if(CharSequenceUtilities.notCharIndexOf(text, CharacterConstants.WHITESPACE_CHARS+CharacterConstants.CONTROL_CHARS+XMLDocument.ELEMENT_END_CHAR)<0	
-									&& !XMLStyleUtilities.isXMLEmptyElement(childAttributeSet))
+									&& !XMLStyleUtilities.isXMLEmptyElement(attributeSet))
 							{
 		//G***del Debug.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElementName(attributeSet)); //G***del
-								childViewList.add(new InvisibleView(childElement));  //create a hidden view for the whitespace inline elements and add it to our list of views
+								viewList.add(new InvisibleView(element));  //create a hidden view for the whitespace inline elements and add it to our list of views
 								continue;	//skip further processing of this child and go to the next one								
-		//G***fix	childViewList.add(viewFactory.create(childElement)); //create a view normally for the child element and add the view to our list
-		//G***fix							childViewList.add(new XMLParagraphView(childElement));  //G***testing
 							}
 						}
 						catch(BadLocationException badLocationException)  //if we tried to access an invalid location (this shouldn't happen unless there are problems internal to an element)
@@ -118,57 +118,52 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 							throw new AssertionError(badLocationException);  //report the error
 						}
 					}
-
-					childViewList.add(viewFactory.create(childElement)); //create a view normally for the child element and add the view to our list						
+					createViews(element, viewFactory, viewList); //create as many views as needed for the child element and add the views to our list						
 				}
-				return childViewList.toArray(new View[childViewList.size()]);  //convert the list of views to an array
+				return viewList.toArray(new View[viewList.size()]);  //convert the list of views to an array
 			}
 		}
 		return NO_VIEWS; //if there is no view factory (the parent view has somehow changed) or no elements, just return an empty array of views
 	}
 
-	/**Gathers child elements of a block element, ensuring that each child element
-		is a block element.
-		Inline child elements will be wrapped in one or more anonymous views.
-	@param element The element representing a block view.
-	@return A list of child elements, which may be empty if there are no
-		child elements.
-	@see CompositeView#setParent
-	@see #loadChildren
+	/**Ensures that each given element is a block element.
+	Inline child elements will be wrapped in one or more anonymous elements.
+	@param parentElement The element that will be used as the parent of any anonymous block children created.
+	@param elements The elements to convert to block elements.
+	@return A list of child elements, which may be empty if there are no child elements.
 	*/
-	public static Element[] getChildElementsAsBlockElements(final Element element)
+	public static Element[] getBlockElements(final Element parentElement, final Element[] elements)
 	{
-		final int childElementCount=element.getElementCount();  //find out how many child elements there are
-		if(childElementCount>0)	//if there are child elements
+		final int elementCount=elements.length;  //find out how many elements there are
+		if(elementCount>0)	//if there are elements
 		{
-			final Document document=element.getDocument();  //get a reference to the document
-			final List<Element> childElementList=new ArrayList<Element>(childElementCount);  //create a list in which to store elements, knowing that we won't have more views than child elements
-			final List<Element> inlineChildElementList=new ArrayList<Element>(childElementCount);  //create a list in which to store inline child elements; we know we'll never have more inline child elements than there are children of the original element
-			for(int childIndex=0; childIndex<childElementCount; ++childIndex) //look at each child element
+			final List<Element> elementList=new ArrayList<Element>(elementCount);  //create a list in which to store elements
+			final List<Element> inlineElementList=new ArrayList<Element>(elementCount);  //create a list in which to store inline child elements
+			for(int i=0; i<elementCount; ++i) //look at each child element
 			{
-				final Element childElement=element.getElement(childIndex);  //get a reference to this child element	
-				final AttributeSet childAttributeSet=childElement.getAttributes();	//get the attributes of the child element
-				final CSSStyleDeclaration childCSSStyle=XMLCSSStyleUtilities.getXMLCSSStyle(childAttributeSet); //get the CSS style of the element (this method make sure the attributes are present)
-					//see if this child element is inline (text is always inline, regardless of what the display property says)
-				final boolean childIsInline=XMLCSSUtilities.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName());
-				if(childIsInline) //if this is an inline child element
+				final Element element=elements[i];  //get a reference to this element	
+				final AttributeSet attributeSet=element.getAttributes();	//get the attributes of the element
+				final CSSStyleDeclaration cssStyle=XMLCSSStyleUtilities.getXMLCSSStyle(attributeSet); //get the CSS style of the element (this method make sure the attributes are present)
+					//see if this element is inline (text is always inline, regardless of what the display property says)
+				final boolean isInline=XMLCSSUtilities.isDisplayInline(cssStyle) || AbstractDocument.ContentElementName.equals(element.getName());
+				if(isInline) //if this is an inline child element
 				{
-					inlineChildElementList.add(childElement);  //add the child element to the inline element list
+					inlineElementList.add(element);  //add the element to the inline element list
 				}
 				else  //if this is a block element
 				{
-					if(inlineChildElementList.size()>0)	//if we've started but not finished an anonymous block, yet
+					if(inlineElementList.size()>0)	//if we've started but not finished an anonymous block, yet
 					{
-						childElementList.add(createAnonymousBlockElement(element, inlineChildElementList));	//create an anonymous block element and clear the list
+						elementList.add(createAnonymousBlockElement(parentElement, inlineElementList));	//create an anonymous block element and clear the list
 					}
-					childElementList.add(childElement); //add the child element normally
+					elementList.add(element); //add the child element normally
 				}
 			}
-			if(inlineChildElementList.size()>0)	//if we started an anonymous block but never finished it (i.e. the last child was inline)
+			if(inlineElementList.size()>0)	//if we started an anonymous block but never finished it (i.e. the last element was inline)
 			{
-				childElementList.add(createAnonymousBlockElement(element, inlineChildElementList));	//create an anonymous block element and clear the list
+				elementList.add(createAnonymousBlockElement(parentElement, inlineElementList));	//create an anonymous block element and clear the list
 			}
-			return childElementList.toArray(new Element[childElementList.size()]);  //convert the list of elements to an array
+			return elementList.toArray(new Element[elementList.size()]);  //convert the list of elements to an array
 		}
 		else	//if there are no child elements
 		{

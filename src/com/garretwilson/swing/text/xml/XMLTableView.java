@@ -17,6 +17,8 @@ import java.util.*; //G***del if not needed
 //G***del import com.garretwilson.swing.text.TestTableView; //G***del maybe
 import com.garretwilson.swing.text.AnonymousElement;
 import com.garretwilson.swing.text.DefaultViewFactory;
+import static com.garretwilson.swing.text.SwingTextUtilities.*;
+import static com.garretwilson.swing.text.ViewUtilities.*;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants;
@@ -614,8 +616,10 @@ return BadBreakWeight;  //G***testing
 	*/
 	protected void loadChildren(final ViewFactory viewFactory)
 	{
-		final View[] createdViews=XMLBlockView.createBlockElementChildViews(getElement(), viewFactory);  //create the child views
-		replace(0, 0, createdViews);  //load our created views as children
+		final Element parentElement=getElement();	//get the parent element
+		final Element[] childElements=getChildElements(parentElement);	//put our child elements into an array
+		final View[] views=XMLBlockView.createBlockViews(parentElement, childElements, viewFactory);  //create the child views
+		replace(0, getViewCount(), views);  //load our created views as children
 	}
 
 
@@ -1444,8 +1448,10 @@ System.out.println("XMLTableRowView.setSize(), width: "+width+" height: "+height
 	*/
 	protected void loadChildren(final ViewFactory viewFactory)
 	{
-		final View[] createdViews=XMLBlockView.createBlockElementChildViews(getElement(), viewFactory);  //create the child views
-		replace(0, 0, createdViews);  //load our created views as children
+		final Element parentElement=getElement();	//get the parent element
+		final Element[] childElements=getChildElements(parentElement);	//put our child elements into an array
+		final View[] views=XMLBlockView.createBlockViews(parentElement, childElements, viewFactory);  //create the child views
+		replace(0, getViewCount(), views);  //load our created views as children
 	}
 
 //G***TableView.TableRow methods for debugging

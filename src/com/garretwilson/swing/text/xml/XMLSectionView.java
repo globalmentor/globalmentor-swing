@@ -5,6 +5,7 @@ import java.util.*;
 import javax.mail.internet.ContentType;
 import javax.swing.event.*;
 import javax.swing.text.*;
+
 import com.garretwilson.swing.text.*;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
@@ -39,71 +40,41 @@ public class XMLSectionView extends XMLBlockView
 	*/
 	protected void loadChildren(final ViewFactory viewFactory)
 	{
-Debug.trace("section loading children");  //G***del
-/*G***fix
-//G***fix		((XMLDocument)getElement().getDocument()).applyxStyles();  //G***testing
-		super.loadChildren(viewFactory);  //load the children normally
-		final View[] createdViews=createBlockElementChildViews(getElement(), viewFactory);  //create the child views
-		replace(0, 0, createdViews);  //load our created views as children
-*/
-//G***del when works super.loadChildren(viewFactory);  //G***del
-
-			if(viewFactory==null) //if there is no view factory, we can't load the children
-				return; //we can't do anything
-			final int startOffset=getStartOffset(); //find out where we should start
-			final int endOffset=getEndOffset(); //find out where we should end
-Debug.trace("loading children for page pool, offsets "+startOffset+" to "+endOffset);
-
-
-/*G***fix
-				//G***testing; comment; eventually put in the view factory
-			final Element[] viewChildElements=getViewChildElements(startOffset, endOffset); //get the child elements that fall within our range
-			//create an anonymous element that simply holds the elements we just loaded
-			//this temporary element will go away after we've created views
-			final Element anonymousElement=new AnonymousElement(getElement(), null, viewChildElements, 0, viewChildElements.length);
-				//G***is it good to make an anonymous element simply for enumerating child elements to XMLBlockView?
-			final View[] createdViews=XMLBlockView.createBlockElementChildViews(anonymousElement, viewFactory);  //create the child views
-*/
-		final View[] createdViews=createChildViews(startOffset, endOffset, viewFactory);
-
-/*G***fix if needed
-				//G***testing last fake document view; comment
-			createdViews[createdViews.length-1]=new XMLHiddenView(viewChildElements[viewChildElements.length-1]);
-*/
-			this.replace(0, 0, createdViews);  //add the views as child views to this view pool (use this to show that we shouldn't use the XMLPagedView version)
-
+		if(viewFactory==null) //if there is no view factory, we can't load the children
+			return; //we can't do anything
+		final Element parentElement=getElement();	//get the parent element 
+		final Element[] childElements=getSectionChildElements(parentElement, getStartOffset(), getEndOffset()); //get the child elements that fall within our range
+		final View[] views=XMLBlockView.createBlockViews(parentElement, childElements, viewFactory);  //create the child views, ensuring they are block elements
+		replace(0, getViewCount(), views);  //add the views as child views to this view pool
 	}
 
-	/**Returns all child elements for which views should be created. If
-		a paged view holds multiple documents, for example, the children of those
+	/**Returns all child elements for which views should be created in a section.
+		If a section view holds multiple documents, for example, the children of those
 		document elements will be included. An XHTML document, furthermore, will
 		return the contents of its <code>&lt;body&gt;</code> element.
 		It is assumed that the ranges precisely enclose any child elements within
 		that range, so any elements that start within the given range will be
 		included.
-	@param newStartOffset This range's starting offset.
-	@param newEndOffset This range's ending offset.
-	@return An array of elements for which views should be created.
+	@param sectionElement The element representing a section.
+	@param startOffset This range's starting offset.
+	@param endOffset This range's ending offset.
+	@return An array of elements for which views should be created for a section.
 	*/
-	protected Element[] getViewChildElements(final int startOffset, final int endOffset)
+	public static Element[] getSectionChildElements(final Element sectionElement, final int startOffset, final int endOffset)
 	{
-			//TODO this is duplicated in XMLPagedView; make sure they are the same, and use some generic mehtod for both
-Debug.trace("Getting view child elements"); //G***del
-		final java.util.List viewChildElementList=new ArrayList();  //create a list in which to store the elements as we find them
-		final Element element=getElement(); //get a reference to our element
-		final int documentElementCount=element.getElementCount();  //find out how many child elements there are (representing XML documents)
+		final List<Element> elementList=new ArrayList<Element>();  //create a list in which to store the elements as we find them
+		final int documentElementCount=sectionElement.getElementCount();  //find out how many child elements there are (representing XML documents)
 			//look at each element representing an XML document, skipping the last dummy '\n' element, which does not represent a document
 		for(int documentElementIndex=0; documentElementIndex<documentElementCount-1; ++documentElementIndex)
 		{
-			final Element documentElement=element.getElement(documentElementIndex); //get a reference to this child element
-				//if this document starts within our range
-			if(documentElement.getStartOffset()>=startOffset && documentElement.getStartOffset()<endOffset)
+			final Element documentElement=sectionElement.getElement(documentElementIndex); //get a reference to this child element
+	    	//if this document's range overlaps with our range
+			if(documentElement.getStartOffset()<endOffset && documentElement.getEndOffset()>startOffset)
 			{
 				final AttributeSet documentAttributeSet=documentElement.getAttributes();  //get the attributes of the document element
 				if(XMLStyleUtilities.isPageBreakView(documentAttributeSet)) //if this is a page break element
 				{
-	Debug.trace("found page break view"); //G***del
-					viewChildElementList.add(documentElement);  //add this element to our list of elements; it's not a top-level document like the others G***this is a terrible hack; fix
+					elementList.add(documentElement);  //add this element to our list of elements; it's not a top-level document like the others TODO this is a terrible hack; fix
 				}
 				else
 				{
@@ -115,8 +86,8 @@ Debug.trace("Getting view child elements"); //G***del
 					final int childElementCount=documentElement.getElementCount();  //find out how many children are in the document
 					for(int childIndex=0; childIndex<childElementCount; ++childIndex)  //look at the children of the document element
 					{
-						final Element childElement=documentElement.getElement(childIndex); //get a reference to the child element
-						if(childElement.getStartOffset()>=startOffset && childElement.getStartOffset()<endOffset) //if this child element starts within our range
+						final Element childElement=documentElement.getElement(childIndex); //get a reference to the child element					  
+						if(childElement.getStartOffset()<endOffset && childElement.getEndOffset()>startOffset)	//if this child element's range overlaps with our range
 						{
 							final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child element's attributes
 							final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);  //get the child element local name
@@ -129,182 +100,24 @@ Debug.trace("Getting view child elements"); //G***del
 								{
 		Debug.trace("Adding body child element: ", bodyChildIndex);
 									final Element bodyChildElement=childElement.getElement(bodyChildIndex); //get this child element of the body element
-									if(bodyChildElement.getStartOffset()>=startOffset && bodyChildElement.getStartOffset()<endOffset) //if this child element starts within our range
-										viewChildElementList.add(bodyChildElement);  //add this body child element to our list of elements
-								}
-							}
-							else  //if this element is not an XHTML <body> element
-							{
-		Debug.trace("Adding child element: ", childIndex);
-								viewChildElementList.add(childElement);  //add this child element to our list of elements
-							}
-						}
-					}
-				}
-			}
-		}
-		viewChildElementList.add(element.getElement(documentElementCount-1));	//add the last element normally, as it is not a document at all but a dummy hierarchy added by Swing
-		return (Element[])viewChildElementList.toArray(new Element[viewChildElementList.size()]); //return the views as an array of views
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	/**Returns all child elements for which views should be created. If
-		a paged view holds multiple documents, for example, the children of those
-		document elements will be included. An XHTML document, furthermore, will
-		return the contents of its <code>&lt;body&gt;</code> element.
-		It is assumed that the ranges precisely enclose any child elements within
-		that range, so any elements that start within the given range will be
-		included.
-	@param newStartOffset This range's starting offset.
-	@param newEndOffset This range's ending offset.
-	@return An array of elements for which views should be created.
-	*/
-	protected View[] createChildViews(final int startOffset, final int endOffset, final ViewFactory viewFactory)
-	{
-final java.util.List viewList=new ArrayList();	//G***testing
-			//TODO this is duplicated in XMLPagedView; make sure they are the same, and use some generic mehtod for both
-Debug.trace("Getting view child elements"); //G***del
-		final java.util.List viewChildElementList=new ArrayList();  //create a list in which to store the elements as we find them
-		final Element element=getElement(); //get a reference to our element
-		final int documentElementCount=element.getElementCount();  //find out how many child elements there are (representing XML documents)
-			//look at each element representing an XML document, skipping the last dummy '\n' element, which does not represent a document
-		for(int documentElementIndex=0; documentElementIndex<documentElementCount-1; ++documentElementIndex)
-		{
-			final Element documentElement=element.getElement(documentElementIndex); //get a reference to this child element
-				//if this document starts within our range
-			if(documentElement.getStartOffset()>=startOffset && documentElement.getStartOffset()<endOffset)
-			{
-				final AttributeSet documentAttributeSet=documentElement.getAttributes();  //get the attributes of the document element
-				if(XMLStyleUtilities.isPageBreakView(documentAttributeSet)) //if this is a page break element
-				{
-	Debug.trace("found page break view"); //G***del
-					viewChildElementList.add(documentElement);  //add this element to our list of elements; it's not a top-level document like the others G***this is a terrible hack; fix
-				}
-				else
-				{
-//G***del if not needed final boolean isHTMLDocument=XHTMLSwingTextUtilities.isHTMLDocumentElement(documentAttributeSet);	//see if this is an HTML document
-	//G***del if not needed				Element baseElement=documentElement;  //we'll find out which element to use as the parent; in most documents, that will be the document element; in HTML elements, it will be the <body> element
-					final ContentType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet);  //get the media type of the document
-					final String documentElementLocalName=XMLStyleUtilities.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
-					final String documentElementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element local name
-					final int childElementCount=documentElement.getElementCount();  //find out how many children are in the document
-					for(int childIndex=0; childIndex<childElementCount; ++childIndex)  //look at the children of the document element
-					{
-						final Element childElement=documentElement.getElement(childIndex); //get a reference to the child element
-						if(childElement.getStartOffset()>=startOffset && childElement.getStartOffset()<endOffset) //if this child element starts within our range
-						{
-							final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child element's attributes
-							final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);  //get the child element local name
-		Debug.trace("Looking at child: ", childElementLocalName); //G***del
-								//if this element is an HTML <body> element 
-							if(XHTMLConstants.ELEMENT_BODY.equals(childElementLocalName) && XHTMLSwingTextUtilities.isHTMLElement(childAttributeSet, documentAttributeSet))  
-							{
-if(viewChildElementList.size()>0)
-{
-	final Element[] elements=(Element[])viewChildElementList.toArray(new Element[viewChildElementList.size()]);
-	for(int i=0; i<elements.length; ++i)
-	{
-		viewList.add(new InvisibleView(elements[i]));
-	}
-	viewChildElementList.clear();
-}
-
-
-								final int bodyChildElementCount=childElement.getElementCount(); //find out how many children the body element has
-								for(int bodyChildIndex=0; bodyChildIndex<bodyChildElementCount; ++bodyChildIndex) //look at each of the body element's children
-								{
-		Debug.trace("Adding body child element: ", bodyChildIndex);
-									final Element bodyChildElement=childElement.getElement(bodyChildIndex); //get this child element of the body element
-									if(bodyChildElement.getStartOffset()>=startOffset && bodyChildElement.getStartOffset()<endOffset) //if this child element starts within our range
-										viewChildElementList.add(bodyChildElement);  //add this body child element to our list of elements
-								}
-
-
-
-								if(viewChildElementList.size()>0)
-								{
-									final Element[] viewChildElements=(Element[])viewChildElementList.toArray(new Element[viewChildElementList.size()]);
-
-
-								//create an anonymous element that simply holds the elements we just loaded
-								//this temporary element will go away after we've created views
-								final Element anonymousElement=new AnonymousElement(getElement(), null, viewChildElements, 0, viewChildElements.length);
-									//G***is it good to make an anonymous element simply for enumerating child elements to XMLBlockView?
-								final View[] createdViews=XMLBlockView.createBlockElementChildViews(anonymousElement, viewFactory);  //create the child views
-									for(int i=0; i<createdViews.length; ++i)
+									if(bodyChildElement.getStartOffset()>=startOffset && bodyChildElement.getEndOffset()<endOffset) //if this child element falls within our range (we can't check for simply an overlap, because we have no way of breaking)
 									{
-										viewList.add(createdViews[i]);
+										elementList.add(bodyChildElement);  //add this body child element to our list of elements
 									}
-									viewChildElementList.clear();
 								}
 							}
 							else  //if this element is not an XHTML <body> element
 							{
-		Debug.trace("Adding child element: ", childIndex);
-								viewChildElementList.add(childElement);  //add this child element to our list of elements
+								elementList.add(childElement);  //add this child element to our list of elements
 							}
 						}
 					}
 				}
 			}
 		}
-		viewChildElementList.add(element.getElement(documentElementCount-1));	//add the last element normally, as it is not a document at all but a dummy hierarchy added by Swing
-
-
-		if(viewChildElementList.size()>0)
-		{
-			final Element[] elements=(Element[])viewChildElementList.toArray(new Element[viewChildElementList.size()]);
-				if(viewList.size()>0)	//if we've added views already (i.e. we've found body element
-				{
-					for(int i=0; i<elements.length; ++i)
-					{
-						viewList.add(new InvisibleView(elements[i]));
-					}
-					
-				}
-				else	//if there is no body
-				{
-					//create an anonymous element that simply holds the elements we just loaded
-					//this temporary element will go away after we've created views
-					final Element anonymousElement=new AnonymousElement(getElement(), null, elements, 0, elements.length);
-						//G***is it good to make an anonymous element simply for enumerating child elements to XMLBlockView?
-					final View[] createdViews=XMLBlockView.createBlockElementChildViews(anonymousElement, viewFactory);  //create the child views
-						for(int i=0; i<createdViews.length; ++i)
-						{
-							viewList.add(createdViews[i]);
-						}
-					
-				}
-		}
-
-
-
-
-		return (View[])viewList.toArray(new View[viewList.size()]); //return the views as an array of views
+		elementList.add(sectionElement.getElement(documentElementCount-1));	//add the last element normally, as it is not a document at all but a dummy hierarchy added by Swing TODO test
+		return (Element[])elementList.toArray(new Element[elementList.size()]); //return the views as an array of views
 	}
-
-
-
-
-
-
-
-
-
-
 
 
 		/**

@@ -1186,122 +1186,6 @@ return super.modelToView(pos, a, b);
 		
 	}
 
-
-
-	/**Returns all child elements for which views should be created. If
-	a paged view holds multiple documents, for example, the children of those
-	document elements will be included. An XHTML document, furthermore, will
-	return the contents of its <code>&lt;body&gt;</code> element.
-	It is assumed that the ranges precisely enclose any child elements within
-	that range, so any elements that start within the given range will be
-	included.
-@param newStartOffset This range's starting offset.
-@param newEndOffset This range's ending offset.
-@return An array of elements for which views should be created.
-*/
-protected Element[] getViewChildElements(final int startOffset, final int endOffset)
-{
-//G***del Debug.trace("Getting view child elements"); //G***del
-//G***del Debug.trace("start offset: ", startOffset); //G***del
-//G***del Debug.trace("end offset: ", endOffset); //G***del
-	final java.util.List viewChildElementList=new ArrayList();  //create a list in which to store the elements as we find them
-	final Element element=getElement(); //get a reference to our element
-	final int documentElementCount=element.getElementCount();  //find out how many child elements there are (representing XML documents)
-	for(int documentElementIndex=0; documentElementIndex<documentElementCount; ++documentElementIndex) //look at each element representing an XML document
-	{
-Debug.trace("looking at document: ", documentElementIndex); //G***del
-	  final Element documentElement=element.getElement(documentElementIndex); //get a reference to this child element
-Debug.trace("document start offset: ", documentElement.getStartOffset()); //G***del
-Debug.trace("document end offset: ", documentElement.getEndOffset()); //G***del
-	    //if this document's range overlaps with our range
-//G***del; only takes care of one case of overlapping			if(documentElement.getStartOffset()>=startOffset && documentElement.getStartOffset()<endOffset)
-		if(documentElement.getStartOffset()<endOffset && documentElement.getEndOffset()>startOffset)
-	  {
-Debug.trace("document within our range"); //G***del
-			final AttributeSet documentAttributeSet=documentElement.getAttributes();  //get the attributes of the document element
-Debug.trace("document attribute set", documentAttributeSet); //G***del
-			if(XMLStyleUtilities.isPageBreakView(documentAttributeSet)) //if this is a page break element
-			{
-Debug.trace("found page break view"); //G***del
-				viewChildElementList.add(documentElement);  //add this element to our list of elements; it's not a top-level document like the others G***this is a terrible hack; fix
-			}
-			else
-			{
-//G***del if not needed				Element baseElement=documentElement;  //we'll find out which element to use as the parent; in most documents, that will be the document element; in HTML elements, it will be the <body> element
-//G***del					final MediaType documentMediaType=XMLStyleConstants.getMediaType(documentAttributeSet);  //get the media type of the document
-//G***del					final String documentElementLocalName=XMLStyleConstants.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
-//G***del					final String documentElementNamespaceURI=XMLStyleConstants.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element local name
-				final int childElementCount=documentElement.getElementCount();  //find out how many children are in the document
-				for(int childIndex=0; childIndex<childElementCount; ++childIndex)  //look at the children of the document element
-				{
-					final Element childElement=documentElement.getElement(childIndex); //get a reference to the child element
-
-//G***del; only accounts for one case of overlapping						if(childElement.getStartOffset()>=startOffset && childElement.getStartOffset()<endOffset) //if this child element starts within our range
-					  //if this child element's range overlaps with our range
-					if(childElement.getStartOffset()<endOffset && childElement.getEndOffset()>startOffset)
-					{
-						final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child element's attributes
-						final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);  //get the child element local name
-//G***del Debug.trace("Looking at child: ", childElementLocalName); //G***del
-//G***del							boolean isHTMLBody=false; //we'll determine if this element is a <body> element of XHTML
-						if(XHTMLConstants.ELEMENT_BODY.equals(childElementLocalName))  //if this element is <body>
-						{
-/*G***del
-							//we'll determine if this body element is HTML by one of following:
-							//  * the element is in the XHTML or OEB namespace
-							//  * the element is in no namespace but the document is of type text/html or text/x-oeb1-document
-							//  * the element is in no namespace and the document element is
-							//      an <html> element in the XHTML or OEB namespace
-							final String childElementNamespaceURI=XMLStyleConstants.getXMLElementNamespaceURI(childAttributeSet);  //get the child element local name
-							if(childElementNamespaceURI!=null)  //if the body element has a namespace
-							{
-									//if it's part of the XHTML or OEB namespace
-								if(XHTMLConstants.XHTML_NAMESPACE_URI.equals(childElementNamespaceURI)
-										|| OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(childElementNamespaceURI))
-									isHTMLBody=true;  //show that this is an HTML body element
-							}
-							else  //if the body element has no namespace
-							{
-									//if the document type is text/html or text/x-oeb1-document
-								if(documentMediaType!=null && (documentMediaType.match(MediaType.TEXT_HTML) || documentMediaType.match(MediaType.TEXT_X_OEB1_DOCUMENT)))
-									isHTMLBody=true;  //is an HTML body element
-								else if(XHTMLConstants.ELEMENT_HTML.equals(documentElementLocalName)  //if the document element is an XHTML or OEB <html> element
-										&& (XHTMLConstants.XHTML_NAMESPACE_URI.equals(documentElementNamespaceURI) || OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(documentElementNamespaceURI)))
-									isHTMLBody=true;  //is an HTML body element
-							}
-						}
-						if(isHTMLBody)  //if this element is an XHTML <body> element
-						{
-*/
-							if(XHTMLSwingTextUtilities.isHTMLElement(childAttributeSet, documentAttributeSet)) //if this is an HTML element
-							{
-//G***del Debug.trace("is HTML body");  //G***del
-								final int bodyChildElementCount=childElement.getElementCount(); //find out how many children the body element has
-								for(int bodyChildIndex=0; bodyChildIndex<bodyChildElementCount; ++bodyChildIndex) //look at each of the body element's children
-								{
-//G***del Debug.trace("Adding body child element: ", bodyChildIndex);
-									final Element bodyChildElement=childElement.getElement(bodyChildIndex); //get this child element of the body element
-									if(bodyChildElement.getStartOffset()>=startOffset && bodyChildElement.getStartOffset()<endOffset) //if this child element starts within our range G***should we merely check for overlaps here?
-										viewChildElementList.add(bodyChildElement);  //add this body child element to our list of elements
-								}
-							}
-						}
-						else  //if this element is not an XHTML <body> element
-						{
-//G***del 		Debug.trace("Adding child element: ", childIndex);
-							viewChildElementList.add(childElement);  //add this child element to our list of elements
-						}
-					}
-				}
-			}
-	  }
-	}
-  return (Element[])viewChildElementList.toArray(new Element[viewChildElementList.size()]); //return the views as an array of views
-}
-
-
-
-
 /**
  * Lays out the children.  If the span along the flow
  * axis has changed, layout is marked as invalid which
@@ -1751,17 +1635,11 @@ return v;
 		{
 			if(viewFactory==null) //if there is no view factory, we can't load the children
 				return; //we can't do anything
-			final int startOffset=getStartOffset(); //find out where we should start
-			final int endOffset=getEndOffset(); //find out where we should end
 	//G***del Debug.trace("loading children for page pool, offsets "+startOffset+" to "+endOffset);
-			  //G***testing; comment; eventually put in the view factory
-			final Element[] viewChildElements=getViewChildElements(startOffset, endOffset); //get the child elements that fall within our range
-		  //create an anonymous element that simply holds the elements we just loaded
-			//this temporary element will go away after we've created views
-		  final Element anonymousElement=new AnonymousElement(getElement(), null, viewChildElements, 0, viewChildElements.length);
-				//G***is it good to make an anonymous element simply for enumerating child elements to XMLBlockView?
-			final View[] createdViews=XMLBlockView.createBlockElementChildViews(anonymousElement, viewFactory);  //create the child views
-			this.replace(0, 0, createdViews);  //add the views as child views to this view pool (use this to show that we shouldn't use the XMLPagedView version)
+			final Element parentElement=getElement();	//get the parent element 
+			final Element[] childElements=XMLSectionView.getSectionChildElements(parentElement, getStartOffset(), getEndOffset()); //get the child elements that fall within our range
+			final View[] views=XMLBlockView.createBlockViews(parentElement, childElements, viewFactory);  //create the child views, ensuring they are block elements
+			replace(0, getViewCount(), views);  //add the views as child views to this view pool
 		}
     
 		/**Forward the document event to the given child view.

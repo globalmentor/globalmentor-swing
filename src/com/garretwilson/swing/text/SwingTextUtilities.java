@@ -41,7 +41,7 @@ public class SwingTextUtilities
 	@see Element#getElementCount()
 	@see Element#getElement(int)
 	*/
-	public static Element[] getChildElements(final Element parentElement)
+	public static Element[] getChildElements(final Element parentElement)	//TODO maybe create a NO_ELEMENTS array to speed up the special case of no child elements
 	{
 		final Element[] childElements=new Element[parentElement.getElementCount()];	//create an array of elements in which to place the child elements	 
 		for(int i=childElements.length-1; i>=0; --i)	//look at each child element
