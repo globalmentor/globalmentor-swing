@@ -273,7 +273,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 			super("Previous");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Previous step");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Go to the previous step.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('p'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.HAND_POINT_LEFT_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -295,7 +295,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 			super("Next");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Next step");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Go to the next step.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('n'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_N));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.HAND_POINT_RIGHT_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -318,7 +318,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 			super("Finish");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Finish sequence");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Finish the sequence.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('f'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_F));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.EXIT_ICON_FILENAME)); //load the correct icon
 		}
 

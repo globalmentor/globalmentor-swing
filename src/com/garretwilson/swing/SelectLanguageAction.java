@@ -83,7 +83,7 @@ public class SelectLanguageAction extends AbstractAction
 		this.parentComponent=parentComponent;	//set the parent component
 		putValue(SHORT_DESCRIPTION, "Select language");	//set the short description G***i18n
 		putValue(LONG_DESCRIPTION, "Select the language.");	//set the long description G***i18n
-		putValue(MNEMONIC_KEY, new Integer('l'));  //set the mnemonic key G***i18n
+		putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_L));  //set the mnemonic key G***i18n
 		putValue(SMALL_ICON, IconResources.getIcon(IconResources.GLOBE_ICON_FILENAME)); //load the correct icon G***use a better icon
 		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_L, Event.CTRL_MASK)); //add the accelerator
 	}

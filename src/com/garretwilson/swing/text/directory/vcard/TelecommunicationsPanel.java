@@ -282,7 +282,7 @@ public class TelecommunicationsPanel extends ContentPanel
 			super("Phone");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Add a telephone");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Add a new telephone number.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('p'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.PHONE_ICON_FILENAME)); //load the correct icon
 		}
 	
@@ -310,7 +310,7 @@ public class TelecommunicationsPanel extends ContentPanel
 			super("Email");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Add an email");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Add a new email address.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('e'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_E));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.EMAIL_ICON_FILENAME)); //load the correct icon
 		}
 	

@@ -2,6 +2,7 @@ package com.garretwilson.swing.text.directory.vcard;
 
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import javax.swing.JTabbedPane;
 import com.garretwilson.model.Model;
 import com.garretwilson.swing.*;
 import com.garretwilson.text.directory.vcard.*;
@@ -176,6 +177,7 @@ public class VCardPanel extends TabbedViewPanel implements Verifiable
 		addView(EXPLANATORY_MODEL_VIEW, "Explanatory", explanatoryPanel);	//G***i18n
 		setDefaultDataView(NAME_ADDRESS_MODEL_VIEW);	//set the name/address view as the default view
 		super.initializeUI(); //do the default UI initialization
+		getTabbedPane().setTabPlacement(JTabbedPane.TOP);	//place the tabs at the top of the panel
 	}
 
 	/**@return An array of actions to use in a toolbar, with any

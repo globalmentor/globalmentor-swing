@@ -1,7 +1,7 @@
 package com.garretwilson.swing;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.rdf.*;
@@ -211,7 +211,7 @@ public class AboutPanel extends BasicPanel implements CharacterConstants
 			super("Properties...");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "View properties.");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "View the metadata properties.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('p'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.PROPERTY_ICON_FILENAME)); //load the correct icon
 		}
 

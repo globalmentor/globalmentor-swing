@@ -15,7 +15,7 @@ import com.garretwilson.util.Debug;
 /**Main frame parent class for a multiple document interface (MDI) application.
 @author Garret Wilson
 */
-public abstract class MDIApplicationFrame extends ApplicationFrame
+public abstract class MDIApplicationFrame extends ObsoleteApplicationFrame
 {
 
 	//window menu identifiers

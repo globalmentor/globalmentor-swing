@@ -1506,7 +1506,7 @@ Debug.trace("ready to start clip.");
 			super("Back");	//create the base class G***Int
 			putValue(SHORT_DESCRIPTION, "Back");	//set the short description G***Int
 			putValue(LONG_DESCRIPTION, "Go back to the previous location in the book.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer('b'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_B));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.BACK_VERSION_ICON_FILENAME)); //load the correct icon
 		  putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Event.ALT_MASK)); //add the accelerator
 		}
@@ -1530,7 +1530,7 @@ Debug.trace("ready to start clip.");
 			super("Close");	//create the base class G***Int
 			putValue(SHORT_DESCRIPTION, "Close the open eBook");	//set the short description G***Int
 			putValue(LONG_DESCRIPTION, "Close the currently open eBook.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer('c'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.BOOK_CLOSED_ICON_FILENAME)); //load the correct icon
 		  putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.CTRL_MASK)); //add the accelerator
 		}
@@ -1554,7 +1554,7 @@ Debug.trace("ready to start clip.");
 			super("Copy");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Copy selected text.");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Copy the selected text to the clipboard.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('c'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key G***i18n
 		  putValue(SMALL_ICON, IconResources.getIcon(IconResources.COPY_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -1580,7 +1580,7 @@ Debug.trace("ready to start clip.");
 			super("Define \""+word+"\"");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "View the definition of \""+word+"\".");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "View the definition of \""+word+"\".");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('d'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_D));  //set the mnemonic key G***i18n
 		  putValue(SMALL_ICON, IconResources.getIcon(IconResources.BOOK_QUESTION_ICON_FILENAME)); //load the correct icon
 		  text=word; //store the reference to the word
 		}
@@ -1671,7 +1671,7 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 			super("Insert Bookmark...");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Insert a bookmark.");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Insert a bookmark at the current location in the book.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('b'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_B));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.BOOKMARK_ICON_FILENAME)); //load the correct icon
 		  bookmarkPos=pos;  //store the position of the bookmark
 		}
@@ -1733,7 +1733,7 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 			super("Insert Highlighted Annotation");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Insert a highlighted annotation.");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Insert a highlighted annotation at the current selection in the book.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('h'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_H));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.PAINT_ICON_FILENAME)); //load the correct icon
 /*G***del
 		  highlightStartPos=startPos;  //store the starting position of the highlight
@@ -1780,7 +1780,7 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 			super("Previous Page");	//create the base class G***Int
 			putValue(SHORT_DESCRIPTION, "Previous Page");	//set the short description G***Int
 			putValue(LONG_DESCRIPTION, "Turn to the previous page in the book.");	//set the long description G***Int
-//G***fix			putValue(MNEMONIC_KEY, new Integer('p'));  //set the mnemonic key G***i18n
+//G***fix			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.HAND_POINT_LEFT_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -1803,7 +1803,7 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 			super("Next Page");	//create the base class G***Int
 			putValue(SHORT_DESCRIPTION, "Next Page");	//set the short description G***Int
 			putValue(LONG_DESCRIPTION, "Turn to the next page in the book.");	//set the long description G***Int
-//G***fix			putValue(MNEMONIC_KEY, new Integer('p'));  //set the mnemonic key G***i18n
+//G***fix			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_N));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.HAND_POINT_RIGHT_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -1826,7 +1826,7 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 			super("Properties...");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "View properties.");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "View the document metadata properties.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('p'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key G***i18n
 		  putValue(SMALL_ICON, IconResources.getIcon(IconResources.PROPERTY_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -1861,7 +1861,7 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 			super("View Image");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "View the image.");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "View the image in a separate window.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('i'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_I));  //set the mnemonic key G***i18n
 		  putValue(SMALL_ICON, IconResources.getIcon(IconResources.IMAGE_ICON_FILENAME)); //load the correct icon
 		  imageHRef=href; //store the reference to the image
 		}

@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
 import java.io.*;
+import java.util.Iterator;
 import java.util.prefs.*;
 import javax.swing.*;
 import com.garretwilson.awt.*;
@@ -27,6 +28,9 @@ import com.garretwilson.util.prefs.*;
 <p>This class allows a default set of frame preferences to be accessed.</p> 
 <p>The class automatically remembers and restores its bounds by storing them
 	in preferences.</p>
+<p>The panel keeps a lazily-created manager that manages menu and tool actions.
+	These actions will automatically be merged with whatever actions are provided
+	by the content pane before creating a menu bar.</p>
 <p>The frame does not actually update its title unless the title text is
 	actually changing.</p>
 <p>The class maintains a lazily-created property change listener that knows
@@ -53,6 +57,19 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 	{
 		return Preferences.userNodeForPackage(getClass());	//return the user preferences node for whatever class extends this one 
 	}
+
+	/**The lazily-created manager of menu and tool actions.*/
+	private ActionManager actionManager;
+
+		/**@return The lazily-created manager of menu and tool actions.*/
+		public ActionManager getActionManager()
+		{
+			if(actionManager==null)	//if we haven't yet created an action manager
+			{
+				actionManager=new ActionManager();	//create a new action manager
+			}
+			return actionManager;	//return the action manager
+		}
 
 	/**The component that hsould get the default focus, or <code>null</code> if unknown.*/
 	private Component defaultFocusComponent;
@@ -250,6 +267,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 	public BasicFrame(final String title, final Container contentPane, final boolean initialize)
 	{
 		super(title);	//construct the parent class with this title, making sure we don't pass null (JFrame sometimes allows null titles, other times it converts them to the empty string)
+		actionManager=null;	//default to no action manager until one is asked for
 		  //don't do anything automatically on close; we'll handle responding to close events
 		super.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);	//tell the parent to set its default close operation G***this implementation depends on the fact that the super class doesn't use the accessor methods---that's probably dangerous
 		enableEvents(AWTEvent.WINDOW_EVENT_MASK); //enable window events, so that we can respond to close events
@@ -320,7 +338,71 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
   protected void initializeUI()
   {
 		setTitle(constructTitle());  //update the title
+		ActionManager actionManager=getActionManager();	//get our action manager
+		final Container contentPane=getContentPane();	//get the content pane
+		if(contentPane instanceof BasicPanel)	//if the content pane is a basic panel TODO use some more generic method, such as checking for an ActionManageable interface or something
+		{
+			actionManager=actionManager.merge(((BasicPanel)contentPane).getActionManager());	//merge with the the content pane's action manager
+		}
+			//set up the menu bar
+				//TODO put this in some convenience method, maybe---or maybe not, if the code is specific to frames
+		final Iterator menuActionIterator=actionManager.getMenuActionIterator();	//get the iterator to top-level menu actions
+		if(menuActionIterator!=null)	//if there are top-level menu actions
+		{
+			final JMenuBar menuBar=new JMenuBar();  //create a menu bar
+			while(menuActionIterator.hasNext())	//while there are more actions
+			{
+				final Action action=(Action)menuActionIterator.next();	//get the next action
+				final JMenuItem menuItem=createMenuItem(action, actionManager, true);	//create a menu item for this top-level menu action
+				menuBar.add((JMenu)menuItem);	//add the menu (we know it's a menu, because we specified that this is a top-level menu action) to the menu bar
+			}
+			setJMenuBar(menuBar);	//set the menu bar
+		}
   }
+
+	/**Creates a menu item to represent the given action. If the given action
+		manager contains child actions for the given action, a menu will be
+		created and the child actions will be recursively added to the menu.
+	@param action The action to be represented with a menu or menu item.
+	@param actionManager The manager that contains any children actions for the
+		given parent.
+	@param isTopLevel Whether this action represents the top level in the manu
+		hierarchy, and thus a menu should unconditionally be created rather than
+		a single menu item.
+	@return A complete menu or a menu item to represent the given action and any
+		chilren. 
+	*/
+	protected static JMenuItem createMenuItem(final Action action, final ActionManager actionManager, final boolean isTopLevel)
+	{
+		final Iterator menuActionIterator=actionManager.getMenuActionIterator(action);	//get the iterator to children, if any, of the parent action
+		if(isTopLevel || menuActionIterator!=null)	//if the parent action has children, or if the action is a top-level action
+		{
+			final JMenu menu=new JMenu(action);	//create a new menu from the action
+			if(menuActionIterator!=null)	//if we have child actions (we might not if this is a top-level menu action)
+			{
+				while(menuActionIterator.hasNext())	//while there are more actions
+				{
+					final Action childAction=(Action)menuActionIterator.next();	//get the next child action
+					final JMenuItem childMenuItem=createMenuItem(childAction, actionManager, false);	//create a new menu item and/or child menu items for the action, specifying that this is not a top-level action
+					menu.add(childMenuItem);	//add the child menu item
+				}
+			}
+			return menu;	//show that we created a complete menu to represent the action
+		}
+		else	//if there are no children actions
+		{
+			return createMenuItem(action);	//just create a normal menu item from the action
+		}
+	}
+
+	/**Creates a single menu item&mdash;not a menu&mdash;from the given action.
+	@param action The action for which a menu item should be created.
+	@return A new menu item to represent the action.
+	*/
+	protected static JMenuItem createMenuItem(final Action action)
+	{
+		return new JMenuItem(action);	//create and return a new menu item from the action
+	}
 
 	/**Updates the states of the actions, including enabled/disabled status,
 		proxied actions, etc.

@@ -1,24 +1,32 @@
 package com.garretwilson.swing;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Event;
 import java.awt.event.*;
 import java.io.*;
-import java.net.*;
 import javax.swing.*;
-import com.garretwilson.io.*;
-import com.garretwilson.lang.ObjectUtilities;
 import com.garretwilson.model.*;
-import com.garretwilson.rdf.DefaultRDFResource;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.*;
 
 /**An abstract class that manages resources, their views, and their modified
-	states.
+	states. This class does not actually change the displayed component in any
+	container, relying on some other class to perform that function in response
+	to a change in resource component state.
+<p>Bound properties:</p>
+<dl>
+	<dt><code>RESOURCE_COMPONENT_STATE_PROPERTY</code> (<code>ResourceComponentManager.ResourceComponentState</code>)</dt>
+	<dd>Indicates that the resource component state has been changed.</dd>
+</dl>
+@see ResourceComponentManager#ResourceComponentState
 @author Garret Wilson
 */
-public abstract class ResourceComponentManager extends DefaultURIAccessible
+public abstract class ResourceComponentManager extends BoundPropertyObject
 {
-	
+
+	/**The property indicating the current resource and component.*/
+	public final static String RESOURCE_COMPONENT_STATE_PROPERTY="resourceComponentState";
+
 	/**The action for opening a resource.*/
 	private final Action openAction;
 
@@ -35,67 +43,52 @@ public abstract class ResourceComponentManager extends DefaultURIAccessible
 		*/
 		public Action getSaveAction() {return saveAction;}
 
-	/**The container that hosts the resource views.*/
-	private final Container container;
+	/**The component to serve as a parent for file dialogs.*/
+	private final Component parentComponent;
 
-		/**@return The container that hosts the resource views.*/
-		public Container getContainer() {return container;}
+		/**@return The component to serve as a parent for file dialogs.*/
+		protected Component getParentComponent() {return parentComponent;}
+
+	/**The implementation for selecting resources.*/
+	private final ResourceSelector resourceSelector;
+
+		/**@return The implementation for selecting resources.*/
+		public ResourceSelector getResourceSelector() {return resourceSelector;}
 
 	/**The state of the resource and its view.*/
 	private ResourceComponentState resourceComponentState;
 
 		/**@return The state of the resource and its view.*/
-		protected ResourceComponentState getResourceViewState() {return resourceComponentState;}
+		protected ResourceComponentState getResourceComponentState() {return resourceComponentState;}
 
 		/**Sets the state of the resource and its view.
 		<p>The component will be added appropriately to the parent component.</p>
-//TODO		This is a bound property.
+		This is a bound property.
 		@param newResourceComponentState The new state of the resource and its view.
 		@see #getParentComponent()
 		*/
 		public void setResourceComponentState(final ResourceComponentState newResourceComponentState)
 		{
-			final ResourceComponentState oldResourceViewState=resourceComponentState; //get the old value
-			if(oldResourceViewState!=newResourceComponentState)  //if the value is really changing
+			final ResourceComponentState oldResourceComponentState=resourceComponentState; //get the old value
+			if(oldResourceComponentState!=newResourceComponentState)  //if the value is really changing
 			{
 				resourceComponentState=newResourceComponentState; //update the value
-					//TODO fix all this to be robust and generic
-				((ContentPanel)getContainer()).setContentComponent(newResourceComponentState.getComponent());	//G***fix; testing
-/*G***fix
-				if(oldResourceViewState!=null)	//if there was an old resource component state TODO fix so that it works when we switch to no view state
-				{
-					getContainer().remove(oldResourceViewState.getComponent());	//remove the old component
-				}
-				if(newResourceComponentState!=null)	//if we now have a resource component state
-				{
-					container.add(newResourceComponentState.getComponent(), BorderLayout.CENTER);	//show the new component
-				}
-*/
+				getSaveAction().setEnabled(newResourceComponentState!=null);	//only enable the save action when there is a component open
 					//show that the property has changed
-//TODO make the resource view state bound, if needed				firePropertyChange(Model.MODEL_PROPERTY, oldModel, newModel);
+				firePropertyChange(RESOURCE_COMPONENT_STATE_PROPERTY, oldResourceComponentState, newResourceComponentState);
 			}
 		}
 
-	/**Container constructor with default access to URIs.
-	@param parentContainer The component that hosts the resource views.
+	/**Parent component and resource selector constructor
+	@param parentComponent The component to serve as a parent for error messages.
+	@param resourceSelector The implementation to use for selecting resources.
 	*/
-	public ResourceComponentManager(final Container container)
+	public ResourceComponentManager(final Component parentComponent, final ResourceSelector resourceSelector)
 	{
-		this(container, null, null);	//use the default accessibility to URIs
-	}
-
-	/**Container and URI accessibility constructor.
-	@param container The container that hosts the resource views.
-	@param uriInputStreamable The implementation to use for accessing a URI for
-		input, or <code>null</code> if the default implementation should be used.
-	@param uriOutputStreamable The implementation to use for accessing a URI for
-		output, or <code>null</code> if the default implementation should be used.
-	*/
-	public ResourceComponentManager(final Container container, final URIInputStreamable uriInputStreamable, final URIOutputStreamable uriOutputStreamable)
-	{
-		super(uriInputStreamable, uriOutputStreamable);	//construct the parent class
-		this.container=container;	//save the container 
+		this.parentComponent=parentComponent;	//save the parent component
+		this.resourceSelector=resourceSelector;	//save the resource selector 
 		saveAction=new SaveAction();  //create the save action
+		saveAction.setEnabled(false);	//the save action is disable by default, as there's nothing to save
 		openAction=new OpenAction();  //create the open action
 	}
 
@@ -169,45 +162,41 @@ public abstract class ResourceComponentManager extends DefaultURIAccessible
 		//G***should this be load() instead of open(?
 		try
 		{
-			final URI uri=askOpen();	//get the URI to use
-			if(uri!=null)  //if a valid URI was returned
+			final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
+				//ask for a resource for input
+			final Resource resource=getResourceSelector().selectInputResource(resourceComponentState!=null ? resourceComponentState.getResource() : null);
+			if(resource!=null)  //if a valid resource was returned
 			{
-				final ResourceComponentState resourceComponentState=open(uri);	//try to open the resource
-				if(resourceComponentState!=null)	//if we succeed in opening the resource
+				assert resource.getReferenceURI()!=null : "Selected resource has no URI.";
+				final ResourceComponentState newResourceComponentState=open(resource);	//try to open the resource
+				if(newResourceComponentState!=null)	//if we succeed in opening the resource
 				{
-					setResourceComponentState(resourceComponentState);	//change to the new state
+					setResourceComponentState(newResourceComponentState);	//change to the new state
 					return true;	//show that we successfully opened the resource
 				}
 			}
 		}
 		catch(final IOException ioException)	//if there is an error opening the resource
 		{
-			SwingApplication.displayApplicationError(getContainer(), ioException);	//display the error to the user
+			SwingApplication.displayApplicationError(getParentComponent(), ioException);	//display the error to the user
 		}
 		return false;	//show that we couldn't open anything, for some reason
 	}
 
-	/**Asks the user for URI for opening.
-	@return The URI to use for opening the resource, or <code>null</code> if the
-		resource should not be opened or if the user cancels.
-	*/
-	protected abstract URI askOpen();
-
 	/**Loads the resource from the location specified.
-	@param URI The URI of the resource to open.
+	@param resource The resource to open.
 	@return An object representing the opened resource and its state, or
 		<code>null</code> if the process was canceled.
 	@exception IOException Thrown if there was an error reading the resource.
 	*/
-	protected ResourceComponentState open(final URI uri) throws IOException
+	protected ResourceComponentState open(final Resource resource) throws IOException
 	{
 //TODO change the cursor while we open
 			//get an input stream to the resource
-		final InputStream inputStream=getInputStream(uri);
+		final InputStream inputStream=getResourceSelector().getInputStream(resource.getReferenceURI());
 		try
 		{
-			final Component component=open(inputStream, uri);	//read the component from the input stream
-			final Resource resource=new DefaultRDFResource(uri);	//create a new resource from the URI TODO get this from some method
+			final Component component=open(resource, inputStream);	//read the component from the input stream
 			final ResourceComponentState resourceComponentState=new ResourceComponentState(resource, component);	//create a new state for the resource
 			return resourceComponentState;	//save the component state
 		}
@@ -218,29 +207,28 @@ public abstract class ResourceComponentManager extends DefaultURIAccessible
 	}
 
 	/**Opens a resource from an input stream.
+	@param resource The resource to open.
 	@param inputStream The input stream from which to read the data.
-	@param baseURI The base URI of the content, or <code>null</code> if no base
-		URI is available.
 	@throws IOException Thrown if there is an error reading the data.
 	*/ 
-	public abstract Component open(final InputStream inputStream, final URI baseURI) throws IOException;
+	public abstract Component open(final Resource resource, final InputStream inputStream) throws IOException;
 
 	/**Saves the current resource.
 	<p>If the current resource component is verifiable, the component is first
 		verified.</p>
 	<p>By default if no location is available, the <code>saveAs</code> method is
-		called. If a location is available, <code>save(URI)</code> is called.</p> 
+		called. If a location is available, <code>save(Resource)</code> is called.</p> 
 	<p>For normal operation, this method should not be modified and
-		<code>save(URI)</code> should be overridden.</p>
+		<code>save(Resource)</code> should be overridden.</p>
 	@return <code>true</code> if there was a resource to save and the operation
 		was not canceled.
-	@see #save(URI)
+	@see #save(Resource)
 	@see #saveAs
-	@see #getResourceViewState()
+	@see #getResourceComponentState()
 	*/
 	public boolean save()
 	{
-		final ResourceComponentState resourceComponentState=getResourceViewState();	//get the current resource component state
+		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
 		if(resourceComponentState!=null)	//if a resource is open
 		{
 				//if the component is verifiable, make sure it verifies before we save the contents
@@ -250,12 +238,12 @@ public abstract class ResourceComponentManager extends DefaultURIAccessible
 				{
 					try
 					{
-						save(resourceComponentState, resourceComponentState.getResource().getReferenceURI()); //save using the URI we already have
+						save(resourceComponentState.getResource(), resourceComponentState.getComponent()); //save using the resource we already have
 						return true;
 					}
 					catch(IOException ioException)	//if there is an error saving the resource
 					{
-						SwingApplication.displayApplicationError(getContainer(), ioException);	//display the error to the user
+						SwingApplication.displayApplicationError(getParentComponent(), ioException);	//display the error to the user
 					}
 				}
 				else  //if we don't have a URI
@@ -273,7 +261,7 @@ public abstract class ResourceComponentManager extends DefaultURIAccessible
 	*/
 	public boolean saveAs()
 	{
-		final ResourceComponentState resourceComponentState=getResourceViewState();	//get the current resource component state
+		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
 		if(resourceComponentState!=null)	//if a resource is open
 		{
 			return saveAs(resourceComponentState); //save the resource using a user-specified URI
@@ -291,43 +279,40 @@ public abstract class ResourceComponentManager extends DefaultURIAccessible
 	{
 		try
 		{
-			final URI uri=askSave();  //get the URI to use for saving
-			if(uri!=null)  //if a valid URI was returned
+			final Resource resource=getResourceSelector().selectOutputResource(resourceComponentState.getResource());  //get the resource to use for saving
+			if(resource!=null)  //if a valid resource was returned
 			{
-				save(resourceComponentState, uri); //save the resource
+				save(resource, resourceComponentState.getComponent()); //save the resource
+				resourceComponentState.setResource(resource);	//change the resource of the component state
+/*G***del if not needed
 				if(!ObjectUtilities.equals(resourceComponentState.getResource().getReferenceURI(), uri))	//if the URI isn't the same //TODO fix or delete comment: wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)
 				{
 					resourceComponentState.getResource().setReferenceURI(uri);	//update the resource description's URI
 				}
+*/
 	//G***fix or del				setFile(file);  //update the file, just in case they override saveFile() and don't call this version
 				return true;	//show that the resource was successfully saved
 			}
 		}
 		catch(IOException ioException)	//if there is an error saving the resource
 		{
-			SwingApplication.displayApplicationError(getContainer(), ioException);	//display the error to the user
+			SwingApplication.displayApplicationError(getParentComponent(), ioException);	//display the error to the user
 		}
 		return false;  //show that we couldn't save the resource		
 	}
 
-	/**Asks the user for a URI for saving.
-	@return The URI to use for saving the resource, or <code>null</code>
-		if the file should not be saved or if the user cancels.
-	*/
-	protected abstract URI askSave();
-
-	/**Saves a resource at the location specified.
-	@param resourceComponentState The state information of the resource to save.
-	@param uri The URI at which the file should be saved.
+	/**Saves a resource.
+	@param resource The resource to save.
+	@param component The component that contains the data to save.
 	@exception IOException Thrown if there was an error writing the resource.
 	*/
-	protected void save(final ResourceComponentState resourceComponentState, final URI uri) throws IOException
+	protected void save(final Resource resource, final Component component) throws IOException
 	{
-//TODO change the cursor while we open
-		final OutputStream outputStream=getOutputStream(uri);	//get an output stream to this URI
+//TODO change the cursor while we save
+		final OutputStream outputStream=getResourceSelector().getOutputStream(resource.getReferenceURI());	//get an output stream to this resource's URI
 		try
 		{
-			save(resourceComponentState.getComponent(), outputStream);	//write the component to the output stream
+			save(resource, component, outputStream);	//write the component to the output stream
 		}
 		finally
 		{
@@ -336,11 +321,12 @@ public abstract class ResourceComponentManager extends DefaultURIAccessible
 	}
 
 	/**Saves a resource to an output stream.
+	@param resource The resource to save.
 	@param component The component that contains the data to save.
 	@param outputStream The input stream to which to write the data.
 	@throws IOException Thrown if there is an error writing the data.
 	*/ 
-	public abstract void save(final Component component, final OutputStream outputStream) throws IOException;
+	public abstract void save(final Resource resource, final Component component, final OutputStream outputStream) throws IOException;
 
 	/**Action for opening a resource.*/
 	class OpenAction extends AbstractAction
@@ -351,14 +337,15 @@ public abstract class ResourceComponentManager extends DefaultURIAccessible
 			super("Open...");	//create the base class G***Int
 			putValue(SHORT_DESCRIPTION, "Open a resource");	//set the short description G***Int
 			putValue(LONG_DESCRIPTION, "Display a dialog to select a file, and then load the selected resource.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer('o'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_O));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.OPEN_ICON_FILENAME)); //load the correct icon
+			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_OPEN_MENU_ACTION_ORDER));	//set the order
 		}
 
 		/**Called when the action should be performed.
-		@param e The event causing the action.
+		@param actionEvent The event causing the action.
 		*/
-		public void actionPerformed(ActionEvent e)
+		public void actionPerformed(final ActionEvent actionEvent)
 		{
 			open();	//open a resource
 		}
@@ -373,15 +360,16 @@ public abstract class ResourceComponentManager extends DefaultURIAccessible
 			super("Save");	//create the base class G***Int
 			putValue(SHORT_DESCRIPTION, "Save the open resource");	//set the short description G***Int
 			putValue(LONG_DESCRIPTION, "Save the currently open resource.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer('v'));  //set the mnemonic key; for some reason, 's' causes the action to be activated when Alt+F4 is pressed G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_V));  //set the mnemonic key; for some reason, 's' causes the action to be activated when Alt+F4 is pressed G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK)); //add the accelerator G***i18n
+			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_SAVE_MENU_ACTION_ORDER));	//set the order
 		}
 
 		/**Called when the action should be performed.
-		@param e The event causing the action.
+		@param actionEvent The event causing the action.
 		*/
-		public void actionPerformed(ActionEvent e)
+		public void actionPerformed(final ActionEvent actionEvent)
 		{
 			save();	//save the resource
 		}
@@ -393,10 +381,21 @@ public abstract class ResourceComponentManager extends DefaultURIAccessible
 	public class ResourceComponentState extends DefaultResourceState
 	{
 
+		/**Sets the resource being described.
+		<p>This method delegates to the parent class, and is declared here solely
+			so that the component manager can change the resource represented.
+		@param resource The new resource to describe.
+		@exception IllegalArgumentException Thrown if the resource is <code>null</code>.
+		*/
+		protected void setResource(final Resource resource)
+		{
+			super.setResource(resource);	//set the resource object
+		}
+
 		/**The component that acts as a view to the resource.*/
 		private Component component;
 
-			/**@return The burrow in which the resource is located.*/
+			/**@return The component that acts as a view to the resource.*/
 			public Component getComponent() {return component;}
 
 		/**Constructs a resource state with a resource and a component.

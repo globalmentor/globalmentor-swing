@@ -240,7 +240,7 @@ public class TelephonePanel extends BasicVCardPanel
 			super("Type");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Edit type");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Edit the intended usage type for this telephone number.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('t'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_T));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.PROPERTY_ICON_FILENAME)); //load the correct icon
 		}
 	

@@ -1,7 +1,7 @@
 package com.garretwilson.swing;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
@@ -304,7 +304,7 @@ public class ListPanel extends ContentPanel implements Editable
 			super("All");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Select all");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Select all items in the list.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('l'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_L));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.CHECK_MULTIPLE_ICON_FILENAME)); //load the correct icon
 		}
 	
@@ -326,7 +326,7 @@ public class ListPanel extends ContentPanel implements Editable
 			super("None");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Select none");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Select no items in the list.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('n'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_N));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.UNCHECK_MULTIPLE_ICON_FILENAME)); //load the correct icon
 		}
 	
@@ -348,7 +348,7 @@ public class ListPanel extends ContentPanel implements Editable
 			super("Add");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Add item");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Add an item to the list.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('a'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_A));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.DOCUMENT_NEW_ICON_FILENAME)); //load the correct icon
 		}
 	
@@ -370,7 +370,7 @@ public class ListPanel extends ContentPanel implements Editable
 			super("Delete");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Delete item");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Delete an item from the list.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('d'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_D));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.DELETE_ICON_FILENAME)); //load the correct icon
 		}
 	
@@ -392,7 +392,7 @@ public class ListPanel extends ContentPanel implements Editable
 			super("Edit");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Edit item");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Edit the selected item.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('e'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_E));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.EDIT_ICON_FILENAME)); //load the correct icon
 		}
 	

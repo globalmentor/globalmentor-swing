@@ -95,21 +95,39 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 //G***Del Debug.trace("configuring properties from actions: ", action); //G***del
 		if(action!=null)  //if there is an action
 		{
-//G***don't change the name to work around a Java bug that adds the text to buttons even if they shouldn't be changed
-//G***fix; see above comment		  putValue(Action.NAME, action.getValue(Action.NAME));
-			putValue(NAME, action.getValue(NAME));	//G***see if this works in JDK 1.4.1
-		  putValue(SMALL_ICON, action.getValue(SMALL_ICON));
-		  putValue(SHORT_DESCRIPTION, action.getValue(SHORT_DESCRIPTION));
-		  putValue(LONG_DESCRIPTION, action.getValue(LONG_DESCRIPTION));
-/*G***fix; with a proxied action with a mnemonic key of Integer('s'), this traps Alt+F4
-		  if(action.getValue(Action.MNEMONIC_KEY)!=null)  //G***testing; why is this needed, and not for the others?
-		    putValue(Action.MNEMONIC_KEY, action.getValue(Action.MNEMONIC_KEY));
-*/
-//G***fix; this gives strange results sometimes		  putValue(Action.ACTION_COMMAND_KEY, action.getValue(Action.ACTION_COMMAND_KEY));
-//G***fix; this gives strange results sometimes		  putValue(Action.ACCELERATOR_KEY, action.getValue(Action.ACCELERATOR_KEY));
-			putValue(ACCELERATOR_KEY, action.getValue(ACCELERATOR_KEY)); //G***is this fixed in JDK1.4.x?
-
-		  setEnabled(action.isEnabled()); //update the enabled property G***can this be done with a normal property?
+			if(action instanceof AbstractAction)	//if the action is an abstract action, we can iterate its properties
+			{
+				final Object[] keys=((AbstractAction)action).getKeys();	//get the keys to the action's properties
+				if(keys!=null)	//if there are keys
+				{
+					for(int i=keys.length-1; i>=0; --i)	//look at each key
+					{
+						final Object key=keys[i];	//get the key
+						if(key instanceof String)	//if the key is a string
+						{
+							final String keyString=(String)key;	//cast the key to a string
+							putValue(keyString, action.getValue(keyString));	//put the key's value in our action
+						}
+					}
+				}
+			}
+			else	//if the given action is a normal action, update the values that we know about
+			{
+	//G***don't change the name to work around a Java bug that adds the text to buttons even if they shouldn't be changed
+	//G***fix; see above comment		  putValue(Action.NAME, action.getValue(Action.NAME));
+				putValue(NAME, action.getValue(NAME));	//G***see if this works in JDK 1.4.1
+			  putValue(SMALL_ICON, action.getValue(SMALL_ICON));
+			  putValue(SHORT_DESCRIPTION, action.getValue(SHORT_DESCRIPTION));
+			  putValue(LONG_DESCRIPTION, action.getValue(LONG_DESCRIPTION));
+	/*G***fix; with a proxied action with a mnemonic key of Integer('s'), this traps Alt+F4
+			  if(action.getValue(Action.MNEMONIC_KEY)!=null)  //G***testing; why is this needed, and not for the others?
+			    putValue(Action.MNEMONIC_KEY, action.getValue(Action.MNEMONIC_KEY));
+	*/
+	//G***fix; this gives strange results sometimes		  putValue(Action.ACTION_COMMAND_KEY, action.getValue(Action.ACTION_COMMAND_KEY));
+	//G***fix; this gives strange results sometimes		  putValue(Action.ACCELERATOR_KEY, action.getValue(Action.ACCELERATOR_KEY));
+				putValue(ACCELERATOR_KEY, action.getValue(ACCELERATOR_KEY)); //G***is this fixed in JDK1.4.x?
+			}
+		  setEnabled(action.isEnabled()); //update the enabled property (which isn't stored using a normal key/value pair, as are the other properties)
 		}
 		else  //if there is no action
 		{

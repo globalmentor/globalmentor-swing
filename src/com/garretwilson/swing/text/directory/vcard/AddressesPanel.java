@@ -316,7 +316,7 @@ public class AddressesPanel extends ContentPanel
 			super("Add Address");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Add an address");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Add a new address.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('a'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_A));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.MAIL_ICON_FILENAME)); //load the correct icon
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.CTRL_MASK)); //add the accelerator
 		}
@@ -345,7 +345,7 @@ public class AddressesPanel extends ContentPanel
 			super("Add Label");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Add a label");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Add a new label.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('l'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_L));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.NOTE_ICON_FILENAME)); //load the correct icon
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.CTRL_MASK)); //add the accelerator
 		}
@@ -374,7 +374,7 @@ public class AddressesPanel extends ContentPanel
 			super("Remove");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Remove this address or label");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Remove the selected address or label.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('e'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_E));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.DELETE_ICON_FILENAME)); //load the correct icon
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.CTRL_MASK)); //add the accelerator
 		}

@@ -119,7 +119,7 @@ public class ImagePanel extends JPanel
 			super("Zoom in");	//create the base class G***Int
 			putValue(SHORT_DESCRIPTION, "Zoom In");	//set the short description G***Int
 			putValue(LONG_DESCRIPTION, "Increase the zoom factor.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer('i'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_I));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.ZOOM_IN_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -142,7 +142,7 @@ public class ImagePanel extends JPanel
 			super("Zoom out");	//create the base class G***Int
 			putValue(SHORT_DESCRIPTION, "Zoom Out");	//set the short description G***Int
 			putValue(LONG_DESCRIPTION, "Decrease the zoom factor.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer('o'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_O));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.ZOOM_OUT_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -165,7 +165,7 @@ public class ImagePanel extends JPanel
 			super("Fit image");	//create the base class G***Int
 			putValue(SHORT_DESCRIPTION, "Fit image to View");	//set the short description G***Int
 			putValue(LONG_DESCRIPTION, "Fit the image to the view..");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer('f'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_F));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.IMAGE_SIZE_ICON_FILENAME)); //load the correct icon
 		}
 

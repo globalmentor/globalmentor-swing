@@ -21,6 +21,7 @@ import com.garretwilson.util.*;
 	that are likewise verifiable.</p>
 <p>The panel can store a preferences node to use for preference, or use the
 	default preferences node for the panel class.</p>
+<p>The panel keeps a lazily-created manager that manages menu and tool actions.</p>
 <p>The panel keeps track of its current user mode and view of data.</p>
 <p>The panel can indicate whether it can close.</p>
 <p>The panel can recognize when it is embedded in a <code>JOptionPane</code>
@@ -127,7 +128,20 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 		{
 			return propertyMap.remove(key);	//remove and return the property value keyed to the key
 		}
-		
+
+	/**The lazily-created manager of menu and tool actions.*/
+	private ActionManager actionManager;
+
+		/**@return The lazily-created manager of menu and tool actions.*/
+		public ActionManager getActionManager()
+		{
+			if(actionManager==null)	//if we haven't yet created an action manager
+			{
+				actionManager=new ActionManager();	//create a new action manager
+			}
+			return actionManager;	//return the action manager
+		}
+
 	/**The title of the panel, or <code>null</code> if there is no title.*/
 	private String title=null;
 
@@ -273,6 +287,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	{
 		super(layout, false);	//construct the parent class but don't initialize
 		preferences=null;	//show that we should use the default preferences for this class
+		actionManager=null;	//default to no action manager until one is asked for
 		userMode=VIEW_MODE;	//default to viewing the data
 		defaultFocusComponent=null;	//default to no default focus component
 			//create and install a new layout focus traversal policy that will
