@@ -8,6 +8,7 @@ import javax.swing.*;
 
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
+import com.garretwilson.text.unicode.*;
 
 /**A panel that shows the set of Unicode code points and related information.
 @author Garret Wilson
@@ -44,16 +45,26 @@ public class UnicodePanel extends ToolStatusPanel
 	/**Initializes actions in the action manager.
 	@param actionManager The implementation that manages actions.
 	*/
-/*TODO fix
 	protected void initializeActions(final ActionManager actionManager)
 	{
 		super.initializeActions(actionManager);	//do the default initialization
+		try
+		{
+			final UnicodeBlockSet unicodeBlockSet=UnicodeBlockSet.load();	//load the set of Unicode blocks
+			final ComboBoxModel unicodeBlockModel=new DefaultComboBoxModel(unicodeBlockSet.toArray(new UnicodeBlock[unicodeBlockSet.size()]));
+			actionManager.addToolAction(new ComboBoxAction(unicodeBlockModel));	//create and add a combo box action with the Unicode block information
+		}
+		catch(final IOException ioException)	//if there is a problem loading the Unicode blocks
+		{
+			SwingApplication.displayApplicationError(this, ioException);
+		}
+/*TODO fix
 		final Action fileMenuAction=actionManager.addMenuAction(ActionManager.getFileMenuAction());	//file
 		actionManager.addMenuAction(fileMenuAction, sdiDecorator.getResourceComponentManager().getOpenAction());	//file|open
 		actionManager.addMenuAction(fileMenuAction, sdiDecorator.getResourceComponentManager().getSaveAction());	//file|save
 			//set up the tool actions
 		actionManager.addToolAction(sdiDecorator.getResourceComponentManager().getOpenAction());	//open
 		actionManager.addToolAction(sdiDecorator.getResourceComponentManager().getSaveAction());	//save
-	}
 */
+	}
 }

@@ -136,7 +136,7 @@ public class ActionManager implements Cloneable
 	/**The map of lists of menu actions, keyed to parent actions.
 	Top-level menu actions are keyed to <code>null</code>.
 	*/
-	private Map menuActionListMap=new HashMap();	//G***this would be better using a tree
+	private Map<Action, List<Action>> menuActionListMap=new HashMap<Action, List<Action>>();	//TODO would be better using a tree
 
 	/**Retrieves a list of menu actions for the given parent menu action.
 	If the map has no record of such parent action, it will be added to the map
@@ -145,19 +145,19 @@ public class ActionManager implements Cloneable
 		<code>null</code> if the action is a top-level menu action.
 	@return A list of child menu actions of the given parent.
 	*/
-	protected List getMenuActionList(final Action parentAction)
+	protected List<Action> getMenuActionList(final Action parentAction)
 	{
-		List actionList=(List)menuActionListMap.get(parentAction);	//see if there is a list of children for this parent
+		List<Action> actionList=menuActionListMap.get(parentAction);	//see if there is a list of children for this parent
 		if(actionList==null)	//if no children have been stored for this parent action
 		{
-			actionList=new ArrayList();	//create a new list for child actions
+			actionList=new ArrayList<Action>();	//create a new list for child actions
 			menuActionListMap.put(parentAction, actionList);	//store the list in the map
 		}
 		return actionList;	//return the list of actions
 	}
 
 	/**The lazily-created list of tool actions.*/
-	private ArrayList toolActionList;
+	private ArrayList<Action> toolActionList;
 
 	/**Default constructor.*/
 	public ActionManager()
@@ -196,7 +196,7 @@ public class ActionManager implements Cloneable
 	*/
 	public Action addMenuAction(final Action parentAction, final Action action)
 	{
-		final List menuActionList=getMenuActionList(parentAction);	//get the parent's list of child actions
+		final List<Action> menuActionList=getMenuActionList(parentAction);	//get the parent's list of child actions
 		if(!menuActionList.contains(action))	//if the list doesn't already contain the action
 		{
 			menuActionList.add(action);	//add the action to the parent's list of child actions
@@ -205,13 +205,11 @@ public class ActionManager implements Cloneable
 	}
 
 	/**@return A read-only iterator to actions representing top-level menus.*/
-	public Iterator getMenuActionIterator()
+	public Iterator<Action> getMenuActionIterator()
 	{
 		return getMenuActionIterator(null);	//return an iterator to all menu actions that do not have parents---the top-level menus
 	}
 
-	private final static Iterator EMPTY_ITERATOR=new EmptyIterator();	//TODO fix to work with generics
-	
 	/**Returns an iterator to actions representing menus.
 	If no parent action is specified, the actions returned will retpresent
 		top-level actions.
@@ -219,15 +217,15 @@ public class ActionManager implements Cloneable
 		<code>null</code> if an iterator to top-level menu actions should be returned.
 	@return A read-only iterator to actions representing menus.
 	*/
-	public Iterator getMenuActionIterator(final Action parentAction)
+	public Iterator<Action> getMenuActionIterator(final Action parentAction)
 	{
-		final List actionList=(List)menuActionListMap.get(parentAction);	//see if there is a list of children for this parent
-		final List sortedActionList=actionList!=null ? new ArrayList(actionList) : null;	//if there's a list, place it in a separate list for sorting
+		final List<Action> actionList=menuActionListMap.get(parentAction);	//see if there is a list of children for this parent
+		final List<Action> sortedActionList=actionList!=null ? new ArrayList<Action>(actionList) : null;	//if there's a list, place it in a separate list for sorting
 		if(sortedActionList!=null)	//if there are actions to sort
 		{
 			Collections.sort(sortedActionList, new ActionMenuOrderComparator(actionList));	//sort the actions by menu order, defaulting to the order they were in before sorting
 		}
-		return sortedActionList!=null ? Collections.unmodifiableList(sortedActionList).iterator() : EMPTY_ITERATOR;	//return a read-only iterator to the sorted actions, if there are any
+		return sortedActionList!=null ? Collections.unmodifiableList(sortedActionList).iterator() : new EmptyIterator<Action>();	//return a read-only iterator to the sorted actions, if there are any
 	}
 
 	/**Merges a given action manager with this one, creating a new, merged action
@@ -240,18 +238,16 @@ public class ActionManager implements Cloneable
 	{
 		final ActionManager mergedActionManager=(ActionManager)clone();	//clone this action manager
 			//merge the menu actions
-		final Iterator actionListEntryIterator=actionManager.menuActionListMap.entrySet().iterator();	//get an iterator to all action lists in the merging manager, keyed to actions
-		while(actionListEntryIterator.hasNext())	//while there are more entries
+		for(final Map.Entry<Action, List<Action>> actionListEntry:menuActionListMap.entrySet())	//look at all action lists in the merging manager, keyed to actions
 		{
-			final Map.Entry actionListEntry=(Map.Entry)actionListEntryIterator.next();	//get the next entry
-			final Action parentAction=(Action)actionListEntry.getKey();	//get this parent action
-			final List mergedActionList=mergedActionManager.getMenuActionList(parentAction);	//get the merged action manager's list of actions for this parent, creating one if it isn't present
-			final Iterator actionIterator=actionManager.getMenuActionIterator(parentAction);	//get an iterator to child actions of this action
+			final Action parentAction=actionListEntry.getKey();	//get this parent action
+			final List<Action> mergedActionList=mergedActionManager.getMenuActionList(parentAction);	//get the merged action manager's list of actions for this parent, creating one if it isn't present
+			final Iterator<Action> actionIterator=actionManager.getMenuActionIterator(parentAction);	//get an iterator to child actions of this action
 			if(actionIterator!=null)	//if there is a list of child actions
 			{
 				while(actionIterator.hasNext())	//while there are more actions
 				{
-					final Action action=(Action)actionIterator.next();	//get the next action
+					final Action action=actionIterator.next();	//get the next action
 					if(!mergedActionList.contains(action))	//if the action is not already in the merged list
 					{
 						mergedActionList.add(action);	//add this action to the merged list
@@ -262,10 +258,10 @@ public class ActionManager implements Cloneable
 			//merge the tool actions
 		if(toolActionList!=null)	//if there is a list of tool actions
 		{
-			final Iterator toolActionEntryIterator=actionManager.toolActionList.iterator();	//get an iterator to all tool actions in the merging manager
+			final Iterator<Action> toolActionEntryIterator=actionManager.toolActionList.iterator();	//get an iterator to all tool actions in the merging manager
 			while(toolActionEntryIterator.hasNext())	//while there are more tool actions
 			{
-				final Action action=(Action)toolActionEntryIterator.next();	//get the next tool action
+				final Action action=toolActionEntryIterator.next();	//get the next tool action
 				mergedActionManager.addToolAction(action);	//add this action to the merged action manager, creating a list of tool actions if needed
 			}
 		}
@@ -280,7 +276,7 @@ public class ActionManager implements Cloneable
 	{
 		if(toolActionList==null)	//if there is no tool action list
 		{
-			toolActionList=new ArrayList();	//create a new list of tool actions
+			toolActionList=new ArrayList<Action>();	//create a new list of tool actions
 		}
 		if(!toolActionList.contains(action))	//if the list doesn't already contain the action
 		{
@@ -300,9 +296,9 @@ public class ActionManager implements Cloneable
 	}
 
 	/**@return A read-only iterator to actions representing tools.*/
-	public Iterator getToolActionIterator()
+	public Iterator<Action> getToolActionIterator()
 	{
-		return toolActionList!=null ? Collections.unmodifiableList(toolActionList).iterator() : EMPTY_ITERATOR;	//return a read-only iterator to the tool actions, if there are any
+		return toolActionList!=null ? Collections.unmodifiableList(toolActionList).iterator() : new EmptyIterator<Action>();	//return a read-only iterator to the tool actions, if there are any
 	}
 
 	/**Returns a read-only sorted iterator to the given list of actions.
@@ -333,10 +329,10 @@ public class ActionManager implements Cloneable
 	public JToolBar addToolComponents(final JToolBar toolBar)
 	{
 		Component lastComponent=null;	//keep track of the last component we added
-		final Iterator actionIterator=getToolActionIterator();	//get an iterator to the tool actions
+		final Iterator<Action> actionIterator=getToolActionIterator();	//get an iterator to the tool actions
 		while(actionIterator.hasNext())	//while there are actions
 		{
-			final Action action=(Action)actionIterator.next();	//get the next action
+			final Action action=actionIterator.next();	//get the next action
 			if(action instanceof ActionManager.SeparatorAction)		//if this is a separator action
 			{
 					//don't put two separators in a row, and don't put a separator as the first component 
@@ -345,6 +341,12 @@ public class ActionManager implements Cloneable
 					lastComponent=ToolBarUtilities.createToolBarSeparator(toolBar);	//create a toolbar separator
 					toolBar.add(lastComponent);	//add the separator
 				}				
+			}
+			else if(action instanceof ComponentAction)		//if this is a component action
+			{
+				final ComponentAction<?> componentAction=(ComponentAction<?>)action;	//get the action as a component action
+				lastComponent=componentAction.addComponent(toolBar);	//tell the action to add a component to the toolbar
+				lastComponent.setFocusable(false);	//don't allow this component to receive focus TODO see if we want this here or in the action's addComponent() method				
 			}
 			else	//if this is a normal action
 			{
@@ -376,16 +378,14 @@ public class ActionManager implements Cloneable
 		try
 		{ 
 			ActionManager actionManager=(ActionManager)super.clone();	//create a cloned copy of this action manager
-			actionManager.menuActionListMap=new HashMap();	//create a new map, which we'll fill with cloned lists
-			final Iterator actionListEntryIterator=menuActionListMap.entrySet().iterator();	//get an entry to all action lists, keyed to actions
-			while(actionListEntryIterator.hasNext())	//while there are more entries
+			actionManager.menuActionListMap=new HashMap<Action, List<Action>>();	//create a new map, which we'll fill with cloned lists
+			for(final Map.Entry<Action, List<Action>> actionListEntry:menuActionListMap.entrySet())	//look at all action lists, keyed to actions
 			{
-				final Map.Entry actionListEntry=(Map.Entry)actionListEntryIterator.next();	//get the next entry
-				actionManager.menuActionListMap.put(actionListEntry.getKey(), ((ArrayList)actionListEntry.getValue()).clone());	//clone the list and put it in the new map
+				actionManager.menuActionListMap.put(actionListEntry.getKey(), (ArrayList<Action>)((ArrayList<Action>)actionListEntry.getValue()).clone());	//clone the list and put it in the new map
 			}
 			if(toolActionList!=null)	//if we have a list of tool actions
 			{
-				actionManager.toolActionList=(ArrayList)toolActionList.clone();	//clone our list of tool actions
+				actionManager.toolActionList=(ArrayList<Action>)toolActionList.clone();	//clone our list of tool actions
 			}
 			return actionManager;	//return the cloned action manager
 		}
@@ -399,7 +399,7 @@ public class ActionManager implements Cloneable
 	@author Garret Wilson
 	@see ActionManager#MENU_ORDER_PROPERTY
 	*/
-	protected static class ActionMenuOrderComparator extends DefaultOrderComparator
+	protected static class ActionMenuOrderComparator extends DefaultOrderComparator<Action>
 	{
 		
 		/**Constructs a comparator to compare actions based upon order or, by
@@ -407,7 +407,7 @@ public class ActionManager implements Cloneable
 		@param defaultOrderList The list that determines the default order of the
 			actions. This must not a different list than any list being sorted.
 		*/
-		public ActionMenuOrderComparator(final List defaultOrderList)
+		public ActionMenuOrderComparator(final List<Action> defaultOrderList)
 		{
 			super(defaultOrderList);	//construct the parent class with the default order
 		}
@@ -423,10 +423,8 @@ public class ActionManager implements Cloneable
 		@throws ClassCastException Thrown if the arguments' types prevent them from
 			being compared by this comparator.
 		*/
-		public int compare(final Object object1, final Object object2)
+		public int compare(final Action action1, final Action action2)
 		{
-			final Action action1=(Action)object1;	//cast the objects to actions
-			final Action action2=(Action)object2;
 				//get the orders, if any
 			final Integer orderInteger1=asInstance(action1.getValue(MENU_ORDER_PROPERTY), Integer.class);
 			final Integer orderInteger2=asInstance(action2.getValue(MENU_ORDER_PROPERTY), Integer.class);
@@ -434,7 +432,7 @@ public class ActionManager implements Cloneable
 			{
 				if(orderInteger2==null)	//if neither action has an order, sort by name
 				{
-					return super.compare(object1, object2);	//return the default order as specified by the provided default order list
+					return super.compare(action1, action2);	//return the default order as specified by the provided default order list
 				}
 				else	//if the first action doesn't have an order, yet the second one does
 				{
@@ -450,7 +448,7 @@ public class ActionManager implements Cloneable
 				else	//if both actions have orders
 				{
 					final int order=orderInteger1.compareTo(orderInteger2);	//compare orders
-					return order!=0 ? order : super.compare(object1, object2);	//return the order; if the order of both objects are the same, return the default order as specified by the provided default order list
+					return order!=0 ? order : super.compare(action1, action2);	//return the order; if the order of both objects are the same, return the default order as specified by the provided default order list
 				}
 			}			
 		}

@@ -4,6 +4,7 @@ import java.awt.event.*;
 import java.beans.*;
 import javax.swing.*;
 import javax.swing.event.*;
+import static com.garretwilson.swing.ComponentConstants.*;
 import com.garretwilson.util.Debug;
 
 /**Action that stands as a proxy for another action. This action will change its
@@ -220,7 +221,7 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 		}
 		else
 */
-		if("enabled".equals(propertyName))  //if the enabled state is changing, we must change the actual property (which will change the property value), rather than just changing the underlying value or the actual property won't change G***use a constant here
+		if(ENABLED_PROPERTY.equals(propertyName))  //if the enabled state is changing, we must change the actual property (which will change the property value), rather than just changing the underlying value or the actual property won't change
 		{
 			setEnabled(((Boolean)propertyChangeEvent.getNewValue()).booleanValue()); //G***testing
 		}
@@ -234,12 +235,12 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 	/**Called when the action should be performed. Forwards the event on to the
 		proxied action. A descendant class can override this event for special
 		processing before and/or after the proxied action receives the event.
-	@param e The event causing the action.
+	@param actionEvent The event causing the action.
 	*/
-	public void actionPerformed(final ActionEvent e)
+	public void actionPerformed(final ActionEvent actionEvent)
 	{
 		if(proxiedAction!=null) //if we have a proxied action
-		  proxiedAction.actionPerformed(e); //forward the action
+		  proxiedAction.actionPerformed(actionEvent); //forward the action
 	}
 
 	/**Factory method which creates the <code>PropertyChangeListener</code>
