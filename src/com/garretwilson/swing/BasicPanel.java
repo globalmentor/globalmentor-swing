@@ -270,7 +270,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 			initialize();   //initialize the panel
 	}
 
-	/**Initializes the content panel. Should only be called once per instance.
+	/**Initializes the panel. Should only be called once per instance.
 	@see #initializeUI
 	*/
 	public void initialize()	//TODO set a flag that will only allow initialization once per instance

@@ -14,6 +14,9 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	/**The list this class proxies.*/
 	protected final List list;
 
+		/**The list this class proxies.*/
+		public final List getList() {return list;}
+
 	/**List constructor.
 	@param list The list this list should proxy.
 	*/

@@ -4,6 +4,9 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
 import javax.swing.plaf.UIResource;
+
+import com.garretwilson.util.Debug;
+
 import java.awt.*;
 import java.io.Serializable;
 
@@ -87,6 +90,8 @@ public class CheckBoxListCellRenderer extends JCheckBox implements ListCellRende
 	*/
   protected String getListCellRendererString(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus)
 	{
+Debug.trace("value: ", value);
+Debug.trace("index: ", index);
 		return getListCellRendererString(value);  //delegate to the simple version
 	}
 

@@ -156,7 +156,14 @@ public class ModifiablePanel extends BasicPanel implements Modifiable
 		modifyModifiedPropertyChangeListener=null;
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel
+	}
+
+	/**Initializes the panel. Should only be called once per instance.*/
+	public void initialize()	//TODO set a flag that will only allow initialization once per instance
+	{
+		super.initialize();	//do the default initialization
 		setModified(false);	//show that the information has not been modified		
+		updateStatus();  //update the status again, because it might have been updated while we were modified G***this means updateStatus() is called twice---try to get around that, or maybe even place updateStatus() in setModified()
 	}
 
 	/**Adds the specified component to this container at the specified index.

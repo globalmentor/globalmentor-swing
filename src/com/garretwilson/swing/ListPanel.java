@@ -184,22 +184,25 @@ public class ListPanel extends ContentPanel implements Editable
 		getSelectNoneAction().setEnabled(isMultipleSelectionAllowed && isListEnabled && listModelSize>0);	//only allow no items to be selected if there are items
 		editSeparator.setVisible(isEditable);	//only show the edit separator if editing is allowed
 		addButton.setVisible(isEditable);	//only show the add button if editing is allowed
+		addButton.setEnabled(isListEnabled);	//only enable the add button if the list is enabled
 		deleteButton.setVisible(isEditable);	//only show the delete button if editing is allowed
-		deleteButton.setEnabled(leadSelectionIndex>=0);	//only enable the delete button if there is something selected to be deleted
+		deleteButton.setEnabled(isListEnabled && leadSelectionIndex>=0);	//only enable the delete button if there is something selected to be deleted
 		editButton.setVisible(isEditable);	//only show the edit button if editing is allowed
-		editButton.setEnabled(leadSelectionIndex>=0);	//only enable the edit button if there is something selected to be edited
+		editButton.setEnabled(isListEnabled && leadSelectionIndex>=0);	//only enable the edit button if there is something selected to be edited
 	}
 
 	/**Selects all list entries.*/
 	public void selectAll()
 	{
 		getList().getSelectionModel().setSelectionInterval(0, getList().getModel().getSize()-1);	//select an interval containing all items
+		setModified(true);	//selecting all modifies the panel
 	}
 
 	/**Selects no list entries.*/
 	public void selectNone()
 	{
 		getList().getSelectionModel().clearSelection();	//clear the selection
+		setModified(true);	//unselecting all modifies the panel
 	}
 
 	/**Creates a new item and, if editing is successful, adds it to the list.*/
@@ -223,6 +226,7 @@ public class ListPanel extends ContentPanel implements Editable
 					{
 						((List)listModel).add(newItem);	//add the item to the list
 					}					
+					setModified(true);	//adding an item modifies the panel
 				}
 			}
 			catch(InstantiationException e)
@@ -258,6 +262,7 @@ public class ListPanel extends ContentPanel implements Editable
 					{
 						((List)listModel).remove(leadSelectionIndex);	//remove the item from the list
 					}
+					setModified(true);	//deleting an item modifies the panel
 				}
 			}
 		}
@@ -284,6 +289,7 @@ public class ListPanel extends ContentPanel implements Editable
 					{
 						((List)listModel).set(leadSelectionIndex, newItem);	//update the list
 					}
+					setModified(true);	//editing an item modifies the panel
 				}
 			}
 		}

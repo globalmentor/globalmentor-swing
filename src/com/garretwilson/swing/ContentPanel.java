@@ -1,14 +1,13 @@
 package com.garretwilson.swing;
 
 import java.awt.*;
-import java.beans.PropertyChangeListener;
-
 import com.garretwilson.awt.*;
 import com.garretwilson.util.*;
 
-/**A generic panel that allows easy setup of a center content component.
-<p>This panel uses a <code>BasicGridBagLayout</code> as its layout manager with
-	the border paradigm.</p>
+/**A generic panel that allows easy setup of a content component which
+	defaults to the center.
+<p>This panel uses a <code>BasicGridBagLayout</code> as its layout manager,
+	defaulting to the border paradigm.</p>
 <p>If the panel is inside a <code>JOptionPane</code>, the window containing
 	to ensure the component has enough room every time the content
 	component changes.</p>  
@@ -28,10 +27,27 @@ import com.garretwilson.util.*;
 public class ContentPanel extends ModifiablePanel implements CanClosable
 {
 
-	/**The main content component in the center of the panel.*/
+	/**The constraints to use in positioning the content component;
+		defaults to <code>BorderLayout.CENTER</code>. 
+	*/
+	private final Object contentConstraints;
+
+		/**The constraints to use in positioning the content component;
+			defaults to <code>BorderLayout.CENTER</code>. 
+		*/
+		protected Object getContentConstraints() {return contentConstraints;}
+
+		/**Sets the constraints to use in positioning the content component.
+		@param constraints The position of the content component, such as
+			<code>BorderLayout.CENTER</code> or a <code>GridBagConstraints</code>
+			instance. 
+		*/
+//G***del if not needed		public void setContentConstraints(final Object constraints) {contentConstraints=constraints;}
+
+	/**The main content component of the panel.*/
 	private Component contentComponent=null;
 
-		/**@return The main content component in the center of the panel, or
+		/**@return The main content component of the panel, or
 			<code>null</code> if there is no content component.
 		*/
 		public Component getContentComponent()
@@ -39,10 +55,10 @@ public class ContentPanel extends ModifiablePanel implements CanClosable
 			return contentComponent;  //return the content component
 		}
 	
-		/**Sets the main content component in the center of the panel.
+		/**Sets the main content component of the panel.
 		<p>If the panel is inside a <code>JOptionPane</code>, the window containing
 			to ensure the component has enough room.</p>  
-		@param newContentComponent The new component for the center of the panel,
+		@param newContentComponent The new content component for the panel,
 			or <code>null</code> for no content component.
 		*/
 		public void setContentComponent(final Component newContentComponent)
@@ -51,39 +67,13 @@ public class ContentPanel extends ModifiablePanel implements CanClosable
 			{
 			  if(contentComponent!=null)  //if we already have an content component
 			  {
-/*G***del when ModifiablePanel works
-			  	if(contentComponent instanceof Modifiable)	//if the content component is modifiable
-			  	{
-			  		contentComponent.removePropertyChangeListener(modifyModifiedChangeListener);	//don't listen for its modifications anymore
-			  	}
 					remove(contentComponent);   //remove the current one
-*/
 			  }
 				contentComponent=newContentComponent; //store the content component
 				if(newContentComponent!=null)	//if we were given a new content component
 				{
-					add(newContentComponent, BorderLayout.CENTER);  //put the content component in the center of the panel
-/*G***del when ModifiablePanel works
-					if(newContentComponent instanceof Modifiable)	//if the new content component is modifiable
-					{
-						if(modifyModifiedChangeListener==null)	//if we don't have a modified property change listener
-						{
-							modifyModifiedChangeListener=createModifyModifiedChangeListener();	//create a new property change listener for modifications
-						}
-						newContentComponent.addPropertyChangeListener(modifyModifiedChangeListener);	//listen for modifications in the content component, and update our modified status in response
-					}
-*/
+					add(newContentComponent, getContentConstraints());  //put the content component in the center of the panel
 				}
-/*G***del when revalidate() works---maybe even remove WindowUtilities.packWindow()		  	
-		  	if(getParentOptionPane()!=null)	//if this panel is inside an option pane
-		  	{
-		  			//TODO probably change this to only pack the window if the panel wants to be bigger than the window to keep from shrinking the window
-		  			//(actually, this window.pack doesn't seem to ever shrink the window, just enlarge it, so this is probably fine
-		  			//TODO remove the JOptionPane check when this enlarges but not shrinks the window
-					WindowUtilities.packWindow(this);	//pack the window we're inside, if there is one, to ensure there's enough room to view this component
-		  	}
-		  	newContentComponent.repaint();	//repaint the component (important if we're inside a JOptionPane, for instance)
-*/
 				revalidate();	//update the layout
 				if(newContentComponent!=null)	//if we were given a new content component
 				{
@@ -118,11 +108,6 @@ public class ContentPanel extends ModifiablePanel implements CanClosable
 		return super.getDefaultFocusComponent();	//if we can't get the default focus component from the content component, return whatever had been set with this panel
 	}
 
-	/**The listener that listens for the modified property and, if it is changed
-		to <code>true</code>, sets our modified status to <code>true</code>.
-	*/
-	private PropertyChangeListener modifyModifiedChangeListener;
-
 	/**Default constructor.*/
 	public ContentPanel()
 	{
@@ -132,7 +117,7 @@ public class ContentPanel extends ModifiablePanel implements CanClosable
 	/**Content component constructor.
 		The content component is guaranteed to be set before
 		<code>initializeUI</code> is called.
-	@param contentComponent The new component for the center of the panel, or
+	@param contentComponent The new component for the panel, or
 		null if there should be no content component.
 	*/
 	public ContentPanel(final Component contentComponent)
@@ -149,7 +134,29 @@ public class ContentPanel extends ModifiablePanel implements CanClosable
 		this(null, initialize);	//construct the panel with no content component and initialize the panel if we should
 	}
 
-	/**Content component constructor with optional initialization.
+	/**Position constructor.
+	@param constraints The position of the content component, such as
+		<code>BorderLayout.CENTER</code> or a <code>GridBagConstraints</code>
+		instance. 
+	*/
+	public ContentPanel(final Object constraints)
+	{
+		this(constraints, true);	//construct and initialize the panel with no content component
+	}
+
+	/**Position constructor with optional initialization.
+	@param constraints The position of the content component, such as
+		<code>BorderLayout.CENTER</code> or a <code>GridBagConstraints</code>
+		instance. 
+	@param initialize <code>true</code> if the panel should initialize itself by
+		calling the initialization methods.
+	*/
+	public ContentPanel(final Object constraints, final boolean initialize)
+	{
+		this(null, constraints, initialize);	//construct the component with constraints and optionally initialize it
+	}
+
+	/**Content component constructor with center position and optional initialization.
 		The content component is guaranteed to be set before
 		<code>initializeUI</code> is called.
 	@param contentComponent The new component for the center of the panel, or
@@ -159,8 +166,24 @@ public class ContentPanel extends ModifiablePanel implements CanClosable
 	*/
 	public ContentPanel(final Component contentComponent, final boolean initialize)
 	{
+		this(contentComponent, BorderLayout.CENTER, initialize);	//construct the panel with the content component in the center
+	}
+
+	/**Content component constructor with constraints and optional initialization.
+		The content component is guaranteed to be set before
+		<code>initializeUI</code> is called.
+	@param contentComponent The new component for the panel, or
+		null if there should be no content component.
+	@param constraints The position of the content component, such as
+		<code>BorderLayout.CENTER</code> or a <code>GridBagConstraints</code>
+		instance. 
+	@param initialize <code>true</code> if the panel should initialize itself by
+		calling the initialization methods.
+	*/
+	public ContentPanel(final Component contentComponent, final Object constraints, final boolean initialize)
+	{
 		super(new BasicGridBagLayout(), false);	//construct the default panel without initializing it
-		modifyModifiedChangeListener=null;	//start out without a property change listener for content component modifications
+		contentConstraints=constraints;	//save the constraints to use for the content component
 	  setContentComponent(contentComponent);  //set the content component, if any
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel
