@@ -56,14 +56,11 @@ public class XHTMLEditorKit extends XMLEditorKit implements XHTMLConstants
 	public Document createDefaultDocument()
 	{
 		final XMLDocument swingDocument=new XMLDocument();	//create a new XML Swing document
-
 		final XMLDOMImplementation domImplementation=new XMLDOMImplementation();	//create a new DOM implementation G***later use some Java-specific stuff
 			//create an XML document for the XHTML <div> element
 		final org.w3c.dom.Document xhtml=domImplementation.createDocument(XHTML_NAMESPACE_URI.toString(), ELEMENT_DIV, null);	//create an XML document for XHTML <div>
 //G***del if not needed		XMLUtilities.appendText(xhtml.getDocumentElement(), "\n");	//append a newline to the div
-/*TODO probably bring this back when the XMLEditorPane can more intelligently handle editing of complex documents
-		final org.w3c.dom.Document xhtml=XHTMLUtilities.createXHTMLDocument();	//create a default XHTML DOM document
-*/
+//TODO probably bring this back when the XMLEditorPane can more intelligently handle editing of complex documents final org.w3c.dom.Document xhtml=XHTMLUtilities.createXHTMLDocument();	//create a default XHTML DOM document
 		setXML(xhtml, null, getMediaType(), swingDocument);	//set the XHTML into the new document, using our media type TODO make sure the base URI gets updated---somehow (maybe the calling code should do this afterwards)
 		return swingDocument;	//return the default document we created
 	}

@@ -240,111 +240,188 @@ Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.Attrib
 		if(viewFactory!=null) //if we have a view factory
 		{
 			final Document document=element.getDocument();  //get a reference to the document
-	//G***del		final CSSStyleDeclaration cssStyle=XMLCSSStyleConstants.getXMLCSSStyle(attributeSet); //get the CSS style of the element
-			final int childElementCount=element.getElementCount();  //find out how many child elements there are
-			final List childViewList=new ArrayList(childElementCount);  //create a list in which to store elements, knowing that we won't have more views than child elements
-			final List inlineChildElementList=new ArrayList(childElementCount);  //create a list in which to store inline child elements; we know we'll never have more inline child elements than there are children of the original element
-			for(int childIndex=0; childIndex<childElementCount; ++childIndex) //look at each child element
+			final Element[] childElements=getChildElementsAsBlockElements(element);	//get the child elements, making sure they are all block elements
+			final int childElementCount=childElements.length;  //find out how many child elements there are
+			if(childElementCount>0)	//if there are child elements
 			{
-				final Element childElement=element.getElement(childIndex);  //get a reference to this child element
-						//see if this is the dummy ending '\n' hierarchy added by Swing 
-				if(AbstractDocument.ParagraphElementName.equals(childElement.getName()))	//if this is is a generic paragraph element
+				final List childViewList=new ArrayList(childElementCount);  //create a list in which to store elements, knowing that we won't have more views than child elements
+				for(int i=0; i<childElementCount; ++i)	//look at each of the child elements
 				{
-					final Element parentElement=element.getParentElement();	//get the element's parent
-					if(AbstractDocument.SectionElementName.equals(parentElement.getName()))	//if this element is a direct child of the section
-					{
-							//if this element is the last child element of the section element, it's the dummy '\n' element---create a hidden view for it
-						if(parentElement.getElementCount()>0 && parentElement.getElement(parentElement.getElementCount()-1)==childElement)
-						{
-//G***testing							childViewList.add(new XMLHiddenView(childElement));	//create a hidden view to hide the dummy ending '\n' hierarchy added by Swing
-//G***fix							childViewList.add(new XMLParagraphView(childElement));	//G***testing
-							childViewList.add(new XMLBlockView(childElement, View.Y_AXIS));	//G***testing
-							continue;	//skip further processing of this child and go to the next one
-						}
-					}
-				}
-//G***del Debug.trace("looking at block view child: ", XMLCSSStyleConstants.getXMLElementLocalName(childElement.getAttributes()));  //G***del
-				final AttributeSet childAttributeSet=childElement.getAttributes();	//get the attributes of the child element
-				final CSSStyleDeclaration childCSSStyle=XMLCSSStyleUtilities.getXMLCSSStyle(childAttributeSet); //get the CSS style of the element (this method make sure the attributes are present)
-					//see if this child element is inline (text is always inline, regardless of what the display property says)
-				final boolean childIsInline=XMLCSSUtilities.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName());
-				if(childIsInline) //if this is an inline child element
+					final Element childElement=childElements[i];	//get a reference to his child element
+					final AttributeSet childAttributeSet=childElement.getAttributes();	//get the attribute set of this child
+					final String elementName=XMLStyleUtilities.getXMLElementName(childAttributeSet); //get the child element's name G***maybe later change this to isAnonymous()
+/*G***fix
+					//see if this is the dummy ending '\n' hierarchy added by Swing 
+			if(AbstractDocument.ParagraphElementName.equals(childElement.getName()))	//if this is is a generic paragraph element
+			{
+				final Element parentElement=element.getParentElement();	//get the element's parent
+				if(AbstractDocument.SectionElementName.equals(parentElement.getName()))	//if this element is a direct child of the section
 				{
-//G***del Debug.trace("is inline"); //G***del
-					try
+						//if this element is the last child element of the section element, it's the dummy '\n' element---create a hidden view for it
+					if(parentElement.getElementCount()>0 && parentElement.getElement(parentElement.getElementCount()-1)==childElement)
 					{
-	//G***bring back for efficiency					final Segment segment=new Segment();  //create a new segment to receive test
-						//get the text of this inline child; if it is just whitespace, we'll create a hidden view for it
-						final String text=document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset());
-	//G***del Debug.trace("Looking at inline text: '"+text+"' character code: "+Integer.toHexString(text.charAt(0)));  //G***del
-	//G***bring back for efficiency				  document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset(), segment);
-
-
-
-
-
-/*G***testing; see how we want to do this
-								//if there are no visible characters (or the end-of-element character mark), and this isn't really just an empty element
-						if(CharSequenceUtilities.notCharIndexOf(text, CharacterConstants.WHITESPACE_CHARS+CharacterConstants.CONTROL_CHARS+XMLDocument.ELEMENT_END_CHAR)<0	
-								&& !XMLStyleUtilities.isXMLEmptyElement(childAttributeSet))
-						{
-	//G***del Debug.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElementName(attributeSet)); //G***del
-							if(inlineChildElementList.size()>0)	//if we've started but not finished an anonymous block, yet
-								childViewList.add(createAnonymousBlockView(element, inlineChildElementList, viewFactory));	//create an anonymous block view and clear the list
-							//G***fix: this does not currently compensate for elements like <pre>
-	//G***del; testing							childViewList.add(new XMLParagraphView(childElement));  //G***testing
-							childViewList.add(new XMLHiddenView(childElement));  //create a hidden view for the whitespace inline element and add it to our list of views
-						}
-						else  //if there's more than whitespace here
-*/
-
-
-//TODO fix this algorithm, after we decide how we want to do this
-
-							//if there are no visible characters (or the end-of-element character mark), and this isn't really just an empty element
-					if(CharSequenceUtilities.notCharIndexOf(text, CharacterConstants.WHITESPACE_CHARS+CharacterConstants.CONTROL_CHARS+XMLDocument.ELEMENT_END_CHAR)<0	
-							&& !XMLStyleUtilities.isXMLEmptyElement(childAttributeSet))
-					{
-//G***del Debug.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElementName(attributeSet)); //G***del
-						if(inlineChildElementList.size()>0)	//if we've started but not finished an anonymous block, yet
-							childViewList.add(createAnonymousBlockView(element, inlineChildElementList, viewFactory));	//create an anonymous block view and clear the list
-						//G***fix: this does not currently compensate for elements like <pre>
-//G***del; testing							childViewList.add(new XMLParagraphView(childElement));  //G***testing
-						childViewList.add(new XMLHiddenView(childElement));  //create a hidden view for the whitespace inline element and add it to our list of views
+//G****testing
+childViewList.add(new XMLHiddenView(childElement));	//create a hidden view to hide the dummy ending '\n' hierarchy added by Swing
+						continue;	//skip further processing of this child and go to the next one
 					}
-					else  //if there's more than whitespace here
-
-
-
-						{
-							inlineChildElementList.add(childElement);  //add the child element to the inline element list
-						}
-					}
-					catch(BadLocationException badLocationException)  //if we tried to access an invalid location (this shouldn't happen unless there are problems internal to an element)
-					{
-						Debug.error(badLocationException);  //report the error
-					}
-	//G***del					anonymousElement.add(childElement); //add the child element to the anonymous element
-				}
-				else  //if this is a block element
-				{
-					if(inlineChildElementList.size()>0)	//if we've started but not finished an anonymous block, yet
-						childViewList.add(createAnonymousBlockView(element, inlineChildElementList, viewFactory));	//create an anonymous block view and clear the list
-					childViewList.add(viewFactory.create(childElement)); //create a view normally for the child element and add the view to our list
 				}
 			}
-			if(inlineChildElementList.size()>0)	//if we started an anonymous block but never finished it (i.e. the last child was inline)
-				childViewList.add(createAnonymousBlockView(element, inlineChildElementList, viewFactory));	//create an anonymous block view and clear the list
-			return (View[])childViewList.toArray(new View[childViewList.size()]);  //convert the list of views to an array
+*/
+
+//TODO comment all this in-depth
+				if(i==0 && childElementCount==2)	//if there are only two child elements, see if the last one is the implied "\n" 
+				{
+					if("$implied".equals(XMLStyleUtilities.getXMLElementName(childElements[childElementCount-1].getAttributes())))	//G***use a constant
+					{
+						childViewList.add(viewFactory.create(childElement)); //create a view normally for the child element, even if it's just whitespace
+						continue;	//G***comment						
+					}
+				}
+
+					if(childElementCount>1 && XMLCSSStyleUtilities.AnonymousAttributeValue.equals(elementName))	//if this is an anonymous element, but it's not the only child element
+					{
+						try
+						{
+							final String text=document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset());
+							//G***bring back for efficiency				  document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset(), segment);
+									//if there are no visible characters (or the end-of-element character mark), and this isn't really just an empty element
+							if(CharSequenceUtilities.notCharIndexOf(text, CharacterConstants.WHITESPACE_CHARS+CharacterConstants.CONTROL_CHARS+XMLDocument.ELEMENT_END_CHAR)<0	
+									&& !XMLStyleUtilities.isXMLEmptyElement(childAttributeSet))
+							{
+		//G***del Debug.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElementName(attributeSet)); //G***del
+								childViewList.add(new XMLHiddenView(childElement));  //create a hidden view for the whitespace inline elements and add it to our list of views
+								continue;	//skip further processing of this child and go to the next one								
+		//G***fix	childViewList.add(viewFactory.create(childElement)); //create a view normally for the child element and add the view to our list
+		//G***fix							childViewList.add(new XMLParagraphView(childElement));  //G***testing
+							}
+						}
+						catch(BadLocationException badLocationException)  //if we tried to access an invalid location (this shouldn't happen unless there are problems internal to an element)
+						{
+							Debug.error(badLocationException);  //report the error
+						}
+					}
+
+					childViewList.add(viewFactory.create(childElement)); //create a view normally for the child element and add the view to our list						
+/*G***fix
+					else	//if this isn't an anonymous element
+					{
+						childViewList.add(viewFactory.create(childElement)); //create a view normally for the child element and add the view to our list						
+					}
+*/
+				}
+				return (View[])childViewList.toArray(new View[childViewList.size()]);  //convert the list of views to an array
+			}
 		}
-		else  //if there is no view factory, the parent view has somehow changed
-			return new View[]{}; //don't create children because we don't have a view factory
+		return new View[]{}; ////if there is no view factory (the parent view has somehow changed) or no elements, just return an empty array of views
 	}
+
+
+
+
+
+
+
+
+
+	/**Gathers child elements of a block element, ensuring that each child element
+		is a block element.
+		Inline child elements will be wrapped in one or more anonymous views.
+	@param element The element representing a block view.
+	@return A list of child elements, which may be empty if there are no
+		child elements.
+	@see CompositeView#setParent
+	@see #loadChildren
+	*/
+	public static Element[] getChildElementsAsBlockElements(final Element element)
+	{
+		final Document document=element.getDocument();  //get a reference to the document
+//G***del		final CSSStyleDeclaration cssStyle=XMLCSSStyleConstants.getXMLCSSStyle(attributeSet); //get the CSS style of the element
+		final int childElementCount=element.getElementCount();  //find out how many child elements there are
+		//TODO maybe just send back a NO_ELEMENTS constant if there are no children
+		final List childElementList=new ArrayList(childElementCount);  //create a list in which to store elements, knowing that we won't have more views than child elements
+		final List inlineChildElementList=new ArrayList(childElementCount);  //create a list in which to store inline child elements; we know we'll never have more inline child elements than there are children of the original element
+		for(int childIndex=0; childIndex<childElementCount; ++childIndex) //look at each child element
+		{
+			final Element childElement=element.getElement(childIndex);  //get a reference to this child element
+/*G***fix
+					//see if this is the dummy ending '\n' hierarchy added by Swing 
+			if(AbstractDocument.ParagraphElementName.equals(childElement.getName()))	//if this is is a generic paragraph element
+			{
+				final Element parentElement=element.getParentElement();	//get the element's parent
+				if(AbstractDocument.SectionElementName.equals(parentElement.getName()))	//if this element is a direct child of the section
+				{
+						//if this element is the last child element of the section element, it's the dummy '\n' element---create a hidden view for it
+					if(parentElement.getElementCount()>0 && parentElement.getElement(parentElement.getElementCount()-1)==childElement)
+					{
+//G***testing							childViewList.add(new XMLHiddenView(childElement));	//create a hidden view to hide the dummy ending '\n' hierarchy added by Swing
+//G***fix							childViewList.add(new XMLParagraphView(childElement));	//G***testing
+						if(inlineChildElementList.size()>0)	//if we've started but not finished an anonymous block, yet
+							childElementList.add(createAnonymousBlockElement(element, inlineChildElementList));	//create an anonymous block element and clear the list
+childElementList.add(childElement);	//G***testing
+//G***del childViewList.add(new XMLHiddenView(childElement));	//create a hidden view to hide the dummy ending '\n' hierarchy added by Swing
+//G***fix							childViewList.add(new XMLBlockView(childElement, View.Y_AXIS));	//G***testing
+						continue;	//skip further processing of this child and go to the next one
+					}
+				}
+			}
+*/
+
+					//see if this is the dummy ending '\n' hierarchy added by Swing 
+			if(AbstractDocument.ParagraphElementName.equals(childElement.getName()))	//if this is is a generic paragraph element
+			{
+				final Element parentElement=element.getParentElement();	//get the element's parent
+				if(AbstractDocument.SectionElementName.equals(parentElement.getName()))	//if this element is a direct child of the section
+				{
+						//if this element is the last child element of the section element, it's the dummy '\n' element---create a hidden view for it
+					if(parentElement.getElementCount()>0 && parentElement.getElement(parentElement.getElementCount()-1)==childElement)
+					{
+//G***testing							childViewList.add(new XMLHiddenView(childElement));	//create a hidden view to hide the dummy ending '\n' hierarchy added by Swing
+//G***fix							childViewList.add(new XMLParagraphView(childElement));	//G***testing
+						if(inlineChildElementList.size()>0)	//if we've started but not finished an anonymous block, yet
+							childElementList.add(createAnonymousBlockElement(element, inlineChildElementList));	//create an anonymous block element and clear the list
+						inlineChildElementList.add(childElement);	//G***testing
+						childElementList.add(createAnonymousBlockElement(element, inlineChildElementList));	//create an anonymous block element and clear the list
+
+//G***del childViewList.add(new XMLHiddenView(childElement));	//create a hidden view to hide the dummy ending '\n' hierarchy added by Swing
+//G***fix							childViewList.add(new XMLBlockView(childElement, View.Y_AXIS));	//G***testing
+						continue;	//skip further processing of this child and go to the next one
+					}
+				}
+			}
+
+
+//G***del Debug.trace("looking at block view child: ", XMLCSSStyleConstants.getXMLElementLocalName(childElement.getAttributes()));  //G***del
+			final AttributeSet childAttributeSet=childElement.getAttributes();	//get the attributes of the child element
+			final CSSStyleDeclaration childCSSStyle=XMLCSSStyleUtilities.getXMLCSSStyle(childAttributeSet); //get the CSS style of the element (this method make sure the attributes are present)
+				//see if this child element is inline (text is always inline, regardless of what the display property says)
+			final boolean childIsInline=XMLCSSUtilities.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName());
+			if(childIsInline) //if this is an inline child element
+			{
+				inlineChildElementList.add(childElement);  //add the child element to the inline element list
+			}
+			else  //if this is a block element
+			{
+				if(inlineChildElementList.size()>0)	//if we've started but not finished an anonymous block, yet
+					childElementList.add(createAnonymousBlockElement(element, inlineChildElementList));	//create an anonymous block element and clear the list
+				childElementList.add(childElement); //add the child element normally
+			}
+		}
+		if(inlineChildElementList.size()>0)	//if we started an anonymous block but never finished it (i.e. the last child was inline)
+			childElementList.add(createAnonymousBlockElement(element, inlineChildElementList));	//create an anonymous block element and clear the list
+		return (Element[])childElementList.toArray(new Element[childElementList.size()]);  //convert the list of elements to an array
+	}
+
+
+
+
+
+
+
+
 
 	/*Creates an anonymous view representing the given child elements.
 	<p>All elements are removed from the collection after the anonymous view has
 		been created.</p>
-	<p>If no child elements are present, no anonymous view is created.</p>
 	<p>If no child elements are visible, a hidden view will be created instead.</p> 
 	@param parentElement The parent element of which this element owns a subset of child
 		views.
@@ -354,6 +431,22 @@ Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.Attrib
 	*/
 	protected static View createAnonymousBlockView(final Element parentElement, final Collection childElementCollection, final ViewFactory viewFactory)
 	{
+		final Element anonymousElement=createAnonymousBlockElement(parentElement, childElementCollection);	//create an anonymous element from the child elements, removing them from the collection
+		return viewFactory.create(anonymousElement); //create a view for the anonymous element and return that view, discarding our reference to the element
+	}
+
+	/*Creates an anonymous element representing the given child elements.
+	<p>All elements are removed from the collection after the anonymous element
+		has been created.</p>
+	<p>If no child elements are visible, the anonymous element will be marked
+		as hidden.</p> 
+	@param parentElement The parent element of which this element owns a subset
+		of child views.
+	@param childElementCollection The collection of elements to be a child of the
+		anonymous element.
+	*/
+	protected static Element createAnonymousBlockElement(final Element parentElement, final Collection childElementCollection)
+	{
 		final MutableAttributeSet anonymousAttributeSet=new SimpleAttributeSet();	//create an anonymous attribute set for this anonymous box
 		XMLStyleUtilities.setXMLElementName(anonymousAttributeSet, XMLCSSStyleUtilities.AnonymousAttributeValue); //show by its name that this is an anonymous box G***maybe change this to setAnonymous
 		final XMLCSSStyleDeclaration anonymousCSSStyle=new XMLCSSStyleDeclaration(); //create a new style declaration
@@ -362,7 +455,36 @@ Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.Attrib
 				//put the child elements into an array
 		final Element[] childElements=(Element[])childElementCollection.toArray(new Element[childElementCollection.size()]);
 		boolean isHidden=true;	//this anonymous view should be hidden unless we find at least one visible view
-		for(int i=childElements.length-1; i>=0; --i)	//see if any child elements are visible
+
+
+
+
+		if(childElements.length==1)	//G***testing
+		{
+			final Element childElement=childElements[0];
+					//see if this is the dummy ending '\n' hierarchy added by Swing 
+			if(AbstractDocument.ParagraphElementName.equals(childElement.getName()))	//if this is is a generic paragraph element
+			{
+				final Element parentParentElement=parentElement.getParentElement();	//get the element's parent
+				if(AbstractDocument.SectionElementName.equals(parentParentElement.getName()))	//if this element is a direct child of the section
+				{
+						//if this element is the last child element of the section element, it's the dummy '\n' element---create a hidden view for it
+					if(parentParentElement.getElementCount()>0 && parentParentElement.getElement(parentParentElement.getElementCount()-1)==childElement)
+					{
+						XMLStyleUtilities.setXMLElementName(anonymousAttributeSet, "$implied");	//G***fix; use a constant XMLCSSStyleUtilities.AnonymousAttributeValue); //show by its name that this is an anonymous box G***maybe change this to setAnonymous
+						isHidden=false;	//G***testing
+					}
+				}
+			}
+		}
+
+
+
+
+
+
+
+		for(int i=childElements.length-1; isHidden && i>=0; --i)	//see if any child elements are visible; stop when we find a visible one
 		{
 			final Element childElement=childElements[i];	//get a reference to this child element
 			final AttributeSet childAttributeSet=childElement.getAttributes();	//get the child element attributes
@@ -372,19 +494,21 @@ Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.Attrib
 				if(XMLStyleUtilities.isVisible(childAttributeSet))	//if we haven't for some reason we've explicitly set this view to be hidden
 				{
 					isHidden=false;	//we've found a visible child, so we can't make the anonymous element hidden
-					break;	//stop looking for visible children
+//G***del when works					break;	//stop looking for visible children
 				} 
 			}
 		}
 		if(isHidden)	//if no child elements are visible
 		{
 			XMLStyleUtilities.setVisible(anonymousAttributeSet, false);	//hide the anonymous element
-		} 
+		}
 			//create an anonymous element with the elements we've collected
 		final Element anonymousElement=new AnonymousElement(parentElement, anonymousAttributeSet, childElementCollection);
 		childElementCollection.clear();	//remove all the child elements from the collection
-		return viewFactory.create(anonymousElement); //create a view for the anonymous element and return that view, discarding our reference to the element
+		return anonymousElement;	//return the anonymous element we created
 	}
+
+
 
 	/**Invalidates the layout and asks the container to repaint itself.
 	This is a convenience function for <code>layoutChanged()</code> and

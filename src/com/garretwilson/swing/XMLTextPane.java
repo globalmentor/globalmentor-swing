@@ -531,6 +531,8 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	{
 		super();	//construct the parent class
 //G***del when works		originalKeymap=getKeymap();  //get the current key map and store it for future use
+
+
 		final Keymap defaultKeymap=getKeymap();	//get the current keymap
 		final Keymap xmlKeymap=addKeymap(XML_KEYMAP_NAME, defaultKeymap); //create a new keymap for our custom actions
 		loadKeymap(defaultKeymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit changes?

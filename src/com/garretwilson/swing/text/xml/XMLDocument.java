@@ -951,7 +951,7 @@ Debug.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEn
      * @see EventListenerList
      */
     protected void fireInsertUpdate(DocumentEvent e) {
-		applyStyles(); //G***testing; put in the correct place, and make sure this gets called when repaginating, if we need to
+//G***fix; right now this is only done when the text is first placed in the document		applyStyles(); //G***testing; put in the correct place, and make sure this gets called when repaginating, if we need to
 			super.fireInsertUpdate(e);
     }
 

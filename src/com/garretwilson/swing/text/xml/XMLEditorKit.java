@@ -29,6 +29,8 @@ import com.garretwilson.text.xml.stylesheets.css.*;	//G***del if we don't need
 import com.garretwilson.util.*;
 import org.w3c.dom.*;
 import org.w3c.dom.css.CSSPrimitiveValue;
+import org.w3c.dom.css.CSSStyleDeclaration;
+import org.w3c.dom.css.CSSStyleSheet;
 
 /**An editor kit for XML.
 @author Garret Wilson
@@ -905,6 +907,8 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 	{
 		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new MediaType[]{mediaType}, swingXMLDocument); //set the XML data, creating arrays each with a single element
 	}
+
+	private XMLCSSStylesheetApplier xmlCSSStylesheetApplier=null;	//G***testing
 	
 	/**Sets the given XML data in the document.
 	@param xmlDocumentArray The array of XML documents to set in the Swing document.
@@ -914,8 +918,15 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 	*/
 	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final MediaType[] mediaTypeArray, final XMLDocument swingXMLDocument)
 	{
+
+		xmlCSSStylesheetApplier=new XMLCSSStylesheetApplier(swingXMLDocument);	//G***testing
+
 		//create a list of element specs for creating the document and store them here
 		final DefaultStyledDocument.ElementSpec[] elementSpecList=createElementSpecs(xmlDocumentArray, baseURIArray, mediaTypeArray);
+
+		xmlCSSStylesheetApplier=null;
+
+
 		swingXMLDocument.create(elementSpecList);	//create the document from the element specs
 	//G***testing; put in correct place		swingDocument.applyStyles(); //G***testing; put in the correct place, and make sure this gets called when repaginating, if we need to
 	}
@@ -944,6 +955,8 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 		return (DefaultStyledDocument.ElementSpec[])elementSpecList.toArray(new DefaultStyledDocument.ElementSpec[elementSpecList.size()]);
 	}
 
+
+
 	/**Creates a list of element spec objects from an aray of XML document trees.
 	@param xmlDocumentArray The array of XML document trees.
 	@param baseURIArray The array of URIs representing the base URIs for each document.
@@ -956,15 +969,32 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 		final List elementSpecList=new ArrayList();	//create an array to hold our element specs
 //G***del when works		final XMLCSSSimpleAttributeSet attributeSet=new XMLCSSSimpleAttributeSet();	//create a new attribute for the body element
 //G***del		final SimpleAttributeSet attributeSet=new SimpleAttributeSet();	//create a new attribute for the body element
+
+//G***fix if(xmlDocumentArray.length>1 || !"null".equals(xmlDocumentArray[0].getDocumentElement().getLocalName()))	//G***testing
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(null, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a Swing element to enclose all elements
 
 		for(int xmlDocumentIndex=0; xmlDocumentIndex<xmlDocumentArray.length; ++xmlDocumentIndex)	//look at each of the documents they passed to us
 		{
 //G***del Debug.trace("Looking at XML document: ", xmlDocumentIndex); //G***del
 			final org.w3c.dom.Document xmlDocument=xmlDocumentArray[xmlDocumentIndex];	//get a reference to this document
+
+
+xmlDocument.normalize();	//G***do we want to do this here? probably not---or maybe so. Maybe we can normalize on the fly in the Swing document, not in the source
+
+
+
 			final URI baseURI=baseURIArray[xmlDocumentIndex]; //get a reference to the base URI
 			final MediaType mediaType=mediaTypeArray[xmlDocumentIndex]; //get a reference to the media type
 			final org.w3c.dom.Element xmlDocumentElement=xmlDocument.getDocumentElement();	//get the root of the document
+
+
+			final CSSStyleSheet[] stylesheets=xmlCSSStylesheetApplier.getStylesheets(xmlDocument, baseURI, mediaType);	//G***testing
+			for(int i=0; i<stylesheets.length; xmlCSSStylesheetApplier.applyStyleSheet(stylesheets[i++], xmlDocumentElement));	//G***testing
+
+
+
+
+
 			if(xmlDocumentIndex>0)	//if this is not the first document to insert
 			{
 							//G***check to see if we should actually do this, first (from the CSS attributes)
@@ -1017,6 +1047,7 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 			}
 */
 		}
+//G***fix	if(xmlDocumentArray.length>1 || !"null".equals(xmlDocumentArray[0].getDocumentElement().getLocalName()))	//G***testing
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(null, DefaultStyledDocument.ElementSpec.EndTagType));	//finish the element that encloses all the documents
 		return elementSpecList; //return the element spec list we constructed
 	}
@@ -1036,8 +1067,10 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 //G***del Debug.trace("XMLDocument.appendElementSpecList: element ", xmlElement.getNodeName());	//G***del
 		final SimpleAttributeSet attributeSet=createAttributeSet(xmlElement, baseURI);	//create and fill an attribute set based upon this element's CSS style
 //G***del Debug.trace("Attribute set: ", attributeSet);  //G***del
+//G***fix if(!"null".equals(xmlElement.getLocalName()))	//G***testing
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(attributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a Swing element to model this XML element
 		appendElementSpecListContent(elementSpecList, xmlElement, attributeSet, baseURI);	//append the content of the element
+//G***fix if(!"null".equals(xmlElement.getLocalName()))	//G***testing
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(attributeSet, DefaultStyledDocument.ElementSpec.EndTagType));	//finish the element we started at the beginning of this function
 		return attributeSet;  //return the attribute set used for the element
 	}
@@ -1064,6 +1097,18 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 				final Node node=childNodeList.item(childIndex);	//look at this node
 				appendElementSpecListNode(elementSpecList, node, baseURI);	//append this node's information
 			}
+
+/*G***fix; transferred elsewhere
+//G***fix			assert node.getParentNode() instanceof org.w3c.dom.Element;	//G***fix
+//G***fix			final org.w3c.dom.Element parentElement=(org.w3c.dom.Element)node.getParentNode();  //get the parent element
+			final CSSStyleDeclaration cssStyle=xmlCSSStylesheetApplier.getStyle(xmlElement);
+				//see if the element is inline (text is always inline
+			final boolean isInline=XMLCSSUtilities.isDisplayInline(cssStyle);
+			if(!isInline)
+			{
+				appendElementSpecListContent(elementSpecList, xmlElement, null, baseURI, "\n");	//G***testing
+			}
+*/
 		}
 		else	//if this element has no children, we'll have to add dummy text
 		{
@@ -1106,7 +1151,7 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 				{
 						//G***see if this really slows things down
 					final MutableAttributeSet textAttributeSet=createAttributeSet(node, baseURI);	//create and fill an attribute set
-					appendElementSpecListContent(elementSpecList, node.getNodeValue(), textAttributeSet, baseURI);	//append the content
+					appendElementSpecListContent(elementSpecList, node, textAttributeSet, baseURI, node.getNodeValue());	//append the content
 					return textAttributeSet;	//return the attribute set of the text
 				}
 			default:	//TODO fix for inserting unknown nodes into the Swing document
@@ -1116,6 +1161,8 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 
 	/**Appends child text into a list of element specs.
 	@param elementSpecList The list of element specs to be inserted into the document.
+	@param node The XML node that contains the content, or <code>null</code> if
+		there is no node representing the text (text is being inserted manually).
 	@param text The text to be inserted.
 	@param attributeSet The attribute set representing the text, or
 		<code>null</code> if default attributes should be used.
@@ -1126,7 +1173,7 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 	@see XMLDocument#insert
 	@see XMLDocument#appendElementSpecListContent
 	*/
-	protected void appendElementSpecListContent(final List elementSpecList, final String text, final AttributeSet attributeSet, final URI baseURI)
+	protected void appendElementSpecListContent(final List elementSpecList, final org.w3c.dom.Node node, final AttributeSet attributeSet, final URI baseURI, final String text)
 	{
 		final AttributeSet textAttributeSet;
 		if(attributeSet!=null)	//if there are no attributes provided (artificial text is being manually inserted, for instance)
@@ -1153,6 +1200,33 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 //G***fix textStringBuffer.append(CharacterConstants.WORD_JOINER_CHAR);	//G***testing
 //G***fix textStringBuffer.append(CharacterConstants.ZERO_WIDTH_NO_BREAK_SPACE_CHAR);	//G***testing
 //G***fix textStringBuffer.append(ELEMENT_END_CHAR);	//put a dummy character at the end of the element so that caret positioning will work correctly at the end of block views
+
+//G***del	if(node.getParentNode()!=null && "null".equals(XMLStyleUtilities.getXMLElementLocalName(attributeSet.getResolveParent())))
+/*G***fix
+			if(node.getParentNode()!=null && "div".equals(node.getParentNode().getLocalName()))	//G***testing; fix
+			{
+textStringBuffer.append('\n');	//G***testing
+				
+			}
+*/
+
+if(node!=null && node.getParentNode() instanceof org.w3c.dom.Element)
+{
+	final org.w3c.dom.Element parentElement=(org.w3c.dom.Element)node.getParentNode();  //get the parent element
+	if(parentElement.getChildNodes().item(parentElement.getChildNodes().getLength()-1)==node)	//if this is the last node
+	{
+			final CSSStyleDeclaration cssStyle=xmlCSSStylesheetApplier.getStyle(parentElement);
+				//see if the element is inline (text is always inline
+			final boolean isInline=XMLCSSUtilities.isDisplayInline(cssStyle);
+			if(!isInline)
+			{
+				textStringBuffer.append('\n');	//G***testing
+			}
+	}
+}
+
+
+
 			final String content=textStringBuffer.toString();	//convert the string buffer to a string
 			elementSpecList.add(new DefaultStyledDocument.ElementSpec(textAttributeSet, DefaultStyledDocument.ElementSpec.ContentType, content.toCharArray(), 0, content.length()));
 		}
@@ -1217,9 +1291,20 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 		{
 			case Node.ELEMENT_NODE: //if this node is an element
 				{
+					org.w3c.dom.Element xmlElement=(org.w3c.dom.Element)xmlNode;  //cast the node to an element
+
+
+
+final CSSStyleDeclaration cssStyle=xmlCSSStylesheetApplier.getStyle(xmlElement);	//see if we've already applied a style to this element
+if(cssStyle!=null)
+{
+	XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, cssStyle);	
+}
+else
+{
 					//give every attribute set a default empty CSS style; if not, this will cause huge performance hits when trying to create them on the fly when styles are applied
 					XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, new XMLCSSStyleDeclaration());
-					org.w3c.dom.Element xmlElement=(org.w3c.dom.Element)xmlNode;  //cast the node to an element
+}
 					NamedNodeMap attributeNodeMap=xmlElement.getAttributes(); //get a reference to the attributes
 					//store the XML attributes
 					for(int attributeIndex=0; attributeIndex<attributeNodeMap.getLength(); ++attributeIndex)	//look at each of the attributes
