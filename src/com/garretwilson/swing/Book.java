@@ -163,11 +163,41 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 		/**@return The action for searching for the next occurrence of text.*/
 		public Action getSearchAgainAction() {return searchAgainAction;}
 
-		/**The action for displaying the book properties.*/
+	/**The action for displaying the book properties.*/
 	private final Action viewPropertiesAction;
 
 		/**@return The action for displaying the book properties.*/
 		public Action getViewPropertiesAction() {return viewPropertiesAction;}
+
+	/**The action for displaying one page at a time.*/
+	private final Action displayOnePageAction;
+
+		/**@return The action for displaying one page at a time.*/
+		public Action getDisplayOnePageAction() {return displayOnePageAction;}
+
+	/**The action for displaying two pages at a time.*/
+	private final Action displayTwoPagesAction;
+
+		/**@return The action for displaying two pages at a time.*/
+		public Action getDisplayTwoPagesAction() {return displayTwoPagesAction;}
+
+	/**The action for inserting a bookmark at the current location.*/
+	private final Action insertBookmarkAction;
+
+		/**@return The action for inserting a bookmark at the current location.*/
+		public Action getInsertBookmarkAction() {return insertBookmarkAction;}
+
+	/**The array of default zoom-level actions.*/
+	private final ZoomAction[] zoomActions;
+
+		/**@return The array of default zoom-level actions.*/
+		public ZoomAction[] getZoomActions() {return zoomActions;}
+
+	/**The action for turning text smoothing on or off.*/
+	private final Action antialiasAction;
+
+		/**@return The action for turning text smoothing on or off.*/
+		public Action getAntialiasAction() {return antialiasAction;}
 
 	/**The current highlight color (defaults to yellow).*/
 	private Color highlightColor=Color.yellow;
@@ -225,9 +255,9 @@ Debug.trace();  //G***del
 				{
 					addBookmark(name, offset);  //add a bookmark with this name at this offset
 				}
-				catch(BadLocationException e) //we should never have a bad location
+				catch(BadLocationException badLocationException) //we should never have a bad location
 				{
-					Debug.error(e); //report the error
+					throw (AssertionError)new AssertionError(badLocationException.getMessage()).initCause(badLocationException);
 				}
 			}
 		}
@@ -639,6 +669,27 @@ Debug.trace();  //G***del
 		searchAction=new SearchAction();
 		searchAgainAction=new SearchAgainAction();
 		viewPropertiesAction=new ViewPropertiesAction();
+		displayOnePageAction=new DisplayPageCountAction(1);
+		displayTwoPagesAction=new DisplayPageCountAction(2);
+		insertBookmarkAction=new InsertBookmarkAction();
+		zoomActions=new ZoomAction[]
+			{
+				new ZoomAction(0.25f),
+				new ZoomAction(0.50f),
+				new ZoomAction(0.60f),
+				new ZoomAction(0.70f),
+				new ZoomAction(0.80f),
+				new ZoomAction(0.90f),
+				new ZoomAction(1.00f),
+				new ZoomAction(1.10f),
+				new ZoomAction(1.20f),
+				new ZoomAction(1.30f),
+				new ZoomAction(1.40f),
+				new ZoomAction(1.50f),
+				new ZoomAction(1.75f),
+				new ZoomAction(2.00f)
+			};
+		antialiasAction=new AntialiasAction();
 		bookmarkHighlightTagMap=new TreeMap();
 		annotationHighlightTagMap=new TreeMap();
 		historyList=new ArrayList();
@@ -1451,6 +1502,31 @@ Debug.trace("ready to call XMLTextPane.go(URI)");
 		getXMLTextPane().go(offset);  //tell the text pane to go to the specified position
 	}
 
+	/**Attempts to navigate to the target of the given OEB guide. This method
+		assumes an OEB publication is available.
+	@param guide The OEB guide which contains the target href location.
+	*/
+	protected void go(final OEBGuide guide)
+	{
+		final OEBPublication publication=getOEBPublication(); //get the publication associated with the book, if there is one
+		if(publication!=null) //if there is a publication
+		{
+			final Document document=getXMLTextPane().getDocument(); //get a reference to the document
+		  if(document instanceof XMLDocument) //if this is an XML document
+			{
+		  	try
+		  	{
+					final URI guideURI=((XMLDocument)document).getResourceURI(guide.getHRef()); //try to construct a URI from the guide's href
+					go(guideURI); //go to the URL specified by the guide
+		  	}
+		  	catch(URISyntaxException uriSyntaxException)
+		  	{
+		  		SwingApplication.displayApplicationError(this, uriSyntaxException);
+		  	}
+			}
+		}
+	}
+
 	/**Activates a particular hyperlink from a given hyperlink event.
 	@param hyperlinkEvent The event which contains information about the hyperlink
 		to be activated.
@@ -1898,10 +1974,17 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 		}
 	}
 
-	/**Action for inserting a bookmark at the current location.*/
-	class InsertBookmarkAction extends AbstractAction
+	/**Action for inserting a bookmark at the current or given location.*/
+	protected class InsertBookmarkAction extends AbstractAction
 	{
-		protected int bookmarkPos;
+		/**The position of the bookmark, or -1 if the current position should be used.*/
+		protected final int bookmarkPos;
+
+		/**Default constructor that always uses the current position when performed.*/
+		public InsertBookmarkAction()
+		{
+			this(-1);	//show that we should always use the current position
+		}
 
 		/**Constructor that specifies the position of a bookmark.
 		@param pos The position in the document at which the bookmark should be added.
@@ -1917,10 +2000,11 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 		}
 
 		/**Called when the action should be performed.
-		@param e The event causing the action.
+		@param actionEvent The event causing the action.
 		*/
-		public void actionPerformed(ActionEvent e)
+		public void actionPerformed(final ActionEvent actionEvent)
 		{
+
 		  final String defaultBookmarkName="bookmark name";  //we need a default name to work around a JDK 1.3 bug which does not display an input field with no default text G***i18n
 				//ask the user for a bookmark name
 			final String specifiedName=(String)JOptionPane.showInputDialog(Book.this, "Enter a bookmark name, or leave blank for an unnamed bookmark:", "Insert Bookmark", JOptionPane.QUESTION_MESSAGE, null, null, defaultBookmarkName); //G***i18n
@@ -1930,15 +2014,21 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 				  //if the user didn't specify a name, or they took the default name, don't use a bookmark name
 				final String bookmarkName=trimmedSpecifiedName.length()>0 && !trimmedSpecifiedName.equals(defaultBookmarkName)
 						? trimmedSpecifiedName : null;
-				try
+				if(bookmarkPos>=0)	//if we know where to add the bookmark
 				{
-					addBookmark(bookmarkName, bookmarkPos);  //add a bookmark with this name at this offset
+					try
+					{
+						addBookmark(bookmarkName, bookmarkPos);  //add a bookmark with this name at this offset
+					}
+					catch(BadLocationException badLocationException) //we should never have a bad location
+					{
+						throw (AssertionError)new AssertionError(badLocationException.getMessage()).initCause(badLocationException);
+					}
 				}
-				catch(BadLocationException badLocationException) //we should never have a bad location
+				else	//if we don't have a particular location
 				{
-					Debug.error(badLocationException); //report the error
+					addBookmark(bookmarkName); //insert a bookmark at the current location in the book
 				}
-//G***fix by sending an event that the bookmarks have changed				refreshGoBookmarksMenu(); //update the bookmarks menu G***put this somewhere else, which will catch even the Book's events via a bookmark property change or something
 			}
 		}
 	}
@@ -2190,4 +2280,169 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 		}
 	}
 
+	
+	
+	
+	
+	
+	
+	/**Action for displaying a particular number of pages at a time.*/
+	protected class DisplayPageCountAction extends AbstractAction
+	{
+		/**The number of pages to display.*/
+		protected final int displayPageCount;
+
+		/**Constructs an action which changes the number of pages displayed.
+		@param displayPageCount How many pages should be displayed when this action is performed.
+		*/
+		public DisplayPageCountAction(final int displayPageCount)
+		{
+			this.displayPageCount=displayPageCount;	//save the display page count
+			switch(displayPageCount)	//see how many pages we should display
+			{
+				case 1:	//if we should show a single page
+					putValue(NAME, "1 Page");	//set the correct name G***i18n
+					putValue(SHORT_DESCRIPTION, "Single Page");	//set the short description G***Int
+					putValue(LONG_DESCRIPTION, "Display only one page at a time.");	//set the long description G***Int
+				  putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_1));  //set the mnemonic key G***i18n
+					putValue(SMALL_ICON, IconResources.getIcon(IconResources.COLUMNS1_ICON_FILENAME)); //load the correct icon
+					break;
+				case 2:	//if we should show two pages
+				default:	//for any other number of pages
+					putValue(NAME, "2 Pages");	//set the correct name G***i18n
+					putValue(SHORT_DESCRIPTION, "Facing Pages");	//set the short description G***Int
+					putValue(LONG_DESCRIPTION, "Display two pages at a time.");	//set the long description G***Int
+					putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_2));  //set the mnemonic key G***i18n
+					putValue(SMALL_ICON, IconResources.getIcon(IconResources.COLUMNS2_ICON_FILENAME)); //load the correct icon
+					break;
+			}
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+			setDisplayPageCount(displayPageCount);	//show the correct number of pages at a time
+		}
+	}
+
+	/**Action for changing the zoom level.*/
+	protected class ZoomAction extends AbstractAction
+	{
+		/**The amount by which to zoom.*/
+		protected final float zoomFactor;
+
+		/**Constructs an action which changes the zoom.
+		@param zoomFactor The amount by which normal size will be multiplied.
+		*/
+		public ZoomAction(final float zoomFactor)
+		{
+			this.zoomFactor=zoomFactor; //save the zoom factor
+			final String percentString=NumberFormat.getPercentInstance().format(zoomFactor); //create a percentage string from the zoom factor G***i18n use selected locale
+			putValue(NAME, percentString);	//set the correct name
+			putValue(SHORT_DESCRIPTION, "Zoom "+percentString);	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Display everything "+percentString+" of its original size.");	//set the long description G***i18n
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+			setZoomFactor(zoomFactor);	//change the book's zoom factor
+		}
+	}
+
+	/**Action for turning on text antialiasing.*/
+	protected class AntialiasAction extends AbstractAction
+	{
+		/**Default constructor.*/
+		public AntialiasAction()
+		{
+			super("Smooth Text");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "Turn on font smoothing.");	//set the short description G***Int
+			putValue(LONG_DESCRIPTION, "Turn on antialias-based font smoothing.");	//set the long description G***Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_S));  //set the mnemonic key G***i18n
+//G***fix			putValue(SMALL_ICON, new ImageIcon(ReaderFrame.class.getResource("info.gif")));	//load the correct icon G***use a constant here
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+		  setAntialias(!isAntialias()); //turn antialiasing on or off -- the opposite of what it is now
+		}
+	}
+
+	/**Action for going to an OEB guide.*/
+	protected class GoGuideAction extends AbstractAction
+	{
+		/**The action guide.*/
+		protected final OEBGuide oebGuide;
+
+		/**Constructs an action which represents a guide target.
+		@param guide The OEB guide which contains the target information.
+		*/
+		public GoGuideAction(final OEBGuide guide)
+		{
+			oebGuide=guide;	//save the guide
+			putValue(NAME, guide.getTitle());	//set the correct name
+			putValue(SHORT_DESCRIPTION, guide.getTitle());	//set the short description
+		  putValue(LONG_DESCRIPTION, guide.getHRef());	//set the long description to equal the actual reference
+//G***fix			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key G***i18n
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+		  go(oebGuide);  //go to the guide's target reference
+		}
+	}
+
+	/**Action for going to a bookmark.*/
+	protected class GoBookmarkAction extends AbstractAction
+	{
+		/**The action bookmark.*/
+		protected final Bookmark bookmark;
+
+		/**Constructs an action which represents a bookmark.
+		@param bookmark The bookmark which contains the target information.
+		*/
+		public GoBookmarkAction(final Bookmark bookmark)
+		{
+//G***del Debug.trace("ReaderFrame.GoBookmarkAction constructor, offset: ", bookmark.getOffset());
+			this.bookmark=bookmark;	//save the bookmark
+//G***del when works			setBookmark(bookmark);	//save the bookmark
+		  final int pageIndex=getPageIndex(bookmark.getOffset()); //get the page index of the bookmark
+			final Document document=getXMLTextPane().getDocument(); //get a reference to the document
+			final int bookmarkedTextLength=Math.min(document.getLength()-bookmark.getOffset(), 16); //find out how much text to show; make sure we don't go past the document G***use a constant here
+			final String bookmarkNameString=bookmark.getName()!=null ? bookmark.getName()+": " : "";  //if there is a bookmark name, include it
+			try
+			{
+				final String bookmarkedText=document.getText(bookmark.getOffset(), bookmarkedTextLength); //get the bookmarked text G***use a constant
+				final String bookmarkString=bookmarkNameString+"Page "+(pageIndex+1)+" ("+bookmarkedText+"...)";  //G**i18n; use a getPageNumber(pageIndex) method; comment
+				putValue(NAME, bookmarkString);	//set the correct name G***fix
+				putValue(SHORT_DESCRIPTION, bookmarkString);	//set the short description G***fix
+				putValue(LONG_DESCRIPTION, bookmarkString);	//set the long description to equal the actual reference G***fix
+			}
+			catch(BadLocationException badLocationException) //we should never get a bad location, since we test the offsets and lengths
+			{
+				throw (AssertionError)new AssertionError(badLocationException.getMessage()).initCause(badLocationException);
+			}
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+		  go(bookmark.getOffset());  //go to the bookmark's offset
+		}
+
+	}
+	
 }

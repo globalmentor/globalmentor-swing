@@ -1,8 +1,6 @@
 package com.garretwilson.swing;
 
 import java.awt.Component;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 /**Class that manages resource components in a content panel using a
 	single document interface paradigm.
@@ -13,7 +11,7 @@ import java.beans.PropertyChangeListener;
 @see ResourceComponentManager
 @see ContentPanel#setContentComponent(Component)
 */
-public class ContentPanelSDIManager
+public class ContentPanelSDIDecorator extends ResourceComponentDecorator
 {
 
 	/**The content panel that hosts the resource components.*/
@@ -22,28 +20,15 @@ public class ContentPanelSDIManager
 		/**@return The content panel that hosts the resource components.*/
 		protected ContentPanel getContentPanel() {return contentPanel;}
 
-	/**The delegate manager of resource components.*/
-	private final ResourceComponentManager resourceComponentManager;
-
-		/**@return The delegate manager of resource components.*/
-		public ResourceComponentManager getResourceComponentManager() {return resourceComponentManager;}
-
 	/**Constructs an SDI manager for a content panel, using the given
 		resource component manager to manager resource components.
 	@param contentPanel The content panel that hosts the resource components.
-	@param The delegate manager of resource components.
+	@param resourceComponentManager The delegate manager of resource components.
 	*/
-	public ContentPanelSDIManager(final ContentPanel contentPanel, final ResourceComponentManager resourceComponentManager)
+	public ContentPanelSDIDecorator(final ContentPanel contentPanel, final ResourceComponentManager resourceComponentManager)
 	{
+		super(resourceComponentManager);	//construct the parent class
 		this.contentPanel=contentPanel;	//save the content panel
-		this.resourceComponentManager=resourceComponentManager;	//save the resource component manager
-		resourceComponentManager.addPropertyChangeListener(ResourceComponentManager.RESOURCE_COMPONENT_STATE_PROPERTY, new PropertyChangeListener()
-				{
-					public void propertyChange(final PropertyChangeEvent propertyChangeEvent)	//when the resource component state changes, call the appropriate method
-					{
-						onResourceComponentStateChange((ResourceComponentManager.ResourceComponentState)propertyChangeEvent.getOldValue(), (ResourceComponentManager.ResourceComponentState)propertyChangeEvent.getNewValue()); 
-					}
-				});
 	}
 
 	/**Called in response to a change in resource component.
