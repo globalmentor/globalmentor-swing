@@ -2,9 +2,9 @@ package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.event.*;
 import com.garretwilson.swing.*;
+import com.garretwilson.swing.border.*;
 import com.garretwilson.swing.event.*;
 
 /**A panel containing fields for the identification types of a vCard
@@ -66,7 +66,7 @@ public class IdentificationPanel extends DefaultPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)));	//set a titled border
+		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
 		setTitle("Identification");	//G***i18n
 			//add listeners to all the components of the name panel to update the status when modified
 		namePanel.getFamilyNameTextField().getDocument().addDocumentListener(createUpdateStatusDocumentListener()); 		
@@ -86,12 +86,12 @@ public class IdentificationPanel extends DefaultPanel
 					}
 				});
 		nicknameLabel.setText("Nickname");	//G***i18n
-		nicknameTextField.setColumns(8);
+		nicknameTextField.setColumns(10);
 		add(namePanel, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		add(nicknameTextField, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		add(nicknameTextField, new GridBagConstraints(0, 2, 1, 1, 0.4, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		add(formattedNameLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		add(formattedNameTextField, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		add(formattedNameTextField, new GridBagConstraints(1, 2, 1, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 	}
 
 	/**Updates the constructed URI based upon current user input.*/
