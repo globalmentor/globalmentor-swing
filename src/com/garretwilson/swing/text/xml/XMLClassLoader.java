@@ -9,11 +9,13 @@ import java.security.AccessController;
 import java.security.CodeSource;
 import java.security.SecureClassLoader;
 import java.security.PrivilegedExceptionAction;
-import com.garretwilson.io.FileConstants;
 import com.garretwilson.io.InputStreamUtilities;
 import com.garretwilson.lang.JavaConstants;
 import com.garretwilson.net.URIUtilities;
 import com.garretwilson.util.Debug;
+
+import static com.garretwilson.io.FileConstants.*;
+import static com.garretwilson.lang.JavaConstants.*;
 
 /**Class loader for retrieving Java classes needed in an XML document. This
 	class loader can be used to retrieve not only classes, but other types of
@@ -25,7 +27,7 @@ import com.garretwilson.util.Debug;
 	03/09/00 by David Connelly.</p>
 @author Garret Wilson
 */
-public class XMLClassLoader extends SecureClassLoader implements JavaConstants, FileConstants
+public class XMLClassLoader extends SecureClassLoader
 {
 
 	/**The XML document to use to retrieve class bytes.*/
