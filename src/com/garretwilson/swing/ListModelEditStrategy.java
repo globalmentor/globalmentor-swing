@@ -215,6 +215,7 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 				//ask the user for confimation to delete the item
 			if(BasicOptionPane.showConfirmDialog(getParentComponent(), "Are you sure you want to delete the item, \""+item+"\"?", "Confirm delete", BasicOptionPane.OK_CANCEL_OPTION)==BasicOptionPane.OK_OPTION)	//G***i18n
 			{
+				deleteItem(item);	//delete the item before removing it from the list
 				if(listModel instanceof DefaultListModel)	//if the list model is a default list model
 				{
 					((DefaultListModel)listModel).remove(index);	//remove the item from the default list model
@@ -353,6 +354,13 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 		<code>null</code> if the edits should not be accepted.
 	*/
 	protected abstract Object editItem(final Object item);
+
+	/**Deletes an object in the list.
+	This is called so that any physical object backing may be removed, if
+	necessary. This method must not remove the item from the list.
+	@param item The item to delete in the list.
+	*/
+	protected void deleteItem(final Object item) {}
 
 	/**Action for adding an item to the list.*/
 	protected class AddAction extends AbstractAction
