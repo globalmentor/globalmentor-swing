@@ -887,10 +887,36 @@ Debug.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEn
 	public void create(ElementSpec[] elementSpecs)
 	{
 		super.create(elementSpecs);	//create the document normally
-		writeLock();	//lock the document for writing G***do we really need to do this, as applying styles doesn't modify the document?
+		try		//remove the ending dumming '\n' added by Swing
+		{
+			if(getLength()>0)	//if we have any characters
+			{
+				final String text=getText(getLength()-1, 1);	//TODO comment
+				if("\n".equals(text))	//if the document ends with an end-of-line character
+				{
+					remove(getLength()-1, 1);	//remove the last end-of-line character
+				}
+			}
+/*G***del when works
+			if(getLength()>1)	//if we have more than one character
+			{
+				final String text=getText(getLength()-2, 2);
+				if("\n\n".equals(text))	//if the document ends with two end-of-line characters
+				{
+					remove(getLength()-1, 1);	//remove the last end-of-line character
+				}
+			}
+*/
+		}
+		catch(BadLocationException badLocationException)
+		{
+			throw (AssertionError)new AssertionError(badLocationException.getMessage()).initCause(badLocationException);
+		}
+
 //	G***fix		applyStyles(); //G***testing; put in the correct place, and make sure this gets called when repaginating, if we need to
 
 /*G***fix
+		writeLock();	//lock the document for writing G***do we really need to do this, as applying styles doesn't modify the document?
 		final Element rootSwingElement=getRootElements()[0]; //get the first root element of the document -- this contains an element tree for each document loaded
 		final int swingDocumentElementCount=rootSwingElement.getElementCount(); //find out how many root elements there are
 		for(int swingDocumentElementIndex=0; swingDocumentElementIndex<swingDocumentElementCount; ++swingDocumentElementIndex) //look at each root element, each of which represents an XML document
@@ -898,8 +924,8 @@ Debug.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEn
 			final Element swingDocumentElement=rootSwingElement.getElement(swingDocumentElementIndex);  //get the first element, which is the root of the document tree
 			insertBlockElementEnds(swingDocumentElement);	//G***testing
 		}
-*/
 		writeUnlock();	//release the document writing lock
+*/
 	}
 
 
