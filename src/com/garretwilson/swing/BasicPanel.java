@@ -45,8 +45,6 @@ import com.garretwilson.util.*;
 	<dd>Indicates the title has been changed.</dd>
 	<dt><code>BasicPanel.USER_MODE_PROPERTY</code> (<code>Integer</code>)</dt>
 	<dd>Indicates the user mode has been changed.</dd>
-	<dt><code>BasicPanel.VIEW_PROPERTY</code> (<code>Integer</code>)</dt>
-	<dd>Indicates the view has been changed.</dd>
 	<dt><code>Modifiable.MODIFIED_PROPERTY_NAME</code> (<code>Boolean</code>)</dt>
 	<dd>Indicates that the boolean modified property has been changed.</dd>
 </dl>
@@ -65,8 +63,6 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	public final static String TITLE_PROPERTY=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"title";	//G***maybe later move this to a titleable interface
 	/**The name of the bound user mode property.*/
 	public final static String USER_MODE_PROPERTY=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"userMode";
-	/**The name of the bound view property.*/
-	public final static String VIEW_PROPERTY=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"view";
 
 	/**The preferences that should be used for this panel, or <code>null</code>
 		if the default preferences for this class should be used.
@@ -204,7 +200,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 			}
 		}
 
-	/**The component that hsould get the default focus, or <code>null</code> if unknown.*/
+	/**The component that should get the default focus, or <code>null</code> if unknown.*/
 	private Component defaultFocusComponent;
 
 		/**@return The component that should get the default focus, or
@@ -247,38 +243,6 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 			}
 		}
 
-	/**Represents no valid view. Not a valid view value to set or get.*/
-	public final static int NO_VIEW=0;
-	/**The default view in which the data is shown normally.*/
-	public final static int NORMAL_VIEW=1<<0;
-	/**The view in which the data is shown in its best form for editing.*/
-	public final static int EDIT_VIEW=1<<1;
-	/**The view in which the data is shown as it would be in its final form.*/
-	public final static int PREVIEW_VIEW=1<<2;
-	/**The view in which the data is shown as a brief overview.*/
-	public final static int SUMMARY_VIEW=1<<3;
-	/**The view in which any source data used to generate the data is shown.*/
-	public final static int SOURCE_VIEW=1<<4;
-
-	/**The view of the data, such as <code>SUMMARY_VIEW</code>.*/
-	private int view;
-
-		/**@return The view of the data, such as <code>SUMMARY_VIEW</code>.*/
-		public int getView() {return view;}
-
-		/**Sets the view of the edata.
-		@param newView The view of the data, such as <code>SUMMARY_VIEW</code>.
-		*/
-		public void setView(final int newView)
-		{
-			final int oldView=view; //get the old value
-			if(oldView!=newView)  //if the value is really changing
-			{
-				view=newView; //update the value					
-				firePropertyChange(VIEW_PROPERTY, new Integer(oldView), new Integer(newView));	//show that the property has changed
-			}
-		}
-
 	/**Default constructor that uses a <code>FlowLayout</code>.
 	@see #FlowLayout
 	*/
@@ -315,7 +279,6 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 		super(layout, false);	//construct the parent class but don't initialize
 		preferences=null;	//show that we should use the default preferences for this class
 		userMode=VIEW_MODE;	//default to viewing the data
-		view=NORMAL_VIEW;	//default to the normal view
 		defaultFocusComponent=null;	//default to no default focus component
 			//create and install a new layout focus traversal policy that will
 			//automatically use the default focus component, if available
