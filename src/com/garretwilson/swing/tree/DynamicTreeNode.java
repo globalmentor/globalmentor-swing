@@ -13,6 +13,9 @@ public abstract class DynamicTreeNode extends DefaultMutableTreeNode
 	/**Whether the child nodes have been loaded.*/
 	private boolean isChildNodesLoaded=false;
 
+		/**@return Whether the child nodes have been loaded.*/
+		public boolean isChildNodesLoaded() {return isChildNodesLoaded;}
+
 	/**Creates a tree node that has no parent and no children, but which
 		allows children.
 	*/
@@ -54,7 +57,7 @@ public abstract class DynamicTreeNode extends DefaultMutableTreeNode
 	*/
 	public void ensureChildNodesLoaded()
 	{
-		if(!isChildNodesLoaded) //if the children are not yet loaded
+		if(!isChildNodesLoaded()) //if the children are not yet loaded
 		{
 			isChildNodesLoaded=true;  //show that we've loaded the child nodes (this is done before the actual loading so that future calls to getChildCount() won't cause reloading)
 			loadChildNodes(); //load the child nodes
