@@ -169,28 +169,26 @@ public class NamePanel extends BasicVCardPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		final DocumentListener modifyDocumentListener=createModifyDocumentListener();	//create a document listener to change the modified status when the document is modified
-		final ActionListener modifyActionListener=createModifyActionListener();	//create an action listener to change the modified status upon an action
 		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
 		familyNameLabel.setText("Family");	//G***i18n
 		familyNameTextField.setColumns(8);
-		familyNameTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		familyNameTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		givenNameLabel.setText("Given Name");	//G***i18n
 		givenNameTextField.setColumns(8);
-		givenNameTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		givenNameTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		additionalNameLabel.setText("Additional");	//G***i18n
 		additionalNameTextField.setColumns(8);
-		additionalNameTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		additionalNameTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		honorificPrefixLabel.setText("Prefix");	//G***i18n
 		honorificPrefixComboBox.setEditable(true);
 		honorificPrefixComboBox.setModel(new DefaultComboBoxModel(HONORIFIC_PREFIX_EXAMPLES));	//set up the example honorific prefixes
 		honorificPrefixComboBox.setPrototypeDisplayValue("Prof.");
-		honorificPrefixComboBox.addActionListener(modifyActionListener);
+		honorificPrefixComboBox.addItemListener(getModifyItemListener());
 		honorificSuffixLabel.setText("Suffix");	//G***i18n
 		honorificSuffixComboBox.setEditable(true);
 		honorificSuffixComboBox.setModel(new DefaultComboBoxModel(HONORIFIC_SUFFIX_EXAMPLES));	//set up the example honorific suffixes
 		honorificSuffixComboBox.setPrototypeDisplayValue("Sr.");
-		honorificSuffixComboBox.addActionListener(modifyActionListener);
+		honorificSuffixComboBox.addItemListener(getModifyItemListener());
 		getSelectLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectLanguageButton=createSelectLanguageButton(getSelectLanguageAction());
 /*G***del when works

@@ -3,11 +3,9 @@ package com.garretwilson.swing.itu;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import javax.swing.*;
-import javax.swing.event.DocumentListener;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.itu.*;
 import com.garretwilson.swing.*;
-import com.garretwilson.util.*;
 
 /**A panel allowing entry of an international public telecommunication number
 	for geographic areas as defined in ITU-T E.164,
@@ -17,7 +15,7 @@ import com.garretwilson.util.*;
 	and Web addresses".
 @author Garret Wilson
 */
-public class TelephoneNumberPanel extends BasicPanel
+public class TelephoneNumberPanel extends ModifiablePanel
 {
 
 	/**The label of the country code.*/
@@ -138,19 +136,17 @@ public class TelephoneNumberPanel extends BasicPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		final DocumentListener modifyDocumentListener=createModifyDocumentListener();	//create a document listener to change the modified status when the document is modified
-		final ActionListener modifyActionListener=createModifyActionListener();	//create an action listener to change the modified status upon an action
 		countryCodeLabel.setText("Country");	//G***i18n
 		countryCodeComboBox.setEditable(true);
 		countryCodeComboBox.setPrototypeDisplayValue("000");	//G***testing
 //G***gix		honorificPrefixComboBox.setModel(new DefaultComboBoxModel(HONORIFIC_PREFIX_EXAMPLES));	//set up the example honorific prefixes
-		countryCodeComboBox.addActionListener(modifyActionListener);
+		countryCodeComboBox.addItemListener(getModifyItemListener());
 		nationalDestinationCodeLabel.setText("Area Code");	//G***i18n
 		nationalDestinationCodeTextField.setColumns(8);
-		nationalDestinationCodeTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		nationalDestinationCodeTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		subscriberNumberLabel.setText("Number");	//G***i18n
 		subscriberNumberTextField.setColumns(10);
-		subscriberNumberTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		subscriberNumberTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 //G***del when works		final JLabel imageLabel=new JLabel(IconResources.getIcon(IconResources.PHONE_ICON_FILENAME)); //create a label with the image		
 //G***del when works		add(imageLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(countryCodeLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));

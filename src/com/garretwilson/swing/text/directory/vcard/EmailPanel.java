@@ -2,7 +2,6 @@ package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.event.DocumentListener;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.lang.*;
 import com.garretwilson.resources.icon.IconResources;
@@ -15,7 +14,7 @@ import com.garretwilson.text.directory.vcard.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class EmailPanel extends BasicPanel
+public class EmailPanel extends ModifiablePanel
 {
 
 	/**The email text field.*/
@@ -140,9 +139,8 @@ public class EmailPanel extends BasicPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		final DocumentListener modifyDocumentListener=createModifyDocumentListener();	//create a document listener to change the modified status when the document is modified
 		addressTextField.setColumns(20);
-		addressTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		addressTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		final JLabel imageLabel=new JLabel(IconResources.getIcon(IconResources.EMAIL_ICON_FILENAME)); //create a label with the image		
 		add(imageLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(addressTextField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));

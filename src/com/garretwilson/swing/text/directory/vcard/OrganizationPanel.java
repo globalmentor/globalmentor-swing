@@ -217,26 +217,25 @@ public class OrganizationPanel extends BasicVCardPanel
 		super.initializeUI();	//do the default user interface initialization
 		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
 		setTitle("Organization");	//G***i18n
-		final DocumentListener modifyDocumentListener=createModifyDocumentListener();	//create a document listener to change the modified status when the document is modified
 		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
 		nameLabel.setText("Organization Name");	//G***i18n
 		getSelectOrganizationNameLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectOrganizationNameLanguageButton=createSelectLanguageButton(getSelectOrganizationNameLanguageAction());
 		nameTextField.setColumns(16);
-		nameTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		nameTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		unitsLabel.setText("Unit(s)");	//G***i18n
 		unitsTextField.setColumns(10);
-		unitsTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		unitsTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		titleLabel.setText("Job Title");	//G***i18n
 		getSelectTitleLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectTitleLanguageButton=createSelectLanguageButton(getSelectTitleLanguageAction());
 		titleTextField.setColumns(16);
-		titleTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		titleTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		roleLabel.setText("Role");	//G***i18n
 		getSelectRoleLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectRoleLanguageButton=createSelectLanguageButton(getSelectRoleLanguageAction());
 		roleTextField.setColumns(12);
-		roleTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		roleTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		add(nameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(selectOrganizationNameLanguageButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(nameTextField, new GridBagConstraints(0, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));

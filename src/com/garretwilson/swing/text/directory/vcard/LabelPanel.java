@@ -134,11 +134,9 @@ public class LabelPanel extends BasicVCardPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		final DocumentListener modifyDocumentListener=createModifyDocumentListener();	//create a document listener to change the modified status when the document is modified
-		final ActionListener modifyActionListener=createModifyActionListener();	//create an action listener to change the modified status upon an action
 		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
 			//TODO turn off tab-handling for labelAddressTextPane
-		labelTextPane.getDocument().addDocumentListener(modifyDocumentListener);
+		labelTextPane.getDocument().addDocumentListener(getModifyDocumentListener());
 		final JScrollPane labelScrollPane=new JScrollPane(labelTextPane);
 /*G***del if not needed
 		labelScrollPane.setMinimumSize(new Dimension(streetAddressScrollPane.getMinimumSize().width, localityTextField.getPreferredSize().height*3));

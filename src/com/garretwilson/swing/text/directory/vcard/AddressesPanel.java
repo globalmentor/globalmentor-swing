@@ -4,12 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.*;
-import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 import java.util.*;
 import javax.swing.*;
 import com.garretwilson.text.directory.vcard.*;
-import com.garretwilson.util.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
@@ -39,11 +37,6 @@ public class AddressesPanel extends ContentPanel
 
 		/**@return The action for removing an address or label.*/
 		public Action getRemoveAddressAction() {return removeAddressAction;}
-
-	/**A property change listener to change the modified status when the
-		"modified" property is set to <code>true</code>.
-	*/
-	private final PropertyChangeListener modifyModifiedPropertyChangeListener;
 
 	/**The tabbed pane containing the address panels.*/
 //G***fix	private final JTabbedPane tabbedPane;
@@ -176,7 +169,6 @@ public class AddressesPanel extends ContentPanel
 		addAddressAction=new AddAddressAction();
 		addLabelAction=new AddLabelAction();
 		removeAddressAction=new RemoveAddressAction();
-		modifyModifiedPropertyChangeListener=createModifyModifiedChangeListener();	//create a property change listener to change the modified status when the modified property is set to true
 		initialize();	//initialize the panel
 		setAddresses(addresses, labels);	//set the addresses to those given
 	}
@@ -223,7 +215,7 @@ public class AddressesPanel extends ContentPanel
 	*/
 	protected void addAddressPanel(final AddressPanel addressPanel)
 	{
-		addressPanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);	//listen for changes to the address and update the modified status in response
+		addressPanel.addPropertyChangeListener(getModifyModifiedPropertyChangeListener());	//listen for changes to the address and update the modified status in response TODO remove when we have a modifiable tabbed pane
 		final String title="Address";	//get a title for the address G***i18n
 //G***del when works		final String title=getTabTitle(address);	//get an title for the address
 		getTabbedPane().addTab(title, addressPanel.getIcon(), addressPanel);	//add the panel
@@ -248,7 +240,7 @@ public class AddressesPanel extends ContentPanel
 	*/
 	protected void addLabelPanel(final LabelPanel labelPanel)
 	{
-		labelPanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);	//listen for changes to the label and update the modified status in response
+		labelPanel.addPropertyChangeListener(getModifyModifiedPropertyChangeListener());	//listen for changes to the label and update the modified status in response TODO remove when we have a modifiable tabbed pane
 		final String title="Label";	//get a title for the address G***i18n
 		getTabbedPane().addTab(title, labelPanel.getIcon(), labelPanel);	//add the panel
 		setModified(true);	//show that we've been modified
@@ -272,7 +264,7 @@ public class AddressesPanel extends ContentPanel
 				if(JOptionPane.showConfirmDialog(this, MessageFormat.format("Are you sure you want to permanently remove this {0}?", new Object[]{objectName}),
 						MessageFormat.format("Remove {0}", new Object[]{objectName}), JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)	//G***i18n
 				{
-					selectedComponent.removePropertyChangeListener(modifyModifiedPropertyChangeListener);	//stop listening for changes
+					selectedComponent.removePropertyChangeListener(getModifyModifiedPropertyChangeListener());	//stop listening for changes TODO remove when we have a modifiable tabbed pane
 					getTabbedPane().remove(selectedComponent);	//remove the selected component
 					setModified(true);	//show that we've been modified
 					updateStatus();	//update the status

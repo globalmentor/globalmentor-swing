@@ -65,16 +65,6 @@ public class RDFPanel extends TabbedViewPanel
 	/**The DOM implementation used for serializing the RDF.*/
 	protected final DOMImplementation domImplementation;
 
-	/**A listener that changes the modification status to <code>true</code> when
-		a document has been modified.
-	*/
-	private final DocumentListener modifyDocumentListener;
-
-		/**A listener that changes the modification status to <code>true</code> when
-			a document has been modified.
-		*/
-		protected DocumentListener getModifyDocumentListener() {return modifyDocumentListener;}
-
 	/**@return The data model for which this component provides a view.
 	@see ModelViewablePanel#getModel()
 	*/
@@ -109,7 +99,6 @@ public class RDFPanel extends TabbedViewPanel
 		sourceTextPane=new JTextPane();
 		xmlScrollPane=new JScrollPane(sourceTextPane);
 		domImplementation=new XMLDOMImplementation();	//create the XML DOM implementation
-		modifyDocumentListener=createModifyDocumentListener();	//create a document listener to change our modification status when a document changes
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel
 	}

@@ -141,20 +141,6 @@ public class IdentificationPanel extends BasicVCardPanel
 		return LocaleText.toLocaleTextArray(StringTokenizerUtilities.getTokens(new StringTokenizer(nicknameTextField.getText().trim(), VALUE_DELIMITERS)), selectNicknameLanguageAction.getLocale());
 	}	
 
-	/**Sets whether the object has been modified.
-	This version sets the modified status of all contained panels to
-		<code>false</code> if the new modified status is <code>false</code>.
-	@param newModified The new modification status.
-	*/
-	public void setModified(final boolean newModified)
-	{
-		super.setModified(newModified);	//set the modified status
-		if(newModified==false)	//if we are no longer modified
-		{
-			namePanel.setModified(newModified);	//tell the name panel it is no longer modified
-		}
-	}
-
 	/**Default constructor.*/
 	public IdentificationPanel()
 	{
@@ -177,9 +163,7 @@ public class IdentificationPanel extends BasicVCardPanel
 		super.initializeUI();	//do the default user interface initialization
 		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
 		setTitle("Identification");	//G***i18n
-		final DocumentListener modifyDocumentListener=createModifyDocumentListener();	//create a document listener to change the modified status when the document is modified
 		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
-		final PropertyChangeListener modifyModifiedPropertyChangeListener=createModifyModifiedChangeListener();	//create a property change listener to change the modified status when the modified property is set to true
 			//add listeners to all the components of the name panel to update the status when modified
 		namePanel.getFamilyNameTextField().getDocument().addDocumentListener(createUpdateStatusDocumentListener()); 		
 		namePanel.getGivenNameTextField().getDocument().addDocumentListener(createUpdateStatusDocumentListener()); 		
@@ -187,7 +171,6 @@ public class IdentificationPanel extends BasicVCardPanel
 		final ItemListener updateStatusItemListener=createUpdateStatusItemListener();	//create an item listener that will update the status			
 		namePanel.getHonorificPrefixComboBox().addItemListener(updateStatusItemListener);
 		namePanel.getHonorificSuffixComboBox().addItemListener(updateStatusItemListener);
-		namePanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);
 		formattedNameLabel.setText("Formatted Name");	//G***i18n
 		getSelectFormattedNameLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectFormattedNameLanguageButton=createSelectLanguageButton(getSelectFormattedNameLanguageAction());
@@ -201,12 +184,12 @@ public class IdentificationPanel extends BasicVCardPanel
 								|| (getVCardName()!=null && formattedNameTextField.getText().equals(getVCardName().toString()));
 					}
 				});
-		formattedNameTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		formattedNameTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		nicknameLabel.setText("Nickname");	//G***i18n
 		getSelectNicknameLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectNicknameLanguageButton=createSelectLanguageButton(getSelectNicknameLanguageAction());
 		nicknameTextField.setColumns(8);
-		nicknameTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		nicknameTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		add(namePanel, new GridBagConstraints(0, 0, 4, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
 		add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(selectNicknameLanguageButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));

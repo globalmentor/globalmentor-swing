@@ -58,6 +58,7 @@ public class VCardPanel extends ContentPanel implements Verifiable
 		<code>false</code> if the new modified status is <code>false</code>.
 	@param newModified The new modification status.
 	*/
+/*G***del when ModifiablePanel works
 	public void setModified(final boolean newModified)	//TODO see why we can't just remove this and use the BasicPanel version (for some reason, name changes no longer will update the status without this)
 	{
 		super.setModified(newModified);	//set the modified status
@@ -70,7 +71,7 @@ public class VCardPanel extends ContentPanel implements Verifiable
 			explanatoryPanel.setModified(newModified);	//tell the explanatory panel it is no longer modified
 		}
 	}
-
+*/
 	/**Sets the vCard information that appears in the component.
 	@param vcard The vCard information to display, or <code>null</code> if
 		default information should be displayed.
@@ -139,7 +140,8 @@ public class VCardPanel extends ContentPanel implements Verifiable
 	protected void initializeUI()
 	{
 		super.initializeUI(); //do the default UI initialization
-		final PropertyChangeListener modifyModifiedPropertyChangeListener=createModifyModifiedChangeListener();	//create a property change listener to change the modified status when the modified property is set to true
+			//TODO maybe create a ModifiableTabbedPane that won't force us to add these listeners here
+		final PropertyChangeListener modifyModifiedPropertyChangeListener=getModifyModifiedPropertyChangeListener();	//create a property change listener to change the modified status when the modified property is set to true
 		identificationPanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);
 		addressesPanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);
 		organizationPanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);

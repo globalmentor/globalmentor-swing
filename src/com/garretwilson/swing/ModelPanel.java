@@ -15,7 +15,7 @@ import com.garretwilson.model.Model;
 </dl>
 @author Garret Wilson
 */
-public class ModelPanel extends BasicPanel
+public class ModelPanel extends ModifiablePanel
 {
 
 	/**The data model for which this component provides a view.*/

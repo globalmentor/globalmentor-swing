@@ -25,7 +25,7 @@ import com.garretwilson.util.*;
 @see DefaultFocusable
 @see com.garretwilson.util.Modifiable
 */
-public class ContentPanel extends BasicPanel implements CanClosable
+public class ContentPanel extends ModifiablePanel implements CanClosable
 {
 
 	/**The main content component in the center of the panel.*/
@@ -51,16 +51,19 @@ public class ContentPanel extends BasicPanel implements CanClosable
 			{
 			  if(contentComponent!=null)  //if we already have an content component
 			  {
+/*G***del when ModifiablePanel works
 			  	if(contentComponent instanceof Modifiable)	//if the content component is modifiable
 			  	{
 			  		contentComponent.removePropertyChangeListener(modifyModifiedChangeListener);	//don't listen for its modifications anymore
 			  	}
 					remove(contentComponent);   //remove the current one
+*/
 			  }
 				contentComponent=newContentComponent; //store the content component
 				if(newContentComponent!=null)	//if we were given a new content component
 				{
 					add(newContentComponent, BorderLayout.CENTER);  //put the content component in the center of the panel
+/*G***del when ModifiablePanel works
 					if(newContentComponent instanceof Modifiable)	//if the new content component is modifiable
 					{
 						if(modifyModifiedChangeListener==null)	//if we don't have a modified property change listener
@@ -69,6 +72,7 @@ public class ContentPanel extends BasicPanel implements CanClosable
 						}
 						newContentComponent.addPropertyChangeListener(modifyModifiedChangeListener);	//listen for modifications in the content component, and update our modified status in response
 					}
+*/
 				}
 /*G***del when revalidate() works---maybe even remove WindowUtilities.packWindow()		  	
 		  	if(getParentOptionPane()!=null)	//if this panel is inside an option pane

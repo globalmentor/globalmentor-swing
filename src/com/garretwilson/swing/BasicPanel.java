@@ -16,10 +16,7 @@ import com.garretwilson.util.*;
 
 /**An extended panel that has extra features beyond those in <code>JPanel</code>.
 <p>The panel stores properties and fires property change events when a
-	property is modified. If the modified property is set to false, all
-	all descendant components that implement <code>Modifiable</code> have
-	their modified properties set to <code>false</code> as well.</p>
-<p>The panel can keep track of whether its contents have been modified.</p>
+	property is modified.</p>
 <p>The panel is verifiable, and automatically verifies all child components
 	that are likewise verifiable.</p>
 <p>The panel can store a preferences node to use for preference, or use the
@@ -36,8 +33,6 @@ import com.garretwilson.util.*;
 	component will be selected.</p>
 <p>The panel can create default listeners, such as <code>ActionListener</code>
 	and <code>DocumentListener</code>, that do nothing but update the status.</p>
-<p>The panel can create a default <code>DocumentListener</code> that
-	automatically sets the modified status to <code>true</code>.</p>
 <p>The panel is scrollable, and by default takes care of its own width and/or
 	height rather than allowing any parent scroll width and height. This behavior
 	can be modified.</p> 
@@ -49,8 +44,6 @@ import com.garretwilson.util.*;
 	<dd>Indicates the title has been changed.</dd>
 	<dt><code>BasicPanel.USER_MODE_PROPERTY</code> (<code>Integer</code>)</dt>
 	<dd>Indicates the user mode has been changed.</dd>
-	<dt><code>Modifiable.MODIFIED_PROPERTY</code> (<code>Boolean</code>)</dt>
-	<dd>Indicates that the boolean modified property has been changed.</dd>
 </dl>
 @author Garret Wilson
 @see java.awt.Container#setFocusCycleRoot
@@ -58,7 +51,7 @@ import com.garretwilson.util.*;
 @see javax.swing.JOptionPane
 @see java.awt.GridBagLayout
 */
-public class BasicPanel extends JPanel implements Scrollable, ContainerConstants, CanClosable, DefaultFocusable, Verifiable, Modifiable
+public class BasicPanel extends JPanel implements Scrollable, ContainerConstants, CanClosable, DefaultFocusable, Verifiable
 {
 
 	/**The name of the bound icon property.*/
@@ -88,31 +81,6 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 		public void setPreferences(final Preferences preferences)
 		{
 			this.preferences=preferences;	//store the preferences
-		}
-
-	/**Whether the object has been modified; the default is not modified.*/
-	private boolean modified=false;
-
-		/**@return Whether the object been modified.*/
-		public boolean isModified() {return modified;}
-
-		/**Sets whether the object has been modified.
-			This is a bound property.
-		@param newModified The new modification status.
-		*/
-		public void setModified(final boolean newModified)
-		{
-			final boolean oldModified=modified; //get the old modified value
-			if(oldModified!=newModified)  //if the value is really changing
-			{
-				modified=newModified; //update the value
-					//show that the modified property has changed
-				firePropertyChange(MODIFIED_PROPERTY, Boolean.valueOf(oldModified), Boolean.valueOf(newModified));
-				if(!modified)	//if we're now not modified
-				{
-					ContainerUtilities.setModifiableDescendants(this, false);	//tell all of our child components that they are not modified, either
-				}
-			}
 		}
 
 	/**The map of properties.*/
@@ -309,7 +277,6 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	{
 		initializeUI(); //initialize the user interface
 		updateStatus();  //update the actions
-		setModified(false);	//show that the information has not been modified G***maybe don't even update the modified status until initialization has occurred
 	}
 
 	/**Initializes the user interface.
@@ -432,42 +399,6 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 		return optionPane!=null ? optionPane.getValue() : null;	//return the value property of the option pane, or null if we are not embedded in a JOptionPane
 	}
 
-	/**Creates an action listener that, when an action occurs, updates the
-		modified status to <code>true</code>.
-	@see #setModified
-	*/
-	public ActionListener createModifyActionListener()
-	{
-		return new ActionListener()	//create a new action listener that will do nothing but set modified to true
-				{
-					public void actionPerformed(final ActionEvent actionEvent) {setModified(true);}	//if the action occurs, show that we've been modified
-				};
-	}
-
-	/**Creates a document listener that, when a document is modified, updates
-		the modified status to <code>true</code>.
-	@see #setModified
-	*/
-	public DocumentListener createModifyDocumentListener()
-	{
-		return new DocumentModifyAdapter()	//create a new document listener that will do nothing but set modified to true
-				{
-					public void modifyUpdate(final DocumentEvent documentEvent) {setModified(true);}	//if the document is modified, show that we've been modfied
-				};
-	}
-
-	/**Creates a list selection listener that, when the list selection changes,
-		updates the modified status to <code>true</code>.
-	@see #setModified
-	*/
-	public ListSelectionListener createModifyListSelectionListener()
-	{
-		return new ListSelectionListener()	//create a new list selection listener that will do nothing but set modified to true
-				{
-					public void valueChanged(final ListSelectionEvent listSelectionEvent) {setModified(true);}	//if the list selection changes, show that we've been modified
-				};
-	}
-
 	/**Creates a list selection listener that, when the list selection changes,
 		updates the status.
 	@see #updateStatus
@@ -494,61 +425,6 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	}
 */
 
-	/**Creates a property change listener that, when the given property changes,
-		updates the modified status to <code>true</code>.
-	@param propertyName The name of the property that, when changed, will set
-		the modified status to <code>true</code>. 
-	@see #setModified
-	*/
-	public PropertyChangeListener createModifyPropertyChangeListener(final String propertyName)
-	{
-		return new PropertyChangeListener()	//create a new property change listener that will do nothing but set modified to true
-				{
-					public void propertyChange(final PropertyChangeEvent propertyChangeEvent)	//if a property is modified
-					{
-						if(propertyName.equals(propertyChangeEvent.getPropertyName()))	//if the property we're concerned about changed
-						{
-							setModified(true);	//show that we've been modified
-						}
-					}
-				};
-	}
-
-	/**Creates a property change listener that, when the given property changes
-		to the given value, updates the modified status to <code>true</code>.
-	@param propertyName The name of the property that, when changed, will set
-		the modified status to <code>true</code>. 
-	@param propertyValue The value of the property that, when equal to the new
-		value, will set the modified status to <code>true</code>. 
-	@see #setModified
-	*/
-	public PropertyChangeListener createModifyPropertyChangeListener(final String propertyName, final Object propertyValue)
-	{
-		return new PropertyChangeListener()	//create a new property change listener that will do nothing but set modified to true
-				{
-					public void propertyChange(final PropertyChangeEvent propertyChangeEvent)	//if a property is modified
-					{
-						if(propertyName.equals(propertyChangeEvent.getPropertyName())	//if the property we're concerned about changed
-								&& ObjectUtilities.equals(propertyValue, propertyChangeEvent.getNewValue()))
-						{
-							setModified(true);	//show that we've been modified
-						}
-					}
-				};
-	}
-
-	/**Creates a property change listener that, when the the "modified" property
-		changes to <code>true</code>, updates the modified status to <code>true</code>.
-	Convenience method.
-	@see Modifiable#MODIFIED_PROPERTY
-	@see Boolean#TRUE
-	@see #setModified
-	*/
-	public PropertyChangeListener createModifyModifiedChangeListener()
-	{
-		return createModifyPropertyChangeListener(MODIFIED_PROPERTY, Boolean.TRUE);	//create a property change listener that will set modified to true if the modified property changes to true
-	}
-
 	/**Creates a property change listener that, when a property chnages,
 		updates the status.
 	@see #updateStatus
@@ -560,20 +436,6 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 					public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {updateStatus();}	//if a property is modified, update the status
 				};
 	}
-
-	/**Creates an item that, when an item is modified, updates
-		the modified status to <code>true</code>.
-	@see #setModified
-	*/
-/*G***fix or del
-	public DocumentListener createModifyDocumentListener()
-	{
-		return new DocumentModifyAdapter()	//create a new document listener that will do nothing but update the status
-				{
-					public void modifyUpdate(final DocumentEvent documentEvent) {setModified(true);}	//if the document is modified, show that we've been modfied
-				};
-	}
-*/
 
 	/**Creates an action listener that, when an action occurs, updates
 		the status.

@@ -228,34 +228,32 @@ public class AddressPanel extends BasicVCardPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		final DocumentListener modifyDocumentListener=createModifyDocumentListener();	//create a document listener to change the modified status when the document is modified
-		final ActionListener modifyActionListener=createModifyActionListener();	//create an action listener to change the modified status upon an action
 		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
 		postOfficeBoxLabel.setText("PO Box");	//G***i18n
 		postOfficeBoxTextField.setColumns(5);
-		postOfficeBoxTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		postOfficeBoxTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		streetAddressesLabel.setText("Street Address");	//G***i18n
 			//TODO turn off tab-handling for streetAddressTextPane
 //G***del; fix; this doesn't work		streetAddressTextPane.setFocusTraversalKeysEnabled(true);
-		streetAddressTextPane.getDocument().addDocumentListener(modifyDocumentListener);
+		streetAddressTextPane.getDocument().addDocumentListener(getModifyDocumentListener());
 		localityLabel.setText("City");	//G***i18n
 		localityTextField.setColumns(8);
-		localityTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		localityTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 //G***fix		streetAddressTextPane.setMinimumSize(new Dimension(streetAddressTextPane.getMinimumSize().width, localityTextField.getPreferredSize().height*3));
 //G***fix		streetAddressTextPane.setPreferredSize(streetAddressTextPane.getMinimumSize());
 
 //G***del		streetAddressTextPane.setBorder(localityTextField.getBorder());
 		regionLabel.setText("State or Province");	//G***i18n
 		regionTextField.setColumns(8);
-		regionTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		regionTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		postalCodeLabel.setText("Postal Code");	//G***i18n
 		postalCodeTextField.setColumns(8);
 		postalCodeTextField.setText("G***del");
-		postalCodeTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		postalCodeTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		countryNameLabel.setText("Country");	//G***i18n
 		countryNameComboBox.setEditable(true);
 		countryNameComboBox.setModel(new DefaultComboBoxModel(LocaleUtilities.getAvailableDisplayCountries()));	//G***i18n
-		countryNameComboBox.addActionListener(modifyActionListener);
+		countryNameComboBox.addItemListener(getModifyItemListener());
 		final JScrollPane streetAddressScrollPane=new JScrollPane(streetAddressTextPane);
 			//TODO fix this with a derived text pane that is scrollable and allows tracksViewport... to be set
 		streetAddressScrollPane.setMinimumSize(new Dimension(streetAddressScrollPane.getMinimumSize().width, localityTextField.getPreferredSize().height*3));

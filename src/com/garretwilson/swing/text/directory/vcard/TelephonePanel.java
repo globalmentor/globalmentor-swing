@@ -2,14 +2,12 @@ package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.*;
 import javax.swing.*;
 import com.garretwilson.itu.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.itu.*;
 import com.garretwilson.text.directory.vcard.*;
-import com.garretwilson.util.*;
 
 /**A panel containing fields for the <code>TEL</code> type of a vCard
 	<code>text/directory</code>	profile as defined in
@@ -174,8 +172,6 @@ public class TelephonePanel extends BasicVCardPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		final PropertyChangeListener modifyModifiedPropertyChangeListener=createModifyModifiedChangeListener();	//create a property change listener to change the modified status when the modified property is set to true
-		telephoneNumberPanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);
 		final JLabel imageLabel=new JLabel(IconResources.getIcon(IconResources.PHONE_ICON_FILENAME)); //create a label with the image		
 		add(telephoneTypeButton, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(imageLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));

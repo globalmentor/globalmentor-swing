@@ -73,16 +73,6 @@ public class XMLPanel extends TabbedViewPanel
 		/**@return The source scroll pane component.*/
 		protected JScrollPane getSourceScrollPane() {return sourceScrollPane;}
 
-	/**A listener that changes the modification status to <code>true</code> when
-		a document has been modified.
-	*/
-	private final DocumentListener modifyDocumentListener;
-
-		/**A listener that changes the modification status to <code>true</code> when
-			a document has been modified.
-		*/
-		protected DocumentListener getModifyDocumentListener() {return modifyDocumentListener;}
-
 	/**@return The data model for which this component provides a view.
 	@see ModelViewablePanel#getModel()
 	*/
@@ -141,7 +131,6 @@ public class XMLPanel extends TabbedViewPanel
 		xmlScrollPane=new JScrollPane(xmlTextPane);	//create a new scroll pane with the XML text pane inside
 		sourceTextPane=new JTextPane();	//create a new text pane for editing the source
 		sourceScrollPane=new JScrollPane(sourceTextPane);	//create a new scroll pane with the source text pane inside
-		modifyDocumentListener=createModifyDocumentListener();	//create a document listener to change our modification status when a document changes
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel
 	}

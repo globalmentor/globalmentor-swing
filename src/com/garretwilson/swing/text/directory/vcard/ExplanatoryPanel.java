@@ -204,23 +204,21 @@ public class ExplanatoryPanel extends BasicVCardPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		final DocumentListener modifyDocumentListener=createModifyDocumentListener();	//create a document listener to change the modified status when the document is modified
 		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes		
-		final ListSelectionListener modifyListSelectionListener=createModifyListSelectionListener();	//create a list selection listener to change the modified status when the list selection changes
 		categoryLabel.setText("Categories");	//G***i18n
 		getSelectCategoryLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectCategoryLanguageButton=createSelectLanguageButton(getSelectCategoryLanguageAction());
 		categorySwingList.setUI(new ToggleListUI()); //allow the answers to be toggled on and off
 		categorySwingList.setCellRenderer(new CheckBoxListCellRenderer());  //display the answers with checkboxes
-		categorySwingList.addListSelectionListener(modifyListSelectionListener);
+		categorySwingList.addListSelectionListener(getModifyListSelectionListener());
 		final JScrollPane categoryScrollPane=new JScrollPane(categorySwingList);
 		noteLabel.setText("Note");	//G***i18n
-		noteTextPane.getDocument().addDocumentListener(modifyDocumentListener);
+		noteTextPane.getDocument().addDocumentListener(getModifyDocumentListener());
 		getSelectNoteLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectNoteLanguageButton=createSelectLanguageButton(getSelectNoteLanguageAction());
 		final JScrollPane noteScrollPane=new JScrollPane(noteTextPane);
 		urlLabel.setText("Web Site URL");	//G***i18n
-		urlTextField.getDocument().addDocumentListener(modifyDocumentListener);
+		urlTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		add(categoryLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(selectCategoryLanguageButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(categoryScrollPane, new GridBagConstraints(0, 1, 2, 3, 0.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, NO_INSETS, 0, 0));

@@ -44,11 +44,6 @@ public class TelecommunicationsPanel extends ContentPanel
 		/**@return The action for removing an address.*/
 //G***fix		public Action getRemoveAddressAction() {return removeAddressAction;}
 
-	/**A property change listener to change the modified status when the
-		"modified" property is set to <code>true</code>.
-	*/
-	private final PropertyChangeListener modifyModifiedPropertyChangeListener;
-
 	/**@return The content component in which the telecommunications panels will be placed.*/
 	protected JPanel getContentPanel() {return (JPanel)getContentComponent();}	//G***why can't we return something else, here--why cast to a JPanel?
 
@@ -177,11 +172,10 @@ public class TelecommunicationsPanel extends ContentPanel
 	*/
 	public TelecommunicationsPanel(final Telephone[] telephones, final Email[] emails)
 	{
-		super(new BasicPanel(new BasicGridBagLayout()), false);	//construct the panel using a grid bag layout, but don't initialize the panel G***is this right? double-check construction with a panel
+		super(new ModifiablePanel(new BasicGridBagLayout()), false);	//construct the panel using a grid bag layout, but don't initialize the panel G***is this right? double-check construction with a panel
 		addTelephoneAction=new AddTelephoneAction();
 		addEmailAction=new AddEmailAction();
 //G***fix		removeAddressAction=new RemoveAddressAction();
-		modifyModifiedPropertyChangeListener=createModifyModifiedChangeListener();	//create a property change listener to change the modified status when the modified property is set to true
 		initialize();	//initialize the panel
 		setTelecommunications(telephones, emails);	//set the given telephones and emails
 	}
@@ -240,7 +234,6 @@ public class TelecommunicationsPanel extends ContentPanel
 	*/
 	protected void addComponent(final Component component)
 	{
-		component.addPropertyChangeListener(modifyModifiedPropertyChangeListener);	//listen for changes to the address and update the modified status in response
 				//TODO use the new BasicGridBagLayout methods here
 			//add the component to the content panel, in a location based upon the components already present 
 		getContentPanel().add(component, new GridBagConstraints(0, getContentPanel().getComponentCount(), 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, NO_INSETS, 0, 0));
