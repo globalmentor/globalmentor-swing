@@ -12,9 +12,9 @@ import com.garretwilson.resources.icon.IconResources;
 public class ListPanel extends ContentPanel
 {
 
-	private BasicPanel buttonPanel;
-	private final JButton selectAllButton;
-	private final JButton selectNoneButton;
+	private final JToolBar buttonToolBar;
+//G***del	private final JButton selectAllButton;
+//G***del	private final JButton selectNoneButton;
 
 	/**@return The list in the scroll pane that is the content component as a list; convenience method.*/
 	protected JList getList() {return (JList)((JScrollPane)getContentComponent()).getViewport().getView();}
@@ -38,13 +38,13 @@ public class ListPanel extends ContentPanel
 	public ListPanel(final JList list)
 	{
 		super(new JScrollPane(list), false);	//construct the panel with the list as the content component, but don't initialize the panel
-		buttonPanel=new BasicPanel();
+		buttonToolBar=new JToolBar(JToolBar.VERTICAL);
 
 		selectAllAction=new SelectAllAction();
-		selectAllButton=new JButton(selectAllAction);
+//G***del		selectAllButton=new JButton(selectAllAction);
 
 		selectNoneAction=new SelectNoneAction();
-		selectNoneButton=new JButton(selectNoneAction);
+//G***del		selectNoneButton=new JButton(selectNoneAction);
 		initialize();	//initialize the panel
 	}
 	
@@ -53,12 +53,10 @@ public class ListPanel extends ContentPanel
 	{
 		super.initializeUI();	//do the default user interface initialization
 		final BasicGridBagLayout buttonPanelLayout=new BasicGridBagLayout();
-		buttonPanel.setLayout(buttonPanelLayout);
-		buttonPanel.add(selectAllButton, buttonPanelLayout.createNextBoxConstraints(BasicGridBagLayout.Y_AXIS));
-		buttonPanel.add(selectNoneButton, buttonPanelLayout.createNextBoxConstraints(BasicGridBagLayout.Y_AXIS));
-		buttonPanel.add(Box.createGlue(), buttonPanelLayout.createNextBoxConstraints(BasicGridBagLayout.Y_AXIS, 1.0));
-
-		add(buttonPanel, BorderLayout.LINE_END);
+		buttonToolBar.setFloatable(false);
+		buttonToolBar.add(new JButton(getSelectAllAction()));
+		buttonToolBar.add(new JButton(getSelectNoneAction()));
+		add(buttonToolBar, BorderLayout.LINE_END);
 	}
 
 	/**Updates the states of the actions, including enabled/disabled status,

@@ -769,7 +769,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		if(text.length()>0)	//if there is any text
 		{
 			if(text.charAt(0)!='<')	//if this text doesn't start with markup G***use a constant
-				text="<div>"+text+"</div>";	//wrap the text with a <div> element G***this assumes a lot about HTML; make this more generic if we can
+				text="<div xmlns=\""+XHTMLConstants.XHTML_NAMESPACE_URI+"\">"+text+"</div>";	//wrap the text with a <div> element G***this assumes a lot about HTML; make this more generic if we can---see the namespace code from XMLPanel
 		}
 		super.setText(text);	//set the text normally
 	}
