@@ -2,29 +2,23 @@ package com.garretwilson.swing;
 
 import java.awt.BorderLayout;
 import java.io.*;
-import java.net.URI;
 import javax.mail.internet.ContentType;
 import javax.swing.*;
 import javax.swing.event.*;
 import com.garretwilson.io.*;
-import com.garretwilson.model.Model;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.unicode.UnicodeStatusBar;
 import com.garretwilson.text.CharacterEncodingConstants;
-import com.garretwilson.text.xml.XMLDocumentFragmentModel;
-import com.garretwilson.text.xml.XMLDocumentModel;
-import com.garretwilson.text.xml.XMLNamespaceProcessor;
 import com.garretwilson.text.xml.XMLNodeModel;
 import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.text.xml.XMLSerializer;
-import com.garretwilson.text.xml.XMLUtilities;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
 import org.w3c.dom.*;
 
 /**Panel that displays XML and source code.
 @author Garret Wilson
 */
-public class XMLPanel extends TabbedViewPanel	//TODO make the toolbar and status bar an option
+public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeModel<N>>	//TODO make the toolbar and status bar an option
 {
 
 	/**The default model views supported by this panel.*/
@@ -90,34 +84,20 @@ public class XMLPanel extends TabbedViewPanel	//TODO make the toolbar and status
 		/**@return G***testing*/
 		public Action getEmphasisAction() {return emphasisAction;}
 
-	/**@return The data model for which this component provides a view.
-	@see ModelViewablePanel#getModel()
-	*/
-	public XMLNodeModel getXMLModel() {return (XMLNodeModel)getModel();}
-
-	/**Sets the data model.
-	@param model The data model for which this component provides a view.
-	@see #setModel(Model)
-	*/
-	public void setXMLModel(final XMLNodeModel model)
-	{
-		setModel(model);	//set the model
-	}
-
 	/**Sets the data model.
 	@param newModel The data model for which this component provides a view.
 	@exception ClassCastException Thrown if the model is not an <code>XMLNodeModel</code>.
 	*/
-	public void setModel(final Model newModel)
+	public void setModel(final XMLNodeModel<N> newModel)
 	{
-		xmlTextPane.setURIInputStreamable((XMLNodeModel)newModel);	//make sure the text pane knows from where to get input streams
+		xmlTextPane.setURIInputStreamable(newModel);	//make sure the text pane knows from where to get input streams
 		super.setModel(newModel);	//set the model in the parent class
 	}
 
 	/**Model constructor.
 	@param model The data model for which this component provides a view.
 	*/
-	public XMLPanel(final XMLNodeModel model)
+	public XMLPanel(final XMLNodeModel<N> model)
 	{
 		this(model, true);	//construct and initialize the panel
 	}
@@ -127,7 +107,7 @@ public class XMLPanel extends TabbedViewPanel	//TODO make the toolbar and status
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public XMLPanel(final XMLNodeModel model, final boolean initialize)
+	public XMLPanel(final XMLNodeModel<N> model, final boolean initialize)
 	{
 		this(model, new ContentType(ContentTypeConstants.TEXT, ContentTypeConstants.XML_SUBTYPE, null), initialize);	//construct the panel with a default text/xml media type
 	}
@@ -136,7 +116,7 @@ public class XMLPanel extends TabbedViewPanel	//TODO make the toolbar and status
 	@param model The data model for which this component provides a view.
 	@param mediaType The content type of the XML.
 	*/
-	public XMLPanel(final XMLNodeModel model, final ContentType mediaType)
+	public XMLPanel(final XMLNodeModel<N> model, final ContentType mediaType)
 	{
 		this(model, mediaType, true);	//construct and initialize the panel
 	}
@@ -147,7 +127,7 @@ public class XMLPanel extends TabbedViewPanel	//TODO make the toolbar and status
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public XMLPanel(final XMLNodeModel model, final ContentType mediaType, final boolean initialize)
+	public XMLPanel(final XMLNodeModel<N> model, final ContentType mediaType, final boolean initialize)
 	{
 		super(model, false);	//construct the parent class without initializing the panel
 		setSupportedModelViews(DEFAULT_SUPPORTED_MODEL_VIEWS);	//set the model views we support
@@ -235,24 +215,25 @@ updateStatus();	//testing; probably put a convenience method to create this list
 	@param modelView The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
 	@exception IOException Thrown if there was an error loading the model.
 	*/
-	protected void loadModel(final int modelView) throws IOException
+	protected void loadModel(final int modelView) throws IOException	//TODO better refactor the Document and DocumentFragment-specific code out of this abstract class
 	{
 		super.loadModel(modelView);	//do the default loading
-		final XMLNodeModel model=getXMLModel();	//get the data model
+		final XMLNodeModel<N> model=getModel();	//get the data model
+		final N xml=model.getXML();	//get the XML
 		switch(modelView)	//see which view of data we should load
 		{
 			case WYSIWYG_MODEL_VIEW:	//if we're changing to the WYSIWYG view
 				getXMLTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the XML text pane
-				if(model.getXML()!=null)	//if we have XML
+				if(xml!=null)	//if we have XML
 				{
 					getXMLTextPane().setURIInputStreamable(model);	//make sure the text pane knows from where to get input streams
-					if(model instanceof XMLDocumentModel)	//if the model models a document
+					if(xml instanceof Document)	//if the model models a document
 					{
-						getXMLTextPane().setXML(((XMLDocumentModel)model).getDocument(), model.getBaseURI(), getContentType());	//put the XML document into the XML text pane
+						getXMLTextPane().setXML((Document)xml, model.getBaseURI(), getContentType());	//put the XML document into the XML text pane
 					}
-					else if(model instanceof XMLDocumentFragmentModel)	//if the model models a document fragment
+					else if(xml instanceof DocumentFragment)	//if the model models a document fragment
 					{
-						getXMLTextPane().setXML(((XMLDocumentFragmentModel)model).getDocumentFragment(), model.getBaseURI(), getContentType());	//put the XML document into the XML text pane
+						getXMLTextPane().setXML((DocumentFragment)xml, model.getBaseURI(), getContentType());	//put the XML document into the XML text pane
 					}
 				}
 				else	//if we don't have any XML
@@ -263,17 +244,17 @@ updateStatus();	//testing; probably put a convenience method to create this list
 				break;
 			case SOURCE_MODEL_VIEW:	//if we're changing to the source view
 				getSourceTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the source text pane
-				if(model.getXML()!=null)	//if we have XML
+				if(xml!=null)	//if we have XML
 				{
 					final XMLSerializer xmlSerializer=new XMLSerializer(false);	//create an unformatted XML serializer
 					String source=null;	//we'll serialize the XML in the model
-					if(model instanceof XMLDocumentModel)	//if the model models a document
+					if(xml instanceof Document)	//if the model models a document
 					{
-						source=xmlSerializer.serialize(((XMLDocumentModel)model).getDocument());	//serialize the XML document to a string
+						source=xmlSerializer.serialize(((Document)xml));	//serialize the XML document to a string
 					}
-					else if(model instanceof XMLDocumentFragmentModel)	//if the model models a document fragment
+					else if(xml instanceof DocumentFragment)	//if the model models a document fragment
 					{
-						source=xmlSerializer.serialize(((XMLDocumentFragmentModel)model).getDocumentFragment());	//serialize the XML document fragment to a string
+						source=xmlSerializer.serialize((DocumentFragment)xml);	//serialize the XML document fragment to a string
 					}
 					if(source!=null)	//if we serialized the model
 					{					
@@ -297,45 +278,23 @@ updateStatus();	//testing; probably put a convenience method to create this list
 	protected void saveModel(final int modelView) throws IOException
 	{
 		super.saveModel(modelView);	//do the default saving
-		final XMLNodeModel model=getXMLModel();	//get the data model
+		final XMLNodeModel<N> model=getModel();	//get the data model
 		switch(modelView)	//see which view of data we have, in order to get the current XML
 		{
 			case SOURCE_MODEL_VIEW:	//if we should store the XML source
 				{
-					final StringBuffer sourceStringBuffer=new StringBuffer(getSourceTextPane().getText().trim());	//get the current source text, trimming it of beginning and trailing whitespace TODO use a Unicode-aware trim
-					if(sourceStringBuffer.length()>0)	//if there is source text
+					final String sourceText=getSourceText();	//get the source text being edited
+					if(sourceText.length()>0)	//if we have source text
 					{
-						if(model instanceof XMLDocumentFragmentModel)	//if we're modeling a document fragment
-						{
-							final StringBuffer prologStringBuffer=new StringBuffer("<?xml version=\"1.0\"?>\n");	//construct the XML prolog TODO use a constant here
-							prologStringBuffer.append("<div");	//append a root element start tag TODO use something HTML-agnostic
-							final URI defaultNamespaceURI=XMLNamespaceProcessor.getDefaultNamespaceURI(getContentType());	//see if we have a default namespace for the media type we're using
-							if(defaultNamespaceURI!=null)	//if we know the default namespace
-							{
-								prologStringBuffer.append(" xmlns=\"").append(defaultNamespaceURI).append("\"");	//add a default XML namespace declaration attribute
-							}
-							prologStringBuffer.append('>');	//finish the root element start tag
-							sourceStringBuffer.insert(0, prologStringBuffer);	//insert the prolog into the source code
-							sourceStringBuffer.append("</div>");	//append the ending tag for the root element to the source code
-						}
 						final XMLProcessor xmlProcessor=new XMLProcessor(model);	//create an XML processor to read the source
-						final byte[] sourceBytes=sourceStringBuffer.toString().getBytes(CharacterEncodingConstants.UTF_8);	//convert the string to a series of UTF-8 bytes
+						final byte[] sourceBytes=sourceText.getBytes(CharacterEncodingConstants.UTF_8);	//convert the string to a series of UTF-8 bytes
 						final InputStream inputStream=new BufferedInputStream(new ByteArrayInputStream(sourceBytes));	//create an input stream to the source as bytes
 						try
 						{
 							final Document document=xmlProcessor.parseDocument(inputStream, model.getBaseURI());	//parse the XML document
 //G***del Debug.trace("document tree from source");
 //G***del XMLUtilities.printTree(document, System.out);
-
-							if(model instanceof XMLDocumentModel)	//if we're modeling a document
-							{
-								((XMLDocumentModel)model).setDocument(document);	//put the whole document in the model
-							}
-							else if(model instanceof XMLDocumentFragmentModel)	//if we're modeling a document fragment
-							{
-									//extract the child elements into a document fragment and set that in the model
-								((XMLDocumentFragmentModel)model).setDocumentFragment(XMLUtilities.extractChildren(document.getDocumentElement()));
-							}
+							saveModel(model, document);	//store the document in the model
 						}
 						finally
 						{
@@ -358,21 +317,27 @@ updateStatus();	//testing; probably put a convenience method to create this list
 						final Document document=xmlEditorKit.getXML(swingDocument);	//get the XML DOM document from the Swing document
 //G***del						Debug.trace("document tree from WYSIWYG");
 //G***del						XMLUtilities.printTree(document, System.out);
-						if(model instanceof XMLDocumentModel)	//if we're modeling a document
-						{
-							((XMLDocumentModel)model).setDocument(document);	//put the whole document in the model
-						}
-						else if(model instanceof XMLDocumentFragmentModel)	//if we're modeling a document fragment
-						{
-								//extract the child elements into a document fragment and set that in the model
-							((XMLDocumentFragmentModel)model).setDocumentFragment(XMLUtilities.extractChildren(document.getDocumentElement()));
-						}
+						saveModel(model, document);	//store the document in the model
 					}
 				}
 				break;
 		}
 	}
 
+	/**@return The edited source text, modified as appropriate for the type of model.
+	This version trims the text of beginning and ending whitespace.
+	*/
+	protected String getSourceText()
+	{
+		return getSourceTextPane().getText().trim();	//get the current source text, trimming it of beginning and trailing whitespace TODO use a Unicode-aware trim		
+	}
+	
+	/**Saves the given document contents to the given model.
+	@param model The model to update.
+	@param document The XML document the contents of which to store in the model.
+	*/
+	protected abstract void saveModel(final XMLNodeModel<N> model, final Document document);
+	
 	/**Indicates that the view of the data has changed.
 	@param oldView The view before the change.
 	@param newView The new view of the data

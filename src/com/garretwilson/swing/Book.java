@@ -15,6 +15,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;  //G***del when image click code is moved elsewhere
 import com.garretwilson.io.*;
+import com.garretwilson.model.ResourceModel;
 import com.garretwilson.net.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.resources.icon.*;
@@ -2219,9 +2220,9 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 			{
 			  final RDFResource publication=getPublication(); //get the loaded publication
 					//create a new panel in which to show the RDF
-				final RDFPanel rdfPanel=new RDFPanel(new RDFResourceModel(publication, getXMLTextPane().getBaseURI(), getXMLTextPane().getURIInputStreamable()));  
+				final RDFPanel<RDFResource, ResourceModel<RDFResource>> rdfPanel=new RDFPanel<RDFResource, ResourceModel<RDFResource>>(new ResourceModel<RDFResource>(publication, getXMLTextPane().getBaseURI(), getXMLTextPane().getURIInputStreamable()));  
 				  //show the properties in an information dialog
-				new JOptionPane(rdfPanel, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION).createDialog(Book.this, "Properties").show();  //G***i18n
+				BasicOptionPane.showMessageDialog(Book.this, rdfPanel, "Properties", BasicOptionPane.INFORMATION_MESSAGE);	//G***i18n
 			}
 		}
 	}

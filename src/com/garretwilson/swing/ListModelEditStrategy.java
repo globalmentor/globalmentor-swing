@@ -16,10 +16,11 @@ import com.garretwilson.util.Modifiable;
 	status will be set when an item is added, edited, or deleted.</p>
 <p>For best results, derived classes should override
 	<code>getParentComponent()</code>, along with <code>getModifiable()</code>
-	if needed.</p> 
+	if needed.</p>
+@param <E> The type of element in the list model.
 @author Garret Wilson
 */
-public abstract class ListModelEditStrategy //TODO use generics when they are available
+public abstract class ListModelEditStrategy<E>
 {
 
 	/**The action for adding an item.*/
@@ -168,8 +169,8 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 	{
 		try
 		{
-			final Object item=createItem();	//create a new item
-			final Object newItem=editItem(item);	//edit the item
+			final E item=createItem();	//create a new item
+			final E newItem=editItem(item);	//edit the item
 			if(newItem!=null)	//if the user accepted the changes
 			{
 				final ListModel listModel=getListModel();	//get the list model
@@ -179,7 +180,7 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 				}
 				else if(listModel instanceof List)	//if the list model implements the list interface
 				{
-					((List)listModel).add(newItem);	//add the item to the list
+					((List<? super E>)listModel).add(newItem);	//add the item to the list
 				}
 				if(getModifiable()!=null)	//if we have a modifiable object
 				{					
@@ -204,14 +205,15 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 	}
 
 	/**Deletes an item in the list.
-	@param index The index of the item to delete. 
+	@param index The index of the item to delete.
+ 	@exception ClassCastException if the element at the given index is not of the correct generic type <code>E</code>.
 	*/
 	public void delete(final int index)
 	{
 		final ListModel listModel=getListModel();	//get the list model
 		if(index>=0 && index<listModel.getSize())	//if a valid index is requested
 		{
-			final Object item=listModel.getElementAt(index);	//get the currently selected item
+			final E item=(E)listModel.getElementAt(index);	//get the currently selected item
 				//ask the user for confimation to delete the item
 			if(BasicOptionPane.showConfirmDialog(getParentComponent(), "Are you sure you want to delete the item, \""+item+"\"?", "Confirm delete", BasicOptionPane.OK_CANCEL_OPTION)==BasicOptionPane.OK_OPTION)	//G***i18n
 			{
@@ -222,7 +224,7 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 				}
 				else if(listModel instanceof List)	//if the list model implements the list interface
 				{
-					((List)listModel).remove(index);	//remove the item from the list
+					((List<? super E>)listModel).remove(index);	//remove the item from the list
 				}
 				if(getModifiable()!=null)	//if we have a modifiable object
 				{					
@@ -232,7 +234,9 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 		}
 	}
 
-	/**Edits the currently selected item in the list.*/
+	/**Edits the currently selected item in the list.
+	@exception ClassCastException if the element at the current index is not of the correct generic type <code>E</code>.
+	*/
 	public void edit()
 	{
 		edit(getLeadSelectionIndex());	//edit the selected index
@@ -240,13 +244,14 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 
 	/**Edits an item in the list.
 	@param index The index of the item to delete. 
+	@exception ClassCastException if the element at the given index is not of the correct generic type <code>E</code>.
 	*/
 	public void edit(final int index)
 	{
 		final ListModel listModel=getListModel();	//get the list model
 		if(index>=0 && index<listModel.getSize())	//if a valid index is indicated
 		{
-			final Object newItem=editItem(listModel.getElementAt(index));	//edit the selected item
+			final E newItem=editItem((E)listModel.getElementAt(index));	//edit the selected item
 			if(newItem!=null)	//if the edit went successfully
 			{
 				if(listModel instanceof DefaultListModel)	//if the list model is a default list model
@@ -255,7 +260,7 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 				}
 				else if(listModel instanceof List)	//if the list model implements the list interface
 				{
-					((List)listModel).set(index, newItem);	//update the list
+					((List<? super E>)listModel).set(index, newItem);	//update the list
 				}
 				if(getModifiable()!=null)	//if we have a modifiable object
 				{					
@@ -301,14 +306,15 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 	
 	/**Moves an item in the list.
 	The lead selection is moved along with the item if appropriate.
-	 @param oldIndex The index of the item to move. 
-	 @param newIndex The new index to which to move the item.
+	@param oldIndex The index of the item to move. 
+	@param newIndex The new index to which to move the item.
+	@exception ClassCastException if the element at the given index is not of the correct generic type <code>E</code>.
 	*/
 	protected void move(final int oldIndex, final int newIndex)
 	{
 		final int oldLeadSelectionIndex=getLeadSelectionIndex();	//get the current lead selection index
 		final ListModel listModel=getListModel();	//get the list model
-		final Object item=listModel.getElementAt(oldIndex);	//get the element at this index
+		final E item=(E)listModel.getElementAt(oldIndex);	//get the element at this index
 		if(listModel instanceof DefaultListModel)	//if the list model is a default list model
 		{
 			((DefaultListModel)listModel).remove(oldIndex);	//remove the item from its old index
@@ -316,8 +322,8 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 		}
 		else if(listModel instanceof List)	//if the list model implements the list interface
 		{
-			((List)listModel).remove(oldIndex);	//remove the item from its old index
-			((List)listModel).add(newIndex, item);	//insert the item at its new index
+			((List<? super E>)listModel).remove(oldIndex);	//remove the item from its old index
+			((List<? super E>)listModel).add(newIndex, item);	//insert the item at its new index
 		}
 		if(getModifiable()!=null)	//if we have a modifiable object
 		{					
@@ -346,21 +352,21 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 		or if the class has no nullary constructor; or if the instantiation fails
 		for some other reason.
 	*/
-	protected abstract Object createItem() throws InstantiationException, IllegalAccessException;
+	protected abstract E createItem() throws InstantiationException, IllegalAccessException;
 
 	/**Edits an object from the list.
 	@param item The item to edit in the list.
 	@return The object with the modifications from the edit, or
 		<code>null</code> if the edits should not be accepted.
 	*/
-	protected abstract Object editItem(final Object item);
+	protected abstract E editItem(final E item);
 
 	/**Deletes an object in the list.
 	This is called so that any physical object backing may be removed, if
 	necessary. This method must not remove the item from the list.
 	@param item The item to delete in the list.
 	*/
-	protected void deleteItem(final Object item) {}
+	protected void deleteItem(final E item) {}
 
 	/**Action for adding an item to the list.*/
 	protected class AddAction extends AbstractAction

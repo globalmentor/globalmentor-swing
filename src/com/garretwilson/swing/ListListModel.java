@@ -9,18 +9,18 @@ import javax.swing.*;
 @see javax.swing.JList
 @see java.util.List
 */
-public class ListListModel extends AbstractListModel implements List	//G*** make sure we don't have to override the iterators---can we assume they will call back to these methods for removal and such?
+public class ListListModel<E> extends AbstractListModel implements List<E>	//G*** make sure we don't have to override the iterators---can we assume they will call back to these methods for removal and such?
 {
 	/**The list this class proxies.*/
-	protected final List list;
+	protected final List<E> list;
 
 		/**The list this class proxies.*/
-		public final List getList() {return list;}
+		public final List<E> getList() {return list;}
 
 	/**List constructor.
 	@param list The list this list should proxy.
 	*/
-	public ListListModel(final List list)
+	public ListListModel(final List<E> list)
 	{
 		this.list=list;	//save the list
 	}
@@ -38,7 +38,7 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 * @param index the requested index
 	 * @return the value at <code>index</code>
 	 */
-	public Object getElementAt(int index) {return list.get(index);}
+	public E getElementAt(int index) {return list.get(index);}
 
 		//Collection methods
 
@@ -82,7 +82,7 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 * 
 	 * @return an <tt>Iterator</tt> over the elements in this collection
 	 */
-	public Iterator iterator() {return list.iterator();}
+	public Iterator<E> iterator() {return list.iterator();}
 
 	/**
 	 * Returns an array containing all of the elements in this collection.  If
@@ -102,52 +102,51 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 */
 	public Object[] toArray() {return list.toArray();} 
 	
-	/**
-	 * Returns an array containing all of the elements in this collection; 
-	 * the runtime type of the returned array is that of the specified array.  
-	 * If the collection fits in the specified array, it is returned therein.  
-	 * Otherwise, a new array is allocated with the runtime type of the 
-	 * specified array and the size of this collection.<p>
-	 *
-	 * If this collection fits in the specified array with room to spare
-	 * (i.e., the array has more elements than this collection), the element
-	 * in the array immediately following the end of the collection is set to
-	 * <tt>null</tt>.  This is useful in determining the length of this
-	 * collection <i>only</i> if the caller knows that this collection does
-	 * not contain any <tt>null</tt> elements.)<p>
-	 *
-	 * If this collection makes any guarantees as to what order its elements
-	 * are returned by its iterator, this method must return the elements in
-	 * the same order.<p>
-	 *
-	 * Like the <tt>toArray</tt> method, this method acts as bridge between
-	 * array-based and collection-based APIs.  Further, this method allows
-	 * precise control over the runtime type of the output array, and may,
-	 * under certain circumstances, be used to save allocation costs<p>
-	 *
-	 * Suppose <tt>l</tt> is a <tt>List</tt> known to contain only strings.
-	 * The following code can be used to dump the list into a newly allocated
-	 * array of <tt>String</tt>:
-	 *
-	 * <pre>
-	 *     String[] x = (String[]) v.toArray(new String[0]);
-	 * </pre><p>
-	 *
-	 * Note that <tt>toArray(new Object[0])</tt> is identical in function to
-	 * <tt>toArray()</tt>.
-	 *
-	 * @param a the array into which the elements of this collection are to be
-	 *        stored, if it is big enough; otherwise, a new array of the same
-	 *        runtime type is allocated for this purpose.
-	 * @return an array containing the elements of this collection
-	 * 
-	 * @throws ArrayStoreException the runtime type of the specified array is
-	 *         not a supertype of the runtime type of every element in this
-	 *         collection.
-	 * @throws NullPointerException if the specified array is <tt>null</tt>.
-	 */
-    
-	public Object[] toArray(Object a[]) {return list.toArray(a);}
+  /**
+   * Returns an array containing all of the elements in this collection; 
+   * the runtime type of the returned array is that of the specified array.  
+   * If the collection fits in the specified array, it is returned therein.  
+   * Otherwise, a new array is allocated with the runtime type of the 
+   * specified array and the size of this collection.<p>
+   *
+   * If this collection fits in the specified array with room to spare
+   * (i.e., the array has more elements than this collection), the element
+   * in the array immediately following the end of the collection is set to
+   * <tt>null</tt>.  This is useful in determining the length of this
+   * collection <i>only</i> if the caller knows that this collection does
+   * not contain any <tt>null</tt> elements.)<p>
+   *
+   * If this collection makes any guarantees as to what order its elements
+   * are returned by its iterator, this method must return the elements in
+   * the same order.<p>
+   *
+   * Like the <tt>toArray</tt> method, this method acts as bridge between
+   * array-based and collection-based APIs.  Further, this method allows
+   * precise control over the runtime type of the output array, and may,
+   * under certain circumstances, be used to save allocation costs<p>
+   *
+   * Suppose <tt>l</tt> is a <tt>List</tt> known to contain only strings.
+   * The following code can be used to dump the list into a newly allocated
+   * array of <tt>String</tt>:
+   *
+   * <pre>
+   *     String[] x = (String[]) v.toArray(new String[0]);
+   * </pre><p>
+   *
+   * Note that <tt>toArray(new Object[0])</tt> is identical in function to
+   * <tt>toArray()</tt>.
+   *
+   * @param a the array into which the elements of this collection are to be
+   *        stored, if it is big enough; otherwise, a new array of the same
+   *        runtime type is allocated for this purpose.
+   * @return an array containing the elements of this collection
+   * 
+   * @throws ArrayStoreException the runtime type of the specified array is
+   *         not a supertype of the runtime type of every element in this
+   *         collection.
+   * @throws NullPointerException if the specified array is <tt>null</tt>.
+   */
+	public <T> T[] toArray(T[] a) {return list.toArray(a);}
 
 	// Modification Operations
 
@@ -183,7 +182,7 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 * @throws IllegalArgumentException some aspect of this element prevents
 	 *         it from being added to this collection.
 	 */
-	public boolean add(Object o)
+	public boolean add(E o)
 	{
 		final int index=list.size();	//find out where the item will go
 		final boolean changed=list.add(o);
@@ -244,7 +243,7 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 *         <tt>null</tt>.
 	 * @see    #contains(Object)
 	 */
-	public boolean containsAll(Collection c) {return list.containsAll(c);}
+	public boolean containsAll(Collection<?> c) {return list.containsAll(c);}
 
 	/**
 	 * Adds all of the elements in the specified collection to this collection
@@ -270,7 +269,7 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 *	       collection.
 	 * @see #add(Object)
 	 */
-	public boolean addAll(Collection c)
+	public boolean addAll(Collection<? extends E> c)
 	{
 		final int index=list.size();
 		final boolean changed=list.addAll(c);
@@ -305,7 +304,7 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 * @see #remove(Object)
 	 * @see #contains(Object)
 	 */
-	public boolean removeAll(Collection c)
+	public boolean removeAll(Collection<?> c)
 	{
 		final int oldSize=list.size();	//see how big the list was to begin with
 		final boolean changed=list.removeAll(c);
@@ -340,7 +339,7 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 * @see #remove(Object)
 	 * @see #contains(Object)
 	 */
-	public boolean retainAll(Collection c)
+	public boolean retainAll(Collection<?> c)
 	{
 		final int oldSize=list.size();	//see how big the list was to begin with
 		final boolean changed=list.retainAll(c);
@@ -454,7 +453,7 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 * @throws IndexOutOfBoundsException if the index is out of range (index
 	 *		  &lt; 0 || index &gt; size()).
 	 */
-	public boolean addAll(int index, Collection c)
+	public boolean addAll(int index, Collection<? extends E> c)
 	{
 		final boolean changed=list.addAll(index, c);
 		if(changed)	//if the list changed
@@ -475,7 +474,7 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 * @throws IndexOutOfBoundsException if the index is out of range (index
 	 * 		  &lt; 0 || index &gt;= size()).
 	 */
-	public Object get(int index) {return list.get(index);}
+	public E get(int index) {return list.get(index);}
 
 	/**
 	 * Replaces the element at the specified position in this list with the
@@ -496,9 +495,9 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 * @throws    IndexOutOfBoundsException if the index is out of range
 	 *		  (index &lt; 0 || index &gt;= size()).
 	 */
-	public Object set(int index, Object element)
+	public E set(int index, E element)
 	{
-		final Object oldObject=list.set(index, element);
+		final E oldObject=list.set(index, element);
 		fireContentsChanged(this, index, index);
 		return oldObject;
 	}
@@ -523,7 +522,7 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 * @throws    IndexOutOfBoundsException if the index is out of range
 	 *		  (index &lt; 0 || index &gt; size()).
 	 */
-	public void add(int index, Object element)
+	public void add(int index, E element)
 	{
 		list.add(index, element);
 		fireIntervalAdded(this, index, index);
@@ -543,9 +542,9 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 * @throws IndexOutOfBoundsException if the index is out of range (index
 	 *            &lt; 0 || index &gt;= size()).
 	 */
-	public Object remove(int index)
+	public E remove(int index)
 	{
-		final Object oldObject=list.remove(index);
+		final E oldObject=list.remove(index);
 		fireIntervalRemoved(this, index, index);
 		return oldObject;
 	}
@@ -597,7 +596,7 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 * @return a list iterator of the elements in this list (in proper
 	 * 	       sequence).
 	 */
-	public ListIterator listIterator() {return list.listIterator();}
+	public ListIterator<E> listIterator() {return list.listIterator();}
 
 	/**
 	 * Returns a list iterator of the elements in this list (in proper
@@ -614,7 +613,7 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 * @throws IndexOutOfBoundsException if the index is out of range (index
 	 *         &lt; 0 || index &gt; size()).
 	 */
-	public ListIterator listIterator(int index) {return list.listIterator(index);}
+	public ListIterator<E> listIterator(int index) {return list.listIterator(index);}
 
 	// View
 
@@ -652,6 +651,6 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 * @throws IndexOutOfBoundsException for an illegal endpoint index value
 	 *     (fromIndex &lt; 0 || toIndex &gt; size || fromIndex &gt; toIndex).
 	 */
-	public List subList(int fromIndex, int toIndex) {return list.subList(fromIndex, toIndex);}
+	public List<E> subList(int fromIndex, int toIndex) {return list.subList(fromIndex, toIndex);}
 
 }

@@ -14,11 +14,11 @@ import com.garretwilson.model.ModelView;
 </dl>
 @author Garret Wilson
 */
-public class ModelPanel extends ModifiablePanel implements ModelView
+public class ModelPanel<M extends Model> extends ModifiablePanel implements ModelView<M>
 {
 
 	/**The data model for which this component provides a view.*/
-	private Model model;
+	private M model;
 
 		/**Returns the component data model.
 		<p>A calling program should first call <code>verify()</code> to ensure
@@ -26,13 +26,13 @@ public class ModelPanel extends ModifiablePanel implements ModelView
 		@return The data model for which this component provides a view.
 		@see #verify()
 		*/
-		public Model getModel() {return model;}
+		public M getModel() {return model;}
 
 		/**Sets the data model.
 		This is a bound property.
 		@param newModel The data model for which this component provides a view.
 		*/
-		public void setModel(final Model newModel)
+		public void setModel(final M newModel)
 		{
 			final Model oldModel=model; //get the old value
 			if(oldModel!=newModel)  //if the value is really changing
@@ -55,7 +55,7 @@ public class ModelPanel extends ModifiablePanel implements ModelView
 	/**Model constructor.
 	@param model The data model for which this component provides a view.
 	*/
-	public ModelPanel(final Model model)
+	public ModelPanel(final M model)
 	{
 		this(model, true); //initialize the panel
 	}
@@ -66,7 +66,7 @@ public class ModelPanel extends ModifiablePanel implements ModelView
 		calling the initialization methods.
 	@see #FlowLayout
 	*/
-	public ModelPanel(final Model model, final boolean initialize)
+	public ModelPanel(final M model, final boolean initialize)
 	{
 		this(new FlowLayout(), model, initialize);	//construct the panel with a flow layout by default
 	}
@@ -75,7 +75,7 @@ public class ModelPanel extends ModifiablePanel implements ModelView
 	@param layout The layout manager to use.
 	@param model The data model for which this component provides a view.
 	*/
-	public ModelPanel(final LayoutManager layout, final Model model)
+	public ModelPanel(final LayoutManager layout, final M model)
 	{
 		this(layout, model, true);	//construct the class with the layout, initializing the panel
 	}
@@ -86,14 +86,10 @@ public class ModelPanel extends ModifiablePanel implements ModelView
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public ModelPanel(final LayoutManager layout, final Model model, final boolean initialize)
+	public ModelPanel(final LayoutManager layout, final M model, final boolean initialize)
 	{
 		super(layout, false);	//construct the parent but don't initialize the panel
 		this.model=model;	//save the model
-/*G***del; child classes should use loadModel(), anyway
-		this.model=null;	//start out with no model
-		setModel(model);		//explicitly set the model so that any child classes can update things appropriately
-*/
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel
 	}

@@ -10,9 +10,10 @@ import com.garretwilson.net.http.HTTPClient;
 import com.garretwilson.util.*;
 
 /**An application that relies on Swing.
+@param <C> The type of configuration object.
 @author Garret Wilson
 */
-public abstract class SwingApplication extends Application
+public abstract class SwingApplication<C> extends Application<C>
 {
 
 	/**Reference URI constructor.

@@ -2,14 +2,16 @@ package com.garretwilson.swing;
 
 import java.io.*;
 import java.net.URI;
+
 import javax.swing.*;
 import javax.swing.text.*;
+
 import com.garretwilson.io.*;
 import com.garretwilson.model.*;
 import com.garretwilson.text.CharacterEncoding;
 import com.garretwilson.text.CharacterEncodingConstants;
-import com.garretwilson.text.xml.XMLDocumentModel;
 import com.garretwilson.text.xml.XMLDocumentModelIOKit;
+import com.garretwilson.text.xml.XMLNodeModel;
 import com.garretwilson.text.xml.XMLProcessor;
 
 /**An implementation for loading information into a view or
@@ -19,7 +21,7 @@ import com.garretwilson.text.xml.XMLProcessor;
 @author GarretWilson
 @see ModelIOKit
 */
-public class XMLDocumentModelViewIOKit extends ModelViewIOKit
+public class XMLDocumentModelViewIOKit extends ModelViewIOKit<XMLNodeModel<org.w3c.dom.Document>>
 {
 
 	/**URI input stream locator constructor.
@@ -58,7 +60,7 @@ public class XMLDocumentModelViewIOKit extends ModelViewIOKit
 		URI is available.
 	@throws IOException Thrown if there is an error reading the data.
 	*/ 
-	public void load(final ModelView view, final InputStream inputStream, final URI baseURI) throws IOException
+	public void load(final ModelView<XMLNodeModel<org.w3c.dom.Document>> view, final InputStream inputStream, final URI baseURI) throws IOException
 	{
 		try
 		{
@@ -66,10 +68,10 @@ public class XMLDocumentModelViewIOKit extends ModelViewIOKit
 		}
 		catch(IOException ioException)	//if there was an error parsing the XML, show the source
 		{
-			final XMLPanel xmlPanel=(XMLPanel)view;	//cast the view to an XML panel
-			xmlPanel.setXMLModel(new XMLDocumentModel());	//clear all data from the panel
+			final XMLDocumentPanel xmlPanel=(XMLDocumentPanel)view;	//cast the view to an XML panel
+			xmlPanel.setModel(new XMLNodeModel<org.w3c.dom.Document>());	//clear all data from the panel
 			xmlPanel.setModelView(XMLPanel.SOURCE_MODEL_VIEW);	//switch to the source and try to load the source with no interpretation					
-			xmlPanel.setXMLModel(new XMLDocumentModel());	//clear all data from the panel again, because changing the data view might have created default XML
+			xmlPanel.setModel(new XMLNodeModel<org.w3c.dom.Document>());	//clear all data from the panel again, because changing the data view might have created default XML
 			final JTextPane sourceTextPane=xmlPanel.getSourceTextPane();	//get a reference to the source text pane G***maybe make an accessor method for setting the source
 			final Document document=sourceTextPane.getDocument();	//get the source document
 			inputStream.reset();	//start back at the beginning of the stream

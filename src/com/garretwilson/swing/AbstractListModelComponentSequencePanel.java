@@ -18,9 +18,10 @@ import com.garretwilson.util.Modifiable;
 	<dt><code>Editable.EDITABLE_PROPERTY</code> (<code>Boolean</code>)</dt>
 	<dd>Indicates the editable status has changed.</dd>
 </dl>
+@param <E> The type of elements contained in the list model.
 @author Garret Wilson
 */
-public abstract class AbstractListModelComponentSequencePanel extends AbstractComponentSequencePanel implements Editable
+public abstract class AbstractListModelComponentSequencePanel<E> extends AbstractComponentSequencePanel implements Editable
 {
 
 	/**The list model from which components are produced, or <code>null</code> for no list.*/
@@ -242,21 +243,24 @@ public abstract class AbstractListModelComponentSequencePanel extends AbstractCo
 
 	/**Determines the component to be displayed at the given step of the sequence.
 	@param index The zero-based index of the step in the sequence.
-	@return The component to be displayed at the given step of the sequence. 
+	@return The component to be displayed at the given step of the sequence.
+	@exception ClassCastException if the element as the given index is not of the correct generic type <code>E</code>.
 	*/
 	protected Component getIndexedComponent(final int index)
 	{
 		//TODO maybe bring some of this index stuff up the hierarchy
 		//TODO maybe call this method from other methods to avoid redundancy
 		//TODO decide whether we should throw an ArrayOutOfBounds exception
-		return getListModel()!=null && index>=0 && index<getListModel().getSize() ? getComponent(getListModel().getElementAt(index)) : null;	//get the component for the requested item
+		return getListModel()!=null && index>=0 && index<getListModel().getSize() ? getComponent((E)getListModel().getElementAt(index)) : null;	//get the component for the requested item
 	}
 
 
-	/**@return The first component to be displayed in the sequence.*/
+	/**@return The first component to be displayed in the sequence.
+	@exception ClassCastException if the element as the given index is not of the correct generic type <code>E</code>.
+	*/
 	protected Component getFirstComponent()
 	{
-		return getListModel()!=null && getListModel().getSize()>0 ? getComponent(getListModel().getElementAt(0)) : null;	//get the component for the first item
+		return getListModel()!=null && getListModel().getSize()>0 ? getComponent((E)getListModel().getElementAt(0)) : null;	//get the component for the first item
 	}
 
 	/**@return <code>true</code> if there is a next component after the current one.*/
@@ -265,10 +269,12 @@ public abstract class AbstractListModelComponentSequencePanel extends AbstractCo
 		return getListModel()!=null ? getIndex()<getListModel().getSize()-1 : false;	//we have another item if we're not at the last item in the list
 	}
 
-	/**@return The next component to be displayed in the sequence.*/
+	/**@return The next component to be displayed in the sequence.
+	@exception ClassCastException if the element as the given index is not of the correct generic type <code>E</code>.
+	*/
 	protected Component getNextComponent()
 	{
-		return getListModel()!=null ? getComponent(getListModel().getElementAt(getIndex()+1)) : null;	//get the component for the next item		
+		return getListModel()!=null ? getComponent((E)getListModel().getElementAt(getIndex()+1)) : null;	//get the component for the next item		
 	}
 
 	/**@return <code>true</code> if there is a previous component before the current one.*/
@@ -277,10 +283,12 @@ public abstract class AbstractListModelComponentSequencePanel extends AbstractCo
 		return getIndex()>0;	//we have another item if we're not at the first item in the list		
 	}
 
-	/**@return The previous component to be displayed in the sequence.*/
+	/**@return The previous component to be displayed in the sequence.
+	@exception ClassCastException if the element as the given index is not of the correct generic type <code>E</code>.
+	*/
 	protected Component getPreviousComponent()
 	{
-		return getListModel()!=null ? getComponent(getListModel().getElementAt(getIndex()-1)) : null;	//get the component for the previous item		
+		return getListModel()!=null ? getComponent((E)getListModel().getElementAt(getIndex()-1)) : null;	//get the component for the previous item		
 	}
 
 	/**Returns a component appropriate for representing the given object from
@@ -288,7 +296,7 @@ public abstract class AbstractListModelComponentSequencePanel extends AbstractCo
 	@param object An object in the list.
 	@return A component appropriate for representing the object.
 	*/
-	protected abstract Component getComponent(final Object object);
+	protected abstract Component getComponent(final E object);
 
 	/**Sent after the indices in the index0, index1
 		interval have been inserted in the data model.

@@ -16,12 +16,13 @@ import com.garretwilson.util.Editable;
 	<dt><code>Editable.EDITABLE_PROPERTY</code> (<code>Boolean</code>)</dt>
 	<dd>Indicates the editable status has changed.</dd>
 </dl>
+@param <E> The type of each element in the list.
 @author Garret Wilson
 @see java.util.List
 @see javax.swing.DefaultListModel
 @see ListEditStrategy
 */
-public class ListPanel extends ContentPanel implements Editable
+public class ListPanel<E> extends ContentPanel implements Editable
 {
 
 	protected final JToolBar buttonToolBar;
@@ -36,10 +37,10 @@ public class ListPanel extends ContentPanel implements Editable
 	protected final JButton moveDownButton;
 	
 	/**The edit strategy for editing items in the list, or <code>null</code> if there is no edit strategy.*/
-	private final ListEditStrategy editStrategy;
+	private final ListEditStrategy<E> editStrategy;
 
 		/**@return The strategy for editing items in the list, or <code>null</code> if there is no edit strategy.*/
-		public ListEditStrategy getEditStrategy() {return editStrategy;}
+		public ListEditStrategy<E> getEditStrategy() {return editStrategy;}
 
 		/**Sets the edit strategy object
 		@param editStrategy The edit strategy for editing items in the list, or
@@ -81,7 +82,7 @@ public class ListPanel extends ContentPanel implements Editable
 	*/
 	public ListPanel(final JList list)
 	{
-		this(list, new ListEditStrategy(list)
+		this(list, new ListEditStrategy(list)	//TODO find out why we can't create an anonymous instance of a specific genericized type
 				{
 					protected Object createItem() throws InstantiationException, IllegalAccessException
 					{
@@ -99,7 +100,7 @@ public class ListPanel extends ContentPanel implements Editable
 	@param editStrategy The edit strategy for editing items in the list.
 	@see JScrollPane
 	*/
-	public ListPanel(final JList list, final ListEditStrategy editStrategy)
+	public ListPanel(final JList list, final ListEditStrategy<E> editStrategy)
 	{
 		super(new JScrollPane(list), false);	//construct the panel with the list as the content component, but don't initialize the panel
 		this.list=list;	//save the list we were given

@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.text.*;
 import javax.swing.event.*;
@@ -16,6 +17,7 @@ import javax.mail.internet.ContentType;
 
 import com.garretwilson.awt.EventQueueUtilities;
 import com.garretwilson.lang.JavaUtilities;
+import com.garretwilson.lang.ObjectUtilities;
 import com.garretwilson.swing.ComponentUtilities;
 import com.garretwilson.swing.SwingApplication;
 import com.garretwilson.swing.XMLTextPane;	//G***del when we can find a better place to set the paged view variable of XMLTextPane
@@ -49,7 +51,7 @@ import com.garretwilson.util.Debug;
 public class XMLPagedView extends FlowView
 {
 
-	protected final static boolean THREADED=false;	//TODO fix threading
+	protected final static boolean THREADED=false;	//TODO fix threading; currently unstable
 
 	/**The task of paginating a document.*/
 	public final static String PAGINATE_TASK="PAGINATE";
@@ -462,6 +464,10 @@ super.changedUpdate(changes, a, f);
 	*/
 	public void paint(final Graphics graphics, final Shape allocation)
 	{
+		if(!isPaginating())
+		{
+		
+		
 		setPageIndex(getCanonicalPageIndex(getPageIndex()));	//make sure the current page index is a canonical one, so that a page in the middle of the set won't be indicated, for instance
 			//get a rectangle that outlines our allocation
 		final Rectangle allocationRectangle=(allocation instanceof Rectangle) ? (Rectangle)allocation : allocation.getBounds();
@@ -538,6 +544,7 @@ super.changedUpdate(changes, a, f);
 					paintChild(graphics, tempRectangle, pageIndex);	//paint this page
 				}
 			}
+		}
 		}
 	}
 
@@ -776,6 +783,7 @@ super.changedUpdate(changes, a, f);
 	 					isLayingOut=true;	//show that layout has started
 	 					try
 	 					{
+	 						Debug.trace("ready to lay out");
 	 						layoutImmediately(dimension.width, dimension.height);	//do the layout
 	 					}
 	 					finally
@@ -1517,11 +1525,6 @@ return v;
 				if(container!=null)	//if we're in a container
 				{
 					container.repaint();	//repaint our container G***check
-					SwingUtilities.invokeLater(new Runnable()	//invoke the hyperlink traversal until a later time in the event thread, so the mouse click won't be re-interpreted when we arrive at the hyperlink destination
-							{
-								public void run() {container.repaint();}	//if the hyperlink was not for a special-case URI, just go to the URI
-							});
-
 				}
 */
 			}
@@ -1551,7 +1554,7 @@ return v;
 			final float estimatedRowCount=rowIndex*progress;	//find out the total rows by multiplying the number of rows *already* collected by the progress
 			fireMadeProgress(new ProgressEvent(flowView, PAGINATE_TASK, "Paginating page "+(rowIndex+1)+" of ~"+Math.round(estimatedRowCount)+"...", rowIndex, estimatedRowCount));	//show that we are paginating the specified page, and the number of pages we guess there will be G***i18n
 			final int nextPos=super.layoutRow(flowView, rowIndex, pos);	//do the default layout
-/*TODO fix end-of-pagination repainting
+/*TODO
 			final Container container=getContainer();	//get a reference to our container
 			if(container!=null)	//if we're in a container
 			{

@@ -20,7 +20,7 @@ When the view value is changed, the appropriate tab is selected; when a new tab
 @author Garret Wilson
 @see BasicGridBagLayout
 */
-public abstract class TabbedViewPanel extends ModelViewablePanel
+public abstract class TabbedViewPanel<M extends Model> extends ModelViewablePanel<M>
 {
 
 	/**The center tabbed pane.*/
@@ -196,7 +196,7 @@ public abstract class TabbedViewPanel extends ModelViewablePanel
 	/**Model constructor.
 	@param model The data model for which this component provides a view.
 	*/
-	public TabbedViewPanel(final Model model)
+	public TabbedViewPanel(final M model)
 	{
 		this(model, true); //initialize the panel
 	}
@@ -206,7 +206,7 @@ public abstract class TabbedViewPanel extends ModelViewablePanel
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public TabbedViewPanel(final Model model, final boolean initialize)
+	public TabbedViewPanel(final M model, final boolean initialize)
 	{
 		super(new BasicGridBagLayout(), model, false);	//construct the parent class with a grid bag layout manager, but don't initialize the panel
 		tabbedPane=new JTabbedPane();	//create the center tabbed pane
@@ -313,7 +313,7 @@ public abstract class TabbedViewPanel extends ModelViewablePanel
 		if not.
 	@see #saveModel()
 	*/
-/*G***del; TODO modify the verify() method (shown here from ModelPanel) sow that it does not attempt to verify every tab on the panel
+/*G***del; TODO modify the verify() method (shown here from ModelPanel) so that it does not attempt to verify every tab on the panel
 	public boolean verify()
 	{
 		boolean verified=super.verify();	//perform the default verification---do this first so that any child components that we may need for our model can be verified, saving their models

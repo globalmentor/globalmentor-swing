@@ -24,7 +24,7 @@ import com.garretwilson.util.ArrayUtilities;
 </dl>
 @author Garret Wilson
 */
-public abstract class ModelViewablePanel extends ModelPanel implements ModelViewable
+public abstract class ModelViewablePanel<M extends Model> extends ModelPanel<M> implements ModelViewable
 {
 
 	/**The default model views supported by this panel.*/
@@ -132,7 +132,7 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 	/**Model constructor.
 	@param model The data model for which this component provides a view.
 	*/
-	public ModelViewablePanel(final Model model)
+	public ModelViewablePanel(final M model)
 	{
 		this(model, true); //initialize the panel
 	}
@@ -143,7 +143,7 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 		calling the initialization methods.
 	@see #FlowLayout
 	*/
-	public ModelViewablePanel(final Model model, final boolean initialize)
+	public ModelViewablePanel(final M model, final boolean initialize)
 	{
 		this(new FlowLayout(), model, initialize);	//construct the panel with a flow layout by default
 	}
@@ -152,7 +152,7 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 	@param layout The layout manager to use.
 	@param model The data model for which this component provides a view.
 	*/
-	public ModelViewablePanel(final LayoutManager layout, final Model model)
+	public ModelViewablePanel(final LayoutManager layout, final M model)
 	{
 		this(layout, model, true);	//construct the class with the layout, initializing the panel
 	}
@@ -163,7 +163,7 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public ModelViewablePanel(final LayoutManager layout, final Model model, final boolean initialize)
+	public ModelViewablePanel(final LayoutManager layout, final M model, final boolean initialize)
 	{
 		super(layout, model, false);	//construct the parent but don't initialize the panel
 		supportedModelViews=DEFAULT_SUPPORTED_MODEL_VIEWS;	//set the model views we support (in this case, none)

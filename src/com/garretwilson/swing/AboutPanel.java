@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
+import com.garretwilson.model.ResourceModel;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.dublincore.*;
 import com.garretwilson.rdf.version.*;
@@ -223,7 +224,7 @@ public class AboutPanel extends BasicPanel implements CharacterConstants
 			final RDFResource resource=getResource();	//get our resource
 			if(resource!=null)	//if we have a resource
 			{
-				final RDFPanel rdfPanel=new RDFPanel(new RDFResourceModel(resource));  //create a new panel in which to show the resource
+				final RDFPanel<RDFResource, ResourceModel<RDFResource>> rdfPanel=new RDFPanel<RDFResource, ResourceModel<RDFResource>>(new ResourceModel<RDFResource>(resource));  //create a new panel in which to show the resource
 				rdfPanel.setEditable(false);	//don't allow this RDF to be edited
 					//show the properties in an information dialog
 				BasicOptionPane.showMessageDialog(AboutPanel.this, rdfPanel, (getTitle()!=null ? getTitle()+' ' : "")+"Properties", BasicOptionPane.INFORMATION_MESSAGE);	//G***i18n

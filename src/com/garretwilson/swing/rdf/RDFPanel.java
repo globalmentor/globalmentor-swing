@@ -12,6 +12,7 @@ import com.garretwilson.text.xml.XMLDOMImplementation;
 import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.text.xml.XMLSerializer;
 import com.garretwilson.model.Model;
+import com.garretwilson.model.ResourceModel;
 import com.garretwilson.rdf.*;
 import org.w3c.dom.*;
 
@@ -19,7 +20,7 @@ import org.w3c.dom.*;
 	presented to allow viewing the RDF+XML source code.
 @author Garret Wilson
 */
-public class RDFPanel extends TabbedViewPanel
+public class RDFPanel<R extends RDFResource, M extends ResourceModel<R>> extends TabbedViewPanel<M>	//TODO see if we can get away with just using M extends ResouceModel<? extends Resource>
 {
 
 	/**The default model views supported by this panel.*/
@@ -65,30 +66,10 @@ public class RDFPanel extends TabbedViewPanel
 	/**The DOM implementation used for serializing the RDF.*/
 	protected final DOMImplementation domImplementation;
 
-	/**@return The data model for which this component provides a view.
-	@see ModelViewablePanel#getModel()
-	*/
-	public RDFResourceModel getRDFResourceModel() {return (RDFResourceModel)getModel();}
-
-	/**Sets the data model.
-	@param model The data model for which this component provides a view.
-	@see #setModel(Model)
-	*/
-	public void setRDFResourceModel(final RDFResourceModel model) {setModel(model);}
-
-	/**Sets the data model.
-	@param newModel The data model for which this component provides a view.
-	@exception ClassCastException Thrown if the model is not a <code>RDFResourceModel</code>.
-	*/
-	public void setModel(final Model newModel)
-	{
-		super.setModel((RDFResourceModel)newModel);	//set the model in the parent class
-	}
-
 	/**Model constructor.
 	@param model The data model for which this component provides a view.
 	*/
-	public RDFPanel(final RDFResourceModel model)
+	public RDFPanel(final M model)
 	{
 		this(model, true);	//construct and initialize the panel
 	}
@@ -98,7 +79,7 @@ public class RDFPanel extends TabbedViewPanel
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public RDFPanel(final RDFResourceModel model, final boolean initialize)
+	public RDFPanel(final M model, final boolean initialize)
 	{
 		super(model, false);	//construct the parent class without initializing the panel
 		setSupportedModelViews(DEFAULT_SUPPORTED_MODEL_VIEWS);	//set the model views we support
@@ -131,14 +112,14 @@ public class RDFPanel extends TabbedViewPanel
 	protected void loadModel(final int modelView) throws IOException
 	{
 		super.loadModel(modelView);	//do the default loading
-		final RDFResourceModel model=getRDFResourceModel();	//get the data model
+		final M model=getModel();	//get the data model
 		switch(modelView)	//see which view of data we should load
 		{
 			case TREE_MODEL_VIEW:	//if we're changing to the tree view
-				if(model.getRDFResource()!=null)	//if we have an RDF resource
+				if(model.getResource()!=null)	//if we have an RDF resource
 				{
 						//G***maybe use a common RDFXMLifier
-					final TreeNode treeNode=new RDFObjectTreeNode(model.getRDFResource(), new RDFXMLifier()); //create a tree node for the resource
+					final TreeNode treeNode=new RDFObjectTreeNode(model.getResource(), new RDFXMLifier()); //create a tree node for the resource
 					getRDFTree().setModel(new DefaultTreeModel(treeNode));  //create a new tree model and set the model for the tree
 				}
 				else	//if we don't have any RDF resource
@@ -148,10 +129,10 @@ public class RDFPanel extends TabbedViewPanel
 				break;
 			case SOURCE_MODEL_VIEW:	//if we're changing to the source view
 				getSourceTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the source text pane
-				if(model.getRDFResource()!=null)	//if we have an RDF resource
+				if(model.getResource()!=null)	//if we have an RDF resource
 				{
 						//create an XML document containing the RDF information TODO see about using a commong RDFXMLifier
-					final Document document=new RDFXMLifier().createDocument(model.getRDFResource(), domImplementation);
+					final Document document=new RDFXMLifier().createDocument(model.getResource(), domImplementation);
 					final XMLSerializer xmlSerializer=new XMLSerializer(true);  //create a formatted serializer
 					final String source=xmlSerializer.serialize(document);	//serialize the XML to a string
 					getSourceTextPane().setText(source);	//show the XML source in the source text pane
@@ -173,7 +154,7 @@ public class RDFPanel extends TabbedViewPanel
 	protected void saveModel(final int modelView) throws IOException
 	{
 		super.saveModel(modelView);	//do the default saving
-		final RDFResourceModel model=getRDFResourceModel();	//get the data model
+		final M model=getModel();	//get the data model
 		switch(modelView)	//see which view of data we should save
 		{
 			case TREE_MODEL_VIEW:	//if we should store the RDF currently in the tree
@@ -182,7 +163,7 @@ public class RDFPanel extends TabbedViewPanel
 					final RDFObjectTreeNode rdfObjectNode=(RDFObjectTreeNode)getRDFTree().getModel().getRoot();	//get the RDF object root node
 					if(rdfObjectNode.getRDFObject() instanceof RDFResource)	//if the tree node represents an RDF resource
 					{
-						model.setRDFResource((RDFResource)rdfObjectNode.getRDFObject());	//set the RDF resource in the model
+						model.setResource((R)rdfObjectNode.getRDFObject());	//set the RDF resource in the model	TODO fix checking for correct resource type
 					}
 				}
 				break;
@@ -214,7 +195,7 @@ public class RDFPanel extends TabbedViewPanel
 					}
 					else	//if there is no source text
 					{
-						model.setRDFResource(null);	//there can be no RDF
+						model.setResource(null);	//there can be no RDF
 					}
 				}
 				break;

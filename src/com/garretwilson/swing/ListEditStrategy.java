@@ -8,9 +8,10 @@ import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.Modifiable;
 
 /**A plug-in strategy class for editing items from a list component.
+@param <E> The type of each element in the list.
 @author Garret Wilson
 */
-public abstract class ListEditStrategy extends ListModelEditStrategy
+public abstract class ListEditStrategy<E> extends ListModelEditStrategy<E>
 {
 
 	/**The action for selecting all items.*/
