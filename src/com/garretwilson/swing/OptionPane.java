@@ -11,13 +11,13 @@ import com.garretwilson.util.*;
 	dialog.
 <p>This class offers several improvements over <code>JOptionPane</code>:</p>
 <ul>
-	<li>If the message object implements <code>InitialFocusable</code>, the
+	<li>If the message object implements <code>DefaultFocusable</code>, the
 		initial focus component is given the focus when the pane is displayed.</li>  
 	<li>If the message object implements <code>Verifiable</code>, the input
 		is verified before the pane is allowed to close.</li>
 </ul>
 @author Garret Wilson
-@see InitialFocusable
+@see DefaultFocusable
 @see Verifiable
 */
 public class OptionPane extends JOptionPane
@@ -360,7 +360,7 @@ public class OptionPane extends JOptionPane
         contentPane.add(this, BorderLayout.CENTER);
         dialog.pack();
         dialog.setLocationRelativeTo(parentComponent);
-				dialog.setDefaultCloseOperation(dialog.DO_NOTHING_ON_CLOSE);  //don't automatically close the dialog G***newswing
+				dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);  //don't automatically close the dialog G***newswing
         dialog.addWindowListener(new WindowAdapter() {
             boolean gotFocus = false;
             public void windowClosing(WindowEvent we) {
@@ -405,17 +405,32 @@ public class OptionPane extends JOptionPane
 	/**Requests that the initial value be selected, which will set
 		focus to the initial value.
 	<p>This version first checks to see if the message implements
-		<code>InitialFocusable</code>, and if so the message is asked which
+		<code>DefaultFocusable</code>, and if so the message is asked which
 		component should get the focus. Otherwise, the default initial value
 		is selected.</p>
 	@see #getMessage
-	@see InitialFocusable	
+	@see DefaultFocusable	
 	*/
 	public void selectInitialValue()
 	{
-		final Object message=getMessage();	//get the message object used in the pane 
-		if(message instanceof InitialFocusable)	//if the message object knows which component should first get the focus 
-			((InitialFocusable)message).getInitialFocusComponent().requestFocus();	//request focus for the initial component
+		final Object message=getMessage();	//get the message object used in the pane
+/*G***fix; this might be useful in the future		
+		if(message instanceof Container)
+		{
+			final FocusTraversalPolicy focusTraversalPolicy=((Container)message).getFocusTraversalPolicy(); 
+			if(focusTraversalPolicy!=null)
+			{
+				final Component defaultComponent=focusTraversalPolicy.getDefaultComponent((Container)message);
+				if(defaultComponent!=null)
+					defaultComponent.requestFocusInWindow();	//G***testing
+			}
+//G***fix			else
+//G***fix				super.selectInitialValue();	//do the default initial value selection
+		}
+*/
+			//if the message object knows which component should get the default focus
+		if(message instanceof DefaultFocusable && ((DefaultFocusable)message).getDefaultFocusComponent()!=null)	 
+			((DefaultFocusable)message).getDefaultFocusComponent().requestFocusInWindow();	//request focus for the default component
 		else	//if the message object doesn't know what to focus
 			super.selectInitialValue();	//do the default initial value selection
 	}

@@ -1,60 +1,22 @@
 package com.garretwilson.swing;
 
 import java.awt.*;
-import java.util.*;
-import javax.swing.*;
-import com.garretwilson.swing.*;
+import com.garretwilson.awt.*;
 import com.garretwilson.util.*;
 
 /**A generic panel that constructs a border layout and allows easy setup of
 	its center content component.
+<p>If the panel is inside a <code>JOptionPane</code>, the window containing
+	to ensure the component has enough room every time the content
+	component changes.</p>  
+<p>If the content component implements <code>DefaultFocusable</code> and knows
+	which component should get the default focus, any request for the default
+	focus component will be delegated to the content component.</p>
 @author Garret Wilson
+@see DefaultFocusable
 */
-public class ContentPanel extends JPanel implements CanClosable
+public class ContentPanel extends DefaultPanel implements CanClosable
 {
-
-	/**The map of properties.*/
-	private final Map propertyMap=new HashMap();
-	
-		/**Gets a property of the panel.
-		@param key The key to the property.
-		@return The value of the panel's property, or <code>null</code> if
-			that property does not exist.
-		*/
-		public Object getProperty(final Object key)
-		{
-			return propertyMap.get(key);	//return the property from the property map
-		}
-		
-		/**Sets the value of a panel property, and fires a property changed
-			event if the key is a string.
-		If the property represented by the key already exists, it will be replaced.
-		@param key The non-<code>null</code> property key.
-		@param value The property value.
-		@return The old property value associated with the key, or <code>null</code>
-			if no value was associated with the key previously.
-		@see PropertyChangeEvent
-		*/
-		public Object setProperty(final Object key, final Object value)
-		{
-			final Object oldValue=propertyMap.put(key, value);	//put the value in the map keyed to the key and save the old value
-			if(key instanceof String)	//if they key was a string
-			{					
-				firePropertyChange((String)key, oldValue, value);	//show that the property value has changed
-			}
-			return oldValue;	//return the old property value, if there was one
-		}
-	
-		/**Removes a property of the panel.
-		If the property represented by the key does not exist, no action is taken.
-		@param key The non-<code>null</code> property key.
-		@return The removed property value, or <code>null</code> if there was no
-			property.
-		*/
-		public Object removeProperty(final Object key)
-		{
-			return propertyMap.remove(key);	//remove and return the property value keyed to the key
-		}
 
 	/**The main content component in the center of the panel.*/
 	private Component contentComponent=null;
@@ -68,6 +30,8 @@ public class ContentPanel extends JPanel implements CanClosable
 		}
 	
 		/**Sets the main content component in the center of the panel.
+		<p>If the panel is inside a <code>JOptionPane</code>, the window containing
+			to ensure the component has enough room.</p>  
 		@param newContentComponent The new component for the center of the panel.
 		*/
 		public void setContentComponent(final Component newContentComponent)
@@ -78,8 +42,46 @@ public class ContentPanel extends JPanel implements CanClosable
 					remove(contentComponent);   //remove the current one
 				contentComponent=newContentComponent; //store the content component
 		  	add(newContentComponent, BorderLayout.CENTER);  //put the content component in the center of the panel
+		  	if(getParentOptionPane()!=null)	//if this panel is inside an option pane
+		  	{
+		  			//TODO probably change this to only pack the window if the panel wants to be bigger than the window to keep from shrinking the window
+		  			//(actually, this window.pack doesn't seem to ever shrink the window, just enlarge it, so this is probably fine
+		  			//TODO remove the JOptionPane check when this enlarges but not shrinks the window
+					WindowUtilities.packWindow(this);	//pack the window we're inside, if there is one, to ensure there's enough room to view this component
+		  	}
+		  	newContentComponent.repaint();	//repaint the component (important if we're inside a JOptionPane, for instance
+				if(newContentComponent instanceof DefaultFocusable)	//if the content component knows what should be focused by default
+				{
+					final DefaultFocusable defaultFocusable=(DefaultFocusable)newContentComponent;	//cast the new content component to a default focusable object
+					if(defaultFocusable.getDefaultFocusComponent()!=null)	//if the component knows what should get the default focus
+					{	 
+						defaultFocusable.getDefaultFocusComponent().requestFocusInWindow();	//request focus for the default component
+					}
+				}
 			}
 		}
+
+	/**Returns the default focus component.
+	If the content component implements <code>DefaultFocusable</code> and knows
+		which component should get the default focus, any request for the default
+		focus component will be delegated to the content component. Otherwise,
+		whichever default focus component is set will be returned.
+	@return The component that should get the default focus, or
+		<code>null</code> if no component should get the default focus or it is
+		unknown which component should get the default focus.
+	*/
+	public Component getDefaultFocusComponent()
+	{
+		if(getContentComponent() instanceof DefaultFocusable)	//if the content component knows what should be focused by default
+		{
+			final DefaultFocusable defaultFocusable=(DefaultFocusable)getContentComponent();	//cast the content component to a default focusable object
+			if(defaultFocusable.getDefaultFocusComponent()!=null)	//if the component knows what should get the default focus
+			{	 
+				return defaultFocusable.getDefaultFocusComponent();	//return the default focus component specified by the content component 
+			}
+		}
+		return super.getDefaultFocusComponent();	//if we can't get the default focus component from the content component, return whatever had been set with this panel
+	}
 
 	/**Application component constructor with optional initialization.
 		The content component is guaranteed to be set before
@@ -88,9 +90,9 @@ public class ContentPanel extends JPanel implements CanClosable
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	protected ContentPanel(final Component contentComponent, final boolean initialize)
+	public ContentPanel(final Component contentComponent, final boolean initialize)
 	{
-		this(initialize); //construct the default panel, initializing if requested
+		this(false); //construct the default panel without initializing it
 		if(contentComponent!=null)  //if we were given a content component
 		  setContentComponent(contentComponent);  //set the content component
 		if(initialize)  //if we should initialize
@@ -111,10 +113,13 @@ public class ContentPanel extends JPanel implements CanClosable
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	protected ContentPanel(final boolean initialize)
+	public ContentPanel(final boolean initialize)
 	{
+		super(new BorderLayout(), false);	//construct the panel with a border layout, but don't initialize
+/*G***del when works		
     final BorderLayout borderLayout=new BorderLayout(); //create a border layout
     setLayout(borderLayout);  //use the border layout
+*/
 		if(initialize)  //if we should initialize
 		  initialize(); //initialize the panel
 	}
@@ -125,32 +130,9 @@ public class ContentPanel extends JPanel implements CanClosable
 		this(true); //initialize the panel
 	}
 
-	/**Initializes the content panel. Should only be called once per instance.
-	@see #initializeUI
-	*/
-	protected void initialize()
-	{
-		initializeUI(); //initialize the user interface
-		updateStatus();  //update the actions
-	}
-
-	/**Initializes the user interface.
-		Any derived class that overrides this method should call this version.
-	*/
-  protected void initializeUI()
-  {
-  }
-
-	/**Updates the states of the actions, including enabled/disabled status,
-		proxied actions, etc.
-	*/
-	protected void updateStatus()
-	{
-	}
-
 	/**@return <code>true</code> if the panel can close.
-	This request is delegated to the content pane if possible, and therefore any
-	class that overrides this one should call this version. 
+		This request is delegated to the content pane if possible, and therefore
+		any class that overrides this one should call this version. 
 	@see ApplicationFrame#canClose
 	*/
 	public boolean canClose()
@@ -158,7 +140,7 @@ public class ContentPanel extends JPanel implements CanClosable
 		if(getContentComponent() instanceof CanClosable)	//if the content component knows how to ask about closing
 			return ((CanClosable)getContentComponent()).canClose();	//return whether the content component can close
 		else	//if the content component doesn't know anything about closing		
-			return true;  //default to allowing the panel to be closed
+			return super.canClose();  //ask the default implementation if we can close
 	}
-
+	
 }

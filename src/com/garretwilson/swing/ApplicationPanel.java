@@ -102,7 +102,7 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	protected ApplicationPanel(final boolean hasToolBar, final boolean hasStatusBar, final boolean initialize)
+	public ApplicationPanel(final boolean hasToolBar, final boolean hasStatusBar, final boolean initialize)
 	{
 		super(false);  //construct the parent class without intializing
 		if(hasToolBar)  //if we should have a toolbar
@@ -162,7 +162,7 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 	{
 	  final JToolBar toolBar=new JToolBar();  //create the toolbar
 		//setup the toolbar
-		toolBar.putClientProperty("JToolBar.isRollover", Boolean.TRUE);	//fix; comment; G***testing
+		toolBar.setRollover(true);	//default to a rollover toolbar
 		return toolBar; //return the toolbar we created
 	}
 

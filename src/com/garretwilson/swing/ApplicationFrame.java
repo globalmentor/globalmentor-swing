@@ -357,7 +357,7 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	  Enables window events.
 	@param contentPane The container to be used as the content pane; usually
 		an <code>ApplicationPanel</code>.
-	@param hasMenuBar Whether this frame should have a toolbar.
+	@param hasMenuBar Whether this frame should have a menu bar.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
