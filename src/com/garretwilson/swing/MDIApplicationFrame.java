@@ -7,8 +7,9 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
+
+import com.garretwilson.rdf.*;
 import com.garretwilson.resources.icon.IconResources;
-import com.garretwilson.swing.*;
 import com.garretwilson.util.Debug;
 
 /**Main frame parent class for a multiple document interface (MDI) application.
@@ -35,9 +36,9 @@ public abstract class MDIApplicationFrame extends ApplicationFrame
 		@return The description used for the object, or <code>null</code> if the
 			object has no associated description.
 		*/
-		protected ResourceState getDocumentDescription(final Object key)
+		protected RDFResourceState getDocumentDescription(final Object key)
 		{
-			return (ResourceState)descriptionMap.get(key);  //return the description associated with the kay
+			return (RDFResourceState)descriptionMap.get(key);  //return the description associated with the kay
 		}
 
 		/**Associates a description with an object. The object is stored in a weak
@@ -48,7 +49,7 @@ public abstract class MDIApplicationFrame extends ApplicationFrame
 		@param description The descrption to associate with the object, or
 			<code>null</code> if the file association should be removed.
 		*/
-		protected void setDocumentDescription(final Object key, final ResourceState description)
+		protected void setDocumentDescription(final Object key, final RDFResourceState description)
 		{
 			if(description!=null)  //if a valid description was passed
 			  descriptionMap.put(key, description); //put the description in the map, keyed to the key
@@ -143,7 +144,7 @@ public abstract class MDIApplicationFrame extends ApplicationFrame
 		opened).
 	@see #getDocumentDescription(Object)
 	*/
-	protected ResourceState getDocumentDescription()
+	protected RDFResourceState getDocumentDescription()
 	{
 		final JInternalFrame internalFrame=getDesktopPane().getSelectedFrame();  //get the currently selected internal frame
 		return internalFrame!=null ? getDocumentDescription(internalFrame) : null;  //return a file for the frame, if it's available
@@ -152,16 +153,16 @@ public abstract class MDIApplicationFrame extends ApplicationFrame
 	/**Sets the description of the currently opened document.
 		The currently open internal frame is used as a key to store the description.
 	@param description The description of the currently opened document.
-	@see #setDocumentDescription(Object, ResourceState)
+	@see #setDocumentDescription(Object, RDFResourceState)
 	*/
-	protected void setDocumentDescription(final ResourceState description)
+	protected void setDocumentDescription(final RDFResourceState description)
 	{
 Debug.trace("setting description: ", description); //G***del
 		final JInternalFrame internalFrame=getMDIManager().getSelectedFrame();  //get the currently selected internal frame
 		if(internalFrame!=null) //if there is an internal frame open
 		{
 		  setDocumentDescription(internalFrame, description);  //store the description, keyed to the internal frame
-Debug.trace("setting frame title: ", description.getResource().getReferenceURI()); //G***del
+Debug.trace("setting frame title: ", description.getRDFResource().getReferenceURI()); //G***del
 		  updateTitle(internalFrame);  //update the internal frame's title
 		}
 	}
@@ -222,12 +223,12 @@ Debug.trace("setting frame title: ", description.getResource().getReferenceURI()
 	protected void updateTitle(final JInternalFrame internalFrame)
 	{
 		String title; //we'll assign a title to this string
-		final ResourceState description=getDocumentDescription(internalFrame); //get the file associated with this frame
+		final RDFResourceState description=getDocumentDescription(internalFrame); //get the file associated with this frame
 		if(description!=null)  //if a description is available
 		{
 //G***del			try
 			{
-			  title=description.getResource().getReferenceURI().toString(); //show the canonical file path in the title G***maybe show something special for an anonymous resource
+			  title=description.getRDFResource().getReferenceURI().toString(); //show the canonical file path in the title G***maybe show something special for an anonymous resource
 //G***del				title=file.getCanonicalPath(); //show the canonical file path in the title
 			}
 /*G***del			

@@ -18,22 +18,42 @@ public class ContentPanel extends JPanel implements CanClosable
 	
 		/**Gets a property of the panel.
 		@param key The key to the property.
-		@return The value of the property, or <code>null</code> if that property
-			does not exist.
+		@return The value of the panel's property, or <code>null</code> if
+			that property does not exist.
 		*/
 		public Object getProperty(final Object key)
 		{
 			return propertyMap.get(key);	//return the property from the property map
 		}
-	
-		/**Sets the value of a panel property.
-		If <var>value</var> is <code>null</code>, the property will be removed. 
+		
+		/**Sets the value of a panel property, and fires a property changed
+			event if the key is a string.
+		If the property represented by the key already exists, it will be replaced.
 		@param key The non-<code>null</code> property key.
 		@param value The property value.
+		@return The old property value associated with the key, or <code>null</code>
+			if no value was associated with the key previously.
+		@see PropertyChangeEvent
 		*/
-		public void setProperty(final Object key, final Object value)
+		public Object setProperty(final Object key, final Object value)
 		{
-			MapUtilities.putRemoveNull(propertyMap, key, value);	//put the value in the map keyed to the key, removing the keyed object if the value is null
+			final Object oldValue=propertyMap.put(key, value);	//put the value in the map keyed to the key and save the old value
+			if(key instanceof String)	//if they key was a string
+			{					
+				firePropertyChange((String)key, oldValue, value);	//show that the property value has changed
+			}
+			return oldValue;	//return the old property value, if there was one
+		}
+	
+		/**Removes a property of the panel.
+		If the property represented by the key does not exist, no action is taken.
+		@param key The non-<code>null</code> property key.
+		@return The removed property value, or <code>null</code> if there was no
+			property.
+		*/
+		public Object removeProperty(final Object key)
+		{
+			return propertyMap.remove(key);	//remove and return the property value keyed to the key
 		}
 
 	/**The main content component in the center of the panel.*/

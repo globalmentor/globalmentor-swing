@@ -100,15 +100,15 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 //G***del	private DocumentDescribable description=null;
 
 	/**The description of the currently opened document.*/
-	private ResourceState documentDescription=null;
+	private RDFResourceState documentDescription=null;
 
 		/**@return The description of the currently opened document.*/
-		protected ResourceState getDocumentDescription() {return documentDescription;}
+		protected RDFResourceState getDocumentDescription() {return documentDescription;}
 
 		/**Sets the description of the currently opened document.
 		@param description The description of the currently opened document.
 		*/
-		protected void setDocumentDescription(final ResourceState description) {documentDescription=description;}
+		protected void setDocumentDescription(final RDFResourceState description) {documentDescription=description;}
 
 	/**The action for creating a new file.*/
 	private final Action fileNewAction;
@@ -434,7 +434,7 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	protected void updateStatus()
 	{
 		setTitle(constructTitle());  //update the title
-		final ResourceState description=getDocumentDescription();	//see what document is being described
+		final RDFResourceState description=getDocumentDescription();	//see what document is being described
 		getFileSaveAction().setEnabled(description!=null && description.isModified());	//only enable saving when there is a document that's modified
 	}
 
@@ -549,9 +549,9 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	@see #askOpenFile
 	@see #setFile
 	*/
-	public ResourceState openFile()
+	public RDFResourceState openFile()
 	{
-		ResourceState description=null;	//assume for now that the operation will be canceled
+		RDFResourceState description=null;	//assume for now that the operation will be canceled
 		final URI uri=askOpenFile();  //get the URI to use
 		if(uri!=null)  //if a valid URI was returned
 		{
@@ -587,12 +587,12 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	public boolean saveFile()
 	{
 //G***del Debug.trace("saving file");
-		final ResourceState description=getDocumentDescription(); //get a description of the document
+		final RDFResourceState description=getDocumentDescription(); //get a description of the document
 		if(description!=null) //if we have a description of the document
 		{
 //G**del Debug.trace("found document description");
-			if(!description.getResource().isAnonymous())  //if the file location is specified
-				return saveFile(description, description.getResource().getReferenceURI()); //save using the URI specified by the description
+			if(!description.getRDFResource().isAnonymous())  //if the file location is specified
+				return saveFile(description, description.getRDFResource().getReferenceURI()); //save using the URI specified by the description
 			else  //if we don't have a file
 				return saveFileAs(description); //call the save as function
 		}
@@ -604,7 +604,7 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	*/
 	public boolean saveFileAs()
 	{
-		final ResourceState description=getDocumentDescription(); //get a description of the document
+		final RDFResourceState description=getDocumentDescription(); //get a description of the document
 		if(description!=null) //if we have a description of the document
 		{
 			return saveFileAs(description); //save the file with the description
@@ -618,7 +618,7 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	@return <code>true</code> if the operation was not cancelled.
 	@see #setFile
 	*/
-	public boolean saveFileAs(final ResourceState description)
+	public boolean saveFileAs(final RDFResourceState description)
 	{
 		boolean result=false; //start out assuming the file won't be saved
 		final URI uri=askSaveFile();  //get the URI to use
@@ -627,11 +627,11 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 			result=saveFile(description, uri); //save the file
 			if(result)  //if the file was saved without being canceled
 			{
-				if(!description.getResource().getReferenceURI().equals(uri))	//if the URI wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)
+				if(!description.getRDFResource().getReferenceURI().equals(uri))	//if the URI wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)
 				{
 						//create a copy of the resource description, using the new URI
-					final RDFResource newResource=new DefaultRDFResource(description.getResource(), uri);	//G***but what if the other resource was a special type?
-					documentDescription.setResource(newResource);	//update the resource to the one with the new URI
+					final RDFResource newResource=new DefaultRDFResource(description.getRDFResource(), uri);	//G***but what if the other resource was a special type?
+					documentDescription.setRDFResource(newResource);	//update the resource to the one with the new URI
 				}
 //G***fix or del				setFile(file);  //update the file, just in case they override saveFile() and don't call this version
 			}
@@ -647,13 +647,13 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	@param uri The URI at which the file should be saved.
 	@return <code>true</code> if the operation was not cancelled.
 	*/
-	protected boolean saveFile(final ResourceState description, final URI uri)
+	protected boolean saveFile(final RDFResourceState description, final URI uri)
 	{
-		if(!description.getResource().getReferenceURI().equals(uri))	//if the URI should be changed
+		if(!description.getRDFResource().getReferenceURI().equals(uri))	//if the URI should be changed
 		{
 				//create a copy of the resource description, using the new URI
-			final RDFResource newResource=new DefaultRDFResource(description.getResource(), uri);	//G***but what if the other resource was a special type?
-			documentDescription.setResource(newResource);	//update the resource to the one with the new URI
+			final RDFResource newResource=new DefaultRDFResource(description.getRDFResource(), uri);	//G***but what if the other resource was a special type?
+			documentDescription.setRDFResource(newResource);	//update the resource to the one with the new URI
 		}
 		return true;  //this version always succeeds
 	}
@@ -735,7 +735,7 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	@return <code>true</code> if the application frame and application can close.
 	@see ApplicationPanel#canClose
 	@see #getDocumentDescription
-	@see #canClose(ResourceState)
+	@see #canClose(RDFResourceState)
 	*/
 	public boolean canClose()
 	{
@@ -758,7 +758,7 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 		}
 		if(canClose)	//if everything looks like we can close so far
 		{
-			final ResourceState description=getDocumentDescription();	//get the current document description
+			final RDFResourceState description=getDocumentDescription();	//get the current document description
 			if(description!=null && description!=getContentPane())	//if we have a document description, and the description isn't the content pane (otherwise we would call canClose() twice)
 				canClose=canClose(description);	//see if we can close the description
 		}
@@ -770,7 +770,7 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	@return <code>true</code> if the specified document can be closed, else
 		<code>false</code> if closing should be canceled.
 	*/
-	public boolean canClose(final ResourceState description)
+	public boolean canClose(final RDFResourceState description)
 	{
 		if(description.isModified()) //if the document has been modified
 		{
@@ -804,7 +804,7 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	@return A description of the opened document, or <code>null</code> if the
 		document was not opened.
 	*/
-	protected ResourceState openFile(final URI uri)	//G***fix the "call this version afterwards" and delete if not needed
+	protected RDFResourceState openFile(final URI uri)	//G***fix the "call this version afterwards" and delete if not needed
 	{
 /*G***fix; maybe this can't go here in the new architecture
 		if(!description.getResource().getReferenceURI().equals(uri))	//if the URI wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)
