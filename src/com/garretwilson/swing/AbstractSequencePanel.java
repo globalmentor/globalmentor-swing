@@ -129,6 +129,10 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		advanceButton=new JButton(advanceAction);
 		setStatusBarPosition(BorderLayout.NORTH);  //put the status bar at the top of the panel by default
 		setToolBarPosition(BorderLayout.SOUTH);  //put the toolbar at the bottom of the panel by default
+			//TODO fix to only retrieve the actions that are allowed, maybe
+		final ActionManager actionManager=getActionManager();	//get our action manager and set up tool actions TODO move this section to the constructor for all similar panels 
+		actionManager.addToolAction(getPreviousAction());
+		actionManager.addToolAction(getNextAction());
 		if(initialize)  //if we should initialize the panel
 			initialize();   //initialize everything		
 	}
@@ -136,10 +140,6 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 	/**Initializes the user interface.*/
 	protected void initializeUI()
 	{
-			//TODO fix to only retrieve the actions that are allowed, maybe
-		final ActionManager actionManager=getActionManager();	//get our action manager and set up tool actions
-		actionManager.addToolAction(getPreviousAction());
-		actionManager.addToolAction(getNextAction());
 		super.initializeUI();	//do the default initialization
 		setPreferredSize(new Dimension(300, 200));	//set an arbitrary preferred size
 	}

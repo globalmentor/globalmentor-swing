@@ -144,14 +144,11 @@ public class ToolStatusPanel extends ContentPanel
 			initialize();   //initialize everything
 	}
 
-	/**Creates any application objects and initializes data.
-		Any class that overrides this method must call this version.
-	*/
-/*G***fix
-	protected void initializeData()
+	/**Initializes the panel. Should only be called once per instance.*/
+/*G***del if not needed
+	public void initialize()	//TODO set a flag that will only allow initialization once per instance
 	{
-		super.initializeData(); //initialize the default data
-		toolBar=createToolBar();  //create the toolbar G***fix creation order problem
+		super.initialize();	//do the default initialization
 	}
 */
 

@@ -185,10 +185,11 @@ public class ListListModel extends AbstractListModel implements List	//G*** make
 	 */
 	public boolean add(Object o)
 	{
+		final int index=list.size();	//find out where the item will go
 		final boolean changed=list.add(o);
 		if(changed)	//if the list changed
 		{
-			fireIntervalAdded(this, list.size(), list.size());
+			fireIntervalAdded(this, index, index);
 		}
 		return changed;
 	}

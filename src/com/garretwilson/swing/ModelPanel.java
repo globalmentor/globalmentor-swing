@@ -90,6 +90,10 @@ public class ModelPanel extends ModifiablePanel implements ModelView
 	{
 		super(layout, false);	//construct the parent but don't initialize the panel
 		this.model=model;	//save the model
+/*G***del; child classes should use loadModel(), anyway
+		this.model=null;	//start out with no model
+		setModel(model);		//explicitly set the model so that any child classes can update things appropriately
+*/
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel
 	}

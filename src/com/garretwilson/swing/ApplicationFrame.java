@@ -289,7 +289,7 @@ public class ApplicationFrame extends BasicFrame
 	
 
 	/**Action for closing the frame.*/
-	class CloseAction extends AbstractAction
+	protected class CloseAction extends AbstractAction
 	{
 		/**Default constructor.*/
 		public CloseAction()
@@ -313,7 +313,7 @@ public class ApplicationFrame extends BasicFrame
 	}
 
 	/**Action for exiting the application.*/
-	class ExitAction extends AbstractAction
+	protected class ExitAction extends AbstractAction
 	{
 		/**Default constructor.*/
 		public ExitAction()
@@ -338,7 +338,7 @@ public class ApplicationFrame extends BasicFrame
 	}
 
 	/**Action for showing the help about dialog.*/
-	class AboutAction extends AbstractAction
+	protected class AboutAction extends AbstractAction
 	{
 		/**Default constructor.*/
 		public AboutAction()

@@ -104,6 +104,13 @@ public class ActionManager implements Cloneable
 		toolActionList=null;	//we don't have a list of tool actions until we need one
 	}
 
+	/**Removes all actions from the action manager.*/ 
+	public void clear()
+	{
+		menuActionListMap.clear();	//clear the map of menu action lists
+		toolActionList.clear();	//clear the list of tool actions
+	}
+
 	/**Adds to the manager an action representing a top-level menu.
 	@param action The action to add as a top-level menu action.
 	*/
