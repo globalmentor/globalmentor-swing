@@ -86,21 +86,13 @@ Debug.trace("Getting view child elements"); //G***del
 		final java.util.List viewChildElementList=new ArrayList();  //create a list in which to store the elements as we find them
 		final Element element=getElement(); //get a reference to our element
 		final int documentElementCount=element.getElementCount();  //find out how many child elements there are (representing XML documents)
-		for(int documentElementIndex=0; documentElementIndex<documentElementCount; ++documentElementIndex) //look at each element representing an XML document
+			//look at each element representing an XML document, skipping the last dummy '\n' element, which does not represent a document
+		for(int documentElementIndex=0; documentElementIndex<documentElementCount-1; ++documentElementIndex)
 		{
 			final Element documentElement=element.getElement(documentElementIndex); //get a reference to this child element
 				//if this document starts within our range
 			if(documentElement.getStartOffset()>=startOffset && documentElement.getStartOffset()<endOffset)
 			{
-					//if this "document" element ends where the entire section ends, it's
-					//	not a real document element but that fake document element tacked
-					//	on to the end G***try to keep that element from being generated to begin with, or do a better check here
-/*G***fix
-				if(documentElement.getEndOffset()==element.getEndOffset())
-				{
-StyleUtilities.setVisible((MutableAttributeSet)documentElement.getAttributes(), false);	//G***testing
-				}
-*/
 				final AttributeSet documentAttributeSet=documentElement.getAttributes();  //get the attributes of the document element
 				if(XMLStyleUtilities.isPageBreakView(documentAttributeSet)) //if this is a page break element
 				{
@@ -145,6 +137,7 @@ StyleUtilities.setVisible((MutableAttributeSet)documentElement.getAttributes(), 
 				}
 			}
 		}
+		viewChildElementList.add(element.getElement(documentElementCount-1));	//add the last element normally, as it is not a document at all but a dummy hierarchy added by Swing
 		return (Element[])viewChildElementList.toArray(new Element[viewChildElementList.size()]); //return the views as an array of views
 	}
 

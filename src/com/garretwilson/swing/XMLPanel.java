@@ -17,36 +17,11 @@ import com.garretwilson.text.xml.XMLSerializer;
 public class XMLPanel extends TabbedViewPanel
 {
 
-	/**The default data views supported by this panel.*/
-	private final int DEFAULT_SUPPORTED_DATA_VIEWS=WYSIWYG_MODEL_VIEW|SOURCE_MODEL_VIEW;
+	/**The default model views supported by this panel.*/
+	private final int[] DEFAULT_SUPPORTED_MODEL_VIEWS=new int[] {WYSIWYG_MODEL_VIEW, SOURCE_MODEL_VIEW};
 
-	/**The data views supported by the panel, ORed together.*/
-	private int supportedDataViews;
-
-		/**@return A value representing the supported data views ORed together.*/
-		public int getSupportedModelViews() {return supportedDataViews;}
-	
-		/**Sets the data views supported by this panel. 
-		@param dataViews A value representing the supported data views ORed together.
-		*/
-		protected void setSupportedDataViews(final int dataViews)
-		{
-			supportedDataViews=dataViews;	//update the supported data views
-		}
-
-	/**The default default data view of this panel.*/
-	private final int DEFAULT_DEFAULT_DATA_VIEW=WYSIWYG_MODEL_VIEW;
-
-	/**The default data view of this panel.*/
-	private int defaultDataView;
-
-		/**@return The default view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.*/
-		public int getDefaultModelView() {return defaultDataView;}
-
-		/**Sets the default data view.
-		@param dataView The default view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
-		*/
-		public void setDefaultDataView(final int dataView) {defaultDataView=dataView;}
+	/**The default default model view of this panel.*/
+	private final int DEFAULT_DEFAULT_MODEL_VIEW=WYSIWYG_MODEL_VIEW;
 
 	/**The XML text pane.*/
 	private final XMLTextPane xmlTextPane; 
@@ -154,8 +129,8 @@ public class XMLPanel extends TabbedViewPanel
 	public XMLPanel(final XMLModel model, final MediaType mediaType, final boolean initialize)
 	{
 		super(model, false);	//construct the parent class without initializing the panel
-		supportedDataViews=DEFAULT_SUPPORTED_DATA_VIEWS;	//set the data views we support
-		defaultDataView=DEFAULT_DEFAULT_DATA_VIEW;	//set the default data view
+		setSupportedModelViews(DEFAULT_SUPPORTED_MODEL_VIEWS);	//set the model views we support
+		setDefaultDataView(DEFAULT_DEFAULT_MODEL_VIEW);	//set the default data view
 		xmlTextPane=new XMLTextPane();	//create a new XML text pane
 		setContentType(mediaType);	//set the content type 
 		xmlScrollPane=new JScrollPane(xmlTextPane);	//create a new scroll pane with the XML text pane inside
@@ -169,10 +144,9 @@ public class XMLPanel extends TabbedViewPanel
 	/**Initialize the user interface.*/
 	protected void initializeUI()
 	{
-		super.initializeUI(); //do the default UI initialization
-//G***fix		xmlTextPane.setContentType(MediaType.APPLICATION_XHTML_XML);	//set the content type to "application/xhtml+xml" G***maybe allow this panel to support multiple MIME types, and put the setting of the type back into XHTMLResourceKit
 		addView(WYSIWYG_MODEL_VIEW, getXMLTextPane().getContentType(), getXMLScrollPane());	//add the XML text pane as the WYSIWYG view G***i18n
 		addView(SOURCE_MODEL_VIEW, "XML", getSourceScrollPane());	//add the source XML text pane as the source view G***i18n
+		super.initializeUI(); //do the default UI initialization
 //TODO check for the content type changing, and update the tab name in response
 
 				//add ourselves to listen to the XML text pane, so that if the XML text pane
@@ -279,10 +253,14 @@ public class XMLPanel extends TabbedViewPanel
 				}
 				break;
 			case WYSIWYG_MODEL_VIEW:	//if we should store the XML in the XML text pane
-				if(getXMLTextPane().getDocument() instanceof XMLDocument)	//if this is an Swing XML document
+				if(getXMLTextPane().getEditorKit() instanceof XMLEditorKit)	//if the text pane has an XML editor kit
 				{
-					final XMLDocument xmlDocument=(XMLDocument)getXMLTextPane().getDocument();	//get the XML document
-					model.setXML(xmlDocument.getXML());	//get the XML from the document
+					final XMLEditorKit xmlEditorKit=(XMLEditorKit)getXMLTextPane().getEditorKit();	//get the XML editor kit
+					if(getXMLTextPane().getDocument() instanceof XMLDocument)	//if this is an Swing XML document
+					{
+						final XMLDocument xmlDocument=(XMLDocument)getXMLTextPane().getDocument();	//get the XML document
+						model.setXML(xmlEditorKit.getXML(xmlDocument));	//get the XML from the document using the editor kit
+					}
 				}
 				break;
 		}

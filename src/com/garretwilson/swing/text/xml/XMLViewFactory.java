@@ -156,19 +156,33 @@ public class XMLViewFactory implements ViewsFactory
 	*/
 	public View create(final Element element, final boolean indicateMultipleViews)
 	{
-//G***del Debug.trace("ready to create view for element: "+XMLStyleConstants.getXMLElementLocalName(element.getAttributes())+" of class "+element.getClass().getName());  //G***
+Debug.trace("ready to create view for element: "+XMLStyleUtilities.getXMLElementLocalName(element.getAttributes())+" of class "+element.getClass().getName());  //G***
 		final AttributeSet attributeSet=element.getAttributes();  //get the element's attribute set
 		final String elementKind=element.getName();	//get the kind of element this is (based on the name of the Swing element, not the Swing element's attribute which holds the name of its corresponding XML element)
 		if(elementKind!=null) //if the element has a kind
 		{
-			if(elementKind.equals(AbstractDocument.SectionElementName))	//if this is the default section element G***do we want the section to be the parent of everything?
+			if(AbstractDocument.SectionElementName.equals(elementKind))	//if this is the default section element
 			{
 				if(DocumentUtilities.isPaged(element.getDocument()))  //if we should page our information
 					return new XMLPagedView(element);	//create a paged view for the entire section G***testing
 				else  //if information is not paged
 					return new XMLSectionView(element);	//create an unpaged section view
 			}
-			else if(elementKind.equals(AbstractDocument.ContentElementName))	//if this is is content
+/*G***bring back if needed
+			else if(AbstractDocument.ParagraphElementName.equals(elementKind))	//if this is is a generic paragraph element
+			{
+				final Element parentElement=element.getParentElement();	//get the element's parent
+				if(AbstractDocument.SectionElementName.equals(parentElement.getName()))	//if this element is a direct child of the section
+				{
+						//if this element is the last child element of the section element, it's the dummy '\n' element---create a hidden view for it
+					if(parentElement.getElementCount()>0 && parentElement.getElement(parentElement.getElementCount()-1)==element)
+					{
+						return new XMLHiddenView(element);	//hide the dummy ending '\n' hierarchy
+					}
+				}
+			}
+*/
+			else if(AbstractDocument.ContentElementName.equals(elementKind))	//if this is is content
 			{
 //G***del Debug.trace("XMLEditorKit always creates inline views for content."); //G***del
 				return new XMLInlineView(element);	//inline elements are *always* inline views; content (that is, text) elements always take precendence over everything

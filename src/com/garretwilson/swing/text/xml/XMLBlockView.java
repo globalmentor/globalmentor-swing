@@ -247,6 +247,22 @@ Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.Attrib
 			for(int childIndex=0; childIndex<childElementCount; ++childIndex) //look at each child element
 			{
 				final Element childElement=element.getElement(childIndex);  //get a reference to this child element
+						//see if this is the dummy ending '\n' hierarchy added by Swing 
+				if(AbstractDocument.ParagraphElementName.equals(childElement.getName()))	//if this is is a generic paragraph element
+				{
+					final Element parentElement=element.getParentElement();	//get the element's parent
+					if(AbstractDocument.SectionElementName.equals(parentElement.getName()))	//if this element is a direct child of the section
+					{
+							//if this element is the last child element of the section element, it's the dummy '\n' element---create a hidden view for it
+						if(parentElement.getElementCount()>0 && parentElement.getElement(parentElement.getElementCount()-1)==childElement)
+						{
+//G***testing							childViewList.add(new XMLHiddenView(childElement));	//create a hidden view to hide the dummy ending '\n' hierarchy added by Swing
+//G***fix							childViewList.add(new XMLParagraphView(childElement));	//G***testing
+							childViewList.add(new XMLBlockView(childElement, View.Y_AXIS));	//G***testing
+							continue;	//skip further processing of this child and go to the next one
+						}
+					}
+				}
 //G***del Debug.trace("looking at block view child: ", XMLCSSStyleConstants.getXMLElementLocalName(childElement.getAttributes()));  //G***del
 				final AttributeSet childAttributeSet=childElement.getAttributes();	//get the attributes of the child element
 				final CSSStyleDeclaration childCSSStyle=XMLCSSStyleUtilities.getXMLCSSStyle(childAttributeSet); //get the CSS style of the element (this method make sure the attributes are present)
@@ -262,6 +278,12 @@ Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.Attrib
 						final String text=document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset());
 	//G***del Debug.trace("Looking at inline text: '"+text+"' character code: "+Integer.toHexString(text.charAt(0)));  //G***del
 	//G***bring back for efficiency				  document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset(), segment);
+
+
+
+
+
+/*G***testing; see how we want to do this
 								//if there are no visible characters (or the end-of-element character mark), and this isn't really just an empty element
 						if(CharSequenceUtilities.notCharIndexOf(text, CharacterConstants.WHITESPACE_CHARS+CharacterConstants.CONTROL_CHARS+XMLDocument.ELEMENT_END_CHAR)<0	
 								&& !XMLStyleUtilities.isXMLEmptyElement(childAttributeSet))
@@ -274,6 +296,26 @@ Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.Attrib
 							childViewList.add(new XMLHiddenView(childElement));  //create a hidden view for the whitespace inline element and add it to our list of views
 						}
 						else  //if there's more than whitespace here
+*/
+
+
+//TODO fix this algorithm, after we decide how we want to do this
+
+							//if there are no visible characters (or the end-of-element character mark), and this isn't really just an empty element
+					if(CharSequenceUtilities.notCharIndexOf(text, CharacterConstants.WHITESPACE_CHARS+CharacterConstants.CONTROL_CHARS+XMLDocument.ELEMENT_END_CHAR)<0	
+							&& !XMLStyleUtilities.isXMLEmptyElement(childAttributeSet))
+					{
+//G***del Debug.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElementName(attributeSet)); //G***del
+						if(inlineChildElementList.size()>0)	//if we've started but not finished an anonymous block, yet
+							childViewList.add(createAnonymousBlockView(element, inlineChildElementList, viewFactory));	//create an anonymous block view and clear the list
+						//G***fix: this does not currently compensate for elements like <pre>
+//G***del; testing							childViewList.add(new XMLParagraphView(childElement));  //G***testing
+						childViewList.add(new XMLHiddenView(childElement));  //create a hidden view for the whitespace inline element and add it to our list of views
+					}
+					else  //if there's more than whitespace here
+
+
+
 						{
 							inlineChildElementList.add(childElement);  //add the child element to the inline element list
 						}

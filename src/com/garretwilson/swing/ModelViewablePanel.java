@@ -4,6 +4,7 @@ import java.awt.FlowLayout;
 import java.awt.LayoutManager;
 import java.io.IOException;
 import com.garretwilson.model.*;
+import com.garretwilson.util.ArrayUtilities;
 
 /**Panel that allows multiple views of a data model to be displayed.
 <p>Bound properties:</p>
@@ -16,19 +17,66 @@ import com.garretwilson.model.*;
 public abstract class ModelViewablePanel extends ModelPanel implements ModelViewable
 {
 
-	/**@return A value representing the supported data views ORed together.*/
-	public abstract int getSupportedModelViews();
+	/**The default model views supported by this panel.*/
+	private final int[] DEFAULT_SUPPORTED_MODEL_VIEWS=new int[]{};
 
-	/**Determines whether this object supports the data views.
-	@param dataViews One or more <code>XXX_DATA_VIEW</code> constants
-		ORed together.
-	@return <code>true</code> if and only if this object kit supports all the
-		indicated data views.
-	*/
-	public boolean isModelViewsSupported(final int dataViews)
-	{
-		return (getSupportedModelViews()&dataViews)==dataViews;	//see whether all the data views are supported
-	}	
+	/**The default default model view of this panel.*/
+	private final int DEFAULT_DEFAULT_MODEL_VIEW=NO_MODEL_VIEW;
+
+	/**The model views supported by the panel.*/
+	private int[] supportedModelViews;
+
+		/**Determines whether this object supports the given data view.
+		@param modelView A model view such as <code>SUMMARY_MODEL_VIEW</code>.
+		@return <code>true</code> if and only if this object supports the indicated
+			model view.
+		*/
+		public boolean isModelViewSupported(final int modelView)
+		{
+			return ArrayUtilities.indexOf(getSupportedModelViews(), modelView)>=0;	//see whether this model view is in our array of supported views
+		}	
+
+		/**@return The supported model views.*/
+		public int[] getSupportedModelViews() {return supportedModelViews;}
+	
+		/**Sets the model views supported by this panel. 
+		@param modelViews The supported model views.
+		*/
+		protected void setSupportedModelViews(final int[] modelViews)
+		{
+			supportedModelViews=modelViews;	//update the supported model views
+		}
+
+		/**Adds support for a model view. 
+		@param modelView The supported model view to add.
+		*/
+		protected void addSupportedModelView(final int modelView)
+		{
+			if(!isModelViewSupported(modelView))	//if this model view isn't already supported
+			{
+				setSupportedModelViews(ArrayUtilities.append(getSupportedModelViews(), modelView));	//append the new model view to our supported model views
+			}
+		}
+
+		/**Adds support for model views. 
+		@param modelViews The supported model views to add.
+		*/
+		protected void addSupportedModelViews(final int[] modelViews)
+		{
+				//TODO make sure the given views aren't already supported
+			setSupportedModelViews(ArrayUtilities.append(getSupportedModelViews(), modelViews));	//append the new model views to our supported model views
+		}
+
+	/**The default data view of this panel.*/
+	private int defaultDataView;
+
+		/**@return The default view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.*/
+		public int getDefaultModelView() {return defaultDataView;}
+
+		/**Sets the default data view.
+		@param dataView The default view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
+		*/
+		public void setDefaultDataView(final int dataView) {defaultDataView=dataView;}
 
 	/**The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.*/
 	private int dataView;
@@ -45,7 +93,7 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 			final int oldView=dataView; //get the old value
 			if(oldView!=newView)  //if the value is really changing
 			{
-				if(!isModelViewsSupported(newView))	//if the new data view isn't supported
+				if(!isModelViewSupported(newView))	//if the new data view isn't supported
 					throw new IllegalArgumentException("Unsupported model view "+newView);
 				if(canChangeModelView(oldView, newView))	//if we can change the view
 				{
@@ -105,6 +153,8 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 	public ModelViewablePanel(final LayoutManager layout, final Model model, final boolean initialize)
 	{
 		super(layout, model, false);	//construct the parent but don't initialize the panel
+		supportedModelViews=DEFAULT_SUPPORTED_MODEL_VIEWS;	//set the model views we support (in this case, none)
+		defaultDataView=DEFAULT_DEFAULT_MODEL_VIEW;	//set the default model view (in this case, no model view)
 		dataView=NO_MODEL_VIEW;	//default to no valid view
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel

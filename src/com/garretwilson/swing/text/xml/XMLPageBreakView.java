@@ -16,7 +16,7 @@ import javax.swing.text.Element;
 @see XMLBlockView
 @author Garret Wilson
 */
-public class XMLPageBreakView extends XMLParagraphView
+public class XMLPageBreakView extends XMLHiddenView	//G***maybe go back to XMLParagraphView, if that class knows how to be hidden, but what are the consequences of either? XMLParagraphView
 {
 
 	/**Constructor which specifies an element.

@@ -11,6 +11,7 @@ import com.garretwilson.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 */
 import javax.swing.text.Element;
+import javax.swing.text.Segment;
 
 /**View class that causes a line break. Meant to be a child view of
 	<code>XMLInlineView</code>.
@@ -33,6 +34,22 @@ public class XMLLineBreakView extends XMLInlineView
 
 //G***del		changedUpdate(null, null, null);	//G***testing
 	}
+
+
+//TODO fix visibility---this doesn't turn off displaying of content, apparently
+
+	/**@return <code>false</code> to indicate that line breaks are not themselves visible.*/
+	public boolean isVisible()
+	{
+		return false;	//show that line breaks views are not visibles G***does this change processing of line breaks?
+	}
+
+/*G***del; this doesn't work
+	public Segment getText(int p0, int p1)
+	{
+		return new Segment(new char[]{'X'}, 0, 1);	//G***testing
+	}
+*/
 
 	/**Forces a line break on the horizontal axis.
 	@param axis The axis to get the break weight for.

@@ -22,36 +22,11 @@ import org.w3c.dom.*;
 public class RDFPanel extends TabbedViewPanel
 {
 
-	/**The default data views supported by this panel.*/
-	private final int DEFAULT_SUPPORTED_DATA_VIEWS=TREE_MODEL_VIEW|SOURCE_MODEL_VIEW;
+	/**The default model views supported by this panel.*/
+	private final int[] DEFAULT_SUPPORTED_MODEL_VIEWS=new int[]{TREE_MODEL_VIEW, SOURCE_MODEL_VIEW};
 
-	/**The data views supported by the panel, ORed together.*/
-	private int supportedDataViews;
-
-		/**@return A value representing the supported data views ORed together.*/
-		public int getSupportedModelViews() {return supportedDataViews;}
-	
-		/**Sets the data views supported by this panel. 
-		@param dataViews A value representing the supported data views ORed together.
-		*/
-		protected void setSupportedDataViews(final int dataViews)
-		{
-			supportedDataViews=dataViews;	//update the supported data views
-		}
-
-	/**The default default data view of this panel.*/
-	private final int DEFAULT_DEFAULT_DATA_VIEW=TREE_MODEL_VIEW;
-
-	/**The default data view of this panel.*/
-	private int defaultDataView;
-
-		/**@return The default view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.*/
-		public int getDefaultModelView() {return defaultDataView;}
-
-		/**Sets the default data view.
-		@param dataView The default view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
-		*/
-		public void setDefaultDataView(final int dataView) {defaultDataView=dataView;}
+	/**The default default model view of this panel.*/
+	private final int DEFAULT_DEFAULT_MODEL_VIEW=TREE_MODEL_VIEW;
 
 	/**The tree tab in which the RDF is displayed.*/
 	private final JTree rdfTree;
@@ -127,8 +102,8 @@ public class RDFPanel extends TabbedViewPanel
 	public RDFPanel(final RDFResourceModel model, final boolean initialize)
 	{
 		super(model, false);	//construct the parent class without initializing the panel
-		supportedDataViews=DEFAULT_SUPPORTED_DATA_VIEWS;	//set the data views we support
-		defaultDataView=DEFAULT_DEFAULT_DATA_VIEW;	//set the default data view
+		setSupportedModelViews(DEFAULT_SUPPORTED_MODEL_VIEWS);	//set the model views we support
+		setDefaultDataView(DEFAULT_DEFAULT_MODEL_VIEW);	//set the default data view
 		rdfTree=new JTree();	//create the RDF tree
 		rdfScrollPane=new JScrollPane(rdfTree);
 		sourceTextPane=new JTextPane();
@@ -142,12 +117,12 @@ public class RDFPanel extends TabbedViewPanel
 	/**Initialize the user interface.*/
 	protected void initializeUI()
 	{
-		super.initializeUI(); //do the default UI initialization
 //G***del; let the calling class do this		sourceTextPane.setEditable(false);	//don't let the text pane be edited
 		editable=true;	//default to being editable 
 		rdfTree.setCellRenderer(new RDFResourceTreeCellRenderer()); //render the icons using our cell renderer for RDF
 		addView(TREE_MODEL_VIEW, "RDF", rdfScrollPane);	//add the RDF component as the tree view G***i18n
 		addView(SOURCE_MODEL_VIEW, "RDF+XML", xmlScrollPane);	//add the XML component as the source view G***i18n
+		super.initializeUI(); //do the default UI initialization
 	}
 
 	/**Loads the data from the model to the view, if necessary.

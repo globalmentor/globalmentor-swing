@@ -20,7 +20,7 @@ public abstract class TabbedViewPanel extends ModelViewablePanel implements Mode
 {
 
 	/**The center tabbed pane.*/
-	private JTabbedPane tabbedPane;
+	private final JTabbedPane tabbedPane;
 
 		/**@return The center tabbed pane.*/
 		protected JTabbedPane getTabbedPane() {return tabbedPane;} 
