@@ -40,7 +40,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 	private final RDFXMLifier xmlifier;
 
 	  /**@return The RDF XML-ifier to use for creating labels.*/
-		protected RDFXMLifier getXMLifier() {return xmlifier;}
+		public RDFXMLifier getXMLifier() {return xmlifier;}
 
 	/**The RDF property of which this resource is an object, or <code>null</code>
 		if this object should not be considered the object of any property.
