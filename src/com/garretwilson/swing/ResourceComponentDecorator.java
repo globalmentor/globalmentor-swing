@@ -1,7 +1,6 @@
 package com.garretwilson.swing;
 
 import com.garretwilson.model.Resource;
-import com.garretwilson.util.CanClosable;
 
 /**Abstract class that can decorate a user interface from component changes
 	of a resource component manager.
@@ -9,7 +8,7 @@ import com.garretwilson.util.CanClosable;
 @param <R> The type of resource the components of which are being managed.
 @see ResourceComponentManager
 */
-public abstract class ResourceComponentDecorator<R extends Resource> implements CanClosable
+public abstract class ResourceComponentDecorator<R extends Resource>
 {
 
 	/**The delegate manager of resource components.*/
@@ -49,12 +48,12 @@ public abstract class ResourceComponentDecorator<R extends Resource> implements 
 	*/
 	protected abstract void onResourceComponentSelected(final ResourceComponentManager<R>.ResourceComponentState oldResourceComponentState, final ResourceComponentManager<R>.ResourceComponentState newResourceComponentState);
 
-	/**Determines if the resource component manager can close.
-	@return <code>true</code> if resource component manager can close
+	/**Determines if the resource component manager can close all open resources.
+	@return <code>true</code> if resource component manager can close all open resources.
 	*/
-	public boolean canClose()
+	public boolean canCloseAll()
 	{
-		return getResourceComponentManager().canClose();	//see if the resource component manager can close
+		return getResourceComponentManager().canCloseAll();	//see if the resource component manager can close all open resources
 	}
 
 }

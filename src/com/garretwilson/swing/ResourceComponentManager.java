@@ -13,6 +13,7 @@ import javax.swing.*;
 import javax.swing.event.EventListenerList;
 
 import com.garretwilson.model.*;
+import static com.garretwilson.net.URIUtilities.*;
 import com.garretwilson.resources.icon.IconResources;
 import static com.garretwilson.swing.ComponentUtilities.*;
 import com.garretwilson.util.*;
@@ -25,7 +26,7 @@ import com.garretwilson.util.*;
 @see ResourceComponentManager#ResourceComponentState
 @author Garret Wilson
 */
-public abstract class ResourceComponentManager<R extends Resource> implements CanClosable
+public abstract class ResourceComponentManager<R extends Resource>
 {
 
 	/**The list of event listeners.*/
@@ -84,6 +85,9 @@ public abstract class ResourceComponentManager<R extends Resource> implements Ca
 	/**The list of all resources and corresponding views.*/
 	private final List<ResourceComponentState> resourceComponentStateList;
 
+		/**@return The list of all resources and corresponding views.*/
+		protected final Iterable<ResourceComponentState> getResourceComponentStates() {return resourceComponentStateList;}
+
 		/**Determines if a resource and component are already present for the given URI.
 		@param uri The reference URI of the resource to retrieve.
 		@return The component state of the resource, if that resource is already known,
@@ -100,7 +104,24 @@ public abstract class ResourceComponentManager<R extends Resource> implements Ca
 			}
 			return null;	//indicate that we could find no corresponding resource and component
 		}
-	
+
+		/**Determines if a resource and component are present for the given component.
+		@param component The component of the resource to retrieve.
+		@return The component state of the resource, if there is a resource with the given component,
+			or <code>null</code> if no resource with that component is present.
+		*/
+		protected ResourceComponentState getResourceComponentState(final Component component)
+		{
+			for(final ResourceComponentState resourceComponentState:resourceComponentStateList)	//for each known resource component state; a map could be used to ameliorate this expensive operation, but component-changing functionality may be desired in the future
+			{
+				if(component.equals(resourceComponentState.getComponent()))	//if this resource has the requested component
+				{
+					return resourceComponentState;	//return this resource and its component
+				}
+			}
+			return null;	//indicate that we could find no corresponding resource and component
+		}
+
 		/**Adds a resource and its corresponding view and fires an event.
 		@param resourceComponentState The resource and component to add.
 		*/	
@@ -157,6 +178,15 @@ public abstract class ResourceComponentManager<R extends Resource> implements Ca
 		/**@return The listener that updates the status when the component is modified.*/
 		protected PropertyChangeListener getUpdateStatusModifiedPropertyChangeListener() {return updateStatusModifiedPropertyChangeListener;}
 
+	/**The number of resources that have been added; used for generating a unique ID.*/
+	private long resourceCount=0;
+
+		/**@return A unique number representing the number of resources added.*/
+		protected synchronized long getNextResourceCount()
+		{
+			return ++resourceCount;	//increase the resource count and return it
+		}
+		
 	/**Parent component and resource selector constructor with unlimited resources (as many as an integer can hold) managed.
 	@param parentComponent The component to serve as a parent for error messages.
 	@param resourceSelector The implementation to use for selecting resources.
@@ -222,16 +252,41 @@ public abstract class ResourceComponentManager<R extends Resource> implements Ca
 		}
 	}
 
+	/**Determines if all open resources and associated components can close.
+	@return <code>true</code> if all open resources and associated components can close.
+	@see #canClose(ResourceComponentState)
+	*/
+	public boolean canCloseAll()
+	{
+			//for a better user experience, check the current resource component state first
+		final ResourceComponentState currentResourceComponentState=getResourceComponentState();	//get the current resource component state
+		if(currentResourceComponentState!=null && !canClose(currentResourceComponentState))	//if we have a resource component state, see if we can close it
+		{
+			return false;	//show that the current resource cannot be closed
+		}
+		for(final ResourceComponentState resourceComponentState:getResourceComponentStates())	//for each resource component state
+		{
+				//if this isn't the current resource (which we already checked), see if it can be closed
+			if(resourceComponentState!=currentResourceComponentState && !canClose(resourceComponentState))
+			{
+				return false;	//show that this resource cannot be closed
+			}
+		}
+		return true;	//report that all open resources can be closed
+	}
+
 	/**Determines if the current resource, if any, and its component can close.
 	@return <code>true</code> if the resource, if any, and its component can close.
 	@see #canClose(ResourceComponentState)
 	*/
+/*TODO fix
 	public boolean canClose()
 	{
 		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
 			//if we have a resource component state, see if we can close it
 		return resourceComponentState!=null? canClose(resourceComponentState) : true;
 	}
+*/
 	
 	/**Determines if a resource and its component can close.
 		This verion asks the resource component if it can close, if that component
@@ -250,6 +305,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Ca
 		}
 		if(component instanceof Modifiable && ((Modifiable)component).isModified())	//if the component says it can close, but it has been modified
 		{
+			setResourceComponentState(resourceComponentState);	//switch to this resource
 			final R resource=resourceComponentState.getResource();	//get the resource
 			final String resourceURIString=resource.getReferenceURI()!=null ? resource.getReferenceURI().toString() : "";	//get a string representing the resource URI, if there is one
 				//see if they want to save the changes
@@ -287,14 +343,29 @@ public abstract class ResourceComponentManager<R extends Resource> implements Ca
 		return true;	//show that there are less than the maximum number of resources
 	}
 
-	
-	/**Unloads the open resource, if any.
+
+	/**Unloads all open resources, if any.
 	If no resource is open, no action occurs.
 	@see #getResourceComponentState()
 	*/
-	public void close()
+/*TODO fix
+	public void closeAll()
 	{
-		/*G***decide which semantics we like
+		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
+		if(resourceComponentState!=null)	//if a resource is open
+		{
+			close(resourceComponentState);	//close this resource component state
+		}
+	}
+*/
+
+	/**Unloads the open resource, if any, after checking to see if the resource can close.
+	If no resource is open, no action occurs.
+	@return <code>true</code> if there was a resource to close and the operation was not canceled.
+	@see #getResourceComponentState()
+	*/
+	public boolean close()
+	{
 		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
 		if(resourceComponentState!=null)	//if a resource is open
 		{
@@ -303,12 +374,14 @@ public abstract class ResourceComponentManager<R extends Resource> implements Ca
 				close(resourceComponentState);	//close this resource component state
 			}
 		}
-*/
+		return false;	//show that there was no resource to close, or closing was canceled
+/*TODO decide which semantics we like
 		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
 		if(resourceComponentState!=null)	//if a resource is open
 		{
 			close(resourceComponentState);	//close this resource component state
 		}
+*/
 	}
 
 	/**Closes the given resource, selecting a new resource if the closed resource was the selected resource.
@@ -431,7 +504,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Ca
 			try
 			{
 				final Component component=read(resource, inputStream);	//read the component from the input stream
-				final ResourceComponentState resourceComponentState=new ResourceComponentState(resource, component);	//create a new state for the resource
+				final ResourceComponentState resourceComponentState=new ResourceComponentState(resource, component, getNextResourceCount());	//create a new state for the resource
 				addResourceComponentState(resourceComponentState);	//add the resource component state
 				return resourceComponentState;	//return the component state
 			}
@@ -791,6 +864,12 @@ public abstract class ResourceComponentManager<R extends Resource> implements Ca
 	*/
 	public class ResourceComponentState extends DefaultObjectState<R>
 	{
+		
+		/**The unique number representing the order created.*/
+		private final long number;
+
+			/**@return The unique number representing the order created.*/
+			public long getNumber() {return number;}
 
 		/**@return The non-<code>null</code> resource being described by delegating to <code>getObject()</code>.
 		@see DefaultObjectState#getObject()
@@ -817,14 +896,22 @@ public abstract class ResourceComponentManager<R extends Resource> implements Ca
 		/**Constructs a resource state with a resource and a component.
 		@param resource The description of the resource.
 		@param component The component that represents a view of the resource.
+		@param number A unique number representing the order created.
 		@exception NullPointerException Thrown if the resource is <code>null</code>.
 		*/
-		public ResourceComponentState(final R resource, final Component component)
+		public ResourceComponentState(final R resource, final Component component, final long number)
 		{
 			super(resource);	//construct the parent class
 			this.component=component;	//save the resource component
+			this.number=number;	//save the number
 		}
 
+		/**@return A label representing this resource component.*/
+		public String getLabel()
+		{
+			final URI uri=getResource().getReferenceURI();	//get the resource reference URI
+			return uri!=null ? getFileName(uri) : "Resource "+getNumber();	//return the URI filename if there is a URI; otherwise, generate a unique label TODO i18n
+		}		
 	}
 
 }

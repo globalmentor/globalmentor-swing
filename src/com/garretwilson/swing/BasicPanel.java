@@ -33,7 +33,9 @@ import static com.garretwilson.util.ArrayUtilities.*;
 <p>The panel can keep track of which child component should get the default
 	focus. An extended focus traversal policy is installed so that, if this
 	panel because a root focus traversal cycle, the correct default focus
-	component will be selected.</p>
+	component will be selected. This implementation recognizes tabbed panes
+	and automatically delegates to the selected tab if the tabbed pane has
+	been specified as the default focus component.</p>
 <p>The panel can create default listeners, such as <code>ActionListener</code>
 	and <code>DocumentListener</code>, that do nothing but update the status.</p>
 <p>The panel is scrollable, and by default takes care of its own width and/or
@@ -92,7 +94,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 		}
 
 	/**The map of properties.*/
-	private final Map propertyMap=new HashMap();
+	private final Map<Object, Object> propertyMap=new HashMap<Object, Object>();
 	
 		/**Gets a property of the panel.
 		@param key The key to the property.
@@ -347,8 +349,21 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 				{
 					public Component getDefaultComponent(final Container focusCycleRoot)	//if the default component is requested
 					{
+						Component defaultFocusComponent=getDefaultFocusComponent();	//see if we have a default focus component
+						/*TODO fix
+						if(defaultFocusComponent instanceof JTabbedPane)	//if the default focus component is a tabbed pane	//TODO check; doesn't seem to work
+						{
+							final Component selectedTab=((JTabbedPane)defaultFocusComponent).getSelectedComponent();	//get the selected tab
+							if(selectedTab!=null)	//if there is a selected tab
+							{
+								defaultFocusComponent=selectedTab instanceof DefaultFocusable	//if the tab component knows about default focus components
+										? ((DefaultFocusable)selectedTab).getDefaultFocusComponent()	//ask the tab for a default focus component
+										: selectedTab;	//otherwise, use the selected tab as the default focus component
+							}
+						}
+						*/
 							//if we have a default focus component, return it; otherwise, use the value given by the parent traversal policy class
-						return getDefaultFocusComponent()!=null ? getDefaultFocusComponent() : super.getDefaultComponent(focusCycleRoot);
+						return defaultFocusComponent!=null ? defaultFocusComponent : super.getDefaultComponent(focusCycleRoot);
 					}
 				});
 		if(initialize)  //if we should initialize

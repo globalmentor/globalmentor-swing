@@ -65,6 +65,7 @@ public class TextPanel extends ModelPanel<LocaleText>
 		unicodeAction=new UnicodeAction();	//create a new Unicode action 
 		unicodeStatusBar=new UnicodeStatusBar();	//create a new Unicode status bar
 		initialize(); //initialize the panel
+		setDefaultFocusComponent(textPane);	//set the text pane as the default component
 	}
 
 	/**Initialize the user interface.*/

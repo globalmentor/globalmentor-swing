@@ -4,8 +4,7 @@ import java.awt.*;
 import com.garretwilson.awt.*;
 import com.garretwilson.util.*;
 
-/**A generic panel that allows easy setup of a content component which
-	defaults to the center.
+/**A generic panel that allows easy setup of a content component which defaults to the center.
 <p>This panel uses a <code>BasicGridBagLayout</code> as its layout manager,
 	defaulting to the border paradigm.</p>
 <p>If the panel is inside a <code>JOptionPane</code>, the window containing
@@ -196,8 +195,9 @@ public class ContentPanel extends ModifiablePanel implements CanClosable
 	*/
 	public boolean canClose()
 	{
-		if(getContentComponent() instanceof CanClosable)	//if the content component knows how to ask about closing
-			return ((CanClosable)getContentComponent()).canClose();	//return whether the content component can close
+		final Component contentComponent=getContentComponent();	//get the content component
+		if(contentComponent instanceof CanClosable)	//if the content component knows how to ask about closing
+			return ((CanClosable)contentComponent).canClose();	//return whether the content component can close
 		else	//if the content component doesn't know anything about closing		
 			return super.canClose();  //ask the default implementation if we can close
 	}
