@@ -13,6 +13,11 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
+import javax.swing.text.AbstractDocument.Content;
+import javax.swing.text.AbstractDocument.DefaultDocumentEvent;
+import javax.swing.text.DefaultStyledDocument.ElementSpec;
+import javax.swing.undo.UndoableEdit;
+
 import com.garretwilson.io.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.net.*;
@@ -919,16 +924,23 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 	*/
 	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray, final XMLDocument swingXMLDocument)
 	{
-
-		xmlCSSStylesheetApplier=new XMLCSSStylesheetApplier(swingXMLDocument);	//G***testing
-
-		//create a list of element specs for creating the document and store them here
-		final DefaultStyledDocument.ElementSpec[] elementSpecList=createElementSpecs(xmlDocumentArray, baseURIArray, mediaTypeArray);
-
-		xmlCSSStylesheetApplier=null;
-
-
-		swingXMLDocument.create(elementSpecList);	//create the document from the element specs
+		if(false)
+		{
+			swingXMLDocument.create(xmlDocumentArray, baseURIArray, mediaTypeArray);	//G***testing newstuff
+			
+		}
+		else
+		{
+			xmlCSSStylesheetApplier=new XMLCSSStylesheetApplier(swingXMLDocument);	//G***testing
+	
+			//create a list of element specs for creating the document and store them here
+			final DefaultStyledDocument.ElementSpec[] elementSpecList=createElementSpecs(xmlDocumentArray, baseURIArray, mediaTypeArray);
+	
+			xmlCSSStylesheetApplier=null;
+	
+	
+			swingXMLDocument.create(elementSpecList);	//create the document from the element specs
+		}
 
 Debug.trace("Finished creating document, length: "+swingXMLDocument.getLength());
 

@@ -821,8 +821,7 @@ try {
 		appropriate editor kit.
 	@param url The URL of the file which has the information to load.
 	@exception IOException as thrown by the stream being used to initialize.
-	@deprecated Replaced with setPage(URI) because in ambiguities in URL
-		reserved character encoding.
+	@deprecated Replaced with setPage(URI) because of ambiguities in URL reserved character encoding.
 	@see JEditorPane#setPage
 	@see EditorKit#createDefaultDocument
 	@see #setDocument
@@ -832,7 +831,7 @@ try {
 	{
 		try
 		{
-			setPage(URIUtilities.createURI(url));	//set the page using the URI version of the URL
+			setPage(url.toURI());	//set the page using the URI version of the URL
 		}
 		catch(URISyntaxException uriSyntaxException)	//if the URL can't be converted to a URI (unlikely)
 		{
@@ -962,46 +961,24 @@ Debug.trace("installed editor kit is now: ", getEditorKit().getClass().getName()
 		document.putProperty(Document.StreamDescriptionProperty, URIUtilities.toValidURL(uri));	//store a URL version of the URI in the document, as getPage() expects this to be a URL
 		DocumentUtilities.setBaseURI(document, uri);	//store the base URI in the document
 Debug.trace("reading from stream"); //G***del
-//G***del		read(inputStream, document);  //read the document from the input stream
 		if(document instanceof XMLDocument) //if this is an XML document
 		{
 			((XMLDocument)document).setURIInputStreamable(getURIInputStreamable()); //give the XML document any input stream locator that we might have, so that it can access files from within zip files, for instance
 		}
-
-/*G***del when works
-		xmlEditorKit.addProgressListener(this);	//show that we want to be notified of any progress the XML editor kit makes G***should one of these go in the XMLTextPane? will it conflict with this one?
-		if(document instanceof XMLDocument) //if this is an XML document
+		final DocumentLoader documentLoader=new DocumentLoader(inputStream, document);	//create a thread for loading the document 
+		//TODO check for already loading asynchronously, as does JEditorPane
+		if(document instanceof AbstractDocument)	//if the document is an abstract document, which can give a load priority
 		{
-			final XMLDocument xmlDocument=(XMLDocument)document;  //cast the document to an XML document
-			xmlDocument.setURIInputStreamable(getURIInputStreamable()); //give the XML document any input stream locator that we might have, so that it can access files from within zip files, for instance
-			((XMLDocument)document).addProgressListener(this);	//show that we want to be notified of any progress the XML document makes G***should this go here or elsewhere? should this bubble up to the editor kit instead?
-		}
-		try
-		{
-*/
-			final DocumentLoader documentLoader=new DocumentLoader(inputStream, document);	//create a thread for loading the document 
-			//TODO check for already loading asynchronously, as does JEditorPane
-			if(document instanceof AbstractDocument)	//if the document is an abstract document, which can give a load priority
-			{
-				final AbstractDocument abstractDocument=(AbstractDocument)document;	//cast to an abstract document
-				final int priority=abstractDocument.getAsynchronousLoadPriority();	//get the asychronous loading priority
-				if(isAsynchronousLoad())	//if we should load asynchronously
+			final AbstractDocument abstractDocument=(AbstractDocument)document;	//cast to an abstract document
+			final int priority=abstractDocument.getAsynchronousLoadPriority();	//get the asychronous loading priority
+			if(isAsynchronousLoad())	//if we should load asynchronously
 //TODO fix the asynchronous flag				if(priority>=0)	//if we should load asynchronously
-				{
-					documentLoader.start();	//load the document in a separate thread
-					return;	//we're finished loading
-				}
+			{
+				documentLoader.start();	//load the document in a separate thread
+				return;	//we're finished loading
 			}
-			documentLoader.load();	//if we shouldn't (or can't) load asynchronously, load the document in our own thread
-/*G***del when works
 		}
-		finally
-		{
-			xmlEditorKit.removeProgressListener(this);	//show the editor kit that we no longer want to be notified of any progress the XML editor kit makes
-			if(document instanceof XMLDocument) //if this is an XML document
-				((XMLDocument)document).removeProgressListener(this);	//show the document that we no longer want to be notified of any progress the document makes
-		}
-*/
+		documentLoader.load();	//if we shouldn't (or can't) load asynchronously, load the document in our own thread
 	}
 
 	/**Class that allows loading the document in a separate thread.*/
@@ -1112,7 +1089,7 @@ Debug.trace("reading from stream"); //G***del
 	{
 		try
 		{
-			return getStream(URIUtilities.createURI(url));	//create a URI from the page URL and get the stream from that
+			return getStream(url.toURI());	//create a URI from the page URL and get the stream from that
 		}
 		catch(URISyntaxException uriSyntaxException)	//if the URL can't be converted to a URI (unlikely)
 		{
