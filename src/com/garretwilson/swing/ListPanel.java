@@ -182,7 +182,7 @@ public class ListPanel extends ContentPanel implements Editable
 		selectNoneButton.setVisible(isMultipleSelectionAllowed);	//only show the selection buttons if multiple selections are allowed
 		getSelectAllAction().setEnabled(isMultipleSelectionAllowed && isListEnabled && listModelSize>0);	//only allow all items to be selected if there are items
 		getSelectNoneAction().setEnabled(isMultipleSelectionAllowed && isListEnabled && listModelSize>0);	//only allow no items to be selected if there are items
-		editSeparator.setVisible(isEditable);	//only show the edit separator if editing is allowed
+		editSeparator.setVisible(isMultipleSelectionAllowed && isEditable);	//only show the edit separator if editing is allowed, and we're showing buttons before it
 		addButton.setVisible(isEditable);	//only show the add button if editing is allowed
 		addButton.setEnabled(isListEnabled);	//only enable the add button if the list is enabled
 		deleteButton.setVisible(isEditable);	//only show the delete button if editing is allowed
