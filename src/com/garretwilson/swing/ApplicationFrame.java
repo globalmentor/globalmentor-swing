@@ -2,6 +2,8 @@ package com.garretwilson.swing;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+
 import javax.swing.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.dublincore.DCUtilities;
@@ -281,6 +283,35 @@ public class ApplicationFrame extends BasicFrame
 		final String dialogTitle="About"+(aboutPanel.getTitle()!=null ? " "+aboutPanel.getTitle() : "");	//G***i18n
 		//have an option pane create and show a new dialog using our about panel
 		BasicOptionPane.showMessageDialog(this, aboutPanel, dialogTitle, JOptionPane.INFORMATION_MESSAGE);	//G***check and see why we originally had a more complex version
+	}
+
+	/**Determines whether the frame can close.
+	This version attempts to save any application configuration information.
+	@return <code>true</code> if the frame can close.
+	*/
+	public boolean canClose()
+	{
+		boolean canClose=super.canClose();	//try to perform the default closing functionality
+		if(canClose)	//if we can close, make sure the configuration has been saved
+		{
+				//if there is configuration information and it has been modified
+			if(getApplication()!=null && getApplication().getConfiguration()!=null && getApplication().getConfiguration().isModified())
+			{
+				try
+				{
+					getApplication().getConfiguration().store();	//try to store the configuration information; if we were unsuccessful
+				}
+				catch(IOException ioException)	//if there is an error saving the configuration
+				{
+					getApplication().displayError(this, ioException);	//alert the user of the error
+						//ask if we can close even though we can't save the configuration information
+					canClose=JOptionPane.showConfirmDialog(this,
+						"Unable to save configuration information; are you sure you want to close?",
+						"Unable to save configuration", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION;	//G***i18n
+				}
+			}
+		}
+		return canClose;	//return whether we can close
 	}
 
 	/**Determines whether the frame and application can close.

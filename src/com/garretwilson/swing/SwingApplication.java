@@ -264,6 +264,7 @@ public abstract class SwingApplication extends Application
 		try
 		{
 			initialize(application, args);	//initialize the environment
+			application.initialize();	//initialize the application
 			if(!application.canStart())	//perform the pre-run checks; if something went wrong, exit
 				return -1;	//show that there was a problem
 			return application.main();	//run the application
@@ -278,7 +279,7 @@ public abstract class SwingApplication extends Application
 	/**Initializes the environment for the application.
 	@param application The application to start. 
 	@param args The command line arguments.
-	@exception Thrown if anything goes wrong.
+	@exception Exception Thrown if anything goes wrong.
 	*/
 	protected static void initialize(final Application application, final String[] args) throws Exception
 	{
