@@ -31,10 +31,10 @@ public class ExplanatoryPanel extends BasicVCardPanel
 		public SelectLanguageAction getSelectCategoryLanguageAction() {return selectCategoryLanguageAction;}
 
 	/**The categories list.*/
-	private final JList categoryList;
+	private final JList categorySwingList;
 
 		/**@return The categories list.*/
-		public JList getCategoryList() {return categoryList;}
+		public JList getCategoryList() {return categorySwingList;}
 	
 	/**The label of the note text pane.*/
 	private final JLabel noteLabel;
@@ -69,17 +69,21 @@ public class ExplanatoryPanel extends BasicVCardPanel
 		CollectionUtilities.addAll(availableCategorySet, categories);	//add all the categories to the available category set, which will only add the ones that aren't there already
 		final List availableCategoryList=new ArrayList(availableCategorySet);	//create a list of available categories
 		Collections.sort(availableCategoryList);	//sort the list of available categories
-		categoryList.setListData(availableCategoryList.toArray());	//put the available categories in the list
+		categorySwingList.setListData(availableCategoryList.toArray());	//put the available categories in the list
 		for(int i=categories.length-1; i>=0; --i)	//look at each category
 		{
-			categoryList.setSelectedValue(categories[i], false);	//select this category without scrolling
+			final int availableCategoryIndex=availableCategoryList.indexOf(categories[i]);	//get the index of this selected category
+			if(availableCategoryIndex>=0)	//if the selected category is in our list
+			{
+				categorySwingList.addSelectionInterval(availableCategoryIndex, availableCategoryIndex);	//select that category
+			}
 		}
 	}
 	
 	/**@return An array of application categories selected.*/
 	public LocaleText[] getCategories()
 	{
-		final Object[] selectedObjects=categoryList.getSelectedValues();	//get the selected categories
+		final Object[] selectedObjects=categorySwingList.getSelectedValues();	//get the selected categories
 		final LocaleText[] selectedCategories=new LocaleText[selectedObjects.length];	//create a locale text array into which to place the selected categories
 		System.arraycopy(selectedObjects, 0, selectedCategories, 0, selectedObjects.length);	//copy the categories into our string array
 		return selectedCategories;	//return the selected categories
@@ -182,7 +186,7 @@ public class ExplanatoryPanel extends BasicVCardPanel
 	{
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		categoryLabel=new JLabel();
-		categoryList=new JList();
+		categorySwingList=new JList();
 		selectCategoryLanguageAction=new SelectCategoryLanguageAction();
 		noteLabel=new JLabel();
 		noteTextPane=new JTextPane();
@@ -206,10 +210,10 @@ public class ExplanatoryPanel extends BasicVCardPanel
 		categoryLabel.setText("Categories");	//G***i18n
 		getSelectCategoryLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectCategoryLanguageButton=createSelectLanguageButton(getSelectCategoryLanguageAction());
-		categoryList.setUI(new ToggleListUI()); //allow the answers to be toggled on and off
-		categoryList.setCellRenderer(new CheckBoxListCellRenderer());  //display the answers with checkboxes
-		categoryList.addListSelectionListener(modifyListSelectionListener);
-		final JScrollPane categoryScrollPane=new JScrollPane(categoryList);
+		categorySwingList.setUI(new ToggleListUI()); //allow the answers to be toggled on and off
+		categorySwingList.setCellRenderer(new CheckBoxListCellRenderer());  //display the answers with checkboxes
+		categorySwingList.addListSelectionListener(modifyListSelectionListener);
+		final JScrollPane categoryScrollPane=new JScrollPane(categorySwingList);
 		noteLabel.setText("Note");	//G***i18n
 		noteTextPane.getDocument().addDocumentListener(modifyDocumentListener);
 		getSelectNoteLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
@@ -262,8 +266,8 @@ public class ExplanatoryPanel extends BasicVCardPanel
 		*/
 		public Locale getLocale()
 		{
-			final int leadSelectionIndex=categoryList.getLeadSelectionIndex();	//get the last selected category index
-			final Object selectedValue=leadSelectionIndex>=0 ? categoryList.getModel().getElementAt(leadSelectionIndex) : null;	//get the last selected value
+			final int leadSelectionIndex=categorySwingList.getLeadSelectionIndex();	//get the last selected category index
+			final Object selectedValue=leadSelectionIndex>=0 ? categorySwingList.getModel().getElementAt(leadSelectionIndex) : null;	//get the last selected value
 			return selectedValue instanceof LocaleText ? ((LocaleText)selectedValue).getLocale() : null;	//return the locale if locale text is selected
 		}
 
@@ -273,8 +277,8 @@ public class ExplanatoryPanel extends BasicVCardPanel
 		*/
 		public void setLocale(final Locale newLocale)
 		{
-			final int leadSelectionIndex=categoryList.getLeadSelectionIndex();	//get the last selected category index
-			final Object selectedValue=leadSelectionIndex>=0 ? categoryList.getModel().getElementAt(leadSelectionIndex) : null;	//get the last selected value
+			final int leadSelectionIndex=categorySwingList.getLeadSelectionIndex();	//get the last selected category index
+			final Object selectedValue=leadSelectionIndex>=0 ? categorySwingList.getModel().getElementAt(leadSelectionIndex) : null;	//get the last selected value
 //G***del			final Object selectedValue=categoryList.getSelectedValue();	//get the selected value
 			if(selectedValue instanceof LocaleText)	//if locale text is selected
 			{
@@ -291,7 +295,7 @@ public class ExplanatoryPanel extends BasicVCardPanel
 		/**Default constructor.*/
 		public SelectCategoryLanguageAction()
 		{
-			super(null, categoryList);	//construct the parent class with no locale using the category list as the parent component
+			super(null, categorySwingList);	//construct the parent class with no locale using the category list as the parent component
 		}
 
 		/**Called when the action should be performed.
@@ -299,8 +303,8 @@ public class ExplanatoryPanel extends BasicVCardPanel
 		*/
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
-			final int leadSelectionIndex=categoryList.getLeadSelectionIndex();	//get the last selected category index
-			final Object selectedValue=leadSelectionIndex>=0 ? categoryList.getModel().getElementAt(leadSelectionIndex) : null;	//get the last selected value
+			final int leadSelectionIndex=categorySwingList.getLeadSelectionIndex();	//get the last selected category index
+			final Object selectedValue=leadSelectionIndex>=0 ? categorySwingList.getModel().getElementAt(leadSelectionIndex) : null;	//get the last selected value
 			if(selectedValue instanceof LocaleText)	//if locale text is selected (really we're just checking to make sure something is selected---it should always be locale text, if anything)
 			{
 				super.actionPerformed(actionEvent);	//do the default language selection
