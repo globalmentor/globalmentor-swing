@@ -9,7 +9,7 @@ import java.util.Map;
 import javax.swing.*;
 import javax.swing.text.*;
 import com.garretwilson.lang.StringUtilities;
-import com.garretwilson.net.URLUtilities;
+import com.garretwilson.net.URIUtilities;
 import com.garretwilson.util.Debug;
 
 /**A view that displays an applet. Implements <code>AppletStub</code> so
@@ -36,12 +36,12 @@ public abstract class XMLAbstractAppletView extends XMLAbstractComponentView imp
 	public Applet getApplet() {return (Applet)getComponent();}
 
 	/**The href of the class to load, including any ending ".class" extension,
-		relative to the document base URL.
+		relative to the document base URI.
 	*/
 	private String classHRef=null;
 
 		/**@return The href of the class to load, including any ending ".class"
-		  extension, relative to the document base URL.
+		  extension, relative to the document base URI.
 		*/
 		public String getClassHRef() {return className;}
 
@@ -49,7 +49,7 @@ public abstract class XMLAbstractAppletView extends XMLAbstractComponentView imp
 			both to determine the applet codebase and to load the applet.
 		  This method does nothing if the Java class has already been created.
 		@param newClassHRef The href of the class to load, including any ending
-			".class" extension, relative to the document base URL.
+			".class" extension, relative to the document base URI.
 		@see #setClassName
 		*/
 		protected void setClassHRef(final String newClassHRef)
@@ -285,9 +285,9 @@ Debug.error(e);		  //G***fix; store errors in console of some sort, as well as i
 	*/
 	protected Class getClass(final String className) throws ClassNotFoundException
 	{
-		final URL baseURL=XMLStyleConstants.getBaseURL(getAttributes());  //get the defined base URL, if any
+		final URI baseURI=XMLStyleConstants.getBaseURI(getAttributes());  //get the defined base URI, if any
 		//create a class loader to load the class from our document, with our document's class loaders as a parent class loader
-		final XMLClassLoader xmlClassLoader=new XMLClassLoader((XMLDocument)getDocument(), getDocument().getClass().getClassLoader(), baseURL);
+		final XMLClassLoader xmlClassLoader=new XMLClassLoader((XMLDocument)getDocument(), getDocument().getClass().getClassLoader(), baseURI);
 		return xmlClassLoader.loadClass(className);  //ask the class loader to load the class
 	}
 
@@ -308,7 +308,15 @@ Debug.error(e);		  //G***fix; store errors in console of some sort, as well as i
 	*/
 	public URL getDocumentBase()
 	{
-		return XMLStyleConstants.getBaseURL(getAttributes());  //get the defined base URL, if any
+		try
+		{ 
+			return XMLStyleConstants.getBaseURI(getAttributes()).toURL();  //get the defined base URL, if any
+		}
+		catch(MalformedURLException malformedURLException)  //if the resulting URL is malformed
+		{
+			Debug.warn(malformedURLException);  //G***fix to log to a Java console
+			return null;  //show that we can't determine the codebase
+		}
 	}
 
 	/**Gets the base URL.
@@ -318,7 +326,13 @@ Debug.error(e);		  //G***fix; store errors in console of some sort, as well as i
 	{
 		try
 		{
-			return URLUtilities.createURL(getDocumentBase(), getClassHRef()); //the codebase is the URL of the class relative to the document base
+			final URI codebaseURI=URIUtilities.createURI(XMLStyleConstants.getBaseURI(getAttributes()), getClassHRef());	//the codebase is the URL of the class relative to the document base
+			return codebaseURI.toURL();	//convert the URI to a URL			
+		}
+		catch(URISyntaxException uriSyntaxException)  //if the resulting URI is not syntactically correct
+		{
+			Debug.warn(uriSyntaxException);  //G***fix to log to a Java console
+			return null;  //show that we can't determine the codebase
 		}
 		catch(MalformedURLException malformedURLException)  //if the resulting URL is malformed
 		{

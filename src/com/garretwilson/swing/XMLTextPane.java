@@ -37,6 +37,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.EventListenerList;
 import com.garretwilson.applet.*;
 import com.garretwilson.io.*;
+import com.garretwilson.net.URIUtilities;
 import com.garretwilson.net.URLUtilities;
 import com.garretwilson.swing.event.PageEvent;
 import com.garretwilson.swing.event.PageListener;
@@ -110,19 +111,19 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 //G***del when keymap works
 //G***del	protected final static KeyStroke RIGHT_KEY_STROKE=KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0);
 
-	/**The access to input streams via URLs, if one exists.*/
-	private InputStreamLocator inputStreamLocator=null;
+	/**The access to input streams via URIs, if one exists.*/
+	private URIInputStreamable uriInputStreamable=null;
 
-		/**@return The access to input streams via URLs, or <code>null</code> if
+		/**@return The access to input streams via URIs, or <code>null</code> if
 		  none exists.
 		*/
-		public InputStreamLocator getInputStreamLocator() {return inputStreamLocator;}
+		public URIInputStreamable getURIInputStreamable() {return uriInputStreamable;}
 
 		/**Sets the object for accessing input streams.
-		@param newInputStreamLocator The object that allows acces to input streams
-			via URLs.
+		@param newURIInputStreamable The object that allows acces to input streams
+			via URIs.
 		*/
-		public void setInputStreamLocator(final InputStreamLocator newInputStreamLocator) {inputStreamLocator=newInputStreamLocator;}
+		public void setURIInputStreamable(final URIInputStreamable newURIInputStreamable) {uriInputStreamable=newURIInputStreamable;}
 
 	/**The current position of the mouse.*/
 	private Point mousePosition=new Point(0, 0);
@@ -674,7 +675,7 @@ Debug.trace();  //G***del
 		document.putProperty(Document.StreamDescriptionProperty, page);	//store the URL in the document
 */
 Debug.trace("setting page: ", page);  //G***del
-		setInputStreamLocator(null);  //show that we don't yet know how to access streams from URLs
+		setURIInputStreamable(null);  //show that we don't yet know how to access streams from URIs
 Debug.trace("Getting input stream.");
 		InputStream inputStream=getStream(page);  //get an input stream to the URL; this should set the media type and install the correct editor kit
 
@@ -691,7 +692,7 @@ Debug.trace("found zip file: ", page);  //G***del
 					//G***look for an OEB publication
 			  final File zipFile=new File(page.getPath());  //create a file for accessing the zip file
 			  final ZipManager zipManager=new ZipManager(zipFile);  //create a zip manager for accessing the file
-				setInputStreamLocator(zipManager);  //we'll use the zip manager as our input stream locator
+				setURIInputStreamable(zipManager);  //we'll use the zip manager as our input stream locator
 				final Iterator zipEntryIterator=zipManager.getZipEntryIterator(); //get an iterator to look
 				while(zipEntryIterator.hasNext()) //while there are more zip entries
 				{
@@ -702,9 +703,16 @@ Debug.trace("found zip file: ", page);  //G***del
 					final MediaType zipEntryMediaType=FileUtilities.getMediaType(zipEntry.getName()); //get the media type of the zip entry
 					getMediaType()
 */
-Debug.trace("switching URL to: ", zipManager.getURL(zipEntry)); //G***del
-						page=zipManager.getURL(zipEntry); //use the file inside the zip file instead of this one
-						inputStream=getStream(page);  //get an input stream to the new URL; this should set the media type and install the correct editor kit
+						try
+						{
+							Debug.trace("switching URI to: ", zipManager.getURI(zipEntry)); //G***del
+							page=zipManager.getURI(zipEntry).toURL(); //use the file inside the zip file instead of this one TODO fix all this URI/URL conversion
+							inputStream=getStream(page);  //get an input stream to the new URL; this should set the media type and install the correct editor kit
+						}
+						catch(URISyntaxException uriSyntaxException)	//if there is an error with the format of a URL (which shouldn't happen)
+						{
+							Debug.warn(uriSyntaxException);	//processing can still go on
+						} 
 //G***del when works						getStream(zipManager.getURL(zipEntry)); //get a stream to this entry in the zip file; in the future, all access to streams will come from the zip file itself
 					}
 				}
@@ -713,9 +721,9 @@ Debug.trace("switching URL to: ", zipManager.getURL(zipEntry)); //G***del
 				Debug.error("Zip file must use URL file: protocol");  //G***fix
 		}
 Debug.trace("installed editor kit is now: ", getEditorKit().getClass().getName());  //G***del
-		if(getInputStreamLocator()==null) //if we haven't established an input stream locator
+		if(getURIInputStreamable()==null) //if we haven't established an input stream locator
 		{
-			setInputStreamLocator(new URLUtilities());  //we'll use an instance of URLUtilities to make direct connections to URLs
+			setURIInputStreamable(new URIUtilities());  //we'll use an instance of URIUtilities to make direct connections to URIs
 		}
 		final XMLEditorKit xmlEditorKit=(XMLEditorKit)getEditorKit();	//get the current editor kit, and assume it's an XML editor kit G***we might want to check just to make sure
 		final Document document=xmlEditorKit.createDefaultDocument();	//create a default document
@@ -728,7 +736,7 @@ Debug.trace("reading from stream"); //G***del
 		{
 //G***del		  final MediaType mediaType=URLUtilities.getMediaType(page);  //see what media type the URL points to
 		  final XMLDocument xmlDocument=(XMLDocument)document;  //cast the document to an XML document
-			xmlDocument.setInputStreamLocator(getInputStreamLocator()); //give the XML document any input stream locator that we might have, so that it can access files from within zip files, for instance
+			xmlDocument.setURIInputStreamable(getURIInputStreamable()); //give the XML document any input stream locator that we might have, so that it can access files from within zip files, for instance
 		  ((XMLDocument)document).addProgressListener(this);	//show that we want to be notified of any progress the XML document makes G***should this go here or elsewhere? should this bubble up to the editor kit instead?
 		}
 		try
@@ -781,7 +789,6 @@ Debug.trace("reading from stream"); //G***del
 		}
 	}
 
-
     /**
      * Fetches a stream for the given URL, which is about to
      * be loaded by the <code>setPage</code> method.  By
@@ -801,17 +808,27 @@ Debug.trace("reading from stream"); //G***del
      *
      * @param page  the URL of the page
      */
-    protected InputStream getStream(URL page) throws IOException
+    protected InputStream getStream(URL page) throws IOException	//TODO look into making a getStream(URI) and have this version call that one
 		{
-			final InputStreamLocator inputStreamLocator=getInputStreamLocator();  //see if we have an input stream locator
-			if(inputStreamLocator!=null)  //if we have an input stream locator (if we're reading from a zip file, for instance)
+			final URIInputStreamable uriInputStreamable=getURIInputStreamable();  //see if we have an input stream locator
+			if(uriInputStreamable!=null)  //if we have an input stream locator (if we're reading from a zip file, for instance)
 			{
 Debug.trace("found input stream locator, getting input stream to URL: ", page); //G***del
-				final InputStream inputStream=inputStreamLocator.getInputStream(page);  //get an input stream from the page
-				final MediaType mediaType=URLUtilities.getMediaType(page);  //get the media type of the target
-				if(mediaType!=null) //if we know the media type of the URL
-		  		setContentType(mediaType.toString());  //set the content type based upon our best guess
-				return inputStream; //return the input stream we located (with an input stream locator, there's no need for us to try to open a connection to the URL ourselves
+				try
+				{
+					final URI pageURI=new URI(page.toString());	//create a URI from the page URL
+					final InputStream inputStream=uriInputStreamable.getInputStream(pageURI);  //get an input stream from the page
+					final MediaType mediaType=URLUtilities.getMediaType(page);  //get the media type of the target
+					if(mediaType!=null) //if we know the media type of the URL
+			  		setContentType(mediaType.toString());  //set the content type based upon our best guess
+					return inputStream; //return the input stream we located (with an input stream locator, there's no need for us to try to open a connection to the URL ourselves
+				}
+				catch(URISyntaxException uriSyntaxException)
+				{
+					final IOException ioException=new IOException(uriSyntaxException.getMessage());	//create a new IO exception
+					ioException.initCause(uriSyntaxException);	//show what caused the error
+					throw ioException;	//throw the exception
+				}
 			}
 
 	URLConnection conn = page.openConnection();
@@ -1295,15 +1312,31 @@ System.out.println("XMLTextPane just changed the page index from: "+oldPageIndex
 		default browser.
 	@param url The destination URL.
 	*/
+/*G***fix or del	
 	public void go(final URL url)
 	{
-Debug.trace("Inside XMLTextPane.goURL()");	//G***del
+			catch(URISyntaxException uriSyntaxException)
+			{
+				Debug.error(uriSyntaxException);	//G***fix				
+			}
+		
+	}
+*/	
+
+	/**Navigates to the specified URI. If the URI is already loaded, it is displayed.
+		If the URI is outside the publication, the location is loaded into the
+		default browser.
+	@param uri The destination URI.
+	*/
+	public void go(final URI uri)
+	{
+Debug.trace("Inside XMLTextPane.goURI()");	//G***del
 		final Document document=getDocument();  //get the document associated with the text pane
 		if(document instanceof XMLDocument) //if this is an XML document
 		{
 //G***del			final XMLDocument xmlDocument=(XMLDocument)document;  //case the document to an XML document
-				//cast the document to an XML document and get the element that the URL represents, if possible
-			final Element element=((XMLDocument)document).getElement(XMLStyleConstants.TARGET_URL_ATTRIBUTE_NAME, url);
+				//cast the document to an XML document and get the element that the URI represents, if possible
+			final Element element=((XMLDocument)document).getElement(XMLStyleConstants.TARGET_URI_ATTRIBUTE_NAME, uri);
 			if(element!=null)	//if we found a matching element in the document
 			{
 /*G***del
@@ -1318,9 +1351,9 @@ Debug.notify("For target ID: "+url+" the text is "+getOEBTextPane().getDocument(
 			{
 				try
 				{
-					BrowserLauncher.openURL(url.toString());	//G***testing; comment; decide if we want this done here or by the caller
+					BrowserLauncher.openURL(uri.toString());	//G***testing; comment; decide if we want this done here or by the caller
 				}
-				catch(IOException e)  //if there is an IO exception browsing to the URL
+				catch(IOException e)  //if there is an IO exception browsing to the URI
 				{
 					Debug.error(e); //we don't expect to see this exception
 				}
@@ -1563,7 +1596,8 @@ Debug.notify("For target ID: "+url+" the text is "+getOEBTextPane().getDocument(
 	//AppletContext methods
 
 	/**Creates an audio clip.
-	@param url An absolute URL giving the location of the audio clip.
+	This method conforms to the <code>AppletContext</code> interface.
+	@param URL An absolute URI giving the location of the audio clip.
 	@return The audio clip at the specified URL.
 	*/
 	public AudioClip getAudioClip(final URL url)
@@ -1579,6 +1613,11 @@ Debug.notify("For target ID: "+url+" the text is "+getOEBTextPane().getDocument(
 					//G***we need to fix this better; right now, we get a ClassCastException if they give a URL to an image, for instance
 	//G***del Debug.trace("ready to start clip.");
 				return new ClipAudioClip(clip); //create an audio clip from the clip and return it
+			}
+			catch(URISyntaxException uriSyntaxException)  //if there's a problem with the audio clip location
+			{
+				Debug.warn(uriSyntaxException);  //show that we can't load the clip G***fix better with Java console info
+				return null;  //show that we couldn't load the audio clip
 			}
 			catch(IOException ioException)  //if there's a problem loading the audio clip
 			{

@@ -228,15 +228,15 @@ Debug.trace("reading in an OEB editor kit, with document of type: ", document.ge
 		if(document instanceof OEBDocument) //if this is a Swing OEB document
 		{
 			OEBDocument oebDocument=(OEBDocument)document; //cast the document to an OEB document
-			final XMLProcessor xmlProcessor=new XMLProcessor(oebDocument.getInputStreamLocator());  //create an XML processor that will use the input stream locator of the document for loading other needed documents
-			final URL[] baseURLArray; //we'll store here an array of base URLs, corresponding to the XML documents
+			final XMLProcessor xmlProcessor=new XMLProcessor(oebDocument.getURIInputStreamable());  //create an XML processor that will use the input stream locator of the document for loading other needed documents
+			final URI[] baseURIArray; //we'll store here an array of base URIs, corresponding to the XML documents
 			final org.w3c.dom.Document[] xmlDocumentArray; //we'll store here an array of XML document trees to load into document
 			final MediaType[] mediaTypeArray; //we'll store here an array of media types (for OEB1, these should all be OEB document media types)
 //G***del if not needed			final URL publicationURL=oebDocument.getBaseURL();  //get the base URL from the document G***what if we don't get a URL back?
 
 				//create a new processor for loading the package information
 			final OEBPackageProcessor oebPackageProcessor=new OEBPackageProcessor(xmlProcessor);
-			final RDF packageRDF=oebPackageProcessor.read(inputStream, oebDocument.getBaseURL()); //read the package from the input stream G***maybe rename this to "process()"
+			final RDF packageRDF=oebPackageProcessor.read(inputStream, oebDocument.getBaseURI()); //read the package from the input stream G***maybe rename this to "process()"
 			oebDocument.setRDF(packageRDF); //set the RDF used to describe the resources
 				//get all the publications listed in the package
 		  final Collection publicationCollection=RDFUtilities.getResourcesByType(packageRDF, OEB2Constants.OEB2_PACKAGE_NAMESPACE_URI, OEB2Constants.PUBLICATION_TYPE_NAME);
@@ -270,7 +270,7 @@ Debug.trace("got spine list");  //G***del
 					}
 					final int spineItemCount=spineList.size(); //find out how many spine items there are
 					xmlDocumentArray=new org.w3c.dom.Document[spineItemCount]; //create an array of OEB XML documents
-					baseURLArray=new URL[spineItemCount];  //create an array of URLs
+					baseURIArray=new URI[spineItemCount];  //create an array of URIs
 					mediaTypeArray=new MediaType[spineItemCount];  //create an array of media types
 					for(int i=0; i<spineItemCount; ++i)	//look at each item in the spine
 					{
@@ -283,23 +283,32 @@ Debug.trace("working on item: ", item); //G***del
 						final String itemHRef=XPackageUtilities.getLocationHRef(item);  //get the item's href
 						fireMadeProgress(new ProgressEvent(this, READ_TASK, "Loading OEB Item: "+itemHRef, i, spineItemCount));	//G***testing i18n
 	//G***del Debug.trace("Loading OEB Item: "+item.getHRef());	//G***del
-						final URL itemURL=oebDocument.getResourceURL(itemHRef); //get the item's URL
-						final InputStream itemInputStream=oebDocument.getResourceAsInputStream(itemURL); //get an input stream to the object
 						try
 						{
-							final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(itemInputStream, itemURL);	//parse the document
-						  xmlDocument.normalize();  //normalize the document
-							tidyOEBXMLDocument((com.garretwilson.text.xml.XMLDocument)xmlDocument);	//tidy up the document (an important step if the document has text directly in the body and such) G***test, comment
-							baseURLArray[i]=itemURL;  //store the URL of the item
-							mediaTypeArray[i]=MIMEOntologyUtilities.getMediaType(item);  //store the media type of the item
-							xmlDocumentArray[i]=xmlDocument;	//add the document to our array that we'll pass to the OEB document for insertion
+							final URI itemURI=oebDocument.getResourceURI(itemHRef); //get the item's URI
+							final InputStream itemInputStream=oebDocument.getResourceAsInputStream(itemURI); //get an input stream to the object
+							try
+							{
+								final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(itemInputStream, itemURI);	//parse the document
+							  xmlDocument.normalize();  //normalize the document
+								tidyOEBXMLDocument((com.garretwilson.text.xml.XMLDocument)xmlDocument);	//tidy up the document (an important step if the document has text directly in the body and such) G***test, comment
+								baseURIArray[i]=itemURI;  //store the URI of the item
+								mediaTypeArray[i]=MIMEOntologyUtilities.getMediaType(item);  //store the media type of the item
+								xmlDocumentArray[i]=xmlDocument;	//add the document to our array that we'll pass to the OEB document for insertion
+							}
+							finally
+							{
+								itemInputStream.close();  //always close the input stream to the document
+							}
 						}
-						finally
+						catch(URISyntaxException uriSyntaxException)	//if we can't get the item's URI
 						{
-							itemInputStream.close();  //always close the input stream to the document
+							final IOException ioException=new IOException(uriSyntaxException.getMessage());	//create an IO exception from the URI syntax exception
+							ioException.initCause(uriSyntaxException);	//show what caused the error
+							throw ioException;	//throw an IO exception version of the error
 						}
 					}
-					setXML(xmlDocumentArray, baseURLArray, mediaTypeArray, oebDocument);  //put all the XML documents we loaded into the Swing OEB document
+					setXML(xmlDocumentArray, baseURIArray, mediaTypeArray, oebDocument);  //put all the XML documents we loaded into the Swing OEB document
 				}
 //G***del when works						oebDocument.insert(0, xmlDocumentArray);	//G***testing; possibly should be create
 			}

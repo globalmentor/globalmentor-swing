@@ -10,6 +10,8 @@ import java.awt.Image;  //G***del when loading routines are placed elsewhere
 import java.awt.Toolkit;  //G***del when loading routines are placed elsewhere
 import java.lang.ref.*;
 import java.util.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 /*G***bring back as needed
 import java.net.URL;
@@ -35,7 +37,7 @@ import org.w3c.dom.stylesheets.StyleSheet;
 //G***del when works import com.garretwilson.awt.ImageUtilities;
 import com.garretwilson.io.*;
 import com.garretwilson.lang.JavaConstants;
-import com.garretwilson.net.URLUtilities;
+import com.garretwilson.net.URIUtilities;
 import com.garretwilson.rdf.RDF;  //G***move
 import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.event.ProgressListener;
@@ -75,13 +77,13 @@ import org.w3c.dom.css.*; //G***maybe move elsewhere
 import org.w3c.dom.stylesheets.StyleSheetList;
 
 /**A document that models XML.
-	Implements <code>InputStreamLocator</code>, as this class knows how to
-	retrieve streams to URLs.
+	Implements <code>URIInputStreamable</code>, as this class knows how to
+	retrieve streams to URIs.
 @see com.garretwilson.text.xml.XMLProcessor
 @see com.garretwilson.text.xml.XMLDocument
 @author Garret Wilson
 */
-public class XMLDocument extends DefaultStyledDocument implements InputStreamLocator
+public class XMLDocument extends DefaultStyledDocument implements URIInputStreamable
 {
 
 	/**The task of applying a stylesheet.*/
@@ -90,14 +92,11 @@ public class XMLDocument extends DefaultStyledDocument implements InputStreamLoc
 	/**The list of progress event listeners.*/
 	private EventListenerList progressListenerList=new EventListenerList();
 
-	/**The location against which to resolve relative URLs.*/
-//G***del; now using document property	private URL baseURL=null;
-
-	/**A map of all full element target IDs (URL+#+id).*/
+	/**A map of all full element target IDs (URI+#+id).*/
 	private Map linkTargetMap=new HashMap();
 
 		/**Gets the element associated with the target ID.
-		@param targetID The full target ID (URL+#+element ID) of the element.
+		@param targetID The full target ID (URI+#+element ID) of the element.
 		@return The element to which the target ID refers, or <code>null</code> if
 			there is no element associated with the target ID.
 		*/
@@ -107,7 +106,7 @@ public class XMLDocument extends DefaultStyledDocument implements InputStreamLoc
 		}
 
 		/**Associates a target ID with an element.
-		@param targetID The full target ID (URL+#+element ID) of the element.
+		@param targetID The full target ID (URI+#+element ID) of the element.
 		@param element The element to which the target ID refers.
 		*/
 		public void setLinkTarget(final String targetID, final Element element)
@@ -115,53 +114,53 @@ public class XMLDocument extends DefaultStyledDocument implements InputStreamLoc
 			linkTargetMap.put(targetID, element);	//put the element in the map, keyed to the target ID
 		}
 
-	/**The access to input streams via URLs, if one exists.*/
-	private InputStreamLocator inputStreamLocator=null;
+	/**The access to input streams via URIs, if one exists.*/
+	private URIInputStreamable uriInputStreamable=null;
 
-		/**@return The access to input streams via URLs, or <code>null</code> if
+		/**@return The access to input streams via URIs, or <code>null</code> if
 		  none exists.
 		*/
-		public InputStreamLocator getInputStreamLocator() {return inputStreamLocator;}
+		public URIInputStreamable getURIInputStreamable() {return uriInputStreamable;}
 
 		/**Sets the object for accessing input streams.
-		@param newInputStreamLocator The object that allows acces to input streams
-			via URLs.
+		@param newURIInputStreamable The object that allows acces to input streams
+			via URIs.
 		*/
-		public void setInputStreamLocator(final InputStreamLocator newInputStreamLocator) {inputStreamLocator=newInputStreamLocator;}
+		public void setURIInputStreamable(final URIInputStreamable newURIInputStreamable) {uriInputStreamable=newURIInputStreamable;}
 
 	/**A map of references to resources that have been loaded.*/
 	private final Map resourceReferenceMap=new HashMap();
 
-	/**Returns a cached resource identified by the URL, if the object's memory
+	/**Returns a cached resource identified by the URI, if the object's memory
 		has not been reclaimed.
-	@param resourceURL The URL of the requested resource.
+	@param resourceURI The URI of the requested resource.
 	@return The resource, if it has been cached and is still referenced in the
 		JVM, or <code>null</code> if the resource's memory has been reclaimed or the
 		object has never been cached.
 	*/
-	protected Object getCachedResource(final URL resourceURL)
+	protected Object getCachedResource(final URI resourceURI)
 	{
-		final Reference resourceReference=(Reference)resourceReferenceMap.get(resourceURL); //return a reference to the cached resource, if available
+		final Reference resourceReference=(Reference)resourceReferenceMap.get(resourceURI); //return a reference to the cached resource, if available
 		if(resourceReference!=null) //if we found a reference to the resource
 		{
 			final Object resource=resourceReference.get();  //get the resource itself
 			if(resource!=null)  //if we still have the resource cached
 				return resource;  //return the resource
 			else
-				resourceReferenceMap.remove(resourceURL);  //remove the reference from the cache, since it is no longer useful
+				resourceReferenceMap.remove(resourceURI);  //remove the reference from the cache, since it is no longer useful
 		}
 		return null;  //show that either the object wasn't cached, or its memory has been reclaimed
 	}
 
 	/**Stores a resource as a reference in the cache. The resource will only
 		stay in the cache until the JVM decides its needs to reclaim its memory.
-	@param resourceURL The URL of the resource being cached.
+	@param resourceURI The URI of the resource being cached.
 	@param resource The resource to cache.
 	*/
-	protected void putCachedResource(final URL resourceURL, final Object resource)
+	protected void putCachedResource(final URI resourceURI, final Object resource)
 	{
 			//store the resource in the map as a soft reference
-	  resourceReferenceMap.put(resourceURL, new SoftReference(resource));
+	  resourceReferenceMap.put(resourceURI, new SoftReference(resource));
 	}
 
 	/**@return The RDF data model where metadata is stored, or <code>null</code>
@@ -522,17 +521,18 @@ G***comment
 	</ul>
 	@param href The specified location of the resource.
 	@return The specified resource.
+	@exception URISyntaxException Thrown if the given location results in a syntactically incorrect URI.
 	@exception IOException Thrown if the specified resource cannot be retrieved.
 	*/
-	public Object getResource(final String href) throws IOException
+	public Object getResource(final String href) throws URISyntaxException, IOException
 	{
 Debug.trace("Inside XMLDocument.getResource() with href: ", href);	//G***del
 		final MediaType mediaType=getResourceMediaType(href);	//get the media type of the resource
 Debug.trace("Inside XMLDocument.getResource() with media type: ", mediaType);	//G***del
 		if(mediaType!=null)	//if we think we know the media type of the file involved
 		{
-			final URL resourceURL=getResourceURL(href);	//create a URL based upon the base URL and the given file location
-		  return getResource(resourceURL, mediaType); //get the resource from its URL and its media type
+			final URI resourceURI=getResourceURI(href);	//create a URI based upon the base URI and the given file location
+		  return getResource(resourceURI, mediaType); //get the resource from its URI and its media type
 		}
 		else
 			throw new IOException(href+" has an unrecognized media type.");	//G***i18n
@@ -547,14 +547,14 @@ Debug.trace("Inside XMLDocument.getResource() with media type: ", mediaType);	//
 		<li>audio/* - <code>javax.sound.sampled.Line</code> Usually this will be
 			of type <code>javax.sound.sampled.Clip</code> and will have been opened.</li>
 	</ul>
-	@param url The URL location of the resource.
+	@param uri The URI location of the resource.
 	@param mediaType The media type of the resource.
 	@return The specified resource.
 	@exception IOException Thrown if the specified resource cannot be retrieved.
 	*/
-	protected Object getResource(final URL url, final MediaType mediaType) throws IOException
+	protected Object getResource(final URI uri, final MediaType mediaType) throws IOException
 	{
-		Object resource=getCachedResource(url); //see if the resource is cached
+		Object resource=getCachedResource(uri); //see if the resource is cached
 		if(resource!=null)  //if the resource was cached
 		{
 			if(resource instanceof Clip)  //if this resource is a clip G***hack; fix to have a special getClip() method
@@ -567,21 +567,20 @@ Debug.trace("Inside XMLDocument.getResource() with media type: ", mediaType);	//
 			return resource;  //return the resource
 		}
 		else  //if the resource wasn't cached
-			return loadResource(url, mediaType);  //load and return the resource
+			return loadResource(uri, mediaType);  //load and return the resource
 	}
 
-	/**Gets the URL of a particular resource. If the given <code>href</code> is
-		relative, it is correctly normalized to an absolute URL. This version
-		assumes relative locations are relative to the base URL.
+	/**Gets the URI of a particular resource. If the given <code>href</code> is
+		relative, it is correctly normalized to an absolute URI. This version
+		assumes relative locations are relative to the base URI.
 	@param href The specified location of the resource.
-	@return The URL of the specified resource.
-	@exception MalformedURLException Thrown if there is an error creating a URL
-		from the given href.
-	@see #getBaseURL
+	@return The URI of the specified resource.
+	@exception URISyntaxException Thrown if the a URI could not be created.
+	@see #getBaseURI
 	*/
-	public URL getResourceURL(final String href) throws MalformedURLException  //G***what happens when there is no base URL?
+	public URI getResourceURI(final String href) throws URISyntaxException
 	{
-		return URLUtilities.createURL(getBaseURL(), href);	//create and return a URL based upon the base URL and the given file location
+		return URIUtilities.createURI(getBaseURI(), href);	//create and return a URI based upon the base URI and the given file location
 	}
 
 	/**Gets the media type of a particular resource.
@@ -608,57 +607,57 @@ Debug.trace("extension: ", extension);  //G***del
 	}
 
 	/**Opens an input stream to the given location, based upon the document's
-		base URL. The input stream should be closed when it is no longer needed.
+		base URI. The input stream should be closed when it is no longer needed.
 	@param href The specified location of the resource.
 	@return An open input stream to the resource.
+	@exception URISyntaxException Thrown if the given location results in a syntactically incorrect URI.
 	@exception IOException Thrown if an input stream to the specified resource
 		cannot be created.
-	@see #getBaseURL
+	@see #getBaseURI
 //G***check about returning null if the resource is not found
 	*/
-	public InputStream getResourceAsInputStream(final String href) throws IOException
+	public InputStream getResourceAsInputStream(final String href) throws URISyntaxException, IOException
 	{
-		final URL resourceURL=getResourceURL(href);	//create a URL based upon the base URL and the given file location
-//G***del		final URL resourceURL=URLUtilities.createURL(getBaseURL(), href);	//create a URL based upon the base URL and the given file location
-		return getResourceAsInputStream(resourceURL); //get an input stream from this URL
+		final URI resourceURI=getResourceURI(href);	//create a URI based upon the base URI and the given file location
+		return getResourceAsInputStream(resourceURI); //get an input stream from this URI
 	}
 
-	/**Opens an input stream to the given URL. The input stream should be closed
+	/**Opens an input stream to the given URI. The input stream should be closed
 		when it is no longer needed.
-	@param url The specified location of the resource.
+	@param uri The specified location of the resource.
 	@return An open input stream to the resource.
 	@exception IOException Thrown if an input stream to the specified resource
 		cannot be created.
 //G***check about returning null if the resource is not found
 	*/
-	public InputStream getResourceAsInputStream(final URL url) throws IOException
+	public InputStream getResourceAsInputStream(final URI uri) throws IOException
 	{
-		final InputStreamLocator inputStreamLocator=getInputStreamLocator();  //see if we have an input stream locator
-		if(inputStreamLocator!=null)  //if we have an input stream locator (if we're reading from a zip file, for instance)
+		final URIInputStreamable uriInputStreamable=getURIInputStreamable();  //see if we have an input stream locator
+		if(uriInputStreamable!=null)  //if we have an input stream locator (if we're reading from a zip file, for instance)
 		{
-Debug.trace("found input stream locator, getting input stream to URL: ", url); //G***del
-			return inputStreamLocator.getInputStream(url);  //get an input stream from the URL
+Debug.trace("found input stream locator, getting input stream to URI: ", uri); //G***del
+			return uriInputStreamable.getInputStream(uri);  //get an input stream from the URI
 		}
 		else  //if we don't have an input stream locator
 		{
-			return url.openConnection().getInputStream();	//open a connection to the URL and return an input stream to that connection
+			return uri.toURL().openConnection().getInputStream();	//open a connection to the URI (converted to a URL) and return an input stream to that connection
 		}
 	}
 
-	/**Returns an input stream from given URL.
+	/**Returns an input stream from given URI.
 		This method is supplied to fulfill the requirements of
-		<code>InputStreamLocator</code>; this method simply delegates to
+		<code>URIInputStreamLocator</code>; this method simply delegates to
 		<code>getResourceAsInputStream()</code>, which may be overridden in child
 		classes to retrieve input streams differently.
-	@param url A complete URL to a file.
-	@return An input stream to the contents of the file represented by the given URL.
+	@param uri A complete URI to a file.
+	@return An input stream to the contents of the file represented by the given URI.
 	@exception IOException Thrown if an I/O error occurred.
-	@see InputStreamLocator
+	@see URIInputStreamLocator
 	@see #getResourceAsInputStream
 	*/
-	public final InputStream getInputStream(final URL url) throws IOException
+	public final InputStream getInputStream(final URI uri) throws IOException
 	{
-		return getResourceAsInputStream(url); //use the method we already had
+		return getResourceAsInputStream(uri); //use the method we already had
 	}
 
 	/**Loads a particular resource from the given location. The loaded resource
@@ -669,12 +668,12 @@ Debug.trace("found input stream locator, getting input stream to URL: ", url); /
 		<li>audio/* - <code>javax.sound.sampled.Line</code> Usually this will be
 			of type <code>javax.sound.sampled.Clip</code> and will have been opened.</li>
 	</ul>
-	@param resourceURL The specified location of the resource.
+	@param resourceURI The specified location of the resource.
 	@param mediaType The media type of the resource.
 	@return The specified resource.
 	@exception IOException Thrown if the specified resource cannot be retrieved.
 	*/
-	protected Object loadResource(final URL resourceURL, final MediaType mediaType) throws IOException  //G***change this to loadImage, loadClip, etc.
+	protected Object loadResource(final URI resourceURI, final MediaType mediaType) throws IOException  //G***change this to loadImage, loadClip, etc.
 	{
 		Object resource;  //this will be assigned if we run into no errors
 		if(mediaType.getTopLevelType().equals(MediaTypeConstants.IMAGE))	//if this is an image
@@ -692,7 +691,7 @@ Debug.trace("found input stream locator, getting input stream to URL: ", url); /
 				final Toolkit toolkit=Toolkit.getDefaultToolkit(); //get the default toolkit
 				final Image image=toolkit.createImage(resourceURL);  //G***testing; does this return null if it doesn't exist?
 */
-				final InputStream resourceInputStream=getResourceAsInputStream(resourceURL);  //get an input stream to the resource
+				final InputStream resourceInputStream=getResourceAsInputStream(resourceURI);  //get an input stream to the resource
 				try
 				{
 					final byte[] imageBytes=InputStreamUtilities.getBytes(resourceInputStream);  //read the bytes from the input stream
@@ -712,7 +711,7 @@ Debug.trace("found input stream locator, getting input stream to URL: ", url); /
 		}
 		else if(mediaType.getTopLevelType().equals(MediaType.AUDIO))	//if this is an audio media type
 		{
-			final InputStream inputStream=new BufferedInputStream(getResourceAsInputStream(resourceURL));	//get a buffered input stream to the audio
+			final InputStream inputStream=new BufferedInputStream(getResourceAsInputStream(resourceURI));	//get a buffered input stream to the audio
 //G***we should really close the input stream if something goes wrong
 			try
 			{
@@ -722,30 +721,48 @@ Debug.trace("found input stream locator, getting input stream to URL: ", url); /
 			}
 			catch(UnsupportedAudioFileException unsupportedAudioFileException)
 			{
-				throw new IOException("The format of "+resourceURL+" of type "+mediaType+" is unsupported: "+unsupportedAudioFileException.getMessage());	//G***i18n
+				throw new IOException("The format of "+resourceURI+" of type "+mediaType+" is unsupported: "+unsupportedAudioFileException.getMessage());	//G***i18n
 			}
 			catch(LineUnavailableException lineUnavailableException)
 			{
-				throw new IOException("There is no line available to the audio file "+resourceURL+" of type "+mediaType+": "+lineUnavailableException.getMessage());	//G***i18n
+				throw new IOException("There is no line available to the audio file "+resourceURI+" of type "+mediaType+": "+lineUnavailableException.getMessage());	//G***i18n
 			}
 		}
 		else	//if we don't recognize this media type
 			throw new IOException("Unrecognized media type: "+mediaType);	//G***i18n
-		putCachedResource(resourceURL, resource); //cache the resource in case we need to use it again
+		putCachedResource(resourceURI, resource); //cache the resource in case we need to use it again
 		return resource;  //return the resource we found
 	}
 
-	/**Gets the location against which to reseolve relative URLs. By default this
-		will be the document's URL if the document was loaded from a URL.
-	@return The location against which to resolve relative URLs, or <code>null</code>
-		if there is no base URL.
+	/**Gets the location against which to resolve relative URIs. By default this
+		will be the document's URI if the document was loaded from a URI.
+	@return The location against which to resolve relative URIs, or <code>null</code>
+		if there is no base URI.
+//G***del	@exception URISyntaxException Thrown if the a URI could not be created.
 	@see Document#StreamDescriptionProperty
 	*/
-	public URL getBaseURL()
+	public URI getBaseURI()	//G***del throws URISyntaxException
 	{
 		final Object streamDescription=getProperty(StreamDescriptionProperty); //get the stream description property value
-		return streamDescription instanceof URL ? (URL)streamDescription : null;  //return the stream description property value if it is a URL
-//G***del		return baseURL;	//return the base URL
+			//G***maybe create a URIUtilities method to do this
+		if(streamDescription instanceof URI)	//if the stream description is a URI
+			return (URI)streamDescription;	//return the stream description as-is
+		else if(streamDescription instanceof URL)	//if the stream description is a URL
+		{
+			try
+			{
+				return new URI(streamDescription.toString());	//create a URI from the stream description URL
+			}
+			catch(URISyntaxException uriSyntaxException)	//if we couldn't create a URI from the URL
+			{
+				Debug.error(uriSyntaxException);	//if it's a URL, we expect to be able to create a URI from it
+				return null;	//don't return any URI
+			}
+		}
+		else if (streamDescription instanceof File)	//if the stream description is a File
+			return ((File)streamDescription).toURI();		//convert the File to a URI
+		else	//if we don't recognize the string description (or if there isn't one)
+			return null;	//show that there is no base URI
 	}
 
 	/**Sets the location against which to resolve relative URLs. By default this
@@ -1176,7 +1193,7 @@ System.out.println("base URL: "+XMLStyleConstants.getBaseURL(swingDocumentElemen
 			((MutableAttributeSet)attributeSet).addAttribute("testAttribute", "testValue"); //G***testing
 	Debug.trace("After setting test attribute");
 */
-				final URL documentURL=XMLStyleConstants.getBaseURL(swingDocumentElement.getAttributes());  //get the URL of this document
+				final URI documentURI=XMLStyleConstants.getBaseURI(swingDocumentElement.getAttributes());  //get the URI of this document
 				final StyleSheetList styleSheetList=getStylesheets(swingDocumentElement); //G***testing
 				//apply the stylesheets
 				final int styleSheetCount=styleSheetList.getLength(); //find out how many stylsheets there are
@@ -1184,7 +1201,7 @@ System.out.println("base URL: "+XMLStyleConstants.getBaseURL(swingDocumentElemen
 				{
 
 				  //prepare a progress message: "Applying stylesheet X to XXXXX.html"
-					final String progressMessage=MessageFormat.format("Applying stylesheet {0} to {1}", new Object[]{new Integer(i+1), documentURL!=null ? documentURL.toString() : "unknown"}); //G***i18n; fix documentURL if null
+					final String progressMessage=MessageFormat.format("Applying stylesheet {0} to {1}", new Object[]{new Integer(i+1), documentURI!=null ? documentURI.toString() : "unknown"}); //G***i18n; fix documentURI if null
 Debug.trace(progressMessage); //G***del
 					fireMadeProgress(new ProgressEvent(this, APPLY_STYLESHEET_TASK, progressMessage, swingDocumentElementIndex, swingDocumentElementCount));	//fire a progress message saying that we're applying a stylesheet
 //G***del System.out.println("applying stylesheet: "+i+" of "+styleSheetList.getLength());  //G***del
@@ -1329,9 +1346,9 @@ Debug.trace("Found default stylesheet for namespace: ", namespaceURI);  //G***de
 		final XMLStyleSheetDescriptor[] styleSheetDescriptorArray=getStylesheetDescriptors(swingDocumentElement);
 		if(styleSheetDescriptorArray.length>0)  //if there are stylesheet descriptors
 		{
-			URL baseURL=XMLStyleConstants.getBaseURL(documentAttributeSet); //get the base URL of the XML document
-			if(baseURL==null) //if we couldn't found a base URL in the attributes
-				baseURL=getBaseURL();	//get the base URL from the document
+			URI baseURI=XMLStyleConstants.getBaseURI(documentAttributeSet); //get the base URI of the XML document
+			if(baseURI==null) //if we couldn't found a base URI in the attributes
+				baseURI=getBaseURI();	//get the base URI from the document
 //G***del when not needed			final Iterator styleSheetDescriptorIterator=styleSheetDescriptorList.iterator();  //get an iterator to all stylesheet descriptors we've gathered so far
 //G***del when not needed			while(styleSheetDescriptorIterator.hasNext()) //while there are more stylesheet descriptors
 		  for(int i=0; i<styleSheetDescriptorArray.length; ++i) //look at each stylesheet descriptor
@@ -1344,12 +1361,12 @@ Debug.trace("Found default stylesheet for namespace: ", namespaceURI);  //G***de
 //G***del Debug.trace("Looking at stylesheet descriptor: ", styleSheetDescriptor.getHRef());  //G***del
 				try
 				{
-					final URL styleSheetURL=getResourceURL(styleSheetDescriptor.getHRef());	//create a URL from the original URL of the XML document and the stylesheet href
+					final URI styleSheetURI=getResourceURI(styleSheetDescriptor.getHRef());	//create a URI from the original URI of the XML document and the stylesheet href
 //G***del					final URL styleSheetURL=URLUtilities.createURL(baseURL, styleSheetDescriptor.getHRef());	//create a URL from the original URL of the XML document and the stylesheet href
-					final InputStreamReader styleSheetReader=new InputStreamReader(getResourceAsInputStream(styleSheetURL));	//get an input stream to the stylesheet G***use the document's encoding here
+					final InputStreamReader styleSheetReader=new InputStreamReader(getResourceAsInputStream(styleSheetURI));	//get an input stream to the stylesheet G***use the document's encoding here
 					try
 					{
-						final CSSStyleSheet cssStyleSheet=cssProcessor.parseStyleSheet(styleSheetReader, styleSheetURL); //parse the stylesheet
+						final CSSStyleSheet cssStyleSheet=cssProcessor.parseStyleSheet(styleSheetReader, styleSheetURI); //parse the stylesheet
 //G***del Debug.trace("parsed stylesheet: ", cssStyleSheet);  //G***testing; del
 						styleSheetList.add(cssStyleSheet);  //add this stylesheet to our list
 					}
@@ -1361,6 +1378,10 @@ Debug.trace("Found default stylesheet for namespace: ", namespaceURI);  //G***de
 				catch(IOException ioException)  //if there are any I/O exceptions
 				{
 					Debug.warn(ioException);  //G***fix better
+				}
+				catch(URISyntaxException uriSyntaxException)  //if there are any URI syntax errors
+				{
+					Debug.warn(uriSyntaxException);  //G***fix better
 				}
 			}
 		}

@@ -6,6 +6,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
+import java.net.URISyntaxException;
 import java.net.URL;
 import javax.swing.*;
 import javax.swing.text.*;
@@ -115,12 +116,14 @@ Debug.trace();  //G***del
 		memory to be reclaimed, this method may reload the image.
 		<code>initialize()</code> must therefore have first been called to
 		appropriately set the image information.
+	@exception URISyntaxException Thrown if the image href does not allow a syntactically
+		correct URI to be contructed.
 	@exception IOException Thrown if there is an error getting the image, usually
 		because the image needed to be loaded but could not be.
 	@see #freeImage
 	@see #initialize
 	*/
-	protected Image getImage() throws IOException
+	protected Image getImage() throws URISyntaxException, IOException
 	{
 Debug.trace("XMLImageView.getImage(): ", getHRef()); //G***del
 		if(shownImage!=null)  //G***testing; comment
@@ -410,6 +413,13 @@ Debug.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+"
 	        g.setPaintMode();
 */
 		}
+	}
+	catch(URISyntaxException uriSyntaxException)  //if there was an error getting the image G***probably set some sort of flag so that we won't try to load it again next time
+	{
+		Debug.error(uriSyntaxException); //report the error
+		((Graphics2D)graphics).setPaint(Color.black);  //G***fix all this
+		graphics.setFont(new Font("Arial", Font.PLAIN, 14));
+		graphics.drawString("Error loading image.", x, y+20);	//G***testing; i18n
 	}
 	catch(IOException ioException)  //if there was an error getting the image G***probably set some sort of flag so that we won't try to load it again next time
 	{

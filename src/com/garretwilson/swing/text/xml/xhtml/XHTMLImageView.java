@@ -2,6 +2,8 @@ package com.garretwilson.swing.text.xml.xhtml;
 
 import java.awt.*;
 import java.io.*;
+import java.net.URISyntaxException;
+
 import javax.swing.text.*;
 import com.garretwilson.awt.*;
 import com.garretwilson.swing.text.xml.*;
@@ -95,6 +97,10 @@ Debug.trace("XHTMLImageView.initialize() src: ", getHRef());
 				height=image.getHeight(this);	//get the image's height
 				width=image.getWidth(this);	//get the image's width
 				freeImage();  //free the image memory; this should speed up view flowing
+			}
+			catch(URISyntaxException e)	//G***do something better here
+			{
+				Debug.error(e);
 			}
 			catch(IOException e)	//G***do something better here
 			{

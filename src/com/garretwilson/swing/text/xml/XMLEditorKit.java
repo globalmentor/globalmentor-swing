@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.net.URI;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -249,25 +250,25 @@ public class XMLEditorKit extends StyledEditorKit
 
 	/**Sets the given XML data in a Swing document.
 	@param xmlDocument The XML document to set in the Swing document.
-	@param baseURL The base URL, corresponding to the XML document.
+	@param baseURI The base URI, corresponding to the XML document.
 	@param mediaType The media type of the XML document.
 	@param swingDocument The Swing document to receive the XML data.
 	*/
-	public void setXML(final org.w3c.dom.Document xmlDocument, final URL baseURL, final MediaType mediaType, final XMLDocument swingDocument)
+	public void setXML(final org.w3c.dom.Document xmlDocument, final URI baseURI, final MediaType mediaType, final XMLDocument swingDocument)
 	{
-		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URL[]{baseURL}, new MediaType[]{mediaType}, swingDocument); //set the XML data, creating arrays each with a single element
+		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new MediaType[]{mediaType}, swingDocument); //set the XML data, creating arrays each with a single element
 	}
 
 	/**Sets the given XML data in a Swing document.
 	@param xmlDocumentArray The array of XML documents to set in the Swing document.
-	@param baseURLArray The array of base URLs, corresponding to the XML documents.
+	@param baseURIArray The array of base URIs, corresponding to the XML documents.
 	@param mediaTypeArray The array of media types of the documents.
 	@param swingDocument The Swing document to receive the XML data.
 	*/
-	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URL[] baseURLArray, final MediaType[] mediaTypeArray, final XMLDocument swingDocument)
+	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final MediaType[] mediaTypeArray, final XMLDocument swingDocument)
 	{
 		//create a list of element specs for creating the document and store them here
-		final DefaultStyledDocument.ElementSpec[] elementSpecList=createElementSpecs(xmlDocumentArray, baseURLArray, mediaTypeArray);
+		final DefaultStyledDocument.ElementSpec[] elementSpecList=createElementSpecs(xmlDocumentArray, baseURIArray, mediaTypeArray);
 		swingDocument.create(elementSpecList);	//create the document from the element specs
 //G***testing; put in correct place		swingDocument.applyStyles(); //G***testing; put in the correct place, and make sure this gets called when repaginating, if we need to
 	}
@@ -414,9 +415,9 @@ System.out.println("Ready to parse stylesheets.");	//G***del
 		if(document instanceof XMLDocument) //if this is a Swing XML document
 		{
 			XMLDocument swingXMLDocument=(XMLDocument)document; //cast the document to an XML document
-			final URL baseURL=swingXMLDocument.getBaseURL();  //get the base URL from the document
+			final URI baseURI=swingXMLDocument.getBaseURI();  //get the base URI from the document
 			final XMLProcessor xmlProcessor=new XMLProcessor();	//create a new XML processor
-			final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(inputStream, baseURL);	//parse the document
+			final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(inputStream, baseURI);	//parse the document
 			xmlDocument.normalize();  //normalize the document
 		  tidyOEBXMLDocument((com.garretwilson.text.xml.XMLDocument)xmlDocument);	//tidy up the document (an important step if the document has text directly in the body and such) G***test, comment
 				//read and set any contained RDF
@@ -424,14 +425,14 @@ System.out.println("Ready to parse stylesheets.");	//G***del
 			final RDF rdf;
 			try
 			{
-				rdf=rdfProcessor.process(xmlDocument, URLUtilities.toURI(baseURL));	//process any contained RDF
+				rdf=rdfProcessor.process(xmlDocument, baseURI);	//process any contained RDF
 			}
 			catch (URISyntaxException e)
 			{
 				throw new IOException(e.toString());
 			}  
 		  swingXMLDocument.setRDF(rdf); //set the RDF in our document
-		  setXML(xmlDocument, baseURL, getMediaType(), swingXMLDocument);  //G***fix
+		  setXML(xmlDocument, baseURI, getMediaType(), swingXMLDocument);  //G***fix
 		}
 		else  //if this is not an XML document we're reading into
 			super.read(inputStream, document, pos); //let the parent class do the reading
@@ -439,35 +440,35 @@ System.out.println("Ready to parse stylesheets.");	//G***del
 
 	/**Creates element spec objects from an XML document tree.
 	@param xmlDocument The XML document tree.
-	@param baseURL The base URL of the document.
+	@param baseURI The base URI of the document.
 	@param mediaType The media type of the document.
 	@return Am array of element specs defining the XML document.
 	*/
-	protected DefaultStyledDocument.ElementSpec[] createElementSpecs(org.w3c.dom.Document xmlDocument, final URL baseURL, final MediaType mediaType)
+	protected DefaultStyledDocument.ElementSpec[] createElementSpecs(org.w3c.dom.Document xmlDocument, final URI baseURI, final MediaType mediaType)
 	{
-		return createElementSpecs(new org.w3c.dom.Document[]{xmlDocument}, new URL[]{baseURL}, new MediaType[]{mediaType});  //put the XML document into an array, create the element specs, and return them
+		return createElementSpecs(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new MediaType[]{mediaType});  //put the XML document into an array, create the element specs, and return them
 	}
 
 	/**Creates element spec objects from a list of XML document trees.
 	@param xmlDocumentArray The array of XML document trees.
-	@param baseURLArray The array of URLs representing the base URLs for each document.
+	@param baseURIArray The array of URIs representing the base URIs for each document.
 	@param mediaTypeArray The array of media types of the documents.
 	@return An array of element specs defining the XML documents.
 	*/
-	protected DefaultStyledDocument.ElementSpec[] createElementSpecs(org.w3c.dom.Document[] xmlDocumentArray, final URL[] baseURLArray, final MediaType[] mediaTypeArray)
+	protected DefaultStyledDocument.ElementSpec[] createElementSpecs(org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final MediaType[] mediaTypeArray)
 	{
-		final List elementSpecList=createElementSpecList(xmlDocumentArray, baseURLArray, mediaTypeArray); //create the list of element specs
+		final List elementSpecList=createElementSpecList(xmlDocumentArray, baseURIArray, mediaTypeArray); //create the list of element specs
 			//convert the list to an array and return it
 		return (DefaultStyledDocument.ElementSpec[])elementSpecList.toArray(new DefaultStyledDocument.ElementSpec[elementSpecList.size()]);
 	}
 
 	/**Creates a list of element spec objects from an aray of XML document trees.
 	@param xmlDocumentArray The array of XML document trees.
-	@param baseURLArray The array of URLs representing the base URLs for each document.
+	@param baseURIArray The array of URIs representing the base URIs for each document.
 	@param mediaTypeArray The array of media types of the documents.
 	@return A list of element specs defining the XML documents.
 	*/
-	protected List createElementSpecList(org.w3c.dom.Document[] xmlDocumentArray, final URL[] baseURLArray, final MediaType[] mediaTypeArray)
+	protected List createElementSpecList(org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final MediaType[] mediaTypeArray)
 	{
 		//G***maybe check to make sure both arrays are of the same length
 		final List elementSpecList=new ArrayList();	//create an array to hold our element specs
@@ -479,7 +480,7 @@ System.out.println("Ready to parse stylesheets.");	//G***del
 		{
 //G***del Debug.trace("Looking at XML document: ", xmlDocumentIndex); //G***del
 			final org.w3c.dom.Document xmlDocument=xmlDocumentArray[xmlDocumentIndex];	//get a reference to this document
-		  final URL baseURL=baseURLArray[xmlDocumentIndex]; //get a reference to the base URL
+		  final URI baseURI=baseURIArray[xmlDocumentIndex]; //get a reference to the base URI
 		  final MediaType mediaType=mediaTypeArray[xmlDocumentIndex]; //get a reference to the media type
 			final org.w3c.dom.Element xmlRoot=xmlDocument.getDocumentElement();	//get the root of the document
 			if(xmlDocumentIndex>0)	//if this is not the first document to insert
@@ -488,11 +489,11 @@ System.out.println("Ready to parse stylesheets.");	//G***del
 //G***del System.out.println("Adding page break element.");	//G***del
 						appendElementSpecListPageBreak(elementSpecList);  //append a page break
 			}
-			final MutableAttributeSet attributeSet=appendElementSpecList(elementSpecList, xmlRoot, baseURL);	//insert this document's root element into our list our list of elements
-			if(baseURL!=null) //if there is a base URL
+			final MutableAttributeSet attributeSet=appendElementSpecList(elementSpecList, xmlRoot, baseURI);	//insert this document's root element into our list our list of elements
+			if(baseURI!=null) //if there is a base URI
 			{
-				XMLStyleConstants.setBaseURL(attributeSet, baseURL); //add the base URL as an attribute
-				XMLStyleConstants.setTargetURL(attributeSet, baseURL);  //because this element is the root of the document, its base URL acts as a linking target as well; store the target URL for quick searching
+				XMLStyleConstants.setBaseURI(attributeSet, baseURI); //add the base URI as an attribute
+				XMLStyleConstants.setTargetURI(attributeSet, baseURI);  //because this element is the root of the document, its base URI acts as a linking target as well; store the target URI for quick searching
 			}
 			if(mediaType!=null) //if there is a media type
 			{
@@ -530,17 +531,17 @@ System.out.println("Ready to parse stylesheets.");	//G***del
 	/**Appends information from an XML element tree into a list of element specs.
 	@param elementSpecList The list of element specs to be inserted into the document.
 	@param xmlElement The XML element tree.
-	@param baseURL The base URL of the document, used for generating full target
-		URLs for quick searching.
+	@param baseURI The base URI of the document, used for generating full target
+		URIs for quick searching.
 	@return The attribute set used to represent the element; this attribute set
 		can be manipulated after the method returns.
 	@exception BadLocationException for an invalid starting offset
 	@see XMLDocument#insert
 	*/
-	protected MutableAttributeSet appendElementSpecList(final List elementSpecList, final org.w3c.dom.Element xmlElement, final URL baseURL)
+	protected MutableAttributeSet appendElementSpecList(final List elementSpecList, final org.w3c.dom.Element xmlElement, final URI baseURI)
 	{
 //G***del Debug.trace("XMLDocument.appendElementSpecList: element ", xmlElement.getNodeName());	//G***del
-		final SimpleAttributeSet attributeSet=createAttributeSet(xmlElement, baseURL);	//create and fill an attribute set based upon this element's CSS style
+		final SimpleAttributeSet attributeSet=createAttributeSet(xmlElement, baseURI);	//create and fill an attribute set based upon this element's CSS style
 		final int numChildNodes=xmlElement.getChildNodes().getLength();	//G***testing image
 //G***del Debug.trace("Number of child  nodes: ", numChildNodes);	//G***del
 /*G***fix
@@ -552,7 +553,7 @@ System.out.println("Ready to parse stylesheets.");	//G***del
 			XMLUtilities.appendText(xmlElement, " "); //only put a single space in this element so that it will have some content G***testing image; probably move elsewhere so we won't have to modify the original XML source tree
 //G***del Debug.trace("Attribute set: ", attributeSet);  //G***del
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(attributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a Swing element to model this XML element
-		appendElementSpecListContent(elementSpecList, xmlElement, attributeSet, baseURL);	//append the content of the element
+		appendElementSpecListContent(elementSpecList, xmlElement, attributeSet, baseURI);	//append the content of the element
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(attributeSet, DefaultStyledDocument.ElementSpec.EndTagType));	//finish the element we started at the beginning of this function
 		return attributeSet;  //return the attribute set used for the element
 	}
@@ -561,14 +562,14 @@ System.out.println("Ready to parse stylesheets.");	//G***del
 		into a list of element specs.
 	@param elementSpecList The list of element specs to be inserted into the document.
 	@param xmlElement The XML element tree.
-	@param baseURL The base URL of the document, used for generating full target
-		URLs for quick searching.
+	@param baseURI The base URI of the document, used for generating full target
+		URIs for quick searching.
 	@exception BadLocationException for an invalid starting offset
 	@see XMLDocument#insert
 	@see XMLDocument#appendElementSpecList
 	*/
 //G***del when works	protected void appendElementSpecListContent(final List elementSpecList, final XMLElement element, final XMLCSSSimpleAttributeSet attributeSet, final boolean inline)
-	protected void appendElementSpecListContent(final List elementSpecList, final org.w3c.dom.Element xmlElement, final SimpleAttributeSet attributeSet, final URL baseURL/*G***del, final boolean inline*/)
+	protected void appendElementSpecListContent(final List elementSpecList, final org.w3c.dom.Element xmlElement, final SimpleAttributeSet attributeSet, final URI baseURI/*G***del, final boolean inline*/)
 	{
 //G***del Debug.trace("XMLDocument.appendElementSpecListContent: element ", xmlElement.getNodeName());	//G***del
 
@@ -651,7 +652,7 @@ Debug.trace("hasInlineChildren: ", hasInlineChildren);	//G***del
 			for(int childIndex=0; childIndex<childNodeList.getLength(); childIndex++)	//look at each child node
 			{
 				final Node node=childNodeList.item(childIndex);	//look at this node
-				appendElementSpecListNode(elementSpecList, node, attributeSet, baseURL);	//append this node's information
+				appendElementSpecListNode(elementSpecList, node, attributeSet, baseURI);	//append this node's information
 			}
 //G***del		}
 	}
@@ -659,20 +660,20 @@ Debug.trace("hasInlineChildren: ", hasInlineChildren);	//G***del
 	/**Appends information from an XML child node into a list of element specs.
 	@param elementSpecList The list of element specs to be inserted into the document.
 	@param xmlNode The XML element's child node tree.
-	@param baseURL The base URL of the document, used for generating full target
-		URLs for quick searching.
+	@param baseURI The base URI of the document, used for generating full target
+		URIs for quick searching.
 //G***del	@param inline Whether or not this is inline content. G***see if we can remove this
 	@exception BadLocationException for an invalid starting offset
 	@see XMLDocument#insert
 	@see XMLDocument#appendElementSpecListContent
 	*/
-	protected void appendElementSpecListNode(final List elementSpecList, final org.w3c.dom.Node node, final SimpleAttributeSet attributeSet, final URL baseURL)
+	protected void appendElementSpecListNode(final List elementSpecList, final org.w3c.dom.Node node, final SimpleAttributeSet attributeSet, final URI baseURI)
 	{
 //G***del Debug.trace("appending element spec list node: ", node.getNodeName());  //G***del
 		switch(node.getNodeType())	//see which type of object this is
 		{
 			case Node.ELEMENT_NODE:	//if this is an element
-				appendElementSpecList(elementSpecList, (org.w3c.dom.Element)node, baseURL);	//insert this element into our element spec list
+				appendElementSpecList(elementSpecList, (org.w3c.dom.Element)node, baseURI);	//insert this element into our element spec list
 				break;
 			case Node.TEXT_NODE:	//if this is a text node
 			case Node.CDATA_SECTION_NODE:	//if this is a CDATA section node
@@ -760,12 +761,12 @@ Debug.trace("Non-collapsed text: "+text);
 
 	/**Creates an attribute set for the given element.
 	@param element The XML element with CSS attributes.
-	@param baseURL The base URL of the document, used for generating full target
-		URLs for quick searching.
+	@param baseURI The base URI of the document, used for generating full target
+		URIs for quick searching.
 	@return An attribute set reflecting the CSS attributes of the element.
 	*/
 //G***del when works	protected XMLCSSSimpleAttributeSet createAttributeSet(final XMLElement element)
-	protected SimpleAttributeSet createAttributeSet(final Node xmlNode, final URL baseURL)
+	protected SimpleAttributeSet createAttributeSet(final Node xmlNode, final URI baseURI)
 	{
 		//G***allow this to use the static XMLDocument.createAttributeSet after first extrating element information
 //G***del Debug.trace("Creating attribute set for node: ", xmlNode.getNodeName()); //G***del
@@ -812,10 +813,10 @@ Debug.trace("Non-collapsed text: "+text);
 		{
 			try
 			{
-			  final URL targetURL=URLUtilities.createURL(baseURL, "#"+targetID);	//create a full URL from the target ID used as a fragment G***use a constant here
-				XMLStyleConstants.setTargetURL(attributeSet, targetURL);  //store the target URL for quick searching
+			  final URI targetURI=URIUtilities.createURI(baseURI, "#"+targetID);	//create a full URI from the target ID used as a fragment G***use a constant here
+				XMLStyleConstants.setTargetURI(attributeSet, targetURI);  //store the target URI for quick searching
 			}
-			catch(MalformedURLException e) {} //ignore any errors and simply don't store the target URL
+			catch(URISyntaxException e) {} //ignore any errors and simply don't store the target URL
 		}
 		return attributeSet;	//return the attribute set we created
 	}

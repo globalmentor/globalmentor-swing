@@ -4,12 +4,15 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.net.URI;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import com.garretwilson.io.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.net.*;
+import com.garretwilson.swing.event.XMLLinkEvent;
 import com.garretwilson.text.xml.oeb.*; //G***move someday
 import com.garretwilson.text.xml.xhtml.*; //G***move someday
 import com.garretwilson.text.xml.xlink.*;
@@ -42,9 +45,9 @@ public class XMLLinkController extends MouseAdapter implements MouseMotionListen
 		enter and exit hyperlink events.*/
 	private Element currentElement=null;
 
-	/**The URL the element currently represents; used to know when to generate
+	/**The URI the element currently represents; used to know when to generate
 		enter and exit hyperlink events.*/
-	private URL currentURL=null;
+	private URI currentURI=null;
 
 	/**This is used by viewToModel to avoid allocing a new array each time.*/
 	private Position.Bias[] bias = new Position.Bias[1];
@@ -105,7 +108,7 @@ public class XMLLinkController extends MouseAdapter implements MouseMotionListen
 					Element element=xmlDocument.getCharacterElement(pos);	//get the element for this position
 					if(currentElement!=element)		//if we've moved to a different element
 					{
-Debug.trace("We've moved to a different element; currentURL: ", currentURL);	//G***del
+Debug.trace("We've moved to a different element; currentURI: ", currentURI);	//G***del
 						currentElement=element;	//show that we have a new current element
 						while(element!=null)  //we'll keep looking up the chain for a link element until we find one or run out of elements
 						{
@@ -115,15 +118,15 @@ Debug.trace("We've moved to a different element; currentURL: ", currentURL);	//G
 //G***del when works									final String href=getLinkElementHRef(element);	//get the href for the element we're over (we don't know if this is a link element, so this may return null)
 								try
 								{
-									final URL url=linkController.getLinkElementURL(xmlDocument, element);	//get the URL for the element we're over (we don't know if this is a link element, so this may return null)
-Debug.trace("url: ", url);	//G***del
+									final URI uri=linkController.getLinkElementURI(xmlDocument, element);	//get the URI for the element we're over (we don't know if this is a link element, so this may return null)
+Debug.trace("URI: ", uri);	//G***del
 //G***del when works									if(url!=currentURL)	//if we're over a different link
-									if(!ObjectUtilities.equals(url, currentURL))	//if we're over a different link (comparing the URLs using the URL.equals() method, if possible)
+									if(!ObjectUtilities.equals(uri, currentURI))	//if we're over a different link (comparing the URIs using the URI.equals() method, if possible)
 									{
 //G***del when works										final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element G***what if this is null?
-										fireEntryExitEvents(editorPane, xmlDocument, currentURL, url, element);	//fire the appropriate events for exiting and entering a link
-										currentURL=url;	//update which link we're over
-										if(url!=null)	//if we're now over a link
+										fireEntryExitEvents(editorPane, xmlDocument, currentURI, uri, element);	//fire the appropriate events for exiting and entering a link
+										currentURI=uri;	//update which link we're over
+										if(uri!=null)	//if we're now over a link
 											newCursor=editorKit.getLinkCursor();	//we'll show the link cursor
 									}
 									else  //if we're still over the same link
@@ -131,9 +134,9 @@ Debug.trace("url: ", url);	//G***del
 										adjustCursor=false; //don't adjust the cursor
 									}
 								}
-								catch(MalformedURLException malformedURLException)  //if the URL could not be formed
+								catch(URISyntaxException uriSyntaxException)  //if the URI could not be formed
 								{
-									Debug.warn(malformedURLException); //continue normally G***should this be somethign just under a warning, since this is a user-caused error?
+									Debug.warn(uriSyntaxException); //continue normally G***should this be something just under a warning, since this is a user-caused error?
 								}
 								break;  //stop looking for links up the hierarchy; we just found one
 							}
@@ -144,8 +147,8 @@ Debug.trace("url: ", url);	//G***del
 						}
 						if(element==null) //if we were unable to find a link element
 						{
-							fireEntryExitEvents(editorPane, xmlDocument, currentURL, null, null);	//fire the appropriate events for exiting and entering a link
-							currentURL=null; //show that we don't currently have a URL
+							fireEntryExitEvents(editorPane, xmlDocument, currentURI, null, null);	//fire the appropriate events for exiting and entering a link
+							currentURI=null; //show that we don't currently have a URI
 						}
 /*G***del when works
 						final String href=getLinkElementHRef(element);	//get the href for the element we're over (we don't know if this is a link element, so this may return null)
@@ -271,30 +274,31 @@ Debug.trace("url: ", url);	//G***del
 //G***bring back when the DTD supports default attributes			return null;	//show that this isn't an XLink element, because it didn't have an "xlink:type" attribute
 	}
 
-	/**Gets the full URL specified element if the specified element
-		represents a link. The href is first calculated and then a URL is created
-		from the base URL specified by the element or one of its ancestors. If
-		a base URL cannot be found in the element hierarchy, the document is
+	/**Gets the full URI specified element if the specified element
+		represents a link. The href is first calculated and then a URI is created
+		from the base URI specified by the element or one of its ancestors. If
+		a base URI cannot be found in the element hierarchy, the document is
 		asked for that value.
 	@param xmlDocument The XML document which contains the element.
 	@param element The element which may be a link element.
-	@return The URL of the link, or <code>null</code> if the element does not
+	@return The URI of the link, or <code>null</code> if the element does not
 		represent a link or if the element's href is not present.
-	@exception MalformedURLException Thrown if the element's href and/or the
-		base URL do not allow a valid URL to be constructed.
+	@exception URISyntaxException Thrown if the element's href and/or the
+		base URI do not allow a valid URI to be constructed.
 	@see #getLinkElementHRef
-	@see XMLDocument#getBaseURL
-	@see XMLStyleConstants#getBaseURL
+	@see XMLDocument#getBaseURI
+	@see XMLStyleConstants#getBaseURI
 	*/
-	protected URL getLinkElementURL(final XMLDocument xmlDocument, final Element element) throws MalformedURLException
+	protected URI getLinkElementURI(final XMLDocument xmlDocument, final Element element) throws URISyntaxException
 	{
 		final String href=getLinkElementHRef(element);  //get the href of the element
 		if(href!=null)  //if there is an href
 		{
-			URL baseURL=XMLStyleConstants.getBaseURL(element.getAttributes()); //get the base URL of the document
-			if(baseURL==null) //if we couldn't found a base URL in the attributes
-				baseURL=xmlDocument.getBaseURL();	//get the base URL from the document
-			return URLUtilities.createURL(baseURL, href);	//convert the href into a full URL, correctly processing URL fragments beginning with "#"
+			URI baseURI=XMLStyleConstants.getBaseURI(element.getAttributes()); //get the base URI of the document
+			if(baseURI==null) //if we couldn't found a base URI in the attributes
+				baseURI=xmlDocument.getBaseURI();	//get the base URI from the document
+						//G***make sure this works for fragments
+			return URIUtilities.createURI(baseURI, href);	//convert the href into a full URI, correctly processing URI fragments beginning with "#"
 		}
 		return null;  //show that we could not find an href for the element
 	}
@@ -402,21 +406,21 @@ protected void activateLink(int pos, JEditorPane editor) {
 	protected HyperlinkEvent createHyperlinkEvent(final JEditorPane editorPane, final XMLDocument xmlDocument, /*G***fix final EventType eventType,*/ /*G***del if not needed String href, */final Element element) //G***fix so that fireEntryExitEvents() can call this
 	{
 //G***del Debug.trace("Inside XMLEditorKit.createHyperlinkEvent() with href of: "+href);	//G***del
-		URL url;	//we'll try get a full URL from the href
-		String description; //we'll store a description of the URL here, or the message we get if we fail to form a URL
+		URI uri;	//we'll try get a full URI from the href
+		String description; //we'll store a description of the URI here, or the message we get if we fail to form a URI
 		try
 		{
-			url=getLinkElementURL(xmlDocument, element);  //get the link URL from the element
-			description=url.toString();  //use the URL as the description //G***fix; this can throw a null pointer exception
+			uri=getLinkElementURI(xmlDocument, element);  //get the link URI from the element
+			description=uri.toString();  //use the URI as the description //G***fix; this can throw a null pointer exception
 		}
-		catch (MalformedURLException m)	//if there are any problems creating a url
+		catch(URISyntaxException uriSyntaxException)	//if there are any problems creating a URI
 		{
-			url=null;	//don't use the URL
-			description=getLinkElementHRef(element);  //store the href that resulted in the invalid URL
+			uri=null;	//don't use the URI
+			description=getLinkElementHRef(element);  //store the href that resulted in the invalid URI
 		}
 //G***change this later to be an XLinkEvent
-			//create a hyperlink event with the specified URL and href
-		final HyperlinkEvent linkEvent=new HyperlinkEvent(editorPane, HyperlinkEvent.EventType.ACTIVATED, url, description);
+			//create a hyperlink event with the specified URI and href
+		final HyperlinkEvent linkEvent=new XMLLinkEvent(editorPane, HyperlinkEvent.EventType.ACTIVATED, uri, description);
 		return linkEvent;	//return the link we created
 	}
 
@@ -425,28 +429,28 @@ protected void activateLink(int pos, JEditorPane editor) {
 		<code>href</code> is not <code>null</code>, an entry event will be fired.
 	@param editorPane The editor pane for which the event belongs and will be fired.
 	@param xmlDocument The document in which the links lie.
-	@param currentURL The URL the element currently represents; used to know
+	@param currentURI The URI the element currently represents; used to know
 		when to generate exit hyperlink events.
-	@param newURL The new link URL, or <code>null</code> if no entry
+	@param newURI The new link URI, or <code>null</code> if no entry
 		event should be fired.
 	@param element The link element.
 	*/
-	protected void fireEntryExitEvents(final JEditorPane editorPane, final XMLDocument xmlDocument, final URL currentURL, final URL newURL, final Element element)
+	protected void fireEntryExitEvents(final JEditorPane editorPane, final XMLDocument xmlDocument, final URI currentURI, final URI newURI, final Element element)
 	{
 //G***del Debug.trace("XMLEditorKit.fireEntryExitEvents() with href of: "+href);	//G***del
-		if(currentURL!=null)	//if we were over a link before
+		if(currentURI!=null)	//if we were over a link before
 		{
 				//create a hyperlink event to represent exiting a hyperlink G***eventually use the common hyperlink event factory
-			final HyperlinkEvent exitEvent=new HyperlinkEvent(editorPane, HyperlinkEvent.EventType.EXITED, currentURL, currentURL.toString());
+			final HyperlinkEvent exitEvent=new XMLLinkEvent(editorPane, HyperlinkEvent.EventType.EXITED, currentURI, currentURI.toString());
 //G***del Debug.trace("ready to fire exit event: "+exitEvent);  //G***del
 			editorPane.fireHyperlinkUpdate(exitEvent);	//fire the exit event
 		}
-		if(newURL!=null)	//if we're over a new link
+		if(newURI!=null)	//if we're over a new link
 		{
-//G***fix		final HyperlinkEvent linkEvent=new HyperlinkEvent(editorPane, HyperlinkEvent.EventType.ACTIVATED, url, description);
+//G***fix		final HyperlinkEvent linkEvent=new HyperlinkEvent(editorPane, HyperlinkEvent.EventType.ACTIVATED, uri, description);
 
 				//create a hyperlink event representing entering a hyperlink G***eventually use the common hyperlink event factory
-			final HyperlinkEvent enteredEvent=new HyperlinkEvent(editorPane, HyperlinkEvent.EventType.ENTERED, newURL, newURL.toString());
+			final HyperlinkEvent enteredEvent=new XMLLinkEvent(editorPane, HyperlinkEvent.EventType.ENTERED, newURI, newURI.toString());
 			editorPane.fireHyperlinkUpdate(enteredEvent);	//fire the enter event
 		}
 	}

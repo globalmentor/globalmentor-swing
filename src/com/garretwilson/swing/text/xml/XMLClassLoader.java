@@ -2,18 +2,17 @@ package com.garretwilson.swing.text.xml;
 
 import java.io.InputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.CodeSource;
 import java.security.SecureClassLoader;
-import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
 import com.garretwilson.io.FileConstants;
 import com.garretwilson.io.InputStreamUtilities;
 import com.garretwilson.lang.JavaConstants;
-import com.garretwilson.net.URLUtilities;
+import com.garretwilson.net.URIUtilities;
 import com.garretwilson.util.Debug;
 
 /**Class loader for retrieving Java classes needed in an XML document. This
@@ -35,10 +34,10 @@ public class XMLClassLoader extends SecureClassLoader implements JavaConstants, 
 	/*The context to be used when loading classes and resources.*/
 	private AccessControlContext accessControlContext;
 
-	/**The base URL to use when loading classes, or <code>null</code> if no base
-		URL should be used.
+	/**The base URI to use when loading classes, or <code>null</code> if no base
+		URI should be used.
 	*/
-	protected final URL baseURL;
+	protected final URI baseURI;
 
 	/**Constructor that takes a Swing XML document which will be used for
 		retrieving class bytes.
@@ -48,29 +47,29 @@ public class XMLClassLoader extends SecureClassLoader implements JavaConstants, 
 	*/
   public XMLClassLoader(final XMLDocument document, final ClassLoader parent)
   {
-		this(document, parent, null); //create an XML class loader without a base URL
+		this(document, parent, null); //create an XML class loader without a base URI
   }
 
 	/**Constructor that takes a Swing XML document which will be used for
-		retrieving class bytes. Accepts a designated base URL to which all classes
+		retrieving class bytes. Accepts a designated base URI to which all classes
 		will be considered relative.
 	@param document The Swing XML document to use in loading classes.
 	@param parent The parent class loader which will be checked to attempt to load
 		a particular class.
-	@param newBaseURL The base URL to which the classes will be considered relative.
+	@param newBaseURI The base URI to which the classes will be considered relative.
 	*/
-  public XMLClassLoader(final XMLDocument document, final ClassLoader parent, final URL newBaseURL)
+  public XMLClassLoader(final XMLDocument document, final ClassLoader parent, final URI newBaseURI)
   {
 //G***perhaps use the document's parent instead of passing a parent
 		super(parent);  //create the parent class
 		xmlDocument=document; //store a reference to the XML document
 		accessControlContext=AccessController.getContext();  //get the current access controller context G***check
-		baseURL=newBaseURL; //store the base URL
+		baseURI=newBaseURI; //store the base URI
   }
 
 
 	/**Finds and loads the class with the specified name from the XML document.
-//G***fix: using the URL search path. Any URLs referring to JAR files are loaded and opened as needed until the class is found.
+//G***fix: using the URI search path. Any URIs referring to JAR files are loaded and opened as needed until the class is found.
 	@param name The name of the class (not the class file).
 	@return The resulting class.
 	@exception ClassNotFoundException Thrown if the class could not be found.
@@ -81,8 +80,8 @@ public class XMLClassLoader extends SecureClassLoader implements JavaConstants, 
 		{
 				//replace '.' with '/' and append ".class"
 			String href=name.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR).concat(String.valueOf(EXTENSION_SEPARATOR)).concat(JavaConstants.CLASS_EXTENSION);
-			if(baseURL!=null) //if we have a base URL
-				href=URLUtilities.createURL(baseURL, href).toString(); //create an href relative to the base URL
+			if(baseURI!=null) //if we have a base URI
+				href=URIUtilities.createURI(baseURI, href).toString(); //create an href relative to the base URI
 			final String finalHRef=href;  //put the href in a variable we wont' modify
 //G***del Debug.trace("XMLClassLoader.findClass() name: "+name+" href: "+href); //G***del
 		  return (Class)AccessController.doPrivileged(new PrivilegedExceptionAction()
@@ -113,17 +112,27 @@ public class XMLClassLoader extends SecureClassLoader implements JavaConstants, 
 								else  //if we didn't receive an input stream
 									throw new ClassNotFoundException(name); //show that we can't find the specified class
 							}
-							catch (IOException e) //if we have problems reading the class
+							catch (IOException ioException) //if we have problems reading the class
 							{
-								throw new ClassNotFoundException(name, e);  //show that we can't load the class because of an I/O error
+								throw new ClassNotFoundException(name, ioException);  //show that we can't load the class because of an I/O error
+							}
+							catch(URISyntaxException uriSyntaxException)
+							{
+								throw new ClassNotFoundException(uriSyntaxException.getMessage(), uriSyntaxException); //show that the class wasn't found
 							}
 						}
 				}, accessControlContext);
 		}
+		catch(URISyntaxException uriSyntaxException)
+		{
+			throw new ClassNotFoundException(uriSyntaxException.getMessage(), uriSyntaxException); //show that the class wasn't found
+		}
+/*G***del if not needed
 		catch(MalformedURLException malformedURLException)
 		{
 	    throw new ClassNotFoundException(malformedURLException.getMessage()); //show that the class wasn't found
 		}
+*/
 		catch (java.security.PrivilegedActionException pae) //if we're not allowed to load this class
 		{
 	    throw new ClassNotFoundException(pae.getException().getMessage()); //show that the class wasn't found

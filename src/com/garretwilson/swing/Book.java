@@ -5,6 +5,7 @@ import java.awt.event.*;  //G***fix for image mouse clicks
 import java.beans.*;
 import java.io.*;
 import java.net.*;
+import java.net.URI;
 import java.text.*;
 import java.util.*;
 import javax.sound.sampled.*;
@@ -753,9 +754,9 @@ Debug.trace("display page count: ", displayPageCount);		  //G***del
 		Debug.trace("Image href: ", href);
 									viewImage(baseRelativeHRef);  //show the image
 								}
-								catch(MalformedURLException malformedURLException)  //we should never get this error
+								catch(URISyntaxException uriSyntaxException)  //we should never get this error
 								{
-									Debug.error(malformedURLException); //report the error
+									Debug.error(uriSyntaxException); //report the error
 								}
 							}
 						}
@@ -879,9 +880,9 @@ Debug.trace("display page count: ", displayPageCount);		  //G***del
 							JMenuItem viewImageMenuItem=popupMenu.add(new ViewImageAction(baseRelativeHRef)); //add an action to view the image
 							popupMenu.addSeparator(); //add a separator
 						}
-						catch(MalformedURLException malformedURLException)  //we should never get this error
+						catch(URISyntaxException uriSyntaxException)  //we should never get this error
 						{
-							Debug.error(malformedURLException); //report the error
+							Debug.error(uriSyntaxException); //report the error
 						}
 					}
 				}
@@ -1246,12 +1247,27 @@ catch(Exception e)
 		default browser. The previous location is stored in the history list.
 	@param url The destination URL.
 	*/
+/*G***fix or del	
 	public void go(final URL url)	//G***fix all this -- this is just a quick kludge to see if it will work
 	{
 Debug.trace("Inside OEBBook.goURL()");	//G***del
-	  storePositionHistory(); //store our position in the history list
+		storePositionHistory(); //store our position in the history list
 Debug.trace("ready to call XMLTextPane.go(URL)");
 		getXMLTextPane().go(url);  //tell the text pane to go to the URL
+	}
+*/
+
+	/**Navigates to specified URI. If the URI is already loaded, it is displayed.
+		If the URI is outside the publication, the location is loaded into the
+		default browser. The previous location is stored in the history list.
+	@param uri The destination URI.
+	*/
+	public void go(final URI uri)	//G***fix all this -- this is just a quick kludge to see if it will work
+	{
+Debug.trace("Inside OEBBook.goURI()");	//G***del
+	  storePositionHistory(); //store our position in the history list
+Debug.trace("ready to call XMLTextPane.go(URI)");
+		getXMLTextPane().go(uri);  //tell the text pane to go to the URI
 	}
 
 	/**Navigates to the specified position. The previous position is stored in
@@ -1271,11 +1287,26 @@ Debug.trace("ready to call XMLTextPane.go(URL)");
 	public void activateLink(final HyperlinkEvent hyperlinkEvent)
 	{
 Debug.trace("Inside OEBBook.activateLink().");
-		final URL hyperlinkURL=hyperlinkEvent.getURL();	//get the hyperlink event's URL
+		final URI hyperlinkURI;	//we'll get the hyperlink event's URI
+		if(hyperlinkEvent instanceof XMLLinkEvent)	//if this is an XML link event
+		{
+			hyperlinkURI=((XMLLinkEvent)hyperlinkEvent).getURI();	//get the XML link event's URI
+		}
+		else
+		{
+			try
+			{
+				hyperlinkURI=new URI(hyperlinkEvent.getURL().toString());	//get the hyperlink event's URI			
+			}
+			catch(URISyntaxException e)	//if we can't get a URI from the URL
+			{
+				return;	//don't process this event 
+			}
+		}
 		try
 		{
 			final XMLDocument xmlDocument=(XMLDocument)getXMLTextPane().getDocument();	//get the loaded document G***should we assume this is an XML document?
-			final MediaType mediaType=xmlDocument.getResourceMediaType(hyperlinkURL.toString());	//get the media type of the resource specified by this hyperlink event
+			final MediaType mediaType=xmlDocument.getResourceMediaType(hyperlinkURI.toString());	//get the media type of the resource specified by this hyperlink event
 Debug.trace("Media type: ", mediaType);	//G***del
 			if(mediaType!=null)	//if we think we know the media type of the file involved
 			{
@@ -1284,14 +1315,14 @@ Debug.trace("Media type: ", mediaType);	//G***del
 				{
 Debug.trace("found an audio file.");
 //G***del; fix				  mouseEvent.consume(); //consume the event so that the mouse click won't be interpreted elsewhere
-					final Clip clip=(Clip)xmlDocument.getResource(hyperlinkURL.toString());	//get and open a clip to the audio
+					final Clip clip=(Clip)xmlDocument.getResource(hyperlinkURI.toString());	//get and open a clip to the audio
 Debug.trace("ready to start clip.");
 					clip.start();	//start the clip playing G***do we need to close it later?
 					return;	//don't do any more processing
 				}
-				else if(topLevelType.equals(MediaType.IMAGE))	//if this is an image media type G***does this work correctly relative to the document base URL?
+				else if(topLevelType.equals(MediaType.IMAGE))	//if this is an image media type G***does this work correctly relative to the document base URI?
 				{
-					viewImage(hyperlinkURL.toString()); //view the image at the given location
+					viewImage(hyperlinkURI.toString()); //view the image at the given location
 					return;	//don't do any more processing
 				}
 			}
@@ -1299,14 +1330,14 @@ Debug.trace("ready to start clip.");
 			//G***check to see if we actually went to the hyperlink; if not, try to use the browser
 			SwingUtilities.invokeLater(new Runnable()	//invoke the hyperlink traversal until a later time in the event thread, so the mouse click won't be re-interpreted when we arrive at the hyperlink destination
 			{
-				public void run() {go(hyperlinkURL);}	//if the hyperlink was not for a special-case URL, just go to the URL
+				public void run() {go(hyperlinkURI);}	//if the hyperlink was not for a special-case URL, just go to the URL
 			});
 //G***del when works			go(hyperlinkURL);	//if the hyperlink was not for a special-case URL, just go to the URL
 		}
 		catch(Exception exception)	//if anything goes wrong with any of this G***is this too broad?
 		{
 			Debug.traceStack(exception);  //G***fix
-			Debug.error("Error activating hyperlink "+hyperlinkURL+": "+exception);	//G***fix; this is an important error which should be reported back to the user in a consistent way
+			Debug.error("Error activating hyperlink "+hyperlinkURI+": "+exception);	//G***fix; this is an important error which should be reported back to the user in a consistent way
 		}
 	}
 
@@ -1324,6 +1355,10 @@ Debug.trace("ready to start clip.");
 			{
 				final Image image=(Image)xmlDocument.getResource(href);	//get the image resource G***check to make sure what is returned is really an image
 				viewImage(image, href); //view the image
+			}
+			catch(URISyntaxException ex)  //G***fix
+			{
+				Debug.error(ex);
 			}
 		  catch(IOException ex)  //G***fix
 			{
