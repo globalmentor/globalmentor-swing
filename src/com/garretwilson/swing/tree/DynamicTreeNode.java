@@ -60,6 +60,7 @@ public abstract class DynamicTreeNode extends DefaultMutableTreeNode
 		if(!isChildNodesLoaded()) //if the children are not yet loaded
 		{
 			isChildNodesLoaded=true;  //show that we've loaded the child nodes (this is done before the actual loading so that future calls to getChildCount() won't cause reloading)
+			removeAllChildren();	//make sure we've removed all children before trying to load the children
 			loadChildNodes(); //load the child nodes
 		}
 	}  
@@ -68,5 +69,12 @@ public abstract class DynamicTreeNode extends DefaultMutableTreeNode
 		appropriately load children.
 	*/
 	protected abstract void loadChildNodes();
+	
+	/**Unloads all child nodes and sets the state to unloaded.*/
+	public void unloadChildNodes()
+	{
+		removeAllChildren();	//remove all the children
+		isChildNodesLoaded=false;	//show that we have no nodes loaded
+	}
 
 }
