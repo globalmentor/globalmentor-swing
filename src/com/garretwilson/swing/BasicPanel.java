@@ -9,10 +9,12 @@ import java.util.prefs.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
+
 import com.garretwilson.awt.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.swing.event.*;
 import com.garretwilson.util.*;
+import static com.garretwilson.util.ArrayUtilities.*;
 
 /**An extended panel that has extra features beyond those in <code>JPanel</code>.
 <p>The panel stores properties and fires property change events when a
@@ -38,7 +40,8 @@ import com.garretwilson.util.*;
 	height rather than allowing any parent scroll width and height. This behavior
 	can be modified.</p>
 <p>When this panel is enabled or disabled, it updates its status through
-	<code>updateStatus()</code>.</p> 
+	<code>updateStatus()</code>.</p>
+<p>The panel keeps an event listener list for convenient adding and removal of specific event listener types.</p>
 <p>Bound properties:</p>
 <dl>
 	<dt><code>BasicPanel.ICON_PROPERTY</code> (<code>Icon</code>)</dt>
@@ -253,6 +256,52 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 			updateStatus();	//update the status
 		}
 	}
+
+	/**The lazily-created list of event listeners.*/
+	private EventListenerList eventListenerList=null;
+
+		/**@return The lazily-created list of event listeners.*/
+		private EventListenerList getEventListenerList()
+		{
+			if(eventListenerList==null)	//if there is yet no event listener list
+			{
+				eventListenerList=new EventListenerList();	//create a new event listener list
+			}
+			return eventListenerList;	//return the event listener list
+		}
+
+		/**Adds the listener as a listener of the specified type.
+		@param eventListenerType The type of the listener to be added.
+		@param eventListener the listener to be added
+		*/
+		protected <T extends EventListener> void addEventListener(final Class<T> eventListenerType, T eventListener)
+		{
+			getEventListenerList().add(eventListenerType, eventListener);	//add the listener to the list of event listeners
+		}
+	
+		/**Removes the listener as a listener of the specified type.
+		@param eventListenerType the type of the listener to be removed
+		@param eventListener the listener to be removed
+		*/
+	  public <T extends EventListener> void removeEventListener(final Class<T> eventListenerType, T eventListener)
+		{
+			getEventListenerList().remove(eventListenerType, eventListener);	//remove the listener from the list of event listeners
+		}
+
+		/**@return An array of all the listeners of the given type. 
+		@exception ClassCastException if the supplied class is not assignable to <code>EventListener</code>.
+		*/
+		protected <T extends EventListener> T[] getEventListeners(final Class<T> eventListenerType)
+		{
+			if(eventListenerList!=null)	//if we have a list of event listeners
+			{
+				return eventListenerList.getListeners(eventListenerType);	//ask the list of event listeners to send back all event listeners of the given type
+			}
+			else	//if we have no list of event listeners
+			{
+				return emptyArray(eventListenerType);	//send back an empty array
+			}
+		}
 
 	/**Default constructor that uses a <code>FlowLayout</code>.
 	@see #FlowLayout

@@ -4,12 +4,15 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.URI;
+import java.util.prefs.Preferences;
+
 import javax.mail.internet.ContentType;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
 import com.garretwilson.io.*;
+import static com.garretwilson.lang.JavaConstants.*;
 import static com.garretwilson.lang.ObjectUtilities.*;
 import com.garretwilson.sun.demo.jfc.notepad.ElementTreePanel;
 import com.garretwilson.swing.*;
@@ -196,6 +199,17 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 	/**Action to display the Unicode table.*/
 	protected static class DisplayUnicodeTableAction extends TextAction
 	{
+		/**The text component that last displayed the Unicode frame.*/
+		private JTextComponent textComponent=null;
+
+			/**@return The text component that last displayed the Unicode frame.*/
+			protected JTextComponent getTextComponent() {return textComponent;}
+
+		/**The frame used for displaying the Unicode, or <code>null</code> if the frame has not yet been created.*/
+		private BasicFrame frame=null;
+	
+		/**The Unicode panel.*/
+		private UnicodePanel unicodePanel=null;
 
 		/**Creates a Unicode table action with the appropriate name.
 		@param name The name of the action.
@@ -210,8 +224,40 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 		*/
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
-//TODO fix			new BasicFrame("Unicode", new JScrollPane(new UnicodePanel())).setVisible(true);	//show a new frame showing elements G***i18n
-			BasicOptionPane.showMessageDialog(null, new JScrollPane(new UnicodePanel()), "Unicode", BasicOptionPane.INFORMATION_MESSAGE);	//G***i18n
+			textComponent=getTextComponent(actionEvent);	//save the text component that generated this event
+			if(frame==null)	//if no frame has been created
+			{
+				unicodePanel=new UnicodePanel();	//create a new Unicode panel
+				unicodePanel.addActionListener(new ActionListener()	//add an action listener to insert characters when selected in the panel
+						{
+							public void actionPerformed(final ActionEvent actionEvent)	//when an action is performed
+							{
+								final int codePoint=unicodePanel.getSelectedCodePoint();	//get the selected code point
+								final JTextComponent textComponent=getTextComponent();	//get the last-known text component
+								if(textComponent!=null && codePoint>=0)	//if we have a text component (we should always have one)
+								{
+									if(codePoint<=MAX_CHAR)	//if this code point isn't over the Java character limit TODO fix for extended Unicode code points
+									{
+										textComponent.replaceSelection(String.valueOf((char)codePoint));	//insert the character value of the code point
+									}
+								}
+//TODO del when works					JOptionPane.showMessageDialog(UnicodePanel.this, e.getActionCommand());
+							}
+						});
+				frame=new BasicFrame("Unicode", new JScrollPane(unicodePanel));	//create a new frame showing Unicode G***i18n
+				try
+				{
+					frame.setPreferences(Preferences.userNodeForPackage(getClass()));	//give the frame unique preferences
+				}
+				catch(final SecurityException securityException)	//if we can't get preferences
+				{
+					Debug.warn(securityException);	//don't do anything drastic
+				}
+				frame.setAlwaysOnTop(true);	//make the frame appear always on top
+			}
+			frame.setVisible(true);	//show the frame
+			frame.pack();	//pack the contents of the frame
+//TODO del when works			BasicOptionPane.showMessageDialog(null, new JScrollPane(new UnicodePanel()), "Unicode", BasicOptionPane.INFORMATION_MESSAGE);	//G***i18n
 		}
 	}
 

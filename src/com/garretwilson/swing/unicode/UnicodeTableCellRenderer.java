@@ -41,10 +41,10 @@ public class UnicodeTableCellRenderer extends DefaultTableCellRenderer
 				if(unicodeCharacter.isControl())	//if this is a control character
 				{
 //G***del					text="<html>"+unicodeCharacter.getUniqueCharacterName()+"</html>";	//use the unique character name of the character TODO update the font, maybe					
-					text=unicodeCharacter.getCharacterName();	//show "<control>" in place of the character
+//G***del					text=unicodeCharacter.getCharacterName();	//show "<control>" in place of the character
+					text="CTL";	//show "CTL" in place of the character TODO use an icon
 					final Font baseFont=getFont();	//get the current font
-					final Font newFont=baseFont.deriveFont((float)Math.round(baseFont.getSize()/2));	//reduce the size of the normal text
-					setFont(newFont);	//change the font
+					setFont(baseFont.deriveFont((float)Math.round(baseFont.getSize()/2)));	//reduce the size of the normal text
 				}
 				else	//if this is not a control character
 				{
@@ -64,6 +64,8 @@ public class UnicodeTableCellRenderer extends DefaultTableCellRenderer
 			setValue(text);	//update the value
 			setToolTipText(description);	//show the description in the tooltip
 		}
+		setHorizontalAlignment(CENTER);	//center the text horizontally
+		setVerticalTextPosition(CENTER);	//center the text vertically
 		return component;	//return the render component
 	}
 	

@@ -16,21 +16,21 @@ public abstract class AbstractToggleAction extends AbstractAction
 {
 
 	/**The <code>Boolean</code> key used for storing the selected state of the action.*/
-	public static final String SELECTED="selected";
+	public static final String SELECTED_KEY="selected";
 
 	/**@return <code>true</code> if the selected property value is <code>true</code>.
-	@see #SELECTED
+	@see #SELECTED_KEY
 	*/
-	public boolean isSelected() {return BooleanUtilities.booleanValue(getValue(SELECTED));}
+	public boolean isSelected() {return BooleanUtilities.booleanValue(getValue(SELECTED_KEY));}
 
 	/**Sets the selected state of the action. Any component that represents this
 		action should automatically update its visual status in response to a
 		change of this property.
-	@see #SELECTED
+	@see #SELECTED_KEY
 	*/
 	public void setSelected(final boolean selected)
 	{
-		putValue(SELECTED, Boolean.valueOf(selected));	//store a boolean value indicating the new selected state		
+		putValue(SELECTED_KEY, Boolean.valueOf(selected));	//store a boolean value indicating the new selected state		
 	}
 
 	/**The group with which the action is associated, or <code>null</code> if no

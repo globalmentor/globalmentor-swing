@@ -18,6 +18,9 @@ import javax.swing.event.EventListenerList;
 public class ActionList extends JList
 {
 
+	/**The key for mapping the action-firing action in the input and action maps.*/
+	public final static String ACTION_KEY="action";
+
 	/**The list of action listeners.*/
 	protected final EventListenerList actionListenerList=new EventListenerList();
 
@@ -84,17 +87,11 @@ public class ActionList extends JList
 					}
 				 }
 			});
-		addKeyListener(new KeyAdapter() //create a new key adapter and add it as a listener
-			{
-				public void keyReleased(KeyEvent keyEvent)	//listen for a key press; listening for a key release would create actions from residue key releases from other components
-				{
-					if(keyEvent.getKeyCode()==KeyEvent.VK_ENTER)  //if this was the enter key
-					{
-						fireActionPerformed();  //fire an action performed event
-						keyEvent.consume(); //consume the event so that it won't cause other effects elsewhere
-					}
-				}
-		  });
+		final InputMap inputMap=getInputMap();	//get the input map		
+		final ActionMap actionMap=getActionMap();	//get the action map		
+		final KeyStroke enterKeyStroke=KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);	//get the keystroke for the Enter key
+		inputMap.put(enterKeyStroke, ACTION_KEY);	//map the Enter keystroke to the action key 
+		actionMap.put(ACTION_KEY, new ActionAction());	//map the action key to an action-firing action
 	}
 
 	/**Notifies all listeners that have registered interest for notification on
@@ -133,7 +130,7 @@ public class ActionList extends JList
 	@param actionEvent The <code>ActionEvent</code> object.
 	@see EventListenerList
 	*/
-  protected void fireActionPerformed(ActionEvent actionEvent)
+  protected void fireActionPerformed(final ActionEvent actionEvent)
 	{
 		final Object[] listeners=listenerList.getListenerList();  //get the array of listeners
 		ActionEvent fireActionEvent=null; //we won't create an action event
@@ -145,7 +142,7 @@ public class ActionList extends JList
 				if(fireActionEvent==null) //if we haven't yet created an event to fire
 				{
 				  final String actionCommand=actionEvent.getActionCommand();  //get the passed action command
-          fireActionEvent=new ActionEvent(ActionList.this,  //G***why does AbstractButton use AbstractButton.this and not just this?
+          fireActionEvent=new ActionEvent(ActionList.this,
 						  ActionEvent.ACTION_PERFORMED,
 						  actionCommand,
 						  actionEvent.getModifiers());  //create a new event for firing, using the parameters of the passed event
@@ -154,5 +151,13 @@ public class ActionList extends JList
 		  }
 		}
   }
+
+	/**Action for firing an action event
+	@author Garret Wilson
+	*/
+	protected class ActionAction extends AbstractAction
+	{
+		public void actionPerformed(final ActionEvent actionEvent) {fireActionPerformed();}	//fire a new action
+	}
 
 }
