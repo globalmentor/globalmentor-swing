@@ -8,6 +8,7 @@ import javax.swing.text.*;
 
 import com.garretwilson.swing.text.ContainerBoxView;
 import com.garretwilson.swing.text.ContainerView;
+import com.garretwilson.swing.text.DocumentUtilities;
 import com.garretwilson.swing.text.FragmentViewFactory;
 import static com.garretwilson.swing.text.ViewUtilities.*;
 import static com.garretwilson.swing.text.SwingTextUtilities.*;
@@ -240,8 +241,8 @@ Debug.trace(); //G***testing
 					//G***testing fractional metrics; should this be in XMLInlineView?
 			final Graphics2D graphics2D=(Graphics2D)graphics;  //cast to the 2D version of graphics
 			  //turn on fractional metrics G***probably do this conditionally, based on some sort of flag
-			graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-//TODO fix		  graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//TODO del; moved to XMLCSSViewPainter			graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+//TODO del; moved to XMLCSSViewPainter		  graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			XMLCSSViewPainter.paint(graphics, allocation, this, getAttributes());	//paint our CSS-specific parts
 		  super.paint(graphics, allocation);  //let the super class paint the rest of the paragraph
 		}

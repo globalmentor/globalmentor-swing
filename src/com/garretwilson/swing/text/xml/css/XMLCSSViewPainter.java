@@ -5,9 +5,12 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.awt.geom.Rectangle2D;
 import javax.swing.text.*;
+
+import com.garretwilson.swing.text.DocumentUtilities;
 import com.garretwilson.swing.text.FragmentView;
 import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.text.xml.XMLListView;
+import com.garretwilson.swing.text.xml.XMLStyleUtilities;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities;
 import com.garretwilson.util.Debug;
@@ -32,9 +35,14 @@ public class XMLCSSViewPainter implements XMLCSSConstants
 	*/
 	public static void paint(final Graphics graphics, final Shape allocation, final View view, final AttributeSet attributeSet)
 	{
+		final boolean antialias=DocumentUtilities.isAntialias(view.getDocument());	//see if the document specifies antialiasing
+//TODO del when works		final boolean isAntialias=XMLStyleUtilities.isAntialias(attributeSet);	//see if we should turn antialias on or off
 		final Graphics2D graphics2D=(Graphics2D)graphics;  //cast to the 2D version of graphics
-		  //turn antialiasing on G***probably do this conditionally, based on some sort of flag
-		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+	  //turn on fractional metrics G***probably do this conditionally, based on some sort of flag
+		graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+		  //turn antialiasing on
+		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialias? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
+//TODO del when works		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		//get the allocation as a rectangle
 		final Rectangle allocRect=(allocation instanceof Rectangle) ? (Rectangle)allocation : allocation.getBounds();
 		final boolean isFragmentView=view instanceof FragmentView;  //see if this view is a fragement of a larger, broken view

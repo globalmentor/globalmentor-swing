@@ -47,6 +47,7 @@ import com.garretwilson.net.URIUtilities;
 import com.garretwilson.rdf.RDF;  //G***move
 import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.event.ProgressListener;
+import com.garretwilson.swing.text.AttributeSetUtilities;
 import com.garretwilson.swing.text.DocumentConstants;
 import com.garretwilson.swing.text.DocumentUtilities;
 import com.garretwilson.swing.text.SwingTextUtilities;
@@ -339,7 +340,7 @@ Debug.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n
 	*/
 	public Font getFont(AttributeSet attributeSet)
 	{
-//G***del		Debug.trace("Getting font from attributes: ", com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(attributeSet));  //G***del
+Debug.trace("Getting font from attributes: ", AttributeSetUtilities.getAttributeSetString(attributeSet));  //G***del
 
 //G***maybe use		sun.java2d.SunGraphicsEnvironment.getLocalGraphicsEnvironment()
 
@@ -404,6 +405,7 @@ Debug.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n
 			size-=2;	//reduce the font size by two
 */
 		final float zoomFactor=DocumentUtilities.getZoom(this, DocumentConstants.DEFAULT_ZOOM);  //get the zoom factor, assuming a default value if no value is specified
+Debug.trace("zoom factor", zoomFactor);
 /*G***del
 		  //we'll try to get the zoom factor from the text pane we're embedded in
 		final float zoomFactor=DocumentUtilities.hasZoomFactor(this)
@@ -418,6 +420,7 @@ Debug.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n
 			zoomFactor=1.20f; //assume a zoom of 120%
 */
 		size*=zoomFactor;	//increase the font size by the specified amout
+Debug.trace("new size", size);
 
 		StyleContext styleContext=((StyleContext)getAttributeContext());  //get the style context to be used for retrieving fonts
 

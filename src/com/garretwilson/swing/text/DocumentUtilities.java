@@ -2,7 +2,11 @@ package com.garretwilson.swing.text;
 
 import java.net.URI;
 
+import javax.swing.text.AttributeSet;
 import javax.swing.text.Document;
+import javax.swing.text.MutableAttributeSet;
+
+import com.garretwilson.lang.BooleanUtilities;
 import com.garretwilson.rdf.RDF;
 
 /**A collection of utility methods for working with Swing text
@@ -72,6 +76,24 @@ public class DocumentUtilities implements DocumentConstants
 	public static void setRDF(final Document document, final RDF rdf)
 	{
 		document.putProperty(RDF_PROPERTY, rdf); //store the RDF in the document
+	}
+
+	/**Retrieves the antialias setting of the document.
+	@param document The document from which to retrieve the property.
+	@return <code>true</code> if the antialiased attribute is set to <code>true</code>, else <code>false</code>.
+	*/
+	public static boolean isAntialias(final Document document)
+	{
+		return BooleanUtilities.booleanValue(document.getProperty(ANTIALIAS_PROPERTY)); //get the property from the document as a boolean value
+	}
+
+	/**Sets the antialias property.
+	@param document The document the property of which to set.
+	@param antialias <code>true</code> if text should be antialiased, else <code>false</code>.
+	*/
+	public static void setAntialias(final Document document, final boolean antialias)
+	{
+		document.putProperty(ANTIALIAS_PROPERTY, Boolean.valueOf(antialias)); //store the antialias property in the document
 	}
 
 	/**Retrieves the zoom factor.

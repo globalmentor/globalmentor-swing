@@ -94,7 +94,7 @@ public class XMLInlineView extends GlyphView implements TabableView
 	protected void synchronize()
 	{
 //G***del Debug.trace("Inside inline synchronize"); //G***del
-		if(GlyphFont==null)	//G***probably later change to use a list of fonts
+//TODO fix for zoom change		if(GlyphFont==null)	//G***probably later change to use a list of fonts
 			setPropertiesFromAttributes();	//calculate our properties from our attributes
 	 }
 
@@ -264,6 +264,8 @@ public class XMLInlineView extends GlyphView implements TabableView
 	*/
 	public Font getFont()
 	{
+//TODO fix		return ((StyledDocument)getDocument()).getFont(getAttributes());	//ask the document for the font
+//TODO testing to fix antialias and zoom changes
 		synchronize();	//make sure we have the correct cached property values.
 		return GlyphFont;	//return the font
 	}

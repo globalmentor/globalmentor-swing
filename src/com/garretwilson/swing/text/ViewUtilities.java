@@ -1,5 +1,6 @@
 package com.garretwilson.swing.text;
 
+import java.awt.Container;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,7 +117,7 @@ public class ViewUtilities
 		along with the parents of all its children.
 	@see View#setParent
 	*/
-	public static void setParentHierarchyNull(final View view)
+	public static void setParentHierarchyNull(final View view)	//TODO del if not needed
 	{
 //G***del Debug.trace("View has child views: ", view.getViewCount()); //G***del
 		for(int i=view.getViewCount()-1 ; i>=0; --i) //look at each child view
@@ -126,6 +127,21 @@ public class ViewUtilities
 			setParentHierarchyNull(view.getView(i));  //set the hierarchy of the child view to null
 		}
 		view.setParent(null); //show that this view has no parent
+	}
+
+	/**Invalidates the given view and asks the container to repaint itself.
+	@param boxView The box view the layout of which should be recalculated.
+	@see BoxView#layoutChanged(int)
+	*/
+	public static void relayout(final BoxView boxView)
+	{
+		boxView.layoutChanged(BoxView.X_AXIS);	//invalidate the view's horizontal axis
+		boxView.layoutChanged(BoxView.Y_AXIS);	//invalidate the view's our vertical axis
+		final Container container=boxView.getContainer();	//get a reference to the view's container
+		if(container!=null)	//if the view is in a container
+		{
+			container.repaint();	//tell the container to repaint itself
+		}
 	}
 
 	/**Traverses the entire child hierarchy of the given view and, if any children

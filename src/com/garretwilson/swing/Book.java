@@ -1714,7 +1714,7 @@ Debug.trace("ready to start clip.");
 		getStatusBar().setStatus("Searching...");	//G***testing; i18n G***doesn't work, because this is in a separate AWT thread
 		try
 		{
-			matchOffset=getXMLTextPane().search(searchText, searchOffset);  //G***testing; comment; don't access deeply
+			matchOffset=getXMLTextPane().search(searchText, searchOffset);  //ask the XML text pane to search for text
 		}
 		finally
 		{

@@ -33,6 +33,7 @@ import org.w3c.dom.DocumentFragment;
 import com.garretwilson.applet.*;
 import com.garretwilson.awt.EventQueueUtilities;
 import com.garretwilson.io.*;
+import com.garretwilson.lang.CharSequenceUtilities;
 import com.garretwilson.net.URIConstants;
 import com.garretwilson.net.URIUtilities;
 import com.garretwilson.net.URLUtilities;
@@ -292,8 +293,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 				final XMLPagedView pagedView=getPagedView();  //get a reference to our paged view
 				if(pagedView!=null)  //if we have a paged view
 				{
-//G***del Debug.trace("ready to relayout"); //G***del
-//TODO fix relayout					pagedView.relayout();  //relayout the paged view
+					pagedView.repaginate();  //relayout the paged view TODO use something more generic for when we don't have a paged view
 				}
 			}
 		}
@@ -329,14 +329,14 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 //G***del				final AttributeSet pagedViewAttributeSet=pagedView.getAttributes();  //get the paged view's attribute set
 //G***del				if(pagedViewAttributeSet instanceof MutableAttributeSet)  //if we can change the paged view's attributes
 				antialias=newAntialias; //set the new antialias status variable so that we can set whatever new document is installed
+				DocumentUtilities.setAntialias(getDocument(), newAntialias);  //store the new antialias setting in the document
 				final XMLPagedView pagedView=getPagedView();  //get a reference to our paged view
 				if(pagedView!=null)  //if we have a paged view
 				{
-//G***fix					XMLStyleConstants.setAntialias((MutableAttributeSet)pagedView.getAttributes(), newAntialias);  //set the view's antialias property
-Debug.trace("Ready to relayout");
+//TODO del					XMLStyleUtilities.setAntialias((MutableAttributeSet)pagedView.getAttributes(), newAntialias);  //set the view's antialias property
 //G***fix, if needed				  pagedView.changedUpdate(new javax.swing.text.AbstractDocument.DefaultDocumentEvent(0, getDocument().getLength(), DocumentEvent.EventType.CHANGE), getBounds(), pagedView.getViewFactory());  //send a synthetic changeUpdate() so that all the children and layout strategies can get a chance to reinitialize
 
-//TODO fix relayout					pagedView.relayout();  //relayout the paged view
+					pagedView.repaginate();  //relayout the paged view TODO use something more generic for when we don't have a paged view
 				}
 /*G***fix
 				final XMLPagedView pagedView=getPagedView();  //get a reference to our paged view
@@ -374,10 +374,8 @@ Debug.trace("Ready to relayout");
 		{
 			resetSearchPosition();  //reset our search position, removing the search highlights
 			searchOffset=newSearchOffset; //update the search offset
-//G***del			searchHighlighter.removeAllHighlights();  //remove all highlights from previous searches
 				//highlight the new search position
 			getHighlighter().addHighlight(newSearchOffset, newSearchOffset+newSearchLength, searchHighlightPainter);
-//G***fix			searchHighlighter.addHighlight(newSearchOffset, newSearchOffset+newSearchLength, searchHighlightPainter);
 		}
 
 		/**Resets the search position so that the next search will be performed as
@@ -388,17 +386,6 @@ Debug.trace("Ready to relayout");
 			searchOffset=-1; //reset the search offset to -1
 				//remove all highlights from previous searches
 		  TextComponentUtilities.removeHighlights(this, searchHighlightPainter);
-/*G***del when works
-		  final Highlighter highlighter=getHighlighter(); //get the current highlighter
-				//remove all highlights from previous searches
-			Highlighter.Highlight[] highlightArray=highlighter.getHighlights(); //get an array of highlights
-			for(int i=0; i<highlightArray.length; ++i)  //look at each highlight
-			{
-				final Highlighter.Highlight highlight=highlightArray[i];  //get a reference to this height
-				if(highlight.getPainter()==searchHighlightPainter) //if this is a search highlight
-				  highlighter.removeHighlight(highlight);		//remove the search highlight
-			}
-*/
 		}
 
 	/**The length of the last search match, or zero if there has been no match.*/
@@ -409,7 +396,7 @@ Debug.trace("Ready to relayout");
 //G***del if not needed		public int getSearchLength() {return searchLength;}
 
 	/**A map of view factories, each keyed to a namespace URI string.*/
-	private final Map namespaceViewFactoryMap=new HashMap();	//G***fix; this is accessed through a complex sequence from the superclass and is not yet initialized
+	private final Map<String, ViewFactory> namespaceViewFactoryMap=new HashMap<String, ViewFactory>();	//G***fix; this is accessed through a complex sequence from the superclass and is not yet initialized
 
 		/**Registers a view factory for a particular namespace URI. These will be
 		  used by any installed <code>XMLEditorKit</code>.
@@ -450,7 +437,7 @@ Debug.trace("Current installed editor kit: ", getEditorKit().getClass().getName(
 		*/
 		public ViewFactory getViewFactory(final String namespaceURI)
 		{
-			return (ViewFactory)namespaceViewFactoryMap.get(namespaceURI); //return a view factory for the given namespace, if one has been registered
+			return namespaceViewFactoryMap.get(namespaceURI); //return a view factory for the given namespace, if one has been registered
 		}
 
 		/**@return An iterator to all the namespaces to which view factories have
@@ -463,7 +450,7 @@ Debug.trace("Current installed editor kit: ", getEditorKit().getClass().getName(
 		}
 
 	/**A map of link controllers, each keyed to a namespace URI string.*/
-	private Map namespaceLinkControllerMap=new HashMap();
+	private Map<String, XMLLinkController> namespaceLinkControllerMap=new HashMap<String, XMLLinkController>();
 
 		/**Registers a link controller for a particular namespace URI. These will be
 		  used by any installed <code>XMLEditorKit</code>.
@@ -493,7 +480,7 @@ Debug.trace("Current installed editor kit: ", getEditorKit().getClass().getName(
 		*/
 		public XMLLinkController getLinkController(final String namespaceURI)
 		{
-			return (XMLLinkController)namespaceLinkControllerMap.get(namespaceURI); //return a link controller for the given namespace, if one has been registered
+			return namespaceLinkControllerMap.get(namespaceURI); //return a link controller for the given namespace, if one has been registered
 		}
 
 		/**@return An iterator to all the namespaces to which link controllers have
@@ -636,7 +623,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		DocumentUtilities.setBaseURI(document, getBaseURI());	//store our base URI in the document
 		DocumentUtilities.setPaged(document, isPaged());  //store the new paged value in the document
 		DocumentUtilities.setZoom(document, getZoom());  //store the zoom factor in the document
-//G***del		document.putProperty(XMLDocument.ZOOM_FACTOR_PROPERTY, new Float(getZoomFactor())); //store the zoom factor in the document
+		DocumentUtilities.setAntialias(document, isAntialias());  //store the antialias setting in the document
 		super.setDocument(document);  //set the document normally
 	}
 
@@ -1724,22 +1711,6 @@ System.out.println("XMLTextPane just changed the page index from: "+oldPageIndex
 			getPagedView().goPreviousPage();	//tell it to go to the previous page
 	}
 
-	/**Navigates to the specified URL. If the URL is already loaded, it is displayed.
-		If the URL is outside the publication, the location is loaded into the
-		default browser.
-	@param url The destination URL.
-	*/
-/*G***fix or del	
-	public void go(final URL url)
-	{
-			catch(URISyntaxException uriSyntaxException)
-			{
-				Debug.error(uriSyntaxException);	//G***fix				
-			}
-		
-	}
-*/	
-
 	/**Navigates to the specified URI. If the URI is already loaded, it is displayed.
 		If the URI is outside the publication, the location is loaded into the
 		default browser.
@@ -1751,16 +1722,11 @@ Debug.trace("Inside XMLTextPane.goURI()");	//G***del
 		final Document document=getDocument();  //get the document associated with the text pane
 		if(document instanceof XMLDocument) //if this is an XML document
 		{
-//G***del			final XMLDocument xmlDocument=(XMLDocument)document;  //case the document to an XML document
+			final XMLDocument xmlDocument=(XMLDocument)document;  //case the document to an XML document
 				//cast the document to an XML document and get the element that the URI represents, if possible
-			final Element element=((XMLDocument)document).getElement(XMLStyleUtilities.TARGET_URI_ATTRIBUTE_NAME, uri);
+			final Element element=xmlDocument.getElement(XMLStyleConstants.TARGET_URI_ATTRIBUTE_NAME, uri);
 			if(element!=null)	//if we found a matching element in the document
 			{
-/*G***del
-try{
-Debug.notify("For target ID: "+url+" the text is "+getOEBTextPane().getDocument().getText(element.getStartOffset(), 5)+" and the offset is: "+element.getStartOffset());
-}catch(Ex
-*/
 			  final int offset=element.getStartOffset(); //get the starting position of the element
 				go(offset);  //go to the beginning of the element
 			}
@@ -1783,13 +1749,11 @@ Debug.notify("For target ID: "+url+" the text is "+getOEBTextPane().getDocument(
 	*/
 	public void go(final int offset)
 	{
-/*TODO fix
 		final int pageIndex=getPagedView().getPageIndex(offset); //get the page index of the specified position
-		if(pageIndex!=-1)
+		if(pageIndex>=0)	//if the offset lies on a valid page
 		{
-		  setPageIndex(pageIndex);	//navigate to the specified page G***what if going to this page puts us on the wrong index?
+		  setPageIndex(pageIndex);	//navigate to the specified page
 		}
-*/
 	}
 
 	/**Searches the document for the given text and returns its first
@@ -1823,43 +1787,39 @@ Debug.notify("For target ID: "+url+" the text is "+getOEBTextPane().getDocument(
 	*/
 	public int search(final String searchText, int searchOffset)
 	{
-		final Document document=getDocument();  //get a reference to the document
-		final int documentLength=document.getLength();  //find out how long the document is
 		if(searchOffset==NEXT_SEARCH_OFFSET)  //if they want to start searching after the results of the last search
 		{
 			searchOffset=getSearchOffset(); //get the current search offset
 			if(searchOffset>=0) //if we have a valid search offset (that is, the last search returned something valid
-				++searchOffset; //we'll start searchig at a different location next time
+				++searchOffset; //we'll start searching at a different location next time
 			else  //if there was no search position last time, meaning we need to start from scratch
 				searchOffset=getPageStartOffset(getPageIndex());  //start searching at the beginning of the first showing page
 		}
-		if(searchOffset<0 || searchOffset>=documentLength)  //if the search position is invalid
-			return -1;  //we can't search outside the document range
-
-		try
+		final Document document=getDocument();  //get a reference to the document
+		final int documentLength=document.getLength();  //find out how long the document is
+		if(searchOffset>=0 && searchOffset<documentLength)	//if the search position is valid
 		{
-			final String documentText=document.getText(0, documentLength).toUpperCase();  //G***fix; this seems very bad
-	/*G***fix
-			final Segment documentSegment=new Segment();  //create a segment to hold the entire text of the document
-			document.getText(0, document.getLength(), documentSegment)
-	*/
-			searchOffset=documentText.indexOf(searchText.toUpperCase(), searchOffset); //G**testing
-/*TODO fix
-			if(searchOffset!=-1) //if a match was found
+			try
 			{
-				final int searchPageIndex=getPageIndex(searchOffset);  //get the page index of this offset
-				if(!isPageShowing(searchPageIndex))  //if the match is on a page that isn't showing
-					setPageIndex(searchPageIndex); //change to the page on which the match lies; this will reset our search position, but we will immediately update it
-//G***del Debug.trace("Setting search offset to: "+searchOffset);  //G***del
-				setSearchPosition(searchOffset, searchText.length());  //update the search position, which updates our highlights
-//G***del Debug.trace("Search offset is now: "+getSearchOffset());  //G***del
+				final String documentText=document.getText(0, documentLength).toLowerCase();  //TODO reimplement searching, perhaps with custom content that allows regex searching 
+				searchOffset=documentText.indexOf(searchText.toLowerCase(), searchOffset); //see if the search text is within the document string, ignoring case TODO use a i18n algorithm
+				if(searchOffset>=0) //if a match was found
+				{
+					final int searchPageIndex=getPageIndex(searchOffset);  //get the page index of this offset
+					if(!isPageShowing(searchPageIndex))  //if the match is on a page that isn't showing
+						setPageIndex(searchPageIndex); //change to the page on which the match lies; this will reset our search position, but we will immediately update it
+					setSearchPosition(searchOffset, searchText.length());  //update the search position, which updates our highlights
+				}
+				return searchOffset;	//return the offset representing the result of the serach
 			}
-*/
-			return searchOffset;
+			catch(final BadLocationException badLocationException) //since we're controlling everything, we should never get a bad location
+			{
+				throw new AssertionError(badLocationException);
+			}
 		}
-		catch(BadLocationException e) //since we're controlling everything, we should never get a bad location
+		else	//if the search position is invalid
 		{
-			return -1;  //show that the text was not found (but we should never encounter this error)
+			return -1;  //we can't search outside the document range
 		}
 	}
 

@@ -254,7 +254,7 @@ public class XMLStyleUtilities extends StyleUtilities implements XMLStyleConstan
 	@return <code>true</code> if the resolved antialiased attribute is set, else
 		<code>false</code>.
 	*/
-	public static boolean isAntialias(AttributeSet a)
+	public static boolean isAntialias(AttributeSet a)	//TODO delete these methods if not used
 	{
 		final Object antialias=a.getAttribute(ANTIALIAS_ATTRIBUTE_NAME);	//get the antialias attribute, resolving up the hierarchy if needed
 		return antialias instanceof Boolean ? ((Boolean)antialias).booleanValue() : false;	//if there is a boolean antialias attribute, return its value, else return false
