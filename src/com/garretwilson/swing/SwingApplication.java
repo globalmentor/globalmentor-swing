@@ -5,6 +5,8 @@ import java.awt.Frame;
 import java.net.URI;
 import javax.swing.*;
 import com.garretwilson.lang.*;
+import com.garretwilson.net.SwingAuthenticator;
+import com.garretwilson.net.http.HTTPClient;
 import com.garretwilson.util.*;
 
 /**An application that relies on Swing.
@@ -18,7 +20,7 @@ public abstract class SwingApplication extends Application
 	*/
 	public SwingApplication(final URI referenceURI)
 	{
-		super(referenceURI);	//construct the parent class
+		this(referenceURI, new String[]{});	//construct the class with no arguments
 	}
 
 	/**Reference URI and arguments constructor.
@@ -28,6 +30,7 @@ public abstract class SwingApplication extends Application
 	public SwingApplication(final URI referenceURI, final String[] args)
 	{
 		super(referenceURI, args);	//construct the parent class
+		HTTPClient.getInstance().setAuthenticator(new SwingAuthenticator());	//create a default authenticator for HTTP connections on the default HTTP client
 	}
 
 	/**Displays an error message to the user for a throwable object.
