@@ -16,12 +16,11 @@ import com.garretwilson.text.xml.stylesheets.css.*;
 import com.garretwilson.util.Debug;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
-/**A view that arranges its children into a box shape by tiling its children along an axis, with no constraints.
+/**A view that arranges its children into a box shape by tiling its children along an axis.
 Any non-block child views are wrapped in anonymous block views.
 @author Garret Wilson
 @see javax.swing.text.BoxView
 */
-//G***fix public class XMLBlockView extends com.garretwilson.swing.text.CompositeView implements XMLCSSView	//G***newswing
 public class XMLBlockView extends ContainerBoxView implements XMLCSSView, FragmentViewFactory
 {
 

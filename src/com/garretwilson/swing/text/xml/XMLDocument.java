@@ -888,7 +888,7 @@ Debug.trace("found input stream locator, getting input stream to URI: ", uri); /
 		 */
 		protected void insertUpdate(DefaultDocumentEvent chng, AttributeSet attr)
 		{
-Debug.trace("inside XMLDocumet insertupdate");
+Debug.trace("inside XMLDocument insertupdate");
 /*G***del; testing bidiarray
 Debug.trace("XMLDocument.insertUpdate()");
         final int chngStart = chng.getOffset();

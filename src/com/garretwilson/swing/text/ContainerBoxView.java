@@ -37,12 +37,15 @@ public class ContainerBoxView extends BoxView
 	/**<code>true</code> if the cache is based upon recent information, even though there may not be a cached value available.*/
 	private boolean cacheValid=false;
 
-	/**@return <code>true</code> if the cache is based upon recent information, even though there may not be a cached value available.*/
-	protected boolean isCacheValid() {return cacheValid;}
-
 	/**Invalidates the cached values so that they can be recalculated when needed.*/
 	protected void invalidateCache() {cacheValid=false;}
 
+	/**The last known element starting offset; used to ensure that changed content hasn't changed our cached starting or ending offset values.*/
+	private int lastElementStartOffset;
+	
+	/**The last known element ending offset; used to ensure that changed content hasn't changed our cached starting or ending offset values.*/
+	private int lastElementEndOffset;
+	
 	/**The cached starting offset, or <code>-1</code> if there is no cached value.*/
 	private int startOffset=-1;
 
@@ -70,6 +73,16 @@ public class ContainerBoxView extends BoxView
   	super.replace(offset, length, views);	//do the default replacement
   	invalidateCache();	//invalidate the cache
   }
+
+	/**@return <code>true</code> if the cache is based upon recent information, even though there may not be a cached value available.
+	This implementation not only checks the cache valid flag, but also verifies the underlying element's starting and ending offset
+	to make sure the content hasn't changed. 
+	*/
+	protected boolean isCacheValid()
+	{
+		final Element element=getElement();	//get the underlying element
+		return cacheValid && lastElementStartOffset==element.getStartOffset() && lastElementEndOffset==element.getEndOffset();	//make sure the cache is valid and the content hasn't changed
+	}
 
   /**Checks the cache and updates it if necessary.
   @see #updateCache() 
@@ -109,6 +122,9 @@ public class ContainerBoxView extends BoxView
 		{
 			startOffset=endOffset=-1;	//show that there are no cached values; the beginning and ending offsets of the underlying element will have to be returned
 		}
+		final Element element=getElement();	//get the underlying element
+		lastElementStartOffset=getElement().getStartOffset();	//update our record of the underlying element's offsets to see if the content changes
+		lastElementEndOffset=getElement().getEndOffset();
 		cacheValid=true;	//show that the cached values are now valid
 	}
 
