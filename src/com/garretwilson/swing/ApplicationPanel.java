@@ -282,6 +282,34 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 	}
 */
 
+	/**Displays an error messages for an exception.
+	@param title The error message box title.
+	@param exception The exception that caused the error.
+	*/
+/*G**fix or del
+	protected void displayError(final String title, final Exception exception)
+	{
+		Debug.trace(exception);	//log the error
+		final String errorMessage;	//we'll store the error message in this variable
+		if(exception instanceof FileNotFoundException)	//if a file was not found
+		{
+			errorMessage="File not found: "+exception.getMessage();	//G***comment; i18n
+		}
+		else if(exception instanceof sun.io.MalformedInputException)	//if there was an error converting characters; G***put this elsewhere, fix for non-Sun JVMs
+		{
+			errorMessage="Invalid character encountered for file encoding.";	//G***comment; i18n
+		}
+		else  //for any another error
+		{
+		  final String message=exception.getMessage();  //get the exception message
+			errorMessage=message!=null ? message : exception.getClass().getName();  //if the message is null, use the class name of the exception as the message
+		}
+//G***del Debug.trace("Ready to display error message: "+errorMessage);
+		final String displayMessage=StringUtilities.wrap(errorMessage, 100);	//wrap the error message at 100 characters G***probably use a constant here
+		JOptionPane.showMessageDialog(this, displayMessage, title, JOptionPane.ERROR_MESSAGE);	//G***i18n; comment
+	}
+*/
+
 	/**Sets the position of the toolbar. If there is no toolbar, no action occurs.
 	@param position The new position, one of the <code>BorderLayout</code> constants
 		such as <code>BorderLayout.NORTH</code>.
