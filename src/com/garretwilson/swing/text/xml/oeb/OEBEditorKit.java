@@ -205,10 +205,10 @@ Debug.trace("oebDocument.setPublication()");
 Debug.trace("got spine list");  //G***del
 						//make sure all documents in the manifest are in our list
 						// (we'll add out-of-spine documents to our local spine in this implementation)
-					final RDFBagResource manifest=XPackageUtilities.getManifest(oebPublication); //get the publication's manifest
+					final RDFListResource manifest=XPackageUtilities.getManifest(oebPublication); //get the publication's manifest
 					if(manifest!=null)  //if there is a manifest
 					{
-						final Iterator manifestIterator=manifest.getItemIterator(); //get an iterator of the items in the manifest
+						final Iterator manifestIterator=manifest.iterator(); //get an iterator of the items in the manifest
 						while(manifestIterator.hasNext()) //while there are more manifest items
 						{
 							final RDFResource manifestItem=(RDFResource)manifestIterator.next(); //get the next OEB item

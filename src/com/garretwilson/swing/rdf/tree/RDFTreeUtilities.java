@@ -58,13 +58,12 @@ public class RDFTreeUtilities
 		{
 
 
-//TODO after the manifest is converted to an rdf:List and changed to xpackage:children, move this whole class to RDFTree and give that class options for showing properties and/or children 
-			final RDFBagResource manifest=XPackageUtilities.getManifest(rdfResource); //get the resource manifest
+//TODO move this whole class to RDFTree and give that class options for showing properties and/or manifest items 
+			final RDFListResource manifest=XPackageUtilities.getManifest(rdfResource); //get the resource manifest
 			if(manifest!=null)  //if the resource has a manifest
 			{
 					//get the resources in this folder
-				final Collection itemResourceCollection=manifest.getItemCollection(); //get the collection of manifest items
-				final Iterator itemResourceIterator=itemResourceCollection.iterator();  //get an iterator to all the contained resources
+				final Iterator itemResourceIterator=manifest.iterator();  //get an iterator to all the contained resources
 				while(itemResourceIterator.hasNext()) //while there are more resources
 				{
 					final RDFResource itemResource=(RDFResource)itemResourceIterator.next();  //get the next resource
