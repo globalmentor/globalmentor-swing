@@ -19,6 +19,7 @@ import com.garretwilson.rdf.*;
 import com.garretwilson.sun.demo.jfc.notepad.ElementTreePanel;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.event.*;
+import com.garretwilson.swing.text.SwingTextUtilities;
 import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.text.xml.css.*;
 import com.garretwilson.text.*;
@@ -182,6 +183,8 @@ final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);
 		new PreviousPageAction(PREVIOUS_PAGE_ACTION_NAME),
 		new NextPageAction(NEXT_PAGE_ACTION_NAME),
 		new DisplayElementTreeAction(DISPLAY_ELEMENT_TREE_ACTION_NAME),
+		new BeginAction(beginAction, false),
+		new EndAction(endAction, false)
 //G***del		new EndLineAction(endLineAction, false)	//G***testing
 	};
 
@@ -1887,6 +1890,89 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 	}
 */
 	}
+
+
+
+
+
+	/**Action that moves the caret to the beginning of the document.
+	<p>This version ensures that the caret is not placed on a hidden view.</p>
+	*/
+	static class BeginAction extends TextAction
+	{
+		/* Create this object with the appropriate identifier. */
+		BeginAction(String nm, boolean select)
+		{
+			super(nm);
+			this.select= select;
+		}
+
+		/** The operation to perform when this action is triggered. */
+		public void actionPerformed(ActionEvent e)
+		{
+			JTextComponent target= getTextComponent(e);
+			if (target != null)
+			{
+				try
+				{
+					final int beginOffset=SwingTextUtilities.getBegin(target);	//get the beginning offset; if this is an invalid position, don't worry---the corresponding exception will be caught below  
+					if(select)
+					{
+						target.moveCaretPosition(beginOffset);
+					}
+					else
+					{
+						target.setCaretPosition(beginOffset);
+					}
+				}
+				catch (BadLocationException badLocationException)
+				{
+					UIManager.getLookAndFeel().provideErrorFeedback(target);
+				}
+			}
+		}
+		private boolean select;
+	}
+
+	/**Action that moves the caret to the end of the document.
+	<p>This version ensures that the caret is not placed on a hidden view.</p>
+	*/
+	static class EndAction extends TextAction
+	{
+		/* Create this object with the appropriate identifier. */
+		EndAction(String nm, boolean select)
+		{
+			super(nm);
+			this.select= select;
+		}
+
+		/** The operation to perform when this action is triggered. */
+		public void actionPerformed(ActionEvent e)
+		{
+			JTextComponent target= getTextComponent(e);
+			if (target != null)
+			{
+				try
+				{
+					final int endOffset=SwingTextUtilities.getEnd(target);	//get the ending offset; if this is an invalid position, don't worry---the corresponding exception will be caught below  
+					if(select)
+					{
+						target.moveCaretPosition(endOffset);
+					}
+					else
+					{
+						target.setCaretPosition(endOffset);
+					}
+				}
+				catch (BadLocationException badLocationException)
+				{
+					UIManager.getLookAndFeel().provideErrorFeedback(target);
+				}
+			}
+		}
+		private boolean select;
+	}
+
 
 
 	/**Action to go to the previous available page(es).*/

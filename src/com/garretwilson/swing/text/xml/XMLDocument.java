@@ -1951,11 +1951,13 @@ fireUndoableEditUpdate(new UndoableEditEvent(this, evnt));
 		appendElementSpecListContent(elementSpecList, StringUtilities.makeString('*', length), null, null);	//G***fix; comment
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(elementAttributeSet, DefaultStyledDocument.ElementSpec.EndTagType));
 		final DefaultStyledDocument.ElementSpec[] elementSpecs=(DefaultStyledDocument.ElementSpec[])elementSpecList.toArray(new DefaultStyledDocument.ElementSpec[elementSpecList.size()]);
+
 		DefaultDocumentEvent evnt=new DefaultDocumentEvent(offset, length, DocumentEvent.EventType.INSERT);
 		buffer.insert(offset, length, elementSpecs, evnt);	//insert the element's specifications
-		insertUpdate(evnt, null);	//update after the insert
+	//G***fix	insertUpdate(evnt, null);	//update after the insert
 		evnt.end();	//end the editing
 		fireInsertUpdate(evnt);	//notify listeners of the insert
+		applyStyles();	//G***testing
 		fireUndoableEditUpdate(new UndoableEditEvent(this, evnt));	//notify listeners of the undoable edit
 		writeUnlock();	//unlock the document
 	}

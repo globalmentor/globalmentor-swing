@@ -24,6 +24,7 @@ import javax.swing.text.Position;	//G*** del if not needed
 
 import com.garretwilson.swing.text.CompositeView;
 import com.garretwilson.swing.text.FragmentView;
+import com.garretwilson.swing.text.SwingTextUtilities;
 import com.garretwilson.swing.text.TextLayoutStrategy;
 import com.garretwilson.swing.text.ViewsFactory;
 import com.garretwilson.swing.text.ViewReleasable;
@@ -1333,36 +1334,83 @@ if(i==0)  //if this is our first view
 		*/
 		protected void loadChildren(ViewFactory viewFactory)
 		{
-Debug.trace("XMLParagraphView.LayoutView.loadChildren() in");
+//G***del Debug.trace("XMLParagraphView.LayoutView.loadChildren() in");
 		  if(viewFactory==null) //if there is no view factory, the parent view has somehow changed
 		    return; //don't create children
 		  final Element element=getElement(); //get the element for which we're loading child views
-Debug.trace("loading child views for element: ", XMLStyleUtilities.getXMLElementLocalName(element.getAttributes()));  //G***del
+//G***del Debug.trace("loading child views for element: ", XMLStyleUtilities.getXMLElementLocalName(element.getAttributes()));  //G***del
 		  int childElementCount=element.getElementCount();  //see how many child elements there are
 			if(childElementCount>0) //if there are child elements
 			{
-				final List addViewList=new ArrayList(childElementCount); //create a new list in which to store views to add; we know there will be at least as many views as child elements -- maybe more
-//G***del				final List addViewList=new ArrayList(childElementCount+1); //create a new list in which to store views to add; we know there will be at least as many views as child elements -- maybe more
-				if(viewFactory instanceof ViewsFactory) //if this view factory knows how to create multiple views
-				{
-Debug.trace("Is a views factory");
-					final ViewsFactory viewsFactory=(ViewsFactory)viewFactory;  //cast the view factory to a views factory
-					for(int i=0; i<childElementCount; ++i)  //look at each child element
-						viewsFactory.create(element.getElement(i), addViewList);  //create one or more views and add them to our list
-				}
-				else  //if this is a normal view factory
-				{
-					for(int i=0; i<childElementCount; ++i)  //look at each child element
-						addViewList.add(viewFactory.create(element.getElement(i)));  //create a single view for this element and add it to our list
-				}
-				//create an array of views, making it the correct size (we now know how many views there will be), and placing the contents of the list into the array
-				final View[] addViewArray=(View[])addViewList.toArray(new View[addViewList.size()]);
-
-Debug.trace("XMLParagraphView.LayoutView.loadChildren() getting ready to add views: "+addViewArray.length);
+				final Element[] childElements=SwingTextUtilities.getChildElements(element);	//put our child elements into an array
+				final View[] addViewArray=createViews(childElements, viewFactory);	//create views for the child elements
+//G***del Debug.trace("XMLParagraphView.LayoutView.loadChildren() getting ready to add views: "+addViewArray.length);
 		    replace(0, 0, addViewArray);  //add the views to our view
 			}
-Debug.trace("XMLParagraphView.LayoutView.loadChildren() out");
+//G***del Debug.trace("XMLParagraphView.LayoutView.loadChildren() out");
     }
+
+		/**Creates views for the given elements.
+		<p>If the given view factory implements <code>ViewsFactory</code>, this
+			implementation will ask the views factory to create as many views as
+			needed for the entire element hierarchy, essentially collapsing all child
+			elements into a single level.</p> 
+		@param elements The elements for each of which one or more views should be
+			created.
+		@param viewFactory The view factory to use for creating views. For correct
+			formatting, this should be a <code>ViewsFactory</code>.
+		@return An array of views representing the given elements.
+		@see ViewsFactory
+		*/
+		protected View[] createViews(final Element[] elements, final ViewFactory viewFactory)
+		{
+			final List viewList=new ArrayList(elements.length); //create a new list in which to store views to add; we know there will be at least as many views as elements---maybe more
+			if(viewFactory instanceof ViewsFactory) //if this view factory knows how to create multiple views
+			{
+				final ViewsFactory viewsFactory=(ViewsFactory)viewFactory;  //cast the view factory to a views factory
+				for(int i=0; i<elements.length; ++i)  //look at each child element
+					viewsFactory.create(elements[i], viewList);  //create one or more views and add them to our list
+			}
+			else  //if this is a normal view factory
+			{
+				for(int i=0; i<elements.length; ++i)  //look at each child element
+					viewList.add(viewFactory.create(elements[i]));  //create a single view for this element and add it to our list
+			}
+			//create an array of views, making it the correct size (we now know how many views there will be), and placing the contents of the list into the array
+			return (View[])viewList.toArray(new View[viewList.size()]);
+		}
+
+		/**Updates the child views in response to receiving notification that the 
+			model changed, and there is change record for the element this view is
+			responsible for.
+		<p>This version correctly collapses the child inline view hierarchy.</p>
+		@param elementChange The change information for the element this view is
+			responsible for. This should not be <code>null</code> if this method gets
+			called.
+		@param documentEvent The change information from the associated document.
+		@param viewFactory The factory to use to build child views.
+		@return Whether or not the child views represent the child elements of the
+			element this view is responsible for.
+		*/
+		protected boolean updateChildren(final DocumentEvent.ElementChange elementChange, final DocumentEvent documentEvent, final ViewFactory viewFactory)
+		{
+			final Element[] removedElems=elementChange.getChildrenRemoved();
+			final Element[] addedElems=elementChange.getChildrenAdded();
+			View[] added=null;
+			if(addedElems!=null)
+			{
+				added=createViews(addedElems, viewFactory);	//create views for the added elements
+			}
+			int nremoved=0;
+			int index=elementChange.getIndex();
+			if(removedElems!=null)
+			{
+				nremoved= removedElems.length;
+			}
+			replace(index, nremoved, added);
+			return true;
+		}
+
 
 		/**Fetches the child view index representing the given position in the model.
 			Since the logical view of a paragraph does not necessarily have one view

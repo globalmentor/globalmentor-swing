@@ -1,5 +1,7 @@
 package com.garretwilson.swing.text;
 
+import java.awt.Rectangle;
+import javax.swing.SwingConstants;
 import javax.swing.text.*;
 import com.garretwilson.util.Debug;
 
@@ -8,6 +10,70 @@ import com.garretwilson.util.Debug;
 */
 public class SwingTextUtilities
 {
+
+	/**Determines the beginning model position of the text component, ensuring
+		that the returned value is not represented by a hidden view.
+	@param textComponent The editor.
+	@return The position (>=0) if the request can be computed, otherwise
+		a value of -1 will be returned.
+	@exception BadLocationException Thrown if the offset is out of range.
+	 */
+	public static int getBegin(final JTextComponent textComponent) throws BadLocationException	//G***this might better to in XMLSectionView.getNextVisualPosition... or something
+	{
+		final View sectionView=textComponent.getUI().getRootView(textComponent).getView(0);	//get the section view
+		final int endOffset=sectionView.getEndOffset();	//find out where the section view ends
+		for(int pos=sectionView.getStartOffset(); pos<endOffset; ++pos)	//find the first position in the section that's visible
+		{
+			final int childViewIndex=sectionView.getViewIndex(pos, Position.Bias.Forward);	//find a view for this position
+			if(childViewIndex>=0)	//if we found a valid child index
+			{
+				final View childView=sectionView.getView(childViewIndex);	//get a reference to this view
+				if(childView.isVisible())	//if this child view is visible
+					return pos;	//return this position
+			}
+		}
+		return -1;	//show that we couldn't find a beginning position
+	}
+
+	/**Returns the child elements of the given parent element as an array of elements.
+	@param parentElement The parent element for which children should be returned.
+	@return An array containing the child elements of the given parent element.
+	@see Element#getElementCount()
+	@see Element#getElement(int)
+	*/
+	public static Element[] getChildElements(final Element parentElement)
+	{
+		final Element[] childElements=new Element[parentElement.getElementCount()];	//create an array of elements in which to place the child elements	 
+		for(int i=childElements.length-1; i>=0; --i)	//look at each child element
+		{
+			childElements[i]=parentElement.getElement(i);	//store this child element in the array
+		}
+		return childElements;	//return the child elements we found
+	}
+
+	/**Determines the ending model position of the text component, ensuring
+		that the returned value is not represented by a hidden view.
+	@param textComponent The editor.
+	@return The position (>=0) if the request can be computed, otherwise
+		a value of -1 will be returned.
+	@exception BadLocationException Thrown if the offset is out of range.
+	 */
+	public static int getEnd(final JTextComponent textComponent) throws BadLocationException	//G***this might better to in XMLSectionView.getNextVisualPosition... or something
+	{
+		final View sectionView=textComponent.getUI().getRootView(textComponent).getView(0);	//get the section view
+		final int startOffset=sectionView.getStartOffset();	//find out where the section view begins
+		for(int pos=sectionView.getEndOffset()-1; pos>=startOffset; --pos)	//find the first last in the section that's visible
+		{
+			final int childViewIndex=sectionView.getViewIndex(pos, Position.Bias.Forward);	//find a view for this position
+			if(childViewIndex>=0)	//if we found a valid child index
+			{
+				final View childView=sectionView.getView(childViewIndex);	//get a reference to this view
+				if(childView.isVisible())	//if this child view is visible
+					return pos;	//return this position
+			}
+		}
+		return -1;	//show that we couldn't find a beginning position
+	}
 
 	/**Finds the last descendant view (the view with the topmost z-order) that
 		represents the given position.
