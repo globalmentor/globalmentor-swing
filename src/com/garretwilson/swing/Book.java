@@ -927,6 +927,7 @@ Debug.trace();  //G***del
 				nextPageAction.setEnabled(pageIndex+displayPageCount<pageCount); //we can only go forwards if the turning the page would not be over the total number of pages
 			}
 */
+//TODO fix; doesn't work inside the AWT event thread, but it *must* be called from there:	statusBar.paintImmediately(statusBar.getBounds());	//G***testing
 		}
 //G***bring back, fix		setStatusLater(e.getStatus());	//update the status later
 	}

@@ -8,6 +8,7 @@ import javax.swing.text.View;
 */
 public interface ViewBreakStrategy
 {
+
 	/**Breaks a view on the given axis at the given length.
 	@param view The view to break.
 	@param axis The axis to break along, either <code>View.X_AXIS</code> or <code>View.Y_AXIS</code>.

@@ -360,8 +360,9 @@ Debug.trace(); //G***testing
 	{
 		if(axis==getAxis())	//if they want to break along our tiling axis
 		{
-				//if we have at least one child view and the first view doesn't dislike the break weight	//TODO add support for requiring a certain number of child views (lines)
-			if(getViewCount()>0 && getView(0).getBreakWeight(axis, pos, len)>BadBreakWeight)	
+			final float marginSpan=(axis==X_AXIS) ? getLeftInset()+getRightInset() : getTopInset()+getBottomInset();	//see how much margin we have to allow for
+				//if we have at least one child view and the first view doesn't dislike the available span, allowing for margins	//TODO add support for requiring a certain number of child views (lines)
+			if(getViewCount()>0 && getView(0).getBreakWeight(axis, pos, len-marginSpan)>BadBreakWeight)	
 			{
 				return GoodBreakWeight;	//if our first child is happy with the break, we can always break by separating children
 			}
@@ -548,6 +549,10 @@ Debug.trace(); //G***testing
 
 		public float getPreferredSpan(int axis)
 		{
+final float ps=super.getPreferredSpan(axis);
+final float ls=getLineSpacing();
+Debug.trace("preferred span", ps, "line spacing", ls);	//G***del
+			
 			return axis==Y_AXIS ? super.getPreferredSpan(axis)*getLineSpacing() : super.getPreferredSpan(axis);	//G***testing
 		}
 

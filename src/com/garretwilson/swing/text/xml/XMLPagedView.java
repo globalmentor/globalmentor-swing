@@ -255,6 +255,20 @@ Debug.trace("new new page index", newPageIndex);
 		return pageIndex;	//return the canonical page index
 	}
 
+	/**@return The logical index of the first displayed page.*/
+	protected int getPageBeginIndex()
+	{
+		return getCanonicalPageIndex(getPageIndex());	//make sure the page index is in canonical form which is the first page index
+	}
+
+	/**@return The index directly after the last visible valid pages, not counting page slots that aren't filled.*/
+	protected int getPageEndIndex()
+	{
+		final int firstPageIndex=getPageBeginIndex();	//get the index of the first visible page
+		final int displayPageCount=firstPageIndex==0 ? 1 : getDisplayPageCount();	//there's only one page in the first set
+		return Math.min(firstPageIndex+displayPageCount, getPageCount());	//return the last visible page, making sure we don't go beyond our page count
+	}
+
 	/**Determines the absolute index from the beginning of allowable page display positions.
 	This implementation compensates for the empty page slots on the first set of pages.
 	@param logicalPageIndex The zero-based logical page index.
@@ -692,25 +706,6 @@ super.changedUpdate(changes, a, f);
 		paginating=newPaginating; //update the paginating variable
 	}
 
-	/**A paged view cannot be broken and therefore always starts where the element starts.
-	@return The starting offset into the model (>0).
-	@see View#getStartOffset
-	*/
-	public int getStartOffset()
-	{
-		return getElement().getStartOffset();	//return the start of the element
-	}
-
-	/**A paged view cannot be broken and therefore always ends where the element ends.
-	@return The ending offset into the model (>0).
-	@see View#getEndOffset
-	*/
-	public int getEndOffset()
-	{
-		return getElement().getEndOffset();	//return the end of the element
-	}
-
-
 	/* ***FlowView methods*** */
 
 		/**
@@ -897,142 +892,28 @@ Debug.trace("laying out major axis, page", i, "gets offset", offsets[i]);
 	/**Finds the child view at the given point.
 	@param x The horizontal coordinate (>=0).
 	@param y The vertical coordinate (>=0).
-	@param alloc The parent's inner allocation on entry, which should
-		be changed to the childs allocation on exit.
+	@param allocation The parent's inner allocation on entry, which should
+		be changed to the child's allocation on exit.
 	@return The child view at the specified point.
 	*/
-	protected View getViewAtPoint(final int x, final int y, final Rectangle alloc)	//TODO update to work with new offset and span indices
+	protected View getViewAtPoint(final int x, final int y, final Rectangle allocation)
 	{
-		final int displayPageCount=getDisplayPageCount();	//see how many pages we're displaying
-		final int pageCount=getPageCount();	//see how many pages we have in total
-		final int pageBeginIndex=getPageIndex();	//see which page we're showing first
-		final int pageEndIndex=Math.min(pageBeginIndex+displayPageCount, pageCount);	//see which page we're showing last (actually, this is one more than the last page we're showing)
-		final int pageWidth=(int)getPageWidth();	//get the width of each page
-		final int pageHeight=(int)getPageHeight();	//get the height of each page
-//G***del when works		int n = getViewCount();
-		int pageIndex;	//we'll store here the index of the page we find
-		if(getAxis()==View.X_AXIS)	//if this view flows horizontally (the default)
+		final int pageBeginIndex=getPageBeginIndex();	//see which page we're showing first
+		final int pageEndIndex=getPageEndIndex();	//see which page we're showing last (actually, this is one more than the last page we're showing)
+		final int axis=getAxis();	//get the axis
+		final int extent=axis==X_AXIS ? x : y;	//get the coordinate to test for an outlier
+		final int allocationExtent=axis==X_AXIS ? allocation.x : allocation.y;	//see which 
+		for(int i=pageBeginIndex+1; i<pageEndIndex; ++i)	//look at each page after the first
 		{
-	    if(x<(alloc.x+getLeftInset()))	//if this location is before our first displayed page G***here again we could use those calculated values in the xAlloc[] array
+			if(extent<allocationExtent+getOffset(axis, i))	//if the extent comes before this child
 			{
-//G***del Debug.trace("XMLPagedView.getViewAtPoint() coordinate is before first horizontally displayed page.");
-				pageIndex=pageBeginIndex;	//use the first page
-/*G***del
-				childAllocation(pageBeginIndex, alloc);	//get the allocation of the first page
-				return getView(pageBeginIndex);	//return the first displayed page
-*/
-	    }
-			else	//if this location isn't before the first displayed page
-			{
-/*G***del
-Debug.trace("XMLPagedView.getViewAtPoint() coordinate is not before first horizontally displayed page.");
-Debug.trace("alloc.x: "+alloc.x+" leftInset: "+getLeftInset()+" alloc.x+getLeftInset(): "+(alloc.x+getLeftInset()));
-Debug.trace("x: "+x+" x-start: "+(x-(alloc.x+getLeftInset())));
-Debug.trace("pageWidth: "+pageWidth+" pageWidth/pos: "+pageWidth/(x-(alloc.x+getLeftInset())));
-*/
-				if(pageWidth>0) //if we have a valid page width G***fix; this next line could throw a DivideByZero when the mouse move during pagination, and this is just a temporary workaround
-				{
-					pageIndex=pageBeginIndex+((x-(alloc.x+getLeftInset()))/pageWidth);	//starting at the first page, see in which page the coordinate lies (since all pages are the same width)
-					if(pageIndex>=pageEndIndex)	//if the coordinate is past the last displayed page
-						pageIndex=pageEndIndex-1;		//use the last page
-				}
-				else  //if there is no page width (e.g. we might be paginating) G***fix
-				{
-					return null;  //we can't get a view
-				}
-			}
+				childAllocation(i-1, allocation);	//get the previous child's allocation
+				return getView(i-1);	//return the previous child
+			}			
 		}
-		else	//if this view flows vertically
-		{
-	    if(y<(alloc.y+getTopInset()))	//if this location is before our first displayed page G***here again we could use those calculated values in the xAlloc[] array
-			{
-//G***del Debug.trace("XMLPagedView.getViewAtPoint() coordinate is before first vertically displayed page.");
-				pageIndex=pageBeginIndex;	//use the first page
-	    }
-			else	//if this location isn't before the first displayed page
-			{
-//G***del Debug.trace("XMLPagedView.getViewAtPoint() coordinate is not before first vertically displayed page.");
-				pageIndex=pageBeginIndex+((y-(alloc.y+getTopInset()))/pageHeight);	//starting at the first page, see in which page the coordinate lies (since all pages are the same height)
-				if(pageIndex>=pageEndIndex)	//if the coordinate is past the last displayed page G***maybe break this out of the statements to avoid duplication
-					pageIndex=pageEndIndex-1;		//use the last page
-			}
-		}
-		if(isLaidOut(pageIndex))  //if this page is laid out
-		{
-//G***del Debug.trace("XMLPagedView.getViewAtPoint() found page index: "+pageIndex);
-	    childAllocation(pageIndex, alloc);	//get the allocation of the page
-//G***del Debug.trace("XMLPagedView.getViewAtPoint() ready to return view: "+pageIndex);
-      return getPage(pageIndex);	//return the page itself
-		}
-		else  //if this page is not yet laid out
-			return null;  //show that we could not find a matching page
-//G***del    return getView(pageIndex);	//return the page that was found
+		childAllocation(pageEndIndex-1, allocation);	//if the point was not before any of the children, get the last child's allocation
+		return getView(pageEndIndex-1);	//return the last child
 	}
-
-
-
-/*G***del when works
-	    for(int i=1; i<pageEndIndex-pageBeginIndex; i++)	//look at each displayed page except the first one
-			{
-				if(x<(alloc.x+getLeftInset()+pageWidth*i))	//if the point is to the left of this page G***here we could use those precalculated xOffsets[i]
-				{
-					childAllocation(pageBeginIndex+i-1, alloc);	//get the allocation for the previous page
-					return getView(pageBeginIndex+i-1);	//return the previous page
-				}
-	    }
-	    childAllocation(pageEndIndex-1, alloc);	//if the point is not before the last page, get the allocation for the last page
-	    return getView(pageEndIndex-1);	//return the last page
-*/
-
-/*G***del
-
-
-
-
-			if(axis==X_AXIS)	//if we're tiling on the X axis
-			{
-				setPageWidth(width/displayPageCount);	//show that the pages will be a fraction of our width
-				setPageHeight(height);	//show that the pages will be the same height
-			}
-			else	//if we're tiling on the Y axis
-			{
-				setPageWidth(width);	//show that the widths will all be the same
-				setPageHeight(height/displayPageCount);	//show that the pages will each be a fraction of the total height
-			}
-			final int newSpan=(flowAxis==X_AXIS) ? width : height;	//get our new span
-
-
-
-
-	    if (x < (alloc.x + xOffsets[0])) {
-		childAllocation(0, alloc);
-		return getView(0);
-	    }
-	    for (int i = 0; i < n; i++) {
-		if (x < (alloc.x + xOffsets[i])) {
-		    childAllocation(i - 1, alloc);
-		    return getView(i - 1);
-		}
-	    }
-	    childAllocation(n - 1, alloc);
-	    return getView(n - 1);
-	} else {
-	    if (y < (alloc.y + yOffsets[0])) {
-		childAllocation(0, alloc);
-		return getView(0);
-	    }
-	    for (int i = 0; i < n; i++) {
-		if (y < (alloc.y + yOffsets[i])) {
-		    childAllocation(i - 1, alloc);
-		    return getView(i - 1);
-		}
-	    }
-	    childAllocation(n - 1, alloc);
-	    return getView(n - 1);
-	}
-    }
-
-*/
 
 	/**     * Provides a mapping from the document model coordinate space
      * to the coordinate space of the view mapped to it.  This makes
@@ -1437,6 +1318,7 @@ Debug.trace("found page break view"); //G***del
  * @param height the height to lay out against >= 0 This
  *   is the height inside of the inset area.
  */
+/*G***del
 protected void layout(int width, int height) {
 final int faxis = getFlowAxis();
 int newSpan;
@@ -1474,23 +1356,8 @@ if (host != null) {
   }
 }
 super.layout(width, height);
-/*G***fix
-final int flowAxis=getFlowAxis();	//get the flow axis
-final int axis=getAxis();	//get our tiling axis
-final int displayPageCount=getDisplayPageCount();	//see how many pages we're displaying
-if(axis==X_AXIS)	//if we're tiling on the X axis
-{
-	setPageWidth(width/displayPageCount);	//show that the pages will be a fraction of our width
-	setPageHeight(height);	//show that the pages will be the same height
-}
-else	//if we're tiling on the Y axis
-{
-	setPageWidth(width);	//show that the widths will all be the same
-	setPageHeight(height/displayPageCount);	//show that the pages will each be a fraction of the total height
 }
 */
-}
-
 
 
 
@@ -1584,7 +1451,11 @@ fv.layoutChanged(View.Y_AXIS);
 * @param fv the view to reflow
 */
 public void layout(FlowView fv) {
-/*G***testing vertical; del; fixed
+		//TODO move to subclass
+	fireMadeProgress(new ProgressEvent(fv, PAGINATE_TASK, "Repaginating pages...", 0, 1));	//show that we are ready to start paginating pages, but we haven't really started, yet G***i18n
+
+	
+	/*G***testing vertical; del; fixed
   fv.removeAll();
 	layoutPool=null;	//G***testing vertical position
 	loadChildren(getViewFactory());
@@ -1628,6 +1499,12 @@ if (next <= p0) {
     p0 = next;
 }
   }
+
+
+	fireMadeProgress(new ProgressEvent(fv, PAGINATE_TASK, "Paginated all "+fv.getViewCount()+" pages.", fv.getViewCount(), fv.getViewCount()));	//show that we paginated all the pages G***i18n
+	//fire a page event with our current page number, since our page count changed
+	firePageEvent(new PageEvent(this, getPageIndex(), getPageCount()));
+
 }
 
 /**
@@ -1647,7 +1524,14 @@ if (next <= p0) {
 * @return the position to start the next row
 */
 protected int layoutRow(FlowView fv, int rowIndex, int pos) {
-  View row = fv.getView(rowIndex);
+
+		//TODO transfer to subclass
+	final float progress=(float)fv.getEndOffset()/pos;	//find out how far we are along the content
+	final float estimatedRowCount=rowIndex*progress;	//find out the total rows by multiplying the number of rows *already* collected by the progress
+	fireMadeProgress(new ProgressEvent(fv, PAGINATE_TASK, "Paginating page "+(rowIndex+1)+" of ~"+Math.round(estimatedRowCount)+"...", rowIndex, estimatedRowCount));	//show that we are paginating the specified page, and the number of pages we guess there will be G***i18n
+	
+	
+	View row = fv.getView(rowIndex);
   int x = fv.getFlowStart(rowIndex);
   int spanLeft = fv.getFlowSpan(rowIndex);
   int end = fv.getEndOffset();
