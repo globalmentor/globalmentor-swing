@@ -67,7 +67,8 @@ public class XMLSectionView extends XMLBlockView
 		final List<Element> elementList=new ArrayList<Element>();  //create a list in which to store the elements as we find them
 		final int documentElementCount=sectionElement.getElementCount();  //find out how many child elements there are (representing XML documents)
 			//look at each element representing an XML document, skipping the last dummy '\n' element, which does not represent a document
-		for(int documentElementIndex=0; documentElementIndex<documentElementCount-1; ++documentElementIndex)
+//TODO fix; the dummy hierarchy is no longer present; find out why; perhaps because the old document creation algorithm removes it		for(int documentElementIndex=0; documentElementIndex<documentElementCount-1; ++documentElementIndex)
+		for(int documentElementIndex=0; documentElementIndex<documentElementCount; ++documentElementIndex)
 		{
 			final Element documentElement=sectionElement.getElement(documentElementIndex); //get a reference to this child element
 	    	//if this document's range overlaps with our range
@@ -115,7 +116,7 @@ public class XMLSectionView extends XMLBlockView
 				}
 			}
 		}
-		elementList.add(sectionElement.getElement(documentElementCount-1));	//add the last element normally, as it is not a document at all but a dummy hierarchy added by Swing TODO test
+//TODO fix or del		elementList.add(sectionElement.getElement(documentElementCount-1));	//add the last element normally, as it is not a document at all but a dummy hierarchy added by Swing TODO test
 		return (Element[])elementList.toArray(new Element[elementList.size()]); //return the views as an array of views
 	}
 

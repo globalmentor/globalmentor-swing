@@ -401,7 +401,7 @@ A copy of our...
 	/**Invalidates the view and schedules a repagination.*/
 	public void repaginate()
 	{
-			//TODO is this more trouble than it's worth? check the time it takes to do this
+			//TODO is changing the cursor more trouble than it's worth? check the time it takes to do this
 		final Container container=getContainer();	//see if the flow view has a container (it always should);
 		final Cursor originalCursor=container!=null ? ComponentUtilities.setCursor(container, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)) : null;	//show the wait cursor
 		try
@@ -959,10 +959,6 @@ Debug.trace("laying out major axis, page", i, "gets offset", offsets[i]);
      }
 	}
 
-	/* ***XMLPagedView.PagePoolView*** */
-
-	/***XMLPagedView.Page***/
-
 	/**Internally-created view that holds the view representing child views
 		arranged in pages. This class descends from <code>ContainerView</code>, which
 		correctly returns starting and ending offsets based upon the child views
@@ -1313,6 +1309,7 @@ row.append(v);
   View v;
   for (int i = 0; i < n; i++) {
 v = r.getView(i);
+
 int spanLeft = desiredSpan - span;
 
 int w = v.getBreakWeight(flowAxis, x + span, spanLeft);
@@ -1326,6 +1323,7 @@ if ((w >= bestWeight) && (w > BadBreakWeight)) {
 	break;
     }
 }
+
 span += v.getPreferredSpan(flowAxis);
   }
   if (bestIndex < 0) {
@@ -1466,10 +1464,27 @@ return v;
 		*/
 		protected void layout(int width, int height)	//TODO eventually something similar should go into all layout-able views; this works here because it is in the top-most hierarchy and reparents the entire hierarchy
 		{
+/*TODO del
+			for(int i=getViewCount()-1 ; i>=0; --i) //look at each child view
+			{
+				final View childView=getView(i); //get a reference to the child view
+			  if(childView.getParent()!=XMLPagedView.this)  //if this view has a different parent than this one
+			  {
+					childView.setParent(XMLPagedView.this);	//set this view's parent to the parent view
+			  }
+				ViewUtilities.reparentHierarchy(childView);
+			}
+*/
+			/*TODO fix
+			for(int i=getViewCount()-1; i>=0; --i) //look at each child view
+			{
+				ViewUtilities.reparentHierarchy(getView(i));  //reparent all views under this one
+			}
+*/
 			ViewUtilities.reparentHierarchy(this); //make sure all the child views have correct parents (previous layouts could cause, for instance, a paragraph row to think it has a parent of a now-unused paragraph fragement)
 			super.layout(width, height);	//do the default layout
 		}
-
+	
 	}
 
 }

@@ -126,17 +126,31 @@ public class ViewUtilities
 			for(int i=view.getViewCount()-1 ; i>=0; --i) //look at each child view
 			{
 				final View childView=view.getView(i); //get a reference to the child view
-			  if(childView.getParent()!=view)  //if this view has a different parent than this one
-			  {
-					childView.setParent(view);	//set this view's parent to the parent view
-			  }
-				invalidateHierarchy(childView);	//invalidate the child hierarchy
+/*TODO del; doesn't work
+				if(childView instanceof FlowView)	//TODO testing
+				{
+					childView.removeAll();
+					childView.preferenceChanged(null, true, true);
+					childView.setParent(view);
+				}
+				else
+*/
+				{
+				  if(childView.getParent()!=view)  //if this view has a different parent than this one
+				  {
+						childView.setParent(view);	//set this view's parent to the parent view
+				  }
+					invalidateHierarchy(childView);	//invalidate the child hierarchy
+				}
 			}
 		}
 		else	//if there are no children (i.e. this is a leaf view)
 		{
 			final View parent=view.getParent();	//get this view's parent
-			parent.preferenceChanged(view, true, true);	//tell this leaf view's parent that its preferences have changed
+			if(parent!=null)	//if this view has a parent (it always should have, if we reparent above)
+			{
+				parent.preferenceChanged(view, true, true);	//tell this leaf view's parent that its preferences have changed
+			}
 		}
 	}
 

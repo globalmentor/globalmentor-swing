@@ -129,6 +129,9 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 //G***del	protected final static KeyStroke RIGHT_KEY_STROKE=KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0);
 
 	/**The access to input streams via URIs.*/
+	protected URIInputStreamable baseURIInputStreamable;	//TODO testing reload; comment
+
+	/**The access to input streams via URIs.*/
 	private URIInputStreamable uriInputStreamable;
 
 		/**@return The access to input streams via URIs.*/
@@ -294,7 +297,15 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 				final XMLPagedView pagedView=getPagedView();  //get a reference to our paged view
 				if(pagedView!=null)  //if we have a paged view
 				{
-					pagedView.repaginate();  //relayout the paged view TODO use something more generic for when we don't have a paged view
+					try
+					{
+						reload();	//TODO testing; repagination seems to work with 95% but not all view structures
+//TODO fix					pagedView.repaginate();  //relayout the paged view TODO use something more generic for when we don't have a paged view
+					}
+					catch(final Exception exception)
+					{
+						SwingApplication.displayApplicationError(XMLTextPane.this, "Error opening document", exception); //G***do we need to clean up anything? G***i18n
+					}
 				}
 			}
 		}
@@ -762,6 +773,23 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		return getURIOutputStreamable().getOutputStream(uri);	//ask the output streamable for the output stream
 	}
 
+	/**Closes and opens the content from the same location.
+		If there is no source URI, no action is taken.
+	@exception IOExeption Thrown if an I/O error occurs.
+	@see #getBaseURI
+	@see #open
+	@see #close
+	*/
+	protected void reload() throws IOException
+	{
+		final URI uri=getBaseURI(); //get the current base URI
+		if(uri!=null) //if there is content loaded from some location
+		{		
+			setPage(getBaseURI(), baseURIInputStreamable);	//read from the same URI
+		}
+	}
+	
+	
 	/**Sets the text to the specified content, which must be well-formed XML.
 	<p>If the XML has no root element, it will be wrapped in
 	<code>&lt;div&gt;...&lt;/div&gt;</code>. This means that simple text will
@@ -862,6 +890,7 @@ try {
 	public void setPage(URI uri, final URIInputStreamable uriInputStreamable) throws IOException
 	{
 		baseURI=uri;	//update our base URI (don't call the setBaseURI() method, because we don't want to change the base URI of the old document
+		baseURIInputStreamable=uriInputStreamable;	//TODO testing reload
 		setURIInputStreamable(uriInputStreamable);  //use whatever input stream locator they specify
 
 //G***make sure we set all the properties like the subclass uses

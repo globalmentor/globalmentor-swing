@@ -10,6 +10,7 @@ import com.garretwilson.swing.text.ContainerBoxView;
 import com.garretwilson.swing.text.ContainerView;
 import com.garretwilson.swing.text.DocumentUtilities;
 import com.garretwilson.swing.text.FragmentViewFactory;
+import com.garretwilson.swing.text.ViewUtilities;
 import static com.garretwilson.swing.text.ViewUtilities.*;
 import static com.garretwilson.swing.text.SwingTextUtilities.*;
 import com.garretwilson.swing.text.ViewBreakStrategy;
@@ -356,19 +357,33 @@ Debug.trace(); //G***testing
 	@return The weight, which should be a value between <code>View.ForcedBreakWeight
 		and View.BadBreakWeight.</code>
 	*/
-	public int getBreakWeight(int axis, float pos, float len)
+	public int getBreakWeight(int axis, float pos, float len)	//TODO add support for requiring a certain number of child views (lines)
 	{
 		if(axis==getAxis())	//if they want to break along our tiling axis
-		{
-			final float marginSpan=(axis==X_AXIS) ? getLeftInset()+getRightInset() : getTopInset()+getBottomInset();	//see how much margin we have to allow for
-				//if we have at least one child view and the first view doesn't dislike the available span, allowing for margins	//TODO add support for requiring a certain number of child views (lines)
-			if(getViewCount()>0 && getView(0).getBreakWeight(axis, pos, len-marginSpan)>BadBreakWeight)	
+		{		  	
+			final String pageBreakAfter=XMLCSSStyleUtilities.getPageBreakAfter(getAttributes());	//see how the view considers breaking after it
+				//if we should avoid breaking after this view, and the provided length is more than we need (i.e. we aren't being asked to break in our middle)
+			if(XMLCSSConstants.CSS_PAGE_BREAK_AFTER_AVOID.equals(pageBreakAfter) && len>getPreferredSpan(axis))
 			{
-				return GoodBreakWeight;	//if our first child is happy with the break, we can always break by separating children
+				return BadBreakWeight;	//don't allow breaking
 			}
-			else	//if we have no child views, or we can't fit at least one child
+			else	//if we aren't break-averse, get the highest break weight available; this has the advantage of allowing invisible views to return their low break weight
 			{
-				return BadBreakWeight;	//we can't break if we don't have children				
+				final float marginSpan=(axis==X_AXIS) ? getLeftInset()+getRightInset() : getTopInset()+getBottomInset();	//see how much margin we have to allow for
+				int bestBreakWeight=BadBreakWeight;	//start out assuming we can't break
+				float spanLeft=len-marginSpan;	//find out how much span we have left (the margins will always be there)
+				final int viewCount=getViewCount();	//find out how many child views there are
+				for(int i=0; i<viewCount && spanLeft>0; ++i)	//look at each child view until we run out of span
+				{
+					final View view=getView(i);	//get this child view
+					final int breakWeight=view.getBreakWeight(axis, pos, spanLeft);	//get the break weight of this view
+					if(breakWeight>bestBreakWeight)	//if this break weight is better than the one we already have
+					{
+						bestBreakWeight=breakWeight;	//update our best break weight
+					}
+					spanLeft-=view.getPreferredSpan(axis);	//update the amount of span we've used by this point
+				}
+				return bestBreakWeight;	//return the best break weight we found
 			}
 		}
 		else	//if they want to break along another axis
@@ -710,6 +725,25 @@ Debug.trace(); //G***testing
 		}
 
 	}
+
+  /**
+   * Child views can call this on the parent to indicate that
+   * the preference has changed and should be reconsidered
+   * for layout.  By default this just propagates upward to 
+   * the next parent.  The root view will call 
+   * <code>revalidate</code> on the associated text component.
+   *
+   * @param child the child view
+   * @param width true if the width preference has changed
+   * @param height true if the height preference has changed
+   * @see javax.swing.JComponent#revalidate
+   */
+  public void preferenceChanged(View child, boolean width, boolean height)
+  {
+//G***del  	removeAll();	//G***testing
+  	super.preferenceChanged(child, width, height);
+  	
+  }
 
 	//newswing
 

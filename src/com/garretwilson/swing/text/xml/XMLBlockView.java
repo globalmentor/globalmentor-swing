@@ -245,37 +245,44 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 
 	/**Determines how attractive a break opportunity in this view is.
 	This is implemented to forward to the superclass for axis perpendicular to
-	the flow axis. Along the flow axis the following values may be returned:
-	<dl>
-//G***TODO			<dt><code>View.ExcellentBreakWeight</code></dt> <dd>If there is whitespace proceeding the desired break location.</dd>
-		<dt><code>View.BadBreakWeight</code></dt> <dd>If the desired break location
-			is less than the first child is comfortable with (i.e. not even one child view can fit),
-			or there are no child views.</dd>
-		<dt><code>View.GoodBreakWeight</code></dt> <dd>If the other conditions don't occur.</dd>
-	</dl>
-	This will result in the view being broken with the maximum number of child
-	views that can fit within the required span.
+	the flow axis. Along the flow axis, the best break weight of child views
+	within the allowed span is returned.
+	If this view does not like breaks after it, this method always returns <code>View.BadBreakWeight</code>.
 	@param axis The breaking axis, either View.X_AXIS or View.Y_AXIS.
 	@param pos The potential location of the start of the broken view (>=0).
 		This may be useful for calculating tab positions.
 	@param len Specifies the relative length from <var>pos</var> where a potential
 		break is desired (>=0).
-	@return The weight, which should be a value between <code>View.ForcedBreakWeight
-		and View.BadBreakWeight.</code>
+	@return The weight, which should be a value between <code>View.ForcedBreakWeight</code>
+		and <code>View.BadBreakWeight.</code>
 	*/
-	public int getBreakWeight(int axis, float pos, float len)
+	public int getBreakWeight(int axis, float pos, float len)	//TODO add support for requiring a certain number of child views
 	{
 		if(axis==getAxis())	//if they want to break along our tiling axis
 		{
-			final float marginSpan=(axis==X_AXIS) ? getLeftInset()+getRightInset() : getTopInset()+getBottomInset();	//see how much margin we have to allow for
-				//if we have at least one child view and the first view doesn't dislike the available span, allowing for margins	//TODO add support for requiring a certain number of child views (lines)
-			if(getViewCount()>0 && getView(0).getBreakWeight(axis, pos, len-marginSpan)>BadBreakWeight)	
+			final String pageBreakAfter=XMLCSSStyleUtilities.getPageBreakAfter(getAttributes());	//see how the view considers breaking after it
+				//if we should avoid breaking after this view, and the provided length is more than we need (i.e. we aren't being asked to break in our middle)
+			if(XMLCSSConstants.CSS_PAGE_BREAK_AFTER_AVOID.equals(pageBreakAfter) && len>getPreferredSpan(axis))
 			{
-				return GoodBreakWeight;	//if our first child is happy with the break, we can always break by separating children
+				return BadBreakWeight;	//don't allow breaking
 			}
-			else	//if we have no child views, or we can't fit at least one child
+			else	//if we aren't break-averse, get the highest break weight available; this has the advantage of allowing invisible views to return their low break weight
 			{
-				return BadBreakWeight;	//we can't break if we don't have children				
+				final float marginSpan=(axis==X_AXIS) ? getLeftInset()+getRightInset() : getTopInset()+getBottomInset();	//see how much margin we have to allow for
+				int bestBreakWeight=BadBreakWeight;	//start out assuming we can't break
+				float spanLeft=len-marginSpan;	//find out how much span we have left (the margins will always be there)
+				final int viewCount=getViewCount();	//find out how many child views there are
+				for(int i=0; i<viewCount && spanLeft>0; ++i)	//look at each child view until we run out of span
+				{
+					final View view=getView(i);	//get this child view
+					final int breakWeight=view.getBreakWeight(axis, pos, spanLeft);	//get the break weight of this view
+					if(breakWeight>bestBreakWeight)	//if this break weight is better than the one we already have
+					{
+						bestBreakWeight=breakWeight;	//update our best break weight
+					}
+					spanLeft-=view.getPreferredSpan(axis);	//update the amount of span we've used by this point
+				}
+				return bestBreakWeight;	//return the best break weight we found
 			}
 		}
 		else	//if they want to break along another axis

@@ -3,7 +3,10 @@ package com.garretwilson.swing.text;
 import java.awt.*;
 import javax.swing.text.*;
 
-/**A view that is not visible.
+import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
+import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants;
+
+/**A view that is not visible and is breakable only as a last resort.
 @author Garret Wilson
 */
 public class InvisibleView extends ZeroSpanView
@@ -24,6 +27,21 @@ public class InvisibleView extends ZeroSpanView
 	public boolean isVisible()
 	{
 		return false;
+	}
+
+	/**Determines how attractive a break opportunity in this view is.
+	An invisible view is designed to be breakable, but only as a last resort;
+	this implementation therefore returns <code>BadBreakWeight+1</code>.
+	This prevents invisible views from coming between and breaking visible views
+	that should not be separated (the first has page-break-after: avoid, for example).
+	@param axis The breaking axis, either View.X_AXIS or View.Y_AXIS.
+	@param pos The potential location of the start of the broken view (>=0).
+	@param len Specifies the relative length from <var>pos</var> where a potential break is desired (>=0).
+	@return The weight, which should be a value between <code>View.ForcedBreakWeight</code> and <code>View.BadBreakWeight.</code>
+	*/
+	public int getBreakWeight(int axis, float pos, float len)
+	{
+		return BadBreakWeight+1;	//an invisible view is the worst possible break there could be G***is it really *that* bad? maybe it should be GoodBreakWeight-1
 	}
 
 	/**Provides a way to determine the next visually represented model 
