@@ -5,7 +5,7 @@ import javax.swing.tree.*;
 
 import com.garretwilson.model.*;
 import com.garretwilson.rdf.*;
-import com.garretwilson.rdf.xpackage.FileOntologyConstants;
+import com.garretwilson.rdf.xpackage.FileOntologyUtilities;
 import com.garretwilson.rdf.xpackage.XPackageUtilities;
 import com.garretwilson.util.*;
 
@@ -53,8 +53,8 @@ public class RDFTreeUtilities
 	public static RDFResourceTreeNode createFileResourceTreeNode(final RDFResource rdfResource)
 	{
 		final RDFResourceTreeNode rdfResourceTreeNode=new RDFResourceTreeNode(rdfResource); //create a new tree node to represent the RDF resource
-		  //if this is a folder
-		if(RDFUtilities.isType(rdfResource, FileOntologyConstants.FILE_ONTOLOGY_NAMESPACE_URI, FileOntologyConstants.FOLDER_TYPE_NAME))
+		  //if this is a folder TODO see if we should allow navigation of normal nodes with children 
+		if(FileOntologyUtilities.isFolder(rdfResource))
 		{
 
 
