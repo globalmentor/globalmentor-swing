@@ -167,7 +167,10 @@ public class ActionManager implements Cloneable
 	public void clear()
 	{
 		menuActionListMap.clear();	//clear the map of menu action lists
-		toolActionList.clear();	//clear the list of tool actions
+		if(toolActionList!=null)	//if there is a list of tool actions
+		{
+			toolActionList.clear();	//clear the list of tool actions
+		}
 	}
 
 	/**Adds to the manager an action representing a top-level menu.
@@ -253,11 +256,14 @@ public class ActionManager implements Cloneable
 			}
 		}
 			//merge the tool actions
-		final Iterator toolActionEntryIterator=actionManager.toolActionList.iterator();	//get an iterator to all tool actions in the merging manager
-		while(toolActionEntryIterator.hasNext())	//while there are more tool actions
+		if(toolActionList!=null)	//if there is a list of tool actions
 		{
-			final Action action=(Action)toolActionEntryIterator.next();	//get the next tool action
-			mergedActionManager.addToolAction(action);	//add this action to the merged action manager, creating a list of tool actions if needed
+			final Iterator toolActionEntryIterator=actionManager.toolActionList.iterator();	//get an iterator to all tool actions in the merging manager
+			while(toolActionEntryIterator.hasNext())	//while there are more tool actions
+			{
+				final Action action=(Action)toolActionEntryIterator.next();	//get the next tool action
+				mergedActionManager.addToolAction(action);	//add this action to the merged action manager, creating a list of tool actions if needed
+			}
 		}
 		return mergedActionManager;	//return the merged action manager
 	}
