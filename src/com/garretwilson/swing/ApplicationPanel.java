@@ -2,6 +2,7 @@ package com.garretwilson.swing;
 
 import java.awt.*;
 import javax.swing.*;
+import com.garretwilson.awt.BasicGridBagLayout;
 
 /**A panel that contains a toolbar and a status. The panel uses a border layout,
 	and content can be added by a component being placed in the panel center.
@@ -39,7 +40,8 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 				toolBar=newToolBar;	//save the toolbar
 				if(newToolBar!=null)	//if we were given a new toolbar
 				{
-					add(newToolBar, BorderLayout.NORTH); //put the toolbar in the north
+			  	add(newToolBar, ((BasicGridBagLayout)getLayout()).createBorderConstraints(BorderLayout.NORTH));  //put the toolbar in the north
+//G***del when works					add(newToolBar, BorderLayout.NORTH); //put the toolbar in the north
 				}
 			}
 		}
@@ -131,7 +133,8 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 */
 			statusBar=createStatusBar();  //create the status bar
 //G***del Debug.trace("adding status bar"); //G***del
-			add(statusBar, BorderLayout.SOUTH); //put the status bar in the south
+			add(statusBar, ((BasicGridBagLayout)getLayout()).createBorderConstraints(BorderLayout.SOUTH));  //put the status bar in the south
+//G***del when works			add(statusBar, BorderLayout.SOUTH); //put the status bar in the south
 		}
 		else  //if we shouldn't have a status bar
 		{
@@ -320,7 +323,8 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 		{
 				//G***verify the position is not BorderLayout.CENTER
 			remove(toolBar);  //remove the toolbar
-			add(toolBar, position); //add the toolbar in the correct position
+			add(toolBar, ((BasicGridBagLayout)getLayout()).createBorderConstraints(position));  //add the toolbar in the correct position
+//G***del when works			add(toolBar, position); //add the toolbar in the correct position
 		}
 	}
 
@@ -335,7 +339,8 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 		{
 				//G***verify the position is not BorderLayout.CENTER
 			remove(statusBar);  //remove the status bar
-			add(statusBar, position); //add the toolbar in the correct position
+			add(statusBar, ((BasicGridBagLayout)getLayout()).createBorderConstraints(position));  //put the status bar in the correct position
+//G***del when works			add(statusBar, position); //add the toolbar in the correct position
 		}
 	}
 	

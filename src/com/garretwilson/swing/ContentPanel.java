@@ -4,8 +4,8 @@ import java.awt.*;
 import com.garretwilson.awt.*;
 import com.garretwilson.util.*;
 
-/**A generic panel that constructs a border layout and allows easy setup of
-	its center content component.
+/**A generic panel that allows easy setup of a center content component.
+<p>This panel uses a <code>BasicGridBagLayout</code> as its layout manager.</p>
 <p>If the panel is inside a <code>JOptionPane</code>, the window containing
 	to ensure the component has enough room every time the content
 	component changes.</p>  
@@ -13,6 +13,7 @@ import com.garretwilson.util.*;
 	which component should get the default focus, any request for the default
 	focus component will be delegated to the content component.</p>
 @author Garret Wilson
+@see BasicGridBagLayout
 @see DefaultFocusable
 */
 public class ContentPanel extends BasicPanel implements CanClosable
@@ -44,7 +45,8 @@ public class ContentPanel extends BasicPanel implements CanClosable
 				contentComponent=newContentComponent; //store the content component
 				if(newContentComponent!=null)	//if we were given a new content component
 				{
-			  	add(newContentComponent, BorderLayout.CENTER);  //put the content component in the center of the panel
+			  	add(newContentComponent, ((BasicGridBagLayout)getLayout()).createBorderConstraints(BorderLayout.CENTER));  //put the content component in the center of the panel
+//G***del when works			  	add(newContentComponent, BorderLayout.CENTER);  //put the content component in the center of the panel
 				}
 /*G***del when revalidate() works---maybe even remove WindowUtilities.packWindow()		  	
 		  	if(getParentOptionPane()!=null)	//if this panel is inside an option pane
@@ -122,7 +124,7 @@ public class ContentPanel extends BasicPanel implements CanClosable
 	*/
 	public ContentPanel(final boolean initialize)
 	{
-		super(new BorderLayout(), false);	//construct the panel with a border layout, but don't initialize
+		super(new BasicGridBagLayout(), false);	//construct the panel with a basic grid bag layout, but don't initialize
 /*G***del when works		
     final BorderLayout borderLayout=new BorderLayout(); //create a border layout
     setLayout(borderLayout);  //use the border layout
