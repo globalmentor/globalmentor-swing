@@ -1,11 +1,14 @@
 package com.garretwilson.swing;
 
+import java.awt.BorderLayout;
 import java.io.*;
 import java.net.URI;
 import javax.swing.*;
 import javax.swing.event.*;
 import com.garretwilson.io.MediaType;
+import com.garretwilson.model.Model;
 import com.garretwilson.swing.text.xml.*;
+import com.garretwilson.swing.unicode.UnicodeStatusBar;
 import com.garretwilson.text.CharacterEncodingConstants;
 import com.garretwilson.text.xml.XMLDocumentFragmentModel;
 import com.garretwilson.text.xml.XMLDocumentModel;
@@ -14,12 +17,13 @@ import com.garretwilson.text.xml.XMLNodeModel;
 import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.text.xml.XMLSerializer;
 import com.garretwilson.text.xml.XMLUtilities;
+import com.garretwilson.text.xml.xhtml.XHTMLConstants;
 import org.w3c.dom.*;
 
 /**Panel that displays XML and source code.
 @author Garret Wilson
 */
-public class XMLPanel extends TabbedViewPanel
+public class XMLPanel extends TabbedViewPanel	//TODO make the toolbar and status bar an option
 {
 
 	/**The default model views supported by this panel.*/
@@ -73,6 +77,18 @@ public class XMLPanel extends TabbedViewPanel
 		/**@return The source scroll pane component.*/
 		protected JScrollPane getSourceScrollPane() {return sourceScrollPane;}
 
+	/**The status bar showing information about the current Unicode character.*/
+	private final UnicodeStatusBar unicodeStatusBar;
+
+		/**@return The status bar showing information about the current Unicode character.*/
+		protected final UnicodeStatusBar getUnicodeStatusBar() {return unicodeStatusBar;}
+
+	/**G***testing.*/
+	private final Action emphasisAction;
+
+		/**@return G***testing*/
+		public Action getEmphasisAction() {return emphasisAction;}
+
 	/**@return The data model for which this component provides a view.
 	@see ModelViewablePanel#getModel()
 	*/
@@ -80,12 +96,21 @@ public class XMLPanel extends TabbedViewPanel
 
 	/**Sets the data model.
 	@param model The data model for which this component provides a view.
-	@see ModelViewablePanel#setModel(Model)
+	@see #setModel(Model)
 	*/
 	public void setXMLModel(final XMLNodeModel model)
 	{
-		xmlTextPane.setURIInputStreamable(model.getURIInputStreamable());	//make sure the text pane knows from where to get input streams
 		setModel(model);	//set the model
+	}
+
+	/**Sets the data model.
+	@param newModel The data model for which this component provides a view.
+	@exception ClassCastException Thrown if the model is not an <code>XMLNodeModel</code>.
+	*/
+	public void setModel(final Model newModel)
+	{
+		xmlTextPane.setURIInputStreamable((XMLNodeModel)newModel);	//make sure the text pane knows from where to get input streams
+		super.setModel(newModel);	//set the model in the parent class
 	}
 
 	/**Model constructor.
@@ -131,6 +156,13 @@ public class XMLPanel extends TabbedViewPanel
 		xmlScrollPane=new JScrollPane(xmlTextPane);	//create a new scroll pane with the XML text pane inside
 		sourceTextPane=new JTextPane();	//create a new text pane for editing the source
 		sourceScrollPane=new JScrollPane(sourceTextPane);	//create a new scroll pane with the source text pane inside
+
+		unicodeStatusBar=new UnicodeStatusBar();	//create a new Unicode status bar
+
+//G***fix		emphasisAction=new EmphasisAction();  //G***testing
+		emphasisAction=new InsertXMLElementAction("<em>emphasis</em>", XHTMLConstants.XHTML_NAMESPACE_URI, XHTMLConstants.ELEMENT_EM, getXMLTextPane());  //G***testing
+
+
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel
 	}
@@ -140,6 +172,19 @@ public class XMLPanel extends TabbedViewPanel
 	{
 		addView(WYSIWYG_MODEL_VIEW, getXMLTextPane().getContentType(), getXMLScrollPane());	//add the XML text pane as the WYSIWYG view G***i18n
 		addView(SOURCE_MODEL_VIEW, "XML", getSourceScrollPane());	//add the source XML text pane as the source view G***i18n
+
+		add(unicodeStatusBar, BorderLayout.SOUTH);	//put the Unicode status bar in the south TODO make this an option
+
+		xmlTextPane.addCaretListener(unicodeStatusBar);	//initially set the Unicode status bar to track the XML text pane 
+		xmlTextPane.addCaretListener(new CaretListener()
+			{
+				public void caretUpdate(CaretEvent e)
+				{
+updateStatus();	//testing; probably put a convenience method to create this listener in XMLTextPane
+				}				
+			});
+
+
 		super.initializeUI(); //do the default UI initialization
 //TODO check for the content type changing, and update the tab name in response
 
@@ -157,8 +202,19 @@ public class XMLPanel extends TabbedViewPanel
 				}
 			});	//TODO transfer to TextApplicationPanel
 */
-		setModified(false);	//show that the information has not been modified
+//G***del if not needed		setModified(false);	//show that the information has not been modified
 	}
+
+	/**@return An array of actions to use in a toolbar, with any
+		<code>null</code> actions representing separators.
+	*/
+/*G***fix
+	public Action[] getToolBarActions()
+	{
+		return new Action[]{getSaveAction(), getEmphasisAction()};	//return the toolbar actions for this panel
+			//TODO probably set many of these actions to be non-focusable; maybe do this in ToolStatusPanel
+	}
+*/
 
 	/**@return The XML content type of the panel.*/
 	public MediaType getContentType()
@@ -187,7 +243,7 @@ public class XMLPanel extends TabbedViewPanel
 				getXMLTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the XML text pane
 				if(model.getXML()!=null)	//if we have XML
 				{
-					getXMLTextPane().setURIInputStreamable(model.getURIInputStreamable());	//make sure the text pane knows from where to get input streams
+					getXMLTextPane().setURIInputStreamable(model);	//make sure the text pane knows from where to get input streams
 					if(model instanceof XMLDocumentModel)	//if the model models a document
 					{
 						getXMLTextPane().setXML(((XMLDocumentModel)model).getDocument(), model.getBaseURI(), getContentType());	//put the XML document into the XML text pane
@@ -259,7 +315,7 @@ public class XMLPanel extends TabbedViewPanel
 							sourceStringBuffer.insert(0, prologStringBuffer);	//insert the prolog into the source code
 							sourceStringBuffer.append("</div>");	//append the ending tag for the root element to the source code
 						}
-						final XMLProcessor xmlProcessor=new XMLProcessor(model.getURIInputStreamable());	//create an XML processor to read the source
+						final XMLProcessor xmlProcessor=new XMLProcessor(model);	//create an XML processor to read the source
 						final byte[] sourceBytes=sourceStringBuffer.toString().getBytes(CharacterEncodingConstants.UTF_8);	//convert the string to a series of UTF-8 bytes
 						final InputStream inputStream=new BufferedInputStream(new ByteArrayInputStream(sourceBytes));	//create an input stream to the source as bytes
 						try
@@ -326,21 +382,33 @@ public class XMLPanel extends TabbedViewPanel
 			case WYSIWYG_MODEL_VIEW:	//if we're changing from the WYSIWYG view
 				getXMLTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the XML text pane any more
 				getXMLTextPane().setDocument(getXMLTextPane().getEditorKit().createDefaultDocument());	//remove the content from the XML text pane by installing a new document
+				getXMLTextPane().removeCaretListener(getUnicodeStatusBar());	//remove the Unicode status bar as a listener from this text pane
 				break;
 			case SOURCE_MODEL_VIEW:	//if we're changing from the source view
 				getSourceTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the source text pane any more
 				getSourceTextPane().setDocument(getSourceTextPane().getEditorKit().createDefaultDocument());	//remove the content from the source text pane by installing a new document
+				getSourceTextPane().removeCaretListener(getUnicodeStatusBar());	//remove the Unicode status bar as a listener from this text pane
 				break;
 		}
 		switch(newView)	//see which view we're changing to
 		{
 			case WYSIWYG_MODEL_VIEW:	//if we're changing to the WYSIWYG view
 				getXMLTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to the XML text pane
+				getXMLTextPane().addCaretListener(getUnicodeStatusBar());	//add the Unicode status bar as a listener to the text pane
 				break;
 			case SOURCE_MODEL_VIEW:	//if we're changing to the source view
 				getSourceTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to see if the source pane is modified
+				getSourceTextPane().addCaretListener(getUnicodeStatusBar());	//add the Unicode status bar as a listener to the text pane
 				break;
 		}
 	}
+
+	/**Unloads the open resource, if any, and resets to defaults.*/
+/*G***fix
+	public void close()
+	{
+		getXMLPanel().setXMLModel(new XMLDocumentModel());	//remove all the XML from the XML panel
+	}
+*/
 
 }

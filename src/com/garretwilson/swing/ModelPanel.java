@@ -4,6 +4,7 @@ import java.awt.FlowLayout;
 import java.awt.LayoutManager;
 import java.io.IOException;
 import com.garretwilson.model.Model;
+import com.garretwilson.model.ModelView;
 
 /**Panel that provides one or more views to a data model.
 <p>Bound properties:</p>
@@ -13,7 +14,7 @@ import com.garretwilson.model.Model;
 </dl>
 @author Garret Wilson
 */
-public class ModelPanel extends ModifiablePanel
+public class ModelPanel extends ModifiablePanel implements ModelView
 {
 
 	/**The data model for which this component provides a view.*/
@@ -25,13 +26,13 @@ public class ModelPanel extends ModifiablePanel
 		@return The data model for which this component provides a view.
 		@see #verify()
 		*/
-		protected Model getModel() {return model;}
+		public Model getModel() {return model;}
 
 		/**Sets the data model.
 		This is a bound property.
 		@param newModel The data model for which this component provides a view.
 		*/
-		protected void setModel(final Model newModel)
+		public void setModel(final Model newModel)
 		{
 			final Model oldModel=model; //get the old value
 			if(oldModel!=newModel)  //if the value is really changing
@@ -40,6 +41,7 @@ public class ModelPanel extends ModifiablePanel
 				try
 				{
 					loadModel();	//try to load the model, as we've changed models
+					setModified(false);	//show that we are no longer modified
 				}
 				catch(IOException ioException)	//if there were any problems saving the model
 				{

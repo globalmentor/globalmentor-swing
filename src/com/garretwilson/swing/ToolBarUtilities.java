@@ -1,7 +1,7 @@
 package com.garretwilson.swing;
 
 import java.awt.Dimension;
-
+import javax.swing.Action;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 
@@ -20,6 +20,29 @@ public class ToolBarUtilities
 		final JToolBar toolBar=new JToolBar();  //create the toolbar
 		toolBar.setRollover(true);	//default to a rollover toolbar
 		return toolBar; //return the toolbar we created
+	}
+
+	/**Creates a default toolbar with the given actions.
+	@param actions An array of actions to use in the toolbar, with any
+		<code>null</code> actions representing separators.
+	@see #createDefaultToolBar()
+	*/
+	public static JToolBar createToolBar(final Action[] actions)
+	{
+		final JToolBar toolBar=createDefaultToolBar();	//create a new toolbar
+		for(int i=0; i<actions.length; ++i)	//look at each action
+		{
+			final Action action=actions[i];	//get a reference to this action
+			if(action!=null)	//if this is a valid action
+			{
+				toolBar.add(action);	//add this action
+			}
+			else	//if this is a null action
+			{
+				toolBar.addSeparator();	//add a toolbar separator
+			}
+		}
+		return toolBar;	//return the toolbar we created
 	}
 
 	/**Creates a toolbar separator of default size, with an orientation

@@ -6,7 +6,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.model.Model;
-import com.garretwilson.model.ModelViewable;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.*;
 
@@ -19,7 +18,7 @@ When the view value is changed, the appropriate tab is selected; when a new tab
 @author Garret Wilson
 @see BasicGridBagLayout
 */
-public abstract class TabbedViewPanel extends ModelViewablePanel implements ModelViewable
+public abstract class TabbedViewPanel extends ModelViewablePanel
 {
 
 	/**The center tabbed pane.*/

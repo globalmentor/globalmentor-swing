@@ -12,6 +12,7 @@ import com.garretwilson.text.CharacterEncodingConstants;
 import com.garretwilson.text.xml.XMLDOMImplementation;
 import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.text.xml.XMLSerializer;
+import com.garretwilson.model.Model;
 import com.garretwilson.rdf.*;
 import org.w3c.dom.*;
 
@@ -72,9 +73,18 @@ public class RDFPanel extends TabbedViewPanel
 
 	/**Sets the data model.
 	@param model The data model for which this component provides a view.
-	@see ModelViewablePanel#setModel(Model)
+	@see #setModel(Model)
 	*/
 	public void setRDFResourceModel(final RDFResourceModel model) {setModel(model);}
+
+	/**Sets the data model.
+	@param newModel The data model for which this component provides a view.
+	@exception ClassCastException Thrown if the model is not a <code>RDFResourceModel</code>.
+	*/
+	public void setModel(final Model newModel)
+	{
+		super.setModel((RDFResourceModel)newModel);	//set the model in the parent class
+	}
 
 	/**Model constructor.
 	@param model The data model for which this component provides a view.
@@ -179,7 +189,7 @@ public class RDFPanel extends TabbedViewPanel
 					final String sourceString=getSourceTextPane().getText();	//get the current source text
 					if(sourceString.length()>0)	//if there is source text
 					{
-						final XMLProcessor xmlProcessor=new XMLProcessor(model.getURIInputStreamable());	//create an XML processor to read the source
+						final XMLProcessor xmlProcessor=new XMLProcessor(model);	//create an XML processor to read the source
 						final byte[] sourceBytes=sourceString.getBytes(CharacterEncodingConstants.UTF_8);	//convert the string to a series of UTF-8 bytes
 						final InputStream inputStream=new BufferedInputStream(new ByteArrayInputStream(sourceBytes));	//create an input stream to the source as bytes
 						try
