@@ -39,11 +39,12 @@ public class TabbedPaneResourceComponentDecorator<R extends Resource> extends Re
 						final Component selectedComponent=tabbedPane.getSelectedComponent();	//see which tab is now selected
 						if(selectedComponent!=null)	//if there is a selected tab
 						{
+							final ResourceComponentManager<R> resourceComponentManager=getResourceComponentManager();	//get the resource component manager
 								//get the resource state corresponding to this component
-							final ResourceComponentManager<R>.ResourceComponentState resourceComponentState=getResourceComponentManager().getResourceComponentState(selectedComponent);
+							final ResourceComponentManager<R>.ResourceComponentState resourceComponentState=resourceComponentManager.getResourceComponentState(selectedComponent);
 							if(resourceComponentState!=null)	//if there is a corresponding state
 							{
-								getResourceComponentManager().setResourceComponentState(resourceComponentState);	//switch to that state
+								resourceComponentManager.setResourceComponentState(resourceComponentState);	//switch to that state
 							}
 						}
 					}
@@ -51,7 +52,7 @@ public class TabbedPaneResourceComponentDecorator<R extends Resource> extends Re
 	}
 
 	/**Called when a resource component is added.
-	This implementation does nothing and waits until a new resource is selected.
+	This implementation adds a tab to the tabbed pane corresponding to the resource component.
 	@param resourceComponentState The resource and component added.
 	*/
 	protected void onResourceComponentAdded(final ResourceComponentManager<R>.ResourceComponentState resourceComponentState)
@@ -60,7 +61,7 @@ public class TabbedPaneResourceComponentDecorator<R extends Resource> extends Re
 	}
 
 	/**Called when a resource component is removed.
-	This implementation does nothing and waits until a new resource is selected.
+	This implementation removes the resource component from the tabbed pane.
 	@param resourceComponentState The resource and component removed.
 	*/
 	protected void onResourceComponentRemoved(final ResourceComponentManager<R>.ResourceComponentState resourceComponentState)

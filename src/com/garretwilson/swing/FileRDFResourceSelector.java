@@ -19,7 +19,6 @@ import com.garretwilson.util.prefs.PreferencesUtilities;
 
 /**An implementation of a resource selector that selects resources from a
 	file system and returns RDF resources as descriptions of selected files.
-@param <R> The type of resource being selected.
 @author Garret Wilson
 */
 public class FileRDFResourceSelector extends DefaultURIAccessible implements ResourceSelector<RDFResource>
@@ -153,7 +152,7 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 	*/
 	public RDFResource selectOutputResource(final RDFResource oldResource) throws SecurityException, IOException
 	{
-	return null;	//TODO fix save dialog
+		throw new UnsupportedOperationException();	//indicate that this operation is not yet supported 
 	}
 
 }

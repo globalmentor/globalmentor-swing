@@ -476,7 +476,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 	@see ResourceSelector#selectInputResource(Resource)
 	@see #setResourceComponentState(ResourceComponentState)
 	*/
-	protected boolean open(R resource)
+	public boolean open(R resource)	//TODO test; this is being made public to retrofit the old MentoractTeacherPanel; tread carefully, lest we corrupt the API needlessly
 	{
 		try
 		{
