@@ -2,8 +2,6 @@ package com.garretwilson.swing;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-
 import javax.swing.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.dublincore.DCUtilities;
@@ -289,11 +287,13 @@ public class ApplicationFrame extends BasicFrame
 	This version attempts to save any application configuration information.
 	@return <code>true</code> if the frame can close.
 	*/
+/*G***del; transferred to Application
 	public boolean canClose()
 	{
 		boolean canClose=super.canClose();	//try to perform the default closing functionality
 		if(canClose)	//if we can close, make sure the configuration has been saved
 		{
+			
 				//if there is configuration information and it has been modified
 			if(getApplication()!=null && getApplication().getConfiguration()!=null && getApplication().getConfiguration().isModified())
 			{
@@ -313,6 +313,7 @@ public class ApplicationFrame extends BasicFrame
 		}
 		return canClose;	//return whether we can close
 	}
+*/
 
 	/**Determines whether the frame and application can close.
 	@return <code>true</code> if the application frame and application can close.
@@ -351,6 +352,23 @@ public class ApplicationFrame extends BasicFrame
 		return canClose;	//return whether we can close the frame
 	}
 */
+
+	/**Exits the application with the given status.
+	This version asks the application to exit, if there is an application.
+	@param status The exit status.
+	@see Application#exit(int)
+	*/
+	protected void exit(final int status)
+	{
+		if(getApplication()!=null)	//if there is an application
+		{
+			getApplication().exit(status);	//ask the application to exit
+		}
+		else	//if there is no application
+		{
+			super.exit(status);	//exit in the default way
+		}
+	}
 
 	/**The content pane for the application frame.
 		The content pane allows for a toolbar and status panel. The action manager
@@ -458,33 +476,8 @@ public class ApplicationFrame extends BasicFrame
 		*/
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
-//G***del when works			exit(); //exit the application
 			close(); //close the frame; this assumes that setDefaultCloseOperation has been set to DISPOSE_ON_CLOSE or EXIT_ON_CLOSE
-		}
-
-/*TODO fix saving of application configuration, if necessary---code from Mentoract Reader
-		public void actionPerformed(ActionEvent e)
-		{
-			try
-			{
-				close();  //make sure the current book (if any) is closed; this will ensure that any user data associated with the book will be saved
-				final ReaderConfig config=getReaderConfig();  //get a reference to the reader configuration
-				if(config.isModified()) //if the configuration has been modified
-				{
-//G***del Debug.trace("Ready to save config");
-					MentoractReader.saveReaderConfig(config); //save the reader configuration
-				}
-//G***del				getReaderConfig().save(true);	//save the configuration file if it has been modified, making a backup copy
-			}
-			catch(Exception exception)	//if there was an error storing the configuration
-			{
-				Debug.error(exception);	//G***for now, we'll ignore the error
-			}
-			System.exit(0);	//close the program G***check
-		}
-	}
-*/
-	
+		}	
 	}
 
 	/**Action for showing the help about dialog.*/

@@ -566,7 +566,10 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 		}
 	}
 
-	/**Exits the application with no status.*/
+	/**Exits the application with no status.
+	Convenience method which calls <code>exit(int)</code>.
+	@see #exit(int)
+	*/
 	protected void exit()
 	{
 		exit(0);	//exit with no status
@@ -577,7 +580,6 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 	*/
 	protected void exit(final int status)
 	{
-//G***del when works		if(canClose())	//if we can close
 		System.exit(status);	//close the program with the given exit status
 	}
 

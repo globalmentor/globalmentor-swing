@@ -258,10 +258,13 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		getNextAction().setEnabled(hasNext()); //only allow going backwards if we have a next step
 		getFinishAction().setEnabled(!hasNext()); //only allow finishing if there are no next components
 		getConfirmAction().setEnabled(isConfirmNavigation() && getConfirmingAction()!=null); //only allow confirmation if confirmation is enabled and there is an action waiting to be confirmed
-		final Component confirmComponent=getToolBar().getComponent(getConfirmAction());	//see if the confirm action is on the toolbar
-		if(confirmComponent!=null)	//if the action has a corresponding component on the toolbar
+		if(getToolBar()!=null)	//if we have a toolbar
 		{
-			confirmComponent.setVisible(isConfirmNavigation());	//only show the confirm action if navigation confirmation is enabled
+			final Component confirmComponent=getToolBar().getComponent(getConfirmAction());	//see if the confirm action is on the toolbar
+			if(confirmComponent!=null)	//if the action has a corresponding component on the toolbar
+			{
+				confirmComponent.setVisible(isConfirmNavigation());	//only show the confirm action if navigation confirmation is enabled
+			}
 		}
 		if(getAdvanceAction().getProxiedAction()!=getStartAction())	//if we've already started
 		{

@@ -272,7 +272,7 @@ public abstract class SwingApplication extends Application
 		catch(Throwable throwable)  //if there are any errors
 		{
 			application.displayError(throwable);	//report the error
-			System.exit(-1);	//exit with an error (we can't just return, because the main frame, if initialized, will probably keep the thread from stopping)
+			application.exit(-1);	//exit with an error (we can't just return, because the main frame, if initialized, will probably keep the thread from stopping)
 			return -1;	//show that there was an error
 		}
 	}
