@@ -94,11 +94,21 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 	/**The identifier for the action to display the Unicode table.*/
 	public static final String DISPLAY_UNICODE_TABLE_ACTION_NAME="display-unicode-table-action";
 
+	/**The identifier for the previous page action.*/
+	public static final String PREVIOUS_PAGE_ACTION_NAME="previous-page-action";
+
+	/**The identifier for the next page action.*/
+	public static final String NEXT_PAGE_ACTION_NAME="next-page-action";
+
 	/**Default actions used by this editor kit to augment the super class default actions.*/
 	private static final Action[] DEFAULT_ACTIONS=
 	{
 		new DisplayElementTreeAction(DISPLAY_ELEMENT_TREE_ACTION_NAME),
-		new DisplayUnicodeTableAction(DISPLAY_UNICODE_TABLE_ACTION_NAME)
+		new DisplayUnicodeTableAction(DISPLAY_UNICODE_TABLE_ACTION_NAME),
+		new PreviousPageAction(PREVIOUS_PAGE_ACTION_NAME),
+		new NextPageAction(NEXT_PAGE_ACTION_NAME),
+		new BeginAction(beginAction, false),
+		new EndAction(endAction, false)
 	};
 
 	/**The access to input streams via URIs.*/
@@ -261,6 +271,142 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 			frame.pack();	//pack the contents of the frame
 //TODO del when works			BasicOptionPane.showMessageDialog(null, new JScrollPane(new UnicodePanel()), "Unicode", BasicOptionPane.INFORMATION_MESSAGE);	//G***i18n
 		}
+	}
+
+	/**Action to go to the previous available page(es).*/
+	protected static class PreviousPageAction extends TextAction
+	{
+
+		/**Creates a previous page action with the appropriate name.
+		@param name The name of the action.
+		*/
+		public PreviousPageAction(final String name)
+		{
+	    super(name);  //do the default construction with the name
+		}
+
+		/**The operation to perform when this action is triggered.
+		@param actionEvent The action representing the event.
+		*/
+		public void actionPerformed(ActionEvent actionEvent)
+		{
+		  final JTextComponent textComponent=getTextComponent(actionEvent); //get the associated text component
+		  if(textComponent instanceof XMLTextPane) //if the text pane is an XMLTextPane
+		  {
+				final XMLTextPane xmlTextPane=(XMLTextPane)textComponent;  //cast the text component to an XML editor pane
+				if(xmlTextPane.isPaged())	//if the text pane is paged
+				{
+					xmlTextPane.goPreviousPage(); //go to the previous page
+				}
+		  }
+		}
+	}
+
+	/**Action to go to the next available page(es).*/
+	protected static class NextPageAction extends TextAction
+	{
+
+		/**Creates a next page action with the appropriate name.
+		@param name The name of the action.
+		*/
+		public NextPageAction(final String name)
+		{
+	    super(name);  //do the default construction with the name
+		}
+
+		/**The operation to perform when this action is triggered.
+		@param actionEvent The action representing the event.
+		*/
+		public void actionPerformed(ActionEvent actionEvent)
+		{
+		  final JTextComponent textComponent=getTextComponent(actionEvent); //get the associated text component
+		  if(textComponent instanceof XMLTextPane) //if the text pane is an XMLTextPane
+		  {
+				final XMLTextPane xmlTextPane=(XMLTextPane)textComponent;  //cast the text component to an XML editor pane
+				if(xmlTextPane.isPaged())	//if the text pane is paged
+				{
+					xmlTextPane.goNextPage(); //go to the next page
+				}
+		  }
+		}
+	}
+
+	/**Action that moves the caret to the beginning of the document.
+	<p>This version ensures that the caret is not placed on a hidden view.</p>
+	*/
+	static class BeginAction extends TextAction
+	{
+		/* Create this object with the appropriate identifier. */
+		BeginAction(String nm, boolean select)
+		{
+			super(nm);
+			this.select= select;
+		}
+
+		/** The operation to perform when this action is triggered. */
+		public void actionPerformed(ActionEvent e)
+		{
+			JTextComponent target= getTextComponent(e);
+			if (target != null)
+			{
+				try
+				{
+					final int beginOffset=SwingTextUtilities.getBegin(target);	//get the beginning offset; if this is an invalid position, don't worry---the corresponding exception will be caught below  
+					if(select)
+					{
+						target.moveCaretPosition(beginOffset);
+					}
+					else
+					{
+						target.setCaretPosition(beginOffset);
+					}
+				}
+				catch (BadLocationException badLocationException)
+				{
+					UIManager.getLookAndFeel().provideErrorFeedback(target);
+				}
+			}
+		}
+		private boolean select;
+	}
+
+	/**Action that moves the caret to the end of the document.
+	<p>This version ensures that the caret is not placed on a hidden view.</p>
+	*/
+	static class EndAction extends TextAction
+	{
+		/* Create this object with the appropriate identifier. */
+		EndAction(String nm, boolean select)
+		{
+			super(nm);
+			this.select= select;
+		}
+
+		/** The operation to perform when this action is triggered. */
+		public void actionPerformed(ActionEvent e)
+		{
+			JTextComponent target= getTextComponent(e);
+			if (target != null)
+			{
+				try
+				{
+					final int endOffset=SwingTextUtilities.getEnd(target);	//get the ending offset; if this is an invalid position, don't worry---the corresponding exception will be caught below  
+					if(select)
+					{
+						target.moveCaretPosition(endOffset);
+					}
+					else
+					{
+						target.setCaretPosition(endOffset);
+					}
+				}
+				catch (BadLocationException badLocationException)
+				{
+					UIManager.getLookAndFeel().provideErrorFeedback(target);
+				}
+			}
+		}
+		private boolean select;
 	}
 
 	/**Adds a progress listener.

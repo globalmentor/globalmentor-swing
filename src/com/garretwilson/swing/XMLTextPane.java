@@ -224,15 +224,15 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 			}
 		}
 
-	/**The name of the key map for normal XML key functions.*/
-	protected final static String XML_KEYMAP_NAME="xmlKeymap";
+	/**The name of the key map for normal key functions.*/
+	protected final static String BASIC_KEYMAP_NAME="basicKeymap";
 	/**The name of the key map for paged key functions.*/
 	protected final static String PAGED_KEYMAP_NAME="pagedKeymap";
 
 //G***del when works	protected final Keymap originalKeymap;  //the keymap originally installed; we'll install keymaps under this
 
-	/**XML text pane default key bindings.*/
-	protected static final KeyBinding[] DEFAULT_KEY_BINDINGS=
+	/**Basic key bindings with custom keys.*/
+	protected static final KeyBinding[] BASIC_KEY_BINDINGS=
 		{
 			//bind (ctrl+shift+'e') to the editor kit's show element tree action
 			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK|InputEvent.SHIFT_DOWN_MASK), BasicStyledEditorKit.DISPLAY_ELEMENT_TREE_ACTION_NAME),
@@ -240,29 +240,29 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK|InputEvent.SHIFT_DOWN_MASK), BasicStyledEditorKit.DISPLAY_UNICODE_TABLE_ACTION_NAME)
 		};
 
-	/**XML text pane paged key bindings.*/
+	/**Paged key bindings beyond basic key bindings.*/
 	protected static final KeyBinding[] PAGED_KEY_BINDINGS=
 		{
 			//bind (left arrow) to the XML editor kit's previous page action
-			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), XMLEditorKit.PREVIOUS_PAGE_ACTION_NAME),
+			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), BasicStyledEditorKit.PREVIOUS_PAGE_ACTION_NAME),
 			//bind (right arrow) to the XML editor kit's next page action
-			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), XMLEditorKit.NEXT_PAGE_ACTION_NAME),
+			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), BasicStyledEditorKit.NEXT_PAGE_ACTION_NAME),
 			//bind (pageup) to the XML editor kit's previous page action
-			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0), XMLEditorKit.PREVIOUS_PAGE_ACTION_NAME),
+			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0), BasicStyledEditorKit.PREVIOUS_PAGE_ACTION_NAME),
 			//bind (pagedown) to the XML editor kit's next page action
-			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0), XMLEditorKit.NEXT_PAGE_ACTION_NAME),
+			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0), BasicStyledEditorKit.NEXT_PAGE_ACTION_NAME),
 		};
 
 	/**The the paged view, if any, displayed on this component. This view does not
 		have to be at the root of the view tree.
 	*/
-	private XMLPagedView PagedView=null;
+	private XMLPagedView pagedView=null;
 
 		/**@return The paged view the pages of which can be controlled, or
 			<code>null</code> if there is no paged view.
 		@see XMLTextPane#fetchPagedView
 		*/
-		protected XMLPagedView getPagedView() {return PagedView;}
+		protected XMLPagedView getPagedView() {return pagedView;}
 
 		/**Sets the paged view the pages of which can be controlled.
 			@param pagedView The paged view to be paged, <code>null</code> if there
@@ -274,7 +274,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 //G***del			Debug.traceStack("Setting the paged view");  //G***del
 
 			//G***remove the listeners from any previous page view, if present
-			PagedView=pagedView;	//set our paged view
+			this.pagedView=pagedView;	//set our paged view
 			pagedView.addPageListener(this);	//show that we want to be notified of page changes the paged view makes, so that we can forward those events
 			pagedView.addProgressListener(this);	//show that we want to be notified of any progress the paged view makes, so that we can forward those events
 			pagedView.setDisplayPageCount(DisplayPageCount);	//in case our display page count has previously been set, tell our page view about it now that we have one
@@ -511,6 +511,9 @@ Debug.trace("Current installed editor kit: ", getEditorKit().getClass().getName(
 			return namespaceLinkControllerMap!=null ? namespaceLinkControllerMap.keySet().iterator() : new HashSet().iterator(); //return an iterator to the keys, which are namespaces G***fix
 		}
 
+	/**The default keymap created by the parent constructor.*/
+	private final Keymap defaultKeymap;
+
 	/**Constructs a new <code>XMLTextPane</code> with a specified XML document model,
 		and the editor kit is set to a new instance of <code>XMLEditorKit</code>.
 	@param doc The document model, a descendant of com.garretwilson.swing.text.xml.XMLDocument.
@@ -560,10 +563,10 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		registerEditorKitForContentType(ContentTypeUtilities.toString(APPLICATION, X_OEB1_PACKAGE_XML_SUBTYPE), OEBEditorKit.class.getName());	//application/x-oeb1-package+xml
 		registerEditorKitForContentType(ContentTypeUtilities.toString(APPLICATION, X_XEBOOK_RDF_XML_SUBTYPE), XEBEditorKit.class.getName());	//application/x-xebook+rdf+xml
 		*/
-		final Keymap defaultKeymap=getKeymap();	//get the current keymap
-		final Keymap xmlKeymap=addKeymap(XML_KEYMAP_NAME, defaultKeymap); //create a new keymap for our custom actions
-		loadKeymap(defaultKeymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit changes?
-		final Keymap pagedKeymap=addKeymap(PAGED_KEYMAP_NAME, xmlKeymap); //create a new keymap for paging
+		defaultKeymap=getKeymap();	//save the current keymap
+		final Keymap basicKeymap=addKeymap(BASIC_KEYMAP_NAME, defaultKeymap); //create a new keymap for our custom actions
+		loadKeymap(defaultKeymap, BASIC_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit changes?
+		final Keymap pagedKeymap=addKeymap(PAGED_KEYMAP_NAME, basicKeymap); //create a new keymap for paging
 		loadKeymap(pagedKeymap, PAGED_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit is changed?
 		updateKeymap();	//update the keymap based upon our current settings
 		final ViewFactory xhtmlViewFactory=new XHTMLViewFactory();  //create a view factory fo XHTML
@@ -573,7 +576,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		registerLinkController(XHTMLConstants.XHTML_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML view factory with XHTML elements
 		registerLinkController(OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML link controller with OEB elements
 //G***del; doesn't work		setBackground(Color.white); //G***set to get the background color from the document itself
-		setEditorKit(new XMLEditorKit(this));	//create a new XML editor kit and use it TODO why do we need this if our create default editor kit method already sets the editor kit?
+//TODO del if not needed		setEditorKit(new XMLEditorKit(this));	//create a new XML editor kit and use it TODO why do we need this if our create default editor kit method already sets the editor kit?
 /*G***del when works
 		final Keymap keymap=getKeymap();  //get the current key map
 		loadKeymap(keymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap G***how do our actions get here from the editor kit?
@@ -955,6 +958,16 @@ Debug.trace("found zip file: ", uri);  //G***del
 		}
 		inputStream=getInputStream(uri);	//get an input stream to the URI
 		setContentType(contentType.toString());	//set the content type, which will select the appropriate editor kit
+
+/*TODO we need to update the key maps when the editor kit changes; this test works, but is probably not correct---it gets the current keymap, which is probably one of the keymaps we already loaded and set; maybe we should save references to the key maps and just reload them
+		final Keymap defaultKeymap=getKeymap();	//get the current keymap
+		final Keymap xmlKeymap=addKeymap(XML_KEYMAP_NAME, defaultKeymap); //create a new keymap for our custom actions
+		loadKeymap(defaultKeymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit changes?
+		final Keymap pagedKeymap=addKeymap(PAGED_KEYMAP_NAME, xmlKeymap); //create a new keymap for paging
+		loadKeymap(pagedKeymap, PAGED_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit is changed?
+
+		updateKeymap();	//TODO testing for paging keys
+*/		
 		load(baseURI, inputStream);	//load the content using the given input stream
 	}
 
@@ -1359,7 +1372,7 @@ Debug.trace("reading from stream into document"); //G***del
 		}
 		else	//if we aren't in paged mode
 		{
-			setKeymap(getKeymap(XML_KEYMAP_NAME));	//install the normal keymap
+			setKeymap(getKeymap(BASIC_KEYMAP_NAME));	//install the normal keymap
 		}
 	}
 
@@ -1804,59 +1817,6 @@ Debug.trace("Inside XMLTextPane.goURI()");	//G***del
 	{
 		fireMadeProgress(e);	//refire that event to our listeners G***perhaps do some manipulation here
 	}
-
-	/**Called when the mouse is dragged. This version ignores mouse dragging.
-	@param mouseEvent The mouse event.
-	*/
-/*G***del JDK1.5
-	public void mouseDragged(final MouseEvent mouseEvent)
-	{
-		setMousePosition(mouseEvent.getPoint());  //update our record of the mouse position
-	}
-*/
-
-	/**Called when the mouse is moved.
-	@param mouseEvent The mouse event.
-	*/
-/*G***del JDK1.5
-	public void mouseMoved(final MouseEvent mouseEvent)
-	{
-		setMousePosition(mouseEvent.getPoint());  //update our record of the mouse position
-	}
-*/
-
-	/**The position in the document the user once was	at. Useful for going "back".
-	@author Garret Wilson
-	*/
-//G***del; Position now used	public static class HistoryPosition
-//G***del; Position now used	{
-		/**The name of the position.*/
-//G***fix		private String name;
-
-		/**The offset in the document this position represents.*/
-//G***del; Position now used		private int offset;
-
-		  /**@return The offset of the position.*/
-//G***del; Position now used			public int getOffset() {return offset;}
-
-		/**Creates a history position with a name and offset.
-//G***fix		@param newName The name of the position.
-		@param newOffset
-		 */
-//G***del; Position now used		public HistoryPosition(/*G***fix final String newName, */final int newOffset)
-//G***del; Position now used		{
-//G***del; Position now used			offset=newOffset; //set the offset
-//G***del; Position now used		}
-
-		/**@return The string representation of this history position.*/
-/*G***fix
-		public String toString()
-		{
-		  return name;
-		}
-*/
-
-//G***del; Position now used	}
 
 	//AppletContext methods
 
