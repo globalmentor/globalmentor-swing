@@ -15,7 +15,7 @@ public class ToolStatusPanel extends ContentPanel
 {
 
   /**The toolbar, or <code>null</code> if there is no toolbar.*/
-	private final BasicToolBar toolBar;
+	private BasicToolBar toolBar;
 
 		/**@return The toolbar, or <code>null</code> if there is no toolbar.*/
 		public BasicToolBar getToolBar() {return toolBar;}
@@ -24,8 +24,7 @@ public class ToolStatusPanel extends ContentPanel
 		@param newToolBar The new toolbar to use, or <code>null</code> if there should
 			be no toolbar.
 		*/
-/*G***del if not needed
-		protected void setToolBar(final JToolBar newToolBar)
+		protected void setToolBar(final BasicToolBar newToolBar)
 		{
 			if(toolBar!=newToolBar)	//if the toolbar is really changing
 			{
@@ -40,7 +39,6 @@ public class ToolStatusPanel extends ContentPanel
 				}
 			}
 		}
-*/
 
 	/**The position of the toolbar, one of the <code>BorderLayout</code> constants
 		such as <code>BorderLayout.NORTH</code>.
@@ -48,7 +46,7 @@ public class ToolStatusPanel extends ContentPanel
 	private String toolBarPosition;
 
 	/**The status bar, or <code>null</code> if there is no toolbar.*/
-	private final StatusBar statusBar;
+	private StatusBar statusBar;
 
 		/**@return The application status bar.*/
 		public StatusBar getStatusBar() {return statusBar;}
@@ -57,7 +55,6 @@ public class ToolStatusPanel extends ContentPanel
 		@param newStatusBar The new status bar to use, or <code>null</code> if there should
 			be no status bar.
 		*/
-	/*G***del if not needed
 		protected void setStatusBar(final StatusBar newStatusBar)
 		{
 			if(statusBar!=newStatusBar)	//if the status bar is really changing
@@ -73,7 +70,6 @@ public class ToolStatusPanel extends ContentPanel
 				}
 			}
 		}
-*/
 
 	/**The position of the status bar, one of the <code>BorderLayout</code>
 		constants such as <code>BorderLayout.NORTH</code>.
@@ -136,10 +132,18 @@ public class ToolStatusPanel extends ContentPanel
 	public ToolStatusPanel(final Component applicationComponent, final boolean hasToolBar, final boolean hasStatusBar, final boolean initialize)
 	{
 		super(applicationComponent!=null ? applicationComponent : new BasicPanel(), false);  //construct the parent class without intializing TODO create a method to create a default center panel
+		toolBar=null;	//we have no toolbar to begin with
 		toolBarPosition=BorderLayout.NORTH;	//default to the toolbar in the north
+		statusBar=null;	//we have no status bar to begin with
 		statusBarPosition=BorderLayout.SOUTH;	//default to the status bar in the south
-		toolBar=hasToolBar ? createToolBar() : null;	//create a toolbar if we should have one
-		statusBar=hasStatusBar ? createStatusBar() : null;	//create a status bar if we should have one
+		if(hasToolBar)	//if we should have a toolbar TODO eventually remove all this automatic adding, and have the subclass manually add the toolbar from the actions or whatever
+		{
+			setToolBar(createToolBar());	//create a toolbar
+		}
+		if(hasStatusBar)	//if we should have a status bar
+		{
+			setStatusBar(createStatusBar());	//create a status bar
+		}
 		if(initialize)  //if we should initialize the panel
 			initialize();   //initialize everything
 	}
@@ -166,13 +170,13 @@ public class ToolStatusPanel extends ContentPanel
 		if(toolbar!=null) //if we have a toolbar
 		{
 			initializeToolBar(toolbar);  //initialize the toolbar
-			add(toolBar, toolBarPosition);  //put the toolbar in the correct position
+//G***del when works			add(toolBar, toolBarPosition);  //put the toolbar in the correct position
 		}
 		final StatusBar statusBar=getStatusBar();	//get the status bar
 		if(statusBar!=null) //if we have a status bar
 		{
 			initializeStatusBar(statusBar);  //initialize the status bar
-			add(statusBar, statusBarPosition);  //put the status bar in the correct position
+//G***del when works			add(statusBar, statusBarPosition);  //put the status bar in the correct position
 		}
   }
 
@@ -189,7 +193,7 @@ public class ToolStatusPanel extends ContentPanel
 	*/
 	public void initializeToolBar(final JToolBar toolBar)
 	{
-		ToolBarUtilities.setupToolBar(toolBar, getActionManager());	//setup the toolbar from the actions in the action manager
+		getActionManager().addToolComponents(toolBar);	//setup the toolbar from the actions in the action manager
 	}
 
 	/**@return A new status bar.*/

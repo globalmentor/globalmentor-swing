@@ -37,36 +37,6 @@ public class ToolBarUtilities
 	}
 */
 
-	/**Sets up a toolbar from the tool actions of the given action manager.
-	@param toolBar The toolbar to set up.
-	@param actionManager The manager that contains the tool actions
-	@see #createDefaultToolBar()
-	@see ActionManager#getToolActionIterator()
-	*/
-	public static JToolBar setupToolBar(final JToolBar toolBar, final ActionManager actionManager)
-	{
-		Component lastComponent=null;	//keep track of the last component we added
-		final Iterator actionIterator=actionManager.getToolActionIterator();	//get an iterator to the tool actions
-		while(actionIterator.hasNext())	//while there are actions
-		{
-			final Action action=(Action)actionIterator.next();	//get the next action
-			if(action instanceof ActionManager.SeparatorAction)		//if this is a separator action
-			{
-					//don't put two separators in a row, and don't put a separator as the first component 
-				if(lastComponent!=null && !(lastComponent instanceof JSeparator))	//if this isn't the first component and it doesn't come before a separator
-				{
-					lastComponent=createToolBarSeparator(toolBar);	//create a toolbar separator
-					toolBar.add(lastComponent);	//add the separator
-				}				
-			}
-			else	//if this is a normal action
-			{
-				lastComponent=toolBar.add(action);	//add this action				
-			}			
-		}
-		return toolBar;	//return the toolbar we created
-	}
-
 	/**Creates a toolbar separator of default size, with an orientation
 		appropriate for the given toolbar.
 	The default size is determined by the current look and feel.
@@ -100,7 +70,7 @@ public class ToolBarUtilities
 				orientation=JSeparator.HORIZONTAL;	//create a horizontal separator
 				break;
 			default:	//if we don't recotnize the orientation of the toolbar
-				throw new IllegalArgumentException("Unrecognized toolbar orienation: "+toolBar.getOrientation());
+				throw new IllegalArgumentException("Unrecognized toolbar orientation: "+toolBar.getOrientation());
 		}
 		return createToolBarSeparator(orientation, size);	//create the toolbar separator with the orientation we decided on
 	}

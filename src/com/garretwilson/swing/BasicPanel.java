@@ -54,7 +54,7 @@ import com.garretwilson.util.*;
 @see javax.swing.JOptionPane
 @see java.awt.GridBagLayout
 */
-public class BasicPanel extends JPanel implements Scrollable, ContainerConstants, CanClosable, DefaultFocusable, Verifiable
+public class BasicPanel extends JPanel implements Scrollable, ContainerConstants, CanClosable, DefaultFocusable, Verifiable, ActionManaged
 {
 
 	/**The name of the bound icon property.*/

@@ -5,7 +5,6 @@ import java.awt.Event;
 import java.awt.event.*;
 import java.io.*;
 import java.net.URI;
-
 import javax.swing.*;
 import com.garretwilson.model.*;
 import com.garretwilson.resources.icon.IconResources;
@@ -37,6 +36,14 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 		*/
 		public Action getOpenAction() {return openAction;}
 
+	/**The action for closing a resource.*/
+	private final Action closeAction;
+
+		/**@return The action for closing a resource.
+		@see #close
+		*/
+		public Action getCloseAction() {return closeAction;}
+
 	/**The action for saving the resource.*/
 	private final Action saveAction;
 
@@ -44,6 +51,14 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 		@see #save
 		*/
 		public Action getSaveAction() {return saveAction;}
+
+	/**The action for reverting a resource.*/
+	private final Action revertAction;
+
+		/**@return The action for reverting a resource.
+		@see #revert
+		*/
+		public Action getRevertAction() {return revertAction;}
 
 	/**The component to serve as a parent for file dialogs.*/
 	private final Component parentComponent;
@@ -75,7 +90,9 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 			if(oldResourceComponentState!=newResourceComponentState)  //if the value is really changing
 			{
 				resourceComponentState=newResourceComponentState; //update the value
+				getCloseAction().setEnabled(newResourceComponentState!=null);	//only enable the close action when there is a component open
 				getSaveAction().setEnabled(newResourceComponentState!=null);	//only enable the save action when there is a component open
+				getRevertAction().setEnabled(newResourceComponentState!=null);	//only enable the revert action when there is a component open
 					//show that the property has changed
 				firePropertyChange(RESOURCE_COMPONENT_STATE_PROPERTY, oldResourceComponentState, newResourceComponentState);
 			}
@@ -89,9 +106,13 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 	{
 		this.parentComponent=parentComponent;	//save the parent component
 		this.resourceSelector=resourceSelector;	//save the resource selector 
+		openAction=new OpenAction();  //create the open action
+		closeAction=new CloseAction();  //create the close action
+		closeAction.setEnabled(false);	//the close action is disable by default, as there's nothing to close
 		saveAction=new SaveAction();  //create the save action
 		saveAction.setEnabled(false);	//the save action is disable by default, as there's nothing to save
-		openAction=new OpenAction();  //create the open action
+		revertAction=new RevertAction();  //create the revert action
+		revertAction.setEnabled(false);	//the revert action is disable by default, as there's nothing to revert
 	}
 
 	/**Updates the states of the actions, including enabled/disabled status,
@@ -105,47 +126,49 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 	}
 */
 
-	/**Determines if the panel can close. If the document is modified, this
-		version asks if the information should be be saved (yes, no, or cancel).
-		If so, <code>save()</code> is called.
-	@return <code>true</code> if the panel is unmodified or saving was successful
-		or declined, <code>false</code> if the panel cannot close because saving
-		was canceled.
-	@see #save
+	/**Determines if a resource and its component can close.
+		This verion asks the resource component if it can close, if that component
+		implements <code>CanClosable</code>.
+	@param resourceComponentState The state information of the resource that
+		should be checked for closing.
+	@return <code>true</code> if the resource and its component can close.
+	@see CanClosable#canClose()
 	*/
-/*TODO fix canClose()
-	public boolean canClose()
+	protected boolean canClose(final ResourceComponentState resourceComponentState)
 	{
-		boolean canClose=super.canClose();	//ask the parent class if it can close 
-		if(canClose)	//if the parent class doesn't care if we close
+		final Component component=resourceComponentState.getComponent();	//get the resource component
+			//if the component can be checked for closing, and it doesn't wish to close
+		if(component instanceof CanClosable && !((CanClosable)component).canClose())
 		{
-			if(isModified())	//see if the document has been modified
-			{
-				final Resource resource=getModel().getResource();	//get the resource we represent
-				if(resource!=null)	//if we represent a resource
-					//see if they want to save the changes
-				switch(JOptionPane.showConfirmDialog(this, "Save modified resource "+getModel().getRDFResource().getReferenceURI()+ "?", "Resource Modified", JOptionPane.YES_NO_CANCEL_OPTION))	//G***i18n
-				{
-					case JOptionPane.YES_OPTION:	//if they want to save the changes
-						return save();	//save the selected resource and report whether the save was successful
-					case JOptionPane.NO_OPTION:	//if they do not want to save the changes
-						return true;	//allow the resource to close
-					default:	//if they want to cancel (they pressed the cancel button *or* they just hit Esc)
-						return false;	//don't allow the resource to close
-				}
-			}
-			else	//if the resource isn't modified
-				return true;	//allow it to close
+			return false;	//the component doesn't want to close for some reason
 		}
-		return canClose;	//return whether or not we can close
+		return true;	//default to allowing closure
 	}
-*/
 
-	/**Unloads the open resource, if any, and resets to defaults.
-	<p>This version does nothing.</p>
+	/**Unloads the open resource, if any.
+	If no resource is open, no action occurs.
+	@see #getResourceComponentState()
 	*/
-	public void close()	//TODO should this be renamed? right now, we're using it as an unconditional close, so canClose() is not checked; we could add a force parameter
+	public void close()
 	{
+		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
+		if(resourceComponentState!=null)	//if a resource is open
+		{
+			if(canClose(resourceComponentState))	//if we can close the open resource
+			{
+				close(resourceComponentState);	//close this resource component state
+			}
+		}
+	}
+
+	/**Closes the given resource.
+	This version simply sets the current resource state to <code>null</code>.
+	@param resourceComponentState The state information of the resource that
+		should be checked for closing.
+	*/
+	protected void close(final ResourceComponentState resourceComponentState)
+	{
+		setResourceComponentState(null);	//close the resource by switching to no resource G***maybe transfer this up to close()---or maybe do nothing at all
 	}
 
 	/**Opens a resource.
@@ -228,7 +251,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 		{
 			final Component component=read(resource, inputStream);	//read the component from the input stream
 			final ResourceComponentState resourceComponentState=new ResourceComponentState(resource, component);	//create a new state for the resource
-			return resourceComponentState;	//save the component state
+			return resourceComponentState;	//return the component state
 		}
 		finally
 		{
@@ -264,7 +287,8 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 				//if the component is verifiable, make sure it verifies before we save the contents
 			if(!(resourceComponentState.getComponent() instanceof Verifiable) || ((Verifiable)resourceComponentState.getComponent()).verify())
 			{
-				if(resourceComponentState.getResource()!=null && resourceComponentState.getResource().getReferenceURI()!=null) //if we have a URI
+				assert resourceComponentState.getResource()!=null : "Resource component state does not represent a valid resource.";
+				if(resourceComponentState.getResource().getReferenceURI()!=null) //if we have a URI
 				{
 					try
 					{
@@ -358,6 +382,31 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 	*/ 
 	protected abstract void write(final Resource resource, final Component component, final OutputStream outputStream) throws IOException;
 
+	/**Reverts the open resource, if any.
+	If no resource is open, no action occurs.
+	@see #getResourceComponentState()
+	*/
+	public void revert()
+	{
+		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
+		if(resourceComponentState!=null)	//if a resource is open
+		{
+//G***del if not needed			if(canClose(resourceComponentState))	//if we can close the open resource
+			{
+				revert(resourceComponentState);	//revert this resource component state
+			}
+		}
+	}
+
+	/**Reverts the given resource.
+	This version does nothing.
+	@param resourceComponentState The state information of the resource that
+		should be checked for closing.
+	*/
+	protected void revert(final ResourceComponentState resourceComponentState)
+	{
+	}
+
 	/**Action for creating a new file.*/
 	public static class NewAction extends AbstractAction
 	{
@@ -402,7 +451,31 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 			open();	//open a resource
 		}
 	}
-	
+
+	/**Action for closing a resource.*/
+	protected class CloseAction extends AbstractAction
+	{
+		/**Default constructor.*/
+		public CloseAction()
+		{
+			super("Close");	//create the base class G***Int
+			putValue(SHORT_DESCRIPTION, "Close the open resource");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Close the currently open resource.");	//set the long description G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key G***i18n
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.CLOSE_ICON_FILENAME)); //load the correct icon
+		  putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.CTRL_MASK)); //add the accelerator
+			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_CLOSE_MENU_ACTION_ORDER));	//set the order
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+			close();	//close the resource
+		}
+	}
+
 	/**Action for saving a resource.*/
 	class SaveAction extends AbstractAction
 	{
@@ -427,7 +500,32 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 		}
 	}
 
+	/**Action for reverting a book.*/
+	protected class RevertAction extends AbstractAction	
+	{
+		/**Default constructor.*/
+		public RevertAction()
+		{
+			super("Revert");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "Revert the open resource");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Revert the currently open resource.");	//set the long description G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_R));  //set the mnemonic key G***i18n
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.REDO_ICON_FILENAME)); //load the correct icon
+			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_REVERT_MENU_ACTION_ORDER));	//set the order
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+			revert();	//revert the resource
+		}
+	}
+
 	/**A representation of a resource and its associated view.
+	A resource component state always represents a valid resource and a valid
+		component, although the resource may be anonymous with no reference URI.
 	@author Garret Wilson
 	*/
 	public class ResourceComponentState extends DefaultResourceState
@@ -437,7 +535,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 		<p>This method delegates to the parent class, and is declared here solely
 			so that the component manager can change the resource represented.
 		@param resource The new resource to describe.
-		@exception IllegalArgumentException Thrown if the resource is <code>null</code>.
+		@exception NullPointerException Thrown if the resource is <code>null</code>.
 		*/
 		protected void setResource(final Resource resource)
 		{
@@ -453,6 +551,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 		/**Constructs a resource state with a resource and a component.
 		@param resource The description of the resource.
 		@param component The component that represents a view of the resource.
+		@exception NullPointerException Thrown if the resource is <code>null</code>.
 		*/
 		public ResourceComponentState(final Resource resource, final Component component)
 		{

@@ -38,7 +38,7 @@ import com.garretwilson.util.prefs.*;
 	how to update the status when something has been modified.</p>
 @author Garret Wilson
 */
-public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
+public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable, ActionManaged
 {
 
 		//the bounds preferences
@@ -205,8 +205,8 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 		"modified" property being changed, if the content pane is
 		<code>Modifiable</code>.
 	@param contentPane the <code>contentPane</code> object for this frame
-	@exception java.awt.IllegalComponentStateException (a runtime
-		exception) if the content pane parameter is <code>null</code>
+	@exception IllegalComponentStateException (a runtime
+		exception) if the content pane parameter is <code>null</code>.
 	@see JFrame#getContentPane
 	@see Modifiable
 	@see Modifiable#MODIFIED_PROPERTY
@@ -220,6 +220,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 			oldContentPane.removePropertyChangeListener(Modifiable.MODIFIED_PROPERTY, getModifiedUpdateStatusPropertyChangeListener());	//remove the modified property change listener from the old content pane
 		}
 		super.setContentPane(contentPane);	//set the content pane normally
+		setDefaultFocusComponent(contentPane);	//default to focusing on the content pane, if one was passed
 		if(contentPane instanceof Modifiable)	//if the new content pane is modifiable
 		{
 			contentPane.addPropertyChangeListener(Modifiable.MODIFIED_PROPERTY, getModifiedUpdateStatusPropertyChangeListener());	//add a listener to update the status when the "modified" property changes
@@ -231,7 +232,17 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 	*/
 	public BasicFrame()
 	{
-		this("");	//construct the frame with no title	
+		this(true);	//construct the frame and initialize it	
+	}
+
+	/**Initialization constructor.
+  <p>Enables window events.</p>
+	@param initialize <code>true</code> if the frame should initialize itself by
+		calling the initialization methods.
+	*/
+	public BasicFrame(final boolean initialize)
+	{
+		this("", initialize);	//construct the frame with no title
 	}
 
 	/**Title constructor.
@@ -300,7 +311,6 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 		enableEvents(AWTEvent.WINDOW_EVENT_MASK); //enable window events, so that we can respond to close events
 		if(contentPane!=null)	//if we have a content pane
 			setContentPane(contentPane); //set the given container as the content pane
-		setDefaultFocusComponent(getContentPane());	//default to focusing on the content pane, if one was passed
 		addComponentListener(new ComponentAdapter()	//listen for the window bounds changes and save or restore the bounds in the preferences
 				{
 					public void componentMoved(ComponentEvent e) {if(isVisible()) saveBoundsPreferences();}	//save the new bounds if we are visible
@@ -376,9 +386,9 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 		setTitle(constructTitle());  //update the title
 		ActionManager actionManager=getActionManager();	//get our action manager
 		final Container contentPane=getContentPane();	//get the content pane
-		if(contentPane instanceof BasicPanel)	//if the content pane is a basic panel TODO use some more generic method, such as checking for an ActionManageable interface or something
+		if(contentPane instanceof ActionManaged)	//if the content pane has managed actions
 		{
-			actionManager=actionManager.merge(((BasicPanel)contentPane).getActionManager());	//merge with the the content pane's action manager
+			actionManager=actionManager.merge(((ActionManaged)contentPane).getActionManager());	//merge with the the content pane's managed actions
 		}
 			//set up the menu bar
 				//TODO put this in some convenience method, maybe---or maybe not, if the code is specific to frames

@@ -1177,6 +1177,7 @@ Debug.trace("Relative offset: ", relativeOffset);
 	*/
 	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final MediaType[] mediaTypeArray, final MediaType mediaType)
 	{
+		close();  //close whatever book is open
 		getXMLTextPane().setContentType(mediaType.toString());	//set the content type of the text pane
 		getXMLTextPane().setXML(xmlDocumentArray, baseURIArray, mediaTypeArray);	//tell the XML text pane to set the XML
 	}
@@ -1199,8 +1200,9 @@ Debug.trace("Relative offset: ", relativeOffset);
 	}
 
 	/**Closes the book, if one is open.*/
-	public void close()
+	public void close()	//TODO find out why this is causing a stack overflow error
 	{
+/*TODO fix user data file saving
 		final File userDataFile=getUserDataFile();  //see if there is a file in which we can store user data
 		if(userDataFile!=null)  //if there is a user data file
 		{
@@ -1215,6 +1217,7 @@ Debug.trace("Relative offset: ", relativeOffset);
 				Debug.error(e); //G***fix; alert the user, give them the option to abort closing
 			}
 		}
+*/
 		historyList.clear();  //clear the history list G***probably put a clearHistory() method instead
 		setHistoryIndex(0); //show that we have no history
 		clearBookmarks(); //clear the bookmark list
@@ -1237,51 +1240,6 @@ Debug.trace("Relative offset: ", relativeOffset);
 			open(uri);  //open the book from the same location
 		}
 	}
-
-	/**Reloads the open file.*/
-/*TODO move to MentoractReaderPanel
-	public void reload()
-	{
-		try
-		{
-//G***probably set a loading flag here, so that we won't recursively try to load
-
-		  final Cursor originalCursor=ComponentUtilities.setCursor(this, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); //show the wait cursor
-			try
-			{
-					//we'll reload the document in a separate non-AWT thread, so that status
-					//  updates occur correctly; the actual setting of the document, however,
-					//  will be performed in the AWT thread to prevent multithreading
-					//  conflicts.
-				final Thread loadThread=new Thread()
-					{
-						public void run()
-						{
-		//G***fix					setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));	//show the wait cursor
-							try
-							{
-								book.reload();	//G***testing
-							}
-							catch(IOException e)
-							{
-								SwingApplication.displayApplicationError(ReaderFrame.this, "Error opening document", e); //G***do we need to clean up anything? G***i18n
-		//G***fix						setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));	//go back to the default cursor
-							}
-						}
-					};
-				loadThread.start(); //start the loading process
-			}
-			finally
-			{
-				ComponentUtilities.setCursorLater(this, originalCursor); //put the cursor back to its original form, making sure it happens after all other AWT events
-			}
-		}
-		catch(Exception ex)
-		{
-			SwingApplication.displayApplicationError(this, "Error opening document", ex); //G***i18n
-		}
-	}
-*/
 
 	/**Reads the book content from a reader.
 	@param in The stream to read from.
@@ -1833,36 +1791,35 @@ Debug.trace("ready to start clip.");
 		public void actionPerformed(ActionEvent e)
 		{
 		  goBack();	//go back in history
-		  getXMLTextPane().requestFocus(); //put the focus back on the book, in case the focus was transferred G***fix the book's default focus somehow so that we don't have to access deep variables
 		}
 	}
 
 	/**Action for closing a book.*/
-	class CloseAction extends AbstractAction
+	protected class CloseAction extends AbstractAction
 	{
 		/**Default constructor.*/
 		public CloseAction()
 		{
 			super("Close");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Close the open eBook");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Close the currently open eBook.");	//set the long description G***Int
+			putValue(SHORT_DESCRIPTION, "Close the open eBook");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Close the currently open eBook.");	//set the long description G***i18n
 			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.BOOK_CLOSED_ICON_FILENAME)); //load the correct icon
 		  putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.CTRL_MASK)); //add the accelerator
+			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_CLOSE_MENU_ACTION_ORDER));	//set the order
 		}
 
 		/**Called when the action should be performed.
-		@param e The event causing the action.
+		@param actionEvent The event causing the action.
 		*/
-		public void actionPerformed(ActionEvent e)
+		public void actionPerformed(final ActionEvent actionEvent)
 		{
 			close();	//close the book
-			getXMLTextPane().requestFocus(); //put the focus back on the book, in case the focus was transferred G***fix the book's default focus somehow so that we don't have to access deep variables
 		}
 	}
 
 	/**Action for copying text.*/
-	class CopyAction extends AbstractAction
+	protected class CopyAction extends AbstractAction
 	{
 		/**Default constructor.*/
 		public CopyAction()
@@ -2205,33 +2162,6 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 		}
 	}
 
-	/**Action for reloading a book.*/
-//TODO transfer this to MentoractReaderPanel	protected class ReloadAction extends AbstractAction	
-//TODO transfer this to MentoractReaderPanel	{
-		/**Default constructor.*/
-/*TODO transfer this to MentoractReaderPanel
-		public ReloadAction()
-		{
-			super("Reload");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Reload the open eBook");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Reload the currently open eBook.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_R));  //set the mnemonic key G***i18n
-			putValue(SMALL_ICON, IconResources.getIcon(IconResources.REDO_ICON_FILENAME)); //load the correct icon
-		}
-*/
-
-		/**Called when the action should be performed.
-		@param e The event causing the action.
-		*/
-/*TODO transfer this to MentoractReaderPanel
-		public void actionPerformed(ActionEvent e)
-		{
-			reload();	//close the file
-//G***del			book.getXMLTextPane().requestFocus(); //put the focus back on the book, in case the focus was transferred G***fix the book's default focus somehow so that we don't have to access deep variables
-		}
-	}
-*/
-
 	/**Action for searching for text.*/
 	protected class SearchAction extends AbstractAction
 	{
@@ -2280,12 +2210,6 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 		}
 	}
 
-	
-	
-	
-	
-	
-	
 	/**Action for displaying a particular number of pages at a time.*/
 	protected class DisplayPageCountAction extends AbstractAction
 	{

@@ -9,6 +9,8 @@ import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.Debug;
 
 /**Main frame parent class for an application.
+<p>This class requires that the content pane be an instance of
+	<code>ApplicationFrame.ApplicationContentPane</code>.</p>
 <p>If an <code>Application</code> is set for the frame, the close
 	operation changes to <code>EXIT_ON_CLOSE</code>. (This is essential to work
 	around a JDK bug that under certain instances runs a daemon thread that
@@ -84,7 +86,50 @@ public class ApplicationFrame extends BasicFrame
 		}
 		return title;	//return the title we discovered
 	}
-	
+
+	/**Sets the <code>contentPane</code> property. 
+	@param contentPane the <code>contentPane</code> object for this frame
+	@exception IllegalComponentStateException (a runtime
+		exception) if the content pane parameter is <code>null</code>.
+	@exception ClassCastException Thrown if the content pane is not an instance
+		of <code>ApplicationContentPane</code>.
+	@see #ApplicationContentPane
+	*/
+	public void setContentPane(final Container contentPane)
+	{
+		super.setContentPane((ApplicationContentPane)contentPane);	//make sure the content pane is of the correct type
+	}
+
+	/**@return The content pane as an application content pane; convenience method.*/
+	public ApplicationContentPane getApplicationContentPane()
+	{
+		return (ApplicationContentPane)getContentPane();	//return the content pane cast to an application content pane
+	}
+
+	/**@return The toolbar, or <code>null</code> if there is no toolbar.*/
+	public BasicToolBar getToolBar() {return getApplicationContentPane().getToolBar();}
+
+	/**Sets the toolbar.
+	@param newToolBar The new toolbar to use, or <code>null</code> if there should
+		be no toolbar.
+	*/
+	protected void setToolBar(final BasicToolBar newToolBar)
+	{
+		getApplicationContentPane().setToolBar(newToolBar);
+	}
+
+	/**@return The application status bar.*/
+	public StatusBar getStatusBar() {return getApplicationContentPane().getStatusBar();}
+
+	/**Sets the status bar.
+	@param newStatusBar The new status bar to use, or <code>null</code> if there should
+		be no status bar.
+	*/
+	protected void setStatusBar(final StatusBar newStatusBar)
+	{
+		getApplicationContentPane().setStatusBar(newStatusBar);
+	}
+
 	/**Default constructor.*/
 	public ApplicationFrame()
 	{
@@ -122,50 +167,51 @@ public class ApplicationFrame extends BasicFrame
 		this(application, null, initialize); //create an application frame with the default content pane
 	}
 
-	/**Content pane constructor.
-	@param contentPane The container to be used as the content pane, or
-		<code>null</code> if the default content pane should be used.
+	/**Application component constructor.
+	@param applicationComponent The component to be used as application component,
+		or <code>null</code> if the default application component should be used.
 	*/
-	public ApplicationFrame(final Container contentPane)
+	public ApplicationFrame(final Component applicationComponent)
 	{
-		this(null, contentPane);	//construct the frame with no application	
+		this(null, applicationComponent);	//construct the frame with no application	
 	}
 
-	/**Content pane and application constructor.
+	/**Application and component constructor.
 	@param application The application this frame represents, or
 		<code>null</code> if there is no application information available or this
 		frame doesn't represent an application.
-	@param contentPane The container to be used as the content pane, or
-		<code>null</code> if the default content pane should be used.
+	@param applicationComponent The component to be used as application component,
+		or <code>null</code> if the default application component should be used.
 	*/
-	public ApplicationFrame(final SwingApplication application, final Container contentPane)
+	public ApplicationFrame(final SwingApplication application, final Component applicationComponent)
 	{
-		this(application, contentPane, true);  //construct and initialize the frame
+		this(application, applicationComponent, true);  //construct and initialize the frame
 	}
 
-	/**Content pane constructor with optional initialization.
-	@param contentPane The container to be used as the content pane, or
-		<code>null</code> if the default content pane should be used.
+	/**Application component constructor with optional initialization.
+	@param applicationComponent The component to be used as application component,
+		or <code>null</code> if the default application component should be used.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public ApplicationFrame(final Container contentPane, final boolean initialize)
+	public ApplicationFrame(final Component applicationComponent, final boolean initialize)
 	{
-		this(null, contentPane, initialize);	//construct the frame with no application	
+		this(null, applicationComponent, initialize);	//construct the frame with no application	
 	}
 
-	/**Content pane and application constructor with optional initialization.
+	/**Application, and component constructor with optional initialization.
 	@param application The application this frame represents, or
 		<code>null</code> if there is no application information available or this
 		frame doesn't represent an application.
-	@param contentPane The container to be used as the content pane, or
-		<code>null</code> if the default content pane should be used.
+	@param applicationComponent The component to be used as application component,
+		or <code>null</code> if the default application component should be used.
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public ApplicationFrame(final SwingApplication application, final Container contentPane, final boolean initialize)
+	public ApplicationFrame(final SwingApplication application, final Component applicationComponent, final boolean initialize)
 	{
-		super(contentPane, false);	//construct the parent class with the given content pane, but don't initialize it
+		super(false);	//construct the parent class, but don't initialize it
+		setContentPane(new ApplicationContentPane(applicationComponent, false, false));	//create a special application content pane and place the application component inside it		
 		this.application=application;	//store the application
 		if(application!=null)	//if this frame represents an application
 		{
@@ -274,7 +320,93 @@ public class ApplicationFrame extends BasicFrame
 		return canClose;	//return whether we can close the frame
 	}
 */
+
+	/**The content pane for the application frame.
+		The content pane allows for a toolbar and status panel. The action manager
+		it returns will be the action manager of its contained
+		<code>ActionManaged</code>, if any.
+	@author Garret Wilson
+	*/
+	protected class ApplicationContentPane extends ToolStatusPanel
+	{
+
+		/**@return The action manager of the content component, if the content
+			component is action managed; otherwise, the defualt action manager.
+		@see ActionManaged
+		 */
+		public ActionManager getActionManager()
+		{
+			final Component contentComponent=getContentComponent();	//get the content component
+			return contentComponent instanceof ActionManaged ? ((ActionManaged)contentComponent).getActionManager() : getActionManager();	//return the content component's action manager if it has one
+		}
+
+		/**Default constructor.*/
+		public ApplicationContentPane()
+		{
+			this(true, true); //default to having a toolbar and a status bar
+		}
 	
+		/**Constructor that allows options to be set, such as the presence of a status
+			bar.
+		@param hasToolBar Whether this panel should have a toolbar.
+		@param hasStatusBar Whether this panel should have a status bar.
+		*/
+		public ApplicationContentPane(final boolean hasToolBar, final boolean hasStatusBar)
+		{
+			this(hasToolBar, hasStatusBar, true); //construct and initialize the panel
+		}
+	
+		/**Initialization constructor that allows options to be set, such as the
+			presence of a status bar.
+		@param hasToolBar Whether this panel should have a toolbar.
+		@param hasStatusBar Whether this panel should have a status bar.
+		@param initialize <code>true</code> if the panel should initialize itself by
+			calling the initialization methods.
+		*/
+		public ApplicationContentPane(final boolean hasToolBar, final boolean hasStatusBar, final boolean initialize)
+		{
+			this(null, hasToolBar, hasStatusBar, initialize);	//construct the panel with no content component
+		}
+	
+		/**Application component constructor.
+		@param applicationComponent The new component for the center of the panel.
+		*/
+		public ApplicationContentPane(final Component applicationComponent)
+		{
+			this(applicationComponent, true, true); //do the default construction with a toolbar and a status bar
+		}
+	
+		/**Application component constructor that allows options to be set.
+		@param applicationComponent The new component for the center of the panel.
+		@param hasToolBar Whether this panel should have a toolbar.
+		@param hasStatusBar Whether this panel should have a status bar.
+		*/
+		public ApplicationContentPane(final Component applicationComponent, final boolean hasToolBar, final boolean hasStatusBar)
+		{
+			this(applicationComponent, hasToolBar, hasStatusBar, true); //construct and automatically initialize the object
+		}
+	
+		/**Application component constructor that allows options to be set.
+		@param applicationComponent The new component for the center of the panel.
+		@param hasToolBar Whether this panel should have a toolbar.
+		@param hasStatusBar Whether this panel should have a status bar.
+		@param initialize <code>true</code> if the panel should initialize itself by
+			calling the initialization methods.
+		*/
+		public ApplicationContentPane(final Component applicationComponent, final boolean hasToolBar, final boolean hasStatusBar, final boolean initialize)
+		{
+			super(applicationComponent, hasToolBar, hasStatusBar, initialize);  //construct the parent class without intializing TODO create a method to create a default center panel
+/*G***fix
+			toolBarPosition=BorderLayout.NORTH;	//default to the toolbar in the north
+			statusBarPosition=BorderLayout.SOUTH;	//default to the status bar in the south
+			toolBar=hasToolBar ? createToolBar() : null;	//create a toolbar if we should have one
+			statusBar=hasStatusBar ? createStatusBar() : null;	//create a status bar if we should have one
+			if(initialize)  //if we should initialize the panel
+				initialize();   //initialize everything
+*/
+		}
+	}
+
 	/**Action for exiting the application.*/
 	protected class ExitAction extends AbstractAction
 	{

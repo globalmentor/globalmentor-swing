@@ -41,6 +41,7 @@ public class ActionManager implements Cloneable
 	public final static int FILE_CLOSE_MENU_ACTION_ORDER=300;
 	public final static int FILE_SAVE_MENU_ACTION_ORDER=400;
 	public final static int FILE_SAVE_AS_MENU_ACTION_ORDER=500;
+	public final static int FILE_REVERT_MENU_ACTION_ORDER=600;
 	public final static int FILE_EXIT_MENU_ACTION_ORDER=9999;
 
 		//help menu order
@@ -98,7 +99,6 @@ public class ActionManager implements Cloneable
 	/**The lazily-created list of tool actions.*/
 	private ArrayList toolActionList;
 
-
 	/**Default constructor.*/
 	public ActionManager()
 	{
@@ -113,6 +113,7 @@ public class ActionManager implements Cloneable
 	}
 
 	/**Adds to the manager an action representing a top-level menu.
+	If the action already exists at the top level, no action occurs.
 	@param action The action to add as a top-level menu action.
 	*/
 	public void addMenuAction(final Action action)
@@ -123,13 +124,18 @@ public class ActionManager implements Cloneable
 	/**Adds to the manager an action representing a menu.
 	If no parent action is specified, the action will be stored as a top-level
 		action.
+	If the action already exists as a child of the given parent, no action occurs.
 	@param parentAction The action that serves as the parent of the action, or
 		<code>null</code> if the action is a top-level menu action.
 	@param action The action to add to the parent's list of child actions.
 	*/
 	public void addMenuAction(final Action parentAction, final Action action)
 	{
-		getMenuActionList(parentAction).add(action);	//add the action to the parent's list of child actions
+		final List menuActionList=getMenuActionList(parentAction);	//get the parent's list of child actions
+		if(!menuActionList.contains(action))	//if the list doesn't already contain the action
+		{
+			menuActionList.add(action);	//add the action to the parent's list of child actions
+		}
 	}
 
 	/**@return A read-only iterator to actions representing top-level menus.*/
@@ -165,6 +171,7 @@ public class ActionManager implements Cloneable
 	public ActionManager merge(final ActionManager actionManager)
 	{
 		final ActionManager mergedActionManager=(ActionManager)clone();	//clone this action manager
+			//merge the menu actions
 		final Iterator actionListEntryIterator=actionManager.menuActionListMap.entrySet().iterator();	//get an iterator to all action lists in the merging manager, keyed to actions
 		while(actionListEntryIterator.hasNext())	//while there are more entries
 		{
@@ -184,10 +191,18 @@ public class ActionManager implements Cloneable
 				}
 			}
 		}
+			//merge the tool actions
+		final Iterator toolActionEntryIterator=actionManager.toolActionList.iterator();	//get an iterator to all tool actions in the merging manager
+		while(toolActionEntryIterator.hasNext())	//while there are more tool actions
+		{
+			final Action action=(Action)toolActionEntryIterator.next();	//get the next tool action
+			mergedActionManager.addToolAction(action);	//add this action to the merged action manager, creating a list of tool actions if needed
+		}
 		return mergedActionManager;	//return the merged action manager
 	}
 
 	/**Adds to the manager an action representing a tool.
+	If the action already exists at the top level, no action occurs.
 	@param action The action to add as a tool action.
 	*/
 	public void addToolAction(final Action action)
@@ -196,7 +211,10 @@ public class ActionManager implements Cloneable
 		{
 			toolActionList=new ArrayList();	//create a new list of tool actions
 		}
-		toolActionList.add(action);	//add the action to the list of tool actions
+		if(!toolActionList.contains(action))	//if the list doesn't already contain the action
+		{
+			toolActionList.add(action);	//add the action to the list of tool actions
+		}
 	}
 
 	/**Removes from the manager an action representing a tool.
@@ -234,6 +252,35 @@ public class ActionManager implements Cloneable
 	}
 	return sortedActionList!=null ? Collections.unmodifiableList(sortedActionList).iterator() : null;	//return a read-only iterator to the sorted actions, if there are any
 */
+
+	/**Adds toolbar components to the toolbar from the toolbar actions.
+	@param toolBar The toolbar to set up.
+	@return The toolbar that was set up.
+	@see #getToolActionIterator()
+	*/
+	public JToolBar addToolComponents(final JToolBar toolBar)
+	{
+		Component lastComponent=null;	//keep track of the last component we added
+		final Iterator actionIterator=getToolActionIterator();	//get an iterator to the tool actions
+		while(actionIterator.hasNext())	//while there are actions
+		{
+			final Action action=(Action)actionIterator.next();	//get the next action
+			if(action instanceof ActionManager.SeparatorAction)		//if this is a separator action
+			{
+					//don't put two separators in a row, and don't put a separator as the first component 
+				if(lastComponent!=null && !(lastComponent instanceof JSeparator))	//if this isn't the first component and it doesn't come before a separator
+				{
+					lastComponent=ToolBarUtilities.createToolBarSeparator(toolBar);	//create a toolbar separator
+					toolBar.add(lastComponent);	//add the separator
+				}				
+			}
+			else	//if this is a normal action
+			{
+				lastComponent=toolBar.add(action);	//add this action				
+			}			
+		}
+		return toolBar;	//return the toolbar we initialized
+	}
 
 	/**Creates a component, such as a button, to represent the given action.
 	<p>Most methods should call <code>MenuUtilities.createComponent(Action)</code>
