@@ -121,7 +121,7 @@ public class RDFTree extends JTree
 		}
 		else  //if no specific resource was given
 		{
-			treeNode=new RDFTreeNode(rdf, rdfXMLifier); //create a tree node for the entire RDF data model
+			treeNode=new RDFTreeNode(rdf, rdfXMLifier, getComparator()); //create a tree node for the entire RDF data model, using the comparator we have, if any
 		}
 		setModel(new DefaultTreeModel(treeNode));  //create a new model and set the model for the tree
 	}

@@ -49,8 +49,20 @@ public class RDFTreeNode extends DynamicTreeNode
 	*/
 	public RDFTreeNode(final RDF rdf, final RDFXMLifier rdfXMLifier)
 	{
+		this(rdf, rdfXMLifier, null);	//construct the tree node without a comparator
+	}
+
+	/**Constructs a tree node from an RDF data model.
+	@param rdf The RDF data model represented by this node.
+	@param rdfXMLifier The RDF XML-ifier to use for creating labels.
+	@param comparator The object that determines how the resources will be
+		sorted, or <code>null</code> if the resources should not be sorted.
+	*/
+	public RDFTreeNode(final RDF rdf, final RDFXMLifier rdfXMLifier, final Comparator comparator)
+	{
 		super(rdf); //store the RDF data model as the user object
 		xmlifier=rdfXMLifier; //save the XMLifier we'll use for generating labels
+		setComparator(comparator);	//set the comparator
 	}
 
   /**@return <code>true</code> if the RDF data model has no resources.*/

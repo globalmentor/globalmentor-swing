@@ -6,9 +6,11 @@ import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.rdfs.*;
 
 /**A tree node that represents an object described in RDF.
-	The object can be either a literal or a resource; if a resource, any
-	properties will be dynamically loaded
-	The RDF object is stored as the user object of the tree node.
+<p>The object can be either a literal or a resource; if a resource, any
+	properties will be dynamically loaded</p>
+<p>The RDF object is stored as the user object of the tree node.</p>
+<p>This class has special support for RDF lists, the contents of which are
+	by default displayed as children of the given property.</p>
 @author Garret Wilson
 */
 public class RDFObjectTreeNode extends DynamicTreeNode
@@ -31,6 +33,9 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 	  /**@return The RDF data model to which the RDF object belongs.*/
 //G***del if not neede		protected RDF getRDF() {return rdf;}
 
+
+//TODO make a boolean property setListCollapsed() or something to allow the display of lists to be special-cased or not
+
 	/**The RDF XML-ifier to use for creating labels.*/
 	private final RDFXMLifier xmlifier;
 
@@ -48,6 +53,23 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 		*/
 		protected RDFResource getProperty() {return property;}
 
+	/**The object that determines how the resources will be sorted in a list,
+		or <code>null</code> if the resources in a list should not be sorted.
+	*/
+//G***fix, maybe	private Comparator comparator=null;
+
+		/**@return The object that determines how the resources will be sorted in,
+			a list, or <code>null</code> if the resources in a list should not be
+			sorted.
+		*/
+//G***fix, maybe		public Comparator getComparator() {return comparator;}
+
+		/**Sets the method of sorting the resources in lists.
+		@param newComparator The object that determines how the resources in a list
+			will be sorted, or <code>null</code> if the resources in a list should
+			not be sorted.
+		*/
+//G***fix, maybe		public void setComparator(final Comparator newComparator) {comparator=newComparator;}
 
 	/**Constructs a tree node from an RDF object not in the context of any
 		property.
@@ -89,19 +111,46 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 	protected void loadChildNodes()
 	{
 		removeAllChildren();	//remove all children G***maybe put this in some common place
+//TODO see if we should use this		public void unloadChildNodes()
 		if(getUserObject() instanceof RDFResource)  //if we represent an RDF resource
 		{
-			final Iterator propertyIterator=((RDFResource)getUserObject()).getPropertyIterator();  //get an iterator to all properties
-			while(propertyIterator.hasNext()) //while there are more properties
+			final RDFResource resource=(RDFResource)getUserObject();	//cast the user object to a resource
+//G***del when works			if(RDFUtilities.isType(resource, RDFConstants.RDF_NAMESPACE_URI, RDFConstants.LIST_TYPE_NAME))	//if this is a list
+			if(resource instanceof RDFListResource)	//if this is a list
 			{
-				final RDFPropertyValuePair propertyValuePair=(RDFPropertyValuePair)propertyIterator.next(); //get the next property/value pair
-				final RDFResource property=propertyValuePair.getProperty();  //get the property resource
-				final RDFObject value=propertyValuePair.getPropertyValue();  //get the property value
-					//create a new tree node to represent the property and value
-				final RDFObjectTreeNode rdfPropertyNode=new RDFObjectTreeNode(property, value, getXMLifier());
-				add(rdfPropertyNode); //add the property node to this resource node
+				final RDFListResource listResource=(RDFListResource)resource;	//cast the resource to a list
+				final Iterator iterator=listResource.iterator();	//get an iterator to look at the list elements
+				while(iterator.hasNext())	//while there are more elements
+				{
+					final RDFObject rdfObject=(RDFObject)iterator.next();	//get the next element of the list
+					loadChildNode(null, rdfObject);	//load the object without indicating a property
+				}
+			}
+			else	//if this is a non-list resource
+			{
+				final Iterator propertyIterator=resource.getPropertyIterator();  //get an iterator to all properties
+				while(propertyIterator.hasNext()) //while there are more properties
+				{
+					final RDFPropertyValuePair propertyValuePair=(RDFPropertyValuePair)propertyIterator.next(); //get the next property/value pair
+					final RDFResource property=propertyValuePair.getProperty();  //get the property resource
+					final RDFObject value=propertyValuePair.getPropertyValue();  //get the property value
+					loadChildNode(property, value);	//load the property-value pair
+				}
 			}
 		}
+	}
+
+	/**Loads a child node to represent a property object and optional property.
+	@param rdfProperty The property of which the object is a resource, or
+		<code>null</code> if this object should not be considered the object of
+		any property.
+	@param rdfObject The resource to represent in the new node.
+	 */ 
+	protected void loadChildNode(final RDFResource rdfProperty, final RDFObject rdfObject)
+	{
+			//create a new tree node to represent the property and value
+		final RDFObjectTreeNode rdfPropertyNode=new RDFObjectTreeNode(rdfProperty, rdfObject, getXMLifier());
+		add(rdfPropertyNode); //add the property node to this resource node		
 	}
 
 	/**@return A string representation to display as the tree node's label.*/

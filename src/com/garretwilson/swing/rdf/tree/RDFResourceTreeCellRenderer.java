@@ -64,7 +64,8 @@ public class RDFResourceTreeCellRenderer extends UserObjectTreeCellRenderer
 	{
 		super();  //construct the parent object
 		  //setup the icon for RDF literals
-		registerRDFLiteralIcon(IconResources.getIcon(IconResources.STRING_ICON_FILENAME));
+		registerRDFLiteralIcon(IconResources.getIcon(IconResources.SPEECH_RECTANGLE_TEXT_ICON_FILENAME));
+//TODO decide on which icon to use		registerRDFLiteralIcon(IconResources.getIcon(IconResources.STRING_ICON_FILENAME));
 	}
 
 	/**Retrieves the key used to lookup data, such as icons, specific for this
