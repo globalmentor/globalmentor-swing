@@ -15,6 +15,7 @@ import java.io.*;
 /*G***bring back as needed
 */
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import javax.swing.text.*;
 import javax.swing.*;
@@ -32,6 +33,7 @@ import com.garretwilson.util.NameValuePair;
 import com.garretwilson.rdf.*;
 import com.garretwilson.text.xml.xlink.XLinkConstants;
 import com.garretwilson.text.xml.XMLDOMImplementation;
+import com.garretwilson.text.xml.XMLNamespaceProcessor;
 import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.text.xml.XMLSerializer;
 import com.garretwilson.text.xml.XMLUtilities;
@@ -201,12 +203,13 @@ Debug.trace("ready to create view for element: "+XMLStyleUtilities.getXMLElement
 			if(elementNamespaceURI==null) //if this element has no namespace
 			{
 				final MediaType mediaType=XMLStyleUtilities.getMediaType(attributeSet); //see if this element's document has a media type defined
-				if(mediaType!=null) //if there is a media type defined for this element's document
-				{ //G***probably do all this differently later, like registering a view factory with a media type or something or, better yet, registering a namespace with a media type
-					if(mediaType.equals(MediaType.TEXT_HTML))
-						elementNamespaceURI=XHTMLConstants.XHTML_NAMESPACE_URI.toString(); //G***testing
-					else if(mediaType.equals(MediaType.TEXT_X_OEB1_DOCUMENT))
-						elementNamespaceURI=OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(); //G***testing
+				if(mediaType!=null) //if there is a media type defined for this element's document	//G***probably do all this differently later, like registering a view factory with a media type or something or, better yet, registering a namespace with a media type
+				{ 
+					final URI mediaTypeNamespaceURI=XMLNamespaceProcessor.getDefaultNamespaceURI(mediaType);	//see if we can find a default namespace for the media type
+					if(mediaTypeNamespaceURI!=null)	//if we found a namespace for the media type
+					{
+						elementNamespaceURI=mediaTypeNamespaceURI.toString();	//use the namespace for the media type
+					}
 				}
 			}
 //G***del Debug.trace("Decided namespace is really: ", elementNamespaceURI); //G***del

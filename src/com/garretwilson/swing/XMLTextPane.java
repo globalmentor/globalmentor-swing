@@ -37,6 +37,10 @@ import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.EventListenerList;
+
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.DocumentFragment;
+
 import com.garretwilson.applet.*;
 import com.garretwilson.awt.EventQueueUtilities;
 import com.garretwilson.io.*;
@@ -53,7 +57,9 @@ import com.garretwilson.swing.text.xml.oeb.OEBEditorKit;  //G***move elsewhere i
 import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLLinkController;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLViewFactory;
+import com.garretwilson.text.xml.XMLDOMImplementation;
 import com.garretwilson.text.xml.XMLReader;
+import com.garretwilson.text.xml.XMLUtilities;
 import com.garretwilson.text.xml.oeb.OEBConstants;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
 import com.garretwilson.text.xml.xhtml.XHTMLUtilities;
@@ -1267,6 +1273,24 @@ Debug.trace("reading from stream into document"); //G***del
 	    read(in, doc);
 	}
 */
+	}
+
+	/**Sets the given XML document fragment.
+	<p>The installed editor kit will be used to create a new document, into which
+		the XML data will be loaded. If the installed editor kit is not an
+		<code>XMLEditorKit</code>, no action occurs.</p>
+	@param documentFragment The XML document fragment that contains the data.
+	@param baseURI The base URI, corresponding to the XML document fragment.
+	@param mediaType The media type of the XML document fragment.
+	*/
+	public void setXML(final DocumentFragment xmlDocumentFragment, final URI baseURI, final MediaType mediaType)
+	{
+		final DOMImplementation domImplementation=new XMLDOMImplementation();	//TODO get a DOMImplementation in an implementation-agnostic way
+			//create a document with an document element of <xhtml:div> TODO create something less XHTML-ish and more generic
+		final org.w3c.dom.Document xmlDocument=domImplementation.createDocument(XHTMLConstants.XHTML_NAMESPACE_URI.toString(), XMLUtilities.createQualifiedName(XHTMLConstants.XHTML_NAMESPACE_PREFIX, XHTMLConstants.ELEMENT_DIV), null);
+			//import the document fragment and append it to the root element of our document
+		xmlDocument.getDocumentElement().appendChild(xmlDocument.importNode(xmlDocumentFragment, true));
+		setXML(xmlDocument, baseURI, mediaType);	//set the XML using our created enclosing document
 	}
 
 	/**Sets the given XML data.

@@ -1,14 +1,23 @@
 package com.garretwilson.swing;
 
 import java.io.*;
+import java.net.URI;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import com.garretwilson.io.MediaType;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.text.CharacterEncodingConstants;
-import com.garretwilson.text.xml.XMLModel;
+import com.garretwilson.text.xml.XMLDocumentFragmentModel;
+import com.garretwilson.text.xml.XMLDocumentModel;
+import com.garretwilson.text.xml.XMLNamespaceProcessor;
+import com.garretwilson.text.xml.XMLNodeModel;
 import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.text.xml.XMLSerializer;
+import com.garretwilson.text.xml.XMLUtilities;
+import com.garretwilson.util.Debug;
+
+import org.w3c.dom.*;
 
 /**Panel that displays XML and source code.
 <p>The canonical XML tree is stored in the currently available view.</p>
@@ -81,13 +90,13 @@ public class XMLPanel extends TabbedViewPanel
 	/**@return The data model for which this component provides a view.
 	@see ModelViewablePanel#getModel()
 	*/
-	public XMLModel getXMLModel() {return (XMLModel)getModel();}
+	public XMLNodeModel getXMLModel() {return (XMLNodeModel)getModel();}
 
 	/**Sets the data model.
 	@param model The data model for which this component provides a view.
 	@see ModelViewablePanel#setModel(Model)
 	*/
-	public void setXMLModel(final XMLModel model)
+	public void setXMLModel(final XMLNodeModel model)
 	{
 		xmlTextPane.setURIInputStreamable(model.getURIInputStreamable());	//make sure the text pane knows from where to get input streams
 		setModel(model);	//set the model
@@ -96,7 +105,7 @@ public class XMLPanel extends TabbedViewPanel
 	/**Model constructor.
 	@param model The data model for which this component provides a view.
 	*/
-	public XMLPanel(final XMLModel model)
+	public XMLPanel(final XMLNodeModel model)
 	{
 		this(model, true);	//construct and initialize the panel
 	}
@@ -106,7 +115,7 @@ public class XMLPanel extends TabbedViewPanel
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public XMLPanel(final XMLModel model, final boolean initialize)
+	public XMLPanel(final XMLNodeModel model, final boolean initialize)
 	{
 		this(model, new MediaType(MediaType.TEXT, MediaType.XML), initialize);	//construct the panel with a default text/xml media type
 	}
@@ -115,7 +124,7 @@ public class XMLPanel extends TabbedViewPanel
 	@param model The data model for which this component provides a view.
 	@param mediaType The content type of the XML.
 	*/
-	public XMLPanel(final XMLModel model, final MediaType mediaType)
+	public XMLPanel(final XMLNodeModel model, final MediaType mediaType)
 	{
 		this(model, mediaType, true);	//construct and initialize the panel
 	}
@@ -126,7 +135,7 @@ public class XMLPanel extends TabbedViewPanel
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public XMLPanel(final XMLModel model, final MediaType mediaType, final boolean initialize)
+	public XMLPanel(final XMLNodeModel model, final MediaType mediaType, final boolean initialize)
 	{
 		super(model, false);	//construct the parent class without initializing the panel
 		setSupportedModelViews(DEFAULT_SUPPORTED_MODEL_VIEWS);	//set the model views we support
@@ -186,7 +195,7 @@ public class XMLPanel extends TabbedViewPanel
 	protected void loadModel() throws IOException
 	{
 		super.loadModel();	//do the default loading
-		final XMLModel model=getXMLModel();	//get the data model
+		final XMLNodeModel model=getXMLModel();	//get the data model
 		switch(getModelView())	//see which view of data we should load
 		{
 			case WYSIWYG_MODEL_VIEW:	//if we're changing to the WYSIWYG view
@@ -194,7 +203,14 @@ public class XMLPanel extends TabbedViewPanel
 				if(model.getXML()!=null)	//if we have XML
 				{
 					getXMLTextPane().setURIInputStreamable(model.getURIInputStreamable());	//make sure the text pane knows from where to get input streams
-					getXMLTextPane().setXML(model.getXML(), model.getBaseURI(), getContentType());	//put the XML into the XML text pane
+					if(model instanceof XMLDocumentModel)	//if the model models a document
+					{
+						getXMLTextPane().setXML(((XMLDocumentModel)model).getDocument(), model.getBaseURI(), getContentType());	//put the XML document into the XML text pane
+					}
+					else if(model instanceof XMLDocumentFragmentModel)	//if the model models a document fragment
+					{
+						getXMLTextPane().setXML(((XMLDocumentFragmentModel)model).getDocumentFragment(), model.getBaseURI(), getContentType());	//put the XML document into the XML text pane
+					}
 				}
 				else	//if we don't have any XML
 				{
@@ -206,10 +222,21 @@ public class XMLPanel extends TabbedViewPanel
 				getSourceTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the source text pane
 				if(model.getXML()!=null)	//if we have XML
 				{
-					final XMLSerializer xmlSerializer=new XMLSerializer(true);	//create a formatted XML serializer
-					final String source=xmlSerializer.serialize(model.getXML());	//serialize the XML to a string
-					getSourceTextPane().setText(source);	//show the XML source in the source text pane
-					getSourceTextPane().setCaretPosition(0);  //scroll to the top of the text
+					final XMLSerializer xmlSerializer=new XMLSerializer(false);	//create an unformatted XML serializer
+					String source=null;	//we'll serialize the XML in the model
+					if(model instanceof XMLDocumentModel)	//if the model models a document
+					{
+						source=xmlSerializer.serialize(((XMLDocumentModel)model).getDocument());	//serialize the XML document to a string
+					}
+					else if(model instanceof XMLDocumentFragmentModel)	//if the model models a document fragment
+					{
+						source=xmlSerializer.serialize(((XMLDocumentFragmentModel)model).getDocumentFragment());	//serialize the XML document fragment to a string
+					}
+					if(source!=null)	//if we serialized the model
+					{					
+						getSourceTextPane().setText(source.trim());	//show the XML source in the source text pane, trimming beginning and ending whitespace TODO use a Unicode-aware trim
+						getSourceTextPane().setCaretPosition(0);  //scroll to the top of the text
+					}
 				}
 				else	//if we don't have XML
 				{
@@ -226,20 +253,45 @@ public class XMLPanel extends TabbedViewPanel
 	protected void saveModel() throws IOException
 	{
 		super.saveModel();	//do the default saving
-		final XMLModel model=getXMLModel();	//get the data model
+		final XMLNodeModel model=getXMLModel();	//get the data model
 		switch(getModelView())	//see which view of data we have, in order to get the current XML
 		{
 			case SOURCE_MODEL_VIEW:	//if we should store the XML source
 				{
-					final String sourceString=getSourceTextPane().getText();	//get the current source text
-					if(sourceString.length()>0)	//if there is source text
+					final StringBuffer sourceStringBuffer=new StringBuffer(getSourceTextPane().getText().trim());	//get the current source text, trimming it of beginning and trailing whitespace TODO use a Unicode-aware trim
+					if(sourceStringBuffer.length()>0)	//if there is source text
 					{
+						if(model instanceof XMLDocumentFragmentModel)	//if we're modeling a document fragment
+						{
+							final StringBuffer prologStringBuffer=new StringBuffer("<?xml version=\"1.0\"?>\n");	//construct the XML prolog TODO use a constant here
+							prologStringBuffer.append("<div");	//append a root element start tag TODO use something HTML-agnostic
+							final URI defaultNamespaceURI=XMLNamespaceProcessor.getDefaultNamespaceURI(getContentType());	//see if we have a default namespace for the media type we're using
+							if(defaultNamespaceURI!=null)	//if we know the default namespace
+							{
+								prologStringBuffer.append(" xmlns=\"").append(defaultNamespaceURI).append("\"");	//add a default XML namespace declaration attribute
+							}
+							prologStringBuffer.append('>');	//finish the root element start tag
+							sourceStringBuffer.insert(0, prologStringBuffer);	//insert the prolog into the source code
+							sourceStringBuffer.append("</div>");	//append the ending tag for the root element to the source code
+						}
 						final XMLProcessor xmlProcessor=new XMLProcessor(model.getURIInputStreamable());	//create an XML processor to read the source
-						final byte[] sourceBytes=sourceString.getBytes(CharacterEncodingConstants.UTF_8);	//convert the string to a series of UTF-8 bytes
+						final byte[] sourceBytes=sourceStringBuffer.toString().getBytes(CharacterEncodingConstants.UTF_8);	//convert the string to a series of UTF-8 bytes
 						final InputStream inputStream=new BufferedInputStream(new ByteArrayInputStream(sourceBytes));	//create an input stream to the source as bytes
 						try
 						{
-							model.setXML(xmlProcessor.parseDocument(inputStream, model.getBaseURI()));	//parse the document into the XML data model
+							final Document document=xmlProcessor.parseDocument(inputStream, model.getBaseURI());	//parse the XML document
+//G***del Debug.trace("document tree from source");
+//G***del XMLUtilities.printTree(document, System.out);
+
+							if(model instanceof XMLDocumentModel)	//if we're modeling a document
+							{
+								((XMLDocumentModel)model).setDocument(document);	//put the whole document in the model
+							}
+							else if(model instanceof XMLDocumentFragmentModel)	//if we're modeling a document fragment
+							{
+									//extract the child elements into a document fragment and set that in the model
+								((XMLDocumentFragmentModel)model).setDocumentFragment(XMLUtilities.extractChildren(document.getDocumentElement()));
+							}
 						}
 						finally
 						{
@@ -258,8 +310,19 @@ public class XMLPanel extends TabbedViewPanel
 					final XMLEditorKit xmlEditorKit=(XMLEditorKit)getXMLTextPane().getEditorKit();	//get the XML editor kit
 					if(getXMLTextPane().getDocument() instanceof XMLDocument)	//if this is an Swing XML document
 					{
-						final XMLDocument xmlDocument=(XMLDocument)getXMLTextPane().getDocument();	//get the XML document
-						model.setXML(xmlEditorKit.getXML(xmlDocument));	//get the XML from the document using the editor kit
+						final XMLDocument swingDocument=(XMLDocument)getXMLTextPane().getDocument();	//get the Swing document
+						final Document document=xmlEditorKit.getXML(swingDocument);	//get the XML DOM document from the Swing document
+//G***del						Debug.trace("document tree from WYSIWYG");
+//G***del						XMLUtilities.printTree(document, System.out);
+						if(model instanceof XMLDocumentModel)	//if we're modeling a document
+						{
+							((XMLDocumentModel)model).setDocument(document);	//put the whole document in the model
+						}
+						else if(model instanceof XMLDocumentFragmentModel)	//if we're modeling a document fragment
+						{
+								//extract the child elements into a document fragment and set that in the model
+							((XMLDocumentFragmentModel)model).setDocumentFragment(XMLUtilities.extractChildren(document.getDocumentElement()));
+						}
 					}
 				}
 				break;
