@@ -133,6 +133,7 @@ public class EmailPanel extends BasicPanel
 		initialize();	//initialize the panel
 		setEmailAddress(emailAddress);	//set the given email address
 		setEmailType(emailType);	//set the given email type
+		setModified(false);	//show that the information has not yet been modified
 	}
 
 	/**Initializes the user interface.*/

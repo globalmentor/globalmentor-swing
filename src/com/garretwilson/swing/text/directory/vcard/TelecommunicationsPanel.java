@@ -163,27 +163,6 @@ public class TelecommunicationsPanel extends ContentPanel
 		}
 	}
 
-	/**Sets whether the object has been modified.
-	This version sets the modified status of all contained panels to
-		<code>false</code> if the new modified status is <code>false</code>.
-	@param newModified The new modification status.
-	*/
-	public void setModified(final boolean newModified)
-	{
-		super.setModified(newModified);	//set the modified status
-		if(newModified==false)	//if we are no longer modified
-		{
-			for(int i=getContentPanel().getComponentCount()-1; i>=0; --i)	//look at each component
-			{
-				final Component component=getContentPanel().getComponent(i);	//get this component
-				if(component instanceof Modifiable)	//if this component is modifiable
-				{
-					((Modifiable)component).setModified(newModified);	//tell the component it is no longer modified
-				}
-			}
-		}
-	}
-
 	/**Default constructor.*/
 	public TelecommunicationsPanel()
 	{

@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
 import com.garretwilson.awt.BasicGridBagLayout;
@@ -11,12 +12,19 @@ import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.Editable;
 
 /**Panel that contains a list and buttons for selecting and unselecting all items.
+<p>In order to create and edit items, an editor must be set (besides setting
+	the list to be editable using <code>setEditable(true)</code>). Actual
+	modification of the list will only be performed if the list uses a list model
+	that implements either <code>javax.swing.DefaultListModel</code> or
+	<code>java.util.List</code>.</p>
 <p>Bound properties:</p>
 <dl>
 	<dt><code>Editable.EDITABLE_PROPERTY</code> (<code>Boolean</code>)</dt>
 	<dd>Indicates the editable status has changed.</dd>
 </dl>
 @author Garret Wilson
+@see java.util.List
+@see javax.swing.DefaultListModel
 */
 public class ListPanel extends ContentPanel implements Editable
 {
@@ -25,7 +33,21 @@ public class ListPanel extends ContentPanel implements Editable
 	protected final JButton selectAllButton;
 	protected final JButton selectNoneButton;
 	protected final JToolBar.Separator editSeparator;
+	protected final JButton addButton;
+	protected final JButton deleteButton;
 	protected final JButton editButton;
+
+	/**The editor for editing items in the list, or <code>null</code> if there is no editor.*/
+	private Editor editor;
+
+		/**@return The editor for editing items in the list, or <code>null</code> if there is no editor.*/
+		public Editor getEditor() {return editor;}
+
+		/**Sets the editor object
+		@param editor The editor for editing items in the list, or]
+			<code>null</code> if there is no editor.
+		*/
+		public void setEditor(final Editor editor) {this.editor=editor;}
 
 	/**@return The list in the scroll pane that is the content component as a list; convenience method.*/
 	protected JList getList() {return (JList)((JScrollPane)getContentComponent()).getViewport().getView();}
@@ -41,6 +63,18 @@ public class ListPanel extends ContentPanel implements Editable
 
 		/**@return The action for selecting no items.*/
 		protected Action getSelectNoneAction() {return selectNoneAction;}
+
+	/**The action for adding an item.*/
+	private final Action addAction;
+
+		/**@return The action for adding an item.*/
+		protected Action getAddAction() {return addAction;}
+
+	/**The action for deleting an item.*/
+	private final Action deleteAction;
+
+		/**@return The action for deleting an item.*/
+		protected Action getDeleteAction() {return deleteAction;}
 
 	/**The action for editing an item.*/
 	private final Action editAction;
@@ -103,6 +137,10 @@ public class ListPanel extends ContentPanel implements Editable
 		selectNoneAction=new SelectNoneAction();	//select none
 		selectNoneButton=new JButton(selectNoneAction);
 		editSeparator=ToolBarUtilities.createToolBarSeparator(buttonToolBar);
+		addAction=new AddAction();	//select all
+		addButton=new JButton(addAction);
+		deleteAction=new DeleteAction();	//select all
+		deleteButton=new JButton(deleteAction);
 		editAction=new EditAction();	//edit
 		editButton=new JButton(editAction);
 
@@ -119,6 +157,8 @@ public class ListPanel extends ContentPanel implements Editable
 		buttonToolBar.add(selectAllButton);
 		buttonToolBar.add(selectNoneButton);
 		buttonToolBar.add(editSeparator);
+		buttonToolBar.add(addButton);
+		buttonToolBar.add(deleteButton);
 		buttonToolBar.add(editButton);
 		add(buttonToolBar, BorderLayout.LINE_END);
 	}
@@ -143,6 +183,9 @@ public class ListPanel extends ContentPanel implements Editable
 		getSelectAllAction().setEnabled(isMultipleSelectionAllowed && isListEnabled && listModelSize>0);	//only allow all items to be selected if there are items
 		getSelectNoneAction().setEnabled(isMultipleSelectionAllowed && isListEnabled && listModelSize>0);	//only allow no items to be selected if there are items
 		editSeparator.setVisible(isEditable);	//only show the edit separator if editing is allowed
+		addButton.setVisible(isEditable);	//only show the add button if editing is allowed
+		deleteButton.setVisible(isEditable);	//only show the delete button if editing is allowed
+		deleteButton.setEnabled(leadSelectionIndex>=0);	//only enable the delete button if there is something selected to be deleted
 		editButton.setVisible(isEditable);	//only show the edit button if editing is allowed
 		editButton.setEnabled(leadSelectionIndex>=0);	//only enable the edit button if there is something selected to be edited
 	}
@@ -159,30 +202,91 @@ public class ListPanel extends ContentPanel implements Editable
 		getList().getSelectionModel().clearSelection();	//clear the selection
 	}
 
-	/**Edits the currently selected item in the list.
-	<p>Derived classes should usually only override <code>edit(Object)</code>.</p>
-	@see #edit(Object)
-	*/
-	public void edit()
+	/**Creates a new item and, if editing is successful, adds it to the list.*/
+	public void add()
 	{
-		final int leadSelectionIndex=getList().getLeadSelectionIndex();	//get the lead selection
-		if(leadSelectionIndex>=0)	//if a valid index is selected
+		final Editor editor=getEditor();	//get the current editor
+		if(editor!=null)	//if we have an editor
 		{
-			edit(getList().getModel().getElementAt(leadSelectionIndex));	//edit the selected item
-//TODO fix---how do we notify the list of changes in a generic way? maybe we don't need to if the implementing class modifies the list model correctly
-//G***fix			((AbstractListModel)getList().getModel())
-/*G***fix
-
-			protected void fireContentsChanged(Object source,
-																				 int index0,
-																				 int index1)
-*/
+			try
+			{
+				final Object item=editor.create();	//create a new item
+				final Object newItem=editor.edit(this, item);	//edit the item
+				if(newItem!=null)	//if the user accepted the changes
+				{
+					final ListModel listModel=getList().getModel();	//get the list model
+					if(listModel instanceof DefaultListModel)	//if the list model is a default list model
+					{
+						((DefaultListModel)listModel).addElement(newItem);	//add the item to the default list model
+					}
+					else if(listModel instanceof List)	//if the list model implements the list interface
+					{
+						((List)listModel).add(newItem);	//add the item to the list
+					}					
+				}
+			}
+			catch(InstantiationException e)
+			{
+				SwingApplication.displayApplicationError(this, e);	//show the error
+			}
+			catch(IllegalAccessException e)
+			{
+				SwingApplication.displayApplicationError(this, e);	//show the error
+			}
 		}
 	}
 
-	/**Edits the given item in the list.*/
-	public void edit(final Object item)
+	/**Deletes the currently selected item in the list.*/
+	public void delete()
 	{
+		final Editor editor=getEditor();	//get the current editor
+		if(editor!=null)	//if we have an editor
+		{
+			final int leadSelectionIndex=getList().getLeadSelectionIndex();	//get the lead selection
+			if(leadSelectionIndex>=0)	//if a valid index is selected
+			{
+				final ListModel listModel=getList().getModel();	//get the list model
+				final Object item=listModel.getElementAt(leadSelectionIndex);	//get the currently selected item
+					//ask the user for confimation to delete the item
+				if(OptionPane.showConfirmDialog(this, "Are you sure you want to delete the item, \""+item+"\"?", "Confirm delete", OptionPane.OK_CANCEL_OPTION)==OptionPane.OK_OPTION)	//G***i18n
+				{
+					if(listModel instanceof DefaultListModel)	//if the list model is a default list model
+					{
+						((DefaultListModel)listModel).remove(leadSelectionIndex);	//remove the item from the default list model
+					}
+					else if(listModel instanceof List)	//if the list model implements the list interface
+					{
+						((List)listModel).remove(leadSelectionIndex);	//remove the item from the list
+					}
+				}
+			}
+		}
+	}
+
+	/**Edits the currently selected item in the list.*/
+	public void edit()
+	{
+		final Editor editor=getEditor();	//get the current editor
+		if(editor!=null)	//if we have an editor
+		{
+			final int leadSelectionIndex=getList().getLeadSelectionIndex();	//get the lead selection
+			if(leadSelectionIndex>=0)	//if a valid index is selected
+			{
+				final ListModel listModel=getList().getModel();	//get the list model
+				final Object newItem=editor.edit(this, listModel.getElementAt(leadSelectionIndex));	//edit the selected item
+				if(newItem!=null)	//if the edit went successfully
+				{
+					if(listModel instanceof DefaultListModel)	//if the list model is a default list model
+					{
+						((DefaultListModel)listModel).set(leadSelectionIndex, newItem);	//update the default list model item
+					}
+					else if(listModel instanceof List)	//if the list model implements the list interface
+					{
+						((List)listModel).set(leadSelectionIndex, newItem);	//update the list
+					}
+				}
+			}
+		}
 	}
 
 	/**Action for selecting all items in the list.*/
@@ -194,7 +298,7 @@ public class ListPanel extends ContentPanel implements Editable
 			super("All");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Select all");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Select all items in the list.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer('a'));  //set the mnemonic key G***i18n
+			putValue(MNEMONIC_KEY, new Integer('l'));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.CHECK_MULTIPLE_ICON_FILENAME)); //load the correct icon
 		}
 	
@@ -229,6 +333,50 @@ public class ListPanel extends ContentPanel implements Editable
 		}
 	}
 
+	/**Action for adding an item to the list.*/
+	class AddAction extends AbstractAction
+	{
+		/**Default constructor.*/
+		public AddAction()
+		{
+			super("Add");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "Add item");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Add an item to the list.");	//set the long description G***i18n
+			putValue(MNEMONIC_KEY, new Integer('a'));  //set the mnemonic key G***i18n
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.DOCUMENT_NEW_ICON_FILENAME)); //load the correct icon
+		}
+	
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+			add();	//add an item
+		}
+	}
+
+	/**Action for deleting an item from the list.*/
+	class DeleteAction extends AbstractAction
+	{
+		/**Default constructor.*/
+		public DeleteAction()
+		{
+			super("Delete");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "Delete item");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Delete an item from the list.");	//set the long description G***i18n
+			putValue(MNEMONIC_KEY, new Integer('d'));  //set the mnemonic key G***i18n
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.DELETE_ICON_FILENAME)); //load the correct icon
+		}
+	
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+			delete();	//delete the item
+		}
+	}
+
 	/**Action for editing an item in the list.*/
 	class EditAction extends AbstractAction
 	{
@@ -250,4 +398,67 @@ public class ListPanel extends ContentPanel implements Editable
 			edit();	//select all items
 		}
 	}
+
+	/**An interface for editing items in a list.
+	@author Garret Wilson
+	*/
+	public interface Editor	//TODO use generics when they are available
+	{
+
+		/**Creates a new default object to be edited.
+		@return The new default object.
+		@exception IllegalAccessException Thrown if the class or its nullary 
+			constructor is not accessible.
+		@exception InstantiationException Thrown if a class represents an abstract
+			class, an interface, an array class, a primitive type, or void;
+			or if the class has no nullary constructor; or if the instantiation fails
+			for some other reason.
+		*/
+		public Object create() throws InstantiationException, IllegalAccessException;
+
+		/**Edits an object from the list.
+		@param parentComponent The component to use as a parent for any editing
+			components.
+		@param item The item to edit in the list.
+		@return The object with the modifications from the edit, or
+			<code>null</code> if the edits should not be accepted.
+		*/
+		public Object edit(final Component parentComponent, final Object item);
+
+	}
+
+	/**A base class for editing items in a list.
+	@author Garret Wilson
+	*/
+	public static abstract class AbstractEditor implements Editor
+	{
+
+		/**The class used for creating new objects.*/
+		protected final Class factoryClass;
+
+		/**Creates an editor with a factory class.
+		@param factoryClass The class used to create new objects. The class must
+			implement a default constructor.
+		*/
+		public AbstractEditor(final Class factoryClass)
+		{
+			this.factoryClass=factoryClass;	//save the class
+		}
+
+		/**Creates a new default object to be edited.
+		@return The new default object.
+		@exception IllegalAccessException Thrown if the class or its nullary 
+			constructor is not accessible.
+		@exception InstantiationException Thrown if a class represents an abstract
+			class, an interface, an array class, a primitive type, or void;
+			or if the class has no nullary constructor; or if the instantiation fails
+			for some other reason.
+		*/
+		public Object create() throws InstantiationException, IllegalAccessException
+		{
+			return factoryClass.newInstance();	//create a new instance of the class
+		}
+
+	}
+
 }

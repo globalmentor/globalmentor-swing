@@ -16,7 +16,9 @@ import com.garretwilson.util.*;
 
 /**An extended panel that has extra features beyond those in <code>JPanel</code>.
 <p>The panel stores properties and fires property change events when a
-	property is modified.</p>
+	property is modified. If the modified property is set to false, all
+	all descendant components that implement <code>Modifiable</code> have
+	their modified properties set to <code>false</code> as well.</p>
 <p>The panel can keep track of whether its contents have been modified.</p>
 <p>The panel is verifiable, and automatically verifies all child components
 	that are likewise verifiable.</p>
@@ -106,6 +108,10 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 				modified=newModified; //update the value
 					//show that the modified property has changed
 				firePropertyChange(MODIFIED_PROPERTY, Boolean.valueOf(oldModified), Boolean.valueOf(newModified));
+				if(!modified)	//if we're now not modified
+				{
+					ContainerUtilities.setModifiableDescendants(this, false);	//tell all of our child components that they are not modified, either
+				}
 			}
 		}
 
@@ -359,24 +365,15 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	}
 
 	/**Verifies the component.
-	<p>This version verifies all child components that implement
+	<p>This version verifies all desdendant components that implement
 		<code>Verifiable</code>, and returns <code>true</code> if no child component
-		returns <code>false</code> from this method.</p>
+		returns <code>false</code>.</p>
 	@return <code>true</code> if the component contents are valid, <code>false</code>
 		if not.
 	*/
 	public boolean verify()
 	{
-		final Component[] components=getComponents();	//get all child components
-		for(int i=components.length-1; i>=0; --i)	//look at each child component
-		{
-			final Component component=components[i];	//get a reference to this component
-			if(component instanceof Verifiable && ((Verifiable)component).verify()==false)	//if this component is verifiable but doesn't verify
-			{
-				return false;	//show that a child component didn't verify
-			}
-		}
-		return true;  //if we couldn't find any problems, verification succeeded
+		return ContainerUtilities.verifyDescendants(this);	//verify all descendant components 
 	}
 	
 	/**@return The component that should get the initial focus.*/
@@ -582,6 +579,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 		the status.
 	@see #updateStatus
 	*/
+/*G***bring back; or maybe we don't need, now that we have createUpdateStatusItemListener()
 	public ActionListener createUpdateStatusActionListener()
 	{
 		return new ActionListener()	//create a new action listener that will do nothing but update the status
@@ -589,6 +587,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 					public void actionPerformed(final ActionEvent actionEvent) {updateStatus();}	//if the action occurs, update the status
 				};
 	}
+*/
 
 	/**Creates a document listener that, when a document is modified, updates
 		the status.
@@ -599,6 +598,18 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 		return new DocumentModifyAdapter()	//create a new document listener that will do nothing but update the status
 				{
 					public void modifyUpdate(final DocumentEvent documentEvent) {updateStatus();}	//if the document is modified, update the status
+				};
+	}
+
+	/**Creates an item listener that, when an item state changes,
+		updates the status.
+	@see #updateStatus
+	*/
+	public ItemListener createUpdateStatusItemListener()
+	{
+		return new ItemListener()	//create a new item listener that will do nothing but update the status
+				{
+					public void itemStateChanged(final ItemEvent itemEvent) {updateStatus();}	//if an item state changes, update the status
 				};
 	}
 
@@ -629,7 +640,6 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	{
 		return getPreferredSize();	//return the default preferred size
 	}
-
 
 	/**Determines the increment for unit scrolling. 
 	@param visibleRect The view area visible within the viewport.

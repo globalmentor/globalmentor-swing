@@ -162,20 +162,6 @@ public class ContentPanel extends BasicPanel implements CanClosable
 			initialize();   //initialize the panel
 	}
 
-	/**Sets whether the object has been modified.
-	<p>If the new modified status is false, also updates the content component if
-		it implements <code>Modifiable</code>.</p>
-	@param modified The new modification status.
-	*/
-	public void setModified(final boolean modified)
-	{
-		super.setModified(modified);	//set the modified status appropriately
-		if(!modified && getContentComponent() instanceof Modifiable)	//if we're no longer modified and the content component is modifiable
-		{
-			((Modifiable)getContentComponent()).setModified(false);	//unmodify the content component
-		}
-	}
-
 	/**@return <code>true</code> if the panel can close.
 		This request is delegated to the content pane if possible, and therefore
 		any class that overrides this one should call this version. 

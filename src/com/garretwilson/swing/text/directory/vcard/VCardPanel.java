@@ -58,7 +58,7 @@ public class VCardPanel extends ContentPanel implements Verifiable
 		<code>false</code> if the new modified status is <code>false</code>.
 	@param newModified The new modification status.
 	*/
-	public void setModified(final boolean newModified)
+	public void setModified(final boolean newModified)	//TODO see why we can't just remove this and use the BasicPanel version (for some reason, name changes no longer will update the status without this)
 	{
 		super.setModified(newModified);	//set the modified status
 		if(newModified==false)	//if we are no longer modified
@@ -132,6 +132,7 @@ public class VCardPanel extends ContentPanel implements Verifiable
 		explanatoryPanel=new ExplanatoryPanel();
 		setDefaultFocusComponent(nameAddressPanel);
 		initialize(); //initialize the panel
+		setModified(false);	//show that the information has not yet been modified
 	}
 
 	/**Initialize the user interface.*/
@@ -148,10 +149,13 @@ public class VCardPanel extends ContentPanel implements Verifiable
 		getTabbedPane().addTab("Explanatory", explanatoryPanel);	//G***i18n
 	}
 
+//TODO---make the new ContainerUtilities.verifyDescendants() method select the tab if it desn't verify
+
 	/**Verifies the component.
 	@return <code>true</code> if the component contents are valid, <code>false</code>
 		if not.
 	*/
+/*G***del when works---the new BasicPanel functionality should automatically verify all descendant components, even those on tabs
 	public boolean verify()
 	{
 		if(!nameAddressPanel.verify())	//if the name/address panel doesn't verify
@@ -164,7 +168,8 @@ public class VCardPanel extends ContentPanel implements Verifiable
 			getTabbedPane().setSelectedComponent(explanatoryPanel);	//select the explanatory panel
 			return false;	//show that verification failed
 		}
-		return super.verify();  //if we couldn't find any problems, verify the parent class TODO we duplicate this functionality here to check and change the tabs if necessary---can we put something like this in BasicPanel, too? 
+		return super.verify();  //if we couldn't find any problems, verify the parent class TODO we duplicate this functionality here to check and change the tabs if necessary---can we put something like this in BasicPanel, too?
 	}
+*/
 
 }

@@ -1,6 +1,7 @@
 package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
+import java.awt.event.ItemListener;
 import java.beans.*;
 import java.util.*;
 import javax.swing.*;
@@ -167,6 +168,7 @@ public class IdentificationPanel extends BasicVCardPanel
 		selectNicknameLanguageAction=new SelectLanguageAction(null, nicknameTextField);
 		setDefaultFocusComponent(namePanel);	//set the default focus component
 		initialize();	//initialize the panel
+		setModified(false);	//show that the information has not yet been modified
 	}
 	
 	/**Initializes the user interface.*/
@@ -182,8 +184,9 @@ public class IdentificationPanel extends BasicVCardPanel
 		namePanel.getFamilyNameTextField().getDocument().addDocumentListener(createUpdateStatusDocumentListener()); 		
 		namePanel.getGivenNameTextField().getDocument().addDocumentListener(createUpdateStatusDocumentListener()); 		
 		namePanel.getAdditionalNameTextField().getDocument().addDocumentListener(createUpdateStatusDocumentListener());
-		namePanel.getHonorificPrefixComboBox().addActionListener(createUpdateStatusActionListener());
-		namePanel.getHonorificSuffixComboBox().addActionListener(createUpdateStatusActionListener());
+		final ItemListener updateStatusItemListener=createUpdateStatusItemListener();	//create an item listener that will update the status			
+		namePanel.getHonorificPrefixComboBox().addItemListener(updateStatusItemListener);
+		namePanel.getHonorificSuffixComboBox().addItemListener(updateStatusItemListener);
 		namePanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);
 		formattedNameLabel.setText("Formatted Name");	//G***i18n
 		getSelectFormattedNameLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);

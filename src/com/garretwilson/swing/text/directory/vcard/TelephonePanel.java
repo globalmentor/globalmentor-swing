@@ -132,20 +132,6 @@ public class TelephonePanel extends BasicVCardPanel
 	/**The number of buttons on the panel.*/
 //G***del	private int buttonCount;
 
-	/**Sets whether the object has been modified.
-	This version sets the modified status of all contained panels to
-		<code>false</code> if the new modified status is <code>false</code>.
-	@param newModified The new modification status.
-	*/
-	public void setModified(final boolean newModified)
-	{
-		super.setModified(newModified);	//set the modified status
-		if(newModified==false)	//if we are no longer modified
-		{
-			telephoneNumberPanel.setModified(newModified);	//tell the telephone number panel panel it is no longer modified
-		}
-	}
-
 	/**Default constructor.*/
 	public TelephonePanel()
 	{
@@ -181,6 +167,7 @@ public class TelephonePanel extends BasicVCardPanel
 		initialize();	//initialize the panel
 		setTelephoneNumber(telephoneNumber);	//set the given telephone number
 		setTelephoneType(telephoneType);	//set the given telephone type
+		setModified(false);	//show that the information has not yet been modified
 	}
 	
 	/**Initializes the user interface.*/

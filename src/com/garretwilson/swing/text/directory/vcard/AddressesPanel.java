@@ -157,27 +157,6 @@ public class AddressesPanel extends ContentPanel
 		return (Label[])labelList.toArray(new Label[labelList.size()]);	//return an array of the labels we collected
 	}
 
-	/**Sets whether the object has been modified.
-	This version sets the modified status of all contained panels to
-		<code>false</code> if the new modified status is <code>false</code>.
-	@param newModified The new modification status.
-	*/
-	public void setModified(final boolean newModified)
-	{
-		super.setModified(newModified);	//set the modified status
-		if(newModified==false)	//if we are no longer modified
-		{
-			for(int i=getTabbedPane().getTabCount()-1; i>=0; --i)	//look at each tab
-			{
-				final Component component=getTabbedPane().getComponentAt(i);	//get this address panel
-				if(component instanceof Modifiable)	//if this component is modifiable
-				{
-					((Modifiable)component).setModified(newModified);	//tell the component it is no longer modified
-				}
-			}
-		}
-	}
-
 	/**Default constructor.*/
 	public AddressesPanel()
 	{
