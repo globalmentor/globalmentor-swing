@@ -65,8 +65,20 @@ public class ActionTree extends JTree
 				{
 					if(mouseEvent.getClickCount()==2) //if this was a double click
 					{
-						fireActionPerformed();  //fire an action performed event
-						mouseEvent.consume(); //consume the mouse event G***do we need this?
+						if(mouseEvent.getSource() instanceof JTree)	//if the click originated in a tree
+						{
+							final JTree tree=(JTree)mouseEvent.getSource();	//get the tree the click originated in
+							final TreePath clickedPath=tree.getPathForLocation(mouseEvent.getX(), mouseEvent.getY());	//see which path was double-clicked
+							if(clickedPath!=null)	//if they clicked on a path
+							{
+								final TreePath selectionPath=tree.getSelectionPath();	//find out which path is selected
+								if(clickedPath.equals(selectionPath))	//if they clicked on the selected path (without checking, double-clicking somewhere else on the tree would fire the action)
+								{
+									fireActionPerformed();  //fire an action performed event
+									mouseEvent.consume(); //consume the mouse event G***do we need this?
+								}
+							}
+						}
 					}
 				 }
 			});

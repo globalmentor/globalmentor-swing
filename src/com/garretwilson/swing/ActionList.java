@@ -67,8 +67,20 @@ public class ActionList extends JList
 				{
 					if(mouseEvent.getClickCount()==2) //if this was a double click
 					{
-						fireActionPerformed();  //fire an action performed event
-						mouseEvent.consume(); //consume the mouse event G***do we need this?
+						if(mouseEvent.getSource() instanceof JList)	//if the click originated in a list
+						{
+							final JList list=(JList)mouseEvent.getSource();	//get the list the click originated in
+							final int clickedIndex=list.locationToIndex(mouseEvent.getPoint());	//find the index of the list that was clicked
+							if(clickedIndex>=0)	//if they clicked on a valid index
+							{
+								final int selectedIndex=list.getSelectedIndex();	//see which index is selected
+								if(clickedIndex==selectedIndex)	//if they clicked on the selected index (without checking, double-clicking somewhere else on the list would fire the action)
+								{
+									fireActionPerformed();  //fire an action performed event
+									mouseEvent.consume(); //consume the mouse event G***do we need this?
+								}
+							}
+						}
 					}
 				 }
 			});
