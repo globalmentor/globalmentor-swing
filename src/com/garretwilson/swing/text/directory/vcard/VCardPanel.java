@@ -210,28 +210,21 @@ public class VCardPanel extends TabbedViewPanel implements Verifiable
 	{
 		super.loadModel();	//do the default loading
 		final VCard vcard=getVCard();	//get the data model
-		switch(getModelView())	//see which view of data we should load
-		{
-			case NAME_ADDRESS_MODEL_VIEW:	//if we're changing to the name/address view
-				getIdentificationPanel().setVCardName(vcard.getName());
-				getIdentificationPanel().setFormattedName(vcard.getFormattedName());
-				getIdentificationPanel().setNicknames(LocaleText.toLocaleTextArray(vcard.getNicknameList()));
-				getAddressesPanel().setAddresses(vcard.getAddresses(), vcard.getLabels());
-				getOrganizationPanel().setOrganizationName(vcard.getOrganizationName());
-				getOrganizationPanel().setUnits(vcard.getOrganizationUnits());
-				getOrganizationPanel().setJobTitle(vcard.getTitle());
-				getOrganizationPanel().setRole(vcard.getRole());
-					//TODO create getTelephones() and getEmails() that return arrays
-				final Telephone[] telephones=(Telephone[])vcard.getTelephoneList().toArray(new Telephone[vcard.getTelephoneList().size()]);
-				final Email[] emails=(Email[])vcard.getEmailList().toArray(new Email[vcard.getEmailList().size()]);
-				getTelecommunicationsPanel().setTelecommunications(telephones, emails);
-				break;
-			case EXPLANATORY_MODEL_VIEW:	//if we're changing to the explanatory view
-				getExplanatoryPanel().setCategories(LocaleText.toLocaleTextArray(vcard.getCategoryList()));
-				getExplanatoryPanel().setNote(vcard.getNote());
-				getExplanatoryPanel().setURL(vcard.getURL());
-				break;
-		}
+		getIdentificationPanel().setVCardName(vcard.getName());
+		getIdentificationPanel().setFormattedName(vcard.getFormattedName());
+		getIdentificationPanel().setNicknames(LocaleText.toLocaleTextArray(vcard.getNicknameList()));
+		getAddressesPanel().setAddresses(vcard.getAddresses(), vcard.getLabels());
+		getOrganizationPanel().setOrganizationName(vcard.getOrganizationName());
+		getOrganizationPanel().setUnits(vcard.getOrganizationUnits());
+		getOrganizationPanel().setJobTitle(vcard.getTitle());
+		getOrganizationPanel().setRole(vcard.getRole());
+			//TODO create getTelephones() and getEmails() that return arrays
+		final Telephone[] telephones=(Telephone[])vcard.getTelephoneList().toArray(new Telephone[vcard.getTelephoneList().size()]);
+		final Email[] emails=(Email[])vcard.getEmailList().toArray(new Email[vcard.getEmailList().size()]);
+		getTelecommunicationsPanel().setTelecommunications(telephones, emails);
+		getExplanatoryPanel().setCategories(LocaleText.toLocaleTextArray(vcard.getCategoryList()));
+		getExplanatoryPanel().setNote(vcard.getNote());
+		getExplanatoryPanel().setURL(vcard.getURL());
 	}
 
 	/**Stores the current data being edited to the model, if necessary.
@@ -241,32 +234,25 @@ public class VCardPanel extends TabbedViewPanel implements Verifiable
 	{
 		super.saveModel();	//do the default saving
 		final VCard vcard=getVCard();	//get the data model
-		switch(getModelView())	//see which view of data we have, in order to get the current RDF
-		{
-			case NAME_ADDRESS_MODEL_VIEW:	//if we were editing the name/address information
-				final LocaleText displayName=getIdentificationPanel().getFormattedName()!=null
-						? getIdentificationPanel().getFormattedName()		//use the formatted name as the display name
-						: getOrganizationPanel().getOrganizationName();		//use the company name if there is no formatted name
-					//TODO decide how to come up with a display name if there is neither formatted name nor organization name
-				vcard.setDisplayName(displayName);
-				vcard.setName(getIdentificationPanel().getVCardName());
-				vcard.setFormattedName(getIdentificationPanel().getFormattedName());
-				vcard.setNicknames(getIdentificationPanel().getNicknames());
-				vcard.setAddresses(getAddressesPanel().getAddresses());
-				vcard.setLabels(getAddressesPanel().getLabels());
-				vcard.setOrganizationName(getOrganizationPanel().getOrganizationName());
-				vcard.setOrganizationUnits(getOrganizationPanel().getUnits());
-				vcard.setTitle(getOrganizationPanel().getJobTitle());
-				vcard.setRole(getOrganizationPanel().getRole());
-				vcard.setTelephones(getTelecommunicationsPanel().getTelephones());
-				vcard.setEmails(getTelecommunicationsPanel().getEmails());
-				break;
-			case EXPLANATORY_MODEL_VIEW:	//if we were editing the explanatory information
-				vcard.setCategories(getExplanatoryPanel().getCategories());
-				vcard.setNote(getExplanatoryPanel().getNote());
-				vcard.setURL(getExplanatoryPanel().getURL());
-				break;
-		}
+		final LocaleText displayName=getIdentificationPanel().getFormattedName()!=null
+				? getIdentificationPanel().getFormattedName()		//use the formatted name as the display name
+				: getOrganizationPanel().getOrganizationName();		//use the company name if there is no formatted name
+			//TODO decide how to come up with a display name if there is neither formatted name nor organization name
+		vcard.setDisplayName(displayName);
+		vcard.setName(getIdentificationPanel().getVCardName());
+		vcard.setFormattedName(getIdentificationPanel().getFormattedName());
+		vcard.setNicknames(getIdentificationPanel().getNicknames());
+		vcard.setAddresses(getAddressesPanel().getAddresses());
+		vcard.setLabels(getAddressesPanel().getLabels());
+		vcard.setOrganizationName(getOrganizationPanel().getOrganizationName());
+		vcard.setOrganizationUnits(getOrganizationPanel().getUnits());
+		vcard.setTitle(getOrganizationPanel().getJobTitle());
+		vcard.setRole(getOrganizationPanel().getRole());
+		vcard.setTelephones(getTelecommunicationsPanel().getTelephones());
+		vcard.setEmails(getTelecommunicationsPanel().getEmails());
+		vcard.setCategories(getExplanatoryPanel().getCategories());
+		vcard.setNote(getExplanatoryPanel().getNote());
+		vcard.setURL(getExplanatoryPanel().getURL());
 	}
 
 	/**Indicates that the view of the data has changed.

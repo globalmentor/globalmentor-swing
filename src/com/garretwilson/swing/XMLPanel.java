@@ -230,14 +230,15 @@ updateStatus();	//testing; probably put a convenience method to create this list
 		getXMLTextPane().setContentType(mediaType.toString());	//set the content type of the text pane
 	}
 
-	/**Loads the data from the model to the view, if necessary.
+	/**Loads the data from the model to the specified view, if necessary.
+	@param modelView The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
 	@exception IOException Thrown if there was an error loading the model.
 	*/
-	protected void loadModel() throws IOException
+	protected void loadModel(final int modelView) throws IOException
 	{
-		super.loadModel();	//do the default loading
+		super.loadModel(modelView);	//do the default loading
 		final XMLNodeModel model=getXMLModel();	//get the data model
-		switch(getModelView())	//see which view of data we should load
+		switch(modelView)	//see which view of data we should load
 		{
 			case WYSIWYG_MODEL_VIEW:	//if we're changing to the WYSIWYG view
 				getXMLTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the XML text pane
@@ -289,13 +290,14 @@ updateStatus();	//testing; probably put a convenience method to create this list
 	}
 
 	/**Stores the current data being edited to the model, if necessary.
-	@exception IOException Thrown if there was an error loading the model.
+	@param modelView The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
+	@exception IOException Thrown if there was an error saving the model.
 	*/
-	protected void saveModel() throws IOException
+	protected void saveModel(final int modelView) throws IOException
 	{
-		super.saveModel();	//do the default saving
+		super.saveModel(modelView);	//do the default saving
 		final XMLNodeModel model=getXMLModel();	//get the data model
-		switch(getModelView())	//see which view of data we have, in order to get the current XML
+		switch(modelView)	//see which view of data we have, in order to get the current XML
 		{
 			case SOURCE_MODEL_VIEW:	//if we should store the XML source
 				{

@@ -3,7 +3,6 @@ package com.garretwilson.swing.rdf;
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
-import javax.swing.event.DocumentListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import com.garretwilson.swing.*;
@@ -124,14 +123,16 @@ public class RDFPanel extends TabbedViewPanel
 		super.initializeUI(); //do the default UI initialization
 	}
 
-	/**Loads the data from the model to the view, if necessary.
+
+	/**Loads the data from the model to the specified view, if necessary.
+	@param modelView The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
 	@exception IOException Thrown if there was an error loading the model.
 	*/
-	protected void loadModel() throws IOException
+	protected void loadModel(final int modelView) throws IOException
 	{
-		super.loadModel();	//do the default loading
+		super.loadModel(modelView);	//do the default loading
 		final RDFResourceModel model=getRDFResourceModel();	//get the data model
-		switch(getModelView())	//see which view of data we should load
+		switch(modelView)	//see which view of data we should load
 		{
 			case TREE_MODEL_VIEW:	//if we're changing to the tree view
 				if(model.getRDFResource()!=null)	//if we have an RDF resource
@@ -166,13 +167,14 @@ public class RDFPanel extends TabbedViewPanel
 	}
 
 	/**Stores the current data being edited to the model, if necessary.
-	@exception IOException Thrown if there was an error loading the model.
+	@param modelView The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
+	@exception IOException Thrown if there was an error saving the model.
 	*/
-	protected void saveModel() throws IOException
+	protected void saveModel(final int modelView) throws IOException
 	{
-		super.saveModel();	//do the default saving
+		super.saveModel(modelView);	//do the default saving
 		final RDFResourceModel model=getRDFResourceModel();	//get the data model
-		switch(getModelView())	//see which view of data we have, in order to get the current RDF
+		switch(modelView)	//see which view of data we have, in order to get the current RDF
 		{
 			case TREE_MODEL_VIEW:	//if we should store the RDF currently in the tree
 				if(getRDFTree().getModel().getRoot() instanceof RDFObjectTreeNode)	//if this tree is showing an RDF object

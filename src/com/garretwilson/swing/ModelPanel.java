@@ -122,7 +122,6 @@ public class ModelPanel extends ModifiablePanel implements ModelView
 	}
 
 	/**Stores the current data being edited to the model, if necessary.
-	If no model is being edited or there is no valid view, no action occurs.
 	@exception IOException Thrown if there was an error saving the model.
 	*/
 	protected void saveModel() throws IOException

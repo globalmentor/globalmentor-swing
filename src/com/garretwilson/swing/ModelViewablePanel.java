@@ -7,6 +7,16 @@ import com.garretwilson.model.*;
 import com.garretwilson.util.ArrayUtilities;
 
 /**Panel that allows multiple views of a data model to be displayed.
+<p>An implementing class may consider the data in each view to be loaded and
+	stored separately, in which case <code>loadModel(int)</code> and
+	<code>saveModel(int)</code> should be used for the appropriate views. The
+	implementation may instead decide that all data is saved and loaded together,
+	in which case <code>loadModel()</code> and <code>saveModel()</code> should
+	be used to load or save all data in all views at the same time.
+	An implementation may use a hybrid of these paradigms, for example storing
+	views of all the data in some views using the view-specific loading and
+	saving methods, and using the generic loading and save methods for views that
+	contain portions of the data.</p>
 <p>Bound properties:</p>
 <dl>
 	<dt><code>ModelViewable.MODEL_VIEW_PROPERTY</code> (<code>Integer</code>)</dt>
@@ -79,10 +89,10 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 		public void setDefaultDataView(final int dataView) {defaultDataView=dataView;}
 
 	/**The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.*/
-	private int dataView;
+	private int modelView;
 
 		/**@return The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.*/
-		public int getModelView() {return dataView;}
+		public int getModelView() {return modelView;}
 
 		/**Sets the view of the data.
 		@param newView The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
@@ -90,22 +100,22 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 		*/
 		public void setModelView(final int newView)
 		{
-			final int oldView=dataView; //get the old value
+			final int oldView=modelView; //get the old value
 			if(oldView!=newView)  //if the value is really changing
 			{
 				if(!isModelViewSupported(newView))	//if the new data view isn't supported
 					throw new IllegalArgumentException("Unsupported model view "+newView);
 				if(canChangeModelView(oldView, newView))	//if we can change the view
 				{
-					dataView=newView; //update the value
+					modelView=newView; //update the value
 					try
 					{
-						loadModel();	//load the model into the new view
+						loadModel(newView);	//load the model into the new view
 					}
 					catch(IOException ioException)	//if there were any problems saving the model
 					{
 						SwingApplication.displayApplicationError(this, ioException);	//display the error
-					}		
+					}
 					onModelViewChange(oldView, newView);	//show this class that the model is changing
 					firePropertyChange(MODEL_VIEW_PROPERTY, new Integer(oldView), new Integer(newView));	//show that the property has changed
 				}
@@ -155,7 +165,7 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 		super(layout, model, false);	//construct the parent but don't initialize the panel
 		supportedModelViews=DEFAULT_SUPPORTED_MODEL_VIEWS;	//set the model views we support (in this case, none)
 		defaultDataView=DEFAULT_DEFAULT_MODEL_VIEW;	//set the default model view (in this case, no model view)
-		dataView=NO_MODEL_VIEW;	//default to no valid view
+		modelView=NO_MODEL_VIEW;	//default to no valid view
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel
 	}
@@ -166,8 +176,49 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 	protected void initializeUI()
 	{
 		assert isModelViewSupported(getDefaultModelView()) : "Specified default model view is not supported";
-		dataView=getDefaultModelView();	//default to the model view
+		modelView=getDefaultModelView();	//default to the model view
 		super.initializeUI(); //do the default UI initialization, which will load the model into our new view
+	}
+
+	/**Loads the data from the model to the view, if necessary.
+	<p>This implementation loads the model normally and then loads the model for
+		the current view.</p>
+	@exception IOException Thrown if there was an error loading the model.
+	@see #loadModel(int)
+	*/
+	protected void loadModel() throws IOException
+	{
+		super.loadModel();	//do the default loading
+		loadModel(getModelView());	//load the model into the current view
+	}
+
+	/**Loads the data from the model to the specified view, if necessary.
+	@param modelView The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
+	@exception IOException Thrown if there was an error loading the model.
+	*/
+	protected void loadModel(final int modelView) throws IOException
+	{
+	}
+
+	/**Stores the current data being edited to the model, if necessary.
+	<p>This implementation first saves the model for the current view and then
+		saves the model normally.</p>
+	@exception IOException Thrown if there was an error saving the model.
+	@see #saveModel(int)
+	*/
+	protected void saveModel() throws IOException
+	{
+		saveModel(getModelView());	//save the current view
+		super.saveModel();	//do the default saving
+	}
+
+	/**Stores the current data being edited to the model, if necessary.
+	If no model is being edited or there is no valid view, no action occurs.
+	@param modelView The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
+	@exception IOException Thrown if there was an error saving the model.
+	*/
+	protected void saveModel(final int modelView) throws IOException
+	{
 	}
 
 	/**Determines whether it is appropriate under the circumstances to change
@@ -199,6 +250,5 @@ public abstract class ModelViewablePanel extends ModelPanel implements ModelView
 	protected void onModelViewChange(final int oldView, final int newView)
 	{
 	}
-
 
 }
