@@ -29,8 +29,6 @@ import com.garretwilson.text.xml.oeb.*;
 import com.garretwilson.util.*;
 import com.garretwilson.util.prefs.PreferencesUtilities;
 
-import edu.stanford.ejalbert.*;
-
 /**A component shows information in book form. Has an XMLTextPane as a child.
 <p>Bound properties:</p>
 <dl>

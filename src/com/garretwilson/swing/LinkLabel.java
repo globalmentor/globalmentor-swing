@@ -5,8 +5,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import com.garretwilson.awt.event.RolloverMouseAdapter;
 import com.garretwilson.lang.ObjectUtilities;
+import com.garretwilson.net.BrowserLauncher;
 import com.garretwilson.util.Debug;
-import edu.stanford.ejalbert.BrowserLauncher;
 
 /**A label that serves as a link to an Internet destination.
 @author Garret Wilson

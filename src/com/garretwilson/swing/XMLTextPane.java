@@ -34,6 +34,7 @@ import com.garretwilson.applet.*;
 import com.garretwilson.awt.EventQueueUtilities;
 import com.garretwilson.io.*;
 import com.garretwilson.lang.CharSequenceUtilities;
+import com.garretwilson.net.BrowserLauncher;
 import com.garretwilson.net.URIConstants;
 import com.garretwilson.net.URIUtilities;
 import com.garretwilson.net.URLUtilities;
@@ -55,7 +56,6 @@ import com.garretwilson.text.xml.xhtml.XHTMLConstants;
 import com.garretwilson.text.xml.xhtml.XHTMLUtilities;
 import com.garretwilson.util.Debug;
 import com.garretwilson.util.zip.*;
-import edu.stanford.ejalbert.BrowserLauncher;
 
 import static com.garretwilson.io.ContentTypeConstants.*;
 import static com.garretwilson.text.xml.XMLUtilities.*;
@@ -540,7 +540,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		final ViewFactory xhtmlViewFactory=new XHTMLViewFactory();  //create a view factory fo XHTML
 		registerViewFactory(XHTMLConstants.XHTML_NAMESPACE_URI.toString(), xhtmlViewFactory);  //associate the XHTML view factory with XHTML elements
 		registerViewFactory(OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlViewFactory);  //associate the XHTML view factory with OEB elements
-		final XMLLinkController xhtmlLinkController=new XHTMLLinkController();  //create a link controller fo XHTML
+		final XMLLinkController xhtmlLinkController=new XHTMLLinkController();  //create a link controller for XHTML
 		registerLinkController(XHTMLConstants.XHTML_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML view factory with XHTML elements
 		registerLinkController(OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML link controller with OEB elements
 //G***del; doesn't work		setBackground(Color.white); //G***set to get the background color from the document itself
@@ -1558,7 +1558,7 @@ System.out.println("Inside XMLTextPage.insertUpdate(), fetching new paged view."
 		final Point mousePosition=getMousePosition();	//get the current mouse position
 		if(mousePosition!=null)	//if the mouse is over the component
 		{
-					  //G***this is somewhat of a hack; do something better, such as having a locationChanged event on page changes and navigation (on non-paged compontents, for example)
+					  //G***this is somewhat of a hack; do something better, such as having a locationChanged event on page changes and navigation (on non-paged components, for example)
 			final MouseEvent mouseEvent=new MouseEvent(this, MouseEvent.MOUSE_MOVED,
 				  System.currentTimeMillis(), 0,
 					mousePosition.x, mousePosition.y, 0, false);
