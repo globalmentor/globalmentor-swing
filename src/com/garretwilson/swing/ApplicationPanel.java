@@ -265,4 +265,12 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 		}
 	}
 
+	/**@return <code>true</code> if the panel can close.
+	@see ApplicationFrame2#canClose
+	*/
+	public boolean canClose()
+	{
+		return true;  //default to allowing the panel to be closed
+	}
+
 }

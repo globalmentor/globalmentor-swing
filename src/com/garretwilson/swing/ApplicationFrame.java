@@ -538,11 +538,20 @@ public abstract class ApplicationFrame extends JFrame
 		new JOptionPane(aboutPanel, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION).createDialog(this, dialogTitle).show();  //G***fix title
 	}
 
-	/**Exits the application.*/
-	public void exit()  //G***should we add an exit code parameter?
+	/**Exits the application with no status.*/
+	public void exit()
 	{
-		System.exit(0);	//close the program G***check
+		exit(0);	//exit with no status
 	}
+	
+	/**Exits the application with the given status.
+	@param status The exit status.
+	*/
+	public void exit(final int status)
+	{
+		System.exit(status);	//close the program with the given exit status
+	}
+	
 
 	/**Updates the states of the actions, including enabled/disabled status,
 		proxied actions, etc.
