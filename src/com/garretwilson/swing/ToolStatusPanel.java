@@ -135,7 +135,7 @@ public class ToolStatusPanel extends ContentPanel
 	*/
 	public ToolStatusPanel(final Component applicationComponent, final boolean hasToolBar, final boolean hasStatusBar, final boolean initialize)
 	{
-		super(applicationComponent, false);  //construct the parent class without intializing
+		super(applicationComponent!=null ? applicationComponent : new BasicPanel(), false);  //construct the parent class without intializing TODO create a method to create a default center panel
 		toolBarPosition=BorderLayout.NORTH;	//default to the toolbar in the north
 		statusBarPosition=BorderLayout.SOUTH;	//default to the status bar in the south
 		toolBar=hasToolBar ? createToolBar() : null;	//create a toolbar if we should have one
