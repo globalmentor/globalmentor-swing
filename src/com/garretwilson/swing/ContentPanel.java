@@ -52,11 +52,14 @@ public class ContentPanel extends DefaultPanel implements CanClosable
 		  	newContentComponent.repaint();	//repaint the component (important if we're inside a JOptionPane, for instance
 				if(newContentComponent instanceof DefaultFocusable)	//if the content component knows what should be focused by default
 				{
+					((DefaultFocusable)newContentComponent).requestDefaultFocusComponentFocus();	//let the component request the focus for its default focus component
+/*G***del when works					
 					final DefaultFocusable defaultFocusable=(DefaultFocusable)newContentComponent;	//cast the new content component to a default focusable object
 					if(defaultFocusable.getDefaultFocusComponent()!=null)	//if the component knows what should get the default focus
 					{	 
 						defaultFocusable.getDefaultFocusComponent().requestFocusInWindow();	//request focus for the default component
 					}
+*/
 				}
 			}
 		}

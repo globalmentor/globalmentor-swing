@@ -597,11 +597,18 @@ public class OptionPane extends JOptionPane
 //G***fix				super.selectInitialValue();	//do the default initial value selection
 		}
 */
+		//if the message object knows how to request the default focus, let it do so if it can; if it can't
+	if(!(message instanceof DefaultFocusable) || !((DefaultFocusable)message).requestDefaultFocusComponentFocus())
+	{	 
+		super.selectInitialValue();	//do the default initial value selection
+	}
+/*G***del when works
 			//if the message object knows which component should get the default focus
 		if(message instanceof DefaultFocusable && ((DefaultFocusable)message).getDefaultFocusComponent()!=null)	 
 			((DefaultFocusable)message).getDefaultFocusComponent().requestFocusInWindow();	//request focus for the default component
 		else	//if the message object doesn't know what to focus
 			super.selectInitialValue();	//do the default initial value selection
+*/
 	}
     
 

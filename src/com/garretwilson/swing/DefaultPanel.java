@@ -1,9 +1,12 @@
 package com.garretwilson.swing;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.event.*;
 import com.garretwilson.awt.*;
+import com.garretwilson.swing.event.*;
 import com.garretwilson.util.*;
 
 /**An extended panel that has extra features beyond those in <code>JPanel</code>.
@@ -16,6 +19,8 @@ import com.garretwilson.util.*;
 	focus. An extended focus traversal policy is installed so that, if this
 	panel because a root focus traversal cycle, the correct default focus
 	component will be selected.</p>
+<p>The panel can create default listeners, such as <code>ActionListener</code>
+	and <code>DocumentListener</code>, that do nothing but update the status.</p> 
 @author Garret Wilson
 @see java.awt.Container#setFocusCycleRoot
 @see java.beans.PropertyChangeListener
@@ -153,6 +158,28 @@ public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusabl
 	{
 	}
 
+	/**Requests that the default focus component should get the default.
+	If the default focus comonent is itself <code>DefaultFocusable</code>, that
+		component is asked to request focus for its default focus component, and
+		so on.
+	@return <code>false</code> if the focus change request is guaranteed to
+		fail; <code>true</code> if it is likely to succeed.
+	@see Component#requestFocusInWindow
+	*/
+	public boolean requestDefaultFocusComponentFocus()
+	{
+		final Component defaultFocusComponent=getDefaultFocusComponent();	//get the default focus component
+		if(defaultFocusComponent instanceof DefaultFocusable	//if the component is itself default focusable
+				&& ((DefaultFocusable)defaultFocusComponent).getDefaultFocusComponent()!=defaultFocusComponent)	//and the default focus component does not reference itself (which would create an endless loop)
+		{
+			return ((DefaultFocusable)defaultFocusComponent).requestDefaultFocusComponentFocus();	//pass the request on to the default focus component
+		}
+		else	//if the default focus component doesn't itself know about default focus components
+		{
+			return defaultFocusComponent.requestFocusInWindow();	//tell the default focus component to request the focus
+		}
+	}
+
 	/**@return <code>true</code> if the panel can close.*/
 	public boolean canClose()
 	{
@@ -214,4 +241,29 @@ public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusabl
 		final JOptionPane optionPane=getParentOptionPane();	//get the option pane in which we're embedded
 		return optionPane!=null ? optionPane.getValue() : null;	//return the value property of the option pane, or null if we are not embedded in a JOptionPane
 	}
+
+	/**Creates an action listener that, when an action occurs, updates
+		the status.
+	@see #updateStatus
+	*/
+	public ActionListener createUpdateStatusActionListener()
+	{
+		return new ActionListener()	//create a new document listener that will do nothing but update the status
+				{
+					public void actionPerformed(final ActionEvent actionEvent) {updateStatus();}	//if the action occurs, update the status
+				};
+	}
+
+	/**Creates a document listener that, when a document is modified, updates
+		the status.
+	@see #updateStatus
+	*/
+	public DocumentListener createUpdateStatusDocumentListener()
+	{
+		return new DocumentModifyAdapter()	//create a new document listener that will do nothing but update the status
+				{
+					public void modifyUpdate(final DocumentEvent documentEvent) {updateStatus();}	//if the document is modified, update the status
+				};
+	}
+
 }
