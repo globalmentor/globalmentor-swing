@@ -10,7 +10,7 @@ import com.garretwilson.swing.text.FragmentView;
 	fragment.
 @author Garret Wilson
 */
-public class XMLFragmentBlockView extends XMLBlockView implements FragmentView //G***add isLastFragment() to FragmentView interface
+public class XMLFragmentBlockView extends XMLBlockView implements FragmentView
 {
 
 	/**Whether this is the first fragment of the original view.*/

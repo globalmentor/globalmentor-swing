@@ -1344,27 +1344,6 @@ return super.modelToView(pos, a, b);
 
 //TODO fix paragraph analogous layoutMinorAxis and calculateMinorAxisRequirements
 		
-		/**Returns the index of the child at the given model position for this page.
-		@param pos The position (>=0) in the model.
-		@return The index of the view representing the given position, or -1 if there
-			is no view on this page which represents that position.
-		*/
-		protected int getViewIndexAtPosition(int pos)
-		{
-//G***del Debug.trace("XMLPagedView.getViewIndexAtPosition(): pos: "+pos+" startOffset: "+this.getStartOffset()+" endOffset: "+this.getEndOffset());
-			// This is expensive, but are views are not necessarily layed
-			// out in model order.
-
-			if(pos<this.getStartOffset() || pos>=this.getEndOffset())	//if the position is before or after the content this page holds
-				return -1;	//show that the given position is not on this page
-			for(int viewIndex=getViewCount()-1; viewIndex>=0; --viewIndex)	//look at all the views from the last to the first (as the JDK comments note, this is an expensive operation, but there's no guarantee the views are laid out in model order)
-			{
-				final View view=getView(viewIndex);	//get a reference to this view
-				if(pos>=view.getStartOffset() && pos<view.getEndOffset())	//if this view holds the requested position
-					return viewIndex;	//return the index to this view
-			}
-			return -1;	//if we make it to this point, we haven't been able to find a view with the specified position
-		}
 	}
 
 
