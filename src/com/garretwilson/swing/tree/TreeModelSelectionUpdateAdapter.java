@@ -4,7 +4,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
 import com.garretwilson.swing.event.*;
-import com.garretwilson.swing.tree.*;
 
 /**A class that automatically updates a tree selection when nodes are added or
 	deleted.
@@ -62,7 +61,11 @@ public class TreeModelSelectionUpdateAdapter extends TreeModelAdapter
 			final TreePath childPath=parentPath.pathByAddingChild(children[i]);	//get the path to this deleted child
 			if(tree.isPathSelected(childPath))	//if this path was selected
 			{
-				tree.setSelectionPath(TreeUtilities.getRemainingPath(parentPath, treeModelEvent.getChildIndices()[i]));	//select the path remaining after the child at this index was deleted
+				final TreePath remainingPath=TreeUtilities.getRemainingPath(parentPath, treeModelEvent.getChildIndices()[i]);	//find the path remaining after the child at this index was deleted
+				SwingUtilities.invokeLater(new Runnable()	//select the remaining path, but do it later, so that any other listeners that might be listening for the event that caused the deletion may finish processing using the current selection state
+					{
+						public void run() {tree.setSelectionPath(remainingPath);}
+					});
 				return;	//don't look for more selections
 			}
 		}
