@@ -17,12 +17,12 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import javax.mail.internet.ContentType;
 import javax.swing.text.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import java.util.*;
-import com.garretwilson.io.MediaType;
 import com.garretwilson.lang.ObjectUtilities;
 import com.garretwilson.lang.StringBufferUtilities;
 import com.garretwilson.lang.StringUtilities;
@@ -202,7 +202,7 @@ public class XMLViewFactory implements ViewsFactory
 //G***del Debug.trace("Looking for view factory for namespace: ", elementNamespaceURI); //G***del
 			if(elementNamespaceURI==null) //if this element has no namespace
 			{
-				final MediaType mediaType=XMLStyleUtilities.getMediaType(attributeSet); //see if this element's document has a media type defined
+				final ContentType mediaType=XMLStyleUtilities.getMediaType(attributeSet); //see if this element's document has a media type defined
 				if(mediaType!=null) //if there is a media type defined for this element's document	//G***probably do all this differently later, like registering a view factory with a media type or something or, better yet, registering a namespace with a media type
 				{ 
 					final URI mediaTypeNamespaceURI=XMLNamespaceProcessor.getDefaultNamespaceURI(mediaType);	//see if we can find a default namespace for the media type

@@ -1,7 +1,8 @@
 package com.garretwilson.swing.text.xml.xhtml;
 
+import javax.mail.internet.ContentType;
 import javax.swing.text.*;
-import com.garretwilson.io.MediaType;
+import com.garretwilson.io.ContentTypeConstants;
 import com.garretwilson.swing.text.*;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
@@ -14,7 +15,7 @@ public class XHTMLViewFactory extends XMLViewFactory implements XHTMLConstants
 {
 
 	/**A static application/java media type for quick reference in the view factory.*/
-	protected final static MediaType APPLICATION_JAVA_MEDIA_TYPE=new MediaType(MediaType.APPLICATION, MediaType.JAVA);
+	protected final static ContentType APPLICATION_JAVA_MEDIA_TYPE=new ContentType(ContentTypeConstants.APPLICATION, ContentTypeConstants.JAVA, null);
 
 	/**Creates a view for the given element. If the element specifies a
 		namespace and a view factory has been registered for the given namespace,
@@ -59,14 +60,14 @@ public class XHTMLViewFactory extends XMLViewFactory implements XHTMLConstants
 					while(recognizedObjectElement!=null)  //while we're still trying to find a recognized object
 					{
 								//get the media type of this object
-						final MediaType mediaType=XHTMLSwingTextUtilities.getObjectMediaType(recognizedObjectElement.getAttributes());
+						final ContentType mediaType=XHTMLSwingTextUtilities.getObjectMediaType(recognizedObjectElement.getAttributes());
 						if(XHTMLSwingTextUtilities.isMediaTypeSupported(mediaType)) //if we support this media type
 						{
-							if(mediaType.equals(APPLICATION_JAVA_MEDIA_TYPE))  //if this is a Java applet
+							if(mediaType.match(APPLICATION_JAVA_MEDIA_TYPE))  //if this is a Java applet
 							{
 								return new XHTMLAppletView(element);	//return an applet view for this object element
 							}
-							else if(mediaType.getTopLevelType().equals(MediaType.IMAGE)) //if this is an image
+							else if(mediaType.getPrimaryType().equals(ContentTypeConstants.IMAGE)) //if this is an image
 							{
 								return new XHTMLImageView(element, recognizedObjectElement);	//return an image view for the object element, using the recognized object for initialization G***should we only pass an initialization attribute set?
 							}

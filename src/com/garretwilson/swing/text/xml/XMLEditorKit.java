@@ -7,6 +7,7 @@ import java.net.*;
 import java.net.URI;
 import java.util.*;
 import java.util.List;
+import javax.mail.internet.ContentType;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
@@ -40,15 +41,15 @@ public class XMLEditorKit extends StyledEditorKit
 {
 
 	/**The XML media type this editor kit supports, defaulting to <code>text/xml</code>.*/
-	private MediaType mediaType=new MediaType(MediaType.TEXT, MediaType.XML);
+	private ContentType mediaType=new ContentType(ContentTypeConstants.TEXT, ContentTypeConstants.XML, null);
 
 		/**@return The XML media type this editor kit supports.*/
-		public MediaType getMediaType() {return mediaType;}
+		public ContentType getMediaType() {return mediaType;}
 
 		/**Sets the media type this editor kit supports.
 		@param newMediaType The new XML media type.
 		*/
-		protected void setMediaType(final MediaType newMediaType) {mediaType=newMediaType;}
+		protected void setMediaType(final ContentType newMediaType) {mediaType=newMediaType;}
 
 	/**The default default cursor.*/
 	private static final Cursor DEFAULT_CURSOR=Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
@@ -196,7 +197,7 @@ public class XMLEditorKit extends StyledEditorKit
 		<code>text/html</code>, this indicates a default namespace even in the
 		absence of a document namespace identfication.
 	*/
-	public XMLEditorKit(final MediaType mediaType)
+	public XMLEditorKit(final ContentType mediaType)
 	{
 		setMediaType(mediaType);  //set the requested media type
 	}
@@ -903,9 +904,9 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 	@param mediaType The media type of the XML document.
 	@param swingXMLDocument The Swing document into which the XML will be set.
 	*/
-	public void setXML(final org.w3c.dom.Document xmlDocument, final URI baseURI, final MediaType mediaType, final XMLDocument swingXMLDocument)
+	public void setXML(final org.w3c.dom.Document xmlDocument, final URI baseURI, final ContentType mediaType, final XMLDocument swingXMLDocument)
 	{
-		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new MediaType[]{mediaType}, swingXMLDocument); //set the XML data, creating arrays each with a single element
+		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new ContentType[]{mediaType}, swingXMLDocument); //set the XML data, creating arrays each with a single element
 	}
 
 	private XMLCSSStylesheetApplier xmlCSSStylesheetApplier=null;	//G***testing
@@ -916,7 +917,7 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 	@param mediaTypeArray The array of media types of the documents.
 	@param swingXMLDocument The Swing document into which the XML will be set.
 	*/
-	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final MediaType[] mediaTypeArray, final XMLDocument swingXMLDocument)
+	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray, final XMLDocument swingXMLDocument)
 	{
 
 		xmlCSSStylesheetApplier=new XMLCSSStylesheetApplier(swingXMLDocument);	//G***testing
@@ -967,9 +968,9 @@ catch (BadLocationException e)
 	@param mediaType The media type of the document.
 	@return Am array of element specs defining the XML document.
 	*/
-	protected DefaultStyledDocument.ElementSpec[] createElementSpecs(org.w3c.dom.Document xmlDocument, final URI baseURI, final MediaType mediaType)
+	protected DefaultStyledDocument.ElementSpec[] createElementSpecs(org.w3c.dom.Document xmlDocument, final URI baseURI, final ContentType mediaType)
 	{
-		return createElementSpecs(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new MediaType[]{mediaType});  //put the XML document into an array, create the element specs, and return them
+		return createElementSpecs(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new ContentType[]{mediaType});  //put the XML document into an array, create the element specs, and return them
 	}
 
 	/**Creates element spec objects from a list of XML document trees.
@@ -978,7 +979,7 @@ catch (BadLocationException e)
 	@param mediaTypeArray The array of media types of the documents.
 	@return An array of element specs defining the XML documents.
 	*/
-	protected DefaultStyledDocument.ElementSpec[] createElementSpecs(org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final MediaType[] mediaTypeArray)
+	protected DefaultStyledDocument.ElementSpec[] createElementSpecs(org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray)
 	{
 		final List elementSpecList=createElementSpecList(xmlDocumentArray, baseURIArray, mediaTypeArray); //create the list of element specs
 			//convert the list to an array and return it
@@ -993,7 +994,7 @@ catch (BadLocationException e)
 	@param mediaTypeArray The array of media types of the documents.
 	@return A list of element specs defining the XML documents.
 	*/
-	protected List createElementSpecList(org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final MediaType[] mediaTypeArray)
+	protected List createElementSpecList(org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray)
 	{
 		//G***maybe check to make sure both arrays are of the same length
 		final List elementSpecList=new ArrayList();	//create an array to hold our element specs
@@ -1014,7 +1015,7 @@ xmlDocument.normalize();	//G***do we want to do this here? probably not---or may
 
 
 			final URI baseURI=baseURIArray[xmlDocumentIndex]; //get a reference to the base URI
-			final MediaType mediaType=mediaTypeArray[xmlDocumentIndex]; //get a reference to the media type
+			final ContentType mediaType=mediaTypeArray[xmlDocumentIndex]; //get a reference to the media type
 			final org.w3c.dom.Element xmlDocumentElement=xmlDocument.getDocumentElement();	//get the root of the document
 
 

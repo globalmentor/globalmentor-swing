@@ -20,6 +20,7 @@ import java.net.URLEncoder;
 import java.net.MalformedURLException;
 import java.io.*;
 import java.text.MessageFormat;
+import javax.mail.internet.ContentType;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -555,7 +556,7 @@ G***comment
 	public Object getResource(final String href) throws URISyntaxException, IOException
 	{
 Debug.trace("Inside XMLDocument.getResource() with href: ", href);	//G***del
-		final MediaType mediaType=getResourceMediaType(href);	//get the media type of the resource
+		final ContentType mediaType=getResourceMediaType(href);	//get the media type of the resource
 Debug.trace("Inside XMLDocument.getResource() with media type: ", mediaType);	//G***del
 		if(mediaType!=null)	//if we think we know the media type of the file involved
 		{
@@ -580,7 +581,7 @@ Debug.trace("Inside XMLDocument.getResource() with media type: ", mediaType);	//
 	@return The specified resource.
 	@exception IOException Thrown if the specified resource cannot be retrieved.
 	*/
-	protected Object getResource(final URI uri, final MediaType mediaType) throws IOException
+	protected Object getResource(final URI uri, final ContentType mediaType) throws IOException
 	{
 		Object resource=getCachedResource(uri); //see if the resource is cached
 		if(resource!=null)  //if the resource was cached
@@ -618,7 +619,7 @@ Debug.trace("Inside XMLDocument.getResource() with media type: ", mediaType);	//
 	@return The media type of the specified resource, or <code>null</code> if
 		the media type cannot be determined.
 	*/
-	public MediaType getResourceMediaType(final String href)
+	public ContentType getResourceMediaType(final String href)
 	{
 //G***del Debug.trace("Getting ready to get media type for: ", href);  //G***del
 //G***fix with FileUtilities; fix uppercase/lowercase for file extensions		FileUtilities.getMediaType()
@@ -703,14 +704,14 @@ Debug.trace("found input stream locator, getting input stream to URI: ", uri); /
 	@return The specified resource.
 	@exception IOException Thrown if the specified resource cannot be retrieved.
 	*/
-	protected Object loadResource(final URI resourceURI, final MediaType mediaType) throws IOException  //G***change this to loadImage, loadClip, etc.
+	protected Object loadResource(final URI resourceURI, final ContentType mediaType) throws IOException  //G***change this to loadImage, loadClip, etc.
 	{
 		Object resource;  //this will be assigned if we run into no errors
-		if(mediaType.getTopLevelType().equals(MediaTypeConstants.IMAGE))	//if this is an image
+		if(mediaType.getPrimaryType().equals(ContentTypeConstants.IMAGE))	//if this is an image
 		{
-			final String mediaSubType=mediaType.getSubtype(); //get the media sub-type
+			final String mediaSubType=mediaType.getSubType(); //get the media sub-type
 				//if this is a GIF, JPEG, PNG G***fix, or X_BITMAP image
-			if(mediaSubType.equals(MediaTypeConstants.GIF) || mediaSubType.equals(MediaTypeConstants.JPEG) || mediaSubType.equals(MediaTypeConstants.PNG)/*G***fix || mediaSubType.equals(MediaTypeConstants.X_BITMAP)*/)
+			if(mediaSubType.equals(ContentTypeConstants.GIF) || mediaSubType.equals(ContentTypeConstants.JPEG) || mediaSubType.equals(ContentTypeConstants.PNG)/*G***fix || mediaSubType.equals(MediaTypeConstants.X_BITMAP)*/)
 			{
 				//G***since we're opening directly from a file, maybe there is a better way to do this
 /*G***this works; fix to use our own caching
@@ -737,9 +738,9 @@ Debug.trace("found input stream locator, getting input stream to URI: ", uri); /
 //G***del when works				ImageUtilities.loadImage(image);  //load the image
 			}
 			else	//if we don't recognize this image type
-				throw new IOException("Unrecognized image type: \""+mediaType.getSubtype()+"\"; only \""+MediaType.JPEG+"\", \""+MediaType.PNG+"\", and \""+MediaType.GIF+"\" are currently supported.");	//G***i18n G***fix for other image types
+				throw new IOException("Unrecognized image type: \""+mediaType.getSubType()+"\"; only \""+ContentTypeConstants.JPEG+"\", \""+ContentTypeConstants.PNG+"\", and \""+ContentTypeConstants.GIF+"\" are currently supported.");	//G***i18n G***fix for other image types
 		}
-		else if(MediaTypeUtilities.isAudio(mediaType))	//if this is an audio media type
+		else if(ContentTypeUtilities.isAudio(mediaType))	//if this is an audio media type
 		{
 			final InputStream inputStream=new BufferedInputStream(getResourceAsInputStream(resourceURI));	//get a buffered input stream to the audio
 //G***we should really close the input stream if something goes wrong
@@ -1288,7 +1289,7 @@ Debug.trace("looking at first root element");  //G***fix
 				final Element swingDocumentElement=rootSwingElement.getElement(swingDocumentElementIndex);  //get the child element, which is the root of the document tree
 				final AttributeSet documentAttributeSet=swingDocumentElement.getAttributes();	//get the attribute set of the document element
 				final URI documentBaseURI=XMLStyleUtilities.getBaseURI(documentAttributeSet);  //get the URI of this document
-				final MediaType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet); //see what media type this document is
+				final ContentType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet); //see what media type this document is
 					//get all styelsheets for this document
 				final CSSStyleSheet[] styleSheets=getStylesheetApplier().getStylesheets(swingDocumentElement, documentBaseURI, documentMediaType);
 				//apply the stylesheets

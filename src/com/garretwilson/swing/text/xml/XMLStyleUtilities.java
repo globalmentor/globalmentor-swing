@@ -2,10 +2,10 @@ package com.garretwilson.swing.text.xml;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import javax.mail.internet.ContentType;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
-import com.garretwilson.io.MediaType;
 import com.garretwilson.swing.text.StyleUtilities;
 import com.garretwilson.text.xml.XMLUtilities;
 import com.garretwilson.util.NameValuePair;
@@ -310,16 +310,16 @@ public class XMLStyleUtilities extends StyleUtilities implements XMLStyleConstan
 	@return The media type, or <code>null</code> if there is no media type defined
 		anywhere up the hierarchy.
 	*/
-	public static MediaType getMediaType(AttributeSet attributeSet)
+	public static ContentType getMediaType(AttributeSet attributeSet)
 	{
-		return (MediaType)attributeSet.getAttribute(MEDIA_TYPE_ATTRIBUTE_NAME);  //get the name of the media type, anywhere within the hierarchy
+		return (ContentType)attributeSet.getAttribute(MEDIA_TYPE_ATTRIBUTE_NAME);  //get the name of the media type, anywhere within the hierarchy
 	}
 
 	/**Sets the media type of the document in which the element resides.
 	@param attributeSet The attribute set.
 	@param mediaType The media type of the document.
 	*/
-	public static void setMediaType(final MutableAttributeSet attributeSet, final MediaType mediaType)
+	public static void setMediaType(final MutableAttributeSet attributeSet, final ContentType mediaType)
 	{
 		attributeSet.addAttribute(MEDIA_TYPE_ATTRIBUTE_NAME, mediaType);	//add the attribute to the attribute set
 	}

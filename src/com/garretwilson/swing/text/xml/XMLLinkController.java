@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.*;
 import java.net.URI;
 
+import javax.mail.internet.ContentType;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
@@ -463,12 +464,12 @@ protected void activateLink(int pos, JEditorPane editor) {
 //G***del Debug.trace("Looking for view factory for namespace: ", elementNamespaceURI); //G***del
 			if(elementNamespaceURI==null) //if this element has no namespace G***this code is duplicated from XMLViewFactory---combine somehow
 			{
-				final MediaType mediaType=XMLStyleUtilities.getMediaType(attributeSet); //see if this element's document has a media type defined
+				final ContentType mediaType=XMLStyleUtilities.getMediaType(attributeSet); //see if this element's document has a media type defined
 				if(mediaType!=null) //if there is a media type defined for this element's document
 				{ //G***probably do all this differently later, like registering a view factory with a media type or something or, better yet, registering a namespace with a media type
-					if(mediaType.equals(MediaType.TEXT_HTML))
+					if(mediaType.match(ContentTypeConstants.TEXT_HTML))
 						elementNamespaceURI=XHTMLConstants.XHTML_NAMESPACE_URI.toString(); //G***testing
-					else if(mediaType.equals(MediaType.TEXT_X_OEB1_DOCUMENT))
+					else if(mediaType.match(ContentTypeConstants.TEXT_X_OEB1_DOCUMENT))
 						elementNamespaceURI=OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(); //G***testing
 				}
 			}

@@ -3,6 +3,7 @@ package com.garretwilson.swing.text.xml.xhtml;
 import java.net.URI;
 import java.util.List;
 
+import javax.mail.internet.ContentType;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Document;
 import javax.swing.text.MutableAttributeSet;
@@ -23,15 +24,15 @@ public class XHTMLEditorKit extends XMLEditorKit implements XHTMLConstants
 {
 
 	/**The XHTML media type this editor kit supports, defaulting to <code>application/xhtml+xml</code>.*/
-	private MediaType mediaType=new MediaType(MediaType.APPLICATION, MediaType.XHTML_XML);
+	private ContentType mediaType=new ContentType(ContentTypeConstants.APPLICATION, ContentTypeConstants.XHTML_XML, null);
 
 		/**@return The XHTML media type this editor kit supports.*/
-		public MediaType getMediaType() {return mediaType;}
+		public ContentType getMediaType() {return mediaType;}
 
 		/**Sets the media type this editor kit supports.
 		@param newMediaType The new XHTML media type.
 		*/
-		protected void setMediaType(final MediaType newMediaType) {mediaType=newMediaType;}
+		protected void setMediaType(final ContentType newMediaType) {mediaType=newMediaType;}
 
 	/**Default constructor.*/
 	public XHTMLEditorKit()
@@ -43,7 +44,7 @@ public class XHTMLEditorKit extends XMLEditorKit implements XHTMLConstants
 		<code>application/xhtml+xml</code>, this indicates a default namespace even
 		in the absence of a document namespace identfication.
 	*/
-	public XHTMLEditorKit(final MediaType mediaType)
+	public XHTMLEditorKit(final ContentType mediaType)
 	{
 		setMediaType(mediaType);  //set the requested media type
 	}

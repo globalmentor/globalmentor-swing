@@ -2,9 +2,9 @@ package com.garretwilson.swing.text.xml;
 
 import java.awt.Shape;
 import java.util.*;
+import javax.mail.internet.ContentType;
 import javax.swing.event.*;
 import javax.swing.text.*;
-import com.garretwilson.io.MediaType;
 import com.garretwilson.swing.text.*;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
@@ -109,7 +109,7 @@ Debug.trace("Getting view child elements"); //G***del
 				{
 //G***del if not needed final boolean isHTMLDocument=XHTMLSwingTextUtilities.isHTMLDocumentElement(documentAttributeSet);	//see if this is an HTML document
 	//G***del if not needed				Element baseElement=documentElement;  //we'll find out which element to use as the parent; in most documents, that will be the document element; in HTML elements, it will be the <body> element
-					final MediaType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet);  //get the media type of the document
+					final ContentType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet);  //get the media type of the document
 					final String documentElementLocalName=XMLStyleUtilities.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
 					final String documentElementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element local name
 					final int childElementCount=documentElement.getElementCount();  //find out how many children are in the document
@@ -197,7 +197,7 @@ Debug.trace("Getting view child elements"); //G***del
 				{
 //G***del if not needed final boolean isHTMLDocument=XHTMLSwingTextUtilities.isHTMLDocumentElement(documentAttributeSet);	//see if this is an HTML document
 	//G***del if not needed				Element baseElement=documentElement;  //we'll find out which element to use as the parent; in most documents, that will be the document element; in HTML elements, it will be the <body> element
-					final MediaType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet);  //get the media type of the document
+					final ContentType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet);  //get the media type of the document
 					final String documentElementLocalName=XMLStyleUtilities.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
 					final String documentElementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element local name
 					final int childElementCount=documentElement.getElementCount();  //find out how many children are in the document

@@ -1,5 +1,6 @@
 package com.garretwilson.swing.rdf.tree;
 
+import javax.mail.internet.ContentType;
 import javax.swing.*;
 import com.garretwilson.io.*;
 import com.garretwilson.rdf.*;
@@ -24,7 +25,7 @@ public class XPackageTreeCellRenderer extends RDFResourceTreeCellRenderer
 		@param icon The icon to register with the media type, or <code>null</code>
 			if no icon should be associated with the media type.
 		*/
-		public void registerOpenIcon(final MediaType contentType, final Icon icon)
+		public void registerOpenIcon(final ContentType contentType, final Icon icon)
 		{
 			registerOpenIcon((Object)contentType, icon); //put the icon in the map, keyed to the media type
 		}
@@ -34,7 +35,7 @@ public class XPackageTreeCellRenderer extends RDFResourceTreeCellRenderer
 		@param icon The icon to register with the media type, or <code>null</code>
 			if no icon should be associated with the media type.
 		*/
-		public void registerClosedIcon(final MediaType contentType, final Icon icon)
+		public void registerClosedIcon(final ContentType contentType, final Icon icon)
 		{
 			registerClosedIcon((Object)contentType, icon); //put the icon in the map, keyed to the media type
 		}
@@ -44,7 +45,7 @@ public class XPackageTreeCellRenderer extends RDFResourceTreeCellRenderer
 		@param icon The icon to register with the media type, or <code>null</code>
 			if no icon should be associated with the media type.
 		*/
-		public void registerLeafIcon(final MediaType contentType, final Icon icon)
+		public void registerLeafIcon(final ContentType contentType, final Icon icon)
 		{
 			registerLeafIcon((Object)contentType, icon); //put the icon in the map, keyed to the media type
 		}
@@ -72,7 +73,7 @@ public class XPackageTreeCellRenderer extends RDFResourceTreeCellRenderer
 		if(userObject instanceof RDFResource) //if this is an RDF resource
 		{
 			final RDFResource rdfResource=(RDFResource)userObject;  //cast the object to an RDF resource
-			final MediaType mediaType=MIMEOntologyUtilities.getMediaType(rdfResource);  //see if there is a media type for the resource
+			final ContentType mediaType=MIMEOntologyUtilities.getMediaType(rdfResource);  //see if there is a media type for the resource
 		  if(mediaType!=null) //if there is a media type
 				return mediaType; //use the media type as the key
 		}

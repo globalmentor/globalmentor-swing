@@ -32,6 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
+import javax.mail.internet.ContentType;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.text.*;
@@ -899,7 +900,7 @@ Debug.trace("installed editor kit is first: ", getEditorKit().getClass().getName
 
 		final String contentType=getContentType();  //see what content type we decided on
 Debug.trace("content type is first: ", contentType);  //G***del
-		if(MediaTypeConstants.APPLICATION_ZIP.equals(contentType)) //if this appears to be an application/zip file
+		if(ContentTypeConstants.APPLICATION_ZIP.equals(contentType)) //if this appears to be an application/zip file
 		{
 Debug.trace("found zip file: ", uri);  //G***del
 			if(URIConstants.FILE_SCHEME.equals(uri.getScheme()))  //if this is the file scheme
@@ -1151,7 +1152,7 @@ Debug.trace("reading from stream"); //G***del
 			{
 Debug.trace("found input stream locator, getting input stream to URI: ", uri); //G***del
 				final InputStream inputStream=getInputStream(uri);  //get an input stream from the page
-				final MediaType mediaType=URIUtilities.getMediaType(uri);  //get the media type of the target
+				final ContentType mediaType=URIUtilities.getMediaType(uri);  //get the media type of the target
 				if(mediaType!=null) //if we know the media type of the URL
 		  		setContentType(mediaType.toString());  //set the content type based upon our best guess
 				return inputStream; //return the input stream we located (with an input stream locator, there's no need for us to try to open a connection to the URL ourselves
@@ -1207,9 +1208,9 @@ Debug.trace("found input stream locator, getting input stream to URI: ", uri); /
 //G***del		final MediaType mediaType=new MediaType(contentType); //get a media type object to examine the content type
 //TODO eventually don't allow MediaType to compare with strings, if this is what's happening
 //G***should we check for application/xml or text/xml?
-		if(MediaType.APPLICATION_XML.equals(contentType)) //if this appears to be an application/xml file
+		if(ContentTypeConstants.APPLICATION_XML.equals(contentType)) //if this appears to be an application/xml file
 		{
-			final MediaType mediaType=URLUtilities.getMediaType(page);  //see if we know what media type this is
+			final ContentType mediaType=URLUtilities.getMediaType(page);  //see if we know what media type this is
 			if(mediaType!=null) //if we have an idea of what media type this is
 				contentType=mediaType.toString();  //our guess of the media type overrides "application/xml"
 		}
@@ -1305,7 +1306,7 @@ Debug.trace("reading from stream into document"); //G***del
 	@param baseURI The base URI, corresponding to the XML document fragment.
 	@param mediaType The media type of the XML document fragment.
 	*/
-	public void setXML(final DocumentFragment xmlDocumentFragment, final URI baseURI, final MediaType mediaType)
+	public void setXML(final DocumentFragment xmlDocumentFragment, final URI baseURI, final ContentType mediaType)
 	{
 		final DOMImplementation domImplementation=new XMLDOMImplementation();	//TODO get a DOMImplementation in an implementation-agnostic way
 			//create a document with an document element of <xhtml:div> TODO create something less XHTML-ish and more generic
@@ -1323,9 +1324,9 @@ Debug.trace("reading from stream into document"); //G***del
 	@param baseURI The base URI, corresponding to the XML document.
 	@param mediaType The media type of the XML document.
 	*/
-	public void setXML(final org.w3c.dom.Document xmlDocument, final URI baseURI, final MediaType mediaType)
+	public void setXML(final org.w3c.dom.Document xmlDocument, final URI baseURI, final ContentType mediaType)
 	{
-		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new MediaType[]{mediaType});	//set the XML using arrays
+		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new ContentType[]{mediaType});	//set the XML using arrays
 	}
 
 	/**Sets the given XML data.
@@ -1336,7 +1337,7 @@ Debug.trace("reading from stream into document"); //G***del
 	@param baseURIArray The array of base URIs, corresponding to the XML documents.
 	@param mediaTypeArray The array of media types of the documents.
 	*/
-	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final MediaType[] mediaTypeArray)
+	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray)
 	{
 		final EditorKit editorKit=getEditorKit();	//get our current editor kit
 		if(editorKit instanceof XMLEditorKit)	//if an XML editor kit is installed
@@ -1456,13 +1457,13 @@ Debug.trace("reading from stream into document"); //G***del
      */
     public static EditorKit createEditorKitForContentType(String type)
 		{
-			final MediaType mediaType=new MediaType(type);  //create a new media type
+			final ContentType mediaType=ContentTypeUtilities.createContentType(type);  //create a new media type
 /*G***make sure this is an XML media type; if not, call the base class
 			if(mediaType.getTopLevelType().eq
 */
 /*G***del
 Debug.trace("creating editor kit for content type: ", type);  //G***del; fix
-		  if(mediaType.equals(mediaType.APPLICATION_ZIP)) //if this is a zip file
+		  if(mediaType.match(mediaType.APPLICATION_ZIP)) //if this is a zip file
 			{
 				return new OEBEditorKit();  //assume that this is an OEB file in a zip file G***allow for other types of files in zip files later by exploring the package
 			}
@@ -1472,7 +1473,7 @@ Debug.trace("creating editor kit for content type: ", type);  //G***del; fix
 				return new XHTMLEditorKit(mediaType);	//create a new XHTML editor kit for this media type
 			}
 				//if this is an OEB package
-		  else if(/*G***fix mediaType.equals(OEBConstants.OEB10_DOCUMENT_MEDIA_TYPE) || */mediaType.equals(OEBConstants.OEB10_PACKAGE_MEDIA_TYPE))
+		  else if(/*G***fix mediaType.match(OEBConstants.OEB10_DOCUMENT_MEDIA_TYPE) || */mediaType.match(OEBConstants.OEB10_PACKAGE_MEDIA_TYPE))
 			{
 Debug.trace("creating OEB editor kit"); //G***del
 				return new OEBEditorKit();  //create a new OEB editor kit for the OEB package

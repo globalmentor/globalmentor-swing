@@ -9,7 +9,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.SizeRequirements;
-import com.garretwilson.io.MediaType;
+import javax.mail.internet.ContentType;
 import com.garretwilson.lang.JavaUtilities;
 import com.garretwilson.swing.XMLTextPane;	//G***del when we can find a better place to set the paged view variable of XMLTextPane
 import com.garretwilson.swing.event.PageEvent;
@@ -1722,7 +1722,7 @@ Debug.trace("create flowlayout"); //G***del
 								else  //if the body element has no namespace
 								{
 										//if the document type is text/html or text/x-oeb1-document
-									if(documentMediaType!=null && (documentMediaType.equals(MediaType.TEXT_HTML) || documentMediaType.equals(MediaType.TEXT_X_OEB1_DOCUMENT)))
+									if(documentMediaType!=null && (documentMediaType.match(MediaType.TEXT_HTML) || documentMediaType.match(MediaType.TEXT_X_OEB1_DOCUMENT)))
 										isHTMLBody=true;  //is an HTML body element
 									else if(XHTMLConstants.ELEMENT_HTML.equals(documentElementLocalName)  //if the document element is an XHTML or OEB <html> element
 											&& (XHTMLConstants.XHTML_NAMESPACE_URI.equals(documentElementNamespaceURI) || OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(documentElementNamespaceURI)))

@@ -9,6 +9,7 @@ import java.net.URI;
 import java.text.*;
 import java.util.*;
 import java.util.prefs.Preferences;
+import javax.mail.internet.ContentType;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -1273,9 +1274,9 @@ Debug.trace("Relative offset: ", relativeOffset);
 	@param baseURI The base URI, corresponding to the XML document.
 	@param mediaType The media type of the XML document.
 	*/
-	public void setXML(final org.w3c.dom.Document xmlDocument, final URI baseURI, final MediaType mediaType)
+	public void setXML(final org.w3c.dom.Document xmlDocument, final URI baseURI, final ContentType mediaType)
 	{
-		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new MediaType[]{mediaType}, mediaType);	//set the XML using arrays, specifying the media type
+		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new ContentType[]{mediaType}, mediaType);	//set the XML using arrays, specifying the media type
 	}
 
 	/**Sets the given XML data.
@@ -1284,7 +1285,7 @@ Debug.trace("Relative offset: ", relativeOffset);
 	@param mediaTypeArray The array of media types of the documents.
 	@param mediaType The media type of the book itself.
 	*/
-	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final MediaType[] mediaTypeArray, final MediaType mediaType)
+	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray, final ContentType mediaType)
 	{
 		close();  //close whatever book is open
 		getXMLTextPane().setContentType(mediaType.toString());	//set the content type of the text pane
@@ -1581,13 +1582,13 @@ Debug.trace("Inside OEBBook.activateLink().");
 		try
 		{
 			final XMLDocument xmlDocument=(XMLDocument)getXMLTextPane().getDocument();	//get the loaded document G***should we assume this is an XML document?
-			final MediaType mediaType=xmlDocument.getResourceMediaType(hyperlinkURI.toString());	//get the media type of the resource specified by this hyperlink event
+			final ContentType mediaType=xmlDocument.getResourceMediaType(hyperlinkURI.toString());	//get the media type of the resource specified by this hyperlink event
 Debug.trace("Media type: ", mediaType);	//G***del
 			if(mediaType!=null)	//if we think we know the media type of the file involved
 			{
 					//TODO create convenience utility methods similar to MediaTypeUtilities.isAudio() for all of these checks
-				final String topLevelType=mediaType.getTopLevelType();  //get the top-level media type
-				if(MediaTypeUtilities.isAudio(mediaType))	//if this is an audio media type
+				final String topLevelType=mediaType.getPrimaryType();  //get the top-level media type
+				if(ContentTypeUtilities.isAudio(mediaType))	//if this is an audio media type
 				{
 Debug.trace("found an audio file.");
 //G***del; fix				  mouseEvent.consume(); //consume the event so that the mouse click won't be interpreted elsewhere
@@ -1596,7 +1597,7 @@ Debug.trace("ready to start clip.");
 					clip.start();	//start the clip playing G***do we need to close it later?
 					return;	//don't do any more processing
 				}
-				else if(topLevelType.equals(MediaType.IMAGE))	//if this is an image media type G***does this work correctly relative to the document base URI?
+				else if(topLevelType.equals(ContentTypeConstants.IMAGE))	//if this is an image media type G***does this work correctly relative to the document base URI?
 				{
 					viewImage(hyperlinkURI.toString()); //view the image at the given location
 					return;	//don't do any more processing

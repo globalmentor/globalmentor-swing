@@ -3,6 +3,7 @@ package com.garretwilson.swing.text.xml.oeb;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import javax.mail.internet.ContentType;
 import javax.swing.text.*;
 import com.garretwilson.io.*;
 import com.garretwilson.rdf.*;
@@ -183,7 +184,7 @@ Debug.trace("reading in an OEB editor kit, with document of type: ", document.ge
 			final XMLProcessor xmlProcessor=new XMLProcessor(oebDocument.getURIInputStreamable());  //create an XML processor that will use the input stream locator of the document for loading other needed documents
 			final URI[] baseURIArray; //we'll store here an array of base URIs, corresponding to the XML documents
 			final org.w3c.dom.Document[] xmlDocumentArray; //we'll store here an array of XML document trees to load into document
-			final MediaType[] mediaTypeArray; //we'll store here an array of media types (for OEB1, these should all be OEB document media types)
+			final ContentType[] mediaTypeArray; //we'll store here an array of media types (for OEB1, these should all be OEB document media types)
 //G***del if not needed			final URL publicationURL=oebDocument.getBaseURL();  //get the base URL from the document G***what if we don't get a URL back?
 
 				//create a new processor for loading the package information
@@ -212,7 +213,7 @@ Debug.trace("got spine list");  //G***del
 						while(manifestIterator.hasNext()) //while there are more manifest items
 						{
 							final RDFResource manifestItem=(RDFResource)manifestIterator.next(); //get the next OEB item
-							final MediaType mediaType=MIMEOntologyUtilities.getMediaType(manifestItem); //get the item's media type
+							final ContentType mediaType=MIMEOntologyUtilities.getMediaType(manifestItem); //get the item's media type
 							//if this is an OEB document that is not in the spine
 							if(OEB10_DOCUMENT_MEDIA_TYPE.equals(mediaType) && !spineList.contains(manifestItem))
 							{
@@ -223,7 +224,7 @@ Debug.trace("got spine list");  //G***del
 					final int spineItemCount=spineList.size(); //find out how many spine items there are
 					xmlDocumentArray=new org.w3c.dom.Document[spineItemCount]; //create an array of OEB XML documents
 					baseURIArray=new URI[spineItemCount];  //create an array of URIs
-					mediaTypeArray=new MediaType[spineItemCount];  //create an array of media types
+					mediaTypeArray=new ContentType[spineItemCount];  //create an array of media types
 					for(int i=0; i<spineItemCount; ++i)	//look at each item in the spine
 					{
 	//G***del Debug.trace("OEBEditorKit.read() Getting item: "+i+" of "+publication.getSpineList().size());

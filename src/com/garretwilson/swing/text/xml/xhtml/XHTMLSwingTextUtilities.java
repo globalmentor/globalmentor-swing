@@ -3,9 +3,11 @@ package com.garretwilson.swing.text.xml.xhtml;
 import java.io.File;
 import java.net.URI;
 
+import javax.mail.internet.ContentType;
 import javax.swing.text.*;
+import com.garretwilson.io.ContentTypeConstants;
+import com.garretwilson.io.ContentTypeUtilities;
 import com.garretwilson.io.FileUtilities;
-import com.garretwilson.io.MediaType;
 import com.garretwilson.swing.text.xml.XMLStyleUtilities;
 import com.garretwilson.text.xml.oeb.OEBConstants;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
@@ -63,8 +65,8 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 					return true;  //show that this is an image object
 				else if(elementName.equals(ELEMENT_OBJECT)) //if this is an <object> element
 				{
-					final MediaType mediaType=getObjectMediaType(attributeSet); //get the media type of the object
-					if(mediaType.getTopLevelType().equals(MediaType.IMAGE)) //if this is an image
+					final ContentType mediaType=getObjectMediaType(attributeSet); //get the media type of the object
+					if(mediaType.getPrimaryType().equals(ContentTypeConstants.IMAGE)) //if this is an image
 						return true;  //show that this is an image object
 				}
 			}
@@ -134,7 +136,7 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 								else  //if the body element has no namespace
 								{
 										//if the document type is text/html or text/x-oeb1-document
-									if(documentMediaType!=null && (documentMediaType.equals(MediaType.TEXT_HTML) || documentMediaType.equals(MediaType.TEXT_X_OEB1_DOCUMENT)))
+									if(documentMediaType!=null && (documentMediaType.match(MediaType.TEXT_HTML) || documentMediaType.match(MediaType.TEXT_X_OEB1_DOCUMENT)))
 										isHTMLBody=true;  //is an HTML body element
 									else if(XHTMLConstants.ELEMENT_HTML.equals(documentElementLocalName)  //if the document element is an XHTML or OEB <html> element
 											&& (XHTMLConstants.XHTML_NAMESPACE_URI.equals(documentElementNamespaceURI) || OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(documentElementNamespaceURI)))
@@ -183,7 +185,7 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 	*/
 	public static boolean isHTMLDocumentElement(final AttributeSet documentAttributeSet)
 	{
-		final MediaType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet);  //get the media type of the document
+		final ContentType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet);  //get the media type of the document
 			//if the document media type is an HTML media type
 		if(XHTMLUtilities.isHTML(documentMediaType)) 
 		{
@@ -277,18 +279,18 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 	@return The media type of the data specified by the object attribute set,
 		<code>null</code> if the media type could not be determined.
 	*/
-	public static MediaType getObjectMediaType(final AttributeSet attributeSet)
+	public static ContentType getObjectMediaType(final AttributeSet attributeSet)
 	{
 		if(attributeSet!=null)  //if there are attributes
 		{
 				//see if there is a code type attribute
 			final String codeType=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_CODETYPE);
 			if(codeType!=null)  //if the object has a code type
-				return new MediaType(codeType); //create a media type from the given type
+				return ContentTypeUtilities.createContentType(codeType); //create a media type from the given type
 				//see if there is a type attribute, since there is no code type specified
 			final String type=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_TYPE);
 			if(type!=null)  //if the object has a code type
-				return new MediaType(type); //create a media type from the given type and return it
+				return ContentTypeUtilities.createContentType(type); //create a media type from the given type and return it
 				//see if there is a data attribute, since there is no type specified
 			final String data=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_DATA);
 			if(data!=null)  //if the object has a data attribute
@@ -301,21 +303,21 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 	@param mediaType The media type to test.
 	@return <code>true</code> if the media type is recognized and supported.
 	*/
-	public static boolean isMediaTypeSupported(final MediaType mediaType) //G***update these for all media types
+	public static boolean isMediaTypeSupported(final ContentType mediaType) //G***update these for all media types
 	{
 			//G***we should really probably just have a map or something -- or maybe not (this is probably more lightweight)
-		final String topLevelType=mediaType.getTopLevelType();  //get the top-level type
-		final String subType=mediaType.getSubtype();  //get the subtype
-		if(MediaType.APPLICATION.equals(topLevelType))  //application/*
+		final String topLevelType=mediaType.getPrimaryType();  //get the top-level type
+		final String subType=mediaType.getSubType();  //get the subtype
+		if(ContentTypeConstants.APPLICATION.equals(topLevelType))  //application/*
 		{
-			if(MediaType.JAVA.equals(subType))  //application/java
+			if(ContentTypeConstants.JAVA.equals(subType))  //application/java
 				return true;  //we support this media type
 		}
-		else if(MediaType.IMAGE.equals(topLevelType))  //image/*
+		else if(ContentTypeConstants.IMAGE.equals(topLevelType))  //image/*
 		{
-			if(MediaType.GIF.equals(subType)  //image/gif
-				  || MediaType.PNG.equals(subType)  //image/png
-				  || MediaType.JPEG.equals(subType))  //image/jpeg
+			if(ContentTypeConstants.GIF.equals(subType)  //image/gif
+				  || ContentTypeConstants.PNG.equals(subType)  //image/png
+				  || ContentTypeConstants.JPEG.equals(subType))  //image/jpeg
 				return true;  //we support this media type
 		}
 		return false; //show that we don't understand this media type

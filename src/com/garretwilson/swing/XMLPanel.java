@@ -3,9 +3,10 @@ package com.garretwilson.swing;
 import java.awt.BorderLayout;
 import java.io.*;
 import java.net.URI;
+import javax.mail.internet.ContentType;
 import javax.swing.*;
 import javax.swing.event.*;
-import com.garretwilson.io.MediaType;
+import com.garretwilson.io.*;
 import com.garretwilson.model.Model;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.unicode.UnicodeStatusBar;
@@ -128,14 +129,14 @@ public class XMLPanel extends TabbedViewPanel	//TODO make the toolbar and status
 	*/
 	public XMLPanel(final XMLNodeModel model, final boolean initialize)
 	{
-		this(model, new MediaType(MediaType.TEXT, MediaType.XML), initialize);	//construct the panel with a default text/xml media type
+		this(model, new ContentType(ContentTypeConstants.TEXT, ContentTypeConstants.XML, null), initialize);	//construct the panel with a default text/xml media type
 	}
 
 	/**Content type constructor.
 	@param model The data model for which this component provides a view.
 	@param mediaType The content type of the XML.
 	*/
-	public XMLPanel(final XMLNodeModel model, final MediaType mediaType)
+	public XMLPanel(final XMLNodeModel model, final ContentType mediaType)
 	{
 		this(model, mediaType, true);	//construct and initialize the panel
 	}
@@ -146,7 +147,7 @@ public class XMLPanel extends TabbedViewPanel	//TODO make the toolbar and status
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public XMLPanel(final XMLNodeModel model, final MediaType mediaType, final boolean initialize)
+	public XMLPanel(final XMLNodeModel model, final ContentType mediaType, final boolean initialize)
 	{
 		super(model, false);	//construct the parent class without initializing the panel
 		setSupportedModelViews(DEFAULT_SUPPORTED_MODEL_VIEWS);	//set the model views we support
@@ -217,15 +218,15 @@ updateStatus();	//testing; probably put a convenience method to create this list
 */
 
 	/**@return The XML content type of the panel.*/
-	public MediaType getContentType()
+	public ContentType getContentType()
 	{
-		return new MediaType(getXMLTextPane().getContentType());	//return the XML text pane content type
+		return ContentTypeUtilities.createContentType(getXMLTextPane().getContentType());	//return the XML text pane content type
 	}	
 
 	/**Sets the XML content type of the panel.
 	@param mediaType The content type of the XML.
 	*/
-	public void setContentType(final MediaType mediaType)
+	public void setContentType(final ContentType mediaType)
 	{
 		getXMLTextPane().setContentType(mediaType.toString());	//set the content type of the text pane
 	}
