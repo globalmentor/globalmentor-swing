@@ -61,49 +61,84 @@ public class OrganizationPanel extends DefaultPanel
 		/**@return The role text field.*/
 		public JTextField getRoleTextField() {return roleTextField;}
 
-	/**Places the organizational information into the various fields.
-	@param organization The organization to place in the fields, or
-		<code>null</code> if no information should be displayed.
+	/**Sets the organization name.
+	@param name The name of the organization, or <code>null</code> for no name.
 	*/
-	public void setOrganization(final Organization organization)
+	public void setOrganizationName(final String name)
 	{
-		if(organization!=null)	//if there is an organization
-		{
-			nameTextField.setText(organization.getName()!=null ? organization.getName().toString() : null);
-			unitsTextField.setText(StringUtilities.concat(organization.getUnits(), UNIT_SEPARATOR));
-			titleTextField.setText(organization.getTitle());
-			roleTextField.setText(organization.getRole());
-		}
-		else	//if there is no organization, clear the fields
-		{
-			nameTextField.setText("");
-			unitsTextField.setText("");
-			titleTextField.setText("");
-			roleTextField.setText("");
-		}
+		nameTextField.setText(name!=null ? name : "");
 	}
-	
-	/**@return An object representing the organization information entered.*/
-	public Organization getOrganization()
+
+	/**@return The organization name, or <code>null</code> for no name.
+	*/
+	public String getOrganizationName()
 	{
-		final String name=StringUtilities.getNonEmptyString(nameTextField.getText().trim());
-		final String[] units=StringTokenizerUtilities.getTokens(new StringTokenizer(unitsTextField.getText().trim(), UNIT_DELIMITERS));
-		final String title=StringUtilities.getNonEmptyString(titleTextField.getText().trim());
-		final String role=StringUtilities.getNonEmptyString(roleTextField.getText().trim());
-		return new Organization(name, units, title, role);	//create and return an organization representing the entered information
+		return StringUtilities.getNonEmptyString(nameTextField.getText().trim());
+	}
+
+	/**Sets the organizational units.
+	@param units The organizational units.
+	*/
+	public void setUnits(final String[] units)
+	{
+		unitsTextField.setText(StringUtilities.concat(units, UNIT_SEPARATOR));
+	}
+
+	/**@return The organizational units.*/
+	public String[] getUnits()
+	{
+		return StringTokenizerUtilities.getTokens(new StringTokenizer(unitsTextField.getText().trim(), UNIT_DELIMITERS));
+	}
+
+	/**Sets the job title.
+	@param title The job title, functional position or function at the
+		organization, or <code>null</code> for no title.
+	*/
+	public void setTitle(final String title)
+	{
+		titleTextField.setText(title!=null ? title : "");
+	}
+
+	/**@return The job title, functional position or function at the,
+		organization or <code>null</code> for no title.
+	*/
+	public String getTitle()
+	{
+		return StringUtilities.getNonEmptyString(titleTextField.getText().trim());
+	}
+
+	/**Sets the role.
+	@param role The role, occupation, or business category at the organization,
+		or <code>null</code> for no role.
+	*/
+	public void setRole(final String role)
+	{
+		roleTextField.setText(role!=null ? role : "");
+	}
+
+	/**@return The role, occupation, or business category at the
+		organization, or <code>null</code> for no role.
+	*/
+	public String getRole()
+	{
+		return StringUtilities.getNonEmptyString(roleTextField.getText().trim());
 	}
 
 	/**Default constructor.*/
 	public OrganizationPanel()
 	{
-		this(new Organization());	//initialize with a default organization
+		this(null, new String[]{}, null, null);	//create a panel with no initial values
 	}
 
-	/**Organization constructor.
-	@param organization The organization to place in the fields, or <code>null</code>
-		if no information should be displayed.
+	/**Full organization constructor.
+	@param name The name of the organization, or <code>null</code> for no name.
+	@param units The organizational units.
+	@param title The job title, functional position or function at the
+		organization, or <code>null</code> for no title.
+	@param role The role, occupation, or business category at the organization,
+		or <code>null</code> for no role.
 	*/
-	public OrganizationPanel(final Organization organization)
+	public OrganizationPanel(final String name, final String[] units, final String title, final String role)
 	{
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		nameLabel=new JLabel();
@@ -116,7 +151,10 @@ public class OrganizationPanel extends DefaultPanel
 		roleLabel=new JLabel();
 		setDefaultFocusComponent(nameTextField);	//set the default focus component
 		initialize();	//initialize the panel
-		setOrganization(organization);	//set the organization
+		setOrganizationName(name);	//set the given name
+		setUnits(units);	//set the given units
+		setTitle(title);	//set the given title
+		setRole(role);	//set the given role
 	}
 	
 	/**Initializes the user interface.*/
