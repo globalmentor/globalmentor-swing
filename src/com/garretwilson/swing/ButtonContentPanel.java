@@ -1,6 +1,7 @@
 package com.garretwilson.swing;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 /**A content panel that, besides the content component, contains a button.
@@ -11,6 +12,11 @@ The button is connected to the content component; whenever the the content
 */
 public class ButtonContentPanel extends ContentPanel
 {
+
+	/**The object that listens for mouse events on the content component and
+		in response clicks the button.
+	*/
+	private MouseListener mouseListener=null;
 
 	/**The button to display in the border of the panel.*/
 	private AbstractButton button=null;
@@ -32,6 +38,41 @@ public class ButtonContentPanel extends ContentPanel
 				if(newButton!=null)	//if we were given a new button
 				{
 					add(newButton, BorderLayout.WEST);  //put the button in the west of the panel TODO i18n
+				}
+			}
+		}
+
+		/**Sets the main content component in the center of the panel.
+		<p>This version adds a listener for clicks to the content component, and in
+			response selects the button.</p>
+		@param newContentComponent The new component for the center of the panel,
+			or <code>null</code> for no content component.
+		*/
+		public void setContentComponent(final Component newContentComponent)
+		{
+			final Component oldContentComponent=getContentComponent();	//get the current content component
+			super.setContentComponent(newContentComponent);	//set the content component normally
+			if(oldContentComponent!=newContentComponent) //if the content component really changed
+			{
+				if(mouseListener==null)	//if we haven't yet created a mouse listener (we must create it here, because this method is called from the constructor before the variable would be initialized)
+				{
+					mouseListener=new MouseAdapter()	//create a mouse listener to listen for mouse clicks on the component
+							{
+								public void mouseClicked(final MouseEvent mouseEvent)
+								{
+//G***test, maybe									getButton().dispatchEvent(mouseEvent)
+									getButton().doClick();	//G***testing
+									getButton().requestFocusInWindow();	//request focus for the button
+								}									
+							};
+				}
+				if(oldContentComponent!=null)	//if we had a content component earlier
+				{
+					oldContentComponent.removeMouseListener(mouseListener);	//remove the mouse listener from the old component
+				}
+				if(newContentComponent!=null)	//if we were given a new content component
+				{
+					newContentComponent.addMouseListener(mouseListener);	//listen for mouse clicks on the component
 				}
 			}
 		}

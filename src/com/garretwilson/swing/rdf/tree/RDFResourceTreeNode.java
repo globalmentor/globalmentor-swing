@@ -36,7 +36,7 @@ public class RDFResourceTreeNode extends DefaultMutableTreeNode
 	{
 //G***del		final RDFResource rdfResource=(RDFResource)getUserObject(); //get the resource we're representing
 		final RDFResource rdfResource=getRDFResource(); //get the resource we're representing
-		final String label=RDFSUtilities.getLabel(rdfResource);  //get the label of the resource, if it has one
-		return label!=null ? label : rdfResource.getReferenceURI().toString(); //return the label, or the reference URI if there is no label
+		final RDFLiteral labelLiteral=RDFSUtilities.getLabel(rdfResource);  //get the label of the resource, if it has one
+		return labelLiteral!=null ? labelLiteral.toString() : rdfResource.getReferenceURI().toString(); //return the label, or the reference URI if there is no label
 	}
 }

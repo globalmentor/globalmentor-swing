@@ -434,8 +434,9 @@ public class BasicPanel extends JPanel implements CanClosable, DefaultFocusable,
  	*/
 	public void remove(final int index)
 	{
-		super.remove(index);	//remove the component normally; if there were no exceptions, the index was valid
-		removeConstraints(getComponent(index));	//remove any constraints associated with the component at the given index
+		final Component component=getComponent(index);	//get a reference to the component to be removed; if there were no exceptions, the index was valid
+		super.remove(index);	//remove the component normally 
+		removeConstraints(component);	//remove any constraints associated with the component at the given index
 	}
 
 	/**Requests that the default focus component should get the default.
