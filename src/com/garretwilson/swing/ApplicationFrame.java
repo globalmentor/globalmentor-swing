@@ -27,7 +27,7 @@ import com.garretwilson.util.*;
 @author Garret Wilson
 @see ApplicationPanel
 */
-public abstract class ApplicationFrame extends JFrame
+public abstract class ApplicationFrame extends JFrame implements CanClosable
 {
 
 	//file menu identifiers
@@ -93,15 +93,15 @@ public abstract class ApplicationFrame extends JFrame
 //G***del	private DocumentDescribable description=null;
 
 	/**The description of the currently opened document.*/
-	private ResourceDescribable documentDescription=null;
+	private ResourceState documentDescription=null;
 
 		/**@return The description of the currently opened document.*/
-		protected ResourceDescribable getDocumentDescription() {return documentDescription;}
+		protected ResourceState getDocumentDescription() {return documentDescription;}
 
 		/**Sets the description of the currently opened document.
 		@param description The description of the currently opened document.
 		*/
-		protected void setDocumentDescription(final ResourceDescribable description) {documentDescription=description;}
+		protected void setDocumentDescription(final ResourceState description) {documentDescription=description;}
 
 	/**The action for creating a new file.*/
 	private final Action fileNewAction;
@@ -393,7 +393,7 @@ public abstract class ApplicationFrame extends JFrame
 	protected void updateStatus()
 	{
 		setTitle(constructTitle());  //update the title
-		final ResourceDescribable description=getDocumentDescription();	//see what document is being described
+		final ResourceState description=getDocumentDescription();	//see what document is being described
 		getFileSaveAction().setEnabled(description!=null && description.isModified());	//only enable saving when there is a document that's modified
 	}
 
@@ -508,9 +508,9 @@ public abstract class ApplicationFrame extends JFrame
 	@see #askOpenFile
 	@see #setFile
 	*/
-	public ResourceDescribable openFile()
+	public ResourceState openFile()
 	{
-		ResourceDescribable description=null;	//assume for now that the operation will be canceled
+		ResourceState description=null;	//assume for now that the operation will be canceled
 		final URI uri=askOpenFile();  //get the URI to use
 		if(uri!=null)  //if a valid URI was returned
 		{
@@ -546,7 +546,7 @@ public abstract class ApplicationFrame extends JFrame
 	public boolean saveFile()
 	{
 //G***del Debug.trace("saving file");
-		final ResourceDescribable description=getDocumentDescription(); //get a description of the document
+		final ResourceState description=getDocumentDescription(); //get a description of the document
 		if(description!=null) //if we have a description of the document
 		{
 //G**del Debug.trace("found document description");
@@ -563,7 +563,7 @@ public abstract class ApplicationFrame extends JFrame
 	*/
 	public boolean saveFileAs()
 	{
-		final ResourceDescribable description=getDocumentDescription(); //get a description of the document
+		final ResourceState description=getDocumentDescription(); //get a description of the document
 		if(description!=null) //if we have a description of the document
 		{
 			return saveFileAs(description); //save the file with the description
@@ -577,7 +577,7 @@ public abstract class ApplicationFrame extends JFrame
 	@return <code>true</code> if the operation was not cancelled.
 	@see #setFile
 	*/
-	public boolean saveFileAs(final ResourceDescribable description)
+	public boolean saveFileAs(final ResourceState description)
 	{
 		boolean result=false; //start out assuming the file won't be saved
 		final URI uri=askSaveFile();  //get the URI to use
@@ -606,7 +606,7 @@ public abstract class ApplicationFrame extends JFrame
 	@param uri The URI at which the file should be saved.
 	@return <code>true</code> if the operation was not cancelled.
 	*/
-	protected boolean saveFile(final ResourceDescribable description, final URI uri)
+	protected boolean saveFile(final ResourceState description, final URI uri)
 	{
 		if(!description.getResource().getReferenceURI().equals(uri))	//if the URI should be changed
 		{
@@ -694,7 +694,7 @@ public abstract class ApplicationFrame extends JFrame
 	@return <code>true</code> if the application frame and application can close.
 	@see ApplicationPanel#canClose
 	@see #getDocumentDescription
-	@see #canClose(ResourceDescribable)
+	@see #canClose(ResourceState)
 	*/
 	public boolean canClose()
 	{
@@ -711,13 +711,13 @@ public abstract class ApplicationFrame extends JFrame
 	public boolean canCloseFile()
 	{
 		boolean canClose=true;	//default to being able to be closed
-		if(getContentPane() instanceof ApplicationPanel)	//if the content pane is an application panel
+		if(getContentPane() instanceof CanClosable)	//if the content pane knows how to ask about closing
 		{
-			canClose=((ApplicationPanel)getContentPane()).canClose();	//ask if the application panel can be closed
+			canClose=((CanClosable)getContentPane()).canClose();	//ask if the content pane can be closed
 		}
 		if(canClose)	//if everything looks like we can close so far
 		{
-			final ResourceDescribable description=getDocumentDescription();	//get the current document description
+			final ResourceState description=getDocumentDescription();	//get the current document description
 			if(description!=null && description!=getContentPane())	//if we have a document description, and the description isn't the content pane (otherwise we would call canClose() twice)
 				canClose=canClose(description);	//see if we can close the description
 		}
@@ -729,7 +729,7 @@ public abstract class ApplicationFrame extends JFrame
 	@return <code>true</code> if the specified document can be closed, else
 		<code>false</code> if closing should be canceled.
 	*/
-	public boolean canClose(final ResourceDescribable description)
+	public boolean canClose(final ResourceState description)
 	{
 		if(description.isModified()) //if the document has been modified
 		{
@@ -763,7 +763,7 @@ public abstract class ApplicationFrame extends JFrame
 	@return A description of the opened document, or <code>null</code> if the
 		document was not opened.
 	*/
-	protected ResourceDescribable openFile(final URI uri)	//G***fix the "call this version afterwards" and delete if not needed
+	protected ResourceState openFile(final URI uri)	//G***fix the "call this version afterwards" and delete if not needed
 	{
 /*G***fix; maybe this can't go here in the new architecture
 		if(!description.getResource().getReferenceURI().equals(uri))	//if the URI wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)

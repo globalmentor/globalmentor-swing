@@ -16,8 +16,9 @@ import org.w3c.dom.*;
 	architecture.
 @author Garret Wilson
 */
-public abstract class AbstractMDIDocumentPanel extends ApplicationPanel implements StreamableResourceDescribable	//G***eventually delete this class and replace it with ResourceApplicationPanel
+public abstract class AbstractMDIDocumentPanel extends ApplicationPanel implements ResourceState	//G***eventually delete this class and replace it with ResourceApplicationPanel
 {
+//TODO make this class implement com.garretwilson.io.Streamable as well (create that class)
 
 	/**The document file.*/
 //G***del when works	private File file=null;
@@ -179,7 +180,7 @@ public abstract class AbstractMDIDocumentPanel extends ApplicationPanel implemen
 	*/
 	public void read(final InputStream inputStream) throws IOException
 	{
-		read(inputStream, null);	//read with no description
+//G***fix		read(inputStream, null);	//read with no description
 	}
 
 }

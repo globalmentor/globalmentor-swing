@@ -1,11 +1,8 @@
 package com.garretwilson.swing;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.util.*;
 import javax.swing.*;
-import com.garretwilson.lang.StringUtilities;
-import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.util.*;
 
@@ -13,72 +10,63 @@ import com.garretwilson.util.*;
 	its center content component.
 @author Garret Wilson
 */
-public class ContentPanel extends JPanel
+public class ContentPanel extends JPanel implements CanClosable
 {
 
-	/**A set of flag objects representing options.*/
-//G***del	private final Set flagSet=new HashSet();
-
-		/**@return A set of flag objects representing options.*/
-//G***del		protected Set getFlagSet() {return flagSet;}
+	/**The map of properties.*/
+	private final Map propertyMap=new HashMap();
+	
+		/**Gets a property of the panel.
+		@param key The key to the property.
+		@return The value of the property, or <code>null</code> if that property
+			does not exist.
+		*/
+		public Object getProperty(final Object key)
+		{
+			return propertyMap.get(key);	//return the property from the property map
+		}
+	
+		/**Sets the value of a panel property.
+		If <var>value</var> is <code>null</code>, the property will be removed. 
+		@param key The non-<code>null</code> property key.
+		@param value The property value.
+		*/
+		public void setProperty(final Object key, final Object value)
+		{
+			if(value!=null)	//if a non-null value is passed
+			{
+				propertyMap.put(key, value);	//put the property in the map, keyed to the key
+			}
+			else	//if a null value is passed
+			{
+				propertyMap.remove(key);	//remove the property from the map
+			}
+		}
 
 	/**The main content component in the center of the panel.*/
 	private Component contentComponent=null;
 
-	/**@return The main content component in the center of the panel, or
-		<code>null</code> if there is no content component.
-	*/
-	public Component getContentComponent()
-	{
-		return contentComponent;  //return the content component
-	}
-
-	/**Sets the main content component in the center of the panel.
-	@param newContentComponent The new component for the center of the panel.
-	*/
-	public void setContentComponent(final Component newContentComponent)
-	{
-		if(contentComponent!=newContentComponent) //if the content component is really changing
+		/**@return The main content component in the center of the panel, or
+			<code>null</code> if there is no content component.
+		*/
+		public Component getContentComponent()
 		{
-		  if(contentComponent!=null)  //if we already have an content component
-				remove(contentComponent);   //remove the current one
-			contentComponent=newContentComponent; //store the content component
-	  	add(newContentComponent, BorderLayout.CENTER);  //put the content component in the center of the panel
+			return contentComponent;  //return the content component
 		}
-	}
-
-	/**Application component and flags constructor.
-		The content component is guaranteed to be set before
-		<code>initializeUI</code> is called.
-	@param contentComponent The new component for the center of the panel, or
-		<code>null</code> if the default content component should be used.
-	@param flags A non-<code>null</code> array of flags specifying options.
-	*/
-/*G***del
-	public ContentPanel(final Component contentComponent, final Object[] flags)
-	{
-		CollectionUtilities.addAll(getFlagSet(), flags);  //add the flags to the set of flags
-		initializeData();  //create the application actions and other properties
-    final BorderLayout borderLayout=new BorderLayout(); //create a border layout
-    setLayout(borderLayout);  //use a border layout
-		if(contentComponent!=null)  //if we were given a content component
-		  setContentComponent(contentComponent);  //set the content component
-		initializeUI(); //initialize the user interface
-	}
-*/
-
-	/**Application component constructor.
-		The content component is guaranteed to be set before
-		<code>initializeUI</code> is called.
-	@param contentComponent The new component for the center of the panel, or
-		<code>null</code> if the default content component should be used.
-	*/
-/*G***del when works
-	public ContentPanel(final Component contentComponent)
-	{
-		this(contentPanel, ArrayUtilities.EMPTY_OBJECT_ARRAY);  //create a content panel with the given content component and no flags
-	}
-*/
+	
+		/**Sets the main content component in the center of the panel.
+		@param newContentComponent The new component for the center of the panel.
+		*/
+		public void setContentComponent(final Component newContentComponent)
+		{
+			if(contentComponent!=newContentComponent) //if the content component is really changing
+			{
+			  if(contentComponent!=null)  //if we already have an content component
+					remove(contentComponent);   //remove the current one
+				contentComponent=newContentComponent; //store the content component
+		  	add(newContentComponent, BorderLayout.CENTER);  //put the content component in the center of the panel
+			}
+		}
 
 	/**Application component constructor with optional initialization.
 		The content component is guaranteed to be set before
@@ -105,14 +93,6 @@ public class ContentPanel extends JPanel
 	{
 		this(contentComponent, true); //create and initialize the component
 	}
-
-	/**Default constructor.*/
-/*G***del when works
-	public ContentPanel()
-	{
-		this(null); //create a content panel with the default content panel
-	}
-*/
 
 	/**Initializes constructor.
 	@param initialize <code>true</code> if the panel should initialize itself by
@@ -141,15 +121,6 @@ public class ContentPanel extends JPanel
 		updateStatus();  //update the actions
 	}
 
-	/**Creates any application objects and initializes data.
-		Any class that overrides this method must call this version.
-	*/
-/*G***del
-	protected void initializeData()
-	{
-	}
-*/
-
 	/**Initializes the user interface.
 		Any derived class that overrides this method should call this version.
 	*/
@@ -165,11 +136,16 @@ public class ContentPanel extends JPanel
 	}
 
 	/**@return <code>true</code> if the panel can close.
+	This request is delegated to the content pane if possible, and therefore any
+	class that overrides this one should call this version. 
 	@see ApplicationFrame#canClose
 	*/
 	public boolean canClose()
 	{
-		return true;  //default to allowing the panel to be closed
+		if(getContentComponent() instanceof CanClosable)	//if the content component knows how to ask about closing
+			return ((CanClosable)getContentComponent()).canClose();	//return whether the content component can close
+		else	//if the content component doesn't know anything about closing		
+			return true;  //default to allowing the panel to be closed
 	}
 
 }
