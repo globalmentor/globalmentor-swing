@@ -33,9 +33,9 @@ public class ListPanel extends ContentPanel implements Editable
 	protected final JButton editButton;
 
 	/**The edit strategy for editing items in the list, or <code>null</code> if there is no edit strategy.*/
-	private ListEditStrategy editStrategy;
+	private final ListEditStrategy editStrategy;
 
-		/**@return The editor for editing items in the list, or <code>null</code> if there is no edit strategy.*/
+		/**@return The strategy for editing items in the list, or <code>null</code> if there is no edit strategy.*/
 		public ListEditStrategy getEditStrategy() {return editStrategy;}
 
 		/**Sets the edit strategy object
@@ -90,7 +90,7 @@ public class ListPanel extends ContentPanel implements Editable
 
 	/**List and edit strategy constructor.
 	@param list The list component, which will be wrapped in a scroll pane.
-	@param editStrategy The edit strategy for editing items in the list, or
+	@param editStrategy The edit strategy for editing items in the list.
 	@see JScrollPane
 	*/
 	public ListPanel(final JList list, final ListEditStrategy editStrategy)

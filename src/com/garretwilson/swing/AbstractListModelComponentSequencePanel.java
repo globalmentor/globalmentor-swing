@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import com.garretwilson.util.Editable;
+import com.garretwilson.util.Modifiable;
 
 /**A component sequence panel that produces its sequence components from items
 	in a list model. (The list items are not necessarily components.)
@@ -46,9 +47,25 @@ public abstract class AbstractListModelComponentSequencePanel extends AbstractCo
 				{
 					newListModel.addListDataListener(listDataListener);	//listen for changes to the list
 				}
+				if(getEditStrategy()!=null)	//if we have an edit strategy
+				{
+					getEditStrategy().setListModel(newListModel);	//update the edit strategy's reference to the model
+				}
 				goStart();	//go to the beginning which, if we don't have a list, will switch to the default component
 			}
 		}
+
+	/**The edit strategy for editing items in the list model, or <code>null</code> if there is no edit strategy.*/
+	private ListModelEditStrategy editStrategy;
+
+		/**@return The strategy for editing items in the list model, or <code>null</code> if there is no edit strategy.*/
+		public ListModelEditStrategy getEditStrategy() {return editStrategy;}
+
+		/**Sets the edit strategy object
+		@param editStrategy The edit strategy for editing items in the list, or
+			<code>null</code> if there is no edit strategy.
+		*/
+		public void setEditStrategy(final ListModelEditStrategy editStrategy) {this.editStrategy=editStrategy;}	//TODO make sure we unregister the old list strategy first by removing all listeners to the list
 
 	/**Whether the items in the list can be edited.*/ 
 	private boolean editable;
@@ -122,7 +139,23 @@ public abstract class AbstractListModelComponentSequencePanel extends AbstractCo
 	*/
 	public AbstractListModelComponentSequencePanel(final ListModel listModel, final boolean hasToolBar, final boolean hasStatusBar, final boolean initialize)
 	{
+		this(listModel, null, hasToolBar, hasStatusBar, initialize);	//construct the panel with no edit strategy
+	}
+	
+	/**Constructor that allows optional initialization.
+	@param listModel The list the items of which the components in this
+		sequence panel represent.
+	@param editStrategy The edit strategy for editing items in the list model,
+		or <code>null</code> if this panel does not allow editing the list model.
+	@param hasToolBar Whether this panel should have a toolbar.
+	@param hasStatusBar Whether this panel should have a status bar.
+	@param initialize <code>true</code> if the panel should initialize itself by
+		calling the initialization methods.
+	*/
+	public AbstractListModelComponentSequencePanel(final ListModel listModel, final ListModelEditStrategy editStrategy, final boolean hasToolBar, final boolean hasStatusBar, final boolean initialize)
+	{
 		super(hasToolBar, hasStatusBar, false);	//construct the panel, but don't initialize
+		this.editStrategy=editStrategy;	//set the edit strategy
 		listDataListener=new ListDataListener()	//create an anonymous nested list data listener that forwards events to our local methods 
 				{
 					public void intervalAdded(ListDataEvent e) {onIntervalAdded(e.getIndex0(), e.getIndex1());}	//forward the event to our local method
@@ -144,6 +177,12 @@ public abstract class AbstractListModelComponentSequencePanel extends AbstractCo
 	{
 		super.initializeActions(actionManager);	//do the default initialization
 		actionManager.removeToolAction(getStartAction());	//remove the start action
+		if(isEditable() && getEditStrategy()!=null)	//if this sequence panel is editable and there is an edit strategy TODO allow the actions to be changed if the panel becomes uneditable
+		{
+			actionManager.addToolAction(new ActionManager.SeparatorAction());
+			actionManager.addToolAction(getEditStrategy().getAddAction());
+			actionManager.addToolAction(getEditStrategy().getDeleteAction());
+		}
 	}
 
 	/**Updates the states of the actions, including enabled/disabled status,
@@ -169,10 +208,13 @@ public abstract class AbstractListModelComponentSequencePanel extends AbstractCo
 	*/
 	public void go(final int index)
 	{
-		final Component component=getIndexedComponent(index);	//get the component for this index
-		setContentComponent(component!=null ? component : getDefaultComponent());	//change to the component, if there is one
-		setIndex(index);	//show that we're at the given index TODO make sure the index is within our range				
-		updateStatus();	//update the status
+		if(verifyCurrentComponent())	//if the current component verifies TODO check to see if we're actually changing, and that the given index is correct
+		{
+			final Component component=getIndexedComponent(index);	//get the component for this index
+			setContentComponent(component!=null ? component : getDefaultComponent());	//change to the component, if there is one
+			setIndex(index);	//show that we're at the given index TODO make sure the index is within our range				
+			updateStatus();	//update the status
+		}
 	}
 
 	/**Goes to the first step in the sequence.*/
@@ -276,8 +318,23 @@ public abstract class AbstractListModelComponentSequencePanel extends AbstractCo
 	*/
 	protected void onIntervalRemoved(final int index0, final int index1)
 	{
-		
-		updateStatus();	//update the status
+		if(index0<=getIndex())	//if the removed index affects our index
+		{
+			final int index;	//see which index to go to, now
+			if(getIndex()<getListModel().getSize())	//if our current index is still OK
+			{
+				index=getIndex();	//keep our current index
+			}
+			else	//if our current index is now out of bounds
+			{
+				index=getListModel().getSize()-1;	//go to the last available index
+			}
+			go(index);	//go to appropriate index TODO switch to an updateComponent method, and probably make go(int) check to make sure the index is changing
+		}
+		else	//if the removed index didn't affect our index
+		{
+			updateStatus();	//update the status
+		}
 	}
 
 	/**Sent when the contents of the list has changed in a way 
@@ -289,8 +346,53 @@ public abstract class AbstractListModelComponentSequencePanel extends AbstractCo
 	*/
 	protected void onContentsChanged(final int index0, final int index1)
 	{
-		
-		updateStatus();	//update the status
+		if(getIndex()>=index0 && getIndex()<=index1)	//if the component at our current index was affected
+		{
+			go(getIndex());	//update the component at our index TODO switch to an updateComponent method, and probably make go(int) check to make sure the index is changing
+		}
+		else	//if nothing changed at our index 
+		{
+			updateStatus();	//update the status
+		}
+	}
+
+	/**An abstract edit strategy that allows editing of the items in the list model.
+	<p>This edit strategy correctly uses the sequence panel as a parent component
+		and as a modifiable object.</p>
+	@author Garret Wilson
+	*/
+	protected abstract class EditStrategy extends ListModelEditStrategy
+	{
+		/**Default constructor.*/
+		public EditStrategy()
+		{
+			super(AbstractListModelComponentSequencePanel.this.getListModel(), AbstractListModelComponentSequencePanel.this, AbstractListModelComponentSequencePanel.this);	//construct the parent class with the list model
+		}
+
+		/**@return The currently selected index of the list model.*/
+		protected int getSelectedIndex()
+		{
+			return getIndex();	//return the current index
+		}
+
+		/**@return The component acting as the parent for windows.*/
+//G***del if not needed		protected Component getParentComponent() {return AbstractListModelComponentSequencePanel.this;}
+
+		/**@return The object that represents the list model modification status.*/
+//	G***del if not needed		protected Modifiable getModifiable() {return AbstractListModelComponentSequencePanel.this;}
+
+		/**Edits an object from the list.
+		<p>This version does nothing and simply returns the item, as it is assumed
+			that the panel itself contains the edit view of the item.</p> 
+		@param item The item to edit in the list.
+		@return The object with the modifications from the edit, or
+			<code>null</code> if the edits should not be accepted.
+		*/
+		protected Object editItem(final Object item)
+		{
+			return item;	//return the item so that it can be added
+		}
+
 	}
 
 }

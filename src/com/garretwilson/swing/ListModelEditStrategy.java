@@ -13,7 +13,10 @@ import com.garretwilson.util.Modifiable;
 	implements either <code>javax.swing.DefaultListModel</code> or
 	<code>java.util.List</code>.</p>
 <p>If a <code>Modifiable</code> object is given, its modified
-	status will be set when an item is added, edited, or deleted.</p> 
+	status will be set when an item is added, edited, or deleted.</p>
+<p>For best results, derived classes should override
+	<code>getParentComponent()</code>, along with <code>getModifiable()</code>
+	if needed.</p> 
 @author Garret Wilson
 */
 public abstract class ListModelEditStrategy //TODO use generics when they are available
@@ -82,6 +85,14 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 		*/
 		protected Modifiable getModifiable() {return modifiable;}
 
+	/**List model constructor.
+	@param listModel The list model this strategy edits.
+	*/
+	public ListModelEditStrategy(final ListModel listModel)
+	{
+		this(listModel, null);	//construct the strategy with no parent component
+	}
+
 	/**List model and parent component constructor.
 	@param listModel The list model this strategy edits.
 	@param parentComponent The component acting as the parent for windows.
@@ -89,6 +100,16 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 	public ListModelEditStrategy(final ListModel listModel, final Component parentComponent)
 	{
 		this(listModel, parentComponent, null);	//construct the strategy with no modifiable object
+	}
+
+	/**Parent component , and modifiable constructor.
+	@param parentComponent The component acting as the parent for windows.
+	@param modifiable The object that represents the list model modification
+		status, or <code>null</code> if modification status should not be indicated.
+	*/
+	public ListModelEditStrategy(final Component parentComponent, final Modifiable modifiable)
+	{
+		this(null, parentComponent, modifiable);	//construct the strategy with no list model
 	}
 
 	/**List model, parent component, and modifiable constructor.
@@ -241,8 +262,6 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 	protected abstract Object createItem() throws InstantiationException, IllegalAccessException;
 
 	/**Edits an object from the list.
-	@param parentComponent The component to use as a parent for any editing
-		components.
 	@param item The item to edit in the list.
 	@return The object with the modifications from the edit, or
 		<code>null</code> if the edits should not be accepted.
