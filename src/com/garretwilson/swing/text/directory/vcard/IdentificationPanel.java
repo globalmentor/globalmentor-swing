@@ -1,6 +1,7 @@
 package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
+import java.beans.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -17,7 +18,7 @@ import com.garretwilson.util.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class IdentificationPanel extends DefaultPanel
+public class IdentificationPanel extends BasicVCardPanel
 {
 
 	/**The character to use when separating multiple values.*/
@@ -137,6 +138,20 @@ public class IdentificationPanel extends DefaultPanel
 		return LocaleText.toLocaleTextArray(StringTokenizerUtilities.getTokens(new StringTokenizer(nicknameTextField.getText().trim(), VALUE_DELIMITERS)), selectNicknameLanguageAction.getLocale());
 	}	
 
+	/**Sets whether the object has been modified.
+	This version sets the modified status of all contained panels to
+		<code>false</code> if the new modified status is <code>false</code>.
+	@param newModified The new modification status.
+	*/
+	public void setModified(final boolean newModified)
+	{
+		super.setModified(newModified);	//set the modified status
+		if(newModified==false)	//if we are no longer modified
+		{
+			namePanel.setModified(newModified);	//tell the name panel it is no longer modified
+		}
+	}
+
 	/**Default constructor.*/
 	public IdentificationPanel()
 	{
@@ -158,16 +173,19 @@ public class IdentificationPanel extends DefaultPanel
 		super.initializeUI();	//do the default user interface initialization
 		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
 		setTitle("Identification");	//G***i18n
+		final DocumentListener modifyDocumentListener=createModifyDocumentListener();	//create a document listener to change the modified status when the document is modified
+		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
+		final PropertyChangeListener modifyModifiedPropertyChangeListener=createModifyModifiedChangeListener();	//create a property change listener to change the modified status when the modified property is set to true
 			//add listeners to all the components of the name panel to update the status when modified
 		namePanel.getFamilyNameTextField().getDocument().addDocumentListener(createUpdateStatusDocumentListener()); 		
 		namePanel.getGivenNameTextField().getDocument().addDocumentListener(createUpdateStatusDocumentListener()); 		
 		namePanel.getAdditionalNameTextField().getDocument().addDocumentListener(createUpdateStatusDocumentListener());
 		namePanel.getHonorificPrefixComboBox().addActionListener(createUpdateStatusActionListener());
 		namePanel.getHonorificSuffixComboBox().addActionListener(createUpdateStatusActionListener());
+		namePanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);
 		formattedNameLabel.setText("Formatted Name");	//G***i18n
-		final JButton selectFormattedNameLanguageButton=new JButton(getSelectFormattedNameLanguageAction());
-		selectFormattedNameLanguageButton.setText("");	//TODO create common routine for this
-		selectFormattedNameLanguageButton.setBorder(null);
+		getSelectFormattedNameLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
+		final JButton selectFormattedNameLanguageButton=createSelectLanguageButton(getSelectFormattedNameLanguageAction());
 		formattedNameTextField.setColumns(10);
 		formattedNameTextField.getDocument().addDocumentListener(new DocumentModifyAdapter()
 				{
@@ -178,11 +196,12 @@ public class IdentificationPanel extends DefaultPanel
 								|| formattedNameTextField.getText().trim().length()==0;
 					}
 				});
+		formattedNameTextField.getDocument().addDocumentListener(modifyDocumentListener);
 		nicknameLabel.setText("Nickname");	//G***i18n
-		final JButton selectNicknameLanguageButton=new JButton(getSelectNicknameLanguageAction());
-		selectNicknameLanguageButton.setText("");	//TODO create common routine for this
-		selectNicknameLanguageButton.setBorder(null);
+		getSelectNicknameLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
+		final JButton selectNicknameLanguageButton=createSelectLanguageButton(getSelectNicknameLanguageAction());
 		nicknameTextField.setColumns(8);
+		nicknameTextField.getDocument().addDocumentListener(modifyDocumentListener);
 		add(namePanel, new GridBagConstraints(0, 0, 4, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
 		add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(selectNicknameLanguageButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));

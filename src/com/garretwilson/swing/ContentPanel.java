@@ -15,7 +15,7 @@ import com.garretwilson.util.*;
 @author Garret Wilson
 @see DefaultFocusable
 */
-public class ContentPanel extends DefaultPanel implements CanClosable
+public class ContentPanel extends BasicPanel implements CanClosable
 {
 
 	/**The main content component in the center of the panel.*/
@@ -42,6 +42,7 @@ public class ContentPanel extends DefaultPanel implements CanClosable
 					remove(contentComponent);   //remove the current one
 				contentComponent=newContentComponent; //store the content component
 		  	add(newContentComponent, BorderLayout.CENTER);  //put the content component in the center of the panel
+/*G***del when revalidate() works---maybe even remove WindowUtilities.packWindow()		  	
 		  	if(getParentOptionPane()!=null)	//if this panel is inside an option pane
 		  	{
 		  			//TODO probably change this to only pack the window if the panel wants to be bigger than the window to keep from shrinking the window
@@ -50,16 +51,12 @@ public class ContentPanel extends DefaultPanel implements CanClosable
 					WindowUtilities.packWindow(this);	//pack the window we're inside, if there is one, to ensure there's enough room to view this component
 		  	}
 		  	newContentComponent.repaint();	//repaint the component (important if we're inside a JOptionPane, for instance)
+*/
+				revalidate();	//update the layout
+				newContentComponent.repaint();	//repaint the component (important if we're inside a JOptionPane, for instance)
 				if(newContentComponent instanceof DefaultFocusable)	//if the content component knows what should be focused by default
 				{
 					((DefaultFocusable)newContentComponent).requestDefaultFocusComponentFocus();	//let the component request the focus for its default focus component
-/*G***del when works					
-					final DefaultFocusable defaultFocusable=(DefaultFocusable)newContentComponent;	//cast the new content component to a default focusable object
-					if(defaultFocusable.getDefaultFocusComponent()!=null)	//if the component knows what should get the default focus
-					{	 
-						defaultFocusable.getDefaultFocusComponent().requestFocusInWindow();	//request focus for the default component
-					}
-*/
 				}
 			}
 		}

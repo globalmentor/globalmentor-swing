@@ -33,7 +33,7 @@ import com.garretwilson.util.*;
 <p>The panel provides a shared constant inset object specifying no insets.</p> 
 <p>Bound properties:</p>
 <dl>
-	<dt><code>DefaultPanel.TITLE_PROPERTY_NAME</code> (<code>String</code>)</dt>
+	<dt><code>BasicPanel.TITLE_PROPERTY_NAME</code> (<code>String</code>)</dt>
 	<dd>Indicates the title has been changed.</dd>
 	<dt><code>Modifiable.MODIFIED_PROPERTY_NAME</code> (<code>Boolean</code>)</dt>
 	<dd>Indicates that the boolean modified property has been changed.</dd>
@@ -43,14 +43,14 @@ import com.garretwilson.util.*;
 @see java.beans.PropertyChangeListener
 @see javax.swing.JOptionPane
 */
-public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusable, Modifiable
+public class BasicPanel extends JPanel implements CanClosable, DefaultFocusable, Modifiable
 {
 
 	/**An object specifying no insets.*/
 	public final static Insets NO_INSETS=new Insets(0, 0, 0, 0);
 
 	/**The name of the bound title property.*/
-	public final String TITLE_PROPERTY_NAME=DefaultPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"title";	//G***maybe later move this to a titleable interface
+	public final String TITLE_PROPERTY_NAME=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"title";	//G***maybe later move this to a titleable interface
 
 	/**Whether the object has been modified; the default is not modified.*/
 	private boolean modified=false;
@@ -164,7 +164,7 @@ public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusabl
 		public void setDefaultFocusComponent(final Component component) {defaultFocusComponent=component;}
 
 	/**Default constructor.*/
-	public DefaultPanel()
+	public BasicPanel()
 	{
 		this(true); //initialize the panel
 	}
@@ -173,7 +173,7 @@ public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusabl
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public DefaultPanel(final boolean initialize)
+	public BasicPanel(final boolean initialize)
 	{
 		this(new FlowLayout(), initialize);	//construct the panel with a flow layout by default, as does JPanel
 	}
@@ -181,7 +181,7 @@ public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusabl
 	/**Layout constructor.
 	@param layout The layout manager to use.
 	*/
-	public DefaultPanel(final LayoutManager layout)
+	public BasicPanel(final LayoutManager layout)
 	{
 		this(layout, true);	//construct the class with the layout, initializing the panel
 	}
@@ -191,9 +191,9 @@ public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusabl
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public DefaultPanel(final LayoutManager layout, final boolean initialize)
+	public BasicPanel(final LayoutManager layout, final boolean initialize)
 	{
-		super(layout);	//construct the parent class
+		super(layout, false);	//construct the parent class but don't initialize
 		defaultFocusComponent=null;	//default to no default focus component
 			//create and install a new layout focus traversal policy that will
 			//automatically use the default focus component, if available
@@ -345,10 +345,23 @@ public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusabl
 				};
 	}
 
+	/**Creates a list selection listener that, when the list selection changes,
+		updates the modified status to <code>true</code>.
+	@see #setModified
+	*/
+	public ListSelectionListener createModifyListSelectionListener()
+	{
+		return new ListSelectionListener()	//create a new list selection listener that will do nothing but set modified to true
+				{
+					public void valueChanged(final ListSelectionEvent listSelectionEvent) {setModified(true);}	//if the list selection changes, show that we've been modified
+				};
+	}
+
 	/**Creates a property change listener that, when any property changes,
 		updates the modified status to <code>true</code>.
 	@see #setModified
 	*/
+/*G***bring back
 	public PropertyChangeListener createModifyPropertyChangeListener()
 	{
 		return new PropertyChangeListener()	//create a new property change listener that will do nothing but set modified to true
@@ -356,6 +369,7 @@ public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusabl
 					public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {setModified(true);}	//if a property is modified, show that we've been modified
 				};
 	}
+*/
 
 	/**Creates a property change listener that, when the given property changes,
 		updates the modified status to <code>true</code>.
@@ -375,6 +389,41 @@ public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusabl
 						}
 					}
 				};
+	}
+
+	/**Creates a property change listener that, when the given property changes
+		to the given value, updates the modified status to <code>true</code>.
+	@param propertyName The name of the property that, when changed, will set
+		the modified status to <code>true</code>. 
+	@param propertyValue The value of the property that, when equal to the new
+		value, will set the modified status to <code>true</code>. 
+	@see #setModified
+	*/
+	public PropertyChangeListener createModifyPropertyChangeListener(final String propertyName, final Object propertyValue)
+	{
+		return new PropertyChangeListener()	//create a new property change listener that will do nothing but set modified to true
+				{
+					public void propertyChange(final PropertyChangeEvent propertyChangeEvent)	//if a property is modified
+					{
+						if(propertyName.equals(propertyChangeEvent.getPropertyName())	//if the property we're concerned about changed
+								&& ObjectUtilities.equals(propertyValue, propertyChangeEvent.getNewValue()))
+						{
+							setModified(true);	//show that we've been modified
+						}
+					}
+				};
+	}
+
+	/**Creates a property change listener that, when the the "modified" property
+		changes to <code>true</code>, updates the modified status to <code>true</code>.
+	Convenience method.
+	@see Modifiable#MODIFIED_PROPERTY_NAME
+	@see Boolean#TRUE
+	@see #setModified
+	*/
+	public PropertyChangeListener createModifyModifiedChangeListener()
+	{
+		return createModifyPropertyChangeListener(MODIFIED_PROPERTY_NAME, Boolean.TRUE);	//create a property change listener that will set modified to true if the modified property changes to true
 	}
 
 	/**Creates an item that, when an item is modified, updates

@@ -198,7 +198,7 @@ public abstract class AbstractSequencePanel extends ApplicationPanel
 		<code>JOptionPane.OK_OPTION</code>, if this panel is embedded in an option
 		pane.
 	@see JOptionPane#OK_OPTION
-	@see DefaultPanel#setOptionPaneValue
+	@see BasicPanel#setOptionPaneValue
 	*/
 	protected void finish()
 	{

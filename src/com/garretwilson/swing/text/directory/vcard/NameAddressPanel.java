@@ -9,7 +9,7 @@ import com.garretwilson.swing.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class NameAddressPanel extends DefaultPanel
+public class NameAddressPanel extends BasicPanel
 {
 	/**The identification panel.*/
 	private final IdentificationPanel identificationPanel;
@@ -21,7 +21,7 @@ public class NameAddressPanel extends DefaultPanel
 	private final AddressesPanel addressesPanel;
 
 		/**@return The addresses panel.*/
-		public AddressesPanel getAddressPanel() {return addressesPanel;}
+		public AddressesPanel getAddressesPanel() {return addressesPanel;}
 
 	/**The organization panel.*/
 	private final OrganizationPanel organizationPanel;

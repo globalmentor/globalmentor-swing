@@ -1,8 +1,11 @@
 package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
+import java.awt.event.*;
+import java.beans.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.event.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.swing.*;
@@ -13,7 +16,7 @@ import com.garretwilson.util.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class NamePanel extends DefaultPanel
+public class NamePanel extends BasicVCardPanel
 {
 	/**The character to use when separating multiple values.*/
 	protected final static char VALUE_SEPARATOR_CHAR='|';
@@ -137,47 +140,49 @@ public class NamePanel extends DefaultPanel
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		familyNameLabel=new JLabel();
 		familyNameTextField=new JTextField();
-		familyNameTextField.getDocument().addDocumentListener(createModifyDocumentListener());
 		givenNameLabel=new JLabel();
 		givenNameTextField=new JTextField();
-		givenNameTextField.getDocument().addDocumentListener(createModifyDocumentListener());
 		additionalNameLabel=new JLabel();
 		additionalNameTextField=new JTextField();
-		additionalNameTextField.getDocument().addDocumentListener(createModifyDocumentListener());
 		honorificPrefixLabel=new JLabel();
 		honorificPrefixComboBox=new JComboBox();
-		honorificPrefixComboBox.addActionListener(createModifyActionListener());
 		honorificSuffixLabel=new JLabel();
 		honorificSuffixComboBox=new JComboBox();
-		honorificSuffixComboBox.addActionListener(createModifyActionListener());
 		selectLanguageAction=new SelectLanguageAction(null, this);
-		selectLanguageAction.addPropertyChangeListener(createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME));
 		setDefaultFocusComponent(givenNameTextField);	//set the default focus component
 		initialize();	//initialize the panel
 		setVCardName(name);	//set the given name
+		setModified(false);	//show that the information has not yet been modified
 	}
 	
 	/**Initializes the user interface.*/
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
+		final DocumentListener modifyDocumentListener=createModifyDocumentListener();	//create a document listener to change the modified status when the document is modified
+		final ActionListener modifyActionListener=createModifyActionListener();	//create an action listener to change the modified status upon an action
+		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
 		familyNameLabel.setText("Family");	//G***i18n
 		familyNameTextField.setColumns(8);
+		familyNameTextField.getDocument().addDocumentListener(modifyDocumentListener);
 		givenNameLabel.setText("Given Name");	//G***i18n
 		givenNameTextField.setColumns(8);
+		givenNameTextField.getDocument().addDocumentListener(modifyDocumentListener);
 		additionalNameLabel.setText("Additional");	//G***i18n
 		additionalNameTextField.setColumns(8);
+		additionalNameTextField.getDocument().addDocumentListener(modifyDocumentListener);
 		honorificPrefixLabel.setText("Prefix");	//G***i18n
 		honorificPrefixComboBox.setEditable(true);
 		honorificPrefixComboBox.setModel(new DefaultComboBoxModel(HONORIFIC_PREFIX_EXAMPLES));	//set up the example honorific prefixes
 		honorificPrefixComboBox.setPrototypeDisplayValue("Prof.");
+		honorificPrefixComboBox.addActionListener(modifyActionListener);
 		honorificSuffixLabel.setText("Suffix");	//G***i18n
 		honorificSuffixComboBox.setEditable(true);
 		honorificSuffixComboBox.setModel(new DefaultComboBoxModel(HONORIFIC_SUFFIX_EXAMPLES));	//set up the example honorific suffixes
 		honorificSuffixComboBox.setPrototypeDisplayValue("Sr.");
-		final JButton selectLanguageButton=new JButton(getSelectLanguageAction());
-		selectLanguageButton.setText("");	//TODO create common routine for this
-		selectLanguageButton.setBorder(null);
+		honorificSuffixComboBox.addActionListener(modifyActionListener);
+		getSelectLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
+		final JButton selectLanguageButton=createSelectLanguageButton(getSelectLanguageAction());
 /*G***del when works
 		add(honorificPrefixLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(honorificPrefixComboBox, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));

@@ -3,9 +3,11 @@ package com.garretwilson.swing.text.directory.vcard;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.event.DocumentListener;
 import com.garretwilson.lang.*;
 import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.resources.icon.IconResources;
@@ -17,7 +19,7 @@ import com.garretwilson.util.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class AddressPanel extends DefaultPanel
+public class AddressPanel extends BasicVCardPanel
 {
 
 	/**The action for editing the address type.*/
@@ -43,11 +45,16 @@ public class AddressPanel extends DefaultPanel
 		*/
 		protected void setAddressType(final int addressType)
 		{
-			this.addressType=addressType;	//store the address type locally
-			addressTypeButton.setText(	//update the telephone type button
-					addressType!=Address.NO_ADDRESS_TYPE	//if there is an address type
-					? Address.getAddressTypeString(addressType)	//show it
-					: "");	//if there is no address type, show nothing
+			final int oldAddressType=this.addressType;	//get the old address type
+			if(oldAddressType!=addressType)	//if the address type is really changing
+			{
+				this.addressType=addressType;	//store the address type locally
+				setModified(true);	//show that we've changed the address type
+				addressTypeButton.setText(	//update the telephone type button
+						addressType!=Address.NO_ADDRESS_TYPE	//if there is an address type
+						? Address.getAddressTypeString(addressType)	//show it
+						: "");	//if there is no address type, show nothing
+			}
 		}
 
 	/**The panel allowing selection of the address type.*/
@@ -187,7 +194,7 @@ public class AddressPanel extends DefaultPanel
 		editAddressTypeAction=new EditAddressTypeAction();
 		addressTypeButton=new JButton(getEditAddressTypeAction());
 		addressTypeButton.setHorizontalTextPosition(SwingConstants.LEFT);
-		addressTypeButton.setBorder(null);
+//G***fix		addressTypeButton.setBorder(null);
 //G***del		addressTypePanel=new AddressTypePanel();
 		postOfficeBoxLabel=new JLabel();
 		postOfficeBoxTextField=new JTextField();
@@ -211,33 +218,40 @@ public class AddressPanel extends DefaultPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
+		final DocumentListener modifyDocumentListener=createModifyDocumentListener();	//create a document listener to change the modified status when the document is modified
+		final ActionListener modifyActionListener=createModifyActionListener();	//create an action listener to change the modified status upon an action
+		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
 		postOfficeBoxLabel.setText("PO Box");	//G***i18n
 		postOfficeBoxTextField.setColumns(5);
+		postOfficeBoxTextField.getDocument().addDocumentListener(modifyDocumentListener);
 		streetAddressesLabel.setText("Street Address");	//G***i18n
 			//TODO turn off tab-handling for streetAddressTextPane
 //G***del; fix; this doesn't work		streetAddressTextPane.setFocusTraversalKeysEnabled(true);
+		streetAddressTextPane.getDocument().addDocumentListener(modifyDocumentListener);
 		localityLabel.setText("City");	//G***i18n
 		localityTextField.setColumns(8);
+		localityTextField.getDocument().addDocumentListener(modifyDocumentListener);
 //G***fix		streetAddressTextPane.setMinimumSize(new Dimension(streetAddressTextPane.getMinimumSize().width, localityTextField.getPreferredSize().height*3));
 //G***fix		streetAddressTextPane.setPreferredSize(streetAddressTextPane.getMinimumSize());
 
 //G***del		streetAddressTextPane.setBorder(localityTextField.getBorder());
 		regionLabel.setText("State or Province");	//G***i18n
 		regionTextField.setColumns(8);
+		regionTextField.getDocument().addDocumentListener(modifyDocumentListener);
 		postalCodeLabel.setText("Postal Code");	//G***i18n
 		postalCodeTextField.setColumns(8);
 		postalCodeTextField.setText("G***del");
+		postalCodeTextField.getDocument().addDocumentListener(modifyDocumentListener);
 		countryNameLabel.setText("Country");	//G***i18n
 		countryNameComboBox.setEditable(true);
 		countryNameComboBox.setModel(new DefaultComboBoxModel(LocaleUtilities.getAvailableDisplayCountries()));	//G***i18n
-
+		countryNameComboBox.addActionListener(modifyActionListener);
 		final JScrollPane streetAddressScrollPane=new JScrollPane(streetAddressTextPane);
 		streetAddressScrollPane.setMinimumSize(new Dimension(streetAddressScrollPane.getMinimumSize().width, localityTextField.getPreferredSize().height*3));
 		streetAddressScrollPane.setPreferredSize(streetAddressScrollPane.getMinimumSize());
 
-		final JButton selectLanguageButton=new JButton(getSelectLanguageAction());
-		selectLanguageButton.setText("");	//TODO create common routine for this
-		selectLanguageButton.setBorder(null);
+		getSelectLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
+		final JButton selectLanguageButton=createSelectLanguageButton(getSelectLanguageAction());
 
 		//TODO move everything up a row if we leave the address type panel at the bottom
 

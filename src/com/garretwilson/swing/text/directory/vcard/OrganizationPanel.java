@@ -1,8 +1,11 @@
 package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.event.DocumentListener;
+
 import com.garretwilson.lang.*;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
@@ -13,7 +16,7 @@ import com.garretwilson.util.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class OrganizationPanel extends DefaultPanel
+public class OrganizationPanel extends BasicVCardPanel
 {
 	/**The character to use when separating multiple units.*/
 	protected final static char UNIT_SEPARATOR_CHAR=',';
@@ -214,23 +217,26 @@ public class OrganizationPanel extends DefaultPanel
 		super.initializeUI();	//do the default user interface initialization
 		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
 		setTitle("Organization");	//G***i18n
+		final DocumentListener modifyDocumentListener=createModifyDocumentListener();	//create a document listener to change the modified status when the document is modified
+		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
 		nameLabel.setText("Organization Name");	//G***i18n
-		final JButton selectOrganizationNameLanguageButton=new JButton(getSelectOrganizationNameLanguageAction());
-		selectOrganizationNameLanguageButton.setText("");	//TODO create common routine for this
-		selectOrganizationNameLanguageButton.setBorder(null);
+		getSelectOrganizationNameLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
+		final JButton selectOrganizationNameLanguageButton=createSelectLanguageButton(getSelectOrganizationNameLanguageAction());
 		nameTextField.setColumns(16);
+		nameTextField.getDocument().addDocumentListener(modifyDocumentListener);
 		unitsLabel.setText("Unit(s)");	//G***i18n
 		unitsTextField.setColumns(10);
+		unitsTextField.getDocument().addDocumentListener(modifyDocumentListener);
 		titleLabel.setText("Job Title");	//G***i18n
-		final JButton selectTitleLanguageButton=new JButton(getSelectTitleLanguageAction());
-		selectTitleLanguageButton.setText("");	//TODO create common routine for this
-		selectTitleLanguageButton.setBorder(null);
+		getSelectTitleLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
+		final JButton selectTitleLanguageButton=createSelectLanguageButton(getSelectTitleLanguageAction());
 		titleTextField.setColumns(16);
+		titleTextField.getDocument().addDocumentListener(modifyDocumentListener);
 		roleLabel.setText("Role");	//G***i18n
-		final JButton selectRoleLanguageButton=new JButton(getSelectRoleLanguageAction());
-		selectRoleLanguageButton.setText("");	//TODO create common routine for this
-		selectRoleLanguageButton.setBorder(null);
+		getSelectRoleLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
+		final JButton selectRoleLanguageButton=createSelectLanguageButton(getSelectRoleLanguageAction());
 		roleTextField.setColumns(12);
+		roleTextField.getDocument().addDocumentListener(modifyDocumentListener);
 		add(nameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(selectOrganizationNameLanguageButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(nameTextField, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));

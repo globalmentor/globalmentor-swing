@@ -6,10 +6,12 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.*;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 import javax.swing.*;
 import com.garretwilson.awt.*;
 import com.garretwilson.text.directory.vcard.*;
+import com.garretwilson.util.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
@@ -41,8 +43,13 @@ public class TelecommunicationsPanel extends ContentPanel
 		/**@return The action for removing an address.*/
 //G***fix		public Action getRemoveAddressAction() {return removeAddressAction;}
 
+	/**A property change listener to change the modified status when the
+		"modified" property is set to <code>true</code>.
+	*/
+	private final PropertyChangeListener modifyModifiedPropertyChangeListener;
+
 	/**@return The content component in which the telecommunications panels will be placed.*/
-	protected DefaultPanel getContentPanel() {return (DefaultPanel)getContentComponent();}
+	protected BasicPanel getContentPanel() {return (BasicPanel)getContentComponent();}
 
 	/**Places the telephones in the panel.
 	@param telephones The telephone numbers to display, or <code>null</code> if
@@ -58,7 +65,7 @@ public class TelecommunicationsPanel extends ContentPanel
 	public Telephone[] getTelephones()
 	{
 		final List telephoneList=new ArrayList();	//create a list into which to place the telephones
-		final DefaultPanel contentPanel=getContentPanel();	//get our content panel
+		final BasicPanel contentPanel=getContentPanel();	//get our content panel
 		final int componentCount=contentPanel.getComponentCount();	//find out how many components there are
 		for(int i=0; i<componentCount; ++i)	//look at each component
 		{
@@ -89,7 +96,7 @@ public class TelecommunicationsPanel extends ContentPanel
 	public Email[] getEmails()
 	{
 		final List emailList=new ArrayList();	//create a list into which to place the emails
-		final DefaultPanel contentPanel=getContentPanel();	//get our content panel
+		final BasicPanel contentPanel=getContentPanel();	//get our content panel
 		final int componentCount=contentPanel.getComponentCount();	//find out how many components there are
 		for(int i=0; i<componentCount; ++i)	//look at each component
 		{
@@ -114,7 +121,7 @@ public class TelecommunicationsPanel extends ContentPanel
 	*/
 	public void setTelecommunications(final Telephone[] telephones, final Email[] emails)
 	{
-		getContentPanel().removeAll();	//remove all the components from the content panel
+		getContentPanel().removeAll();	//remove all the components from the content panel G***maybe remove the listeners first
 		if(telephones!=null)	//if telephones were given
 		{
 			for(int i=0; i<telephones.length; ++i)	//look at each telephone
@@ -153,6 +160,27 @@ public class TelecommunicationsPanel extends ContentPanel
 		}
 	}
 
+	/**Sets whether the object has been modified.
+	This version sets the modified status of all contained panels to
+		<code>false</code> if the new modified status is <code>false</code>.
+	@param newModified The new modification status.
+	*/
+	public void setModified(final boolean newModified)
+	{
+		super.setModified(newModified);	//set the modified status
+		if(newModified==false)	//if we are no longer modified
+		{
+			for(int i=getContentPanel().getComponentCount()-1; i>=0; --i)	//look at each component
+			{
+				final Component component=getContentPanel().getComponent(i);	//get this component
+				if(component instanceof Modifiable)	//if this component is modifiable
+				{
+					((Modifiable)component).setModified(newModified);	//tell the component it is no longer modified
+				}
+			}
+		}
+	}
+
 	/**Default constructor.*/
 	public TelecommunicationsPanel()
 	{
@@ -167,10 +195,11 @@ public class TelecommunicationsPanel extends ContentPanel
 	*/
 	public TelecommunicationsPanel(final Telephone[] telephones, final Email[] emails)
 	{
-		super(new DefaultPanel(new GridBagLayout()), false);	//construct the panel using a grid bag layout, but don't initialize the panel
+		super(new BasicPanel(new GridBagLayout()), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		addTelephoneAction=new AddTelephoneAction();
 		addEmailAction=new AddEmailAction();
 //G***fix		removeAddressAction=new RemoveAddressAction();
+		modifyModifiedPropertyChangeListener=createModifyModifiedChangeListener();	//create a property change listener to change the modified status when the modified property is set to true
 		initialize();	//initialize the panel
 		setTelecommunications(telephones, emails);	//set the given telephones and emails
 	}
@@ -229,13 +258,19 @@ public class TelecommunicationsPanel extends ContentPanel
 	*/
 	protected void addComponent(final Component component)
 	{
+		component.addPropertyChangeListener(modifyModifiedPropertyChangeListener);	//listen for changes to the address and update the modified status in response
 			//add the component to the content panel, in a location based upon the components already present 
 		getContentPanel().add(component, new GridBagConstraints(0, getContentPanel().getComponentCount(), 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, NO_INSETS, 0, 0));
+		setModified(true);	//show that we've been modified by the addition of this component
+/*G***del; we may not even need this pack method any more, if revalidate() works
 		if(getParentOptionPane()!=null)	//if this panel is inside an option pane
 		{
 			WindowUtilities.packWindow(this);	//pack the window we're inside, if there is one, to ensure there's enough room to view this component
 		}
-		repaint();	//repaint ourselves (important if we're inside a JOptionPane, for instance)
+*/
+//G***del		invalidate();	//G***testing
+//G***del		repaint();	//repaint ourselves (important if we're inside a JOptionPane, for instance)
+		revalidate();	//update the layout
 	}
 
 	/**Removes the currently selected address.
@@ -287,7 +322,6 @@ public class TelecommunicationsPanel extends ContentPanel
 				addComponent(telephonePanel);	//add the new telephone panel
 			}
 			telephonePanel.requestDefaultFocusComponentFocus();	//focus on the new telephone panel
-//G**del if not needed			updateStatus();	//update the status
 		}
 	}
 

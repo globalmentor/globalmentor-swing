@@ -109,6 +109,7 @@ public class SequenceableSequencePanel extends AbstractSequencePanel	//G***fix o
 			final Object nextObject=((Sequenceable)getContentComponent()).getNext();	//get the next object in the sequence
 			if(nextObject instanceof Component)	//if the next object is a component
 			{
+				getSequenceHistoryList().addLast(getContentComponent());	//add the current component to our stack 
 				return (Component)nextObject;	//return the next component
 			}
 		}

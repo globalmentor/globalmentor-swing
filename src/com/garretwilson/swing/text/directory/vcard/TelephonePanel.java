@@ -2,6 +2,8 @@ package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeListener;
+
 import javax.swing.*;
 import com.garretwilson.itu.*;
 import com.garretwilson.resources.icon.IconResources;
@@ -17,7 +19,7 @@ import com.garretwilson.text.directory.vcard.*;
 	buttons.</p>
 @author Garret Wilson
 */
-public class TelephonePanel extends DefaultPanel
+public class TelephonePanel extends BasicVCardPanel
 {
 
 	/**The action for editing the telephone type.*/
@@ -46,12 +48,16 @@ public class TelephonePanel extends DefaultPanel
 		*/
 		protected void setTelephoneType(final int telephoneType)
 		{
-			this.telephoneType=telephoneType;	//store the telephone type locally
-			telephoneTypeButton.setText(	//update the telephone type label
-					telephoneType!=Telephone.NO_TELEPHONE_TYPE	//if there is a telephone type
-					? /*G***del"("+*/Telephone.getTelephoneTypeString(telephoneType)/*G***del+")"*/	//show it surrounded by parentheses
-					: "");	//if there is no telephone type, show nothing
-//G***fix			telephoneTypeLabel.setCaretPosition(0);	//set the cursor at the start of the field
+			final int oldTelephoneType=this.telephoneType;	//get the old telephone type
+			if(oldTelephoneType!=telephoneType)	//if the telephone type is really changing
+			{
+				this.telephoneType=telephoneType;	//store the telephone type locally
+				setModified(true);	//show that we've changed the telephone type
+				telephoneTypeButton.setText(	//update the telephone type button
+						telephoneType!=Telephone.NO_TELEPHONE_TYPE	//if there is a telephone type
+						? Telephone.getTelephoneTypeString(telephoneType)	//show it
+						: "");	//if there is no telephone type, show nothing
+			}
 		}
 
 	/**Shows or hides the telphone number labels.
@@ -124,7 +130,21 @@ public class TelephonePanel extends DefaultPanel
 	}
 
 	/**The number of buttons on the panel.*/
-	private int buttonCount;
+//G***del	private int buttonCount;
+
+	/**Sets whether the object has been modified.
+	This version sets the modified status of all contained panels to
+		<code>false</code> if the new modified status is <code>false</code>.
+	@param newModified The new modification status.
+	*/
+	public void setModified(final boolean newModified)
+	{
+		super.setModified(newModified);	//set the modified status
+		if(newModified==false)	//if we are no longer modified
+		{
+			telephoneNumberPanel.setModified(newModified);	//tell the telephone number panel panel it is no longer modified
+		}
+	}
 
 	/**Default constructor.*/
 	public TelephonePanel()
@@ -154,9 +174,9 @@ public class TelephonePanel extends DefaultPanel
 		editTelephoneTypeAction=new EditTelephoneTypeAction();
 		telephoneTypeButton=new JButton(getEditTelephoneTypeAction());
 		telephoneTypeButton.setHorizontalTextPosition(SwingConstants.LEFT);	//G***testing
-		telephoneTypeButton.setBorder(null);	//G**testing
+//G***fix		telephoneTypeButton.setBorder(null);	//G**testing
 		telephoneNumberPanel=new TelephoneNumberPanel();	
-		buttonCount=0;	//G***fix all this now that we don't allow extra buttons
+//G***del		buttonCount=0;	//G***fix all this now that we don't allow extra buttons
 		setDefaultFocusComponent(telephoneNumberPanel);	//set the default focus component
 		initialize();	//initialize the panel
 		setTelephoneNumber(telephoneNumber);	//set the given telephone number
@@ -167,26 +187,19 @@ public class TelephonePanel extends DefaultPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-//G***fix		telephoneTypeLabel.setEditable(false);
-//G***fix		telephoneTypeLabel.setFont(telephoneTypeLabel.getFont().deriveFont(Font.ITALIC, (float)(telephoneTypeLabel.getFont().getSize2D()*0.8)));
-//G***del		final JButton editTelephoneTypeButton=new JButton(getEditTelephoneTypeAction());	//create a button for editing the telephone type
-
-		add(telephoneTypeButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(telephoneNumberPanel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-/*G***fix
-		add(telephoneNumberPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(telephoneTypeLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
-*/
-
-
-
-//G***fix		addButton(getEditTelephoneTypeAction());	//add a button for the edit telephone type action
+		final PropertyChangeListener modifyModifiedPropertyChangeListener=createModifyModifiedChangeListener();	//create a property change listener to change the modified status when the modified property is set to true
+		telephoneNumberPanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);
+		final JLabel imageLabel=new JLabel(IconResources.getIcon(IconResources.PHONE_ICON_FILENAME)); //create a label with the image		
+		add(telephoneTypeButton, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(imageLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(telephoneNumberPanel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 	}
 	
 	/**Adds a new button based upon the given action and positions it correctly.
 	@param action The new action for which a button should be added.
 	@return The added button representing the given action.
 	*/
+/*G***del
 	public JButton addButton(final Action action)
 	{
 		final JButton button=new JButton(action);	//create a button from the action
@@ -194,6 +207,7 @@ public class TelephonePanel extends DefaultPanel
 		add(button, new GridBagConstraints(1, buttonCount, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		return button;	//return the button we created and added
 	}
+*/
 
 	/**Asks the user for a new telephone type.
 	@param parentComponent The component that determines the <code>Frame</code>

@@ -11,7 +11,7 @@ import com.garretwilson.swing.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class AddressTypePanel extends DefaultPanel
+public class AddressTypePanel extends BasicPanel
 {
 	
 	/**The checkbox for a domestic delivery address.*/

@@ -2,8 +2,10 @@ package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeListener;
 import javax.swing.*;
 import com.garretwilson.text.directory.vcard.*;
+import com.garretwilson.util.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
@@ -27,6 +29,11 @@ public class AddressesPanel extends ContentPanel
 
 		/**@return The action for removing an address.*/
 		public Action getRemoveAddressAction() {return removeAddressAction;}
+
+	/**A property change listener to change the modified status when the
+		"modified" property is set to <code>true</code>.
+	*/
+	private final PropertyChangeListener modifyModifiedPropertyChangeListener;
 
 	/**The tabbed pane containing the address panels.*/
 //G***fix	private final JTabbedPane tabbedPane;
@@ -65,6 +72,27 @@ public class AddressesPanel extends ContentPanel
 		return addresses;	//return the addresses we collected
 	}
 
+	/**Sets whether the object has been modified.
+	This version sets the modified status of all contained panels to
+		<code>false</code> if the new modified status is <code>false</code>.
+	@param newModified The new modification status.
+	*/
+	public void setModified(final boolean newModified)
+	{
+		super.setModified(newModified);	//set the modified status
+		if(newModified==false)	//if we are no longer modified
+		{
+			for(int i=getTabbedPane().getTabCount()-1; i>=0; --i)	//look at each tab
+			{
+				final Component component=getTabbedPane().getComponentAt(i);	//get this address panel
+				if(component instanceof Modifiable)	//if this component is modifiable
+				{
+					((Modifiable)component).setModified(newModified);	//tell the component it is no longer modified
+				}
+			}
+		}
+	}
+
 	/**Default constructor.*/
 	public AddressesPanel()
 	{
@@ -82,6 +110,7 @@ public class AddressesPanel extends ContentPanel
 //G***fix		tabbedPane=new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 		addAddressAction=new AddAddressAction();
 		removeAddressAction=new RemoveAddressAction();
+		modifyModifiedPropertyChangeListener=createModifyModifiedChangeListener();	//create a property change listener to change the modified status when the modified property is set to true
 		initialize();	//initialize the panel
 		setAddresses(addresses);	//set the addresses to those given
 	}
@@ -116,10 +145,22 @@ public class AddressesPanel extends ContentPanel
 	public AddressPanel addAddress(final Address address)
 	{
 		final AddressPanel addressPanel=new AddressPanel(address);	//create a new address panel for this address
-		final String title=getTabTitle(address);	//get an title for the address
+		addAddressPanel(addressPanel);	//add the address panel
+		return addressPanel;	//return the panel we creatd for the address		
+	}
+
+	/**Adds an address panel to the tabbed pane.
+	@param address The address to add.
+	@return The address panel that represents the added address.
+	*/
+	protected void addAddressPanel(final AddressPanel addressPanel)
+	{
+		addressPanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);	//listen for changes to the address and update the modified status in response
+		final String title="Address";	//get a title for the address G***i18n
+//G***del when works		final String title=getTabTitle(address);	//get an title for the address
 			//TODO add an icon to each tab
 		getTabbedPane().addTab(title, addressPanel);	//add the panel
-		return addressPanel;	//return the panel we creatd for the address		
+		setModified(true);	//show that we've been modified
 	}
 
 	/**Removes the currently selected address.
@@ -136,7 +177,9 @@ public class AddressesPanel extends ContentPanel
 					//if they really want to delete the address
 				if(JOptionPane.showConfirmDialog(this, "Are you sure you want to permanently remove this address?", "Remove Address", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)	//G***i18n
 				{
+					selectedComponent.removePropertyChangeListener(modifyModifiedPropertyChangeListener);	//stop listening for changes
 					getTabbedPane().remove(selectedComponent);	//remove the selected component
+					setModified(true);	//show that we've been modified
 					return true;	//show that we removed the address
 				}
 			}
@@ -193,10 +236,14 @@ public class AddressesPanel extends ContentPanel
 		*/
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
-			final AddressPanel addressPanel=addAddress(new Address());	//add a new default address
-			getTabbedPane().setSelectedComponent(addressPanel);	//select the new address panel
-			addressPanel.requestDefaultFocusComponentFocus();	//focus on the default panel TODO add this functionality into a listener to the tabbed pane, maybe, probably not, because we don't want to lose the old focus when changing tabs
-			updateStatus();	//update the status
+			final AddressPanel addressPanel=new AddressPanel(new Address());	//create a default address panel
+			if(addressPanel.editTelephoneType())	//ask the user for the address type; if they accept the changes
+			{
+				addAddressPanel(addressPanel);	//add the address panel
+				getTabbedPane().setSelectedComponent(addressPanel);	//select the new address panel
+				addressPanel.requestDefaultFocusComponentFocus();	//focus on the default panel TODO add this functionality into a listener to the tabbed pane, maybe, probably not, because we don't want to lose the old focus when changing tabs
+//G***del if not needed				updateStatus();	//update the status
+			}
 		}
 	}
 

@@ -3,8 +3,10 @@ package com.garretwilson.swing.text.directory.vcard;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.event.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.swing.*;
@@ -15,7 +17,7 @@ import com.garretwilson.util.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class ExplanatoryPanel extends DefaultPanel
+public class ExplanatoryPanel extends BasicVCardPanel
 {
 
 	/**The label of the categories list.*/
@@ -142,19 +144,21 @@ public class ExplanatoryPanel extends DefaultPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
+		final DocumentListener modifyDocumentListener=createModifyDocumentListener();	//create a document listener to change the modified status when the document is modified
+		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes		
+		final ListSelectionListener modifyListSelectionListener=createModifyListSelectionListener();	//create a list selection listener to change the modified status when the list selection changes
 		categoryLabel.setText("Categories");	//G***i18n
-		final JButton selectCategoryLanguageButton=new JButton(getSelectCategoryLanguageAction());
-		selectCategoryLanguageButton.setText("");	//TODO create common routine for this
-		selectCategoryLanguageButton.setBorder(null);
+		getSelectCategoryLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
+		final JButton selectCategoryLanguageButton=createSelectLanguageButton(getSelectCategoryLanguageAction());
 		categoryList.setUI(new ToggleListUI()); //allow the answers to be toggled on and off
 		categoryList.setCellRenderer(new CheckBoxListCellRenderer());  //display the answers with checkboxes
+		categoryList.addListSelectionListener(modifyListSelectionListener);
 		final JScrollPane categoryScrollPane=new JScrollPane(categoryList);
 		noteLabel.setText("Note");	//G***i18n
-		final JButton selectNoteLanguageButton=new JButton(getSelectNoteLanguageAction());
-		selectNoteLanguageButton.setText("");	//TODO create common routine for this
-		selectNoteLanguageButton.setBorder(null);
+		noteTextPane.getDocument().addDocumentListener(modifyDocumentListener);
+		getSelectNoteLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
+		final JButton selectNoteLanguageButton=createSelectLanguageButton(getSelectNoteLanguageAction());
 		final JScrollPane noteScrollPane=new JScrollPane(noteTextPane);
-//G***del		noteTextPane.setMinimumSize(new Dimension(600, 200));
 		add(categoryLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(selectCategoryLanguageButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(categoryScrollPane, new GridBagConstraints(0, 1, 2, 1, 0.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, NO_INSETS, 0, 0));
