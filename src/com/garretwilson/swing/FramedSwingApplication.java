@@ -2,7 +2,10 @@ package com.garretwilson.swing;
 
 import java.awt.Component;
 import java.awt.Frame;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+
+import com.garretwilson.awt.EventQueueUtilities;
 
 /**A Swing application uses one main application frame.
 @author Garret Wilson
@@ -50,9 +53,31 @@ public abstract class FramedSwingApplication extends SwingApplication
 	*/ 
 	public int main()
 	{
-		final Frame applicationFrame=createApplicationFrame();	//create the application frame
-		setApplicationFrame(applicationFrame);	//set the application frame
-		applicationFrame.setVisible(true);	//show the frame
+/*G***testing
+		try
+		{
+			EventQueueUtilities.invokeInEventQueueAndWait(new Runnable()
+					{
+						public void run()
+						{
+							final Frame applicationFrame=createApplicationFrame();	//create the application frame
+							setApplicationFrame(applicationFrame);	//set the application frame
+							applicationFrame.setVisible(true);	//show the frame
+						}
+					});
+		}
+		catch (InterruptedException e)
+		{
+			displayError(e);
+		}
+		catch (InvocationTargetException e)
+		{
+			displayError(e);
+		}
+*/
+							final Frame applicationFrame=createApplicationFrame();	//create the application frame
+							setApplicationFrame(applicationFrame);	//set the application frame
+							applicationFrame.setVisible(true);	//show the frame
 		return super.main();	//perform the default functionality
 	}
 

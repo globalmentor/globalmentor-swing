@@ -9,7 +9,6 @@ import java.net.URI;
 import java.text.*;
 import java.util.*;
 import java.util.prefs.Preferences;
-
 import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -32,13 +31,21 @@ import com.garretwilson.util.prefs.PreferencesUtilities;
 import edu.stanford.ejalbert.*;
 
 /**A component shows information in book form. Has an XMLTextPane as a child.
-	<p>Bound properties:</p>
-	<ul>
-	  <li><code>BOOKMARKS_PROPERTY</code> Indicates the bookmarks have
-			chnaged. Returns <code>null</code> for old and new values.</li>
-	  <li><code>HISTORY_INDEX_PROPERTY</code> Indicates the history has
-			changed. Returns the old and new history index.</li>
-	</ul>
+<p>Bound properties:</p>
+<dl>
+	<dt><code>ANTIALIAS_PROPERTY</code> (<code>Boolean</code>)</dt>
+	<dd>Indicates the antialias setting has changed.</dd>
+	<dt><code>BOOKMARKS_PROPERTY</code> (<code>null</code>)</dt>
+	<dd>Indicates the bookmarks have changed.
+		Returns <code>null</code> for old and new values.</dd>
+	<dt><code>DISPLAY_PAGE_COUNT_PROPERTY</code> (<code>Integer</code>)</dt>
+	<dd>Indicates the number of pages being displayed has changed.</dd>
+	<dt><code>HISTORY_INDEX_PROPERTY</code> (<code>Integer</code>)</dt>
+	<dd>Indicates the history has changed.
+		Returns the old and new history index.</dd>
+	<dt><code>ZOOM_PROPERTY</code> (<code>Float</code>)</dt>
+	<dd>Indicates the zoom level has changed.</dd>
+</dl>
 @author Garret Wilson
 @see javax.swing.JComponent
 @see javax.swing.JPanel
@@ -46,14 +53,23 @@ import edu.stanford.ejalbert.*;
 */
 public class Book extends ToolStatusPanel implements PageListener, AdjustmentListener, CaretListener, ProgressListener, HyperlinkListener, MouseListener  //G***testing MouseListener for image viewing
 {
+	/**The property representing the antialias setting.*/
+	public final static String ANTIALIAS_PROPERTY="antialias";
+
 	/**The property representing bookmark changes.*/
 	public final static String BOOKMARKS_PROPERTY="bookmarks";
+
+	/**The property representing the display page count.*/
+	public final static String DISPLAY_PAGE_COUNT_PROPERTY="displayPageCount";
 
 	/**The property representing the history index.*/
 	public final static String HISTORY_INDEX_PROPERTY="historyIndex";
 
 	/**The property which stores the user data <code>File</code> object.*/
-	public final static String USER_DATA_FILE_PROPERTY="userData";
+//G***del	public final static String USER_DATA_FILE_PROPERTY="userData";
+
+	/**The property representing the zoom level.*/
+	public final static String ZOOM_PROPERTY="zoom";
 
 	/**The preference for storing the search text.*/
 	protected final String SEARCH_TEXT_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "searchText");
@@ -67,25 +83,10 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 	private boolean mousePressReleasePopupTrigger=false;
 
 	/**The text pane used to display information.*/
-	private XMLTextPane TextPane; //TODO make the text pane final
+	private final XMLTextPane xmlTextPane;
 
 		/**@return The text pane used to display information.*/
-		public XMLTextPane getXMLTextPane() {return TextPane;}	//G***maybe later change this to protected access
-
-		/**Sets the text pane used to display information.
-		@param textPane The XML text pane component.
-		*/
-		private void setXMLTextPane(final XMLTextPane textPane)
-		{
-			TextPane=textPane;
-				//catch all document changes in the text pane, since the document is actually changed in a separate thread
-			textPane.addPropertyChangeListener(XMLTextPane.DOCUMENT_PROPERTY, new PropertyChangeListener()
-				{
-				  //if the document property changes, call onDocumentChange()
-				  public void propertyChange(final PropertyChangeEvent event) {onDocumentChange();}
-				});
-		  textPane.addPageListener(this); //add ourselves as a page listener, so that we can update the forward and backwards actions G***we probably want to get the events directly from the book
-		}
+		public XMLTextPane getXMLTextPane() {return xmlTextPane;}	//G***maybe later change this to protected access
 
 	/**The scrollbar for showing the position within the book.*/
 	private final JScrollBar scrollBar;
@@ -170,16 +171,16 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 		public Action getViewPropertiesAction() {return viewPropertiesAction;}
 
 	/**The action for displaying one page at a time.*/
-	private final Action displayOnePageAction;
+	private final AbstractToggleAction displayOnePageAction;
 
 		/**@return The action for displaying one page at a time.*/
-		public Action getDisplayOnePageAction() {return displayOnePageAction;}
+		public AbstractToggleAction getDisplayOnePageAction() {return displayOnePageAction;}
 
 	/**The action for displaying two pages at a time.*/
-	private final Action displayTwoPagesAction;
+	private final AbstractToggleAction displayTwoPagesAction;
 
 		/**@return The action for displaying two pages at a time.*/
-		public Action getDisplayTwoPagesAction() {return displayTwoPagesAction;}
+		public AbstractToggleAction getDisplayTwoPagesAction() {return displayTwoPagesAction;}
 
 	/**The action for inserting a bookmark at the current location.*/
 	private final Action insertBookmarkAction;
@@ -194,10 +195,10 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 		public ZoomAction[] getZoomActions() {return zoomActions;}
 
 	/**The action for turning text smoothing on or off.*/
-	private final Action antialiasAction;
+	private final AntialiasAction antialiasAction;
 
 		/**@return The action for turning text smoothing on or off.*/
-		public Action getAntialiasAction() {return antialiasAction;}
+		public AntialiasAction getAntialiasAction() {return antialiasAction;}
 
 	/**The current highlight color (defaults to yellow).*/
 	private Color highlightColor=Color.yellow;
@@ -357,6 +358,24 @@ Debug.trace("ready to fire property change");
 		  return Collections.unmodifiableSet(bookmarkHighlightTagMap.keySet()).iterator(); //return a read-only iterator to the bookmarks (the keys are already sorted because they are stored in a TreeMap)
 		}
 
+		/**Creates an action for navigating to a specific bookmark.
+		@param bookmark The bookmark for which an action should be created.
+		@return A new action representing the given bookmark.
+		*/
+		public Action createGoBookmarkAction(final Bookmark bookmark)
+		{
+			return new GoBookmarkAction(bookmark); //create and return a new action to represent the bookmark
+		}
+
+		/**Creates an action for navigating to a specific guide.
+		@param guide The guide for which an action should be created.
+		@return A new action representing the given guide.
+		*/
+		public Action createGoGuideAction(final OEBGuide guide)
+		{
+			return new GoGuideAction(guide); //create and return a new action to represent the guide
+		}
+
 	/**The map of highlight tags for the book, keyed to annotations. This map
 		therefore serves as both a definitive list of annotations and a map of
 		highlights which correspond to those annotations. This tree map ensures
@@ -453,10 +472,10 @@ Debug.trace("ready to fire property change");
 
 	/**@return The URI of the loaded publication or file, or <code>null</code> if
 		there is no file loaded.
-	@see XMLTextPane#getBaseURI()
 	*/
 	public URI getURI()
 	{
+//G***del; now close() removes the base URI, making this next line work		return DocumentUtilities.getBaseURI(getXMLTextPane().getDocument());	//get the base URI of the document
 		return getXMLTextPane().getBaseURI();  //get the base URI property value
 	}
 
@@ -493,17 +512,36 @@ Debug.trace("ready to fire property change");
 		data file.
 	@see #USER_DATA_FILE_PROPERTY
 	*/
+/*G***del if not needed
 	public File getUserDataFile()
 	{
 		final Object userDataFile=getXMLTextPane().getDocument().getProperty(USER_DATA_FILE_PROPERTY); //get the user data file from the document
 		return userDataFile instanceof File ? (File)userDataFile : null;  //return the file, if that's really what it is; otherwise, return null
 	}
-
-/*G***fix
-	/**
-	private int DisplayPageCount;
 */
 
+	/**@return The file object representing the user data file associated with
+		the loaded publication or file, or <code>null</code> if	there is no user
+		data file.
+	@see #getURI()
+	*/
+	public File getUserDataFile()
+	{
+		final URI uri=getURI(); //get our current URI
+				//if the URI specifies a file, we can have a user data file
+		if(uri!=null && URIConstants.FILE_SCHEME.equals(uri.getScheme()))
+		{
+		  final File file=new File(uri);  //create a file from the URI
+				//create a userdata filename with ".userdata.xml" appended
+		  final File userDataFile=new File(file.getParent(), file.getName()+FileConstants.EXTENSION_SEPARATOR+"bookuserdata"+FileConstants.EXTENSION_SEPARATOR+"xml");
+		  return userDataFile;	//return the user data file
+		}
+		else	//if there is no URI
+		{
+			return null;	//there is no user data file
+		}
+	}
+			
 	/**@return The number of pages to display at a time.
 	@see XMLTextPane#getDisplayPageCount
 	@see XMLPagedView#getDisplayPageCount
@@ -511,30 +549,70 @@ Debug.trace("ready to fire property change");
 	public int getDisplayPageCount() {return getXMLTextPane().getDisplayPageCount();}
 
 	/**Sets the number of pages to display at a time.
-	@param displayPageCount The new number of pages to display at a time.
+	This is a bound property.
+	@param newDisplayPageCount The new number of pages to display at a time.
 	@see XMLTextPane#setDisplayPageCount
 	@see XMLPagedView#setDisplayPageCount
 	*/
-	public void setDisplayPageCount(final int displayPageCount)
+	public void setDisplayPageCount(final int newDisplayPageCount)
 	{
-		getXMLTextPane().setDisplayPageCount(displayPageCount);	//tell the text pane the number of pages do be displayed
+		final int oldDisplayPageCount=getXMLTextPane().getDisplayPageCount();	//get the current display page count
+		if(oldDisplayPageCount!=newDisplayPageCount)	//if the display page count is really changing
+		{
+			getXMLTextPane().setDisplayPageCount(newDisplayPageCount);	//tell the text pane the number of pages do be displayed
+			firePropertyChange(DISPLAY_PAGE_COUNT_PROPERTY, oldDisplayPageCount, newDisplayPageCount);	//show that the display page count changed
+			//TODO it would probably be better if we listened for the display page count changing, although we would still have to initialize with the correct value
+		}
+		if(newDisplayPageCount==1)	//update the actions in response to the new value
+			getDisplayOnePageAction().setSelected(true);
+		else if(newDisplayPageCount==2)
+			getDisplayTwoPagesAction().setSelected(true);
 	}
 
-		/**@return Whether text is antialiased.*/
-		public boolean isAntialias() {return getXMLTextPane().isAntialias();}
+	/**@return Whether text is antialiased.*/
+	public boolean isAntialias() {return getXMLTextPane().isAntialias();}
 
-		/**Sets whether text is antialiased.
-		@param newAntialias Whether text should be antialias.
-		*/
-		public void setAntialias(final boolean newAntialias) {getXMLTextPane().setAntialias(newAntialias);}
+	/**Sets whether text is antialiased.
+	@param newAntialias Whether text should be antialias.
+	*/
+	public void setAntialias(final boolean newAntialias)
+	{
+		final boolean oldAntialias=getXMLTextPane().isAntialias();	//get the current value
+		if(oldAntialias!=newAntialias)	//if the value is really changing
+		{
+			getXMLTextPane().setAntialias(newAntialias);	//change the value
+			firePropertyChange(ANTIALIAS_PROPERTY, oldAntialias, newAntialias);	//show that the antialias setting has changed
+		}
+		getAntialiasAction().setSelected(newAntialias);	//show whether or not antialias is now turned on
+	}
 
-	/**@return The factor by which text should be zoomed, default 1.00.*/
-	public float getZoomFactor() {return getXMLTextPane().getZoomFactor();}
+	/**@return The value by which text should be zoomed, such as 1.00.*/
+	public float getZoom() {return getXMLTextPane().getZoom();}
 
 	/**Sets the factor by which text should be zoomed.
-	@param newZoomFactor The amount by which normal text should be multiplied.
+	This is a bound property.
+	@param newZoom The amount by which normal text should be multiplied.
 	*/
-	public void setZoomFactor(final float newZoomFactor){getXMLTextPane().setZoomFactor(newZoomFactor);}
+	public void setZoom(final float newZoom)
+	{
+		final float oldZoom=getXMLTextPane().getZoom();	//get the current value
+		if(oldZoom!=newZoom)	//if the zoom is really changing
+		{
+			getXMLTextPane().setZoom(newZoom);	//change the zoom
+			firePropertyChange(ZOOM_PROPERTY, oldZoom, newZoom);	//show that the zoom has changed
+		}
+			//make sure the correct zoom action is selected (the zoom action selection can initially be out of synch even if the zoom level hasn't changed)
+		final ZoomAction[] zoomActions=getZoomActions();	//get the zoom actions
+		for(int i=zoomActions.length-1; i>=0; --i)	//look at all our zoom actions
+		{
+			final ZoomAction zoomAction=zoomActions[i];	//look at this zoom action
+			if(zoomAction.getZoom()==newZoom)	//if this action represents the new value
+			{
+				zoomAction.setSelected(true);	//show that this action is now selected
+				break;	//we found a matching zoom action; there should only be one, so don't look further
+			}
+		}
+	}
 
 	//history
 	//G***probably make something to limit the size of the history list
@@ -646,7 +724,29 @@ Debug.trace();  //G***del
 		}
 	}
 
-	/**Default constructor that displays two pages.*/
+	/**The implementation to use for retrieving an input stream to a URI.*/
+	private URIInputStreamable uriInputStreamable;
+
+		/**@return The implementation to use for retrieving an input stream to a URI.*/
+		public URIInputStreamable getURIInputStreamable() {return uriInputStreamable;}
+		
+		/**Sets the implementation to use for retrieving an input stream to a URI.
+		@param inputStreamable The implementation to use for accessing a URI for input.
+		*/
+		public void setURIInputStreamable(final URIInputStreamable inputStreamable) {uriInputStreamable=inputStreamable;}
+
+	/**The implementation to use for retrieving an output stream to a URI.*/
+	private URIOutputStreamable uriOutputStreamable;
+
+		/**@return The implementation to use for retrieving an output stream to a URI.*/
+		public URIOutputStreamable getURIOutputStreamable() {return uriOutputStreamable;}
+		
+		/**Sets the implementation to use for retrieving an output stream to a URI.
+		@param outputStreamable The implementation to use for accessing a URI for output.
+		*/
+		public void setURIOutputStreamable(final URIOutputStreamable outputStreamable) {uriOutputStreamable=outputStreamable;}
+
+	/**Default constructor which displays two pages.*/
 	public Book()
 	{
 		this(2);	//default to showing two pages
@@ -659,7 +759,9 @@ Debug.trace();  //G***del
 	public Book(final int displayPageCount)
 	{
 		super(new XMLTextPane(), true, true, false);	//construct the parent class, but don't initialize the book
-		setXMLTextPane((XMLTextPane)getContentComponent());	//store the text pane for use in the future (it will be used by setDisplayPageCount())
+		uriInputStreamable=DefaultURIAccessible.getDefaultURIAccessible();	//start with a default method of getting input streams
+		uriOutputStreamable=DefaultURIAccessible.getDefaultURIAccessible();	//start with a default method of getting output streams
+		xmlTextPane=(XMLTextPane)getContentComponent();	//store the text pane for use in the future (it will be used by setDisplayPageCount())
 		previousPageAction=new PreviousPageAction();
 		nextPageAction=new NextPageAction();
 		backAction=new BackAction();
@@ -695,6 +797,7 @@ Debug.trace();  //G***del
 		historyList=new ArrayList();
 		scrollBar=new JScrollBar(JScrollBar.HORIZONTAL);
 		setDisplayPageCount(displayPageCount);	//set the number of pages to display
+		setDefaultFocusComponent(xmlTextPane);	//set the default focus component
 		initialize();	//initialize the book
 	}
 
@@ -731,15 +834,21 @@ Debug.trace();  //G***del
 		insertHighlightAction.setEnabled(false); //disable all our local actions based on selection state
 		searchAction.setEnabled(false); //default to not allowing searching
 		searchAgainAction.setEnabled(false); //default to not allowing searching
-		setDoubleBuffered(false);	//turn off double buffering G***do we want this?
-		setOpaque(true);	//show that we aren't transparent
-//G***del		updateUI();	//update the user interface
 		getXMLTextPane().setAsynchronousLoad(true);	//turn on asynchronous loading TODO fix this better; tidy up throughout the code
 		getXMLTextPane().setPaged(true); //show that the text pane should page its information
+		setAntialias(true);	//default to antialiasing, updating the action
+		setZoom(DocumentConstants.DEFAULT_ZOOM);	//set the default zoom level, selecting the appropriate action
 		add(getXMLTextPane(), BorderLayout.CENTER);	//add the text pane to the center of our control
-		getXMLTextPane().setEditable(false);	//don't let the OEB text pane be edited in this implementation
-		getXMLTextPane().addProgressListener(this);	//listen for progress events
-		getXMLTextPane().addHyperlinkListener(this);  //listen for hyperlink events
+		xmlTextPane.setEditable(false);	//don't let the OEB text pane be edited in this implementation
+		xmlTextPane.addProgressListener(this);	//listen for progress events
+		xmlTextPane.addHyperlinkListener(this);  //listen for hyperlink events
+			//catch all document changes in the text pane, since the document is actually changed in a separate thread
+		xmlTextPane.addPropertyChangeListener(XMLTextPane.DOCUMENT_PROPERTY, new PropertyChangeListener()
+			{
+			  //if the document property changes, call onDocumentChange()
+			  public void propertyChange(final PropertyChangeEvent event) {onDocumentChange();}
+			});
+	  xmlTextPane.addPageListener(this); //add ourselves as a page listener, so that we can update the forward and backwards actions G***we probably want to get the events directly from the book
 /*G***del when works
 		getXMLTextPane().addHyperlinkListener(  //add a listener for hyperlink events
 			new HyperlinkListener()
@@ -753,8 +862,8 @@ Debug.trace();  //G***del
 				}
 			});
 */
-		getXMLTextPane().addCaretListener(this);	//listen for caret events so that we can enable or disable certain actions
-		getXMLTextPane().addMouseListener(this);	//G***testing
+		xmlTextPane.addCaretListener(this);	//listen for caret events so that we can enable or disable certain actions
+		xmlTextPane.addMouseListener(this);	//G***testing
 //G***fix		statusBar.add(statusProgressBar, new GridBagConstraints(1, 0, 1, 1, 0.5, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));	//G***testing
 //G***fix		statusSlider.setPaintLabels(true);  //turn on label painting
 //G***fix		statusSlider.setPaintTicks(true); //turn on tick painting
@@ -788,7 +897,7 @@ Debug.trace();  //G***del
 			}
 		  else if(progressEvent.getTask().equals(XMLTextPane.PAGINATE_TASK))  //if the document is finished being paginated G***probably add some specific document setting event later, or something; actually, that's already there with the document property changing
 			{
-//TODO fix				refreshGoBookmarksMenu(); //update the bookmarks menu, even though these were already set during document loading, because pagination changes the pages they point to
+				firePropertyChange(BOOKMARKS_PROPERTY, null, null); //fire an event showing that the bookmarks have changed, because pagination changes the pages they point to
 			}
 //G***del when works			setStatus("");	//clear the status
 //G***del Debug.trace("setting status progress to zero"); //G***del
@@ -1196,31 +1305,16 @@ Debug.trace("Relative offset: ", relativeOffset);
 		  //register a QTI view factory with the QTI namespace, with the normal XML view factory as the fallback
 //G***if fix, register with the XMLTextPane, not the view factory		xmlViewFactory.registerViewFactory(QTIConstants.QTI_1_1_NAMESPACE_URI, new QTIViewFactory());
 */
-		getXMLTextPane().setPage(uri);	//tell the text pane to read from the URI
+		getXMLTextPane().setPage(uri, getURIInputStreamable());	//tell the text pane to read from the URI
 	}
 
 	/**Closes the book, if one is open.*/
-	public void close()	//TODO find out why this is causing a stack overflow error
+	public void close()
 	{
-/*TODO fix user data file saving
-		final File userDataFile=getUserDataFile();  //see if there is a file in which we can store user data
-		if(userDataFile!=null)  //if there is a user data file
-		{
-			try
-			{
-				final UserData userData=getUserData(); //create a new user data object to represent the data in this book
-					//G***check the return value here
-			  XMLStorage.store(userData, userDataFile, true); //save the user data to the user data file, making a backup file in the process
-			}
-			catch(IOException e)  //if anything went wrong saving the user data
-			{
-				Debug.error(e); //G***fix; alert the user, give them the option to abort closing
-			}
-		}
-*/
 		historyList.clear();  //clear the history list G***probably put a clearHistory() method instead
 		setHistoryIndex(0); //show that we have no history
 		clearBookmarks(); //clear the bookmark list
+		getXMLTextPane().setBaseURI(null);	//show that nothing is open (do this so that the new blank document will not have its base URI set automatically) 
 		getXMLTextPane().setDocument(getXMLTextPane().getEditorKit().createDefaultDocument());  //create a default document and assign it to the text pane
 	}
 
@@ -1258,7 +1352,7 @@ Debug.trace("Relative offset: ", relativeOffset);
 		be considered read-only, as its information may reference information in
 		the book.
 	*/
-	protected UserData getUserData()
+	public UserData getUserData()
 	{
 		return new UserData(this); //create a new user data object to represent the data in this book
 	}
@@ -1266,7 +1360,7 @@ Debug.trace("Relative offset: ", relativeOffset);
 	/**Updates the book user data from a <code>UserData</code> object.
 	@param userData The object containing the user data.
 	*/
-	protected void setUserData(final UserData userData)
+	public void setUserData(final UserData userData)
 	{
 			//set the bookmarks
 		clearBookmarks(); //clear all bookmarks
@@ -1315,30 +1409,6 @@ Debug.trace("document change, URI: ", uri);
 //TODO transfer this to MentoractReaderPanel		reloadAction.setEnabled(book.getURI()!=null);  //only enable the reload button if there is a file open
 	  final RDF rdf=getRDF(); //get the loaded metadata
 		getViewPropertiesAction().setEnabled(rdf!=null);  //only enable the properties button if there is RDF
-			//update the user data
-				//if the URI specifies a file, we can have a user data file
-		if(uri!=null && URIConstants.FILE_SCHEME.equals(uri.getScheme()))
-		{
-Debug.trace("the URI is a file");
-		  final File file=new File(uri);  //create a file from the URI
-				//create a userdata filename with ".userdata.xml" appended
-		  final File userDataFile=new File(file.getParent(), file.getName()+FileConstants.EXTENSION_SEPARATOR+"bookuserdata"+FileConstants.EXTENSION_SEPARATOR+"xml");
-Debug.trace("user data file: ", userDataFile);
-			getXMLTextPane().getDocument().putProperty(USER_DATA_FILE_PROPERTY, userDataFile); //store the userdata file object in the document
-		  if(userDataFile.exists()) //if the user data file exists, try to load it
-			{
-				try
-				{
-					final UserData userData=(UserData)XMLStorage.retrieve(userDataFile, UserData.class, true);  //read the user data, using a backup file if the original file doesn't exist
-//G***del when works					final UserData userData=(UserData)BeanUtilities.xmlDecode(userDataFile);  //reade the user data
-					setUserData(userData);  //set the user data we just loaded
-				}
-				catch(Exception e)  //if anything went wrong saving the user data
-				{
-					Debug.error(e); //G***fix; alert the user
-				}
-			}
-		}
 	}
 
 	/**Paints the book-specific items such as bookmarks.
@@ -1633,7 +1703,7 @@ Debug.trace("ready to start clip.");
 		}
 		if(matchOffset<0) //if the text was not found
 		{
-			SwingApplication.displayApplicationError(this, "The requested text was not found.", "Search Results"); //show that the text was not found
+			SwingApplication.displayApplicationError(this, "Search Results", "The requested text was not found."); //show that the text was not found
 		}
 	}
 
@@ -1739,7 +1809,7 @@ Debug.trace("ready to start clip.");
 		/**Creates user data from the current contents of a book.
 		@param book The book for which user data should be constructed.
 		*/
-		public UserData(final Book book)
+		public UserData(final Book book)	//TODO create defensive copies of the data 
 		{
 				//create an array to hold the bookmarks, fill the array with the bookmarks, and store the array
 			setBookmarks((Bookmark[])book.bookmarkHighlightTagMap.keySet().toArray(new Bookmark[book.bookmarkHighlightTagMap.size()]));
@@ -1829,6 +1899,7 @@ Debug.trace("ready to start clip.");
 			putValue(LONG_DESCRIPTION, "Copy the selected text to the clipboard.");	//set the long description G***i18n
 			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key G***i18n
 		  putValue(SMALL_ICON, IconResources.getIcon(IconResources.COPY_ICON_FILENAME)); //load the correct icon
+		  putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C, Event.CTRL_MASK)); //add the accelerator
 		}
 
 		/**Called when the action should be performed.
@@ -2077,7 +2148,6 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 		public void actionPerformed(ActionEvent e)
 		{
 			goPreviousPage();	//tell the book to go to the previous page
-		  getXMLTextPane().requestFocus(); //put the focus back on the book, in case the focus was transferred G***fix the book's default focus somehow so that we don't have to access deep variables
 		}
 	}
 
@@ -2100,7 +2170,6 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 		public void actionPerformed(ActionEvent e)
 		{
 			goNextPage();	//tell the book to go to the next page
-		  getXMLTextPane().requestFocus(); //put the focus back on the book, in case the focus was transferred G***fix the book's default focus somehow so that we don't have to access deep variables
 		}
 	}
 
@@ -2131,7 +2200,6 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 				  //show the properties in an information dialog
 				new JOptionPane(rdfPanel, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION).createDialog(Book.this, "Properties").show();  //G***i18n
 			}
-		  getXMLTextPane().requestFocus(); //put the focus back on the text pane, in case the focus was transferred
 		}
 	}
 
@@ -2210,9 +2278,13 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 		}
 	}
 
+	/**The group indicating exclusive display page count actions.*/
+	private final ActionGroup displayPageCountGroup=new ActionGroup(){};
+
 	/**Action for displaying a particular number of pages at a time.*/
-	protected class DisplayPageCountAction extends AbstractAction
+	protected class DisplayPageCountAction extends AbstractToggleAction	//TODO create a factory method to make sure a singleton is returned for each page count  
 	{
+
 		/**The number of pages to display.*/
 		protected final int displayPageCount;
 
@@ -2221,6 +2293,7 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 		*/
 		public DisplayPageCountAction(final int displayPageCount)
 		{
+			super(displayPageCountGroup);	//construct the parent class
 			this.displayPageCount=displayPageCount;	//save the display page count
 			switch(displayPageCount)	//see how many pages we should display
 			{
@@ -2251,19 +2324,26 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 		}
 	}
 
+	/**The group indicating exclusive zoom actions.*/
+	private final ActionGroup zoomGroup=new ActionGroup(){};
+
 	/**Action for changing the zoom level.*/
-	protected class ZoomAction extends AbstractAction
+	protected class ZoomAction extends AbstractToggleAction
 	{
 		/**The amount by which to zoom.*/
-		protected final float zoomFactor;
+		protected final float zoom;
+
+			/**@return The amount by which to zoom.*/
+			public float getZoom() {return zoom;}
 
 		/**Constructs an action which changes the zoom.
-		@param zoomFactor The amount by which normal size will be multiplied.
+		@param zoom The amount by which normal size will be multiplied.
 		*/
-		public ZoomAction(final float zoomFactor)
+		public ZoomAction(final float zoom)
 		{
-			this.zoomFactor=zoomFactor; //save the zoom factor
-			final String percentString=NumberFormat.getPercentInstance().format(zoomFactor); //create a percentage string from the zoom factor G***i18n use selected locale
+			super(zoomGroup);	//construct the parent class
+			this.zoom=zoom; //save the zoom factor
+			final String percentString=NumberFormat.getPercentInstance().format(zoom); //create a percentage string from the zoom factor G***i18n use selected locale
 			putValue(NAME, percentString);	//set the correct name
 			putValue(SHORT_DESCRIPTION, "Zoom "+percentString);	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Display everything "+percentString+" of its original size.");	//set the long description G***i18n
@@ -2274,12 +2354,12 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 		*/
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
-			setZoomFactor(zoomFactor);	//change the book's zoom factor
+			setZoom(zoom);	//change the book's zoom factor
 		}
 	}
 
 	/**Action for turning on text antialiasing.*/
-	protected class AntialiasAction extends AbstractAction
+	protected class AntialiasAction extends AbstractToggleAction
 	{
 		/**Default constructor.*/
 		public AntialiasAction()

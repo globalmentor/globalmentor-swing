@@ -429,7 +429,7 @@ Debug.trace("Decided on font family: ", family); //G***del
 		if(StyleConstants.isSuperscript(attributeSet) || StyleConstants.isSubscript(attributeSet))	//G***change to use CSS attributes
 			size-=2;	//reduce the font size by two
 */
-		final float zoomFactor=DocumentUtilities.getZoomFactor(this, DocumentConstants.DEFAULT_ZOOM_FACTOR);  //get the zoom factor, assuming a default value if no value is specified
+		final float zoomFactor=DocumentUtilities.getZoom(this, DocumentConstants.DEFAULT_ZOOM);  //get the zoom factor, assuming a default value if no value is specified
 /*G***del
 		  //we'll try to get the zoom factor from the text pane we're embedded in
 		final float zoomFactor=DocumentUtilities.hasZoomFactor(this)

@@ -76,38 +76,32 @@ public class DocumentUtilities implements DocumentConstants
 
 	/**Retrieves the zoom factor.
 	@param document The document from which to retrieve the property.
-	@param defaultZoomFactor The default zoom factor to use if the property isn't
+	@param defaultZoom The default zoom level to use if the property isn't
 		specified.
 	@return The stored zoom factor or the default value.
 	*/
-	public static float getZoomFactor(final Document document, final float defaultZoomFactor)
+	public static float getZoom(final Document document, final float defaultZoom)
 	{
-		final Object object=document.getProperty(ZOOM_FACTOR_PROPERTY); //get the property from the document
-		return object instanceof Float ? ((Float)object).floatValue() : defaultZoomFactor;  //return the value if we have if
-/*G***del when works
-		if(object instanceof Float) //if the property is of the correct type
-			return ((Float)object).floatValue();  //get the value
-		else  //if we don't get a valid zoom factor back
-			return defaultZoomFactor; //return the default value
-*/
+		final Object object=document.getProperty(ZOOM_PROPERTY); //get the property from the document
+		return object instanceof Float ? ((Float)object).floatValue() : defaultZoom;  //return the value if we have if
 	}
 
 	/**Sets the factor by which text should be zoomed.
 	@param document The document the property of which to set.
-	@param zoomFactor The amount by which normal text should be multiplied.
+	@param zoom The amount by which normal text should be multiplied.
 	*/
-	public static void setZoomFactor(final Document document, final float zoomFactor)
+	public static void setZoom(final Document document, final float zoom)
 	{
-		document.putProperty(ZOOM_FACTOR_PROPERTY, new Float(zoomFactor)); //store the new zoom factor in the document
+		document.putProperty(ZOOM_PROPERTY, new Float(zoom)); //store the new zoom factor in the document
 	}
 
-	/**Determines whether a zoom factor is specified for the document.
+	/**Determines whether a zoom level is specified for the document.
 	@param document The document to check for the property.
 	@return <code>true</code> if the property is specified for the document.
 	*/
-	public static boolean hasZoomFactor(final Document document)
+	public static boolean hasZoom(final Document document)
 	{
-		return document.getProperty(ZOOM_FACTOR_PROPERTY) instanceof Float;
+		return document.getProperty(ZOOM_PROPERTY) instanceof Float;
 	}
 
 }

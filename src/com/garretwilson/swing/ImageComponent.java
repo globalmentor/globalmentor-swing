@@ -40,7 +40,7 @@ public class ImageComponent extends JComponent implements Scrollable
 		public double getZoomFactor() {return zoomFactor;}
 
 		/**Sets the amount to resize the image.
-		This is a bound property, <code>ZOOM_FACTOR_PROPERTY</code>.
+		This is a bound property, <code>ZOOM_PROPERTY</code>.
 		@param newZoomFactor The zoom multiplier, with with <code>1</code> equal to
 			no resizing.
 		*/

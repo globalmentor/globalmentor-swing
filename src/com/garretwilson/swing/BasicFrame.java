@@ -3,7 +3,7 @@ package com.garretwilson.swing;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
-import java.util.Iterator;
+import java.util.*;
 import java.util.prefs.*;
 import javax.swing.*;
 import com.garretwilson.awt.*;
@@ -418,7 +418,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 	@return A complete menu or a menu item to represent the given action and any
 		chilren. 
 	*/
-	protected static JMenuItem createMenuItem(final Action action, final ActionManager actionManager, final boolean isTopLevel)
+	protected JMenuItem createMenuItem(final Action action, final ActionManager actionManager, final boolean isTopLevel)
 	{
 		final Iterator menuActionIterator=actionManager.getMenuActionIterator(action);	//get the iterator to children, if any, of the parent action
 		if(isTopLevel || menuActionIterator.hasNext())	//if the parent action has children, or if the action is a top-level action
@@ -451,13 +451,53 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 		}
 	}
 
+	/**The map of button groups keyed to action groups.*/
+	private final Map actionGroupButtonGroupMap=new HashMap();
+
+	/**Retrieves a button group for the given action group.
+	 If no button group exists for the given action group, one is created.
+	*/
+	protected ButtonGroup getButtonGroup(final ActionGroup actionGroup)
+	{
+		ButtonGroup buttonGroup=(ButtonGroup)actionGroupButtonGroupMap.get(actionGroup);	//get a button group group for this action group
+		if(buttonGroup==null)	//if no button group has been created
+		{
+			buttonGroup=new ButtonGroup();	//create a new button group
+			actionGroupButtonGroupMap.put(actionGroup, buttonGroup);	//associate the button group with the action group
+		}
+		return buttonGroup;	//return the button group
+	}
+	
 	/**Creates a single menu item&mdash;not a menu&mdash;from the given action.
 	@param action The action for which a menu item should be created.
 	@return A new menu item to represent the action.
 	*/
-	protected static JMenuItem createMenuItem(final Action action)
+	protected JMenuItem createMenuItem(final Action action)
 	{
-		return new JMenuItem(action);	//create and return a new menu item from the action
+		final JMenuItem menuItem;
+		if(action instanceof AbstractToggleAction)	//if this is a toggle action
+		{
+			final AbstractToggleAction toggleAction=(AbstractToggleAction)action;	//cast the action to a toggle action
+			final ActionGroup actionGroup=toggleAction.getGroup();	//get the action's group, if any
+			if(actionGroup!=null)	//if there is a group of mutually exclusive actions
+			{
+				menuItem=new JRadioButtonMenuItem(toggleAction);	//create a radio button menu item
+				getButtonGroup(actionGroup).add(menuItem);	//add this menu item to the button group
+			}
+			else	//if there is no group
+			{
+				menuItem=new JCheckBoxMenuItem(toggleAction);	//create a checkbox menu item
+			}
+			menuItem.setSelected(toggleAction.isSelected());	//set the initial selected state of the menu item
+				//create a property change listener to update the button in response to the action "selected" state changing
+			final PropertyChangeListener selectedPropertyChangeListener=ButtonUtilities.createToggleActionSelectedPropertyChangeListener(menuItem);
+			toggleAction.addPropertyChangeListener(selectedPropertyChangeListener);	//listen for the action "selected" state changing
+		}
+		else	//if we should create a normal menu item
+		{
+			menuItem=new JMenuItem(action);	//create a normal menu item from the action
+		}
+		return menuItem;	//return the menu item we created
 	}
 
 	/**Updates the states of the actions, including enabled/disabled status,

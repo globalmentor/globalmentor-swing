@@ -47,8 +47,11 @@ public class ListPanel extends ContentPanel implements Editable
 		*/
 //G***del if not needed		public void setEditStrategy(final ListEditStrategy editStrategy) {this.editStrategy=editStrategy;}	//TODO make sure we unregister the old list strategy first by removing all listeners to the list
 
-	/**@return The list in the scroll pane that is the content component as a list; convenience method.*/
-	protected JList getList() {return (JList)((JScrollPane)getContentComponent()).getViewport().getView();}
+	/**The list this panel represents.*/
+	private final JList list;
+	
+		/**@return The list this panel represents.*/
+		protected JList getList() {return list;}
 
 	/**Whether the items in the list can be edited.*/ 
 	private boolean editable;
@@ -99,6 +102,7 @@ public class ListPanel extends ContentPanel implements Editable
 	public ListPanel(final JList list, final ListEditStrategy editStrategy)
 	{
 		super(new JScrollPane(list), false);	//construct the panel with the list as the content component, but don't initialize the panel
+		this.list=list;	//save the list we were given
 		this.editStrategy=editStrategy;	//save the edit strategy
 		buttonToolBar=new JToolBar(JToolBar.VERTICAL);
 		selectAllButton=new JButton(editStrategy.getSelectAllAction());

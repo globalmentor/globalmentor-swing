@@ -33,6 +33,9 @@ public class ActionManager implements Cloneable
 
 		//top-level menu order
 	public final static int FILE_MENU_ACTION_ORDER=100;
+	public final static int EDIT_MENU_ACTION_ORDER=200;
+	public final static int INSERT_MENU_ACTION_ORDER=300;
+	public final static int VIEW_MENU_ACTION_ORDER=400;
 	public final static int HELP_MENU_ACTION_ORDER=1000;
 
 		//file menu order
@@ -58,6 +61,45 @@ public class ActionManager implements Cloneable
 			fileMenuAction=new FileMenuAction();	//create a new action 
 		}
 		return fileMenuAction;	//return the action
+	}
+
+	/**The lazily-created action representing the top-level edit menu.*/
+	private static Action editMenuAction=null;
+
+	/**@return The lazily-created action representing the top-level edit menu.*/
+	public static Action getEditMenuAction()
+	{
+		if(editMenuAction==null)	//if there is no action, yet
+		{
+			editMenuAction=new EditMenuAction();	//create a new action 
+		}
+		return editMenuAction;	//return the action
+	}
+
+	/**The lazily-created action representing the top-level insert menu.*/
+	private static Action insertMenuAction=null;
+
+	/**@return The lazily-created action representing the top-level insert menu.*/
+	public static Action getInsertMenuAction()
+	{
+		if(insertMenuAction==null)	//if there is no action, yet
+		{
+			insertMenuAction=new InsertMenuAction();	//create a new action 
+		}
+		return insertMenuAction;	//return the action
+	}
+
+	/**The lazily-created action representing the top-level view menu.*/
+	private static Action viewMenuAction=null;
+
+	/**@return The lazily-created action representing the top-level view menu.*/
+	public static Action getViewMenuAction()
+	{
+		if(viewMenuAction==null)	//if there is no action, yet
+		{
+			viewMenuAction=new ViewMenuAction();	//create a new action 
+		}
+		return viewMenuAction;	//return the action
 	}
 
 	/**The lazily-created action representing the top-level help menu.*/
@@ -115,10 +157,11 @@ public class ActionManager implements Cloneable
 	/**Adds to the manager an action representing a top-level menu.
 	If the action already exists at the top level, no action occurs.
 	@param action The action to add as a top-level menu action.
+	@return The added menu action.
 	*/
-	public void addMenuAction(final Action action)
+	public Action addMenuAction(final Action action)
 	{
-		addMenuAction(null, action);	//add the action without any parent
+		return addMenuAction(null, action);	//add the action without any parent
 	}
 
 	/**Adds to the manager an action representing a menu.
@@ -128,14 +171,16 @@ public class ActionManager implements Cloneable
 	@param parentAction The action that serves as the parent of the action, or
 		<code>null</code> if the action is a top-level menu action.
 	@param action The action to add to the parent's list of child actions.
+	@return The added menu action.
 	*/
-	public void addMenuAction(final Action parentAction, final Action action)
+	public Action addMenuAction(final Action parentAction, final Action action)
 	{
 		final List menuActionList=getMenuActionList(parentAction);	//get the parent's list of child actions
 		if(!menuActionList.contains(action))	//if the list doesn't already contain the action
 		{
 			menuActionList.add(action);	//add the action to the parent's list of child actions
 		}
+		return action;	//return the added action
 	}
 
 	/**@return A read-only iterator to actions representing top-level menus.*/
@@ -254,6 +299,7 @@ public class ActionManager implements Cloneable
 */
 
 	/**Adds toolbar components to the toolbar from the toolbar actions.
+	The components are set not to receive focus.
 	@param toolBar The toolbar to set up.
 	@return The toolbar that was set up.
 	@see #getToolActionIterator()
@@ -276,7 +322,8 @@ public class ActionManager implements Cloneable
 			}
 			else	//if this is a normal action
 			{
-				lastComponent=toolBar.add(action);	//add this action				
+				lastComponent=toolBar.add(action);	//add this action
+				lastComponent.setFocusable(false);	//don't allow this component to receive focus
 			}			
 		}
 		return toolBar;	//return the toolbar we initialized
@@ -396,6 +443,73 @@ public class ActionManager implements Cloneable
 //G***fix if needed			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
 //G***fix			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, Event.ALT_MASK)); //add the accelerator G***i18n
 			putValue(MENU_ORDER_PROPERTY, new Integer(FILE_MENU_ACTION_ORDER));	//set the order
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+		}
+	}
+
+	/**Action for a top-level edit menu.*/
+	protected static class EditMenuAction extends AbstractAction
+	{
+		/**Default constructor.*/
+		public EditMenuAction()
+		{
+			super("Edit");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "Edit menu");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Edit functions.");	//set the long description G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_E));  //set the mnemonic key G***i18n
+//G***fix if needed			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
+//G***fix			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, Event.ALT_MASK)); //add the accelerator G***i18n
+			putValue(MENU_ORDER_PROPERTY, new Integer(EDIT_MENU_ACTION_ORDER));	//set the order
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+		}
+	}
+
+	/**Action for a top-level insert menu.*/
+	protected static class InsertMenuAction extends AbstractAction
+	{
+		/**Default constructor.*/
+		public InsertMenuAction()
+		{
+			super("Insert");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "Insert menu");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Insert functions.");	//set the long description G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_I));  //set the mnemonic key G***i18n
+			putValue(MENU_ORDER_PROPERTY, new Integer(INSERT_MENU_ACTION_ORDER));	//set the order
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+		}
+	}
+
+	/**Action for a top-level view menu.*/
+	protected static class ViewMenuAction extends AbstractAction
+	{
+		/**Default constructor.*/
+		public ViewMenuAction()
+		{
+			super("View");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "View menu");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "View functions.");	//set the long description G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_V));  //set the mnemonic key G***i18n
+//G***fix if needed			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
+//G***fix			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, Event.ALT_MASK)); //add the accelerator G***i18n
+			putValue(MENU_ORDER_PROPERTY, new Integer(VIEW_MENU_ACTION_ORDER));	//set the order
 		}
 
 		/**Called when the action should be performed.

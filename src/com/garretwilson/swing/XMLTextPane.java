@@ -78,7 +78,7 @@ import edu.stanford.ejalbert.BrowserLauncher;
 @see com.garretwilson.swing.event.PageEvent
 @see com.garretwilson.swing.event.PageListener
 */
-public class XMLTextPane extends JTextPane implements AppletContext, /*G***del when works KeyListener, */MouseMotionListener, PageListener, ProgressListener, URIAccessible
+public class XMLTextPane extends JTextPane implements AppletContext, /*G***del when works KeyListener, */MouseMotionListener, PageListener, ProgressListener//G***fix, URIAccessible
 {
 
 	/**The name of the property that indicates the current document.*/
@@ -131,12 +131,10 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 //G***del when keymap works
 //G***del	protected final static KeyStroke RIGHT_KEY_STROKE=KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0);
 
-	/**The access to input streams via URIs, if one exists.*/
-	private URIInputStreamable uriInputStreamable=null;
+	/**The access to input streams via URIs.*/
+	private URIInputStreamable uriInputStreamable;
 
-		/**@return The access to input streams via URIs, or <code>null</code> if
-		  none exists.
-		*/
+		/**@return The access to input streams via URIs.*/
 		public URIInputStreamable getURIInputStreamable() {return uriInputStreamable;}
 
 		/**Sets the object for accessing input streams.
@@ -146,13 +144,14 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		public void setURIInputStreamable(final URIInputStreamable newURIInputStreamable) {uriInputStreamable=newURIInputStreamable;}
 
 	/**The implementation to use for retrieving an output stream to a URI.*/
-	private URIOutputStreamable uriOutputStreamable=this;
+	private URIOutputStreamable uriOutputStreamable;
 
 		/**@return The implementation to use for retrieving an output stream to a URI.*/
 		public URIOutputStreamable getURIOutputStreamable() {return uriOutputStreamable;}
 		
 		/**Sets the implementation to use for retrieving an output stream to a URI.
-		@param outputStreamable The implementation to use for accessing a URI for output.
+		@param outputStreamable The implementation to use for accessing a URI for
+			output.
 		*/
 		public void setURIOutputStreamable(final URIOutputStreamable outputStreamable) {uriOutputStreamable=outputStreamable;}
 
@@ -276,24 +275,24 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		}
 
 	/**The factor by which text should be zoomed.*/
-	private float zoomFactor=DocumentConstants.DEFAULT_ZOOM_FACTOR;
+	private float zoom=DocumentConstants.DEFAULT_ZOOM;
 
 		/**@return The factor by which text should be zoomed.
-		@see DocumentConstants#DEFAULT_ZOOM_FACTOR
+		@see DocumentConstants#DEFAULT_ZOOM
 		*/
-		public float getZoomFactor() {return zoomFactor;}
+		public float getZoom() {return zoom;}
 
 		/**Sets the factor by which text should be zoomed.
-		@param newZoomFactor The amount by which normal text should be multiplied.
+		@param newZoom The amount by which normal text should be multiplied.
 		*/
-		public void setZoomFactor(final float newZoomFactor)
+		public void setZoom(final float newZoom)
 		{
 //G***del			final float oldZoomFactor=getZoomFactor(); //get the current zoom factor
-			if(zoomFactor!=newZoomFactor)  //if the zoom factor is really changing
+			if(zoom!=newZoom)  //if the zoom factor is really changing
 			{
 //G***del Debug.trace("changing view factor from "+oldZoomFactor+" to "+newZoomFactor); //G***del
-				zoomFactor=newZoomFactor; //set the new zoom factor
-				DocumentUtilities.setZoomFactor(getDocument(), zoomFactor);  //store the new zoom factor in the document
+				zoom=newZoom; //set the new zoom factor
+				DocumentUtilities.setZoom(getDocument(), zoom);  //store the new zoom factor in the document
 //G***del				document.putProperty(XMLDocument.ZOOM_FACTOR_PROPERTY, new Float(zoomFactor)); //store the new zoom factor in the document
 				final XMLPagedView pagedView=getPagedView();  //get a reference to our paged view
 				if(pagedView!=null)  //if we have a paged view
@@ -548,8 +547,8 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	{
 		super();	//construct the parent class
 //G***del when works		originalKeymap=getKeymap();  //get the current key map and store it for future use
-
-
+		uriInputStreamable=DefaultURIAccessible.getDefaultURIAccessible();	//start with a default method of getting input streams
+		uriOutputStreamable=DefaultURIAccessible.getDefaultURIAccessible();	//start with a default method of getting output streams
 		final Keymap defaultKeymap=getKeymap();	//get the current keymap
 		final Keymap xmlKeymap=addKeymap(XML_KEYMAP_NAME, defaultKeymap); //create a new keymap for our custom actions
 		loadKeymap(defaultKeymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit changes?
@@ -641,7 +640,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	{
 		DocumentUtilities.setBaseURI(document, getBaseURI());	//store our base URI in the document
 		DocumentUtilities.setPaged(document, isPaged());  //store the new paged value in the document
-		DocumentUtilities.setZoomFactor(document, getZoomFactor());  //store the zoom factor in the document
+		DocumentUtilities.setZoom(document, getZoom());  //store the zoom factor in the document
 //G***del		document.putProperty(XMLDocument.ZOOM_FACTOR_PROPERTY, new Float(getZoomFactor())); //store the zoom factor in the document
 		super.setDocument(document);  //set the document normally
 	}
@@ -764,7 +763,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	*/
 	public InputStream getInputStream(final URI uri) throws IOException
 	{
-		return uri.toURL().openConnection().getInputStream();	//G***testing---fix
+		return getURIInputStreamable().getInputStream(uri);	//ask the input streamable for the input stream
 	}
 
 	/**Returns an output stream for the given URI.
@@ -775,7 +774,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	*/
 	public OutputStream getOutputStream(final URI uri) throws IOException
 	{
-		return uri.toURL().openConnection().getOutputStream();	//TODO fix activity engine by delegating to default URIAccessible
+		return getURIOutputStreamable().getOutputStream(uri);	//ask the output streamable for the output stream
 	}
 
 	/**Sets the text to the specified content, which must be well-formed XML.
@@ -851,7 +850,7 @@ try {
 		the component (such as an OEB document) and initializes the model using the
 		appropriate editor kit.
 	<p>This method must be called from inside the AWT event thread.</p>
-	<p>A default input stream locator is used.</p>
+	<p>The current input stream locator is used.</p>
 	@param uri The URI of the resource which has the information to load.
 	@exception IOException as thrown by the stream being used to initialize.
 	@see JEditorPane#setPage
@@ -861,7 +860,7 @@ try {
 	*/
 	public void setPage(final URI uri) throws IOException
 	{
-		setPage(uri, new URIUtilities());  //we'll use an instance of URIUtilities to make direct connections to URIs
+		setPage(uri, getURIInputStreamable());  //use our current method for getting input streams
 	}
 
 	/**Initializes from a URI to a resource, which could be a document or, for OEB,
@@ -893,7 +892,6 @@ Debug.trace("setting page: ", uri);  //G***del
 
 
 
-//G***del		setURIInputStreamable(null);  //show that we don't yet know how to access streams from URIs
 Debug.trace("Getting input stream.");
 		InputStream inputStream=getStream(uri);  //get an input stream to the URI; this should set the media type and install the correct editor kit
 
@@ -938,10 +936,12 @@ Debug.trace("found zip file: ", uri);  //G***del
 				Debug.error("Zip file must use URI file protocol");  //G***fix
 		}
 Debug.trace("installed editor kit is now: ", getEditorKit().getClass().getName());  //G***del
+/*G***del if not needed
 		if(getURIInputStreamable()==null) //if we haven't established an input stream locator
 		{
 			setURIInputStreamable(new URIUtilities());  //we'll use an instance of URIUtilities to make direct connections to URIs
 		}
+*/
 		setPage(uri, inputStream);	//set the page using the given input stream
 	}
 
@@ -1150,7 +1150,7 @@ Debug.trace("reading from stream"); //G***del
 			if(uriInputStreamable!=null)  //if we have an input stream locator (if we're reading from a zip file, for instance)
 			{
 Debug.trace("found input stream locator, getting input stream to URI: ", uri); //G***del
-				final InputStream inputStream=uriInputStreamable.getInputStream(uri);  //get an input stream from the page
+				final InputStream inputStream=getInputStream(uri);  //get an input stream from the page
 				final MediaType mediaType=URIUtilities.getMediaType(uri);  //get the media type of the target
 				if(mediaType!=null) //if we know the media type of the URL
 		  		setContentType(mediaType.toString());  //set the content type based upon our best guess
