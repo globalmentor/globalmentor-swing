@@ -31,6 +31,19 @@ public class ComponentUtilities
 		return originalCursor;  //return the original cursor used
 	}
 
+	/**Sets a predefined cursor for a component immediately, returning the original cursor.
+	@param component The component whose cursor should be set.
+	@param type The type of predefined cursor the component should use.
+	@return The cursor currently used by the component.
+	@see Component#getCursor
+	@see Component#setCursor
+	@see #setCursor(Component, Cursor)
+	*/
+	public static Cursor setPredefinedCursor(final Component component, final int type)
+	{
+		return setCursor(component, Cursor.getPredefinedCursor(type));	//get the predefined cursor and set it
+	}
+
 	/**Sets the cursor using the AWT event queue, after all AWT events have been
 		processed. Immediately returns the original cursor.
 		This is useful for setting the cursor back to a particular value after invoking

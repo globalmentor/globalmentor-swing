@@ -1,8 +1,11 @@
 package com.garretwilson.swing;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Event;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.net.URI;
 import javax.swing.*;
@@ -89,14 +92,26 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 			final ResourceComponentState oldResourceComponentState=resourceComponentState; //get the old value
 			if(oldResourceComponentState!=newResourceComponentState)  //if the value is really changing
 			{
+				if(oldResourceComponentState!=null && oldResourceComponentState.getComponent() instanceof Modifiable)	//if the old component was modifiable
+				{
+					oldResourceComponentState.getComponent().removePropertyChangeListener(Modifiable.MODIFIED_PROPERTY, getUpdateStatusModifiedPropertyChangeListener());	//remove our modifiable listener
+				}
 				resourceComponentState=newResourceComponentState; //update the value
-				getCloseAction().setEnabled(newResourceComponentState!=null);	//only enable the close action when there is a component open
-				getSaveAction().setEnabled(newResourceComponentState!=null);	//only enable the save action when there is a component open
-				getRevertAction().setEnabled(newResourceComponentState!=null);	//only enable the revert action when there is a component open
+				if(newResourceComponentState!=null && newResourceComponentState.getComponent() instanceof Modifiable)	//if the new component is modifiable
+				{
+					newResourceComponentState.getComponent().addPropertyChangeListener(Modifiable.MODIFIED_PROPERTY, getUpdateStatusModifiedPropertyChangeListener());	//listen for component modifications
+				}
+				updateStatus();	//update the status of the actions
 					//show that the property has changed
 				firePropertyChange(RESOURCE_COMPONENT_STATE_PROPERTY, oldResourceComponentState, newResourceComponentState);
 			}
 		}
+
+	/**The listener that updates the status when the component is modified.*/
+	private final PropertyChangeListener updateStatusModifiedPropertyChangeListener;
+
+		/**@return The listener that updates the status when the component is modified.*/
+		protected PropertyChangeListener getUpdateStatusModifiedPropertyChangeListener() {return updateStatusModifiedPropertyChangeListener;}
 
 	/**Parent component and resource selector constructor
 	@param parentComponent The component to serve as a parent for error messages.
@@ -105,7 +120,14 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 	public ResourceComponentManager(final Component parentComponent, final ResourceSelector resourceSelector)
 	{
 		this.parentComponent=parentComponent;	//save the parent component
-		this.resourceSelector=resourceSelector;	//save the resource selector 
+		this.resourceSelector=resourceSelector;	//save the resource selector
+		updateStatusModifiedPropertyChangeListener=new PropertyChangeListener()	//create a property change listener to update our status when modification occurs
+			{
+				public void propertyChange(final PropertyChangeEvent propertyChangeEvent)
+				{
+					updateStatus();
+				}
+			};
 		openAction=new OpenAction();  //create the open action
 		closeAction=new CloseAction();  //create the close action
 		closeAction.setEnabled(false);	//the close action is disable by default, as there's nothing to close
@@ -118,13 +140,33 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 	/**Updates the states of the actions, including enabled/disabled status,
 		proxied actions, etc.
 	*/
-/*G***fix
 	public void updateStatus()
 	{
-		super.updateStatus();	//do the default updating
-		getSaveAction().setEnabled(isModified());	//only enable saving when the resource is modified
+		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current state of the resource component
+		getCloseAction().setEnabled(resourceComponentState!=null);	//only enable the close action when there is a component open
+		if(resourceComponentState!=null)	//if we have a resource and its component
+		{
+			final Component component=resourceComponentState.getComponent();	//get the resource component
+			assert component!=null : "No component associated with resource.";
+			if(component instanceof Modifiable)	//if the component is modifiable
+			{
+				final boolean isModified=((Modifiable)component).isModified();	//see if the component has been modified
+				getSaveAction().setEnabled(isModified);	//only enable the save action when the component is modified
+				getRevertAction().setEnabled(isModified);	//only enable the revert action when the component is modified				
+			}
+			else	//if the component is not modifiable
+			{
+				getSaveAction().setEnabled(true);	//always allow save
+				getRevertAction().setEnabled(true);	//always allow revert
+				
+			}
+		}
+		else	//if there is no resource and component
+		{
+			getSaveAction().setEnabled(false);	//there's nothing to save
+			getRevertAction().setEnabled(false);	//there's nothing to revert
+		}
 	}
-*/
 
 	/**Determines if a resource and its component can close.
 		This verion asks the resource component if it can close, if that component
@@ -191,7 +233,15 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 		try
 		{
 			final Resource resource=getResourceSelector().getResource(referenceURI);	//get a description of the resource
-			return open(resource);	//open the resource
+			final Cursor originalCursor=ComponentUtilities.setPredefinedCursor(getParentComponent(), Cursor.WAIT_CURSOR);	//change the cursor
+			try
+			{
+				return open(resource);	//open the resource
+			}
+			finally
+			{
+				getParentComponent().setCursor(originalCursor);	//always change the component's cursor back to normal
+			}
 		}
 		catch(final IOException ioException)	//if there is an error opening the resource
 		{
