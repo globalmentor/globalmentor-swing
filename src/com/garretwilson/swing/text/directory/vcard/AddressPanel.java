@@ -132,7 +132,7 @@ public class AddressPanel extends DefaultPanel
 			countryNameComboBox.setSelectedItem(address.getCountryName()!=null ? address.getCountryName() : "");
 			addressTypePanel.setAddressType(address.getAddressType());
 		}
-		else	//if there is no addres, clear the fields
+		else	//if there is no address, clear the fields
 		{
 			postOfficeBoxTextField.setText("");
 			for(int i=0; i<streetAddressTextFields.length; streetAddressTextFields[i++].setText(""));
@@ -144,7 +144,7 @@ public class AddressPanel extends DefaultPanel
 		}
 	}
 	
-	/**@return An object representing the VCard address information entered.*/
+	/**@return An object representing the address information entered.*/
 	public Address getAddress()
 	{
 		final String postOfficeBox=StringUtilities.getNonEmptyString(postOfficeBoxTextField.getText().trim());
@@ -166,7 +166,7 @@ public class AddressPanel extends DefaultPanel
 	/**Default constructor.*/
 	public AddressPanel()
 	{
-		this(new Address());	//initialize with a default addressaddress
+		this(new Address());	//initialize with a default address
 	}
 
 	/**Address constructor.

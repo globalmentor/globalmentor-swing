@@ -3,6 +3,7 @@ package com.garretwilson.swing.itu;
 import java.awt.*;
 import javax.swing.*;
 import com.garretwilson.itu.*;
+import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 
 /**A panel allowing entry of an international public telecommunication number
@@ -42,6 +43,23 @@ public class TelephoneNumberPanel extends DefaultPanel
 
 		/**@return The subscriber number text field.*/
 		public JTextField getSubscriberNumberCodeTextField() {return subscriberNumberTextField;}
+
+	/**Shows or hides the telphone number labels.
+	@param visible <code>true</code> if the labels should be shown,
+		<code>false</code> if they should be hidden.
+	*/
+	public void setLabelsVisible(final boolean visible)
+	{
+		countryCodeLabel.setVisible(visible);
+		nationalDestinationCodeLabel.setVisible(visible);
+		subscriberNumberLabel.setVisible(visible);
+	}
+	
+	/**@return Whether all the telephone number labels are visible.*/ 
+	public boolean isLabelsVisible()
+	{
+		return countryCodeLabel.isVisible() && nationalDestinationCodeLabel.isVisible() && subscriberNumberLabel.isVisible();
+	}
 
 	/**Places the telephone number into the various fields.
 	@param telephoneNumber The telephone number to place in the fields, or
@@ -111,12 +129,14 @@ public class TelephoneNumberPanel extends DefaultPanel
 		nationalDestinationCodeTextField.setColumns(8);
 		subscriberNumberLabel.setText("Number");	//G***i18n
 		subscriberNumberTextField.setColumns(10);
-		add(countryCodeLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(countryCodeComboBox, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(nationalDestinationCodeLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(nationalDestinationCodeTextField, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(subscriberNumberLabel, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(subscriberNumberTextField, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		final JLabel imageLabel=new JLabel(IconResources.getIcon(IconResources.PHONE_ICON_FILENAME)); //create a label with the image		
+		add(imageLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(countryCodeLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(countryCodeComboBox, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(nationalDestinationCodeLabel, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(nationalDestinationCodeTextField, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(subscriberNumberLabel, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(subscriberNumberTextField, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		setTelephoneNumber(null);	//clear the fields
 	}
 }

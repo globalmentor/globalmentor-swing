@@ -25,12 +25,12 @@ public class TelephonePanel extends DefaultPanel
 
 		/**@return The action for editing the telephone type.*/
 		public Action getEditTelephoneTypeAction() {return editTelephoneTypeAction;}
-
+		
 	/**The telephone number panel.*/
 	private final TelephoneNumberPanel telephoneNumberPanel;
 	
 	/**The telephone type label.*/
-	private final JTextField telephoneTypeLabel;
+	private final JButton telephoneTypeLabel;
 
 	/**The local copy of the telephone type.*/
 	private int telephoneType;
@@ -51,8 +51,26 @@ public class TelephonePanel extends DefaultPanel
 					telephoneType!=Telephone.NO_TELEPHONE_TYPE	//if there is a telephone type
 					? /*G***del"("+*/Telephone.getTelephoneTypeString(telephoneType)/*G***del+")"*/	//show it surrounded by parentheses
 					: "");	//if there is no telephone type, show nothing
-			telephoneTypeLabel.setCaretPosition(0);	//set the cursor at the start of the field
+//G***fix			telephoneTypeLabel.setCaretPosition(0);	//set the cursor at the start of the field
 		}
+
+	/**Shows or hides the telphone number labels.
+	@param visible <code>true</code> if the labels should be shown,
+		<code>false</code> if they should be hidden.
+	@see TelephoneNumberPanel#setLabelsVisible
+	*/
+	public void setLabelsVisible(final boolean visible)
+	{
+		telephoneNumberPanel.setLabelsVisible(visible);	//pass the request on to the telephone number panel
+	}
+	
+	/**@return Whether all the telephone number labels are visible. 
+	@see TelephoneNumberPanel#isLabelsVisible
+	*/
+	public boolean isLabelsVisible()
+	{
+		return telephoneNumberPanel.isLabelsVisible();	//return the answer of the telephone number panel
+	}
 
 	/**Places the telephone number information into the various fields.
 	@param telephoneNumber The telephone number to place in the fields, or
@@ -121,7 +139,14 @@ public class TelephonePanel extends DefaultPanel
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		editTelephoneTypeAction=new EditTelephoneTypeAction();
 		telephoneNumberPanel=new TelephoneNumberPanel();
-		telephoneTypeLabel=new JTextField();
+//G***fix		telephoneTypeLabel=new JTextField();
+		telephoneTypeLabel=new JButton(getEditTelephoneTypeAction());	//G***testing
+		telephoneTypeLabel.setHorizontalTextPosition(SwingConstants.LEFT);	//G***testing
+		telephoneTypeLabel.setBorder(null);	//G**testing
+//	G***fix		telephoneTypeLabel.setRolloverEnabled(true);	//G***testing
+//G***fix		telephoneTypeLabel.setRolloverIcon(IconResources.getIcon(IconResources.PROPERTY_ICON_FILENAME));
+//G***fix		telephoneTypeLabel.setRolloverSelectedIcon(IconResources.getIcon(IconResources.PROPERTY_ICON_FILENAME));
+		
 		buttonCount=0;
 		setDefaultFocusComponent(telephoneNumberPanel);	//set the default focus component
 		initialize();	//initialize the panel
@@ -133,12 +158,20 @@ public class TelephonePanel extends DefaultPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		telephoneTypeLabel.setEditable(false);
-		telephoneTypeLabel.setFont(telephoneTypeLabel.getFont().deriveFont(Font.ITALIC, (float)(telephoneTypeLabel.getFont().getSize2D()*0.8)));
+//G***fix		telephoneTypeLabel.setEditable(false);
+//G***fix		telephoneTypeLabel.setFont(telephoneTypeLabel.getFont().deriveFont(Font.ITALIC, (float)(telephoneTypeLabel.getFont().getSize2D()*0.8)));
 //G***del		final JButton editTelephoneTypeButton=new JButton(getEditTelephoneTypeAction());	//create a button for editing the telephone type
+
+		add(telephoneTypeLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(telephoneNumberPanel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+/*G***fix
 		add(telephoneNumberPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(telephoneTypeLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
-		addButton(getEditTelephoneTypeAction());	//add a button for the edit telephone type action
+*/
+
+
+
+//G***fix		addButton(getEditTelephoneTypeAction());	//add a button for the edit telephone type action
 	}
 	
 	/**Adds a new button based upon the given action and positions it correctly.

@@ -100,11 +100,21 @@ public class TelecommunicationsPanel extends ContentPanel
 		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
 		setTitle("Telecommunications");	//G***i18n
 			//add a work voice telephone
-		addComponent(new TelephonePanel(null, Telephone.WORK_TELEPHONE_TYPE|Telephone.VOICE_TELEPHONE_TYPE));	
+		final TelephonePanel workTelephonePanel=new TelephonePanel(null, Telephone.WORK_TELEPHONE_TYPE|Telephone.VOICE_TELEPHONE_TYPE);
+		workTelephonePanel.setLabelsVisible(false);	//turn off the labels
+		addComponent(workTelephonePanel);	
 			//add a home voice telephone
-		addComponent(new TelephonePanel(null, Telephone.HOME_TELEPHONE_TYPE|Telephone.VOICE_TELEPHONE_TYPE));
+		final TelephonePanel homeTelephonePanel=new TelephonePanel(null, Telephone.HOME_TELEPHONE_TYPE|Telephone.VOICE_TELEPHONE_TYPE);
+		homeTelephonePanel.setLabelsVisible(false);	//turn off the labels
+		addComponent(homeTelephonePanel);
 			//add a mobile voice telephone
-		addComponent(new TelephonePanel(null, Telephone.CELL_TELEPHONE_TYPE|Telephone.VOICE_TELEPHONE_TYPE));
+		final TelephonePanel mobileTelephonePanel=new TelephonePanel(null, Telephone.CELL_TELEPHONE_TYPE|Telephone.VOICE_TELEPHONE_TYPE);
+		mobileTelephonePanel.setLabelsVisible(false);	//turn off the labels
+		addComponent(mobileTelephonePanel);
+			//add an Internet email address
+		final EmailPanel internetEmailPanel=new EmailPanel(null, Email.INTERNET_EMAIL_TYPE);
+		internetEmailPanel.setLabelsVisible(false);	//turn off the labels
+		addComponent(internetEmailPanel);	
 		final JPanel buttonPanel=new JPanel(new FlowLayout(FlowLayout.CENTER));
 		buttonPanel.add(new JButton(getAddTelephoneAction()));
 		buttonPanel.add(new JButton(getAddEmailAction()));
@@ -127,12 +137,15 @@ public class TelecommunicationsPanel extends ContentPanel
 	@param telephone The telephone to add.
 	@return The telephone panel that represents the added telephone.
 	*/
+/*G***del or add parallel addEmail() method
 	public TelephonePanel addTelephone(final Telephone telephone)
 	{
 		final TelephonePanel telephonePanel=new TelephonePanel(telephone);	//create a new telephone panel for this telephone
+		telephonePanel.setLabelsVisible(false);	//turn off the labels
 		addComponent(telephonePanel);	//add the panel to the content panel
 		return telephonePanel;	//return the panel we creatd for the telephone		
 	}
+*/
 
 	/**Adds a component to the content panel, positioning it correctly based upon
 		the other components present.
@@ -179,7 +192,7 @@ public class TelecommunicationsPanel extends ContentPanel
 		/**Default constructor.*/
 		public AddTelephoneAction()
 		{
-			super("Add Telephone");	//create the base class G***i18n
+			super("Add");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Add a telephone");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Add a new telephone number.");	//set the long description G***i18n
 			putValue(MNEMONIC_KEY, new Integer('t'));  //set the mnemonic key G***i18n
@@ -194,6 +207,7 @@ public class TelecommunicationsPanel extends ContentPanel
 			final TelephonePanel telephonePanel=new TelephonePanel();	//create a default telephone panel
 			if(telephonePanel.editTelephoneType())	//ask the user for the telephone type; if they accept the changes
 			{
+				telephonePanel.setLabelsVisible(false);	//turn off the labels
 				addComponent(telephonePanel);	//add the new telephone panel
 			}
 			telephonePanel.requestDefaultFocusComponentFocus();	//focus on the new telephone panel
@@ -207,7 +221,7 @@ public class TelecommunicationsPanel extends ContentPanel
 		/**Default constructor.*/
 		public AddEmailAction()
 		{
-			super("Add Email");	//create the base class G***i18n
+			super("Add");	//create the base class G***i18n
 			putValue(SHORT_DESCRIPTION, "Add an email");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Add a new email address.");	//set the long description G***i18n
 			putValue(MNEMONIC_KEY, new Integer('e'));  //set the mnemonic key G***i18n
@@ -219,15 +233,13 @@ public class TelecommunicationsPanel extends ContentPanel
 		*/
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
-/**G***fix			
-			final TelephonePanel telephonePanel=new TelephonePanel();	//create a default telephone panel
-			if(telephonePanel.editTelephoneType())	//ask the user for the telephone type; if they accept the changes
+			final EmailPanel emailPanel=new EmailPanel();	//create a default email panel
+//G***fix			if(emailPanel.editEmailType())	//ask the user for the email type; if they accept the changes
 			{
-				addComponent(telephonePanel);	//add the new telephone panel
+				emailPanel.setLabelsVisible(false);	//turn off the labels
+				addComponent(emailPanel);	//add the new email panel
 			}
-			telephonePanel.requestDefaultFocusComponentFocus();	//focus on the new telephone panel
-//G**del if not needed			updateStatus();	//update the status
-*/
+			emailPanel.requestDefaultFocusComponentFocus();	//focus on the new email panel
 		}
 	}
 
