@@ -15,7 +15,7 @@ import static com.garretwilson.io.ContentTypeConstants.*;
 /**A panel to edit plain text.
 @author Garret Wilson
 */
-public class TextPanel extends ModelPanel<LocaleText>
+public class TextPanel extends ModelPanel<StringBuilder>
 {
 
 	private final JScrollPane scrollPane;
@@ -50,13 +50,13 @@ public class TextPanel extends ModelPanel<LocaleText>
 	/**Default constructor.*/
 	public TextPanel()
 	{
-		this(new LocaleText(""));	//construct the panel with no text
+		this(new StringBuilder(""));	//construct the panel with no text
 	}
 
 	/**Text model constructor.
 	@param model The model containing the text to display
 	*/
-	public TextPanel(final LocaleText model)
+	public TextPanel(final StringBuilder model)
 	{
 		super(new BasicGridBagLayout(), model, false);  //create the panel with the model without initializing
 //TODO del when works		textPane=new JTextPane();	//create a new text pane
@@ -85,7 +85,7 @@ public class TextPanel extends ModelPanel<LocaleText>
 	public void loadModel() throws IOException
 	{
 		super.loadModel();	//do the default loading
-		textPane.setText(getModel().getText());	//get the text from the model
+		textPane.setText(getModel().toString());	//get the text from the model
 	}
 
 	/**Stores the current data being edited to the model, if necessary.
@@ -94,7 +94,7 @@ public class TextPanel extends ModelPanel<LocaleText>
 	public void saveModel() throws IOException
 	{
 		super.saveModel();	//do the default saving
-		getModel().setText(textPane.getText());	//change the model's text to whatever is in the text pane 
+		getModel().replace(0, getModel().length(), textPane.getText());	//change the model's text to whatever is in the text pane 
 	}
 
 	/**Action for turning on text antialiasing.*/

@@ -2,6 +2,8 @@ package com.garretwilson.swing.text.xml.xeb;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
+
 import javax.mail.internet.ContentType;
 import javax.swing.text.*;
 import javax.swing.text.Document;
@@ -10,11 +12,14 @@ import com.garretwilson.io.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.xpackage.*;
 import com.garretwilson.rdf.xeb.*;
+
+import static com.garretwilson.io.ContentTypeConstants.*;
 import static com.garretwilson.rdf.xeb.XEBConstants.*;
 import com.garretwilson.swing.event.*;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
 import com.garretwilson.text.xml.XMLProcessor;
+import com.garretwilson.util.Debug;
 
 import org.w3c.dom.*;
 
@@ -27,6 +32,9 @@ public class XEBEditorKit extends XHTMLEditorKit	//TODO eventually go back to de
 
 	/**The task of reading a document.*/
 	public final static String READ_TASK="READ";
+
+	/**The "text/text/x-oeb1-document" content type.*/
+	protected final static ContentType OEB_DOCUMENT_MEDIA_TYPE=new ContentType(TEXT, X_OEB1_DOCUMENT_SUBTYPE, null);
 
 	/**Constructor.
 	@param uriInputStreamable The source of input streams for resources.
@@ -190,44 +198,100 @@ System.out.println("Finished with file.");	//G***del
 	*/
 	protected void read(final RDF rdf, final XMLDocument swingXMLDocument, int pos) throws IOException, BadLocationException
 	{
-		final URI[] baseURIArray; //we'll store here an array of base URIs, corresponding to the XML documents
-		final org.w3c.dom.Document[] xmlDocumentArray; //we'll store here an array of XML document trees to load into document
-		final ContentType[] mediaTypeArray; //we'll store here an array of media types (for OEB1, these should all be OEB document media types)
+Debug.trace(RDFUtilities.toString(rdf));
 //G***del if not needed			final URL publicationURL=oebDocument.getBaseURL();  //get the base URL from the document G***what if we don't get a URL back?
 		swingXMLDocument.setRDF(rdf); //set the RDF used to describe the resources
-	  final Publication publication=(Book)RDFUtilities.getResourceByType(rdf, XEB_NAMESPACE_URI, BOOK_CLASS_NAME);	//get the publication from the data model
+	  final Publication publication=(Publication)RDFUtilities.getResourceByType(rdf, XEB_NAMESPACE_URI, BOOK_CLASS_NAME);	//get the publication from the data model
 	  if(publication!=null)	//if there is a book
 	  {
 			swingXMLDocument.setPublication(publication);	//show the XML document which publication it's associated with
-		  final RDFListResource spine=XEBUtilities.getSpine(publication); //get the publication's spine
-			if(spine!=null)  //if there is a spine
+			final List<RDFResource> itemList=new ArrayList<RDFResource>();	//create a new list to hold spine items
+			gatherSpineItems(publication, itemList);	//gather the items in the spine
+				//make sure all documents in the manifest are in our list
+				// (we'll add out-of-spine documents to our local spine in this implementation)
+			final RDFListResource manifest=XPackageUtilities.getManifest(publication); //get the publication's manifest
+			if(manifest!=null)  //if there is a manifest
 			{
-	/*TODO fix for OEB out-of-spine items
-							//make sure all documents in the manifest are in our list
-							// (we'll add out-of-spine documents to our local spine in this implementation)
-						final RDFListResource manifest=XPackageUtilities.getManifest(publication); //get the publication's manifest
-						if(manifest!=null)  //if there is a manifest
-						{
-							for(final RDFResource item:manifest)	//for each item in the manifest
-							{
-								final ContentType mediaType=MIMEOntologyUtilities.getMediaType(item); //get the item's media type
-								//if this is an OEB document that is not in the spine
-								if(OEB10_DOCUMENT_MEDIA_TYPE.match(mediaType) && !spine.contains(item))
-								{
-									spineList.add(manifestItem);  //add the item to our local spine
-								}
-							}
-						}
-	*/
-				final XMLProcessor xmlProcessor=new XMLProcessor(swingXMLDocument.getURIInputStreamable());  //create an XML processor that will use the input stream locator of the document for loading other needed documents
-				final int spineItemCount=spine.size(); //find out how many spine items there are
-				xmlDocumentArray=new org.w3c.dom.Document[spineItemCount]; //create an array of OEB XML documents
-				baseURIArray=new URI[spineItemCount];  //create an array of URIs
-				mediaTypeArray=new ContentType[spineItemCount];  //create an array of media types
-				for(int i=0; i<spineItemCount; ++i)	//look at each item in the spine
+				for(final RDFResource item:manifest)	//for each item in the manifest
 				{
-	//G***del Debug.trace("OEBEditorKit.read() Getting item: "+i+" of "+publication.getSpineList().size());
-					final RDFResource item=spine.get(i);	//get a reference to this item
+					final ContentType mediaType=MIMEOntologyUtilities.getMediaType(item); //get the item's media type
+					//if this is an OEB document that is not in the spine
+					if(OEB_DOCUMENT_MEDIA_TYPE.match(mediaType) && !itemList.contains(item))
+					{
+						itemList.add(item);  //add the item to our local spine
+					}
+				}
+			}
+			final XMLProcessor xmlProcessor=new XMLProcessor(swingXMLDocument.getURIInputStreamable());  //create an XML processor that will use the input stream locator of the document for loading other needed documents
+			final int spineItemCount=itemList.size(); //find out how many spine items there are
+			final org.w3c.dom.Document[] xmlDocumentArray=new org.w3c.dom.Document[spineItemCount]; //create ane an array of OEB XML documents
+			final URI[] baseURIArray=new URI[spineItemCount];  //create an array of URIs
+			final ContentType[] contentTypeArray=new ContentType[spineItemCount];  //create an array of media types
+			for(int i=0; i<spineItemCount; ++i)	//look at each item in the spine
+			{
+//G***del Debug.trace("OEBEditorKit.read() Getting item: "+i+" of "+publication.getSpineList().size());
+				final RDFResource item=itemList.get(i);	//get a reference to this item
+				final String itemHRef=XPackageUtilities.getLocationHRef(item);  //get the item's href
+				if(itemHRef!=null)	//if this item has an href
+				{
+					fireMadeProgress(new ProgressEvent(this, READ_TASK, "Loading item: "+itemHRef, i, spineItemCount));	//G***testing i18n
+					try
+					{
+						final URI itemURI=swingXMLDocument.getResourceURI(itemHRef); //get the item's URI
+						final ContentType contentType=MIMEOntologyUtilities.getMediaType(item);	//get the item's content type
+							//TODO make sure this is an XML content type, and later add support for PDF, Word, text, and the like
+						final InputStream itemInputStream=swingXMLDocument.getInputStream(itemURI); //get an input stream to the object
+						try
+						{
+							final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(itemInputStream, itemURI);	//parse the document
+						  xmlDocument.normalize();  //normalize the document
+							xmlDocumentArray[i]=xmlDocument;	//add the document which we'll pass to the Swing XML document for insertion
+							baseURIArray[i]=itemURI;	//store the URI of the item
+							contentTypeArray[i]=contentType;  //store the media type of the item
+						}
+						finally
+						{
+							itemInputStream.close();  //always close the input stream to the document
+						}
+					}
+					catch(final IllegalArgumentException illegalArgumentException)	//if we can't get the item's URI
+					{
+						throw (IOException)new IOException(illegalArgumentException.getMessage()).initCause(illegalArgumentException);	//create and trhwo an IO exception from the URI syntax exception
+					}
+				}
+				else	//if this item has no href
+				{
+					throw new IOException("Item in spine missing href.");	//TODO i18n; add support for text content
+				}
+			}
+			setXML(xmlDocumentArray, baseURIArray, contentTypeArray, swingXMLDocument);  //put all the XML documents we loaded into the Swing XML document
+	  }
+	}
+
+	/**Loads all documents in the spine and the spines of any contained bindings.
+	@param binding The binding the spine of which to load.
+	@param swingXMLDocument The Swing document is the ultimate destination of the loaded spine.
+	@param xmlDocumentList	The list to be populated with XML documents.
+	@param baseURIList The list to be populated with base URIs.
+	@param contentTypeList The list to be populated with content types.
+	@exception IOException if there is an error loading any of the documents.
+	*/
+	protected void loadSpine(final Binding binding, final XMLDocument swingXMLDocument, final XMLProcessor xmlProcessor, final List<org.w3c.dom.Document> xmlDocumentList, final List<URI> baseURIList, final List<ContentType> contentTypeList) throws IOException
+	{
+	  final RDFListResource spine=binding.getSpine(); //get the binding's spine
+		if(spine!=null)  //if there is a spine
+		{
+			final int spineItemCount=spine.size(); //find out how many spine items there are
+			for(int i=0; i<spineItemCount; ++i)	//look at each item in the spine
+			{
+//G***del Debug.trace("OEBEditorKit.read() Getting item: "+i+" of "+publication.getSpineList().size());
+				final RDFResource item=spine.get(i);	//get a reference to this item
+				if(item instanceof Binding)	//if this item is a sub-binding
+				{
+					loadSpine((Binding)item, swingXMLDocument, xmlProcessor, xmlDocumentList, baseURIList, contentTypeList);	//load the sub-binding's spine
+				}
+				else	//if this is a normal item
+				{
 					final String itemHRef=XPackageUtilities.getLocationHRef(item);  //get the item's href
 					if(itemHRef!=null)	//if this item has an href
 					{
@@ -235,14 +299,16 @@ System.out.println("Finished with file.");	//G***del
 						try
 						{
 							final URI itemURI=swingXMLDocument.getResourceURI(itemHRef); //get the item's URI
-							final InputStream itemInputStream=swingXMLDocument.getResourceAsInputStream(itemURI); //get an input stream to the object
+							final ContentType contentType=MIMEOntologyUtilities.getMediaType(item);	//get the item's content type
+								//TODO make sure this is an XML content type, and later add support for PDF, Word, text, and the like
+							final InputStream itemInputStream=swingXMLDocument.getInputStream(itemURI); //get an input stream to the object
 							try
 							{
 								final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(itemInputStream, itemURI);	//parse the document
 							  xmlDocument.normalize();  //normalize the document
-								baseURIArray[i]=itemURI;  //store the URI of the item
-								mediaTypeArray[i]=MIMEOntologyUtilities.getMediaType(item);  //store the media type of the item
-								xmlDocumentArray[i]=xmlDocument;	//add the document to our array that we'll pass to the Swing XML document for insertion
+								xmlDocumentList.add(xmlDocument);	//add the document which we'll pass to the Swing XML document for insertion
+								baseURIList.add(itemURI);	//store the URI of the item
+								contentTypeList.add(contentType);  //store the media type of the item
 							}
 							finally
 							{
@@ -255,9 +321,31 @@ System.out.println("Finished with file.");	//G***del
 						}
 					}
 				}
-				setXML(xmlDocumentArray, baseURIArray, mediaTypeArray, swingXMLDocument);  //put all the XML documents we loaded into the Swing XML document
 			}
-	  }
+		}
+	}
+
+	/**Gathers all items in the spine and the spines of any contained bindings.
+	@param binding The binding the spine of which to load.
+	@param itemList The list to be populated with spine items.
+	*/
+	protected void gatherSpineItems(final Binding binding, final List<RDFResource> itemList)
+	{
+	  final RDFListResource spine=binding.getSpine(); //get the binding's spine
+		if(spine!=null)  //if there is a spine
+		{
+			for(final RDFResource item:spine)	//for each item in the spine
+			{
+				if(item instanceof Binding)	//if this item is a sub-binding
+				{
+					gatherSpineItems((Binding)item, itemList);	//gather the sub-binding's spine
+				}
+				else	//if this is a normal item
+				{
+					itemList.add(item);	//add this item to the item list
+				}
+			}
+		}
 	}
 
 }

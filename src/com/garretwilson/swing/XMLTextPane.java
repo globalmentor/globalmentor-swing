@@ -73,7 +73,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 	/**The "application/x-oeb1-package+xml" content type.*/
 	protected final static ContentType OEB_PACKAGE_MEDIA_TYPE=new ContentType(APPLICATION, X_OEB1_PACKAGE_XML_SUBTYPE, null);
 
-	/**The "application/x-oeb-publication+xml+zip" content type.*/
+	/**The "application/x-oeb-publication+zip" content type.*/
 	protected final static ContentType OEB_ZIP_MEDIA_TYPE=new ContentType(APPLICATION, X_OEB_PUBLICATION_ZIP_SUBTYPE, null);
 
 	/**The "application/x-xebook+rdf+xml" content type.*/
@@ -187,39 +187,6 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 			{
 			  paged=newPaged; //update whether we're paged
 				DocumentUtilities.setPaged(getDocument(), paged);  //store the new paged value in the document
-/*G***del when works
-
-						//G***fix the way this sets the paged variable in the XMLEditorKit view factory, because it somehow affects other XMLTextPanes
-				final ViewFactory viewFactory=getEditorKit().getViewFactory();  //get our current view factory
-				if(viewFactory instanceof XMLEditorKit.XMLViewFactory)  //if our new view factory is an XML view factory
-				{
-					((XMLEditorKit.XMLViewFactory)viewFactory).setPaged(isPaged()); //tell the editor kit whether it should be paged
-				}
-*/
-/*G***del when works
-				removeKeymap(PAGED_KEYMAP_NAME);	//make sure the paged key map is not in effect
-				if(newPaged)  //if we should be paged, now
-				{
-					final Keymap pagedKeymap=addKeymap("Paged Keymap", getKeymap()); //create a new keymap for paging G***use a constant, maybe
-					loadKeymap(pagedKeymap, PAGED_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit is changed?
-				}
-*/
-
-/*G***del when works
-					final Keymap keyMap=addKeymap();	//we'll determine the new keymap based upon whether we're now paged
-				if(newPaged)  //if we should be paged, now
-				{
-						//G***maybe setup the keymap elsewhere
-				  keyMap=addKeymap("Paged Keymap", originalKeymap); //create a new keymap for paging G***use a constant, maybe
-						//G***rename DEFAULT_KEY_BINDINGS, perhaps to PAGED_KEY_BINDINGS, after we see what other key bindings are needed
-		  		loadKeymap(pagedKeymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap G***how do our actions get here from the editor kit?
-					setKeymap(pagedKeymap); //switch to our special keymap
-				}
-				else  //if we're not paged
-				{
-					setKeymap(originalKeymap); //switch back to our original keymap
-				}
-*/
 				updateKeymap();	//update the keymap to reflect our new paged condition
 			}
 		}
@@ -551,6 +518,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	public XMLTextPane()
 	{
 		super();	//construct the parent class
+		setEditorKit(getEditorKit());	//TODO why is this needed for loading text documents to edit? this was already done in the parent class! without this line, though, text documents won't be edited
 //G***del when works		originalKeymap=getKeymap();  //get the current key map and store it for future use
 		uriInputStreamable=DefaultURIAccessible.getDefaultURIAccessible();	//start with a default method of getting input streams
 		uriOutputStreamable=DefaultURIAccessible.getDefaultURIAccessible();	//start with a default method of getting output streams
@@ -576,13 +544,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		registerLinkController(XHTMLConstants.XHTML_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML view factory with XHTML elements
 		registerLinkController(OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML link controller with OEB elements
 //G***del; doesn't work		setBackground(Color.white); //G***set to get the background color from the document itself
-//TODO del if not needed		setEditorKit(new XMLEditorKit(this));	//create a new XML editor kit and use it TODO why do we need this if our create default editor kit method already sets the editor kit?
-/*G***del when works
-		final Keymap keymap=getKeymap();  //get the current key map
-		loadKeymap(keymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap G***how do our actions get here from the editor kit?
-*/
 //G***del; maybe delete class		setCaret(new XMLCaret(getCaret()));	//G***testing
-//G***del JDK1.5		addMouseMotionListener(this);	//keep track of mouse movements G***fix; currently used for updating hyperlink on page change
 	}
 
 	/**Searches the view hierarchy for an XMLPagedView, and uses the first one
@@ -695,44 +657,13 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 
 	/* ***JEditorPane methods*** */
 
-	/**Creates and returns the editor kit to use by default. This version returns
-		a com.garretwilson.swing.text.xml.XMLEditorKit
+	/**Creates and returns the editor kit to use by default. This version returns a com.garretwilson.swing.text.BasicStyledEditorKit
 	@return The default editor kit.
 	*/
 	protected EditorKit createDefaultEditorKit()
 	{
 		return new BasicStyledEditorKit(this);	//create an XML editor kit and return it
 	}
-
-	/**Sets the editor kit for handling content. Since an XMLTextPane requires a
-		descendant of XMLEditorKit, an exception will be thrown if this isn't the
-		case.
-	@param kit The editor kit that specifies the desired behavior.
-	@exception IllegalArgumentException Thrown if kit is not a com.garretwilson.swing.text.xml.XMLEditorKit.
-	*/
-/*G***fix when this isn't declared final in JTextPane
-	public final void setEditorKit(EditorKit kit)
-	{
-		if(kit instanceof XMLEditorKit)	//if this is an XMLEditorKit
-			super.setEditorKit(kit);	//set the editor kit normally
-		else	//if this isn't an XMLEditorKit
-			throw new IllegalArgumentException("Must be XMLEditorKit");	//throw an exception indicating the error
-	}
-*/
-//G***it might also be nice to override setEditorKit() and automatically update whether the editor kit should be paged
-
-	/**Gets the current URL being displayed. 
-	If a URL was not specified in the creation of the document, this
-		will return <code>null</code>, and relative URL's will not be resolved.
-	<p>This version knows how to convert a URI to a URL, if a URI is stored in
-		the stream description property.</p>
-	@return The page URL, or <code>null</code> if none.
-	*/
-/*G***del if not needed
-	public URL getPage() {
-			return (URL) getDocument().getProperty(Document.StreamDescriptionProperty);
-	}
-*/
 
 	/**The base URI of the XML, or <code>null</code> if unknown.*/
 	private URI baseURI=null;
