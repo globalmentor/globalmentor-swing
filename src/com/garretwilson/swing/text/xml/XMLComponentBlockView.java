@@ -19,7 +19,7 @@ import com.garretwilson.util.Debug;
 //G***later make a way to free the embedded component, just as we should do with the XMLAbstractComponentView and children
 //G***this could perhaps be generalized even more to an XMLPrefixedComponentView or Something
 */
-public class XMLComponentBlockView extends XMLBlockView implements ViewHidable
+public class XMLComponentBlockView extends XMLBlockView implements ViewHidable	//TODO eventually recode this class using ViewComponentManager
 {
 
 	/**Whether this is the first fragment of the original view.*/

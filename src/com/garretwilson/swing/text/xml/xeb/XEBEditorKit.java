@@ -8,20 +8,43 @@ import javax.mail.internet.ContentType;
 import javax.swing.text.*;
 import javax.swing.text.Document;
 
+import org.w3c.dom.DocumentType;
+import org.w3c.dom.Node;
+import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.css.CSSStyleDeclaration;
+import org.w3c.dom.css.CSSStyleSheet;
+
 import com.garretwilson.io.*;
+import com.garretwilson.model.Resource;
+import com.garretwilson.model.ResourceModel;
+import com.garretwilson.net.URIUtilities;
 import com.garretwilson.rdf.*;
+
+import static com.garretwilson.rdf.RDFUtilities.*;
+import com.garretwilson.rdf.maqro.*;
+import static com.garretwilson.rdf.maqro.MAQROConstants.*;
 import com.garretwilson.rdf.xpackage.*;
 import com.garretwilson.rdf.xeb.*;
 
 import static com.garretwilson.io.ContentTypeConstants.*;
 import static com.garretwilson.rdf.xeb.XEBConstants.*;
-import com.garretwilson.swing.event.*;
-import com.garretwilson.swing.text.xml.*;
-import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
-import com.garretwilson.text.xml.XMLProcessor;
-import com.garretwilson.util.Debug;
 
-import org.w3c.dom.*;
+import com.garretwilson.swing.ListListModel;
+import com.garretwilson.swing.event.*;
+import static com.garretwilson.swing.text.rdf.RDFStyleUtilities.*;
+import com.garretwilson.swing.text.xml.*;
+import com.garretwilson.swing.text.xml.XMLEditorKit.ContentData;
+import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
+import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
+import com.garretwilson.text.xml.XMLDOMImplementation;
+import com.garretwilson.text.xml.XMLProcessor;
+import com.garretwilson.text.xml.XMLUtilities;
+import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants;
+import com.garretwilson.text.xml.stylesheets.css.XMLCSSProcessor;
+import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
+import com.garretwilson.text.xml.xhtml.XHTMLConstants;
+import com.garretwilson.util.Debug;
+import com.garretwilson.util.NameValuePair;
 
 /**An editor kit for an XEB publication.
 @see XMLEditorKit
@@ -33,9 +56,12 @@ public class XEBEditorKit extends XHTMLEditorKit	//TODO eventually go back to de
 	/**The task of reading a document.*/
 	public final static String READ_TASK="READ";
 
-	/**The "text/text/x-oeb1-document" content type.*/
+	/**The "text/x-oeb1-document" content type.*/
 	protected final static ContentType OEB_DOCUMENT_MEDIA_TYPE=new ContentType(TEXT, X_OEB1_DOCUMENT_SUBTYPE, null);
 
+	/**The "application/x-maqro+rdf+xml" content type.*/
+	protected final static ContentType MAQRO_MEDIA_TYPE=new ContentType(APPLICATION, X_MAQRO_RDF_XML_SUBTYPE, null);
+	
 	/**Constructor.
 	@param uriInputStreamable The source of input streams for resources.
 	@exception NullPointerException if the new source of input streams is <code>null</code>.
@@ -223,10 +249,9 @@ Debug.trace(RDFUtilities.toString(rdf));
 				}
 			}
 			final XMLProcessor xmlProcessor=new XMLProcessor(swingXMLDocument.getURIInputStreamable());  //create an XML processor that will use the input stream locator of the document for loading other needed documents
+			final ActivityModelIOKit activityModelIOKit=new ActivityModelIOKit(swingXMLDocument.getURIInputStreamable());	//create an IO kit for reading MAQRO activities
 			final int spineItemCount=itemList.size(); //find out how many spine items there are
-			final org.w3c.dom.Document[] xmlDocumentArray=new org.w3c.dom.Document[spineItemCount]; //create ane an array of OEB XML documents
-			final URI[] baseURIArray=new URI[spineItemCount];  //create an array of URIs
-			final ContentType[] contentTypeArray=new ContentType[spineItemCount];  //create an array of media types
+			final ContentData<?>[] contentDataArray=new ContentData[spineItemCount];	//create an array to hold each content data
 			for(int i=0; i<spineItemCount; ++i)	//look at each item in the spine
 			{
 //G***del Debug.trace("OEBEditorKit.read() Getting item: "+i+" of "+publication.getSpineList().size());
@@ -239,19 +264,32 @@ Debug.trace(RDFUtilities.toString(rdf));
 					{
 						final URI itemURI=swingXMLDocument.getResourceURI(itemHRef); //get the item's URI
 						final ContentType contentType=MIMEOntologyUtilities.getMediaType(item);	//get the item's content type
-							//TODO make sure this is an XML content type, and later add support for PDF, Word, text, and the like
-						final InputStream itemInputStream=swingXMLDocument.getInputStream(itemURI); //get an input stream to the object
-						try
+						if(MAQRO_MEDIA_TYPE.match(contentType))	//if this is a MAQRO activity
 						{
-							final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(itemInputStream, itemURI);	//parse the document
-						  xmlDocument.normalize();  //normalize the document
-							xmlDocumentArray[i]=xmlDocument;	//add the document which we'll pass to the Swing XML document for insertion
-							baseURIArray[i]=itemURI;	//store the URI of the item
-							contentTypeArray[i]=contentType;  //store the media type of the item
+							final InputStream itemInputStream=swingXMLDocument.getInputStream(itemURI); //get an input stream to the object
+							try
+							{
+								final ResourceModel<Activity> activityModel=activityModelIOKit.load(itemInputStream, itemURI);	//load this activity
+								contentDataArray[i]=new ContentData<Activity>(activityModel.getResource(), itemURI, contentType, item);	//create an object representing the MAQRO activity, giving the item as the description
+							}
+							finally
+							{
+								itemInputStream.close();  //always close the input stream to the document
+							}
 						}
-						finally
+						else	//if this is not a MAQRO activity, assume it is a XML document TODO make sure this is an XML content type, and later add support for PDF, Word, text, and the like
 						{
-							itemInputStream.close();  //always close the input stream to the document
+							final InputStream itemInputStream=swingXMLDocument.getInputStream(itemURI); //get an input stream to the object
+							try
+							{
+								final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(itemInputStream, itemURI);	//parse the document
+							  xmlDocument.normalize();  //normalize the document TODO decide if we want to normalize in both places or not
+								contentDataArray[i]=new ContentData<org.w3c.dom.Document>(xmlDocument, itemURI, contentType, item);	//create an object representing the XML document content data, giving the item as the description
+							}
+							finally
+							{
+								itemInputStream.close();  //always close the input stream to the document
+							}
 						}
 					}
 					catch(final IllegalArgumentException illegalArgumentException)	//if we can't get the item's URI
@@ -264,7 +302,7 @@ Debug.trace(RDFUtilities.toString(rdf));
 					throw new IOException("Item in spine missing href.");	//TODO i18n; add support for text content
 				}
 			}
-			setXML(xmlDocumentArray, baseURIArray, contentTypeArray, swingXMLDocument);  //put all the XML documents we loaded into the Swing XML document
+			setXML(contentDataArray, swingXMLDocument);  //put all the data we loaded into the Swing XML document
 	  }
 	}
 
@@ -276,6 +314,7 @@ Debug.trace(RDFUtilities.toString(rdf));
 	@param contentTypeList The list to be populated with content types.
 	@exception IOException if there is an error loading any of the documents.
 	*/
+/*TODO del if not needed
 	protected void loadSpine(final Binding binding, final XMLDocument swingXMLDocument, final XMLProcessor xmlProcessor, final List<org.w3c.dom.Document> xmlDocumentList, final List<URI> baseURIList, final List<ContentType> contentTypeList) throws IOException
 	{
 	  final RDFListResource spine=binding.getSpine(); //get the binding's spine
@@ -324,6 +363,7 @@ Debug.trace(RDFUtilities.toString(rdf));
 			}
 		}
 	}
+*/
 
 	/**Gathers all items in the spine and the spines of any contained bindings.
 	@param binding The binding the spine of which to load.
@@ -346,6 +386,242 @@ Debug.trace(RDFUtilities.toString(rdf));
 				}
 			}
 		}
+	}
+
+	/**Creates an attribute set for the given RDF resource.
+	The attribute set will be given an XML namespace and local name corresponding to the type of the given resource.
+	@param resource The RDF resource.
+	@return An attribute set reflecting the resource.
+	*/
+	protected MutableAttributeSet createAttributeSet(final RDFResource resource, final URI baseURI)
+	{
+		final RDFResource type=getType(resource);	//get the resource type
+		final URI namespaceURI=type!=null ? RDFXMLifier.getNamespaceURI(type) : null;	//get the namespace of the resource
+		final String localName=type!=null ? RDFXMLifier.getLocalName(type) : null;	//get the local name of the resource
+		final MutableAttributeSet attributeSet=namespaceURI!=null && localName!=null	//if we could find both a type namespace and a type local name
+				? createAttributeSet(namespaceURI, localName)	//create an attribute set with the given namespace and local name
+				: new SimpleAttributeSet();	//if type information isn't available, create a new default attribute set for this element
+		setRDFResource(attributeSet, resource);	//store the resource in the attribute set
+		return attributeSet;	//return the attribute set we created
+	}
+
+	/**Appends element spec objects from content data.
+	This implementation adds support for MAQRO activity content data.
+	@param elementSpecList The list of element specs to be inserted into the document.
+	@param contentData The content to be inserted into the document.
+	@param swingXMLDocument The Swing document into which the content will be set.
+	@exception IllegalArgumentException if the given content data is not recognized or is not supported.
+	*/
+	protected void appendElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final ContentData<?> contentData, final XMLDocument swingXMLDocument)
+	{
+		if(contentData.getObject() instanceof Activity)	//if this is a MAQRO activity
+		{
+			appendMAQROActivityElementSpecList(elementSpecList, (ContentData<Activity>)contentData, swingXMLDocument);	//append MAQRO activity content
+		}
+		else	//if we don't recognize this content data
+		{
+			super.appendElementSpecList(elementSpecList, contentData, swingXMLDocument);	//append the content data normally
+		}
+	}
+
+	/**Appends element spec objects from MAQRO activity content data.
+	@param elementSpecList The list of element specs to be inserted into the document.
+	@param contentData The MAQRO activity content to be inserted into the document.
+	@param swingXMLDocument The Swing document into which the content will be set.
+	*/
+	protected void appendMAQROActivityElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final ContentData<? extends Activity> contentData, final XMLDocument swingXMLDocument)
+	{
+		final Activity activity=contentData.getObject();	//get a reference to this activity
+		final URI baseURI=contentData.getBaseURI(); //get a reference to the base URI
+		final ContentType mediaType=contentData.getContentType(); //get a reference to the media type
+/*TODO later fix auto-styling of activity elements
+		final org.w3c.dom.Element xmlDocumentElement=xmlDocument.getDocumentElement();	//get the root of the document
+		final URI publicationBaseURI=swingXMLDocument.getBaseURI();	//get the base URI of the publication TODO do we need to check this for null?
+			//if there is a publication, see if we have a description of this resource in the manifest
+		final RDFResource description=contentData.getDescription();
+			//TODO make sure the stylesheet applier correctly distinguishes between document base URI for internal stylesheets and publication base URI for package-level base URIs
+		final CSSStyleSheet[] stylesheets=getXMLStylesheetApplier().getStylesheets(xmlDocument, baseURI, mediaType, description);	//G***testing
+		for(int i=0; i<stylesheets.length; getXMLStylesheetApplier().applyStyleSheet(stylesheets[i++], xmlDocumentElement));	//G***testing
+			//TODO make sure stylesheets get applied later, too, in our Swing stylesheet application routine
+		getXMLStylesheetApplier().applyLocalStyles(xmlDocumentElement);	//apply local styles to the document TODO why don't we create one routine to do all of this?
+*/
+		final MutableAttributeSet activityAttributeSet=appendElementSpecList(elementSpecList, activity, baseURI);	//append the activity
+		if(baseURI!=null) //if there is a base URI
+		{
+			XMLStyleUtilities.setBaseURI(activityAttributeSet, baseURI); //add the base URI as an attribute
+			XMLStyleUtilities.setTargetURI(activityAttributeSet, baseURI);  //because this element is the root of the document, its base URI acts as a linking target as well; store the target URI for quick searching
+		}
+		if(mediaType!=null) //if there is a media type
+		{
+			XMLStyleUtilities.setMediaType(activityAttributeSet, mediaType); //add the media type as an attribute
+		}
+	}
+
+	/**Appends information from a MAQRO activity to a list of element specs.
+	@param elementSpecList The list of element specs to be inserted into the document.
+	@param activity The MAQRO activity.
+	@param baseURI The base URI of the RDF data model.
+	@return The attribute set used to represent the resource.
+	@exception BadLocationException for an invalid starting offset
+	*/
+	protected MutableAttributeSet appendElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final Activity activity, final URI baseURI)
+	{
+		final MutableAttributeSet attributeSet=createAttributeSet(activity, baseURI);	//create and fill an attribute set based upon the RDF resource
+
+		try	//TODO fix this hack to load styles automatically based upon the namespace
+		{
+			final CSSStyleDeclaration cssStyle=XMLCSSProcessor.parseRuleSet("display:block;");	//create a CSS style for the attribute set
+			XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, cssStyle);	//store the constructed CSS style in the attribute set			
+		}
+		catch(final IOException ioException)  //if we have any errors reading the style
+		{
+		  Debug.warn(ioException);	//warn that we don't understand the style
+		}
+		
+		elementSpecList.add(new DefaultStyledDocument.ElementSpec(attributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a Swing element to model this resource
+		final List<RDFResource> interactions=activity.getInteractions();	//get the activity interactions
+		if(interactions!=null)	//if there are choices
+		{
+			for(final RDFResource interaction:interactions)	//for each interaction
+			{
+				if(interaction instanceof Question)	//if this interaction is a question
+				{
+					appendElementSpecList(elementSpecList, (Question)interaction, baseURI);	//append element specs for the interaction
+				}
+				else
+				{
+					throw new IllegalArgumentException("Non-question interaction not supported");
+				}
+			}
+		}
+		else
+		{
+			throw new IllegalArgumentException("Activity without interactions not supported");
+		}
+//G***fix if(!"null".equals(xmlElement.getLocalName()))	//G***testing
+		elementSpecList.add(new DefaultStyledDocument.ElementSpec(attributeSet, DefaultStyledDocument.ElementSpec.EndTagType));	//finish the element we started at the beginning of this function
+		return attributeSet;  //return the attribute set used for the element
+	}
+
+	/**Appends information from a MAQRO question to a list of element specs.
+	The children of the element will be any choices the question may have.
+	@param elementSpecList The list of element specs to be inserted into the document.
+	@param question The MAQRO question.
+	@param baseURI The base URI of the RDF data model.
+	@return The attribute set used to represent the resource.
+	@exception BadLocationException for an invalid starting offset
+	*/
+	protected MutableAttributeSet appendElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final Question question, final URI baseURI)
+	{
+		final MutableAttributeSet attributeSet=createAttributeSet(question, baseURI);	//create and fill an attribute set based upon the RDF resource
+
+		try	//TODO fix this hack to load styles automatically based upon the namespace
+		{
+			final CSSStyleDeclaration cssStyle=XMLCSSProcessor.parseRuleSet("display:list-item;margin-left: 2em;list-style-type: decimal;");	//create a CSS style for the attribute set
+			XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, cssStyle);	//store the constructed CSS style in the attribute set			
+		}
+		catch(final IOException ioException)  //if we have any errors reading the style
+		{
+		  Debug.warn(ioException);	//warn that we don't understand the style
+		}
+		
+		elementSpecList.add(new DefaultStyledDocument.ElementSpec(attributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a Swing element to model this resource
+		final Dialogue query=question.getQuery();	//get the question query
+		if(query!=null)	//if the question has a query
+		{
+			appendElementSpecList(elementSpecList, query, baseURI);	//append element specs for the query dialogue
+		}
+		final List<RDFResource> choices=question.getChoices();	//get the question choices
+		if(choices!=null)	//if there are choices
+		{
+
+			
+
+			final MutableAttributeSet choicesAttributeSet=createAttributeSet(MAQRO_NAMESPACE_URI, CHOICES_PROPERTY_NAME);	//create and fill an attribute set for the choices property
+			
+			try	//TODO fix this hack to load styles automatically based upon the namespace
+			{
+				final CSSStyleDeclaration cssStyle=XMLCSSProcessor.parseRuleSet("display:block;");	//create a CSS style for the attribute set
+				XMLCSSStyleUtilities.setXMLCSSStyle(choicesAttributeSet, cssStyle);	//store the constructed CSS style in the attribute set			
+			}
+			catch(final IOException ioException)  //if we have any errors reading the style
+			{
+			  Debug.warn(ioException);	//warn that we don't understand the style
+			}
+			
+			elementSpecList.add(new DefaultStyledDocument.ElementSpec(choicesAttributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a Swing element to model this resource
+			for(final RDFResource choice:choices)	//for each choice
+			{
+				if(choice instanceof Dialogue)	//if this choice is dialogue
+				{
+					final MutableAttributeSet choiceAttributeSet=appendElementSpecList(elementSpecList, (Dialogue)choice, baseURI);	//append element specs for the dialogue
+					
+					try	//TODO fix this hack to load styles automatically based upon the namespace
+					{
+						final CSSStyleDeclaration cssStyle=XMLCSSProcessor.parseRuleSet("display:block;margin-left: 2em;");	//create a CSS style for the attribute set
+						XMLCSSStyleUtilities.setXMLCSSStyle(choiceAttributeSet, cssStyle);	//store the constructed CSS style in the attribute set			
+					}
+					catch(final IOException ioException)  //if we have any errors reading the style
+					{
+					  Debug.warn(ioException);	//warn that we don't understand the style
+					}
+				}
+				else
+				{
+					throw new IllegalArgumentException("Non-dialogue choices not supported");
+				}
+			}
+			elementSpecList.add(new DefaultStyledDocument.ElementSpec(choicesAttributeSet, DefaultStyledDocument.ElementSpec.EndTagType));	//finish the element we started at the beginning of this function
+			
+		}
+		else
+		{
+			throw new IllegalArgumentException("Questions without choices not supported");
+		}
+		elementSpecList.add(new DefaultStyledDocument.ElementSpec(attributeSet, DefaultStyledDocument.ElementSpec.EndTagType));	//finish the element we started at the beginning of this function
+		return attributeSet;  //return the attribute set used for the element
+	}
+
+	/**Appends information from MAQRO dialogue to a list of element specs.
+	The child element will be the literal value of the dialogue.
+	@param elementSpecList The list of element specs to be inserted into the document.
+	@param dialogue The MAQRO dialogue.
+	@param baseURI The base URI of the RDF data model.
+	@return The attribute set used to represent the resource.
+	@exception BadLocationException for an invalid starting offset
+	*/
+	protected MutableAttributeSet appendElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final Dialogue dialogue, final URI baseURI)
+	{
+		final MutableAttributeSet attributeSet=createAttributeSet(dialogue, baseURI);	//create and fill an attribute set based upon the RDF resource
+
+		try	//TODO fix this hack to load styles automatically based upon the namespace
+		{
+			final CSSStyleDeclaration cssStyle=XMLCSSProcessor.parseRuleSet("display:block;");	//create a CSS style for the attribute set
+			XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, cssStyle);	//store the constructed CSS style in the attribute set			
+		}
+		catch(final IOException ioException)  //if we have any errors reading the style
+		{
+		  Debug.warn(ioException);	//warn that we don't understand the style
+		}
+		
+		elementSpecList.add(new DefaultStyledDocument.ElementSpec(attributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a Swing element to model this resource
+		final RDFLiteral dialogueValue=dialogue.getValue();	//get the value of this dialogue
+		if(dialogueValue instanceof RDFPlainLiteral)	//if the dialogue is a plain literal
+		{
+			final String text=dialogueValue!=null ? dialogueValue.getLexicalForm() : "X";	//TODO use an object replacement character
+			appendElementSpecListContent(elementSpecList, null, null, baseURI, text);	//append the dialogue literal text
+		}
+		else if(dialogueValue instanceof RDFXMLLiteral)	//if the dialogue is an XML literal
+		{
+			final RDFXMLLiteral xmlLiteralDialogueValue=(RDFXMLLiteral)dialogueValue;
+			appendElementSpecListContent(elementSpecList, xmlLiteralDialogueValue.getDocumentFragment(), attributeSet, baseURI);	//
+		}
+		else	//if we don't understand the type of dialogue value given (i.e. it's not a plain literal or an XML literal)
+		{
+			throw new IllegalArgumentException("Unknown dialogue literal type for "+dialogueValue);
+		}
+		elementSpecList.add(new DefaultStyledDocument.ElementSpec(attributeSet, DefaultStyledDocument.ElementSpec.EndTagType));	//finish the element we started at the beginning of this function
+		return attributeSet;  //return the attribute set used for the element
 	}
 
 }

@@ -6,16 +6,20 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.MutableAttributeSet;
 import org.w3c.dom.css.*;
 
-import com.garretwilson.swing.text.xml.XMLStyleUtilities;
+import static com.garretwilson.swing.text.StyleUtilities.*;
+import static com.garretwilson.swing.text.xml.XMLStyleConstants.*;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSPrimitiveValue;  //G***remove all these and use the DOM
+import static com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants.*;
+import static com.garretwilson.swing.text.xml.css.XMLCSSStyleConstants.*;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSValueList;
+
 import com.garretwilson.util.Debug;
 
 /**A collection of utilities used for rendering XML using CSS in Swing.
 @author Garret Wilson
 */
-public class XMLCSSStyleUtilities extends XMLStyleUtilities implements XMLCSSStyleConstants
+public class XMLCSSStyleUtilities
 {
 
 	/**Gets the XML CSS style declaration the Swing attributes represent. The
@@ -25,7 +29,7 @@ public class XMLCSSStyleUtilities extends XMLStyleUtilities implements XMLCSSSty
 	*/
 	public static CSSStyleDeclaration getXMLCSSStyle(AttributeSet a)
 	{
-		return (CSSStyleDeclaration)getDefinedAttribute(a, XMLCSSStyleAttributeName);	//get the attribute
+		return (CSSStyleDeclaration)getDefinedAttribute(a, XML_CSS_STYLE_ATTRIBUTE_NAME);	//get the attribute
 	}
 
 	/**Sets the XML CSS style declaration map.
@@ -34,7 +38,7 @@ public class XMLCSSStyleUtilities extends XMLStyleUtilities implements XMLCSSSty
 	*/
 	public static void setXMLCSSStyle(final MutableAttributeSet a, final CSSStyleDeclaration cssStyle)
 	{
-		a.addAttribute(XMLCSSStyleAttributeName, cssStyle);	//add the attribute to the attribute set
+		a.addAttribute(XML_CSS_STYLE_ATTRIBUTE_NAME, cssStyle);	//add the attribute to the attribute set
 	}
 
 	/**Gets the CSS value object or a particular CSS property.

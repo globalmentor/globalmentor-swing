@@ -169,7 +169,7 @@ public class XMLCSSStyleContext extends StyleContext
 				size-=2;	//reduce the font size by two
 		*/
 		size*=zoomFactor;	//increase the font size by the specified amout
-Debug.trace("new size", size);
+//TODO del Debug.trace("new size", size);
 		return getFont(family, style, Math.round(size));	//get the font based upon the specifications we just got from attribute set
 	}
 

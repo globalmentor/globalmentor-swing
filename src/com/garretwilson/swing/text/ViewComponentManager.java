@@ -2,6 +2,7 @@ package com.garretwilson.swing.text;
 
 import java.awt.*;
 import java.util.*;
+import static java.util.Collections.*;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import javax.swing.text.*;
@@ -23,13 +24,49 @@ import com.garretwilson.util.Debug;
 public class ViewComponentManager //G***finish the class comments with examples of usage
 {
 
+	/**A designation of a border position.*/
+	public enum Border
+	{
+		/**The top position.*/
+		NORTH,
+		/**The bottom position.*/
+		SOUTH,
+		/**The right position.*/
+		EAST,
+		/**The left position.*/
+		WEST,
+		/**The center position.*/
+		CENTER,
+		/**Before the first line of the layout's content; for left-to-right, top-to-bottom orientation, equivalient to <code>NORTH</code>.*/
+		PAGE_START,
+		/**After the first line of the layout's content; for left-to-right, top-to-bottom orientation, equivalient to <code>SOUTH</code>.*/
+		PAGE_END,
+		/**Beginning of the line direction for the layout; for left-to-right, top-to-bottom orientation, equivalient to <code>WEST</code>.*/
+		LINE_START,
+		/**End of the line direction for the layout; for left-to-right, top-to-bottom orientation, equivalient to <code>EAST</code>.*/
+		LINE_END;
+		
+	}
+
 	/**The view for which components will be managed.*/
 	protected final View view;
 
 	/**The map of component information, each keyed to a component being managed.
 	@see #ComponentInfo
 	*/
-	protected final Map componentInfoMap=new HashMap();
+	protected final Map<Component, ComponentInfo> componentInfoMap=new HashMap<Component, ComponentInfo>();
+
+	/**@return A read-only set of components managed by this object.*/ 
+	public Set<Component> getComponents()
+	{
+		return unmodifiableSet(componentInfoMap.keySet());	//return a read-only set of components
+	}
+
+	/**@return A read-only collection of component information managed by this object.*/ 
+	public Collection<ComponentInfo> getComponentInfos()
+	{
+		return unmodifiableCollection(componentInfoMap.values());	//return a read-only set of component information
+	}
 
 		/**Retrieves the component information for a specific component.
 		@param component The component for which information should be retrieved.
@@ -39,7 +76,7 @@ public class ViewComponentManager //G***finish the class comments with examples 
 /*G***del if not needed
 		protected ComponentInfo getComponentInfo(final Component component)
 		{
-			return (ComponentInfo)componentInfoMap.get(component); //get the component information for the component
+			return componentInfoMap.get(component); //get the component information for the component
 		}
 */
 
@@ -104,7 +141,7 @@ public class ViewComponentManager //G***finish the class comments with examples 
 	*/
 	public synchronized void add(final Component component)
 	{
-		add(component, new ComponentInfo()); //add the component with default component info
+		add(new ComponentInfo(component)); //add the component with default component info
 	}
 
 	/**Adds a component to be managed, along with its location, which will also
@@ -117,7 +154,7 @@ public class ViewComponentManager //G***finish the class comments with examples 
 	*/
 	public synchronized void add(final Component component, final int x, final int y)
 	{
-		add(component, new ComponentInfo(x, y)); //add the component with its component info
+		add(new ComponentInfo(component, x, y)); //add the component with its component info
 	}
 
 	/**Adds a component to be managed, along with its location, which will also
@@ -145,7 +182,7 @@ public class ViewComponentManager //G***finish the class comments with examples 
 	{
 		add(component, location.x, location.y, centered); //add the component with the location information
 	}
-
+	
 	/**Adds a component to be managed, along with its location, which will also
 		be managed. The component is specified as centered or not centered around
 		the location.
@@ -159,9 +196,8 @@ public class ViewComponentManager //G***finish the class comments with examples 
 	*/
 	public synchronized void add(final Component component, final int x, final int y, final boolean centered)
 	{
-		add(component, new ComponentInfo(x, y, centered)); //add the component with its component info
+		add(new ComponentInfo(component, x, y, centered)); //add the component with its component info
 	}
-
 	/**Adds a component to be managed, along with its location and size, which
 		will also be managed.
 		The component location and size will automatically be scaled when the view
@@ -174,7 +210,7 @@ public class ViewComponentManager //G***finish the class comments with examples 
 	*/
 	public synchronized void add(final Component component, final int x, final int y, final int width, final int height)
 	{
-		add(component, new ComponentInfo(x, y, width, height)); //add the component with its component info
+		add(new ComponentInfo(component, x, y, width, height)); //add the component with its component info
 	}
 
 	/**Adds a component to be managed, along with its location and size, which
@@ -191,6 +227,18 @@ public class ViewComponentManager //G***finish the class comments with examples 
 	}
 
 	/**Adds a component to be managed, along with its location and size, which
+		will also be managed.
+		The component location and size will automatically be scaled when the view
+		size changes, provided the manager is notified of the size change.
+	@param component The component to be managed.
+	@param rectangle The location and size of the component, relative to the view.
+	*/
+	public synchronized void add(final Component component, final Rectangle rectangle)
+	{
+		add(component, rectangle.x, rectangle.y, rectangle.width, rectangle.height); //add the component with its location and size information
+	}
+
+	/**Adds a component to be managed, along with its location and size, which
 		will also be managed. The component is specified as centered or not centered
 		around the location.
 		The component location and size will automatically be scaled when the view
@@ -204,19 +252,7 @@ public class ViewComponentManager //G***finish the class comments with examples 
 	{
 		add(component, location.x, location.y, size.width, size.height, centered); //add the component with its location and size information
 	}
-
-	/**Adds a component to be managed, along with its location and size, which
-		will also be managed.
-		The component location and size will automatically be scaled when the view
-		size changes, provided the manager is notified of the size change.
-	@param component The component to be managed.
-	@param rectangle The location and size of the component, relative to the view.
-	*/
-	public synchronized void add(final Component component, final Rectangle rectangle)
-	{
-		add(component, rectangle.x, rectangle.y, rectangle.width, rectangle.height); //add the component with its location and size information
-	}
-
+	
 	/**Adds a component to be managed, along with its location and size, which
 		will also be managed. The component is specified as centered or not
 		centered around the location.
@@ -229,24 +265,58 @@ public class ViewComponentManager //G***finish the class comments with examples 
 	@param height The height of the component, relative to the view width.
 	@param centered Whether the component should be centered at its location.
 	*/
-	public synchronized void add(final Component component, final int x, final int y, final int width, final int height, final boolean centered)  //G***does this constructor even make sense?
+	public synchronized void add(final Component component, final int x, final int y, final int width, final int height, final boolean centered)
 	{
-		add(component, new ComponentInfo(x, y, width, height, centered)); //add the component with its component info
+		add(new ComponentInfo(component, x, y, width, height, centered)); //add the component with its component info
 	}
 
-	/**Adds a component to be managed, along with its associated component
-		information.
-		Sets the component's visibility based upon the current showing status.
+	/**Adds a component to be managed, along with a border position.
 	@param component The component to be managed.
-	@param componentInfo The information about the component, which will be
-		managed as well
+	@param border The optional border of the component, which overrides its position, or <code>null</code> for no border position.
 	*/
-	protected synchronized void add(final Component component, final ComponentInfo componentInfo)
+	public synchronized void add(final Component component, final Border border)
 	{
+		add(new ComponentInfo(component, border)); //add the component with its border information
+	}
+
+	/**Adds a component to be managed, along with its size, which
+		will also be managed. The border position is also specified.
+		The component location and size will automatically be scaled when the view
+		size changes, provided the manager is notified of the size change.
+	@param component The component to be managed.
+	@param size The size of the component, relative to the view size.
+	@param border The optional border of the component, which overrides its position, or <code>null</code> for no border position.
+	*/
+	public synchronized void add(final Component component, final Dimension size, final Border border)
+	{
+		add(component, size.width, size.height, border); //add the component with its size and border information
+	}
+
+	/**Adds a component to be managed, along with its size, which
+		will also be managed. The border position is also specified.
+		The component location and size will automatically be scaled when the view
+		size changes, provided the manager is notified of the size change.
+	@param component The component to be managed.
+	@param width The width of the component, relative to the view width.
+	@param height The height of the component, relative to the view width.
+	@param border The optional border of the component, which overrides its position, or <code>null</code> for no border position.
+	*/
+	public synchronized void add(final Component component, final int width, final int height, final Border border)
+	{
+		add(new ComponentInfo(component, width, height, border)); //add the component with its component info
+	}
+
+	/**Adds a component to be managed, along with its associated component information.
+		Sets the component's visibility based upon the current showing status.
+	@param componentInfo The information about the component, which will be managed as well
+	*/
+	public synchronized void add(final ComponentInfo componentInfo)
+	{
+		final Component component=componentInfo.getComponent();	//get the component to be managed
 		componentInfoMap.put(component, componentInfo); //store the information in the component information map, keyed to the component we're managing
 		component.setSize(component.getPreferredSize());  //set the component's size to whatever it prefers
 		component.validate(); //tell the component to validate itself, laying out its child components if needed
-		updateComponentScaledPosition(component, componentInfo); //update the component's scaled location and size
+		updateComponentScaledPosition(componentInfo); //update the component's scaled location and size
 		setShowing(component, showing); //show or hide the component appropriately
 	}
 
@@ -264,10 +334,8 @@ Debug.trace("set showing, new: ", new Boolean(newShowing)); //G***del
 Debug.traceStack(); //G***del
 */
 		showing=newShowing; //update our showing status
-		final Iterator componentIterator=componentInfoMap.keySet().iterator();  //get an iterator to look through the components
-		while(componentIterator.hasNext())  //while there are more components
+		for(final Component component:getComponents())  //for each component
 		{
-		  final Component component=(Component)componentIterator.next();  //get the next component
 		  setShowing(component, newShowing);  //show or hide this component
 		}
 	}
@@ -313,12 +381,25 @@ Debug.traceStack(); //G***del
 
 	/**Indicates the view size is changing, and modifies the locations of all
 		components appropriately that have registered a location relative to the
+		absolute view size.
+	This version sets the full size to match the scaled size.
+	@param newScaledWidth The current scaled width (>=0).
+	@param newScaledHeight The current scaled height (>=0).
+	@see #setSize(float, float, float, float)
+	*/
+	public void setSize(final float newScaledWidth, final float newScaledHeight)
+	{
+		setSize(newScaledWidth, newScaledHeight, newScaledWidth, newScaledHeight);	//use the same full and scaled size
+	}
+
+	/**Indicates the view size is changing, and modifies the locations of all
+		components appropriately that have registered a location relative to the
 		absolute view size. The absolute size of the view must first have been set.
 	@param newFullWidth The unscaled width (>=0).
 	@param newFullHeight The unscaled height (>=0).
 	@param newScaledWidth The current scaled width (>=0).
 	@param newScaledHeight The current scaled height (>=0).
-	@see updateComponentScaledPositions
+	@see #updateComponentScaledPositions()
 	*/
 	public void setSize(final float newFullWidth, final float newFullHeight, final float newScaledWidth, final float newScaledHeight)
 	{
@@ -345,8 +426,7 @@ Debug.traceStack(); //G***del
 	}
 
 
-	/**Updates the allocation given to the view. , which in turn updates the
-view location.
+	/**Updates the allocation given to the view, which in turn updates the view location.
 		All components the locations of which are managed are updated so that their
 		locations are correctly scaled relative to the scaled size of the view.
 		The size of the allocation is ignored.
@@ -387,13 +467,9 @@ view location.
 		//if we have valid values for everything
 		if(fullWidth>0 && fullHeight>0 && scaledWidth>0 && scaledHeight>0)
 		{
-		  final Iterator componentEntryIterator=componentInfoMap.entrySet().iterator(); //get an iterator to look through the component entries
-			while(componentEntryIterator.hasNext())  //while there are more component entries
+			for(final ComponentInfo componentInfo:getComponentInfos())	//for each component information
 			{
-				final Map.Entry componentEntry=(Map.Entry)componentEntryIterator.next(); //get the next component entry
-				final Component component=(Component)componentEntry.getKey(); //get the component
-				final ComponentInfo componentInfo=(ComponentInfo)componentEntry.getValue(); //get the associated component information
-				updateComponentScaledPosition(component, componentInfo); //update this component's scaled location and size
+				updateComponentScaledPosition(componentInfo); //update this component's scaled location and size
 			}
 		}
 	}
@@ -401,33 +477,74 @@ view location.
 	/**Updates the scaled location of given component, if the manager is keeping
 		track of that component's location.
 		The component's absolute location is also updated.
-	@param component The component the location of which should be updated
-		relative to the current size of the scaled view.
-	@param componentInfo The component information that contains the scaled
-		location information.
+	@param componentInfo The component information that contains the scaled location information.
 	@see #updateComponentPosition
 	*/
-	protected void updateComponentScaledPosition(final Component component, final ComponentInfo componentInfo)
+	protected void updateComponentScaledPosition(final ComponentInfo componentInfo)
 	{
 		if(componentInfo!=null) //if we have valid component information
 		{
-			final Point location=componentInfo.getLocation(); //get the relative location of this component, if we have it
-			if(location!=null)  //if we have a preferred location for this component
+			final Dimension relativeSize=componentInfo.getSize(); //get the relative size of this component, if we have it
+			final Dimension actualSize;	//we'll determine the current display size, which will be the scaled size or the actual size if there is no scaled size
+			if(relativeSize!=null)  //if we have a preferred size for this component
 			{
-				final Point scaledLocation=new Point(location); //create a new scaled location based on the preferred location
-				scaledLocation.x=Math.round(scaledLocation.x*xMultiplier);  //scale the position horizontally
-				scaledLocation.y=Math.round(scaledLocation.y*yMultiplier);  //scale the position vertically
-				componentInfo.setScaledLocation(scaledLocation);  //store the scaled location
-				final Dimension size=componentInfo.getSize(); //get the relative size of this component, if we have it
-				if(size!=null)  //if we have a preferred size for this component
-				{
-					final Dimension scaledSize=new Dimension(size); //create a new scaled size based on the preferred location
-					scaledSize.width=Math.round(scaledSize.width*xMultiplier);  //scale the size horizontally
-					scaledSize.height=Math.round(scaledSize.height*yMultiplier);  //scale the size vertically
-					componentInfo.setScaledSize(scaledSize);  //store the scaled size
-				}
-				updateComponentPosition(component, componentInfo); //update the component's absolute location and size
+				actualSize=new Dimension(relativeSize); //create a new scaled size based on the preferred location
+				actualSize.width=Math.round(actualSize.width*xMultiplier);  //scale the size horizontally
+				actualSize.height=Math.round(actualSize.height*yMultiplier);  //scale the size vertically
+				componentInfo.setScaledSize(actualSize);  //store the scaled size
 			}
+			else	//if we don't have a preferred size for the component
+			{
+				actualSize=componentInfo.getComponent().getSize();	//just use the size of the component
+			}
+			final Border border=componentInfo.getBorder();	//see if there is a border specified
+			if(border!=null)	//if a border position is specified
+			{
+				final int width=actualSize.width;	//get the actual width and height
+				final int height=actualSize.height;	
+				final int x, y;	//determine the coordinates of the component
+				switch(border)	//see which border is specified
+				{
+					case NORTH:
+					case PAGE_START:	//TODO i81n
+						x=Math.round((scaledWidth-width)/2);	//center the component horizontally
+						y=0;	//place the component at the top
+						break;
+					case SOUTH:
+					case PAGE_END:	//TODO i81n
+						x=Math.round((scaledWidth-width)/2);	//center the component horizontally
+						y=Math.round(scaledHeight-height);	//place the component at the bottom
+						break;
+					case WEST:
+					case LINE_START:	//TODO i81n
+						x=0;	//place the component on the left
+						y=Math.round((scaledHeight-height)/2);	//center the component vertically TODO decide if we want to move this up or down
+						break;
+					case EAST:
+					case LINE_END:	//TODO i81n
+						x=Math.round(scaledWidth-width);	//place the component on the right
+						y=Math.round((scaledHeight-height)/2);	//center the component vertically TODO decide if we want to move this up or down
+						break;
+					case CENTER:
+						x=Math.round((scaledWidth-width)/2);	//center the component horizontally
+						y=Math.round((scaledHeight-height)/2);	//center the component vertically
+					default:	//we should have covered all the options
+						throw new AssertionError("Unknown border position "+border);
+				}
+				componentInfo.setScaledLocation(new Point(x, y));  //store the scaled location
+			}
+			else	//if no border position is specified
+			{
+				final Point location=componentInfo.getLocation(); //get the relative location of this component, if we have it
+				if(location!=null)  //if we have a preferred location for this component
+				{
+					final Point scaledLocation=new Point(location); //create a new scaled location based on the preferred location
+					scaledLocation.x=Math.round(scaledLocation.x*xMultiplier);  //scale the position horizontally
+					scaledLocation.y=Math.round(scaledLocation.y*yMultiplier);  //scale the position vertically
+					componentInfo.setScaledLocation(scaledLocation);  //store the scaled location
+				}
+			}
+			updateComponentPosition(componentInfo); //update the component's absolute location and size
 		}
 	}
 
@@ -440,28 +557,22 @@ view location.
 		//if we have valid values for everything
 		if(fullWidth>0 && fullHeight>0 && scaledWidth>0 && scaledHeight>0)
 		{
-		  final Iterator componentEntryIterator=componentInfoMap.entrySet().iterator(); //get an iterator to look through the component entries
-			while(componentEntryIterator.hasNext())  //while there are more component entries
+			for(final ComponentInfo componentInfo:getComponentInfos())	//for each component information
 			{
-				final Map.Entry componentEntry=(Map.Entry)componentEntryIterator.next(); //get the next component entry
-				final Component component=(Component)componentEntry.getKey(); //get the component
-				final ComponentInfo componentInfo=(ComponentInfo)componentEntry.getValue(); //get the associated component information
-				updateComponentPosition(component, componentInfo); //update this component's absolute location
+				updateComponentPosition(componentInfo); //update this component's absolute location
 			}
 		}
 	}
 
 	/**Updates the absolute location of given component, if the manager is keeping
 		track of that component's location.
-	@param component The component the location of which should be updated
-		relative to the current size of the scaled view.
-	@param componentInfo The component information that contains the scaled
-		location information.
+	@param componentInfo The component information that contains the scaled location information.
 	*/
-	protected void updateComponentPosition(final Component component, final ComponentInfo componentInfo)
+	protected void updateComponentPosition(ComponentInfo componentInfo)
 	{
-		if(componentInfo!=null) //if we have valid component information
+		if(componentInfo!=null) //if we have valid component information TODO is this test needed anymore?
 		{
+			final Component component=componentInfo.getComponent();	//get the component being managed
 			final Point scaledLocation=componentInfo.getScaledLocation();  //get the scaled location of this component, if we have it
 			if(scaledLocation!=null)  //if we have a scaled location for this component
 			{
@@ -469,7 +580,7 @@ view location.
 				{
 					int x=location.x+scaledLocation.x;  //offset the component from the horizontal view origin
 					int y=location.y+scaledLocation.y;  //offset the component from the vertial view origin
-					if(componentInfo.isCentered())  //if we should center the component
+					if(componentInfo.isCentered())  //if we should center the component at the location
 					{
 						x-=component.getWidth()/2;  //center the component horizontally
 						y-=component.getHeight()/2;  //center the component vertically
@@ -501,8 +612,13 @@ view location.
 	}
 
 	/**The class which encapsulates information about a component being managed.*/
-	protected static class ComponentInfo
+	public static class ComponentInfo implements Cloneable
 	{
+		/**The component being managed.*/
+		private final Component component;
+
+			/**@return The component being managed.*/
+			public Component getComponent() {return component;}
 
 		/**The preferred location of the component relative to the original size of
 		  the view, or <code>null</code> if the location isn't available.*/
@@ -525,9 +641,9 @@ view location.
 				relative to the scaled size of the view, or <code>null</code> if the
 				scaled location isn't available.
 		  */
-			public void setScaledLocation(final Point newScaledLocation) {scaledLocation=newScaledLocation;}
+			protected void setScaledLocation(final Point newScaledLocation) {scaledLocation=newScaledLocation;}
 
-	/**The preferred size of the component relative to the original size of
+		/**The preferred size of the component relative to the original size of
 		  the view, or <code>null</code> if the size isn't available.*/
 		private Dimension size=null;
 
@@ -548,63 +664,116 @@ view location.
 				relative to the scaled size of the view, or <code>null</code> if the
 				scaled size isn't available.
 		  */
-			public void setScaledSize(final Dimension newScaledSize) {scaledSize=newScaledSize;}
+			protected void setScaledSize(final Dimension newScaledSize) {scaledSize=newScaledSize;}
+
+		/**The optional border of the component, which overrides its position, or <code>null</code> for no border position.*/
+		private final Border border;
+			
+			/**@erturn The optional border of the component, which overrides its position, or <code>null</code> for no border position.*/
+			public Border getBorder() {return border;}
 
 		/**Whether the component should be centered at its location.*/
-		private boolean centered=false;
+		private final boolean centered;
 
 			/**@return Whether the component should be centered at its location.*/
 			public boolean isCentered() {return centered;}
 
-		/**Default constructor.*/
-		public ComponentInfo()
+		/**Component constructor.
+		@param component The component being managed.
+		*/
+		public ComponentInfo(final Component component)
 		{
+			this.component=component;	//save the component
+			border=null;	//show that there is no border specified
+			centered=false;	//show that the component is not centered
 		}
 
 		/**Position constructor.
+		@param component The component being managed.
 		@param x The horizontal position of the component, relative to the view.
 		@param y The vertical position of the component, relative to the view.
 		*/
-		public ComponentInfo(final int x, final int y)
+		public ComponentInfo(final Component component, final int x, final int y)
 		{
-			this(x, y, false);  //do the default constructing, not centering the component
+			this(component, x, y, false);  //do the default constructing, not centering the component
 		}
 
-		/**Position constructor that accepts whether the component wants to be
-		  centered.
+		/**Position constructor that accepts whether the component wants to be centered.
+		@param component The component being managed.
 		@param x The horizontal position of the component, relative to the view.
 		@param y The vertical position of the component, relative to the view.
 		@param newCentered Whether the component should be centered at its location.
 		*/
-		public ComponentInfo(final int x, final int y, final boolean newCentered)
+		public ComponentInfo(final Component component, final int x, final int y, final boolean newCentered)
 		{
+			this.component=component;	//save the component
 			location=new Point(x, y); //store the component's preferred location
 			centered=newCentered; //store the centering status
+			border=null;	//show that no border position is specified
 		}
 
-		/**Position and size constructor that accepts whether the component wants
-		  to be centered.
+		/**Position and size constructor that accepts whether the component wants to be centered.
+		@param component The component being managed.
 		@param x The horizontal position of the component, relative to the view.
 		@param y The vertical position of the component, relative to the view.
 		@param width The width of the component, relative to the view width.
 		@param height The height of the component, relative to the view width.
 		@param newCentered Whether the component should be centered at its location.
 		*/
-		public ComponentInfo(final int x, final int y, final int width, final int height, final boolean newCentered)  //G***does this constructor even make sense?
+		public ComponentInfo(final Component component, final int x, final int y, final int width, final int height, final boolean newCentered)
 		{
-			this(x, y, newCentered);  //do the default location construction
+			this(component, x, y, newCentered);  //do the default location construction
 			size=new Dimension(width, height);  //store the component's preferred size
 		}
 
 		/**Position and size constructor.
+		@param component The component being managed.
 		@param x The horizontal position of the component, relative to the view.
 		@param y The vertical position of the component, relative to the view.
 		@param width The width of the component, relative to the view width.
 		@param height The height of the component, relative to the view width.
 		*/
-		public ComponentInfo(final int x, final int y, final int width, final int height)
+		public ComponentInfo(final Component component, final int x, final int y, final int width, final int height)
 		{
-			this(x, y, width, height, false);  //do the default construction, not centering the component
+			this(component, x, y, width, height, false);  //do the default construction, not centering the component
+		}
+
+		/**Position constructor that accepts a border position.
+		@param component The component being managed.
+		@param border The optional border of the component, which overrides its position, or <code>null</code> for no border position.
+		*/
+		public ComponentInfo(final Component component, final Border border)
+		{
+			this.component=component;	//save the component
+			this.border=border; //store the border position
+			centered=false;	//show that the component is not centered
+		}
+
+		/**Size constructor with optional border specification.
+		@param component The component being managed.
+		@param x The horizontal position of the component, relative to the view.
+		@param y The vertical position of the component, relative to the view.
+		@param width The width of the component, relative to the view width.
+		@param height The height of the component, relative to the view width.
+		@param border The optional border of the component, which overrides its position, or <code>null</code> for no border position.
+		*/
+		public ComponentInfo(final Component component, final int width, final int height, final Border border)  //G***does this constructor even make sense?
+		{
+			this(component, border);	//do the default construction
+			size=new Dimension(width, height);  //store the component's preferred size
+		}
+
+		/**@return A deep clone of the component info, while keeping a reference to the same component.
+		@exception CloneNotSupportedException if the clone operation fails.
+		*/
+    public Object clone() throws CloneNotSupportedException
+		{
+			final ComponentInfo componentInfo=(ComponentInfo)super.clone();	//create a clone of the component info
+			componentInfo.location=(Point)location.clone();	//clone the location
+			componentInfo.scaledLocation=(Point)scaledLocation.clone();	//clone the scaled location
+			componentInfo.size=(Dimension)size.clone();	//clone the size
+			componentInfo.scaledSize=(Dimension)scaledSize.clone();	//clone the scaled size
+			return componentInfo;	//return the cloned component information
 		}
 
 	}

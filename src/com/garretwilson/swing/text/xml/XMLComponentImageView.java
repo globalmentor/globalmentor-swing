@@ -5,13 +5,14 @@ import java.util.*;
 import javax.swing.*; //G***del if not needed
 import javax.swing.text.*;
 import com.garretwilson.awt.ImageUtilities;
+import com.garretwilson.swing.text.ViewComponentManageable;
 import com.garretwilson.swing.text.ViewComponentManager;
 import com.garretwilson.util.Debug;
 
 /**A view that maintains components that are displayed on the image.
 @author Garret Wilson
 */
-public abstract class XMLComponentImageView extends XMLImageView
+public abstract class XMLComponentImageView extends XMLImageView implements ViewComponentManageable
 {
 
 	/**The object that manages the components this view owns.*/
@@ -20,7 +21,7 @@ public abstract class XMLComponentImageView extends XMLImageView
 		/**@return The object that manages the components this view owns.*/
 		public ViewComponentManager getComponentManager() {return componentManager;}
 
-	/**Creates a new view that represents a image that con contain components.
+	/**Creates a new view that represents an image that can contain components.
 	@param element The element for which to create the view.
 	*/
   public XMLComponentImageView(final Element element)
@@ -57,8 +58,8 @@ Debug.trace("view being removed");
 	*/
 	public void setShowing(final boolean showing)
 	{
-		super.setShowing(showing);  //update showing in the parent class
 		componentManager.setShowing(showing); //tell the component manager our new status
+		super.setShowing(showing);  //update showing in the parent class
 	}
 
 	/**Paints the component.
@@ -69,13 +70,8 @@ Debug.trace("view being removed");
 	*/
 	public void paint(final Graphics graphics, final Shape allocation)
 	{
-		super.paint(graphics, allocation);  //do the default painting, which will update our dimensions if needed
 		componentManager.setLocation(allocation); //tell the component manager our new location
-/*G***del
-		  //get the bounding rectangle of the painting area G***use a utility function
-		final Rectangle rectangle=(allocation instanceof Rectangle) ? (Rectangle)allocation : allocation.getBounds();
-		componentManager.setLocation(rectangle.x, rectangle.y); //G***testing
-*/
+		super.paint(graphics, allocation);  //do the default painting, which will update our dimensions if needed
 	}
 
 	/**Sets the size of the object, while keeping the object in the same proportions.
@@ -85,8 +81,8 @@ Debug.trace("view being removed");
 	*/
 	public void setSize(float width, float height)
 	{
+		componentManager.setSize(getWidth(), getHeight(), getCurrentWidth(), getCurrentHeight()); //tell the component manager our new size
 		super.setSize(width, height); //do the default size setting
-		componentManager.setSize(getWidth(), getHeight(), getCurrentWidth(), getCurrentHeight()); //G***testing
 	}
 
 }

@@ -14,6 +14,7 @@ import javax.swing.text.Element;
 
 import com.garretwilson.io.*;
 import com.garretwilson.lang.*;
+import static com.garretwilson.lang.ObjectUtilities.*;
 import com.garretwilson.net.*;
 import com.garretwilson.rdf.*;
 import static com.garretwilson.rdf.xpackage.XPackageUtilities.*;
@@ -47,7 +48,7 @@ public class XMLEditorKit extends BasicStyledEditorKit
 	private final XMLLinkController defaultLinkController=new DefaultXMLLinkController();
 
 	/**A map of view factories, each keyed to a namespace URI string.*/
-	private Map namespaceViewFactoryMap=new HashMap();
+	private Map<String, ViewFactory> namespaceViewFactoryMap=new HashMap<String, ViewFactory>();
 
 			/**Registers a view factory for a particular namespace URI.
 			@param namespaceURI The namespace URI that identifies the namespace,
@@ -70,7 +71,7 @@ public class XMLEditorKit extends BasicStyledEditorKit
 		  */
 			public ViewFactory getViewFactory(final String namespaceURI)
 			{
-				return (ViewFactory)namespaceViewFactoryMap.get(namespaceURI); //return a view factory for the given namespace, if one has been registered
+				return namespaceViewFactoryMap.get(namespaceURI); //return a view factory for the given namespace, if one has been registered
 			}
 
 			/**Removes all registered view factories.*/
@@ -80,7 +81,7 @@ public class XMLEditorKit extends BasicStyledEditorKit
 			}
 
 	/**A map of link controllers, each keyed to a namespace URI string.*/
-	private Map namespaceLinkControllerMap=new HashMap();
+	private Map<String, XMLLinkController> namespaceLinkControllerMap=new HashMap<String, XMLLinkController>();
 
 			/**Registers a link controller for a particular namespace URI.
 			@param namespaceURI The namespace URI that identifies the namespace,
@@ -103,7 +104,7 @@ public class XMLEditorKit extends BasicStyledEditorKit
 		  */
 			public XMLLinkController getLinkController(final String namespaceURI)
 			{
-				return (XMLLinkController)namespaceLinkControllerMap.get(namespaceURI); //return a link controller for the given namespace, if one has been registered
+				return namespaceLinkControllerMap.get(namespaceURI); //return a link controller for the given namespace, if one has been registered
 			}
 
 			/**Removes all registered link controllers.*/
@@ -171,29 +172,13 @@ public class XMLEditorKit extends BasicStyledEditorKit
 	*/
 	public XMLLinkController getLinkController() {return defaultLinkController;}
 
-		/**
-		 * Create an uninitialized text storage model
-		 * that is appropriate for this type of editor.
-		 *
-		 * @return the model
-		 */
-//G***fix
+	/**Create an uninitialized text storage model that is appropriate for this type of editor.
+	This version return a Swing XML document.
+	@return The model.
+	*/
 	public XMLDocument createDefaultDocument()
 	{
-//G***del Debug.traceStack("Creating default XML document");  //G***del
 		return new XMLDocument(getURIInputStreamable());	//create an XML document, passing along our source of input streams
-/*G***fix
-	StyleSheet styles = getStyleSheet();
-	StyleSheet ss = new StyleSheet();
-
-	ss.addStyleSheet(styles);
-
-	HTMLDocument doc = new HTMLDocument(ss);
-	doc.putProperty(HTMLDocument.PARSER_PROPERTY, getParser());
-	doc.setAsynchronousLoadPriority(4);
-	doc.setTokenThreshold(100);
-	return doc;
-*/
 	}
 
 	/**Reads a given publication and stores it in the given document.
@@ -275,48 +260,6 @@ G***fix
 		}
 		else  //if this is not an XML document we're reading into
 			super.read(reader, document, pos); //let the parent class do the reading
-/*G***del when works
-		if(doc instanceof com.garretwilson.swing.text.xml.XMLDocument)	//make sure this is a document we know how to work with
-		{
-//G***fix			final XMLProcessor xmlProcessor=new XMLProcessor(in);	//create an XML processor
-			try
-			{
-
-				final com.garretwilson.text.xml.XMLDocument xmlDocument=xmlProcessor.parseDocument();	//parse the document
-System.out.println("Adding the default OEB stylesheet.");	//G***del
-				xmlDocument.getStyleSheetList().add(new DefaultOEBCSSStyleSheet());	//G***put this somewhere else; perhaps in an OEBEditorKit
-						//G***do a normalize() somewhere here
-System.out.println("Ready to parse stylesheets.");	//G***del
-				final XMLCSSProcessor cssProcessor=new XMLCSSProcessor();	//G***testing
-				cssProcessor.parseStyles(xmlDocument);	//G***testing
-				cssProcessor.applyxStyles(xmlDocument);	//G***testing
-
-				final XMLElement xmlRoot=xmlDocument.getDocumentXMLElement();	//get the root of the document G***change to DOM
-//G***del			xmlRoot.dump();	//G***check, comment
-				System.out.println("Finished with file.");	//G***del
-
-				final XMLNodeList elementList=(XMLNodeList)xmlDocument.getElementsByTagName("*");	//G***testing; use a constant here
-				for(int i=0; i<elementList.size(); ++i)	//G***testing
-				{
-					final XMLElement element=(XMLElement)elementList.get(i);	//get the element at this index
-					if(element.getNodeName().equals("body"))	//G***testing
-					{
-						((com.garretwilson.swing.text.xml.XMLDocument)doc).create(element);
-						return;
-					}
-				}
-				((com.garretwilson.swing.text.xml.XMLDocument)doc).create(xmlDocument);
-			}
-			catch(Exception ex)
-			{
-				System.out.println(ex.getMessage());
-			}	//G***fix
-		}
-		else	//if this isn't an XML document
-		{
-			super.read(in, doc, pos);	//let our parent read the document
-		}
-*/
 	}
 
 	/**Inserts content from the given stream which is expected to be in a format
@@ -367,34 +310,7 @@ System.out.println("Ready to parse stylesheets.");	//G***del
 	@exception BadLocationException Thrown if the position represents an invalid
 		location within the document.
 	*/
-	public void write(final Writer writer, final Document document, final int pos, final int len) throws IOException, BadLocationException
-	{
-/*G***fix when XMLSerializer supports writers
-		if(document instanceof XMLDocument) //if the document is an XML document
-		{
-
-		final com.garretwilson.text.xml.XMLSerializer xmlSerializer=new com.garretwilson.text.xml.XMLSerializer(true);  //create an XML serializer G***use local package name after we move
-		try
-		{
-			xmlSerializer.serialize(document, System.out);  //G***testing
-		}
-		catch(Exception e)
-		{
-			Debug.error(e); //G***fix
-		}
-
-			HTMLWriter w = new HTMLWriter(out, (HTMLDocument)doc, pos, len);
-	    w.write();
-		}
-		else  //if the document is not an XML document
-	} else if (doc instanceof StyledDocument) {
-	    MinimalHTMLWriter w = new MinimalHTMLWriter(out, (StyledDocument)doc, pos, len);
-	    w.write();
-	} else {
-	    super.write(out, doc, pos, len);
-	}
-*/
-		}
+//TODO fix when XMLSerializere supports writers	public void write(final Writer writer, final Document document, final int pos, final int len) throws IOException, BadLocationException
 
 	/**Writes content from a document to the given stream in a format appropriate
 		for this kind of content handler. Currently the position and length are
@@ -450,19 +366,19 @@ Debug.trace("installing XMLEditorKit"); //G***del
 		{
 			final XMLTextPane xmlTextPane=(XMLTextPane)editorPane;  //cast the editor pane to a text pane
 				//get all registered view factories from the XML text pane
-			final Iterator viewFactoryNamespaceIterator=xmlTextPane.getViewFactoryNamespaceIterator(); //get an iterator to all namespaces of intalled editor kits
+			final Iterator<String> viewFactoryNamespaceIterator=xmlTextPane.getViewFactoryNamespaceIterator(); //get an iterator to all namespaces of intalled editor kits
 			while(viewFactoryNamespaceIterator.hasNext())  //while there are more namespaces
 			{
-				final String namespaceURI=(String)viewFactoryNamespaceIterator.next(); //get the next namespace for which a view factory is installed
+				final String namespaceURI=viewFactoryNamespaceIterator.next(); //get the next namespace for which a view factory is installed
 //G***del Debug.trace("setting view factory registered for namespace: ", namespaceURI); //G***del
 				final ViewFactory registeredViewFactory=xmlTextPane.getViewFactory(namespaceURI); //get the view factory associated with this namespace
 				registerViewFactory(namespaceURI, registeredViewFactory);  //register this view factory with the the namespace
 			}
 				//get all registered link controllers from the XML text pane
-			final Iterator linkControllerNamespaceIterator=xmlTextPane.getLinkControllerNamespaceIterator(); //get an iterator to all namespaces of intalled link controllers
+			final Iterator<String> linkControllerNamespaceIterator=xmlTextPane.getLinkControllerNamespaceIterator(); //get an iterator to all namespaces of intalled link controllers
 			while(linkControllerNamespaceIterator.hasNext())  //while there are more namespaces
 			{
-				final String namespaceURI=(String)linkControllerNamespaceIterator.next(); //get the next namespace for which a link controller is installed
+				final String namespaceURI=linkControllerNamespaceIterator.next(); //get the next namespace for which a link controller is installed
 				final XMLLinkController registeredLinkController=xmlTextPane.getLinkController(namespaceURI); //get the link controller associated with this namespace
 				registerLinkController(namespaceURI, registeredLinkController);  //register this link controller with the the namespace
 			}
@@ -485,150 +401,6 @@ Debug.trace("installing XMLEditorKit"); //G***del
 		super.deinstall(editorPane);	//do the default uninstalling
 	}
 
-		/**
-		 * Inserts HTML into an existing document.
-		 *
-		 * @param doc Document to insert into.
-		 * @param offset offset to insert HTML at
-		 * @param popDepth number of DefaultStyledDocument.ElementSpec.EndTagType to generate before
-		 *        inserting.
-		 * @param pushDepth number of DefaultStyledDocument.ElementSpec.StartTagType with a direction
-		 *        of DefaultStyledDocument.ElementSpec.JoinNextDirection that should be generated
-		 *        before inserting, but after the end tags have been generated.
-		 * @param insertTag first tag to start inserting into document.
-		 * @exception RuntimeException (will eventually be a BadLocationException)
-		 *            if pos is invalid.
-		 */
-/*G***fix
-		public void insertHTML(HTMLDocument doc, int offset, String html,
-				 int popDepth, int pushDepth,
-				 HTML.Tag insertTag) throws
-								 BadLocationException, IOException {
-	Parser p = getParser();
-	if (p == null) {
-			throw new IOException("Can't load parser");
-	}
-	if (offset > doc.getLength()) {
-			throw new BadLocationException("Invalid location", offset);
-	}
-
-	ParserCallback receiver = doc.getReader(offset, popDepth, pushDepth,
-						insertTag);
-	Boolean ignoreCharset = (Boolean)doc.getProperty
-													("IgnoreCharsetDirective");
-	p.parse(new StringReader(html), receiver, (ignoreCharset == null) ?
-		false : ignoreCharset.booleanValue());
-	receiver.flush();
-		}
-*/
-
-		/**
-		 * Called when the kit is being installed into the
-		 * a JEditorPane.
-		 *
-		 * @param c the JEditorPane
-		 */
-/*G***fix
-		public void install(JEditorPane c) {
-	c.addMouseListener(linkHandler);
-				c.addMouseMotionListener(tmpHandler);
-	super.install(c);
-		}
-*/
-
-		/**
-		 * Called when the kit is being removed from the
-		 * JEditorPane.  This is used to unregister any
-		 * listeners that were attached.
-		 *
-		 * @param c the JEditorPane
-		 */
-/*G***fix
-		public void deinstall(JEditorPane c) {
-	c.removeMouseListener(linkHandler);
-				c.removeMouseMotionListener(tmpHandler);
-	super.deinstall(c);
-		}
-*/
-
-    /**
-     * Default Cascading Style Sheet file that sets
-     * up the tag views.
-     */
-//G***fix    public static final String DEFAULT_CSS = "default.css";
-
-		/**
-		 * Set the set of styles to be used to render the various
-		 * html elements.  These styles are specified in terms of
-		 * css specifications.  Each document produced by the kit
-		 * will have a copy of the sheet which it can add the
-		 * document specific styles to.  By default, the StyleSheet
-		 * specified is shared by all HTMLEditorKit instances.
-		 * This should be reimplemented to provide a finer granularity
-		 * if desired.
-		 */
-/*G***fix
-		public void setStyleSheet(StyleSheet s) {
-	defaultStyles = s;
-		}
-*/
-
-		/**
-		 * Get the set of styles currently being used to render the
-		 * html elements.  By default the resource specified by
-		 * DEFAULT_CSS gets loaded, and is shared by all HTMLEditorKit
-		 * instances.
-		 */
-/*G***fix
-		public StyleSheet getStyleSheet() {
-	if (defaultStyles == null) {
-			defaultStyles = new StyleSheet();
-			try {
-		InputStream is = HTMLEditorKit.getResourceAsStream(DEFAULT_CSS);
-		Reader r = new BufferedReader(new InputStreamReader(is));
-		defaultStyles.loadRules(r, null);
-		r.close();
-	    } catch (Throwable e) {
-		// on error we simply have no styles... the html
-		// will look mighty wrong but still function.
-	    }
-	}
-	return defaultStyles;
-		}
-*/
-
-		/**
-		 * Fetch a resource relative to the HTMLEditorKit classfile.
-		 * If this is called on 1.2 the loading will occur under the
-		 * protection of a doPrivileged call to allow the HTMLEditorKit
-		 * to function when used in an applet.
-		 *
-		 * @param name the name of the resource, relative to the
-		 *  HTMLEditorKit class.
-		 * @returns a stream representing the resource
-		 */
-/*G***fix
-		static InputStream getResourceAsStream(String name) {
-	try {
-			Class klass;
-			ClassLoader loader = HTMLEditorKit.class.getClassLoader();
-			if (loader != null) {
-		klass = loader.loadClass("javax.swing.text.html.ResourceLoader");
-			} else {
-		klass = Class.forName("javax.swing.text.html.ResourceLoader");
-			}
-			Class[] parameterTypes = { String.class };
-	    Method loadMethod = klass.getMethod("getResourceAsStream", parameterTypes);
-	    String[] args = { name };
-	    return (InputStream) loadMethod.invoke(null, args);
-	} catch (Throwable e) {
-	    // If the class doesn't exist or we have some other
-	    // problem we just try to call getResourceAsStream directly.
-	    return HTMLEditorKit.class.getResourceAsStream(name);
-	}
-		}
-*/
-
 	/**Fetches the command list for the editor. This is the list of commands
 		supported by the superclass augmented by the collection of commands defined
 		locally for such things as page operations.
@@ -638,166 +410,6 @@ Debug.trace("installing XMLEditorKit"); //G***del
 	{
 		return TextAction.augmentList(super.getActions(), DEFAULT_ACTIONS);
 	}
-
-		/**
-		 * Copies the key/values in <code>element</code>s AttributeSet into
-		 * <code>set</code>. This does not copy component, icon, or element
-		 * names attributes. Subclasses may wish to refine what is and what
-		 * isn't copied here. But be sure to first remove all the attributes that
-		 * are in <code>set</code>.<p>
-		 * This is called anytime the caret moves over a different location.
-		 *
-		 */
-/*G***fix
-		protected void createInputAttributes(Element element,
-					 MutableAttributeSet set) {
-	set.removeAttributes(set);
-	set.addAttributes(element.getAttributes());
-	set.removeAttribute(StyleConstants.ComposedTextAttribute);
-
-	Object o = set.getAttribute(StyleConstants.NameAttribute);
-	if (o instanceof HTML.Tag) {
-			HTML.Tag tag = (HTML.Tag)o;
-			// PENDING: we need a better way to express what shouldn't be
-			// copied when editing...
-			if(tag == HTML.Tag.IMG) {
-		// Remove the related image attributes, src, width, height
-		set.removeAttribute(HTML.Attribute.SRC);
-		set.removeAttribute(HTML.Attribute.HEIGHT);
-		set.removeAttribute(HTML.Attribute.WIDTH);
-		set.addAttribute(StyleConstants.NameAttribute,
-				 HTML.Tag.CONTENT);
-			}
-			else if (tag == HTML.Tag.HR) {
-		// Don't copy HR's either.
-		set.addAttribute(StyleConstants.NameAttribute,
-				 HTML.Tag.CONTENT);
-			}
-			else if (tag == HTML.Tag.COMMENT) {
-		// Don't copy COMMENTs either
-		set.addAttribute(StyleConstants.NameAttribute,
-				 HTML.Tag.CONTENT);
-		set.removeAttribute(HTML.Attribute.COMMENT);
-			}
-			else if (tag instanceof HTML.UnknownTag) {
-		// Don't copy unknowns either:(
-		set.addAttribute(StyleConstants.NameAttribute,
-				 HTML.Tag.CONTENT);
-		set.removeAttribute(HTML.Attribute.ENDTAG);
-			}
-	}
-		}
-*/
-
-		/**
-		 * Gets the input attributes used for the styled
-		 * editing actions.
-		 *
-		 * @return the attribute set
-		 */
-/*G***fix
-		public MutableAttributeSet getInputAttributes() {
-	if (input == null) {
-			input = getStyleSheet().addStyle(null, null);
-	}
-	return input;
-		}
-*/
-
-		/**
-		 * Fetch the parser to use for reading html streams.
-		 * This can be reimplemented to provide a different
-		 * parser.  The default implementation is loaded dynamically
-		 * to avoid the overhead of loading the default parser if
-		 * it's not used.  The default parser is the HotJava parser
-		 * using an html 3.2 dtd.
-		 */
-/*G***fix
-		protected Parser getParser() {
-	if (defaultParser == null) {
-			try {
-								Class c = Class.forName("javax.swing.text.html.parser.ParserDelegator");
-								defaultParser = (Parser) c.newInstance();
-			} catch (Throwable e) {
-			}
-	}
-	return defaultParser;
-		}
-*/
-
-		// --- variables ------------------------------------------
-/*G***fix
-		MutableAttributeSet input;
-		private static StyleSheet defaultStyles = null;
-		private MouseListener linkHandler = new LinkController();
-		private static Parser defaultParser = null;
-
-		private MouseMotionListener tmpHandler = new TemporaryHandler();
-*/
-
-
-	/**Calculates the full unique target ID strings for every element that has
-		a target ID.
-		These target IDs are stored as attributes for quick lookup later.
-	@param xmlDocument The document for which target IDs should be generated.
-//G***del	@param baseURL The document's base URL.
-	@see XMLStyleConstants#setTargetURL
-	@see #getElementTargetID
-	*/
-//G***del when works	protected void calculateTargetIDs(final org.w3c.dom.Document document, /*G***del when works, final URL baseURL*/)
-/*G***del when works
-	{
-Debug.trace("OEBEditorKit.calculateTargetIDs()");
-		final NodeList nodeList=document.getElementsByTagName("*");	//get a list of all elements in the document G***find a better way to do this using iterators
-Debug.trace("found nodes: "+nodeList.getLength());  //G***del
-		for(int nodeIndex=nodeList.getLength()-1; nodeIndex>=0; --nodeIndex)	//look at each of the nodes
-		{
-			final org.w3c.dom.Element element=(org.w3c.dom.Element)nodeList.item(nodeIndex);	//get a reference to this item
-		  //encode base URL attributes for all link elements
-			if(element.getNodeName().equals("a")) //if this is an <a> element G***use a constant
-		  {
-//G***del Debug.trace("Storing base URL attribute: "+baseURL+" for element: "+element.getNodeName()); //G***del
-				element.setAttribute(XMLStyleConstants.BASE_URL_ATTRIBUTE_NAME, baseURL.toString());	//G***testing; use constant; comment
-		  }
-			try //encode target ID attributes for all elements with "id" or "name" attributes
-			{
-				final AttributeSet attributeSet
-
-				String idValue=element.getAttributeNS(null, "id");	//get the value of the id attribute, if there is one G***use a constant here
-				if(idValue.length()==0) //if there is no ID value
-					idValue=element.getAttributeNS(null, "name");	//get the value of the name attribute, if there is one, since we couldn't find an ID attribute G***use a constant here
-				if(idValue.length()!=0)	//if this element has an ID attribute
-				{
-					final URL targetURL=URLUtilities.createURL(baseURL, "#"+idValue);	//create a full URL from the item ID used as a fragment G***use a constant here
-//G***del 	Debug.trace("Storing full URL for element ID: "+idValue+" of: "+targetURL);
-
-
-
-				  XMLStyleConstants.setBaseURL(element.getAttributes(), targetURL); //store the target
-					element.setAttribute(XMLStyleConstants.TARGET_ID_PATH_ATTRIBUTE_NAME, targetURL.toString());	//G***testing; use constant; comment
-	//G***del								oebDocument.setLinkTarget(targetURL.toString(), element);	//associate the full target ID with this element
-				}
-			}
-			catch(MalformedURLException e)	//if there's an error generating a URL
-			{
-				Debug.error(e);	//ignore the error G***perhaps do something with the error in the future, but it's likely that validity-checking on the XML document will keep errors from ever occurring
-			}
-		}
-			//G***this section is just a kludge because each document gets separated from its URL, so links to the files themselves won't work without this; replace it with something better eventually
-		final NodeList bodyNodeList=(NodeList)XPath.evaluateLocationPath(xmlDocument.getDocumentElement(), "/body/*");	//get the first element under <body> G***use a special XPath that only returns the first element G***use a constant here
-		if(bodyNodeList.getLength()>0)	//if we retrieved at least one value from the document G***if not, have the XML version just use the first element
-		{
-//G***fix: if the first note is a comment, this will fail
-			final org.w3c.dom.Element element=(org.w3c.dom.Element)bodyNodeList.item(0);	//get a reference to the first element under the body
-			final String targetIDValue=element.getAttributeNS(null, XMLStyleConstants.TARGET_ID_PATH_ATTRIBUTE_NAME);	//see if we've assigned a target ID to the first element G***turn this into an accessor function
-			if(targetIDValue.length()==0)	//if this element doesn't yet have a target ID
-			{
-//G***del 	Debug.trace("Storing full URL for element: "+element.getNodeValue()+" of: "+baseURL);
-					element.setAttribute(XMLStyleConstants.TARGET_ID_PATH_ATTRIBUTE_NAME, baseURL.toString());	//G***testing; use constant; comment
-			}
-		}
-	}
-*/
 
 		//document information storage methods
 
@@ -809,16 +421,14 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 	*/
 	public void setXML(final org.w3c.dom.Document xmlDocument, final URI baseURI, final ContentType mediaType, final XMLDocument swingXMLDocument)
 	{
-		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new ContentType[]{mediaType}, swingXMLDocument); //set the XML data, creating arrays each with a single element
+		setXML(new ContentData[]{new ContentData<org.w3c.dom.Document>(xmlDocument, baseURI, mediaType)}, swingXMLDocument); //set the XML data, creating an array with a single element
 	}
 
 	/**Sets the given XML data in the document.
-	@param xmlDocumentArray The array of XML documents to set in the Swing document.
-	@param baseURIArray The array of base URIs, corresponding to the XML documents.
-	@param mediaTypeArray The array of media types of the documents.
+	@param contentDataArray the array of data objects to insert into the document.
 	@param swingXMLDocument The Swing document into which the XML will be set.
 	*/
-	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray, final XMLDocument swingXMLDocument)
+	public void setXML(final ContentData<?>[] contentDataArray, final XMLDocument swingXMLDocument)
 	{
 /*G***fix
 		if(false)	//TODO testing newstuff 
@@ -832,7 +442,7 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 			final XMLCSSStylesheetApplier stylesheetApplier=getXMLStylesheetApplier();	//get the stylesheet applier
 			stylesheetApplier.clearStyles();	//clear any styles that were present before
 			//create a list of element specs for creating the document and store them here
-			final DefaultStyledDocument.ElementSpec[] elementSpecList=createElementSpecs(xmlDocumentArray, baseURIArray, mediaTypeArray, swingXMLDocument);
+			final DefaultStyledDocument.ElementSpec[] elementSpecList=createElementSpecs(contentDataArray, swingXMLDocument);
 			stylesheetApplier.clearStyles();	//clear the styles; we're done with the XML document so we don't need the mappings anymore
 			swingXMLDocument.create(elementSpecList);	//create the document from the element specs
 		}
@@ -876,111 +486,111 @@ catch (BadLocationException e)
 	@param swingXMLDocument The Swing document into which the XML will be set.
 	@return Am array of element specs defining the XML document.
 	*/
+/*TODO del if not needed
 	protected DefaultStyledDocument.ElementSpec[] createElementSpecs(org.w3c.dom.Document xmlDocument, final URI baseURI, final ContentType mediaType, final XMLDocument swingXMLDocument)
 	{
 		return createElementSpecs(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new ContentType[]{mediaType}, swingXMLDocument);  //put the XML document into an array, create the element specs, and return them
 	}
+*/
 
 	/**Creates element spec objects from a list of XML document trees.
-	@param xmlDocumentArray The array of XML document trees.
-	@param baseURIArray The array of URIs representing the base URIs for each document.
-	@param mediaTypeArray The array of media types of the documents.
+	@param contentDataArray the array of data objects to insert into the document.
 	@param swingXMLDocument The Swing document into which the XML will be set.
 	@return An array of element specs defining the XML documents.
 	*/
-	protected DefaultStyledDocument.ElementSpec[] createElementSpecs(org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray, final XMLDocument swingXMLDocument)
+	protected DefaultStyledDocument.ElementSpec[] createElementSpecs(final ContentData<?>[] contentDataArray, final XMLDocument swingXMLDocument)
 	{
-		final List elementSpecList=createElementSpecList(xmlDocumentArray, baseURIArray, mediaTypeArray, swingXMLDocument); //create the list of element specs
-			//convert the list to an array and return it
-		return (DefaultStyledDocument.ElementSpec[])elementSpecList.toArray(new DefaultStyledDocument.ElementSpec[elementSpecList.size()]);
-	}
-
-
-
-	/**Creates a list of element spec objects from an aray of XML document trees.
-	@param xmlDocumentArray The array of XML document trees.
-	@param baseURIArray The array of URIs representing the base URIs for each document.
-	@param mediaTypeArray The array of media types of the documents.
-	@param swingXMLDocument The Swing document into which the XML will be set.
-	@return A list of element specs defining the XML documents.
-	*/
-	protected List createElementSpecList(org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray, final XMLDocument swingXMLDocument)
-	{
-		//G***maybe check to make sure both arrays are of the same length
-		final List elementSpecList=new ArrayList();	//create an array to hold our element specs
-//G***del when works		final XMLCSSSimpleAttributeSet attributeSet=new XMLCSSSimpleAttributeSet();	//create a new attribute for the body element
-//G***del		final SimpleAttributeSet attributeSet=new SimpleAttributeSet();	//create a new attribute for the body element
-
-//G***fix if(xmlDocumentArray.length>1 || !"null".equals(xmlDocumentArray[0].getDocumentElement().getLocalName()))	//G***testing
+		final List<DefaultStyledDocument.ElementSpec> elementSpecList=new ArrayList<DefaultStyledDocument.ElementSpec>();	//create an array to hold our element specs
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(null, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a Swing element to enclose all elements
-
-		for(int xmlDocumentIndex=0; xmlDocumentIndex<xmlDocumentArray.length; ++xmlDocumentIndex)	//look at each of the documents they passed to us
+		for(int i=0; i<contentDataArray.length; ++i)	//look at each content data
 		{
-//G***del Debug.trace("Looking at XML document: ", xmlDocumentIndex); //G***del
-			final org.w3c.dom.Document xmlDocument=xmlDocumentArray[xmlDocumentIndex];	//get a reference to this document
-
-
-xmlDocument.normalize();	//G***do we want to do this here? probably not---or maybe so. Maybe we can normalize on the fly in the Swing document, not in the source
-
-
-
-			final URI baseURI=baseURIArray[xmlDocumentIndex]; //get a reference to the base URI
-			final ContentType mediaType=mediaTypeArray[xmlDocumentIndex]; //get a reference to the media type
-			final org.w3c.dom.Element xmlDocumentElement=xmlDocument.getDocumentElement();	//get the root of the document
-
-
-			final RDFResource publication=swingXMLDocument.getPublication();	//see if we know about a publication
-			final URI publicationBaseURI=swingXMLDocument.getBaseURI();	//get the base URI of the publication TODO do we need to check this for null?
-				//if there is a publication, see if we have a description of this resource in the manifest
-			final RDFResource description=publication!=null ? getManifestItemByLocationHRef(publication, publicationBaseURI, baseURI) : null;
-			final CSSStyleSheet[] stylesheets=getXMLStylesheetApplier().getStylesheets(xmlDocument, baseURI, mediaType, description);	//G***testing
-			for(int i=0; i<stylesheets.length; getXMLStylesheetApplier().applyStyleSheet(stylesheets[i++], xmlDocumentElement));	//G***testing
-				//TODO make sure stylesheets get applied later, too, in our Swing stylesheet application routine
-			getXMLStylesheetApplier().applyLocalStyles(xmlDocumentElement);	//apply local styles to the document TODO why don't we create one routine to do all of this?
-
-
-
-
-			if(xmlDocumentIndex>0)	//if this is not the first document to insert
+			if(i>0)	//if this is not the first data to insert
 			{
 							//G***check to see if we should actually do this, first (from the CSS attributes)
 //G***del System.out.println("Adding page break element.");	//G***del
 						appendElementSpecListPageBreak(elementSpecList);  //append a page break
 			}
-			final MutableAttributeSet documentAttributeSet=appendElementSpecList(elementSpecList, xmlDocumentElement, baseURI);	//insert this document's root element into our list our list of elements
-			if(baseURI!=null) //if there is a base URI
+			final ContentData<?> contentData=contentDataArray[i];	//get a reference to this content data
+			appendElementSpecList(elementSpecList, contentData, swingXMLDocument);	//append element specs for this document
+		}
+		elementSpecList.add(new DefaultStyledDocument.ElementSpec(null, DefaultStyledDocument.ElementSpec.EndTagType));	//finish the element that encloses all the documents
+		return (DefaultStyledDocument.ElementSpec[])elementSpecList.toArray(new DefaultStyledDocument.ElementSpec[elementSpecList.size()]);
+	}
+	
+	/**Appends element spec objects from content data.
+	Child classes can override this method for processing of custom content data.
+	@param elementSpecList The list of element specs to be inserted into the document.
+	@param contentData The content to be inserted into the document.
+	@param swingXMLDocument The Swing document into which the content will be set.
+	@exception IllegalArgumentException if the given content data is not recognized or is not supported.
+	*/
+	protected void appendElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final ContentData<?> contentData, final XMLDocument swingXMLDocument)
+	{
+		if(contentData.getObject() instanceof org.w3c.dom.Document)	//if this is XML document content data
+		{
+			appendXMLDocumentElementSpecList(elementSpecList, (ContentData<org.w3c.dom.Document>)contentData, swingXMLDocument);	//append XML content
+		}
+		else	//if we don't recognize this content data
+		{
+			throw new IllegalArgumentException("Unrecognized content type "+contentData.getObject().getClass().getName());
+		}
+	}
+
+	/**Appends element spec objects from XML document content data.
+	@param elementSpecList The list of element specs to be inserted into the document.
+	@param contentData The XML document content to be inserted into the document.
+	@param swingXMLDocument The Swing document into which the content will be set.
+	*/
+	protected void appendXMLDocumentElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final ContentData<? extends org.w3c.dom.Document> contentData, final XMLDocument swingXMLDocument)
+	{
+		final org.w3c.dom.Document xmlDocument=contentData.getObject();	//get a reference to this document
+		xmlDocument.normalize();	//G***do we want to do this here? probably not---or maybe so. Maybe we can normalize on the fly in the Swing document, not in the source
+		final URI baseURI=contentData.getBaseURI(); //get a reference to the base URI
+		final ContentType mediaType=contentData.getContentType(); //get a reference to the media type
+		final org.w3c.dom.Element xmlDocumentElement=xmlDocument.getDocumentElement();	//get the root of the document
+		final URI publicationBaseURI=swingXMLDocument.getBaseURI();	//get the base URI of the publication TODO do we need to check this for null?
+			//if there is a publication, see if we have a description of this resource in the manifest
+		final RDFResource description=contentData.getDescription();
+			//TODO make sure the stylesheet applier correctly distinguishes between document base URI for internal stylesheets and publication base URI for package-level base URIs
+		final CSSStyleSheet[] stylesheets=getXMLStylesheetApplier().getStylesheets(xmlDocument, baseURI, mediaType, description);	//G***testing
+		for(int i=0; i<stylesheets.length; getXMLStylesheetApplier().applyStyleSheet(stylesheets[i++], xmlDocumentElement));	//G***testing
+			//TODO make sure stylesheets get applied later, too, in our Swing stylesheet application routine
+		getXMLStylesheetApplier().applyLocalStyles(xmlDocumentElement);	//apply local styles to the document TODO why don't we create one routine to do all of this?
+
+		final MutableAttributeSet documentAttributeSet=appendElementSpecList(elementSpecList, xmlDocumentElement, baseURI);	//insert this document's root element into our list our list of elements
+		if(baseURI!=null) //if there is a base URI
+		{
+			XMLStyleUtilities.setBaseURI(documentAttributeSet, baseURI); //add the base URI as an attribute
+			XMLStyleUtilities.setTargetURI(documentAttributeSet, baseURI);  //because this element is the root of the document, its base URI acts as a linking target as well; store the target URI for quick searching
+		}
+		if(mediaType!=null) //if there is a media type
+		{
+			XMLStyleUtilities.setMediaType(documentAttributeSet, mediaType); //add the media type as an attribute
+		}
+		final DocumentType documentType=xmlDocument.getDoctype(); //get the XML document's doctype, if any
+		if(documentType!=null) //if this document has a doctype
+		{
+			if(documentType.getPublicId()!=null)  //if the document has a public ID
+				XMLStyleUtilities.setXMLDocTypePublicID(documentAttributeSet, documentType.getPublicId());  //store the public ID
+			if(documentType.getSystemId()!=null)  //if the document has a public ID
+				XMLStyleUtilities.setXMLDocTypeSystemID(documentAttributeSet, documentType.getSystemId());  //store the system ID
+		}
+			//store the processing instructions
+		final List processingInstructionList=XMLUtilities.getNodesByName(xmlDocument, Node.PROCESSING_INSTRUCTION_NODE, "*", false);  //get a list of all the processing instructions in the document G***use a constant here
+		if(processingInstructionList.size()>0) //if there are processing instructions
+		{
+			final NameValuePair[] processingInstructions=new NameValuePair[processingInstructionList.size()];  //create enough name/value pairs for processing instructions
+			for(int processingInstructionIndex=0; processingInstructionIndex<processingInstructionList.size(); ++processingInstructionIndex)	//look at each of the processing instruction nodes
 			{
-				XMLStyleUtilities.setBaseURI(documentAttributeSet, baseURI); //add the base URI as an attribute
-				XMLStyleUtilities.setTargetURI(documentAttributeSet, baseURI);  //because this element is the root of the document, its base URI acts as a linking target as well; store the target URI for quick searching
-			}
-			if(mediaType!=null) //if there is a media type
-			{
-				XMLStyleUtilities.setMediaType(documentAttributeSet, mediaType); //add the media type as an attribute
-			}
-			final DocumentType documentType=xmlDocument.getDoctype(); //get the XML document's doctype, if any
-			if(documentType!=null) //if this document has a doctype
-			{
-				if(documentType.getPublicId()!=null)  //if the document has a public ID
-					XMLStyleUtilities.setXMLDocTypePublicID(documentAttributeSet, documentType.getPublicId());  //store the public ID
-				if(documentType.getSystemId()!=null)  //if the document has a public ID
-					XMLStyleUtilities.setXMLDocTypeSystemID(documentAttributeSet, documentType.getSystemId());  //store the system ID
-			}
-				//store the processing instructions
-			final List processingInstructionList=XMLUtilities.getNodesByName(xmlDocument, Node.PROCESSING_INSTRUCTION_NODE, "*", false);  //get a list of all the processing instructions in the document G***use a constant here
-			if(processingInstructionList.size()>0) //if there are processing instructions
-			{
-				final NameValuePair[] processingInstructions=new NameValuePair[processingInstructionList.size()];  //create enough name/value pairs for processing instructions
-				for(int processingInstructionIndex=0; processingInstructionIndex<processingInstructionList.size(); ++processingInstructionIndex)	//look at each of the processing instruction nodes
-				{
-					final ProcessingInstruction processingInstruction=(ProcessingInstruction)processingInstructionList.get(processingInstructionIndex);	//get a reference to this processing instruction
-					processingInstructions[processingInstructionIndex]=new NameValuePair(processingInstruction.getTarget(), processingInstruction.getData()); //create a name/value pair from the processing instruction
+				final ProcessingInstruction processingInstruction=(ProcessingInstruction)processingInstructionList.get(processingInstructionIndex);	//get a reference to this processing instruction
+				processingInstructions[processingInstructionIndex]=new NameValuePair<String, String>(processingInstruction.getTarget(), processingInstruction.getData()); //create a name/value pair from the processing instruction
 /*G***del when works
 						//add an attribute representing the processing instruction, prepended by the special characters for a processing instruction
 					attributeSet.addAttribute(XMLStyleConstants.XML_PROCESSING_INSTRUCTION_ATTRIBUTE_START+processingInstruction.getTarget(), processingInstruction.getData());
 */
-				}
-				XMLStyleUtilities.setXMLProcessingInstructions(documentAttributeSet, processingInstructions); //add the processing instructions
 			}
+			XMLStyleUtilities.setXMLProcessingInstructions(documentAttributeSet, processingInstructions); //add the processing instructions
+		}
 /*G***fix
 			if(XHTMLSwingTextUtilities.isHTMLDocumentElement(documentAttributeSet);	//see if this is an HTML document
 			{
@@ -992,10 +602,6 @@ xmlDocument.normalize();	//G***do we want to do this here? probably not---or may
 				}
 			}
 */
-		}
-//G***fix	if(xmlDocumentArray.length>1 || !"null".equals(xmlDocumentArray[0].getDocumentElement().getLocalName()))	//G***testing
-		elementSpecList.add(new DefaultStyledDocument.ElementSpec(null, DefaultStyledDocument.ElementSpec.EndTagType));	//finish the element that encloses all the documents
-		return elementSpecList; //return the element spec list we constructed
 	}
 
 	/**Appends information from an XML element tree into a list of element specs.
@@ -1008,7 +614,7 @@ xmlDocument.normalize();	//G***do we want to do this here? probably not---or may
 	@exception BadLocationException for an invalid starting offset
 	@see XMLDocument#insert
 	*/
-	protected MutableAttributeSet appendElementSpecList(final List elementSpecList, final org.w3c.dom.Element xmlElement, final URI baseURI)
+	protected MutableAttributeSet appendElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final org.w3c.dom.Element xmlElement, final URI baseURI)
 	{
 //G***del Debug.trace("XMLDocument.appendElementSpecList: element ", xmlElement.getNodeName());	//G***del
 		final MutableAttributeSet attributeSet=createAttributeSet(xmlElement, baseURI);	//create and fill an attribute set based upon this element's CSS style
@@ -1021,10 +627,9 @@ xmlDocument.normalize();	//G***do we want to do this here? probably not---or may
 		return attributeSet;  //return the attribute set used for the element
 	}
 
-	/**Appends the tree contents of an XML element (not including the element tag)
-		into a list of element specs.
+	/**Appends the tree contents of an XML node (not including the element tag) into a list of element specs.
 	@param elementSpecList The list of element specs to be inserted into the document.
-	@param xmlElement The XML element tree.
+	@param node The XML node tree, such as an element or a document fragment.
 	@param attributeSet The attribute set of the element.
 	@param baseURI The base URI of the document, used for generating full target
 		URIs for quick searching.
@@ -1032,16 +637,16 @@ xmlDocument.normalize();	//G***do we want to do this here? probably not---or may
 	@see XMLDocument#insert
 	@see XMLDocument#appendElementSpecList
 	*/
-	protected void appendElementSpecListContent(final List elementSpecList, final org.w3c.dom.Element xmlElement, final MutableAttributeSet attributeSet, final URI baseURI)
+	protected void appendElementSpecListContent(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final Node node, final MutableAttributeSet attributeSet, final URI baseURI)
 	{
-		final NodeList childNodeList=xmlElement.getChildNodes();  //get the list of child nodes
+		final NodeList childNodeList=node.getChildNodes();  //get the list of child nodes
 		final int childNodeCount=childNodeList.getLength();	//see how many child nodes there are
 		if(childNodeCount>0)	//if this element has children
 		{
 			for(int childIndex=0; childIndex<childNodeCount; childIndex++)	//look at each child node
 			{
-				final Node node=childNodeList.item(childIndex);	//look at this node
-				appendElementSpecListNode(elementSpecList, node, baseURI);	//append this node's information
+				final Node childNode=childNodeList.item(childIndex);	//look at this node
+				appendElementSpecListNode(elementSpecList, childNode, baseURI);	//append this node's information
 			}
 
 /*G***fix; transferred elsewhere
@@ -1085,7 +690,7 @@ xmlDocument.normalize();	//G***do we want to do this here? probably not---or may
 	@see XMLDocument#insert
 	@see XMLDocument#appendElementSpecListContent
 	*/
-	protected MutableAttributeSet appendElementSpecListNode(final List elementSpecList, final org.w3c.dom.Node node, final URI baseURI)
+	protected MutableAttributeSet appendElementSpecListNode(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final org.w3c.dom.Node node, final URI baseURI)
 	{
 //G***del Debug.trace("appending element spec list node: ", node.getNodeName());  //G***del
 		switch(node.getNodeType())	//see which type of object this is
@@ -1119,7 +724,7 @@ xmlDocument.normalize();	//G***do we want to do this here? probably not---or may
 	@see XMLDocument#insert
 	@see XMLDocument#appendElementSpecListContent
 	*/
-	protected void appendElementSpecListContent(final List elementSpecList, final org.w3c.dom.Node node, final AttributeSet attributeSet, final URI baseURI, final String text)
+	protected void appendElementSpecListContent(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final org.w3c.dom.Node node, final AttributeSet attributeSet, final URI baseURI, final String text)	//TODO remove the node parameter if not needed
 	{
 		final AttributeSet textAttributeSet;
 		if(attributeSet!=null)	//if there are no attributes provided (artificial text is being manually inserted, for instance)
@@ -1183,7 +788,7 @@ if(node!=null && node.getParentNode() instanceof org.w3c.dom.Element)
 	@see XMLDocument#insert
 	@see XMLDocument#appendElementSpecList
 	*/
-	protected void appendElementSpecListPageBreak(final List elementSpecList)
+	protected void appendElementSpecListPageBreak(final List<DefaultStyledDocument.ElementSpec> elementSpecList)
 	{
 //G***del Debug.trace("XMLDocument.appendElementSpecListPageBreak()");	//G***del
 		final SimpleAttributeSet pageBreakAttributeSet=new SimpleAttributeSet();	//create a page break attribute set G***create this and keep it in the constructor for optimization
@@ -1489,7 +1094,6 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 	*/
 	protected String getTargetID(final AttributeSet attributeSet)  //G***can any of this be made into a generic XML utility, using the DTD ID type?
 	{
-//G***del when works		final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
 		return XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, "id");  //return the value of the "id" attribute, if it exists G***use a constant here
 	}
 
@@ -1556,573 +1160,94 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 		}
 	}
 
+	/**Data to be inserted into the Swing document, such as an XML document or a MAQRO activity.
+	@author Garret Wilson
+	*/
+	public static class ContentData<O>
+	{
+		/**The content object.*/
+		private final O object;
 
-	/**
-	 * Creates a view from an element.
-	 *
-	 * @param elem the element
-	 * @return the view
-	 */
-	 /*G***fix
-		public View create(Element elem)
-		{
+			/**@return The content object.*/
+			public O getObject() {return object;}
+
+		/**The base URI of the object, or <code>null</code> if no base URI is available..*/
+		private final URI baseURI;
+
+			/**@return The base URI of the object, or <code>null</code> if no base URI is available.*/
+			public URI getBaseURI() {return baseURI;}
+
+		/**The content type of the object.*/
+		private final ContentType contentType;
+
+			/**@return The content type of the object.*/
+			public ContentType getContentType() {return contentType;}
+
+		/**A description of the object, or <code>null</code> if no description is available.*/
+		private final RDFResource description;
+
+			/**@return A description of the object, or <code>null</code> if no description is available.*/
+			public RDFResource getDescription() {return description;}
+
+		/**Object and baseURI constructor
+		@param object The content object.
+		@param baseURI The base URI of the object, or <code>null</code> if no base URI is available..
+		@param contentType The content type of the object.
+		@exception NullPointerException if the object or content type is <code>null</code>.
 		*/
-/*G***del
-			System.out.println("element: "+elem);
-		if(elem.getAttributes().getAttribute(StyleConstants.NameAttribute)!=null && elem.getAttributes().getAttribute(StyleConstants.NameAttribute) instanceof String)
-			System.out.println("element.name: "+elem.getAttributes().getAttribute(StyleConstants.NameAttribute));
-*/
-//G***fix		return new ParagraphView(elem);
-//G***fix			return XMLEditorKit.create(elem);
-
-//G***fix		}
-//G***fix	}
-/*G***fix
-
-
-			Object o = elem.getAttributes().getAttribute(StyleConstants.NameAttribute);
-			if (o instanceof HTML.Tag) {
-		HTML.Tag kind = (HTML.Tag) o;
-		if (kind == HTML.Tag.CONTENT) {
-				return new InlineView(elem);
-		} else if (kind == HTML.Tag.IMPLIED) {
-				String ws = (String) elem.getAttributes().getAttribute(
-			CSS.Attribute.WHITE_SPACE);
-				if ((ws != null) && ws.equals("pre")) {
-			return new LineView(elem);
-				}
-				return new javax.swing.text.html.ParagraphView(elem);
-		} else if ((kind == HTML.Tag.P) ||
-				 (kind == HTML.Tag.H1) ||
-				 (kind == HTML.Tag.H2) ||
-				 (kind == HTML.Tag.H3) ||
-				 (kind == HTML.Tag.H4) ||
-				 (kind == HTML.Tag.H5) ||
-				 (kind == HTML.Tag.H6) ||
-				 (kind == HTML.Tag.DT)) {
-				// paragraph
-				return new javax.swing.text.html.ParagraphView(elem);
-		} else if ((kind == HTML.Tag.MENU) ||
-			   (kind == HTML.Tag.DIR) ||
-			   (kind == HTML.Tag.UL)   ||
-				 (kind == HTML.Tag.OL)) {
-		    return new ListView(elem);
-		} else if (kind == HTML.Tag.BODY) {
-		    // reimplement major axis requirements to indicate that the
-		    // block is flexible for the body element... so that it can
-		    // be stretched to fill the background properly.
-		    return new BlockView(elem, View.Y_AXIS) {
-												protected SizeRequirements calculateMajorAxisRequirements(int axis, SizeRequirements r) {
-                            r = super.calculateMajorAxisRequirements(axis, r);
-					r.maximum = Integer.MAX_VALUE;
-			    return r;
-			}
-		    };
-		} else if ((kind == HTML.Tag.LI) ||
-				 (kind == HTML.Tag.CENTER) ||
-			   (kind == HTML.Tag.DL) ||
-			   (kind == HTML.Tag.DD) ||
-			   (kind == HTML.Tag.HTML) ||
-			   (kind == HTML.Tag.DIV) ||
-			   (kind == HTML.Tag.BLOCKQUOTE) ||
-			   (kind == HTML.Tag.PRE)) {
-		    // vertical box
-		    return new BlockView(elem, View.Y_AXIS);
-		} else if (kind == HTML.Tag.NOFRAMES) {
-		    return new NoFramesView(elem, View.Y_AXIS);
-		} else if ((kind == HTML.Tag.TH) ||
-			   (kind == HTML.Tag.TD)) {
-		    return new javax.swing.text.html.TableView.CellView(elem);
-		} else if (kind==HTML.Tag.IMG) {
-		    return new ImageView(elem);
-		} else if (kind == HTML.Tag.ISINDEX) {
-		    return new IsindexView(elem);
-		} else if (kind == HTML.Tag.HR) {
-		    return new HRuleView(elem);
-		} else if (kind == HTML.Tag.BR) {
-				return new BRView(elem);
-		} else if (kind == HTML.Tag.TABLE) {
-		    return new javax.swing.text.html.TableView(elem);
-		} else if ((kind == HTML.Tag.INPUT) ||
-			   (kind == HTML.Tag.SELECT) ||
-			   (kind == HTML.Tag.TEXTAREA)) {
-		    return new FormView(elem);
-		} else if (kind == HTML.Tag.OBJECT) {
-		    return new ObjectView(elem);
-		} else if (kind == HTML.Tag.FRAMESET) {
-                     if (elem.getAttributes().isDefined(HTML.Attribute.ROWS)) {
-                         return new FrameSetView(elem, View.Y_AXIS);
-                     } else if (elem.getAttributes().isDefined(HTML.Attribute.COLS)) {
-                         return new FrameSetView(elem, View.X_AXIS);
-										 }
-                     throw new Error("Can't build a"  + kind + ", " + elem + ":" +
-                                     "no ROWS or COLS defined.");
-                } else if (kind == HTML.Tag.FRAME) {
- 		    return new FrameView(elem);
-                } else if (kind instanceof HTML.UnknownTag) {
-		    return new HiddenTagView(elem);
-		} else if (kind == HTML.Tag.COMMENT) {
-		    return new CommentView(elem);
-		} else if ((kind == HTML.Tag.HEAD) ||
-			   (kind == HTML.Tag.TITLE) ||
-			   (kind == HTML.Tag.META) ||
-			   (kind == HTML.Tag.LINK) ||
-			   (kind == HTML.Tag.STYLE) ||
-			   (kind == HTML.Tag.SCRIPT) ||
-			   (kind == HTML.Tag.AREA) ||
-			   (kind == HTML.Tag.MAP) ||
-			   (kind == HTML.Tag.PARAM) ||
-			   (kind == HTML.Tag.APPLET)) {
-		    return new HiddenTagView(elem);
+		public ContentData(final O object, final URI baseURI, final ContentType contentType)
+		{
+			this(object, baseURI, contentType, null);	//construct the data with no description
 		}
-		// don't know how to build this....
-		throw new Error("Can't build a " + kind + ", " + elem);
-	    }
 
-	    // don't know how to build this....
-	    throw new Error("Can't build a " + elem);
-	}
+		/**Object, baseURI, and description constructor
+		@param object The content object.
+		@param baseURI The base URI of the object, or <code>null</code> if no base URI is available..
+		@param contentType The content type of the object.
+		@param description A description of the object, or <code>null</code> if no description is available.
+		@exception NullPointerException if the object or content type is <code>null</code>.
+		*/
+		public ContentData(final O object, final URI baseURI, final ContentType contentType, final RDFResource description)
+		{
+			this.object=checkNull(object, "Object cannot be null");
+			this.baseURI=baseURI;
+//TODO del when works			this.baseURI=checkNull(baseURI, "Base URI cannot be null");
+			this.contentType=checkNull(contentType, "Content type cannot be null");
+			this.description=description;
 		}
-*/
-		// --- Action implementations ------------------------------
-
-/** The bold action identifier
-*/
-//G***fix    public static final String	BOLD_ACTION = "html-bold-action";
-/** The italic action identifier
-*/
-//G***fix    public static final String	ITALIC_ACTION = "html-italic-action";
-/** The paragraph left indent action identifier
-*/
-//G***fix		public static final String	PARA_INDENT_LEFT = "html-para-indent-left";
-/** The paragraph right indent action identifier
-*/
-//G***fix		public static final String	PARA_INDENT_RIGHT = "html-para-indent-right";
-/** The  font size increase to next value action identifier
-*/
-//G***fix		public static final String	FONT_CHANGE_BIGGER = "html-font-bigger";
-/** The font size decrease to next value action identifier
-*/
-//G***fix		public static final String	FONT_CHANGE_SMALLER = "html-font-smaller";
-/** The Color choice action identifier
-		 The color is passed as an argument
-*/
-//G***fix		public static final String	COLOR_ACTION = "html-color-action";
-/** The logical style choice action identifier
-		 The logical style is passed in as an argument
-*/
-//G***fix		public static final String	LOGICAL_STYLE_ACTION = "html-logical-style-action";
-		/**
-		 * Align images at the top.
-		 */
-//G***fix		public static final String	IMG_ALIGN_TOP = "html-image-align-top";
-
-		/**
-		 * Align images in the middle.
-		 */
-//G***fix		public static final String	IMG_ALIGN_MIDDLE = "html-image-align-middle";
-
-		/**
-		 * Align images at the bottom.
-		 */
-//G***fix		public static final String	IMG_ALIGN_BOTTOM = "html-image-align-bottom";
-
-		/**
-		 * Align images at the border.
-		 */
-//G***fix		public static final String	IMG_BORDER = "html-image-border";
-
-
-		/** HTML used when inserting tables. */
-//G***fix		private static final String INSERT_TABLE_HTML = "<table border=1><tr><td></td></tr></table>";
-
-		/** HTML used when inserting unordered lists. */
-//G***fix		private static final String INSERT_UL_HTML = "<ul><li></li></ul>";
-
-		/** HTML used when inserting ordered lists. */
-//G***fix		private static final String INSERT_OL_HTML = "<ol><li></li></ol>";
-
-		/** HTML used when inserting hr. */
-//G***fix		private static final String INSERT_HR_HTML = "<hr>";
-
-		/** HTML used when inserting pre. */
-//G***fix		private static final String INSERT_PRE_HTML = "<pre></pre>";
-
-	/**
-	 * @return HTMLDocument of <code>e</code>.
-	 */
-/*G***fix
-	protected HTMLDocument getHTMLDocument(JEditorPane e) {
-			Document d = e.getDocument();
-			if (d instanceof HTMLDocument) {
-		return (HTMLDocument) d;
-			}
-			throw new IllegalArgumentException("document must be HTMLDocument");
 	}
-*/
 
-	/**
-	 * @return HTMLEditorKit for <code>e</code>.
-	 */
-/*G***fix
-				protected HTMLEditorKit getHTMLEditorKit(JEditorPane e) {
-			EditorKit k = e.getEditorKit();
-			if (k instanceof HTMLEditorKit) {
-		return (HTMLEditorKit) k;
-			}
-			throw new IllegalArgumentException("EditorKit must be HTMLEditorKit");
-	}
+	/**An XML document to be inserted into the Swing document.
+	@author Garret Wilson
+	*/
+/*G***del if not needed
+	protected static class XMLDocumentData extends ContentData<org.w3c.dom.Document>
+	{
 */
-
-	/**
-	 * Returns an array of the Elements that contain <code>offset</code>.
-	 * The first elements corresponds to the root.
-	 */
-/*G***fix
-	protected Element[] getElementsAt(HTMLDocument doc, int offset) {
-			return getElementsAt(doc.getDefaultRootElement(), offset, 0);
-	}
-*/
-
-	/**
-	 * Recursive method used by getElementsAt.
-	 */
-/*G***fix
-	private Element[] getElementsAt(Element parent, int offset,
-					int depth) {
-			if (parent.isLeaf()) {
-		Element[] retValue = new Element[depth + 1];
-		retValue[depth] = parent;
-		return retValue;
-			}
-			Element[] retValue = getElementsAt(parent.getElement
-				(parent.getElementIndex(offset)), offset, depth + 1);
-			retValue[depth] = parent;
-			return retValue;
-	}
-*/
-
-	/**
-	 * Returns number of elements, starting at the deepest leaf, needed
-	 * to get to an element representing <code>tag</code>. This will
-	 * return -1 if no elements is found representing <code>tag</code>,
-	 * or 0 if the parent of the leaf at <code>offset</code> represents
-	 * <code>tag</code>.
-	 */
-/*G***fix
-	protected int elementCountToTag(HTMLDocument doc, int offset,
-					HTML.Tag tag) {
-			int depth = -1;
-			Element e = doc.getCharacterElement(offset);
-	    while (e != null && e.getAttributes().getAttribute
-		   (StyleConstants.NameAttribute) != tag) {
-		e = e.getParentElement();
-		depth++;
-	    }
-	    if (e == null) {
-		return -1;
-	    }
-	    return depth;
-	}
-*/
-
-	/**
-	 * Returns the deepest element at <code>offset</code> matching
-	 * <code>tag</code>.
-	 */
-/*G***fix
-	protected Element findElementMatchingTag(HTMLDocument doc, int offset,
-						 HTML.Tag tag) {
-			Element e = doc.getDefaultRootElement();
-			Element lastMatch = null;
-			while (e != null) {
-		if (e.getAttributes().getAttribute
-			 (StyleConstants.NameAttribute) == tag) {
-				lastMatch = e;
-		}
-		e = e.getElement(e.getElementIndex(offset));
-			}
-			return lastMatch;
-	}
+		/**Document and baseURI constructor
+		@param document The content document.
+		@param baseURI The base URI of the object.
+		@exception NullPointerException if the object or base URI is <code>null</code>.
+		*/
+/*G***del if not needed
+		public XMLDocumentData(final org.w3c.dom.Document document, final URI baseURI)
+		{
+			this(document, baseURI, null);	//construct the data with no description
 		}
 */
 
-		/**
-		 * InsertHTMLTextAction can be used to insert an arbitrary string of HTML
-		 * into an existing HTML document. At least two HTML.Tags need to be
-		 * supplied. The first Tag, parentTag, identifies the parent in
-		 * the document to add the elements to. The second tag, addTag,
-		 * identifies the first tag that should be added to the document as
-		 * seen in the HTML string. One important thing to remember, is that
-		 * the parser is going to generate all the appropriate tags, even if
-		 * they aren't in the HTML string passed in.<p>
-		 * For example, lets say you wanted to create an action to insert
-		 * a table into the body. The parentTag would be HTML.Tag.BODY,
-		 * addTag would be HTML.Tag.TABLE, and the string could be something
-		 * like &lt;table>&lt;tr>&lt;td>&lt;/td>&lt;/tr>&lt;/table>.
-		 * <p>There is also an option to supply an alternate parentTag and
-		 * addTag. These will be checked for if there is no parentTag at
-		 * offset.
-		 */
-/*G***fix
-		public static class InsertHTMLTextAction extends HTMLTextAction {
-	public InsertHTMLTextAction(String name, String html,
-						HTML.Tag parentTag, HTML.Tag addTag) {
-			this(name, html, parentTag, addTag, null, null);
+		/**Document, baseURI, and description constructor
+		@param document The content document.
+		@param baseURI The base URI of the object.
+		@param description A description of the object, or <code>null</code> if no description is available.
+		@exception NullPointerException if the object or base URI is <code>null</code>.
+		*/
+/*G***del if not needed
+		public XMLDocumentData(final org.w3c.dom.Document document, final URI baseURI, final RDFResource description)
+		{
+			super(document, baseURI, description);	//construct the parent class
+		}
 	}
-
-	public InsertHTMLTextAction(String name, String html,
-						HTML.Tag parentTag,
-						HTML.Tag addTag,
-						HTML.Tag alternateParentTag,
-						HTML.Tag alternateAddTag) {
-			this(name, html, parentTag, addTag, alternateParentTag,
-		 alternateAddTag, true);
-	}
-*/
-
-	/* public */
-/*G***fix
-	InsertHTMLTextAction(String name, String html,
-						HTML.Tag parentTag,
-						HTML.Tag addTag,
-						HTML.Tag alternateParentTag,
-						HTML.Tag alternateAddTag,
-						boolean adjustSelection) {
-			super(name);
-			this.html = html;
-			this.parentTag = parentTag;
-			this.addTag = addTag;
-			this.alternateParentTag = alternateParentTag;
-			this.alternateAddTag = alternateAddTag;
-			this.adjustSelection = adjustSelection;
-	}
-*/
-
-	/**
-	 * A cover for HTMLEditorKit.insertHTML. If an exception it
-	 * thrown it is wrapped in a RuntimeException and thrown.
-	 */
-/*G***fix
-	protected void insertHTML(JEditorPane editor, HTMLDocument doc,
-					int offset, String html, int popDepth,
-					int pushDepth, HTML.Tag addTag) {
-			try {
-		getHTMLEditorKit(editor).insertHTML(doc, offset, html,
-								popDepth, pushDepth,
-								addTag);
-			} catch (IOException ioe) {
-		throw new RuntimeException("Unable to insert: " + ioe);
-			} catch (BadLocationException ble) {
-		throw new RuntimeException("Unable to insert: " + ble);
-			}
-	}
-*/
-
-	/**
-	 * This is invoked when inserting at a boundry. It determines
-	 * the number of pops, and then the number of pushes that need
-	 * to be performed, and then invokes insertHTML.
-	 */
-/*G***fix
-	protected void insertAtBoundry(JEditorPane editor, HTMLDocument doc,
-							 int offset, Element insertElement,
-							 String html, HTML.Tag parentTag,
-							 HTML.Tag addTag) {
-			// Find the common parent.
-			Element e;
-			Element commonParent;
-			boolean isFirst = (offset == 0);
-
-			if (offset > 0 || insertElement == null) {
-		e = doc.getDefaultRootElement();
-		while (e != null && e.getStartOffset() != offset &&
-					 !e.isLeaf()) {
-				e = e.getElement(e.getElementIndex(offset));
-		}
-		commonParent = (e != null) ? e.getParentElement() : null;
-			}
-			else {
-		// If inserting at the origin, the common parent is the
-		// insertElement.
-		commonParent = insertElement;
-			}
-			if (commonParent != null) {
-		// Determine how many pops to do.
-		int pops = 0;
-		int pushes = 0;
-		if (isFirst && insertElement != null) {
-				e = commonParent;
-				while (e != null && !e.isLeaf()) {
-			e = e.getElement(e.getElementIndex(offset));
-			pops++;
-		    }
-		}
-		else {
-		    e = commonParent;
-				offset--;
-				while (e != null && !e.isLeaf()) {
-			e = e.getElement(e.getElementIndex(offset));
-			pops++;
-				}
-
-				// And how many pushes
-				e = commonParent;
-				offset++;
-				while (e != null && e != insertElement) {
-			e = e.getElement(e.getElementIndex(offset));
-			pushes++;
-				}
-		}
-		pops = Math.max(0, pops - 1);
-
-		// And insert!
-		insertHTML(editor, doc, offset, html, pops, pushes, addTag);
-			}
-	}
-*/
-
-	/**
-	 * If there is an Element with name <code>tag</code> at
-	 * <code>offset</code>, this will invoke either insertAtBoundry
-	 * or <code>insertHTML</code>. This returns true if there is
-	 * a match, and one of the inserts is invoked.
-	 */
-	/*protected*/
-/*G***fix
-	boolean insertIntoTag(JEditorPane editor, HTMLDocument doc,
-			      int offset, HTML.Tag tag, HTML.Tag addTag) {
-	    Element e = findElementMatchingTag(doc, offset, tag);
-	    if (e != null && e.getStartOffset() == offset) {
-		insertAtBoundry(editor, doc, offset, e, html,
-				tag, addTag);
-		return true;
-	    }
-	    else if (offset > 0) {
-		int depth = elementCountToTag(doc, offset - 1, tag);
-		if (depth != -1) {
-		    insertHTML(editor, doc, offset, html, depth, 0, addTag);
-		    return true;
-		}
-	    }
-	    return false;
-	}
-*/
-
-	/**
-	 * Called after an insertion to adjust the selection.
-	 */
-	/* protected */
-/*G***fix
-	void adjustSelection(JEditorPane pane, HTMLDocument doc,
-					 int startOffset, int oldLength) {
-			int newLength = doc.getLength();
-			if (newLength != oldLength && startOffset < newLength) {
-		if (startOffset > 0) {
-				String text;
-				try {
-			text = doc.getText(startOffset - 1, 1);
-				} catch (BadLocationException ble) {
-			text = null;
-				}
-				if (text != null && text.length() > 0 &&
-			text.charAt(0) == '\n') {
-			pane.select(startOffset, startOffset);
-		    }
-		    else {
-			pane.select(startOffset + 1, startOffset + 1);
-		    }
-		}
-		else {
-		    pane.select(1, 1);
-		}
-	    }
-	}
-*/
-
-				/**
-				 * Inserts the html into the document.
-				 *
-				 * @param e the event
-				 */
-/*G***fix
-				public void actionPerformed(ActionEvent ae) {
-			JEditorPane editor = getEditor(ae);
-			if (editor != null) {
-		HTMLDocument doc = getHTMLDocument(editor);
-		int offset = editor.getSelectionStart();
-		int length = doc.getLength();
-		boolean inserted;
-		// Try first choice
-		if (!insertIntoTag(editor, doc, offset, parentTag, addTag) &&
-		    alternateParentTag != null) {
-		    // Then alternate.
-		    inserted = insertIntoTag(editor, doc, offset,
-					     alternateParentTag,
-					     alternateAddTag);
-		}
-		else {
-		    inserted = true;
-		}
-		if (adjustSelection && inserted) {
-		    adjustSelection(editor, doc, offset, length);
-		}
-	    }
-	}
-*/
-
-	/** HTML to insert. */
-//G***fix	protected String html;
-	/** Tag to check for in the document. */
-//G***fix	protected HTML.Tag parentTag;
-	/** Tag in HTML to start adding tags from. */
-//G***fix	protected HTML.Tag addTag;
-	/** Alternate Tag to check for in the document if parentTag is
-	 * not found. */
-//G***fix	protected HTML.Tag alternateParentTag;
-	/** Alternate tag in HTML to start adding tags from if parentTag
-	 * is not found and alternateParentTag is found. */
-//G***fix	protected HTML.Tag alternateAddTag;
-	/** True indicates the selection should be adjusted after an insert. */
-//G***fix	boolean adjustSelection;
-//G***fix		}
-
-
-		/**
-		 * InsertHRAction is special, at actionPerformed time it will determine
-		 * the parent HTML.Tag based on the paragraph element at the selection
-		 * start.
-		 */
-/*G***fix
-		static class InsertHRAction extends InsertHTMLTextAction {
-	InsertHRAction() {
-			super("InsertHR", "<hr>", null, HTML.Tag.IMPLIED, null, null,
-			false);
-	}
-*/
-
-				/**
-				 * Inserts the html into the document.
-				 *
-				 * @param e the event
-				 */
-/*G***fix
-				public void actionPerformed(ActionEvent ae) {
-			JEditorPane editor = getEditor(ae);
-			if (editor != null) {
-		HTMLDocument doc = getHTMLDocument(editor);
-		int offset = editor.getSelectionStart();
-		Element paragraph = doc.getParagraphElement(offset);
-		if (paragraph.getParentElement() != null) {
-				parentTag = (HTML.Tag)paragraph.getParentElement().
-											getAttributes().getAttribute
-											(StyleConstants.NameAttribute);
-				super.actionPerformed(ae);
-		}
-			}
-	}
-
-		}
 */
 
 }

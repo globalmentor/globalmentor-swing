@@ -102,18 +102,16 @@ public class XMLParagraphView extends ParagraphView implements XMLCSSView, Fragm
 	/**@return The indent amount of the first line.*/
 	protected float getFirstLineIndent() {return firstLineIndent;}
 
-		/**
-		 * Constructs a ParagraphView for the given element.
-		 *
-		 * @param elem the element that this view is responsible for
-		 */
-		public XMLParagraphView(Element elem)
-		{
-			super(elem);
+	/**Constructs a paragraph view for the given element.
+	@param element The element for which this view is responsible.
+	*/
+	public XMLParagraphView(final Element element)
+	{
+		super(element);	//construct the parent class
 //G***del Debug.trace("Creating XMLParagraphView, i18n property: ", getDocument().getProperty("i18n")); //G***testing
 Debug.trace(); //G***testing
 //TODO fix antialias and fonts		  strategy=new com.garretwilson.swing.text.TextLayoutStrategy();  //G***fix; testing i18n
-		}
+	}
 
 	/**Releases any cached information such as pooled views and flows. This
 		version releases the entire pooled view.
@@ -697,6 +695,15 @@ Debug.trace(); //G***testing
 		public XMLParagraphFragmentView(final Element element, final int axis, final View wholeView, final boolean firstFragment, final boolean lastFragment)
 		{
 			super(element, axis, wholeView, firstFragment, lastFragment); //do the default construction
+		}
+
+		/**Creates a fragment view into which pieces of this view will be placed.
+		@param isFirstFragment Whether this fragment holds the first part of the original view.
+		@param isLastFragment Whether this fragment holds the last part of the original view.
+		*/
+		public View createFragmentView(final boolean isFirstFragment, final boolean isLastFragment)
+		{
+		  return new XMLParagraphFragmentView(getElement(), getAxis(), getWholeView(), isFirstFragment, isLastFragment);	//create a fragment of this view, indicating the original view
 		}
 
 		/**Perform layout for the minor axis of the box (i.e. the axis orthoginal to

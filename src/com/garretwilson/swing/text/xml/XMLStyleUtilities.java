@@ -6,8 +6,10 @@ import javax.mail.internet.ContentType;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
-import com.garretwilson.swing.text.StyleUtilities;
-import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
+import static com.garretwilson.swing.text.StyleUtilities.*;
+import static com.garretwilson.swing.text.xml.XMLStyleConstants.*;
+
+import com.garretwilson.lang.ObjectUtilities;
 import com.garretwilson.text.xml.XMLUtilities;
 import com.garretwilson.util.NameValuePair;
 
@@ -21,7 +23,7 @@ import com.garretwilson.util.NameValuePair;
 @author Garret Wilson
 @see com.garretwilson.swing.text.xml.XMLAttribute
 */
-public class XMLStyleUtilities extends StyleUtilities implements XMLStyleConstants
+public class XMLStyleUtilities
 {
 
 	/**An empty array of name/value pairs to return when, for example, no
@@ -32,49 +34,69 @@ public class XMLStyleUtilities extends StyleUtilities implements XMLStyleConstan
 	/**The delimiter used for forming combined namespaceURI+localName names for XML attributes.*/
 	protected final static char ATTRIBUTE_NAMESPACE_DELIMITER='$';
 
-	/**Searches up the element hierarchy for an element with the given local
-		name. The given element itself is not checked.
+	/**Searches up the element hierarchy for an element with the given namespace URI and local name.
+	The given element itself is not checked.
 	@param element The element the ancestors of which should be checked.
-	@param localName The local name of the element to find. G***maybe pass a namespace URI as well
-	@return The ancestor element with the given XML local name, or <code>null</code>
-		if there is no such ancestor element.
+	@param namespaceURI The XML namespace of the element to find, or <code>null</code> if the element is not in a namespace.
+	@param localName The XML local name of the element to find.
+	@return The ancestor element with the given XML local name, or <code>null</code> if there is no such ancestor element.
 	*/
-	public static Element getAncestorElement(final Element element, final String localName) //G***probably put this in a better utility class
+	public static Element getAncestorElement(final Element element, final String namespaceURI, final String localName)
 	{
 		Element parentElement=element.getParentElement(); //get the element's parent
 		while(parentElement!=null)  //keep looking up the hierarchy until we run out of parents
 		{
 			final AttributeSet attributeSet=parentElement.getAttributes();  //get the parent element's attribute set
-			//G***we should probably make sure this element is in our namespace
-			final String elementLocalName=getXMLElementLocalName(attributeSet); //get the local name of this element
-			if(localName.equals(elementLocalName))  //if this element has the correct local name
+			if(isXMLElement(attributeSet, namespaceURI, localName))	//if this attribute set matches
+			{
 				break;  //we've found the correct ancestor; stop looking
+			}
 			parentElement=parentElement.getParentElement(); //look at this element's parent
 		}
 		return parentElement; //return the parent element, which will be null if we didn't find a match
 	}
 
-	/**Searches for a direct child element with the given local name.
+	/**Searches for a direct child element with the given namespace URI and local name.
 	@param element The element the children of which should be checked.
-	@param localName The local name of the element to find. G***maybe pass a namespace URI as well
+	@param localName The XML local name of the element to find.
+	@param namespaceURI The XML namespace of the element to find, or <code>null</code> if the element is not in a namespace.
 	@return The first child element with the given XML local name, or
 		<code>null</code> if there is no such child element.
 	*/
-	public static Element getChildElement(final Element element, final String localName) //G***probably put this in a better utility class
+	public static Element getChildElement(final Element element, final String namespaceURI, final String localName)
 	{
 		final int childElementCount=element.getElementCount(); //find out how many child elements there are
 		for(int i=0; i<childElementCount; ++i) //look at each child element
 		{
 			final Element childElement=element.getElement(i); //get a reference to this child element
 			final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child element's attribute set
-			//G***we should probably make sure this element is in our namespace
-			final String elementLocalName=getXMLElementLocalName(childAttributeSet); //get the local name of this element
-			if(localName.equals(elementLocalName))  //if this element has the correct local name
+			if(isXMLElement(childAttributeSet, namespaceURI, localName))	//if this attribute set matches
+			{
 				return childElement;  //return the child element we found
+			}
 		}
 		return null;  //show that we couldn't find a matching child element
 	}
 
+	/**Determines if the given attribute set represents an XML element with the given namespace URI and local name.
+	@param namespaceURI The XML namespace, or <code>null</code> if the element is not in a namespace.
+	@param localName The XML local name.
+	@return <code>true</code> if the given attribute set represents an XML element with the given namespace and local name.
+	*/
+	public static boolean isXMLElement(final AttributeSet attributeSet, final String namespaceURI, final String localName)
+	{
+		final String elementNamespaceURI=getXMLElementNamespaceURI(attributeSet);	//get the namespace
+		if(ObjectUtilities.equals(namespaceURI, elementNamespaceURI))	//if the namespace URI matches (or they are both null)
+		{
+			final String elementLocalName=getXMLElementLocalName(attributeSet); //get the local name of this element
+			if(localName.equals(elementLocalName))  //if this element has the correct local name
+			{
+				return true;  //show that this attribute set represents the requested XML element
+			}
+		}
+		return false;	//indicate that either the namespace URI or local name was incorrect
+	}
+	
 	/**The name of the map of XML attributes.*/
 //G***fix	public final static String XMLAttributesAttributeName="XMLAttributes";
 

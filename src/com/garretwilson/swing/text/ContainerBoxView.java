@@ -161,6 +161,7 @@ public class ContainerBoxView extends BoxView
 	}
 
 	/**A break strategy for views that contain other views and may be parceled up into fragments.
+	If a view and its fragment both support managed components, this strategy transfers managed components to the fragment.
 	@author Garret Wilson
 	*/
 	public static class ContainerBreakStrategy implements ViewBreakStrategy
@@ -245,7 +246,37 @@ public class ContainerBoxView extends BoxView
 						  break;  //stop trying to add more child views; more views may fit (especially hidden views), but they would be skipping content that we've already lost by breaking this child view
 					  }
 					}
-					return createFragmentView(fragmentViewFactory, view, childViewList.toArray(new View[childViewList.size()]), isFirstFragment, isLastFragment);	//create a fragment view with the collected children
+					final View fragmentView=createFragmentView(fragmentViewFactory, view, childViewList.toArray(new View[childViewList.size()]), isFirstFragment, isLastFragment);	//create a fragment view with the collected children
+					try	//TODO later modify this code to see if the component locations fall within our span
+					{
+						if(fragmentView instanceof ViewComponentManageable && view instanceof ViewComponentManageable)	//if the original view and the fragment both support managed components
+						{
+							final ViewComponentManager componentManager=((ViewComponentManageable)view).getComponentManager();	//get the original view's component manager
+							final ViewComponentManager fragmentComponentManager=((ViewComponentManageable)fragmentView).getComponentManager();	//get the fragment view's component manager
+							for(final ViewComponentManager.ComponentInfo componentInfo:componentManager.getComponentInfos())	//for each component information
+							{
+								final boolean transferComponent;	//we'll determine whether we should transfer this component
+								final ViewComponentManager.Border border=componentInfo.getBorder();	//get the component border
+								if(border==ViewComponentManager.Border.SOUTH || border==ViewComponentManager.Border.PAGE_END)	//if this component is at the bottom TODO update to match orientation
+								{
+									transferComponent=isLastFragment;	//only include bottom components in the last fragment
+								}
+								else	//for all other components
+								{
+									transferComponent=isFirstFragment;	//include all non-bottom components only in the first fragment
+								}
+								if(transferComponent)	//if we should transfer this component
+								{
+									fragmentComponentManager.add((ViewComponentManager.ComponentInfo)componentInfo.clone());	//add a clone of the component information								
+								}
+							}					
+						}
+					}
+					catch(final CloneNotSupportedException cloneNotSupportedException)	//cloning should always be supported for the objects we use
+					{
+						throw new AssertionError(cloneNotSupportedException);
+					}
+					return fragmentView;	//return the fragment view we created
 				}
 			}
 			return view;	//if they want to break along another axis or we weren't able to break, return our entire view
@@ -290,7 +321,37 @@ public class ContainerBoxView extends BoxView
 						childViewList.add(childView.createFragment(startPos, endPos));	//add a portion (or all) of this child to our list of views
 					}
 				}
-				return createFragmentView(fragmentViewFactory, view, childViewList.toArray(new View[childViewList.size()]), isFirstFragment, isLastFragment);	//create a fragment view with the collected children
+				final View fragmentView=createFragmentView(fragmentViewFactory, view, childViewList.toArray(new View[childViewList.size()]), isFirstFragment, isLastFragment);	//create a fragment view with the collected children
+				try	//TODO later modify this code to check component locations
+				{
+					if(fragmentView instanceof ViewComponentManageable && view instanceof ViewComponentManageable)	//if the original view and the fragment both support managed components
+					{
+						final ViewComponentManager componentManager=((ViewComponentManageable)view).getComponentManager();	//get the original view's component manager
+						final ViewComponentManager fragmentComponentManager=((ViewComponentManageable)fragmentView).getComponentManager();	//get the fragment view's component manager
+						for(final ViewComponentManager.ComponentInfo componentInfo:componentManager.getComponentInfos())	//for each component information
+						{
+							final boolean transferComponent;	//we'll determine whether we should transfer this component
+							final ViewComponentManager.Border border=componentInfo.getBorder();	//get the component border
+							if(border==ViewComponentManager.Border.SOUTH || border==ViewComponentManager.Border.PAGE_END)	//if this component is at the bottom TODO update to match orientation
+							{
+								transferComponent=isLastFragment;	//only include bottom components in the last fragment
+							}
+							else	//for all other components
+							{
+								transferComponent=isFirstFragment;	//include all non-bottom components only in the first fragment
+							}
+							if(transferComponent)	//if we should transfer this component
+							{
+								fragmentComponentManager.add((ViewComponentManager.ComponentInfo)componentInfo.clone());	//add a clone of the component information								
+							}
+						}					
+					}
+				}
+				catch(final CloneNotSupportedException cloneNotSupportedException)	//cloning should always be supported for the objects we use
+				{
+					throw new AssertionError(cloneNotSupportedException);
+				}
+				return fragmentView;	//return the fragment view we created
 			}
 		}
 

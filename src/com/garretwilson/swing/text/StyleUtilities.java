@@ -2,11 +2,12 @@ package com.garretwilson.swing.text;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.MutableAttributeSet;
+import static com.garretwilson.swing.text.StyleConstants.*;
 
 /**A collection of utilities for working with Swing styles in attribute sets.
 @author Garret Wilson
 */
-public class StyleUtilities implements StyleConstants
+public class StyleUtilities
 {
 
 	/**Returns an attribute in the attribute set only if it is defined; the attribute

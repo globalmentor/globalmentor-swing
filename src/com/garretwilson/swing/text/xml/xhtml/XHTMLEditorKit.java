@@ -12,14 +12,13 @@ import com.garretwilson.swing.text.StyleUtilities;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.text.xml.XMLDOMImplementation;
 import com.garretwilson.text.xml.xhtml.*;
+import static com.garretwilson.text.xml.xhtml.XHTMLConstants.*;
 import org.w3c.dom.*;
 
 /**An editor kit for XHTML.
 @author Garret Wilson
-
-@see com.garretwilson.text.xml.XMLProcessor
 */
-public class XHTMLEditorKit extends XMLEditorKit implements XHTMLConstants
+public class XHTMLEditorKit extends XMLEditorKit 
 {
 
 	/**The XHTML media type this editor kit supports, defaulting to <code>application/xhtml+xml</code>.*/

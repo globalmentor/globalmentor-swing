@@ -1303,7 +1303,10 @@ Debug.trace("Relative offset: ", relativeOffset);
 	*/
 	public void setXML(final org.w3c.dom.Document xmlDocument, final URI baseURI, final ContentType mediaType)
 	{
-		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new ContentType[]{mediaType}, mediaType);	//set the XML using arrays, specifying the media type
+//TODO del if not needed		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new ContentType[]{mediaType}, mediaType);	//set the XML using arrays, specifying the media type
+		close();  //close whatever book is open
+		getXMLTextPane().setContentType(mediaType.toString());	//set the content type of the text pane
+		getXMLTextPane().setXML(xmlDocument, baseURI, mediaType);	//tell the XML text pane to set the XML
 	}
 
 	/**Sets the given XML data.
@@ -1312,12 +1315,14 @@ Debug.trace("Relative offset: ", relativeOffset);
 	@param mediaTypeArray The array of media types of the documents.
 	@param mediaType The media type of the book itself.
 	*/
+/*TODO del if not needed
 	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray, final ContentType mediaType)
 	{
 		close();  //close whatever book is open
 		getXMLTextPane().setContentType(mediaType.toString());	//set the content type of the text pane
 		getXMLTextPane().setXML(xmlDocumentArray, baseURIArray, mediaTypeArray);	//tell the XML text pane to set the XML
 	}
+*/	
 
 	/**Reads the book content from a URI.
 	@param uri The location of the book.

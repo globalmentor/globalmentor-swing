@@ -21,13 +21,13 @@ public class XMLFragmentBlockView extends XMLBlockView implements FragmentView
 		public View getWholeView() {return wholeView;}
 
 	/**Whether this is the first fragment of the original view.*/
-	private boolean isFirstFragment;
+	private final boolean isFirstFragment;
 
 		/**@return <code>true</code> if this is the first fragment of the original view.*/
 		public boolean isFirstFragment() {return isFirstFragment;}
 
 	/**Whether this is the last fragment of the original view.*/
-	private boolean isLastFragment;
+	private final boolean isLastFragment;
 
 		/**@return <code>true</code> if this is the last fragment of the original view.*/
 		public boolean isLastFragment() {return isLastFragment;}
@@ -48,10 +48,8 @@ public class XMLFragmentBlockView extends XMLBlockView implements FragmentView
 	}
 
 	/**Creates a fragment view into which pieces of this view will be placed.
-	@param isFirstFragment Whether this fragment holds the first part of the
-		original view.
-	@param isLastFragment Whether this fragment holds the last part of the
-		original view.
+	@param isFirstFragment Whether this fragment holds the first part of the original view.
+	@param isLastFragment Whether this fragment holds the last part of the original view.
 	*/
 	public View createFragmentView(final boolean isFirstFragment, final boolean isLastFragment)
 	{

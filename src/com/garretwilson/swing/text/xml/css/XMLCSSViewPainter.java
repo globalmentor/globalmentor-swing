@@ -11,14 +11,14 @@ import com.garretwilson.swing.text.FragmentView;
 import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.text.xml.XMLListView;
 import com.garretwilson.swing.text.xml.XMLStyleUtilities;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants;
+import static com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants.*;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities;
 import com.garretwilson.util.Debug;
 
 /**Class to paint XML CSS views.
 @author Garret Wilson
 */
-public class XMLCSSViewPainter implements XMLCSSConstants
+public class XMLCSSViewPainter
 {
 
 	/**The default list style types for different nestings of ordered lists.*/
@@ -56,7 +56,7 @@ public class XMLCSSViewPainter implements XMLCSSConstants
 		  //G***testing; move
 		if(backgroundColor!=null)	//if we have a background color
 		{
-Debug.trace("Background for "+XMLCSSStyleUtilities.getXMLElementName(attributeSet)+": "+backgroundColor); //G***del
+//TODO del Debug.trace("Background for "+XMLCSSStyleUtilities.getXMLElementName(attributeSet)+": "+backgroundColor); //G***del
 			final Color originalColor=graphics.getColor();	//get the original graphics color
 			graphics.setColor(backgroundColor);	//switch to the background color
 			graphics.fillRect(allocRect.x, allocRect.y, allocRect.width, allocRect.height);	//fill the rectangle with the correct color

@@ -3,15 +3,14 @@ package com.garretwilson.swing.text.xml.xhtml;
 import javax.mail.internet.ContentType;
 import javax.swing.text.*;
 import com.garretwilson.io.ContentTypeConstants;
-import com.garretwilson.swing.text.*;
 import com.garretwilson.swing.text.xml.*;
-import com.garretwilson.text.xml.xhtml.XHTMLConstants;
+import static com.garretwilson.text.xml.xhtml.XHTMLConstants.*;
 
 /**A factory to build views for elements from XHTML based upon the name and/or
 	attributes of each element.
 @author Garret Wilson
 */
-public class XHTMLViewFactory extends XMLViewFactory implements XHTMLConstants
+public class XHTMLViewFactory extends XMLViewFactory
 {
 
 	/**A static application/java media type for quick reference in the view factory.*/

@@ -28,10 +28,10 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 	protected final static Element[] NO_ELEMENTS=new Element[0];
 
 	/**Whether we're allowed to expand horizontally.*/
-	protected final boolean isExpandX;
+	protected final boolean isExpandX;	//TODO is this used anymore?
 
 	/**Whether we're allowed to expand vertically.*/
-	protected final boolean isExpandY;
+	protected final boolean isExpandY;	//TODO is this used anymore?
 
 	/**Constructs an XMLBlockView expandable on the flowing (non-tiling) axis.
 	@param element The element this view is responsible for.
@@ -97,7 +97,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 				{
 					final Element element=elements[i];	//get a reference to this element
 					final AttributeSet attributeSet=element.getAttributes();	//get the attribute set of this element
-					if(elementCount>1 && XMLCSSStyleUtilities.isAnonymous(attributeSet))	//if this is an anonymous element, but it's not the only element
+					if(elementCount>1 && XMLStyleUtilities.isAnonymous(attributeSet))	//if this is an anonymous element, but it's not the only element
 					{
 						try
 						{
@@ -213,7 +213,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 				//if this child element doesn't have a CSS display of "none", it's visible unless something else (the editor kit, for instance) specified it to be hidden 
 			if(!XMLCSSConstants.CSS_DISPLAY_NONE.equals(XMLCSSStyleUtilities.getDisplay(childAttributeSet)))
 			{
-				if(XMLStyleUtilities.isVisible(childAttributeSet))	//if we haven't for some reason we've explicitly set this view to be hidden
+				if(StyleUtilities.isVisible(childAttributeSet))	//if we haven't for some reason we've explicitly set this view to be hidden
 				{
 					isHidden=false;	//we've found a visible child, so we can't make the anonymous element hidden
 				} 
@@ -221,7 +221,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 		}
 		if(isHidden)	//if no child elements are visible
 		{
-			XMLStyleUtilities.setVisible(anonymousAttributeSet, false);	//hide the anonymous element
+			StyleUtilities.setVisible(anonymousAttributeSet, false);	//hide the anonymous element
 		}
 			//create an anonymous element with the elements we've collected
 		final Element anonymousElement=new AnonymousElement(parentElement, anonymousAttributeSet, childElementCollection);

@@ -27,11 +27,13 @@ import com.garretwilson.net.BrowserLauncher;
 import com.garretwilson.net.URIConstants;
 import com.garretwilson.net.URIUtilities;
 import com.garretwilson.net.URLUtilities;
+import com.garretwilson.rdf.maqro.MAQROConstants;
 import com.garretwilson.swing.event.PageEvent;
 import com.garretwilson.swing.event.PageListener;
 import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.event.ProgressListener;
 import com.garretwilson.swing.text.*;
+import com.garretwilson.swing.text.rdf.maqro.MAQROViewFactory;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.oeb.OEBEditorKit;  //G***move elsewhere if we can
 import com.garretwilson.swing.text.xml.xeb.XEBEditorKit;
@@ -45,6 +47,7 @@ import com.garretwilson.text.xml.oeb.OEBConstants;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
 import com.garretwilson.text.xml.xhtml.XHTMLUtilities;
 import com.garretwilson.util.Debug;
+import com.garretwilson.util.EmptyIterator;
 import com.garretwilson.util.zip.*;
 
 import static com.garretwilson.io.ContentTypeConstants.*;
@@ -427,13 +430,11 @@ Debug.trace("Current installed editor kit: ", getEditorKit().getClass().getName(
 			return namespaceViewFactoryMap.get(namespaceURI); //return a view factory for the given namespace, if one has been registered
 		}
 
-		/**@return An iterator to all the namespaces to which view factories have
-		  been associated.
+		/**@return An iterator to all the namespaces to which view factories have been associated.
 		*/
-		public Iterator getViewFactoryNamespaceIterator()
+		public Iterator<String> getViewFactoryNamespaceIterator()
 		{
-			return namespaceViewFactoryMap!=null ? namespaceViewFactoryMap.keySet().iterator() : new HashSet().iterator(); //return an iterator to the keys, which are namespaces
-//G***fix			return namespaceViewFactoryMap.keySet().iterator(); //return an iterator to the keys, which are namespaces
+			return namespaceViewFactoryMap!=null ? namespaceViewFactoryMap.keySet().iterator() : new EmptyIterator<String>(); //return an iterator to the keys, which are namespaces
 		}
 
 	/**A map of link controllers, each keyed to a namespace URI string.*/
@@ -470,12 +471,11 @@ Debug.trace("Current installed editor kit: ", getEditorKit().getClass().getName(
 			return namespaceLinkControllerMap.get(namespaceURI); //return a link controller for the given namespace, if one has been registered
 		}
 
-		/**@return An iterator to all the namespaces to which link controllers have
-		  been associated.
+		/**@return An iterator to all the namespaces to which link controllers have been associated.
 		*/
-		public Iterator getLinkControllerNamespaceIterator()
+		public Iterator<String> getLinkControllerNamespaceIterator()
 		{
-			return namespaceLinkControllerMap!=null ? namespaceLinkControllerMap.keySet().iterator() : new HashSet().iterator(); //return an iterator to the keys, which are namespaces G***fix
+			return namespaceLinkControllerMap!=null ? namespaceLinkControllerMap.keySet().iterator() : new EmptyIterator<String>(); //return an iterator to the keys, which are namespaces G***fix
 		}
 
 	/**The default keymap created by the parent constructor.*/
@@ -543,6 +543,8 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		final XMLLinkController xhtmlLinkController=new XHTMLLinkController();  //create a link controller for XHTML
 		registerLinkController(XHTMLConstants.XHTML_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML view factory with XHTML elements
 		registerLinkController(OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML link controller with OEB elements
+		final ViewFactory maqroViewFactory=new MAQROViewFactory();  //create a view factory fo MAQRO
+		registerViewFactory(MAQROConstants.MAQRO_NAMESPACE_URI.toString(), maqroViewFactory);  //associate the MAQRO view factory with MAQRO elements
 //G***del; doesn't work		setBackground(Color.white); //G***set to get the background color from the document itself
 //G***del; maybe delete class		setCaret(new XMLCaret(getCaret()));	//G***testing
 	}
@@ -1182,7 +1184,26 @@ Debug.trace("reading from stream into document"); //G***del
 	*/
 	public void setXML(final org.w3c.dom.Document xmlDocument, final URI baseURI, final ContentType mediaType)
 	{
-		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new ContentType[]{mediaType});	//set the XML using arrays
+//TODO del if not needed		setXML(new org.w3c.dom.Document[]{xmlDocument}, new URI[]{baseURI}, new ContentType[]{mediaType});	//set the XML using arrays
+		final EditorKit editorKit=getEditorKit();	//get our current editor kit
+		if(editorKit instanceof XMLEditorKit)	//if an XML editor kit is installed
+		{
+			final XMLEditorKit xmlEditorKit=(XMLEditorKit)getEditorKit();	//cast the editor kit to an XML editor kit
+			final XMLDocument swingXMLDocument=xmlEditorKit.createDefaultDocument();	//create a default document
+			final Cursor originalCursor=ComponentUtilities.setCursor(XMLTextPane.this, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			try
+			{
+					//tell the editor kit to put the XML into the document
+				xmlEditorKit.setXML(xmlDocument, baseURI, mediaType, swingXMLDocument);
+//TODO fix progress					fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Constructing the document..."));	//G***testing i18n
+				setDocument(swingXMLDocument);	//show that the text pane is using this document (this actually creates the views)
+//TODO fix progress					fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Finished constructing the document...", true));	//G***testing i18n
+			}
+			finally
+			{
+				setCursor(originalCursor); //after the event thread is finished setting the document, always set the cursor back to its original form
+			}
+		}
 	}
 
 	/**Sets the given XML data.
@@ -1193,6 +1214,7 @@ Debug.trace("reading from stream into document"); //G***del
 	@param baseURIArray The array of base URIs, corresponding to the XML documents.
 	@param mediaTypeArray The array of media types of the documents.
 	*/
+/*TODO del if not needed
 	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray)
 	{
 		final EditorKit editorKit=getEditorKit();	//get our current editor kit
@@ -1215,6 +1237,7 @@ Debug.trace("reading from stream into document"); //G***del
 			}
 		}
 	}
+*/
 
 /*G***del
 		public final void setContentType(String type)
