@@ -792,7 +792,7 @@ public abstract class ApplicationFrame extends JFrame implements DefaultFocusabl
 		if(description!=null) //if we have a description of the document
 		{
 //G**del Debug.trace("found document description");
-			if(!description.getRDFResource().isAnonymous())  //if the file location is specified
+			if(description.getRDFResource().getReferenceURI()!=null)  //if the file location is specified
 				return saveFile(description, description.getRDFResource().getReferenceURI()); //save using the URI specified by the description
 			else  //if we don't have a file
 				return saveFileAs(description); //call the save as function

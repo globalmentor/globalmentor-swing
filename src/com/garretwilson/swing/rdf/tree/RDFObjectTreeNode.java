@@ -128,7 +128,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 					stringBuffer.append(':').append(' '); //append ": " to separate the property from the type
 				stringBuffer.append('(').append(getXMLifier().getLabel(type)).append(')'); //append "(type)"
 			}
-			if(!resource.isAnonymous()) //if this is not an anonymour resource
+			if(resource.getReferenceURI()!=null) //if this is not a blank node resource
 			{
 				if(property!=null && type==null)  //if we had a property, but no type
 					stringBuffer.append(':'); //append a colon to separate the property from the reference URI

@@ -55,7 +55,7 @@ public class RDFTreeNode extends DynamicTreeNode
 			//G***in throwing away anonymous resources, some might have been described at the top of the hierarchy---we should really just check to see which resources are not referenced
 //G***check to see if there are no references to this node---if so, we'll probably want to display it anyway
 //G***since this exact functionality occurs in RDFXMLifier, create it there and access those methods here
-			if(!resource.isAnonymous() //if this is not an anonymous node
+			if(resource.getReferenceURI()!=null //if this is not a blank node
 				  && resource.getPropertyCount()>0)  //if this resource actually has properties (even properties such as type identifiers are resources, but they don't have properties)
 			{
 					//create a new tree node to represent the resource
