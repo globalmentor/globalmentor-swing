@@ -13,6 +13,8 @@ import com.garretwilson.util.Debug;
 
 /**A panel that contains a toolbar and a status. The panel uses a border layout,
 	and content can be added by a component being placed in the panel center.
+<p>Accelerators will be added to the component for all actions added to the
+	toolbar inside <code>initializeToolBar()</code>.</p> 
 @author Garret Wilson
 */
 public class ApplicationPanel extends ContentPanel //G***maybe replace the content pane in Application frame with this
@@ -159,13 +161,41 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 */
 
 	/**Initializes the user interface.
-		Any derived class that overrides this method should call this version.
+	<p>After initializing the toolbar, accelerators are added for any actions
+		added to the toolbar.</p>
+	<p>Any derived class that overrides this method should call this version.</p>
+	@see #initializeToolBar(JToolBar)
+	@see #initializeStatusBar(JPanel)
 	*/
   protected void initializeUI()
   {
 		super.initializeUI(); //do the default UI initialization
-		if(getToolBar()!=null) //if we have a toolbar
-			initializeToolBar(getToolBar());  //initialize the toolbar
+		final JToolBar toolbar=getToolBar();	//get the toolbar
+		if(toolbar!=null) //if we have a toolbar
+		{
+			initializeToolBar(toolbar);  //initialize the toolbar
+			for(int i=toolbar.getComponentCount()-1; i>=0; --i)	//look at each component on the toolbar and add accelerators as needed
+			{
+				final Component component=toolbar.getComponent(i);	//get this toolbar component
+				if(component instanceof AbstractButton)	//if this is a button on the toolbar
+				{
+					final AbstractButton button=(AbstractButton)component;	//cast the toolbar component to a button
+					final Action action=button.getAction();	//get the button's action, if there is one
+					if(action!=null)	//if this button has an action
+					{
+						final Object acceleratorValue=action.getValue(Action.ACCELERATOR_KEY);	//get this action's accelerator value
+						if(acceleratorValue instanceof KeyStroke)	//if this action has an accelerator keystroke
+						{
+							final KeyStroke keyStroke=(KeyStroke)acceleratorValue;	//cast the accelerator value to a keystroke
+								//store the keystroke in the input map pointing to the action name
+							getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(keyStroke, action.getValue(Action.NAME));
+								//place the action in the action map keyed to the action name
+							getActionMap().put(action.getValue(Action.NAME), action);
+						}
+					}
+				}
+			}
+		}
 		if(getStatusBar()!=null) //if we have a status bar
 			initializeStatusBar(getStatusBar());  //initialize the status bar
   }
