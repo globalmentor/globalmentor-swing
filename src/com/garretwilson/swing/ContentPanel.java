@@ -33,14 +33,7 @@ public class ContentPanel extends JPanel implements CanClosable
 		*/
 		public void setProperty(final Object key, final Object value)
 		{
-			if(value!=null)	//if a non-null value is passed
-			{
-				propertyMap.put(key, value);	//put the property in the map, keyed to the key
-			}
-			else	//if a null value is passed
-			{
-				propertyMap.remove(key);	//remove the property from the map
-			}
+			MapUtilities.putRemoveNull(propertyMap, key, value);	//put the value in the map keyed to the key, removing the keyed object if the value is null
 		}
 
 	/**The main content component in the center of the panel.*/

@@ -4,7 +4,6 @@ import java.awt.event.*;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
-import com.garretwilson.util.Debug;
 
 /**Class that fires action events when an item is double-clicked or the Enter
 	key is pressed. This class will be superceded if a future version of
@@ -75,14 +74,14 @@ public class ActionList extends JList
 			});
 		addKeyListener(new KeyAdapter() //create a new key adapter and add it as a listener
 			{
-				public void keyReleased(KeyEvent keyEvent)
+				public void keyReleased(KeyEvent keyEvent)	//listen for a key press; listening for a key release would create actions from residue key releases from other components
 				{
-				  if(keyEvent.getKeyCode()==KeyEvent.VK_ENTER)  //if this was the enter key
+					if(keyEvent.getKeyCode()==KeyEvent.VK_ENTER)  //if this was the enter key
 					{
 						fireActionPerformed();  //fire an action performed event
 						keyEvent.consume(); //consume the event so that it won't cause other effects elsewhere
 					}
-			  }
+				}
 		  });
 	}
 

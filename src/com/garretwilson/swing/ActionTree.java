@@ -5,7 +5,6 @@ import java.util.Vector;
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import javax.swing.tree.*;
-import com.garretwilson.util.Debug;
 
 /**Class that fires action events when a node is double-clicked or the Enter
 	key is pressed. This class will be superceded if a future version of
@@ -73,7 +72,7 @@ public class ActionTree extends JTree
 			});
 		addKeyListener(new KeyAdapter() //create a new key adapter and add it as a listener
 			{
-				public void keyReleased(KeyEvent keyEvent)
+				public void keyPressed(KeyEvent keyEvent)	//listen for a key press; listening for a key release would create actions from residue key releases from other components
 				{
 				  if(keyEvent.getKeyCode()==KeyEvent.VK_ENTER)  //if this was the enter key
 					{
