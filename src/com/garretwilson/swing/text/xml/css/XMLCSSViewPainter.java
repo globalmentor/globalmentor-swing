@@ -6,6 +6,7 @@ import java.awt.font.LineMetrics;
 import java.awt.geom.Rectangle2D;
 import javax.swing.text.*;
 import com.garretwilson.swing.text.FragmentView;
+import com.garretwilson.swing.text.xml.XMLListView;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities;
 import com.garretwilson.util.Debug;
@@ -15,6 +16,12 @@ import com.garretwilson.util.Debug;
 */
 public class XMLCSSViewPainter implements XMLCSSConstants
 {
+
+	/**The default list style types for different nestings of ordered lists.*/
+	public final static String[] NESTED_ORDERED_LIST_STYLE_TYPES=new String[]{CSS_LIST_STYLE_TYPE_DECIMAL, CSS_LIST_STYLE_TYPE_UPPER_ALPHA, CSS_LIST_STYLE_TYPE_UPPER_ROMAN, CSS_LIST_STYLE_TYPE_LOWER_ALPHA}; 
+	/**The default list style types for different nestings of unordered lists.*/
+	public final static String[] NESTED_UNORDERED_LIST_STYLE_TYPES=new String[]{CSS_LIST_STYLE_TYPE_DISC}; 
+//TODO fix when other circle and square are supported	public final static String[] NESTED_UNORDERED_LIST_STYLE_TYPES=new String[]{CSS_LIST_STYLE_TYPE_DISC, CSS_LIST_STYLE_TYPE_CIRCLE, CSS_LIST_STYLE_TYPE_SQUARE}; 
 
 	/**Paints an XML view using CSS properties.
 	@param graphics The rendering surface to use.
@@ -59,127 +66,106 @@ Debug.trace("View painter view's class: ", view.getClass().getName());  //G***de
 			{
 Debug.trace("View painter parent view's class: ", view.getClass().getName());  //G***del
 
-						final Document document=view.getDocument(); //get the view's document
-						if(document instanceof StyledDocument)		//if the document is a styled document
-						{
-							final StyledDocument styledDocument=(StyledDocument)document;	//cast the document to a styled document
-							final Font font=styledDocument.getFont(attributeSet);	//let the document get the font from the attributes
-
-				final AttributeSet parentAttributeSet=parentView.getAttributes(); //get the parent's attributes
-				final float parentLeftMargin=XMLCSSStyleUtilities.getMarginLeft(parentAttributeSet, font);  //get the parent's left margin G***i18n
-				final float markerX=allocRect.x-parentLeftMargin; //find out where the marker should be located horizontally
-				View relativeSizeView=view; //we'll get the deepest view we can in order to judge the size of the marker
-				while(relativeSizeView.getViewCount()>0)  //while there are child views
+				final Document document=view.getDocument(); //get the view's document
+				if(document instanceof StyledDocument)		//if the document is a styled document
 				{
-					relativeSizeView=relativeSizeView.getView(0);  //get the first child view
-				}
-				final float relativeHeight=relativeSizeView.getPreferredSpan(View.Y_AXIS);  //find the height of the view we're using as a guide
-				final String listStyleType=XMLCSSStyleUtilities.getListStyleType(attributeSet);  //get the type of list style
-				if(CSS_LIST_STYLE_TYPE_DISC.equals(listStyleType))  //if the marker should be a disc
-				{
-					final float markerHeight=relativeHeight/3;  //make the marker partially as high as the deepest child G***make this a constant from somewhere
-					final float markerY=allocRect.y+(relativeHeight-markerHeight)/2;  //center the marker vertically
-					graphics.fillOval(Math.round(markerX), Math.round(markerY), Math.round(markerHeight), Math.round(markerHeight));		  //G***fix; testing; maybe use fractional coordinates with Graphics2D
-				}
-				else  //if we shouldn't render a shape, find the model index of this list item
-				{
-					final Element element=view.getElement();  //get the element the view represents
-					final Element parentElement=element.getParentElement(); //get the parent element of this one
-					final int siblingCount=parentElement.getElementCount(); //find out how many siblings there are, including the element the view represents
-					int listItemIndex=0;  //we'll assign a value here after we discover which index we are
-					for(int i=0; i<siblingCount; ++i) //look at each sibling
+					final StyledDocument styledDocument=(StyledDocument)document;	//cast the document to a styled document
+					final Font font=styledDocument.getFont(attributeSet);	//let the document get the font from the attributes
+					final AttributeSet parentAttributeSet=parentView.getAttributes(); //get the parent's attributes
+					final float parentLeftMargin=XMLCSSStyleUtilities.getMarginLeft(parentAttributeSet, font);  //get the parent's left margin G***i18n
+					final float markerX=allocRect.x-parentLeftMargin; //find out where the marker should be located horizontally
+					View relativeSizeView=view; //we'll get the deepest view we can in order to judge the size of the marker
+					while(relativeSizeView.getViewCount()>0)  //while there are child views
 					{
-						final Element siblingElement=parentElement.getElement(i); //get a reference to this sibling
-						if(siblingElement!=element)  //if we still haven't found ourselves
+						relativeSizeView=relativeSizeView.getView(0);  //get the first child view
+					}
+					final float relativeHeight=relativeSizeView.getPreferredSpan(View.Y_AXIS);  //find the height of the view we're using as a guide
+					String listStyleType=XMLCSSStyleUtilities.getListStyleType(attributeSet);  //get the type of list style
+						//TODO fix; this implementation will inherit list styles from other enclosing lists
+					if(listStyleType==null)	//if no list style type is indicated, determine the list style type based upon the enclosing list views
+					{
+						Boolean isListOrdered=null;	//we'll find out whether the list is ordered
+						int depthIndex=-1;	//we'll find out how many lists are nested (indicating nesting with a zero-based index)
+						View parent=parentView;	//start with the parent we already know about
+						while(parent!=null)	//while there is still a parent to check
 						{
-							final String siblingDisplay=XMLCSSStyleUtilities.getDisplay(siblingElement.getAttributes()); //get the CSS display property value of the sibling
-							if(CSS_DISPLAY_LIST_ITEM.equals(siblingDisplay)) //if this is a list item
-								++listItemIndex;  //we've found another list item that isn't us
+							if(parent instanceof XMLListView)	//if this parent is a list view
+							{
+								final XMLListView listView=(XMLListView)parent;	//cast the parent to a list view
+								if(isListOrdered==null)	//if we don't yet know whether the list should be ordered
+								{
+									isListOrdered=Boolean.valueOf(listView.isOrdered());	//we'll go with whether the closest enclosing list is ordered
+								}
+								if(isListOrdered.booleanValue()==listView.isOrdered())	//if this list matches the ordered or unordered status
+								{
+									++depthIndex;	//show that this list is counted as an enclosing list
+								}
+							}
+							parent=parent.getParent();	//look at the parent's parent
 						}
-						else  //if we've found ourselves
-							break;  //we now know our list index
-					}
-					//G***we assume we found ourselves -- is there any instance in which we wouldn't, and how would we know?
-				  final String markerString=XMLCSSUtilities.getMarkerString(listStyleType, listItemIndex);  //get a string representing the marker for us to render
-				  if(markerString!=null)  //if we found a valid marker string
-					{
-/*G***del; moved
-						final Document document=view.getDocument(); //get the view's document
-						if(document instanceof StyledDocument)		//if the document is a styled document
+
+						if(depthIndex>=0)	//if we have at least one enclosing list
 						{
-							final StyledDocument styledDocument=(StyledDocument)document;	//cast the document to a styled document
-							final Font font=styledDocument.getFont(attributeSet);	//let the document get the font from the attributes
-*/
-						  graphics.setFont(font); //switch to the same font as the one being used by the list item
-//G***del; moved						}
-						final FontRenderContext fontRenderContext=graphics2D.getFontRenderContext();  //get the font rendering context
-							//G***probably make sure that it is antialiased, here
-						final LineMetrics markerLineMetrics=graphics2D.getFont().getLineMetrics(markerString, fontRenderContext); //get the line metrics of the marker string
-						final double markerHeight=markerLineMetrics.getAscent()/*G***fix markerLineMetrics.getHeight()*/;  //find out how high the text is G***fix; there's something not right here, especially with the multiple-line leading calculation of the text itself
-						final double markerY=allocRect.y+markerHeight;  //align the text with the top of the list item
-//G***bring back or del						final double markerY=allocRect.y+(relativeHeight-markerHeight)/2+markerHeight;  //center the marker vertically
-							//G***set the font here
-						graphics.drawString(markerString, Math.round(markerX), (int)Math.round(markerY));	//G***testing; i18n
+							assert isListOrdered!=null : "Found enclosing list but didn't record its ordered condition.";
+							if(isListOrdered.booleanValue())	//if the list is ordered
+							{
+								listStyleType=NESTED_ORDERED_LIST_STYLE_TYPES[depthIndex%NESTED_ORDERED_LIST_STYLE_TYPES.length];	//get the list style type, wrapping around if necessary 
+							}
+							else	//if the list is not ordered
+							{
+								listStyleType=NESTED_UNORDERED_LIST_STYLE_TYPES[depthIndex%NESTED_UNORDERED_LIST_STYLE_TYPES.length];	//get the list style type, wrapping around if necessary 
+							}
+						}
+						else	//if we didn't find at least one enclosing list
+						{
+							listStyleType=CSS_LIST_STYLE_TYPE_DISC;	//default to a disc marker
+						}
 					}
-				}
-						} //G***fix
-
+					if(!CSS_LIST_STYLE_TYPE_NONE.equals(listStyleType))  //if the list style type does not specify "none"
+					{
+						if(CSS_LIST_STYLE_TYPE_DISC.equals(listStyleType))  //if the marker should be a disc
+						{
+							final float markerHeight=relativeHeight/3;  //make the marker partially as high as the deepest child G***make this a constant from somewhere
+							final float markerY=allocRect.y+(relativeHeight-markerHeight)/2;  //center the marker vertically
+							graphics.fillOval(Math.round(markerX), Math.round(markerY), Math.round(markerHeight), Math.round(markerHeight));		  //G***fix; testing; maybe use fractional coordinates with Graphics2D
+						}
+						else  //if we shouldn't render a shape, find the model index of this list item
+						{
+							final Element element=view.getElement();  //get the element the view represents
+							final Element parentElement=element.getParentElement(); //get the parent element of this one
+							final int siblingCount=parentElement.getElementCount(); //find out how many siblings there are, including the element the view represents
+							int listItemIndex=0;  //we'll assign a value here after we discover which index we are
+							for(int i=0; i<siblingCount; ++i) //look at each sibling
+							{
+								final Element siblingElement=parentElement.getElement(i); //get a reference to this sibling
+								if(siblingElement!=element)  //if we still haven't found ourselves
+								{
+									final String siblingDisplay=XMLCSSStyleUtilities.getDisplay(siblingElement.getAttributes()); //get the CSS display property value of the sibling
+									if(CSS_DISPLAY_LIST_ITEM.equals(siblingDisplay)) //if this is a list item
+										++listItemIndex;  //we've found another list item that isn't us
+								}
+								else  //if we've found ourselves
+									break;  //we now know our list index
+							}
+							//G***we assume we found ourselves -- is there any instance in which we wouldn't, and how would we know?
+						  final String markerString=XMLCSSUtilities.getMarkerString(listStyleType, listItemIndex);  //get a string representing the marker for us to render
+						  if(markerString!=null)  //if we found a valid marker string
+							{
+							  graphics.setFont(font); //switch to the same font as the one being used by the list item
+								final FontRenderContext fontRenderContext=graphics2D.getFontRenderContext();  //get the font rendering context
+									//G***probably make sure that it is antialiased, here
+								final LineMetrics markerLineMetrics=graphics2D.getFont().getLineMetrics(markerString, fontRenderContext); //get the line metrics of the marker string
+								final double markerHeight=markerLineMetrics.getAscent()/*G***fix markerLineMetrics.getHeight()*/;  //find out how high the text is G***fix; there's something not right here, especially with the multiple-line leading calculation of the text itself
+								final double markerY=allocRect.y+markerHeight;  //align the text with the top of the list item
+		//G***bring back or del						final double markerY=allocRect.y+(relativeHeight-markerHeight)/2+markerHeight;  //center the marker vertically
+									//G***set the font here
+								graphics.drawString(markerString, Math.round(markerX), (int)Math.round(markerY));	//G***testing; i18n
+							}
+						}
+					}
+				} //G***fix
 			}
 		}
 	}
-
-	/**Returns a string to display on a marker for the given list item.
-	@param listStypeType The type of list marker to use, one of the
-		<code>XMLCSSConstants.CSS_LIST_STYLE_TYPE_</code> constants.
-	@param listItemIndex The index of the list item for which text should be generated
-	@return The string to be rendered for the given list item, or
-		<code>null</code> if a string rendering is not appropriate for the given
-		list style type.
-	*/
-/*G***del when works; transferred to XMLCSSUtilities
-	protected static String getMarkerString(final String listStyleType, final int listItemIndex)  //G***maybe make sure none of these wrap around
-	{
-		if(CSS_LIST_STYLE_TYPE_DECIMAL.equals(listStyleType)) //decimal
-			return String.valueOf(1+listItemIndex); //return the ordinal position as a decimal number
-//G***fix	public final static String CSS_LIST_STYLE_TYPE_DECIMAL_LEADING_ZERO="decimal-leading-zero";
-		else if(CSS_LIST_STYLE_TYPE_LOWER_ROMAN.equals(listStyleType)) //lower-roman
-		{
-			switch(listItemIndex) //see which index this is G***fix with a better algorithm
-			{
-				case 0: return "i"; //G***fix
-				case 1: return "ii"; //G***fix
-				case 2: return "iii"; //G***fix
-				case 3: return "iv"; //G***fix
-				case 4: return "v"; //G***fix
-				case 5: return "vi"; //G***fix
-				case 6: return "vii"; //G***fix
-				case 7: return "viii"; //G***fix
-				case 8: return "ix"; //G***fix
-				case 9: return "x"; //G***fix
-				default: return ""; //G***fix
-			}
-		}
-//G***fix	public final static String CSS_LIST_STYLE_TYPE_UPPER_ROMAN="upper-roman";
-//G***fix	public final static String CSS_LIST_STYLE_TYPE_LOWER_GREEK="lower-greek";
-		else if(CSS_LIST_STYLE_TYPE_LOWER_GREEK.equals(listStyleType)) //lower-greek
-		  return String.valueOf((char)('\u03b1'+listItemIndex)); //return the correct lowercase greek character as a string
-		else if(CSS_LIST_STYLE_TYPE_LOWER_ALPHA.equals(listStyleType) //lower-alpha
-			  || CSS_LIST_STYLE_TYPE_LOWER_LATIN.equals(listStyleType)) //lower-latin
-		  return String.valueOf((char)('a'+listItemIndex)); //return the correct lowercase character as a string
-		else if(CSS_LIST_STYLE_TYPE_UPPER_ALPHA.equals(listStyleType) //upper-alpha
-			  || CSS_LIST_STYLE_TYPE_UPPER_LATIN.equals(listStyleType)) //upper-latin
-		  return String.valueOf((char)('A'+listItemIndex)); //return the correct lowercase character as a string
-//G***fix	public final static String CSS_LIST_STYLE_TYPE_HEBREW="hebrew";
-//G***fix	public final static String CSS_LIST_STYLE_TYPE_ARMENIAN="armenian";
-//G***fix	public final static String CSS_LIST_STYLE_TYPE_GEORGIAN="georgian";
-//G***fix	public final static String CSS_LIST_STYLE_TYPE_CJK_IDEOGRAPHIC="cjk-ideographic";
-//G***fix	public final static String CSS_LIST_STYLE_TYPE_HIRAGANA="hiragana";
-//G***fix	public final static String CSS_LIST_STYLE_TYPE_KATAKANA="katakana";
-//G***fix	public final static String CSS_LIST_STYLE_TYPE_HIRAGANA_IROHA="hiragana-iroha";
-//G***fix	public final static String CSS_LIST_STYLE_TYPE_KATAKANA_IROHA="katakana-iroha";
-//G***fix	public final static String CSS_LIST_STYLE_TYPE_NONE="none";
-		return null;  //show that we couldn't find an appropriate market string
-	}
-*/
 
 }

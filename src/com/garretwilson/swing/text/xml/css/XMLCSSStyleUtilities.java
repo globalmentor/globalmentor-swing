@@ -432,8 +432,8 @@ public class XMLCSSStyleUtilities extends XMLStyleUtilities implements XMLCSSSty
 	/**Gets the inherited CSS <code>list-style-type</code> setting from the
 		attribute set.
 	@param attributeSet The attribute set containing CSS properties.
-	@return The left list style type or, if the property is not specified, the
-		default value, "none".
+	@return The left list style type, or <code>null</code> if the property is not
+		specified.
 	*/
 	public static String getListStyleType(AttributeSet attributeSet)
 	{
@@ -442,7 +442,7 @@ public class XMLCSSStyleUtilities extends XMLStyleUtilities implements XMLCSSSty
 		{
 			return listStyleTypeValue.getStringValue(); //return the value as a string
 		}
-		return CSS_LIST_STYLE_TYPE_NONE;	//return the default value, since we couldn't find an alternative
+		return null;	//show that the list style was not specified
 	}
 
 	/**Gets the CSS <code>margin-bottom</code> setting from the attribute set in pixels. G***actually, right now it returns the value in points; fix this

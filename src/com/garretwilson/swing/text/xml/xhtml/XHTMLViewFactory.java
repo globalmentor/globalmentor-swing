@@ -91,6 +91,14 @@ public class XHTMLViewFactory extends XMLViewFactory implements XHTMLConstants
 					}
 					return new XMLParagraphView(element); //if we don't recognize any of the objects, just show them as a paragraph G***this is close but not quite the correct way to do things
 				}
+				else if(elementLocalName.equals(ELEMENT_OL))	//if this is the XHTML <ol> element
+				{
+					return new XMLListView(element, View.Y_AXIS, true);	//create an ordered list view
+				}
+				else if(elementLocalName.equals(ELEMENT_UL))	//if this is the XHTML <ul> element
+				{
+					return new XMLListView(element, View.Y_AXIS, false);	//create an unordered list view
+				}					
 			}
 		}
 		return super.create(element, indicateMultipleViews);	//if we couldn't figure out which kind of view to create, let the parent class decide what to do

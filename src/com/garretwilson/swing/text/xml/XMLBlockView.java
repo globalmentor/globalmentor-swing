@@ -816,7 +816,7 @@ Debug.trace("xAllocValid: "+xAllocValid+" yAllocValid: "+yAllocValid);  //G***de
      * @see View#paint
      */
     public void paint(Graphics g, Shape allocation) {
-Debug.trace("Inside XMLBlockView.paint()");
+//G***del Debug.trace("Inside XMLBlockView.paint()");
 			synchronize();	//make sure we have the correct cached property values (newswing)
 
 			XMLCSSViewPainter.paint(g, allocation, this, getAttributes());	//paint our CSS-specific parts (newswing) G***decide whether we want to pass the attributes or not
