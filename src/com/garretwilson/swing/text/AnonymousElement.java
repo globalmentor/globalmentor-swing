@@ -1,8 +1,6 @@
 package com.garretwilson.swing.text;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import javax.swing.text.*;
 
 /**An element that allows its child element list to be manually constructed.
@@ -32,7 +30,7 @@ public class AnonymousElement implements Element  //G***isn't there a better nam
 	@param attributes The attributes of this element.
 	@param childElementCollection The collection of elements this element should contain.
 	*/
-	public AnonymousElement(final Element parent, final AttributeSet attributes, final Collection childElementCollection)
+	public AnonymousElement(final Element parent, final AttributeSet attributes, final Collection<Element> childElementCollection)
 	{
 		this(parent, attributes, (Element[])childElementCollection.toArray(new Element[childElementCollection.size()]));	//construct the element with the child elements in an array 
 	}

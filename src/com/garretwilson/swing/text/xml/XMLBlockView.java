@@ -11,6 +11,7 @@ import javax.swing.SizeRequirements;
 
 import com.garretwilson.lang.CharSequenceUtilities;
 import com.garretwilson.swing.text.AnonymousElement;
+import com.garretwilson.swing.text.ContainerView;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;	//G***maybe change to XMLStyleConstants
 import com.garretwilson.swing.text.xml.css.XMLCSSView;
 import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
@@ -21,16 +22,17 @@ import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities;
 import com.garretwilson.util.Debug;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
-/**A view that arranges its children into a box shape by tiling its children
- 	along an axis, with no constraints.
-This class is a extension, rewrite, and bug fix of javax.swing.text.BoxView
-by Timothy Prinzing version 1.44 02/02/00 and is based on code from that class.
+/**A view that arranges its children into a box shape by tiling its children along an axis, with no constraints.
+Any non-block child views are wrapped in anonymous block views.
 @author Garret Wilson
 @see javax.swing.text.BoxView
 */
 //G***fix public class XMLBlockView extends com.garretwilson.swing.text.CompositeView implements XMLCSSView	//G***newswing
-public class XMLBlockView extends BoxView implements XMLCSSView
+public class XMLBlockView extends ContainerView implements XMLCSSView
 {
+
+	/**The shared empty array of elements.*/
+	protected final static Element[] NO_ELEMENTS=new Element[0];
 
 	/**Whether we're allowed to expand horizontally.*/
 	protected final boolean isExpandX;
@@ -81,22 +83,14 @@ public class XMLBlockView extends BoxView implements XMLCSSView
 		more anonymous views. Inline views consisting only of whitespace will be
 		given hidden views.
 	@param element The element representing a block view.
-//G***del	@param attributeSet The attributes of the element, which may or may not be the
-		same as <code>element.getAttributes()</code>.
 	@param viewFactory The factory used to create child views.
 	@return An array of created child views, which may be empty if there are no
 		child elements or an invalid view factory was passed.
 	@see CompositeView#setParent
 	@see #loadChildren
 	*/
-	public static View[] createBlockElementChildViews(final Element element, /*G***del final AttributeSet attributeSet, */final ViewFactory viewFactory)
+	public static View[] createBlockElementChildViews(final Element element, final ViewFactory viewFactory)
 	{
-/*G***del
-Debug.traceStack(); //G***del
-Debug.trace("Loading children for block element: ", XMLCSSStyleConstants.getXMLElementName(element.getAttributes()));  //G***del
-Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(element.getAttributes()));  //G***del
-*/
-
 		if(viewFactory!=null) //if we have a view factory
 		{
 			final Document document=element.getDocument();  //get a reference to the document
@@ -104,41 +98,12 @@ Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.Attrib
 			final int childElementCount=childElements.length;  //find out how many child elements there are
 			if(childElementCount>0)	//if there are child elements
 			{
-				final List childViewList=new ArrayList(childElementCount);  //create a list in which to store elements, knowing that we won't have more views than child elements
+				final List<View> childViewList=new ArrayList<View>(childElementCount);  //create a list in which to store elements, knowing that we won't have more views than child elements
 				for(int i=0; i<childElementCount; ++i)	//look at each of the child elements
 				{
 					final Element childElement=childElements[i];	//get a reference to his child element
 					final AttributeSet childAttributeSet=childElement.getAttributes();	//get the attribute set of this child
-					final String elementName=XMLStyleUtilities.getXMLElementName(childAttributeSet); //get the child element's name G***maybe later change this to isAnonymous()
-/*G***fix
-					//see if this is the dummy ending '\n' hierarchy added by Swing 
-			if(AbstractDocument.ParagraphElementName.equals(childElement.getName()))	//if this is is a generic paragraph element
-			{
-				final Element parentElement=element.getParentElement();	//get the element's parent
-				if(AbstractDocument.SectionElementName.equals(parentElement.getName()))	//if this element is a direct child of the section
-				{
-						//if this element is the last child element of the section element, it's the dummy '\n' element---create a hidden view for it
-					if(parentElement.getElementCount()>0 && parentElement.getElement(parentElement.getElementCount()-1)==childElement)
-					{
-//G****testing
-childViewList.add(new XMLHiddenView(childElement));	//create a hidden view to hide the dummy ending '\n' hierarchy added by Swing
-						continue;	//skip further processing of this child and go to the next one
-					}
-				}
-			}
-*/
-
-//TODO comment all this in-depth
-				if(i==0 && childElementCount==2)	//if there are only two child elements, see if the last one is the implied "\n" 
-				{
-					if("$implied".equals(XMLStyleUtilities.getXMLElementName(childElements[childElementCount-1].getAttributes())))	//G***use a constant
-					{
-						childViewList.add(viewFactory.create(childElement)); //create a view normally for the child element, even if it's just whitespace
-						continue;	//G***comment						
-					}
-				}
-
-					if(childElementCount>1 && XMLCSSStyleUtilities.AnonymousAttributeValue.equals(elementName))	//if this is an anonymous element, but it's not the only child element
+					if(childElementCount>1 && XMLCSSStyleUtilities.isAnonymous(childAttributeSet))	//if this is an anonymous element, but it's not the only child element
 					{
 						try
 						{
@@ -162,17 +127,11 @@ childViewList.add(new XMLHiddenView(childElement));	//create a hidden view to hi
 					}
 
 					childViewList.add(viewFactory.create(childElement)); //create a view normally for the child element and add the view to our list						
-/*G***fix
-					else	//if this isn't an anonymous element
-					{
-						childViewList.add(viewFactory.create(childElement)); //create a view normally for the child element and add the view to our list						
-					}
-*/
 				}
-				return (View[])childViewList.toArray(new View[childViewList.size()]);  //convert the list of views to an array
+				return childViewList.toArray(new View[childViewList.size()]);  //convert the list of views to an array
 			}
 		}
-		return new View[]{}; ////if there is no view factory (the parent view has somehow changed) or no elements, just return an empty array of views
+		return NO_VIEWS; //if there is no view factory (the parent view has somehow changed) or no elements, just return an empty array of views
 	}
 
 	/**Gathers child elements of a block element, ensuring that each child element
@@ -186,81 +145,42 @@ childViewList.add(new XMLHiddenView(childElement));	//create a hidden view to hi
 	*/
 	public static Element[] getChildElementsAsBlockElements(final Element element)
 	{
-		final Document document=element.getDocument();  //get a reference to the document
-//G***del		final CSSStyleDeclaration cssStyle=XMLCSSStyleConstants.getXMLCSSStyle(attributeSet); //get the CSS style of the element
 		final int childElementCount=element.getElementCount();  //find out how many child elements there are
-		//TODO maybe just send back a NO_ELEMENTS constant if there are no children
-		final List childElementList=new ArrayList(childElementCount);  //create a list in which to store elements, knowing that we won't have more views than child elements
-		final List inlineChildElementList=new ArrayList(childElementCount);  //create a list in which to store inline child elements; we know we'll never have more inline child elements than there are children of the original element
-		for(int childIndex=0; childIndex<childElementCount; ++childIndex) //look at each child element
+		if(childElementCount>0)	//if there are child elements
 		{
-			final Element childElement=element.getElement(childIndex);  //get a reference to this child element
-/*G***fix
-					//see if this is the dummy ending '\n' hierarchy added by Swing 
-			if(AbstractDocument.ParagraphElementName.equals(childElement.getName()))	//if this is is a generic paragraph element
+			final Document document=element.getDocument();  //get a reference to the document
+			final List<Element> childElementList=new ArrayList<Element>(childElementCount);  //create a list in which to store elements, knowing that we won't have more views than child elements
+			final List<Element> inlineChildElementList=new ArrayList<Element>(childElementCount);  //create a list in which to store inline child elements; we know we'll never have more inline child elements than there are children of the original element
+			for(int childIndex=0; childIndex<childElementCount; ++childIndex) //look at each child element
 			{
-				final Element parentElement=element.getParentElement();	//get the element's parent
-				if(AbstractDocument.SectionElementName.equals(parentElement.getName()))	//if this element is a direct child of the section
+				final Element childElement=element.getElement(childIndex);  //get a reference to this child element	
+				final AttributeSet childAttributeSet=childElement.getAttributes();	//get the attributes of the child element
+				final CSSStyleDeclaration childCSSStyle=XMLCSSStyleUtilities.getXMLCSSStyle(childAttributeSet); //get the CSS style of the element (this method make sure the attributes are present)
+					//see if this child element is inline (text is always inline, regardless of what the display property says)
+				final boolean childIsInline=XMLCSSUtilities.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName());
+				if(childIsInline) //if this is an inline child element
 				{
-						//if this element is the last child element of the section element, it's the dummy '\n' element---create a hidden view for it
-					if(parentElement.getElementCount()>0 && parentElement.getElement(parentElement.getElementCount()-1)==childElement)
-					{
-//G***testing							childViewList.add(new XMLHiddenView(childElement));	//create a hidden view to hide the dummy ending '\n' hierarchy added by Swing
-//G***fix							childViewList.add(new XMLParagraphView(childElement));	//G***testing
-						if(inlineChildElementList.size()>0)	//if we've started but not finished an anonymous block, yet
-							childElementList.add(createAnonymousBlockElement(element, inlineChildElementList));	//create an anonymous block element and clear the list
-childElementList.add(childElement);	//G***testing
-//G***del childViewList.add(new XMLHiddenView(childElement));	//create a hidden view to hide the dummy ending '\n' hierarchy added by Swing
-//G***fix							childViewList.add(new XMLBlockView(childElement, View.Y_AXIS));	//G***testing
-						continue;	//skip further processing of this child and go to the next one
-					}
+					inlineChildElementList.add(childElement);  //add the child element to the inline element list
 				}
-			}
-*/
-
-					//see if this is the dummy ending '\n' hierarchy added by Swing 
-			if(AbstractDocument.ParagraphElementName.equals(childElement.getName()))	//if this is is a generic paragraph element
-			{
-				final Element parentElement=element.getParentElement();	//get the element's parent
-				if(AbstractDocument.SectionElementName.equals(parentElement.getName()))	//if this element is a direct child of the section
+				else  //if this is a block element
 				{
-						//if this element is the last child element of the section element, it's the dummy '\n' element---create a hidden view for it
-					if(parentElement.getElementCount()>0 && parentElement.getElement(parentElement.getElementCount()-1)==childElement)
+					if(inlineChildElementList.size()>0)	//if we've started but not finished an anonymous block, yet
 					{
-//G***testing							childViewList.add(new XMLHiddenView(childElement));	//create a hidden view to hide the dummy ending '\n' hierarchy added by Swing
-//G***fix							childViewList.add(new XMLParagraphView(childElement));	//G***testing
-						if(inlineChildElementList.size()>0)	//if we've started but not finished an anonymous block, yet
-							childElementList.add(createAnonymousBlockElement(element, inlineChildElementList));	//create an anonymous block element and clear the list
-						inlineChildElementList.add(childElement);	//G***testing
 						childElementList.add(createAnonymousBlockElement(element, inlineChildElementList));	//create an anonymous block element and clear the list
-
-//G***del childViewList.add(new XMLHiddenView(childElement));	//create a hidden view to hide the dummy ending '\n' hierarchy added by Swing
-//G***fix							childViewList.add(new XMLBlockView(childElement, View.Y_AXIS));	//G***testing
-						continue;	//skip further processing of this child and go to the next one
 					}
+					childElementList.add(childElement); //add the child element normally
 				}
 			}
-
-
-//G***del Debug.trace("looking at block view child: ", XMLCSSStyleConstants.getXMLElementLocalName(childElement.getAttributes()));  //G***del
-			final AttributeSet childAttributeSet=childElement.getAttributes();	//get the attributes of the child element
-			final CSSStyleDeclaration childCSSStyle=XMLCSSStyleUtilities.getXMLCSSStyle(childAttributeSet); //get the CSS style of the element (this method make sure the attributes are present)
-				//see if this child element is inline (text is always inline, regardless of what the display property says)
-			final boolean childIsInline=XMLCSSUtilities.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName());
-			if(childIsInline) //if this is an inline child element
+			if(inlineChildElementList.size()>0)	//if we started an anonymous block but never finished it (i.e. the last child was inline)
 			{
-				inlineChildElementList.add(childElement);  //add the child element to the inline element list
+				childElementList.add(createAnonymousBlockElement(element, inlineChildElementList));	//create an anonymous block element and clear the list
 			}
-			else  //if this is a block element
-			{
-				if(inlineChildElementList.size()>0)	//if we've started but not finished an anonymous block, yet
-					childElementList.add(createAnonymousBlockElement(element, inlineChildElementList));	//create an anonymous block element and clear the list
-				childElementList.add(childElement); //add the child element normally
-			}
+			return childElementList.toArray(new Element[childElementList.size()]);  //convert the list of elements to an array
 		}
-		if(inlineChildElementList.size()>0)	//if we started an anonymous block but never finished it (i.e. the last child was inline)
-			childElementList.add(createAnonymousBlockElement(element, inlineChildElementList));	//create an anonymous block element and clear the list
-		return (Element[])childElementList.toArray(new Element[childElementList.size()]);  //convert the list of elements to an array
+		else	//if there are no child elements
+		{
+			return NO_ELEMENTS;	//indicate that there are no child elements, block or otherwise
+		}
 	}
 
 	/*Creates an anonymous view representing the given child elements.
@@ -273,7 +193,7 @@ childElementList.add(childElement);	//G***testing
 		anonymous view.
 	@param viewFactory The view factory used to create the anonymous view.
 	*/
-	protected static View createAnonymousBlockView(final Element parentElement, final Collection childElementCollection, final ViewFactory viewFactory)
+	protected static View createAnonymousBlockView(final Element parentElement, final Collection<Element> childElementCollection, final ViewFactory viewFactory)
 	{
 		final Element anonymousElement=createAnonymousBlockElement(parentElement, childElementCollection);	//create an anonymous element from the child elements, removing them from the collection
 		return viewFactory.create(anonymousElement); //create a view for the anonymous element and return that view, discarding our reference to the element
@@ -289,45 +209,16 @@ childElementList.add(childElement);	//G***testing
 	@param childElementCollection The collection of elements to be a child of the
 		anonymous element.
 	*/
-	protected static Element createAnonymousBlockElement(final Element parentElement, final Collection childElementCollection)
+	protected static Element createAnonymousBlockElement(final Element parentElement, final Collection<Element> childElementCollection)
 	{
 		final MutableAttributeSet anonymousAttributeSet=new SimpleAttributeSet();	//create an anonymous attribute set for this anonymous box
-		XMLStyleUtilities.setXMLElementName(anonymousAttributeSet, XMLCSSStyleUtilities.AnonymousAttributeValue); //show by its name that this is an anonymous box G***maybe change this to setAnonymous
+		XMLStyleUtilities.setAnonymous(anonymousAttributeSet);	//set the XML name of the attribute set to the anonymous name
 		final XMLCSSStyleDeclaration anonymousCSSStyle=new XMLCSSStyleDeclaration(); //create a new style declaration
 		anonymousCSSStyle.setDisplay(XMLCSSConstants.CSS_DISPLAY_BLOCK);	//show that the anonymous element should be a block element
 		XMLCSSStyleUtilities.setXMLCSSStyle(anonymousAttributeSet, anonymousCSSStyle);	//store the constructed CSS style in the attribute set
 				//put the child elements into an array
-		final Element[] childElements=(Element[])childElementCollection.toArray(new Element[childElementCollection.size()]);
+		final Element[] childElements=childElementCollection.toArray(new Element[childElementCollection.size()]);
 		boolean isHidden=true;	//this anonymous view should be hidden unless we find at least one visible view
-
-
-
-
-		if(childElements.length==1)	//G***testing
-		{
-			final Element childElement=childElements[0];
-					//see if this is the dummy ending '\n' hierarchy added by Swing 
-			if(AbstractDocument.ParagraphElementName.equals(childElement.getName()))	//if this is is a generic paragraph element
-			{
-				final Element parentParentElement=parentElement.getParentElement();	//get the element's parent
-				if(AbstractDocument.SectionElementName.equals(parentParentElement.getName()))	//if this element is a direct child of the section
-				{
-						//if this element is the last child element of the section element, it's the dummy '\n' element---create a hidden view for it
-					if(parentParentElement.getElementCount()>0 && parentParentElement.getElement(parentParentElement.getElementCount()-1)==childElement)
-					{
-						XMLStyleUtilities.setXMLElementName(anonymousAttributeSet, "$implied");	//G***fix; use a constant XMLCSSStyleUtilities.AnonymousAttributeValue); //show by its name that this is an anonymous box G***maybe change this to setAnonymous
-						isHidden=false;	//G***testing
-					}
-				}
-			}
-		}
-
-
-
-
-
-
-
 		for(int i=childElements.length-1; isHidden && i>=0; --i)	//see if any child elements are visible; stop when we find a visible one
 		{
 			final Element childElement=childElements[i];	//get a reference to this child element
@@ -338,7 +229,6 @@ childElementList.add(childElement);	//G***testing
 				if(XMLStyleUtilities.isVisible(childAttributeSet))	//if we haven't for some reason we've explicitly set this view to be hidden
 				{
 					isHidden=false;	//we've found a visible child, so we can't make the anonymous element hidden
-//G***del when works					break;	//stop looking for visible children
 				} 
 			}
 		}
@@ -373,44 +263,8 @@ childElementList.add(childElement);	//G***testing
 	}
 
 
-    /**
-     * Sets the size of the view.  If the size has changed, layout
-     * is redone.  The size is the full size of the view including
-     * the inset areas.
-     *
-     * @param width the width >= 0
-     * @param height the height >= 0
-     */
-/*G***del if we can; this looks important, but may be very out of date
-    public void setSize(float width, float height) {
-
-		  //G***testing to see if we can update the insets before sizes are calculated
-			synchronize();	//make sure we have the correct cached property values (newswing) //G***check to make sure this doesn't throw off calculations at the wrong time
-//G***del Debug.stackTrace();  //G***del
-//G***del Debug.stackTrace(); //G***del
-	if (((int) width) != this.width) {
-	    xAllocValid = false;
-	}
-	if (((int) height) != this.height) {
-	    yAllocValid = false;
-	}
-	if ((! xAllocValid) || (! yAllocValid)) {
-	    this.width = (int) width;
-	    this.height = (int) height;
-	    layout(this.width - getLeftInset() - getRightInset(),
-		   this.height - getTopInset() - getBottomInset());
-	}
-if(this instanceof XMLPagedView)  //G***del
-{
-Debug.trace("after layout");
-Debug.trace("xAllocValid: "+xAllocValid+" yAllocValid: "+yAllocValid);  //G***del
-}
-    }
-*/
-
 	/**Renders the block view using the given rendering surface and area on that surface.
-	Only the children that intersect the clip bounds of the given <code>Graphics</code>
-	will be rendered.
+	Only the children that intersect the clip bounds of the given <code>Graphics</code> will be rendered.
 	This version correctly paints XML CSS style.
 	@param graphics The rendering surface to use.
 	@param allocation The allocated region to render into.
@@ -422,80 +276,6 @@ Debug.trace("xAllocValid: "+xAllocValid+" yAllocValid: "+yAllocValid);  //G***de
 		super.paint(graphics, allocation);	//do the default painting
   }
 
-
-/*G***del refactor
-//G***fix		protected boolean flipEastAndWestAtEnds(int position, Position.Bias bias) {
-		public boolean flipEastAndWestAtEnds(int position, Position.Bias bias) {	//G***newswing
-	if(axis == Y_AXIS) {
-			int testPos = (bias == Position.Bias.Backward) ?
-							Math.max(0, position - 1) : position;
-			int index = getViewIndexAtPosition(testPos);
-			if(index != -1) {
-		View v = getView(index);
-
-		if(v != null && v instanceof com.garretwilson.swing.text.CompositeView) {	//G***newswing
-				return ((com.garretwilson.swing.text.CompositeView)v).flipEastAndWestAtEnds(position,
-										bias);
-
-//			G***del newswing		if(v != null && v instanceof CompositeView) {
-//			G***del newswing				return ((CompositeView)v).flipEastAndWestAtEnds(position,
-//			G***del newswing										bias);
-		}
-	    }
-	}
-	return false;
-    }
-*/
-
-	//G*** newswing ****
-
-	/**Whether the horizontal allocation is valid or needs to be updated.*/
-//G***del if not needed	private boolean xAllocValid;
-
-		/**@return whether the horizontal allocation is valid or needs to be updated.*/
-//	G***del if not needed		public boolean isXAllocValid() {return xAllocValid;}
-
-		/**Sets whether the horizontal allocation is valid or needs to be updated.
-		@param <code>true</code> if the horizontal allocation is valid, or
-			<code>false</code> if it needs to be updated.
-		*/
-//	G***del if not needed		protected void setXAllocValid(final boolean xAllocationValid) {xAllocValid=xAllocationValid;}
-
-	/**Whether the vertical allocation is valid or needs to be updated.*/
-//	G***del if not needed	private boolean yAllocValid;
-
-		/**@return whether the vertical allocation is valid or needs to be updated.*/
-//	G***del if not needed		public boolean isYAllocValid() {return yAllocValid;}
-
-		/**Sets whether the vertical allocation is valid or needs to be updated.
-		@param <code>true</code> if the Vertical allocation is valid, or
-			<code>false</code> if it needs to be updated.
-		*/
-//	G***del if not needed		protected void setYAllocValid(final boolean yAllocationValid) {yAllocValid=yAllocationValid;}
-
-	/**Whether the horizontal preference valid or needs to be updated.*/
-	private boolean xValid;
-
-		/**@return whether the horizontal preference is valid or needs to be updated.*/
-		public boolean isXValid() {return xValid;}
-
-		/**Sets whether the horizontal preference is valid or needs to be updated.
-		@param <code>true</code> if the horizontal preference is valid, or
-			<code>false</code> if it needs to be updated.
-		*/
-		protected void setXValid(final boolean xvalid) {xValid=xvalid;}
-
-	/**Whether the vertical preference is valid or needs to be updated.*/
-	private boolean yValid;
-
-		/**@return whether the vertical preference is valid or needs to be updated.*/
-		public boolean isYValid() {return yValid;}
-
-		/**Sets whether the vertical preference is valid or needs to be updated.
-		@param <code>true</code> if the Vertical allocation is valid, or
-			<code>false</code> if it needs to be updated.
-		*/
-		protected void setYValid(final boolean yvalid) {yValid=yvalid;}
 
 	/**Creates a fragment view into which pieces of this view will be placed.
 	@param isFirstFragment Whether this fragment holds the first part of the
@@ -579,7 +359,7 @@ Debug.trace("xAllocValid: "+xAllocValid+" yAllocValid: "+yAllocValid);  //G***de
 	*/
 	public View breakView(int axis, int p0, float pos, float len)
 	{
-Debug.trace("Inside XMLBlockView.breakView axis: "+axis+" p0: "+p0+" pos: "+pos+" len: "+len+" name: "+XMLStyleUtilities.getXMLElementName(getAttributes()));	//G***del
+Debug.trace("Inside XMLBlockView.breakView axis: ", axis, "p0:", p0, "pos:", pos, "len:", len, "name:", XMLStyleUtilities.getXMLElementName(getAttributes()));	//G***del
 
 	//G***important! if len is sufficiently large, just return ourselves
 		if(axis==getAxis())	//if they want to break along our tiling axis
@@ -738,69 +518,6 @@ fragmentView.setParent(getParent());				  //G***testing; comment
 		}
 	}
 
-		/**Each fragment is a subset of the content in the breaking <code>XMLBlockView</code>.
-		@return The starting offset of this page, which is the starting offset of the
-			view with the lowest starting offset
-		@see View#getRange
-		*/
-//G***testing
-		public int getStartOffset()
-		{
-			int startOffset=Integer.MAX_VALUE;	//we'll start out with a high number, and we'll end up with the lowest starting offset of all the views
-			final int numViews=getViewCount();	//find out how many view are on this page
-//G***del System.out.println("getStartOffset() viewCount: "+numViews+" name: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" super: "+super.getStartOffset());	//G***del
-			if(numViews>0)	//if we have child views
-			{
-				for(int viewIndex=0; viewIndex<numViews; ++viewIndex)	//look at each view on this page
-				{
-					final View view=getView(viewIndex);	//get a reference to this view
-					startOffset=Math.min(startOffset, view.getStartOffset());	//if this view has a lower starting offset, use its starting offset
-//G***del System.out.println("  View: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" child: "+(String)view.getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" startOffset: "+view.getStartOffset()+" New start offset: "+startOffset);	//G***del
-				}
-				return startOffset;	//return the starting offset we found
-			}
-			else	//if we don't have any child views
-				return super.getStartOffset();	//return the default starting offset
-		}
-
-		/**Each fragment is a subset of the content in the breaking <code>XMLBlockView</code>.
-		@return The ending offset of this page, which is the ending offset of the
-			view with the largest ending offset
-		@see View#getRange
-		*/
-//G***testing
-		public int getEndOffset()
-		{
-			int endOffset=0;	//start out with a low ending offset, and we'll wind up with the largest ending offset
-			final int numViews=getViewCount();	//find out how many view are on this page
-//G***del System.out.println("getEndOffset() viewCount: "+numViews+" name: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" super: "+super.getEndOffset());	//G***del
-			if(numViews>0)	//if we have child views
-			{
-				for(int viewIndex=0; viewIndex<numViews; ++viewIndex)	//look at each view on this page
-				{
-					final View view=getView(viewIndex);	//get a reference to this view
-
-
-					final int viewEndOffset=view.getEndOffset();  //G***testing
-					if(viewEndOffset>endOffset) //G***testing
-					{
-//G***del Debug.trace("Transitioning from "+endOffset+" to "+viewEndOffset+" because of view of type: "+view.getClass().getName()+" of name: "+XMLStyleConstants.getXMLElementName(view.getElement().getAttributes()));  //G***del
-						endOffset=viewEndOffset;  //G***del
-//G***del Debug.trace("  View: "+XMLStyleConstants.getXMLElementName(getElement().getAttributes())+" child: "+XMLStyleConstants.getXMLElementName(view.getElement().getAttributes())+" endOffset: "+view.getEndOffset()+" New end offset: "+endOffset);	//G***del
-					}
-
-/*G***bring back
-Debug.trace("old endOffset: ", endOffset);  //G***del
-					endOffset=Math.max(endOffset, view.getEndOffset());	//if this view has a larger ending offset, use that instead
-Debug.trace("new endOffset: ", endOffset);  //G***del
-Debug.trace("  View: "+XMLStyleConstants.getXMLElementName(getElement().getAttributes())+" child: "+XMLStyleConstants.getXMLElementName(view.getElement().getAttributes())+" endOffset: "+view.getEndOffset()+" New end offset: "+endOffset);	//G***del
-*/
-				}
-				return endOffset;	//return the largest ending offset we found
-			}
-			else	//if we don't have any child views
-				return super.getEndOffset();	//return the default ending offset
-		}
 
 
 	//G***we may now want to put getViewIndexAtPosition, along with getStart/EndOffset(),

@@ -7,6 +7,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
 import com.garretwilson.swing.text.StyleUtilities;
+import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.text.xml.XMLUtilities;
 import com.garretwilson.util.NameValuePair;
 
@@ -188,14 +189,22 @@ public class XMLStyleUtilities extends StyleUtilities implements XMLStyleConstan
 	}
 */
 
-
-
-
-
-
-
-
-
+	/**Checks to see if the given attribute set represents an anonymous element.
+	@param attributeSet The attribute set.
+	@return <code>true</code> if the attribute set represents an anonymous element.
+	*/
+	public static boolean isAnonymous(final AttributeSet attributeSet)
+	{
+		return ANONYMOUS_XML_ELEMENT_NAME.equals(getXMLElementName(attributeSet)); //see if the attribute set has the anonymous name 
+	}
+	
+	/**Gives the attribute set the anonymous name.
+	@param attributeSet The attribute set.
+	*/
+	public static void setAnonymous(final MutableAttributeSet attributeSet)
+	{
+		setXMLElementName(attributeSet, ANONYMOUS_XML_ELEMENT_NAME); //show by its name that this is an anonymous element
+	}
 	/**Checks to see if the page break view attribute is set. The attribute is not
 		resolved through the parent attribute set hierarchy.
 	@param a The attribute set.

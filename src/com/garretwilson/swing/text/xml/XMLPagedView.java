@@ -18,6 +18,7 @@ import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.event.ProgressListener;
 import com.garretwilson.swing.text.AnonymousElement;
 //G***del if not needed import com.garretwilson.swing.text.ViewHidable;
+import com.garretwilson.swing.text.ContainerView;
 import com.garretwilson.swing.text.ViewReleasable;
 import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
@@ -89,7 +90,7 @@ public class XMLPagedView extends FlowView
 		
 //TODO fix		strategy=new PageFlowStrategy(this);	//create a flow strategy which may or may not be used in a threaded way (newswing threadlayout)
 
-strategy=new TestFlowStrategy();	//G***testing
+strategy=new PaginateStrategy();	//G***testing
 
 
 //G***del		strategy=null;	//the strategy will be created each time it is needed, whether or not threading is used (newswing threadlayout)
@@ -1275,20 +1276,31 @@ Debug.trace("pageWidth: "+pageWidth+" pageWidth/pos: "+pageWidth/(x-(alloc.x+get
 	/***XMLPagedView.Page***/
 
 	/**Internally-created view that holds the view representing child views
-		arranged in pages. This class descends from <code>XMLBLockView</code>, which
+		arranged in pages. This class descends from <code>ContainerView</code>, which
 		correctly returns starting and ending offsets based upon the child views
 		it contains, not the element it represents.
+	@author Garret Wilson
 	*/
-	class Page extends BoxView
+	protected class Page extends ContainerView
 	{
-		/**Page constructor that specifies the element from which the information
-			will come.
+		/**Page constructor that specifies the element from which the information will come.
 		@param element The element that contains the information to display.
 		*/
-		Page(Element element)
+		public Page(final Element element)
 		{
 			super(element, View.Y_AXIS);	//the information inside each page will be flowed vertically
 			setInsets((short)25, (short)25, (short)25, (short)25);	//G***fix; testing; need here and in setPropertiesFromAttributes() for hack to work
+		}
+
+		/**Returns the attributes to use for this container view.
+	 	Because this view does not directly represent its underlying element,
+		the attributes of the parent view is returned, if there is a parent.
+		@return The attributes of the parent view, or the attributes of the underlying element if there is no parent.
+		*/
+		public AttributeSet getAttributes()
+		{
+			final View parentView=getParent();	//get the parent view
+			return parentView!=null ? parentView.getAttributes() : super.getAttributes();	//return the parent's attributes, if we have a parent, or the default attributes if we have no parent
 		}
 
 		/**Sets the cached properties from the attributes. This version forces the
@@ -1307,255 +1319,49 @@ Debug.trace("pageWidth: "+pageWidth+" pageWidth/pos: "+pageWidth/(x-(alloc.x+get
 		public short getPublicRightInset() {return getRightInset();}
 		public short getPublicTopInset() {return getTopInset();}
 		public short getPublicBottomInset() {return getBottomInset();}
+
 		/**Each page does not need to fill its children, since its parent
 			<code>XMLPagedView</code> will load its children with the views it created.
 			This function therefore does nothing.
 		*/
 		protected void loadChildren(ViewFactory f) {}
 
-		/**Each fragment is a subset of the content in the breaking <code>XMLBlockView</code>.
-		@return The starting offset of this page, which is the starting offset of the
-			view with the lowest starting offset
-		@see View#getRange
-		*/
-//G***testing
-		public int getStartOffset()
-		{
-			int startOffset=Integer.MAX_VALUE;	//we'll start out with a high number, and we'll end up with the lowest starting offset of all the views
-			final int numViews=getViewCount();	//find out how many view are on this page
-//G***del System.out.println("getStartOffset() viewCount: "+numViews+" name: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" super: "+super.getStartOffset());	//G***del
-			if(numViews>0)	//if we have child views
-			{
-				for(int viewIndex=0; viewIndex<numViews; ++viewIndex)	//look at each view on this page
-				{
-					final View view=getView(viewIndex);	//get a reference to this view
-					startOffset=Math.min(startOffset, view.getStartOffset());	//if this view has a lower starting offset, use its starting offset
-//G***del System.out.println("  View: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" child: "+(String)view.getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" startOffset: "+view.getStartOffset()+" New start offset: "+startOffset);	//G***del
-				}
-				return startOffset;	//return the starting offset we found
-			}
-			else	//if we don't have any child views
-				return super.getStartOffset();	//return the default starting offset
-		}
-
-		/**Each fragment is a subset of the content in the breaking <code>XMLBlockView</code>.
-		@return The ending offset of this page, which is the ending offset of the
-			view with the largest ending offset
-		@see View#getRange
-		*/
-//G***testing
-		public int getEndOffset()
-		{
-			int endOffset=0;	//start out with a low ending offset, and we'll wind up with the largest ending offset
-			final int numViews=getViewCount();	//find out how many view are on this page
-//G***del System.out.println("getEndOffset() viewCount: "+numViews+" name: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" super: "+super.getEndOffset());	//G***del
-			if(numViews>0)	//if we have child views
-			{
-				for(int viewIndex=0; viewIndex<numViews; ++viewIndex)	//look at each view on this page
-				{
-					final View view=getView(viewIndex);	//get a reference to this view
-
-
-					final int viewEndOffset=view.getEndOffset();  //G***testing
-					if(viewEndOffset>endOffset) //G***testing
-					{
-//G***del Debug.trace("Transitioning from "+endOffset+" to "+viewEndOffset+" because of view of type: "+view.getClass().getName()+" of name: "+XMLStyleConstants.getXMLElementName(view.getElement().getAttributes()));  //G***del
-						endOffset=viewEndOffset;  //G***del
-//G***del Debug.trace("  View: "+XMLStyleConstants.getXMLElementName(getElement().getAttributes())+" child: "+XMLStyleConstants.getXMLElementName(view.getElement().getAttributes())+" endOffset: "+view.getEndOffset()+" New end offset: "+endOffset);	//G***del
-					}
-
-/*G***bring back
-Debug.trace("old endOffset: ", endOffset);  //G***del
-					endOffset=Math.max(endOffset, view.getEndOffset());	//if this view has a larger ending offset, use that instead
-Debug.trace("new endOffset: ", endOffset);  //G***del
-Debug.trace("  View: "+XMLStyleConstants.getXMLElementName(getElement().getAttributes())+" child: "+XMLStyleConstants.getXMLElementName(view.getElement().getAttributes())+" endOffset: "+view.getEndOffset()+" New end offset: "+endOffset);	//G***del
-*/
-				}
-				return endOffset;	//return the largest ending offset we found
-			}
-			else	//if we don't have any child views
-				return super.getEndOffset();	//return the default ending offset
-		}
-
-
     /**
-     * This is called by a child to indicated its
-     * preferred span has changed.  This is implemented to
-     * throw away cached layout information so that new
-     * calculations will be done the next time the children
-     * need an allocation.
+     * Provides a mapping from the document model coordinate space
+     * to the coordinate space of the view mapped to it.  This is
+     * implemented to let the superclass find the position along 
+     * the major axis and the allocation of the row is used 
+     * along the minor axis, so that even though the children 
+     * are different heights they all get the same caret height.
      *
-     * @param child the child view
-     * @param width true if the width preference should change
-     * @param height true if the height preference should change
+     * @param pos the position to convert
+     * @param a the allocated region to render into
+     * @return the bounding box of the given position
+     * @exception BadLocationException  if the given position does not represent a
+     *   valid location in the associated document
+     * @see View#modelToView
      */
-    public void preferenceChanged(View child, boolean width, boolean height) {
-/*G***testing table repaginate
-	if (width) {
-	    xValid = false;
-	    xAllocValid = false;
-	}
-	if (height) {
-	    yValid = false;
-	    yAllocValid = false;
-	}
-*/
-//G***del Debug.stackTrace(); //G***del
-	super.preferenceChanged(child, width, height);
+/*TODO fix paragraph analog
+    public Shape modelToView(int pos, Shape a, Position.Bias b) throws BadLocationException {
+        Rectangle r = a.getBounds();
+  View v = getViewAtPosition(pos, r);
+  if ((v != null) && (!v.getElement().isLeaf())) {
+// Don't adjust the height if the view represents a branch.
+return super.modelToView(pos, a, b);
+  }
+  r = a.getBounds();
+        int height = r.height;
+        int y = r.y;
+        Shape loc = super.modelToView(pos, a, b);
+        r = loc.getBounds();
+        r.height = height;
+        r.y = y;
+        return r;
     }
-
-
-		/**Returns the attributes to use when rendering the page. Since this view
-			is just a placeholder, it returns the attributes of its parents, the
-			<code>XMLPagedView</code> which created it.
-		@return The attributes of the parent view.
-		*/
-		public AttributeSet getAttributes()
-		{
-			final View parentView=getParent();	//get the parent view
-			return (parentView!=null) ? parentView.getAttributes() : null;	//return the parent's attributes, if we have a parent (we should), or null if we have no parent
-		}
-
-/*G***we might override this later for vertical alignment
-				public float getAlignment(int axis) {
-						if (axis == View.X_AXIS) {
-								switch (justification) {
-								case StyleConstants.ALIGN_LEFT:
-										return 0;
-								case StyleConstants.ALIGN_RIGHT:
-										return 1;
-								case StyleConstants.ALIGN_CENTER:
-								case StyleConstants.ALIGN_JUSTIFIED:
-										return 0.5f;
-								}
-						}
-						return super.getAlignment(axis);
-				}
 */
 
-				/**
-				 * Provides a mapping from the document model coordinate space
-				 * to the coordinate space of the view mapped to it.  This is
-				 * implemented to let the superclass find the position along
-				 * the major axis and the allocation of the row is used
-				 * along the minor axis, so that even though the children
-				 * are different heights they all get the same caret height.
-				 *
-				 * @param pos the position to convert
-				 * @param a the allocated region to render into
-				 * @return the bounding box of the given position
-				 * @exception BadLocationException  if the given position does not represent a
-				 *   valid location in the associated document
-				 * @see View#modelToView
-				 */
-/*G***fix
-				public Shape modelToView(int pos, Shape a, Position.Bias b) throws BadLocationException {
-						Rectangle r = a.getBounds();
-			View v = getViewAtPosition(pos, r);
-			if ((v != null) && (!v.getElement().isLeaf())) {
-		// Don't adjust the height if the view represents a branch.
-		return super.modelToView(pos, a, b);
-			}
-			r = a.getBounds();
-						int height = r.height;
-						int y = r.y;
-						Shape loc = super.modelToView(pos, a, b);
-						r = loc.getBounds();
-						r.height = height;
-						r.y = y;
-						return r;
-				}
-*/
-
-		/**Each page in a <code>XMLPagedView</code> is a subset of the content
-			in the parent <code>XMLPagedView</code>.
-		@return The starting offset of this page, which is the starting offset of the
-			view with the lowest starting offset
-		@see View#getRange
-		*/
-/*G***del if not needed by descending from XMLBlockView
-		public int getStartOffset()
-		{
-			int startOffset=Integer.MAX_VALUE;	//we'll start out with a high number, and we'll end up with the lowest starting offset of all the views
-			final int numViews=getViewCount();	//find out how many view are on this page
-			for(int viewIndex=0; viewIndex<numViews; ++viewIndex)	//look at each view on this page
-			{
-				final View view=getView(viewIndex);	//get a reference to this view
-				startOffset=Math.min(startOffset, view.getStartOffset());	//if this view has a lower starting offset, use its starting offset
-			}
-			return startOffset;	//return the starting offset we found
-		}
-*/
-
-		/**Each page in a <code>XMLPagedView</code> is a subset of the content
-			in the parent <code>XMLPagedView</code>.
-		@return The ending offset of this page, which is the ending offset of the
-			view with the largest ending offset
-		@see View#getRange
-		*/
-/*G***del if not needed by descending from XMLBlockView
-		public int getEndOffset()
-		{
-			int endOffset=0;	//start out with a low ending offset, and we'll wind up with the largest ending offset
-			final int numViews=getViewCount();	//find out how many view are on this page
-			for(int viewIndex=0; viewIndex<numViews; ++viewIndex)	//look at each view on this page
-			{
-				final View view=getView(viewIndex);	//get a reference to this view
-				endOffset=Math.max(endOffset, view.getEndOffset());	//if this view has a larger ending offset, use that instead
-			}
-			return endOffset;	//return the largest ending offset we found
-		}
-*/
-
-	/**
-	 * Perform layout for the minor axis of the box (i.e. the
-	 * axis orthoginal to the axis that it represents).  The results
-	 * of the layout should be placed in the given arrays which represent
-	 * the allocations to the children along the minor axis.
-	 * <p>
-	 * This is implemented to do a baseline layout of the children
-	 * by calling BoxView.baselineLayout.
-	 *
-	 * @param targetSpan the total span given to the view, which
-	 *  whould be used to layout the children.
-	 * @param axis the axis being layed out.
-	 * @param offsets the offsets from the origin of the view for
-	 *  each of the child views.  This is a return value and is
-	 *  filled in by the implementation of this method.
-	 * @param spans the span of each child view.  This is a return
-	 *  value and is filled in by the implementation of this method.
-	 * @returns the offset and span for each child view in the
-	 *  offsets and spans parameters.
-	 */
-		/**Performs layout for the minor axis of the page (usually the left-to-right
-			X axis).
-		@param targetSpan the total span given to the view, which
-			whould be used to layout the children.
-		@param axis the axis being layed out.
-		@param offsets the offsets from the origin of the view for
-			each of the child views.  This is a return value and is
-			filled in by the implementation of this method.
-		@param spans the span of each child view.  This is a return
-			value and is filled in by the implementation of this method.
-		@returns the offset and span for each child view in the
-			offsets and spans parameters.
-		*/
-		//G***check all this
-/*G***del if not needed
-		protected void layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans)
-		{
-			baselineLayout(targetSpan, axis, offsets, spans);	//do the default baseline layout
-		}
-*/
-
-/*G***del if we don't need
-		//G***check, comment
-		protected SizeRequirements calculateMinorAxisRequirements(int axis, SizeRequirements r)
-		{
-			return baselineRequirements(axis, r); //G***does this have anything to do with what we want to return?
-		}
-*/
-
+//TODO fix paragraph analogous layoutMinorAxis and calculateMinorAxisRequirements
+		
 		/**Returns the index of the child at the given model position for this page.
 		@param pos The position (>=0) in the model.
 		@return The index of the view representing the given position, or -1 if there
@@ -1579,42 +1385,6 @@ Debug.trace("  View: "+XMLStyleConstants.getXMLElementName(getElement().getAttri
 		}
 	}
 
-
-	/**
-	 * Determines the preferred span for this view along an
-	 * axis.
-	 *
-	 * @param axis may be either View.X_AXIS or View.Y_AXIS
-	 * @returns  the span the view would like to be rendered into.
-	 *           Typically the view is told to render into the span
-	 *           that is returned, although there is no guarantee.
-	 *           The parent may choose to resize or break the view.
-	 * @see View#getPreferredSpan
-	 */
-/*G***fix
-	public float getPreferredSpan(int axis)
-	{
-		if(axis==X_AXIS)	//G***check, change to flowaxis or something
-			return layoutSpan;	//G***testing
-		else
-			return super.getPreferredSpan(axis);
-*/
-/*G***fix; testing
-			float maxpref = 0;
-			float pref = 0;
-			int n = getViewCount();
-			for (int i = 0; i < n; i++) {
-		View v = getView(i);
-		pref += v.getPreferredSpan(axis);
-		if (v.getBreakWeight(axis, 0, Short.MAX_VALUE) >= ForcedBreakWeight) {
-				maxpref = Math.max(maxpref, pref);
-				pref = 0;
-		}
-			}
-			maxpref = Math.max(maxpref, pref);
-			return maxpref;
-*/
-//G***fix	}
 
 
 	/**Returns all child elements for which views should be created. If
@@ -1814,17 +1584,11 @@ else	//if we're tiling on the Y axis
 
 
 
-/**
- * Strategy for maintaining the physical form
- * of the flow.  The default implementation is
- * completely stateless, and recalculates the
- * entire flow if the layout is invalid on the
- * given FlowView.  Alternative strategies can
- * be implemented by subclassing, and might 
- * perform incrementatal repair to the layout
- * or alternative breaking behavior.
- */
-public static class TestFlowStrategy extends FlowStrategy {
+	/**Strategy for pagination.
+	@author Garret Wilson
+	*/
+	public static class PaginateStrategy extends FlowStrategy
+	{
 
 /**
 * Gives notification that something was inserted into the document
@@ -2133,250 +1897,68 @@ return v;
 }
 }
 
-/**
- * This class can be used to represent a logical view for 
- * a flow.  It keeps the children updated to reflect the state
- * of the model, gives the logical child views access to the
- * view hierarchy, and calculates a preferred span.  It doesn't
- * do any rendering, layout, or model/view translation.
- */
-protected class PagePoolView extends BoxView {
-
-PagePoolView(Element elem) {
-  super(elem, XMLPagedView.this.getAxis()==View.X_AXIS ? View.Y_AXIS : View.X_AXIS);
-}
-/*G***del
-    protected int getViewIndexAtPosition(int pos) {
-  Element elem = getElement();
-  if (elem.isLeaf()) {
-return 0;
-  }
-  return super.getViewIndexAtPosition(pos);
-}
-*/
-    
-    
-		/**Loads the children into this view pool. Only the children within the
-		view's range (specified in the constructor) will be loaded.
-	@param viewFactory The factory to use to create the child views.
+	/**The logical view of child elements which will be paginated into pages.
+	Because pagination is a meta-flowing that requires underlying layout on paragraphs and
+	other flowing views, this view allows for pre-pagination by setting its size.
+	@author Garret Wilson
 	*/
-	protected void loadChildren(ViewFactory viewFactory)
+	protected class PagePoolView extends ContainerView
 	{
-		if(viewFactory==null) //if there is no view factory, we can't load the children
-			return; //we can't do anything
-		final int startOffset=getStartOffset(); //find out where we should start
-		final int endOffset=getEndOffset(); //find out where we should end
-//G***del Debug.trace("loading children for page pool, offsets "+startOffset+" to "+endOffset);
-		  //G***testing; comment; eventually put in the view factory
-		final Element[] viewChildElements=getViewChildElements(startOffset, endOffset); //get the child elements that fall within our range
-	  //create an anonymous element that simply holds the elements we just loaded
-		//this temporary element will go away after we've created views
-	  final Element anonymousElement=new AnonymousElement(getElement(), null, viewChildElements, 0, viewChildElements.length);
-			//G***is it good to make an anonymous element simply for enumerating child elements to XMLBlockView?
-		final View[] createdViews=XMLBlockView.createBlockElementChildViews(anonymousElement, viewFactory);  //create the child views
-		this.replace(0, 0, createdViews);  //add the views as child views to this view pool (use this to show that we shouldn't use the XMLPagedView version)
-	}
-    
-	/**Returns the index of the child at the given model position in the pool.
-	@param pos The position (>=0) in the model.
-	@return The index of the view representing the given position, or -1 if there
-		is no view on this pool which represents that position.
-	*/
-	protected int getViewIndexAtPosition(int pos)
-	{
-//G***del Debug.trace("looking for view at position: ", pos); //G***del
-//G***del Debug.trace("startoffset: ", getStartOffset());
-//G***del Debug.trace("endoffset: ", getEndOffset());
 
-//G***del Debug.trace("child views: ", getViewCount());
-
-		//this is an expensive operation, but this class usually contains only a partial list of views, which may not correspond to the complete list of original elements
-		if(pos<getStartOffset() || pos>=getEndOffset())	//if the position is before or after the content
-			return -1;	//show that the given position is not on this page
-		for(int viewIndex=getViewCount()-1; viewIndex>=0; --viewIndex)	//look at all the views from the last to the first
+		/**Constructor that uses a tiling axis orthogonal to the tiling axis of individual pages.
+		@param element The element that contains the children to be paginated.
+		*/
+		public PagePoolView(final Element element)
 		{
-			final View view=getView(viewIndex);	//get a reference to this view
-//G***del Debug.trace("View "+viewIndex+" is of class: ", view.getClass().getName());
-//G***del Debug.trace("startoffset: ", view.getStartOffset());
-//G***del Debug.trace("endoffset: ", view.getEndOffset());
-			if(pos>=view.getStartOffset() && pos<view.getEndOffset())	//if this view holds the requested position
-				return viewIndex;	//return the index to this view
+			super(element, XMLPagedView.this.getAxis()==View.X_AXIS ? View.Y_AXIS : View.X_AXIS);	//determine the tiling axis orthogonal to the paged view tiling axis
 		}
-		return -1;	//if we make it to this point, we haven't been able to find a view with the specified position
+
+		/**Returns the attributes to use for this container view.
+	 	Because this view does not directly represent its underlying element,
+		the attributes of the parent view is returned, if there is a parent.
+		@return The attributes of the parent view, or the attributes of the underlying element if there is no parent.
+		*/
+		public AttributeSet getAttributes()
+		{
+			final View parentView=getParent();	//get the parent view
+			return parentView!=null ? parentView.getAttributes() : super.getAttributes();	//return the parent's attributes, if we have a parent, or the default attributes if we have no parent
+		}
+
+		/**Loads the children into this view pool. Only the children within the
+			view's range (specified in the constructor) will be loaded.
+		@param viewFactory The factory to use to create the child views.
+		*/
+		protected void loadChildren(ViewFactory viewFactory)
+		{
+			if(viewFactory==null) //if there is no view factory, we can't load the children
+				return; //we can't do anything
+			final int startOffset=getStartOffset(); //find out where we should start
+			final int endOffset=getEndOffset(); //find out where we should end
+	//G***del Debug.trace("loading children for page pool, offsets "+startOffset+" to "+endOffset);
+			  //G***testing; comment; eventually put in the view factory
+			final Element[] viewChildElements=getViewChildElements(startOffset, endOffset); //get the child elements that fall within our range
+		  //create an anonymous element that simply holds the elements we just loaded
+			//this temporary element will go away after we've created views
+		  final Element anonymousElement=new AnonymousElement(getElement(), null, viewChildElements, 0, viewChildElements.length);
+				//G***is it good to make an anonymous element simply for enumerating child elements to XMLBlockView?
+			final View[] createdViews=XMLBlockView.createBlockElementChildViews(anonymousElement, viewFactory);  //create the child views
+			this.replace(0, 0, createdViews);  //add the views as child views to this view pool (use this to show that we shouldn't use the XMLPagedView version)
+		}
+    
+		/**Forward the document event to the given child view.
+		This implementation first reparents the child to the logical view,
+		as the child may have been given a parent page if the child
+		could fit without break.
+		@param view The child view to forward the event to.
+		@param event The change information from the associated document.
+		@param allocation The current allocation of the view.
+		@param factory The factory to use to rebuild if the view has children.
+		*/
+		protected void forwardUpdateToView(final View view, final DocumentEvent event, final Shape allocation, final ViewFactory factory)
+		{
+			view.setParent(this);	//reparent the view to the pool
+			super.forwardUpdateToView(view, event, allocation, factory);	//forward the update normally
+		}
 	}
-    
-    
-    
-/*G***del
-    protected void loadChildren(ViewFactory f) {
-  Element elem = getElement();
-  if (elem.isLeaf()) {
-View v = new LabelView(elem);
-append(v);
-  } else {
-super.loadChildren(f);
-  }
-}
-*/
-
-/**
-* Fetches the attributes to use when rendering.  This view
-* isn't directly responsible for an element so it returns
-* the outer classes attributes.
-*/
-    public AttributeSet getAttributes() {
-  View p = getParent();
-  return (p != null) ? p.getAttributes() : null;
-}
-
-/**
-* Determines the preferred span for this view along an
-* axis.
-*
-* @param axis may be either View.X_AXIS or View.Y_AXIS
-* @return   the span the view would like to be rendered into.
-*           Typically the view is told to render into the span
-*           that is returned, although there is no guarantee.  
-*           The parent may choose to resize or break the view.
-* @see View#getPreferredSpan
-*/
-    public float getPreferredSpan(int axis) {
-  float maxpref = 0;
-  float pref = 0;
-  int n = getViewCount();
-  for (int i = 0; i < n; i++) {
-View v = getView(i);
-pref += v.getPreferredSpan(axis);
-if (v.getBreakWeight(axis, 0, Integer.MAX_VALUE) >= ForcedBreakWeight) {
-    maxpref = Math.max(maxpref, pref);
-    pref = 0;
-}
-  }
-  maxpref = Math.max(maxpref, pref);
-  return maxpref;
-}
-
-/**
-* Determines the minimum span for this view along an
-* axis.  The is implemented to find the minimum unbreakable
-* span.
-*
-* @param axis may be either View.X_AXIS or View.Y_AXIS
-* @return  the span the view would like to be rendered into.
-*           Typically the view is told to render into the span
-*           that is returned, although there is no guarantee.  
-*           The parent may choose to resize or break the view.
-* @see View#getPreferredSpan
-*/
-    public float getMinimumSpan(int axis) {
-  float maxmin = 0;
-  float min = 0;
-  boolean nowrap = false;
-  int n = getViewCount();
-  for (int i = 0; i < n; i++) {
-View v = getView(i);
-if (v.getBreakWeight(axis, 0, Integer.MAX_VALUE) == BadBreakWeight) {
-    min += v.getPreferredSpan(axis);
-    nowrap = true;
-} else if (nowrap) {
-    maxmin = Math.max(min, maxmin);
-    nowrap = false;
-    min = 0;
-}
-  }
-  maxmin = Math.max(maxmin, min);
-  return maxmin;
-}
-
-/**
-* Forward the DocumentEvent to the given child view.  This
-* is implemented to reparent the child to the logical view
-* (the children may have been parented by a row in the flow
-* if they fit without breaking) and then execute the superclass 
-* behavior.
-*
-* @param v the child view to forward the event to.
-* @param e the change information from the associated document
-* @param a the current allocation of the view
-* @param f the factory to use to rebuild if the view has children
-* @see #forwardUpdate
-* @since 1.3
-*/
-    protected void forwardUpdateToView(View v, DocumentEvent e, 
-			   Shape a, ViewFactory f) {
-  v.setParent(this);
-  super.forwardUpdateToView(v, e, a, f);
-}
-
-// The following methods don't do anything useful, they
-// simply keep the class from being abstract.
-
-/**
-* Renders using the given rendering surface and area on that
-* surface.  This is implemented to do nothing, the logical
-* view is never visible.
-*
-* @param g the rendering surface to use
-* @param allocation the allocated region to render into
-* @see View#paint
-*/
-    public void paint(Graphics g, Shape allocation) {
-}
-
-/**
-* Tests whether a point lies before the rectangle range.
-* Implemented to return false, as hit detection is not
-* performed on the logical view.
-*
-* @param x the X coordinate >= 0
-* @param y the Y coordinate >= 0
-* @param alloc the rectangle
-* @return true if the point is before the specified range
-*/
-    protected boolean isBefore(int x, int y, Rectangle alloc) {
-  return false;
-}
-
-/**
-* Tests whether a point lies after the rectangle range.
-* Implemented to return false, as hit detection is not
-* performed on the logical view.
-*
-* @param x the X coordinate >= 0
-* @param y the Y coordinate >= 0
-* @param alloc the rectangle
-* @return true if the point is after the specified range
-*/
-    protected boolean isAfter(int x, int y, Rectangle alloc) {
-  return false;
-}
-
-/**
-* Fetches the child view at the given point.
-* Implemented to return null, as hit detection is not
-* performed on the logical view.
-*
-* @param x the X coordinate >= 0
-* @param y the Y coordinate >= 0
-* @param alloc the parent's allocation on entry, which should
-*   be changed to the child's allocation on exit
-* @return the child view
-*/
-    protected View getViewAtPoint(int x, int y, Rectangle alloc) {
-  return null;
-}
-
-/**
-* Returns the allocation for a given child.
-* Implemented to do nothing, as the logical view doesn't
-* perform layout on the children.
-*
-* @param index the index of the child, >= 0 && < getViewCount()
-* @param a  the allocation to the interior of the box on entry, 
-*   and the allocation of the child view at the index on exit.
-*/
-    protected void childAllocation(int index, Rectangle a) {
-}
-}
 
 }

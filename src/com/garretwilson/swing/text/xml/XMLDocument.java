@@ -49,7 +49,6 @@ import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.event.ProgressListener;
 import com.garretwilson.swing.text.DocumentConstants;
 import com.garretwilson.swing.text.DocumentUtilities;
-import com.garretwilson.swing.text.PureGapContent;
 import com.garretwilson.swing.text.SwingTextUtilities;
 import com.garretwilson.text.CharacterConstants;
 import com.garretwilson.text.xml.XMLConstants;

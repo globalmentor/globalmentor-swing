@@ -17,6 +17,7 @@ import com.garretwilson.util.Debug;
 */
 public class XMLCSSStyleUtilities extends XMLStyleUtilities implements XMLCSSStyleConstants
 {
+
 	/**Gets the XML CSS style declaration the Swing attributes represent. The
 		attribute is not resolved through the parent attribute set hierarchy.
 	@param a The attribute set, which may be <code>null</code>.
