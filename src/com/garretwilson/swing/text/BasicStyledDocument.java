@@ -3,6 +3,7 @@ package com.garretwilson.swing.text;
 import java.awt.Font;
 import java.net.URI;
 import java.io.*;
+
 import javax.swing.event.*;
 import javax.swing.text.*;
 
@@ -22,7 +23,7 @@ import com.garretwilson.util.Debug;
 </ul>
 @author Garret Wilson
 */
-public class BasicStyledDocument extends DefaultStyledDocument implements URIInputStreamable
+public class BasicStyledDocument extends DefaultStyledDocument implements URIAccessible
 {
 
 	/**The name of the document property which may contain the loaded publication description.*/
@@ -201,6 +202,17 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIInp
 	public final InputStream getInputStream(final URI uri) throws IOException
 	{
 		return getURIInputStreamable().getInputStream(uri);	//delegate to our own URIInputStreamable
+	}
+
+	/**Returns an output stream for the given URI.
+	The calling class has the responsibility for closing the output stream.
+	@param uri A URI to a resource.
+	@return An output stream to the contents of the resource represented by the given URI.
+	@exception IOException Thrown if an I/O error occurred.
+	*/
+	public OutputStream getOutputStream(final URI uri) throws IOException
+	{
+		throw new IOException("Document output not yet supported.");
 	}
 
 	/**Adds a progress listener.
