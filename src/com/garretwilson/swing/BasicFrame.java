@@ -10,7 +10,7 @@ import com.garretwilson.awt.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.*;
-import com.garretwilson.util.prefs.*;
+import static com.garretwilson.util.prefs.PreferencesUtilities.*;
 
 /**An extended frame that has extra features beyond those in <code>JFrame</code>.
 <p>The default close operation in this class by default is
@@ -43,15 +43,15 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 
 		//the bounds preferences
 	/**The preference for storing the horizontal position.*/
-	protected final String BOUNDS_X_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.x");
+	protected final String BOUNDS_X_PREFERENCE=getPreferenceName(getClass(), "bounds.x");
 	/**The preference for storing the vertical position.*/
-	protected final String BOUNDS_Y_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.y");
+	protected final String BOUNDS_Y_PREFERENCE=getPreferenceName(getClass(), "bounds.y");
 	/**The preference for storing the width.*/
-	protected final String BOUNDS_WIDTH_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.width");
+	protected final String BOUNDS_WIDTH_PREFERENCE=getPreferenceName(getClass(), "bounds.width");
 	/**The preference for storing the height.*/
-	protected final String BOUNDS_HEIGHT_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.height");
+	protected final String BOUNDS_HEIGHT_PREFERENCE=getPreferenceName(getClass(), "bounds.height");
 	/**The preference for storing the extended state.*/
-	protected final String EXTENDED_STATE_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "extended.state");
+	protected final String EXTENDED_STATE_PREFERENCE=getPreferenceName(getClass(), "extended.state");
 
 	/**The preferences that should be used for this frame, or <code>null</code>
 		if the default preferences for this class should be used.

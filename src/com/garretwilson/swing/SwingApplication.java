@@ -6,7 +6,6 @@ import java.net.URI;
 import javax.swing.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.net.SwingAuthenticator;
-import com.garretwilson.net.http.HTTPClient;
 import com.garretwilson.util.*;
 
 /**An application that relies on Swing.
@@ -265,7 +264,7 @@ public abstract class SwingApplication<C> extends Application<C>
 	@param args The command line arguments.
 	@return The application status.
 	*/
-	public static int run(final Application application, final String[] args)
+	public static <C> int run(final Application<C> application, final String[] args)
 	{
 		int result=0;	//start out assuming a neutral result TODO use a constant and a unique value
 		try
