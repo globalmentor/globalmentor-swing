@@ -4,7 +4,7 @@ import java.io.File;
 import javax.swing.text.*;
 import com.garretwilson.io.FileUtilities;
 import com.garretwilson.io.MediaType;
-import com.garretwilson.swing.text.xml.XMLStyleConstants;
+import com.garretwilson.swing.text.xml.XMLStyleUtilities;
 import com.garretwilson.text.xml.oeb.OEBConstants;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
 import com.garretwilson.util.Debug;
@@ -53,7 +53,7 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 	{
 		if(attributeSet!=null) //if a valid attribute set is passed
 		{
-			final String elementName=XMLStyleConstants.getXMLElementName(attributeSet); //get the name of this element
+			final String elementName=XMLStyleUtilities.getXMLElementName(attributeSet); //get the name of this element
 			if(elementName!=null) //if there is an element name
 			{
 				if(elementName.equals(ELEMENT_IMG))	//if this is an <img> element
@@ -87,8 +87,8 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 	*/
 	public static boolean isHTML(final AttributeSet attributeSet, final AttributeSet documentAttributeSet)
 	{
-		final String elementNamespaceURI=XMLStyleConstants.getXMLElementNamespaceURI(attributeSet);  //get the element namespace
-		final String elementLocalName=XMLStyleConstants.getXMLElementLocalName(attributeSet);  //get the element local name
+		final String elementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(attributeSet);  //get the element namespace
+		final String elementLocalName=XMLStyleUtilities.getXMLElementLocalName(attributeSet);  //get the element local name
 		if(elementNamespaceURI!=null)  //if the element has a namespace
 		{
 				//if it's part of the XHTML or OEB namespace
@@ -98,7 +98,7 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 		}
 		else  //if the body element has no namespace
 		{
-		  final MediaType documentMediaType=XMLStyleConstants.getMediaType(documentAttributeSet);  //get the media type of the document
+		  final MediaType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet);  //get the media type of the document
 				//if the document type is text/html or text/x-oeb1-document or application/xhtml+xml
 			if(documentMediaType!=null && (documentMediaType.equals(MediaType.TEXT_HTML)
 				|| documentMediaType.equals(MediaType.APPLICATION_XHTML_XML)
@@ -108,8 +108,8 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 			}
 			else  //if the media type isn't HTML
 			{
-				final String documentElementLocalName=XMLStyleConstants.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
-				final String documentElementNamespaceURI=XMLStyleConstants.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element local name
+				final String documentElementLocalName=XMLStyleUtilities.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
+				final String documentElementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element local name
 				if(XHTMLConstants.ELEMENT_HTML.equals(documentElementLocalName)  //if the document element is an XHTML or OEB <html> element
 					&& (XHTMLConstants.XHTML_NAMESPACE_URI.equals(documentElementNamespaceURI) || OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(documentElementNamespaceURI)))
 				{
@@ -133,19 +133,19 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 	{
 		if(attributeSet!=null) //if a valid attribute set is passed
 		{
-			final String elementName=XMLStyleConstants.getXMLElementName(attributeSet); //get the name of this element
+			final String elementName=XMLStyleUtilities.getXMLElementName(attributeSet); //get the name of this element
 			if(elementName!=null) //if there is an element name G***use ELEMENT_IMG.equals(), etc. so that this line is unecessary
 			{
 					//see if this is an <img> or <object> element
 				if(elementName.equals(ELEMENT_IMG)) //if the corresponding element is an img element
 				{
 						//get the src attribute, representing the href of the image, or null if not present
-					return (String)XMLStyleConstants.getDefinedAttribute(attributeSet, ELEMENT_IMG_ATTRIBUTE_SRC);
+					return XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_IMG_ATTRIBUTE_SRC);
 				}
 				else if(elementName.equals(ELEMENT_OBJECT)) //if the corresponding element is an object element
 				{
 						//get the data attribute, representing the href of the image, or null if not present
-					return (String)XMLStyleConstants.getDefinedAttribute(attributeSet, ELEMENT_OBJECT_ATTRIBUTE_DATA);
+					return XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_DATA);
 				}
 			}
 		}
@@ -164,15 +164,15 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 		if(attributeSet!=null)  //if there are attributes
 		{
 				//see if there is a code type attribute
-			final String codeType=(String)XMLStyleConstants.getDefinedAttribute(attributeSet, ELEMENT_OBJECT_ATTRIBUTE_CODETYPE);
+			final String codeType=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_CODETYPE);
 			if(codeType!=null)  //if the object has a code type
 				return new MediaType(codeType); //create a media type from the given type
 				//see if there is a type attribute, since there is no code type specified
-			final String type=(String)XMLStyleConstants.getDefinedAttribute(attributeSet, ELEMENT_OBJECT_ATTRIBUTE_TYPE);
+			final String type=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_TYPE);
 			if(type!=null)  //if the object has a code type
 				return new MediaType(type); //create a media type from the given type and return it
 				//see if there is a data attribute, since there is no type specified
-			final String data=(String)XMLStyleConstants.getDefinedAttribute(attributeSet, ELEMENT_OBJECT_ATTRIBUTE_DATA);
+			final String data=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_DATA);
 			if(data!=null)  //if the object has a data attribute
 				return FileUtilities.getMediaType(new File(data)); //try to get a media type from the file and return it
 		}

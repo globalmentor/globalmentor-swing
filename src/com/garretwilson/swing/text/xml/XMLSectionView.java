@@ -86,7 +86,7 @@ Debug.trace("Getting view child elements"); //G***del
 			if(documentElement.getStartOffset()>=startOffset && documentElement.getStartOffset()<endOffset)
 		  {
 				final AttributeSet documentAttributeSet=documentElement.getAttributes();  //get the attributes of the document element
-				if(XMLStyleConstants.isPageBreakView(documentAttributeSet)) //if this is a page break element
+				if(XMLStyleUtilities.isPageBreakView(documentAttributeSet)) //if this is a page break element
 				{
 	Debug.trace("found page break view"); //G***del
 					viewChildElementList.add(documentElement);  //add this element to our list of elements; it's not a top-level document like the others G***this is a terrible hack; fix
@@ -94,9 +94,9 @@ Debug.trace("Getting view child elements"); //G***del
 				else
 				{
 	//G***del if not needed				Element baseElement=documentElement;  //we'll find out which element to use as the parent; in most documents, that will be the document element; in HTML elements, it will be the <body> element
-					final MediaType documentMediaType=XMLStyleConstants.getMediaType(documentAttributeSet);  //get the media type of the document
-					final String documentElementLocalName=XMLStyleConstants.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
-					final String documentElementNamespaceURI=XMLStyleConstants.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element local name
+					final MediaType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet);  //get the media type of the document
+					final String documentElementLocalName=XMLStyleUtilities.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
+					final String documentElementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element local name
 					final int childElementCount=documentElement.getElementCount();  //find out how many children are in the document
 					for(int childIndex=0; childIndex<childElementCount; ++childIndex)  //look at the children of the document element
 					{
@@ -104,7 +104,7 @@ Debug.trace("Getting view child elements"); //G***del
 						if(childElement.getStartOffset()>=startOffset && childElement.getStartOffset()<endOffset) //if this child element starts within our range
 						{
 							final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child element's attributes
-							final String childElementLocalName=XMLStyleConstants.getXMLElementLocalName(childAttributeSet);  //get the child element local name
+							final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);  //get the child element local name
 		Debug.trace("Looking at child: ", childElementLocalName); //G***del
 							boolean isHTMLBody=false; //we'll determine if this element is a <body> element of XHTML
 							if(XHTMLConstants.ELEMENT_BODY.equals(childElementLocalName))  //if this element is "body"
@@ -114,7 +114,7 @@ Debug.trace("Getting view child elements"); //G***del
 								//  * the element is in no namespace but the document is of type text/html or text/x-oeb1-document
 								//  * the element is in no namespace and the document element is
 								//      an <html> element in the XHTML or OEB namespace
-								final String childElementNamespaceURI=XMLStyleConstants.getXMLElementNamespaceURI(childAttributeSet);  //get the child element local name
+								final String childElementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(childAttributeSet);  //get the child element local name
 								if(childElementNamespaceURI!=null)  //if the body element has a namespace
 								{
 										//if it's part of the XHTML or OEB namespace
@@ -210,10 +210,10 @@ Debug.trace("Creating added element: ", addedElems[i].getClass().getName());  //
 
 
 	//G***del
-	final String ourLocalName=XMLStyleConstants.getXMLElementLocalName(getElement().getAttributes());  //G***testing
+	final String ourLocalName=XMLStyleUtilities.getXMLElementLocalName(getElement().getAttributes());  //G***testing
 
 	//G***del
-	final String elementLocalName=XMLStyleConstants.getXMLElementLocalName(ec.getElement().getAttributes());  //G***testing
+	final String elementLocalName=XMLStyleUtilities.getXMLElementLocalName(ec.getElement().getAttributes());  //G***testing
 
 				//G***testing
 		//as the section view can conflate the structure and place XHTML elements before the body, update our index accordingly
@@ -281,7 +281,7 @@ if(ec==null)  //G***testing; fix; comment; G***we don't need this test; the test
 		final Element childElement=elem.getElement(i);  //G***testing
 		if(childElement.getAttributes()!=null)  //G***del; we probably don't need this test
 		{
-			final String childElementLocalName=XMLStyleConstants.getXMLElementLocalName(childElement.getAttributes());  //G***testing
+			final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childElement.getAttributes());  //G***testing
 
 Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; testing
 
@@ -293,7 +293,7 @@ Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; test
 					final Element grandchildElement=childElement.getElement(j);  //G***testing
 					if(grandchildElement.getAttributes()!=null)  //G***del; we probably don't need this test
 					{
-						final String grandchildElementLocalName=XMLStyleConstants.getXMLElementLocalName(grandchildElement.getAttributes());  //G***testing
+						final String grandchildElementLocalName=XMLStyleUtilities.getXMLElementLocalName(grandchildElement.getAttributes());  //G***testing
 
 			Debug.trace("grandchild "+i+" local name: ", grandchildElementLocalName);  //G***del; testing
 
@@ -358,7 +358,7 @@ Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; test
 				final Element childElement=elem.getElement(i);  //G***testing
 				if(childElement.getAttributes()!=null)  //G***del; we probably don't need this test
 				{
-					final String childElementLocalName=XMLStyleConstants.getXMLElementLocalName(childElement.getAttributes());  //G***testing
+					final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childElement.getAttributes());  //G***testing
 
 		Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; testing
 
@@ -370,7 +370,7 @@ Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; test
 							final Element grandchildElement=childElement.getElement(j);  //G***testing
 							if(grandchildElement.getAttributes()!=null)  //G***del; we probably don't need this test
 							{
-								final String grandchildElementLocalName=XMLStyleConstants.getXMLElementLocalName(grandchildElement.getAttributes());  //G***testing
+								final String grandchildElementLocalName=XMLStyleUtilities.getXMLElementLocalName(grandchildElement.getAttributes());  //G***testing
 
 					Debug.trace("grandchild "+i+" local name: ", grandchildElementLocalName);  //G***del; testing
 
@@ -437,7 +437,7 @@ Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; test
 				final Element childElement=elem.getElement(i);  //G***testing
 				if(childElement.getAttributes()!=null)  //G***del; we probably don't need this test
 				{
-					final String childElementLocalName=XMLStyleConstants.getXMLElementLocalName(childElement.getAttributes());  //G***testing
+					final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childElement.getAttributes());  //G***testing
 
 		Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; testing
 
@@ -449,7 +449,7 @@ Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; test
 							final Element grandchildElement=childElement.getElement(j);  //G***testing
 							if(grandchildElement.getAttributes()!=null)  //G***del; we probably don't need this test
 							{
-								final String grandchildElementLocalName=XMLStyleConstants.getXMLElementLocalName(grandchildElement.getAttributes());  //G***testing
+								final String grandchildElementLocalName=XMLStyleUtilities.getXMLElementLocalName(grandchildElement.getAttributes());  //G***testing
 
 					Debug.trace("grandchild "+i+" local name: ", grandchildElementLocalName);  //G***del; testing
 

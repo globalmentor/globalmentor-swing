@@ -1598,7 +1598,7 @@ Debug.trace("create flowlayout"); //G***del
 				{
 					endOffset=childElement.getEndOffset(); //find the end of this element
 				}
-				else if(XMLStyleConstants.isPageBreakView(childElement.getAttributes())) //G***maybe just check for the page-break-after attribute
+				else if(XMLStyleUtilities.isPageBreakView(childElement.getAttributes())) //G***maybe just check for the page-break-after attribute
 				{
 					endOffset=childElement.getEndOffset(); //find the end of this element
 				}
@@ -1679,7 +1679,7 @@ Debug.trace("create flowlayout"); //G***del
 		  {
 //G***del Debug.trace("document within our range"); //G***del
 				final AttributeSet documentAttributeSet=documentElement.getAttributes();  //get the attributes of the document element
-				if(XMLStyleConstants.isPageBreakView(documentAttributeSet)) //if this is a page break element
+				if(XMLStyleUtilities.isPageBreakView(documentAttributeSet)) //if this is a page break element
 				{
 //G***del Debug.trace("found page break view"); //G***del
 					viewChildElementList.add(documentElement);  //add this element to our list of elements; it's not a top-level document like the others G***this is a terrible hack; fix
@@ -1700,7 +1700,7 @@ Debug.trace("create flowlayout"); //G***del
 						if(childElement.getStartOffset()<endOffset && childElement.getEndOffset()>startOffset)
 						{
 							final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child element's attributes
-							final String childElementLocalName=XMLStyleConstants.getXMLElementLocalName(childAttributeSet);  //get the child element local name
+							final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);  //get the child element local name
 //G***del Debug.trace("Looking at child: ", childElementLocalName); //G***del
 //G***del							boolean isHTMLBody=false; //we'll determine if this element is a <body> element of XHTML
 							if(XHTMLConstants.ELEMENT_BODY.equals(childElementLocalName))  //if this element is <body>

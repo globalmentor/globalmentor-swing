@@ -145,7 +145,7 @@ Debug.trace("XMLImageView.getImage(): ", getHRef()); //G***del
 				final XMLDocument document=(XMLDocument)getDocument();  //get the document used to load resources G***make sure this is an XML document
 					//get the href, taking into account that the href is relative to this file's base URL
 //G***del System.out.println("image href: "+getHRef());  //G***del
-			  final String href=XMLStyleConstants.getBaseRelativeHRef(getAttributes(), getHRef());
+			  final String href=XMLStyleUtilities.getBaseRelativeHRef(getAttributes(), getHRef());
 //G***del System.out.println("image base relateive href: "+href);  //G***del
 				image=(Image)document.getResource(href);	//get the image resource G***check to make sure what is returned is really an image
 				imageReference=new SoftReference(image);  //create a soft reference to the image to store locally

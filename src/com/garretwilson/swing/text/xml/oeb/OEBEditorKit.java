@@ -416,7 +416,7 @@ Debug.assert(item!=null, "Item is null");
 		if(targetID==null)  //if the "id" attribute didn't have a value
 		{
 //G***del when works			final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-			targetID=(String)XMLStyleConstants.getDefinedAttribute(attributeSet, "name");  //return the value of the "name" attribute, if it exists G***use a constant here
+			targetID=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, "name");  //return the value of the "name" attribute, if it exists G***use a constant here
 		}
 		return targetID;  //return whatever target ID we found, if any
 	}

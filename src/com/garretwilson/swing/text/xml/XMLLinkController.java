@@ -294,7 +294,7 @@ Debug.trace("URI: ", uri);	//G***del
 		final String href=getLinkElementHRef(element);  //get the href of the element
 		if(href!=null)  //if there is an href
 		{
-			URI baseURI=XMLStyleConstants.getBaseURI(element.getAttributes()); //get the base URI of the document
+			URI baseURI=XMLStyleUtilities.getBaseURI(element.getAttributes()); //get the base URI of the document
 			if(baseURI==null) //if we couldn't found a base URI in the attributes
 				baseURI=xmlDocument.getBaseURI();	//get the base URI from the document
 						//G***make sure this works for fragments
@@ -467,11 +467,11 @@ protected void activateLink(int pos, JEditorPane editor) {
 		if(attributeSet!=null)  //if we have an attribute set
 		{
 				//final a registered XML link controller to which to delegate if we can
-			/*G***fix final */String elementNamespaceURI=XMLStyleConstants.getXMLElementNamespaceURI(attributeSet); //get the namespace of this element, if it has one
+			/*G***fix final */String elementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(attributeSet); //get the namespace of this element, if it has one
 //G***del Debug.trace("Looking for view factory for namespace: ", elementNamespaceURI); //G***del
 			if(elementNamespaceURI==null) //if this element has no namespace G***this code is duplicated from XMLViewFactory---combine somehow
 			{
-				final MediaType mediaType=XMLStyleConstants.getMediaType(attributeSet); //see if this element's document has a media type defined
+				final MediaType mediaType=XMLStyleUtilities.getMediaType(attributeSet); //see if this element's document has a media type defined
 				if(mediaType!=null) //if there is a media type defined for this element's document
 				{ //G***probably do all this differently later, like registering a view factory with a media type or something or, better yet, registering a namespace with a media type
 					if(mediaType.equals(MediaType.TEXT_HTML))

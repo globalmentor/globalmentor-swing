@@ -60,7 +60,7 @@ Debug.trace("Finished constructing XHTMLImageView");	//G***del
 	{
 Debug.trace("XHTMLImageView.initialize()");
 		final AttributeSet attributeSet=element.getAttributes();  //get the element's attributes
-		final String elementName=XMLStyleConstants.getXMLElementName(attributeSet); //get the name of this element
+		final String elementName=XMLStyleUtilities.getXMLElementName(attributeSet); //get the name of this element
 		final String href=XHTMLSwingTextUtilities.getImageHRef(element.getAttributes()); //get a reference to the image file represented by the element
 			setHRef(href);	//set the href to the value we found
 //G***del when works		final String src=(String)element.getAttributes().getAttribute("src");	//G***check about resolving parents (we don't want to resolve), use a constant, use namespaces, and comment
@@ -78,11 +78,11 @@ Debug.trace("XHTMLImageView.initialize() src: ", getHRef());
 		try //try to get the width and the height from the attributes; if we can, we won't have to load the image, now
 		{
 			//get the height if it is defined G***check about namespaces
-			final String heightString=(String)XMLStyleConstants.getDefinedAttribute(attributeSet, ELEMENT_IMG_ATTRIBUTE_HEIGHT);
+			final String heightString=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_IMG_ATTRIBUTE_HEIGHT);
 			if(heightString!=null)  //if there is a height defined
 				height=Integer.parseInt(heightString);  //turn the height of the image into an integer
 			//get the width if it is defined G***check about namespaces
-			final String widthString=(String)XMLStyleConstants.getDefinedAttribute(attributeSet, ELEMENT_IMG_ATTRIBUTE_WIDTH);
+			final String widthString=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_IMG_ATTRIBUTE_WIDTH);
 			if(widthString!=null)  //if there is a height defined
 				width=Integer.parseInt(widthString);  //turn the width of the image into an integer
 		}

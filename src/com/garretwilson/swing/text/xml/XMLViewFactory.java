@@ -176,11 +176,11 @@ public class XMLViewFactory implements ViewsFactory
 		if(attributeSet!=null)  //if we have an attribute set
 		{
 				//delegate to the registered view factory if we can
-			/*G***fix final */String elementNamespaceURI=XMLStyleConstants.getXMLElementNamespaceURI(attributeSet); //get the namespace of this element, if it has one
+			/*G***fix final */String elementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(attributeSet); //get the namespace of this element, if it has one
 //G***del Debug.trace("Looking for view factory for namespace: ", elementNamespaceURI); //G***del
 			if(elementNamespaceURI==null) //if this element has no namespace
 			{
-				final MediaType mediaType=XMLStyleConstants.getMediaType(attributeSet); //see if this element's document has a media type defined
+				final MediaType mediaType=XMLStyleUtilities.getMediaType(attributeSet); //see if this element's document has a media type defined
 				if(mediaType!=null) //if there is a media type defined for this element's document
 				{ //G***probably do all this differently later, like registering a view factory with a media type or something or, better yet, registering a namespace with a media type
 					if(mediaType.equals(MediaType.TEXT_HTML))
@@ -208,12 +208,12 @@ public class XMLViewFactory implements ViewsFactory
 						return view;  //return the view the view factory for the namespace created
 				}
 			}
-			final String elementName=XMLStyleConstants.getXMLElementName(attributeSet); //get the name of this element G***shouldn't we use getXMLLocalName()?
+			final String elementName=XMLStyleUtilities.getXMLElementName(attributeSet); //get the name of this element G***shouldn't we use getXMLLocalName()?
 //G***del Debug.trace("XMLViewFactory: Creating a view for element: "+elementName+" of kind: "+elementKind);  //G***replace with a better Debug trace
 //G***del Debug.trace("Indicate multiple views: "+indicateMultipleViews);	//G***del
 //G***del Debug.trace("1"); //G***del
 				//those elements marked to have page break views take precedence over paragraphs and their block/inline specification
-			if(XMLStyleConstants.isPageBreakView(attributeSet))	//show that this element should have a page-break view
+			if(XMLStyleUtilities.isPageBreakView(attributeSet))	//show that this element should have a page-break view
 				return new XMLPageBreakView(element);	//create a page break view
 //G***del Debug.trace("2"); //G***del
 
@@ -375,7 +375,7 @@ Debug.trace("5"); //G***del
 //G***del Debug.trace("XMLViewFactory creating inline view.");  //G***del
 		if(indicateMultipleViews) //if we should indicate multiple views are needed
 		{
-			Debug.trace("returning null for element: ", XMLStyleConstants.getXMLElementName(element.getAttributes()));  //G***del
+			Debug.trace("returning null for element: ", XMLStyleUtilities.getXMLElementName(element.getAttributes()));  //G***del
 			return null;  //return null so that the XMLParagraphView.LayoutView can create views for the children of the inline view, eventually creating XMLInlineViews for the actual content
 		}
 		else  //if we're not allowed to indicate multiple views

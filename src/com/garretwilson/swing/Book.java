@@ -750,7 +750,7 @@ Debug.trace("display page count: ", displayPageCount);		  //G***del
 									//take into account that the href is relative to this file's base URL
 								try
 								{
-									final String baseRelativeHRef=XMLStyleConstants.getBaseRelativeHRef(attributeSet, href);
+									final String baseRelativeHRef=XMLStyleUtilities.getBaseRelativeHRef(attributeSet, href);
 		Debug.trace("Image href: ", href);
 									viewImage(baseRelativeHRef);  //show the image
 								}
@@ -876,7 +876,7 @@ Debug.trace("display page count: ", displayPageCount);		  //G***del
 						{
 								//G***add something here to extract the name of the image, especially after we can get a URL relative to the file base
 								//take into account that the href is relative to this file's base URL
-							final String baseRelativeHRef=XMLStyleConstants.getBaseRelativeHRef(imageElement.getAttributes(), href);
+							final String baseRelativeHRef=XMLStyleUtilities.getBaseRelativeHRef(imageElement.getAttributes(), href);
 							JMenuItem viewImageMenuItem=popupMenu.add(new ViewImageAction(baseRelativeHRef)); //add an action to view the image
 							popupMenu.addSeparator(); //add a separator
 						}

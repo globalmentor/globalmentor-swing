@@ -64,7 +64,7 @@ public class XHTMLAppletView extends XMLAbstractAppletView implements XHTMLConst
 			final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child's attributes
 
 
-			final String childElementName=XMLStyleConstants.getXMLElementName(childAttributeSet);	//get the name of this child element
+			final String childElementName=XMLStyleUtilities.getXMLElementName(childAttributeSet);	//get the name of this child element
 //G***del		  final String childElementName=(String)childAttributeSet.getAttribute(StyleConstants.NameAttribute);	//get the name of this child element
 		  if(childElementName.equals(ELEMENT_PARAM))  //if this is a param element
 			{

@@ -26,7 +26,7 @@ public class XHTMLLinkController extends XMLLinkController implements XHTMLConst
 	protected boolean isLinkElement(final Element element)
 	{
 		final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-		final String elementLocalName=XMLStyleConstants.getXMLElementLocalName(attributeSet); //get the local name of this element
+		final String elementLocalName=XMLStyleUtilities.getXMLElementLocalName(attributeSet); //get the local name of this element
 		if(ELEMENT_A.equals(elementLocalName)) //if this is the XHTML <a> element
 			return true;	//show that this is a link element
 		else	//if this is another element
@@ -44,7 +44,7 @@ public class XHTMLLinkController extends XMLLinkController implements XHTMLConst
 	protected String getLinkElementHRef(final Element element)
 	{
 		final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-		final String elementLocalName=XMLStyleConstants.getXMLElementLocalName(attributeSet); //get the local name of this element
+		final String elementLocalName=XMLStyleUtilities.getXMLElementLocalName(attributeSet); //get the local name of this element
 		if(ELEMENT_A.equals(elementLocalName))	//if this is an XHTML <a> element
 			return (String)attributeSet.getAttribute(ELEMENT_A_ATTRIBUTE_HREF);	//get the href value
 		else	//if this is another element

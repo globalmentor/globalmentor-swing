@@ -1438,7 +1438,7 @@ Debug.trace("Inside XMLTextPane.goURI()");	//G***del
 		{
 //G***del			final XMLDocument xmlDocument=(XMLDocument)document;  //case the document to an XML document
 				//cast the document to an XML document and get the element that the URI represents, if possible
-			final Element element=((XMLDocument)document).getElement(XMLStyleConstants.TARGET_URI_ATTRIBUTE_NAME, uri);
+			final Element element=((XMLDocument)document).getElement(XMLStyleUtilities.TARGET_URI_ATTRIBUTE_NAME, uri);
 			if(element!=null)	//if we found a matching element in the document
 			{
 /*G***del

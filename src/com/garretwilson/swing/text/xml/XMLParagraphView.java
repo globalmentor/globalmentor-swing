@@ -1337,7 +1337,7 @@ Debug.trace("XMLParagraphView.LayoutView.loadChildren() in");
 		  if(viewFactory==null) //if there is no view factory, the parent view has somehow changed
 		    return; //don't create children
 		  final Element element=getElement(); //get the element for which we're loading child views
-Debug.trace("loading child views for element: ", XMLStyleConstants.getXMLElementLocalName(element.getAttributes()));  //G***del
+Debug.trace("loading child views for element: ", XMLStyleUtilities.getXMLElementLocalName(element.getAttributes()));  //G***del
 		  int childElementCount=element.getElementCount();  //see how many child elements there are
 			if(childElementCount>0) //if there are child elements
 			{

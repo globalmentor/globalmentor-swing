@@ -34,9 +34,9 @@ public class XHTMLViewFactory extends XMLViewFactory implements XHTMLConstants
 		final AttributeSet attributeSet=element.getAttributes();  //get the element's attribute set
 		if(attributeSet!=null)  //if we have an attribute set
 		{
-			final String elementLocalName=XMLStyleConstants.getXMLElementLocalName(attributeSet); //get the local name of this element
+			final String elementLocalName=XMLStyleUtilities.getXMLElementLocalName(attributeSet); //get the local name of this element
 			//if this element has a name, and it's not a paragraph or a page break (we let the XMLEditorKit create paragraphs and page breaks)
-			if(elementLocalName!=null && /*G***del !XMLStyleConstants.isParagraphView(attributeSet) && */!XMLStyleConstants.isPageBreakView(attributeSet))  //G***we may not need this line at all when this code gets even more elegant
+			if(elementLocalName!=null && /*G***del !XMLStyleConstants.isParagraphView(attributeSet) && */!XMLStyleUtilities.isPageBreakView(attributeSet))  //G***we may not need this line at all when this code gets even more elegant
 			{
 				if(elementLocalName.equals(ELEMENT_BR))	//if this is the XHTML <br> element
 				{
@@ -80,7 +80,7 @@ public class XHTMLViewFactory extends XMLViewFactory implements XHTMLConstants
 							{
 								final Element childElement=currentElement.getElement(i); //get a reference to this child element
 									//get the child element's name
-								final String childElementName=XMLStyleConstants.getXMLElementName(childElement.getAttributes());
+								final String childElementName=XMLStyleUtilities.getXMLElementName(childElement.getAttributes());
 								if(ELEMENT_OBJECT.equals(childElementName))  //if this child is an object
 								{
 									recognizedObjectElement=childElement; //we'll start over and see if we recognize this child object's media type

@@ -8,7 +8,7 @@ import javax.swing.text.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.SizeRequirements;
 import com.garretwilson.swing.text.AnonymousElement;
-import com.garretwilson.swing.text.xml.XMLStyleConstants;
+import com.garretwilson.swing.text.xml.XMLStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleConstants;	//G***maybe change to XMLStyleConstants
 import com.garretwilson.swing.text.xml.css.XMLCSSView;
 import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
@@ -260,7 +260,7 @@ Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.Attrib
 						final String text=document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset());
 	//G***del Debug.trace("Looking at inline text: '"+text+"' character code: "+Integer.toHexString(text.charAt(0)));  //G***del
 	//G***bring back for efficiency				  document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset(), segment);
-						if(text.trim().length()==0 && !XMLStyleConstants.isXMLEmptyElement(childElement.getAttributes())) //if there is nothing but whitespace in this inline element, and this isn't really just an empty element G***maybe only get the attribute set once
+						if(text.trim().length()==0 && !XMLStyleUtilities.isXMLEmptyElement(childElement.getAttributes())) //if there is nothing but whitespace in this inline element, and this isn't really just an empty element G***maybe only get the attribute set once
 						{
 	//G***del Debug.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElementName(attributeSet)); //G***del
 							if(inlineChildElementCount>0)	//if we've started but not finished an anonymous block, yet G***try to combine all these identical code sections
@@ -282,7 +282,7 @@ Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.Attrib
 								anonymousAttributeSet=new SimpleAttributeSet();	//create an anonymous attribute set for this anonymous box
 		//G***del when works						anonymousAttributeSet=new XMLCSSSimpleAttributeSet();	//create an anonymous attribute set for this anonymous box
 		//G***fix						XMLCSSStyleConstants.setXMLElementName(anonymousAttributeSet, XMLStyleConstants.AnonymousNameValue);	//show by its name that this is an anonymous box
-								XMLStyleConstants.setXMLElementName(anonymousAttributeSet, XMLCSSStyleConstants.AnonymousAttributeValue); //show by its name that this is an anonymous box G***maybe change this to setAnonymous
+								XMLStyleUtilities.setXMLElementName(anonymousAttributeSet, XMLCSSStyleConstants.AnonymousAttributeValue); //show by its name that this is an anonymous box G***maybe change this to setAnonymous
 								final XMLCSSStyleDeclaration anonymousCSSStyle=new XMLCSSStyleDeclaration(); //create a new style declaration
 								anonymousCSSStyle.setDisplay(XMLCSSConstants.CSS_DISPLAY_BLOCK);	//show that the anonymous element should be a block element
 								XMLCSSStyleConstants.setXMLCSSStyle(anonymousAttributeSet, anonymousCSSStyle);	//store the constructed CSS style in the attribute set
@@ -1449,7 +1449,7 @@ else  //G***fix
 	*/
 	public View breakView(int axis, int p0, float pos, float len)
 	{
-Debug.trace("Inside XMLBlockView.breakView axis: "+axis+" p0: "+p0+" pos: "+pos+" len: "+len+" name: "+XMLStyleConstants.getXMLElementName(getAttributes()));	//G***del
+Debug.trace("Inside XMLBlockView.breakView axis: "+axis+" p0: "+p0+" pos: "+pos+" len: "+len+" name: "+XMLStyleUtilities.getXMLElementName(getAttributes()));	//G***del
 
 	//G***important! if len is sufficiently large, just return ourselves
 		if(axis==getAxis())	//if they want to break along our tiling axis

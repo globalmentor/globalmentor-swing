@@ -285,7 +285,7 @@ Debug.error(e);		  //G***fix; store errors in console of some sort, as well as i
 	*/
 	protected Class getClass(final String className) throws ClassNotFoundException
 	{
-		final URI baseURI=XMLStyleConstants.getBaseURI(getAttributes());  //get the defined base URI, if any
+		final URI baseURI=XMLStyleUtilities.getBaseURI(getAttributes());  //get the defined base URI, if any
 		//create a class loader to load the class from our document, with our document's class loaders as a parent class loader
 		final XMLClassLoader xmlClassLoader=new XMLClassLoader((XMLDocument)getDocument(), getDocument().getClass().getClassLoader(), baseURI);
 		return xmlClassLoader.loadClass(className);  //ask the class loader to load the class
@@ -310,7 +310,7 @@ Debug.error(e);		  //G***fix; store errors in console of some sort, as well as i
 	{
 		try
 		{ 
-			return XMLStyleConstants.getBaseURI(getAttributes()).toURL();  //get the defined base URL, if any
+			return XMLStyleUtilities.getBaseURI(getAttributes()).toURL();  //get the defined base URL, if any
 		}
 		catch(MalformedURLException malformedURLException)  //if the resulting URL is malformed
 		{
@@ -326,7 +326,7 @@ Debug.error(e);		  //G***fix; store errors in console of some sort, as well as i
 	{
 		try
 		{
-			final URI codebaseURI=URIUtilities.createURI(XMLStyleConstants.getBaseURI(getAttributes()), getClassHRef());	//the codebase is the URL of the class relative to the document base
+			final URI codebaseURI=URIUtilities.createURI(XMLStyleUtilities.getBaseURI(getAttributes()), getClassHRef());	//the codebase is the URL of the class relative to the document base
 			return codebaseURI.toURL();	//convert the URI to a URL			
 		}
 		catch(URISyntaxException uriSyntaxException)  //if the resulting URI is not syntactically correct

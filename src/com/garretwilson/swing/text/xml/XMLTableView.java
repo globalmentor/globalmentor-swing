@@ -1886,7 +1886,7 @@ Debug.trace("G***search");
 		*/
 		public View create(final Element element, final boolean indicateMultipleViews)
 		{
-			final String elementName=XMLStyleConstants.getXMLElementName(element.getAttributes()); //G***del
+			final String elementName=XMLStyleUtilities.getXMLElementName(element.getAttributes()); //G***del
 Debug.trace("Table factory constructing view for a table element with name: ", elementName);	//G***del
 Debug.trace("Indicate multiple views: "+indicateMultipleViews);	//G***del
 Debug.traceStack(); //G***del

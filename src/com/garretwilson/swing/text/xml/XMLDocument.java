@@ -314,11 +314,11 @@ Debug.trace("loading code2000");
 	protected MutableAttributeSet createAttributeSet(final String elementName, final String elementNamespaceURI, final CSSStyleDeclaration style)
 	{
 		final SimpleAttributeSet attributeSet=new SimpleAttributeSet();	//create a new attribute for this element
-		XMLStyleConstants.setXMLElementName(attributeSet, elementName);	//store the element's name in the attribute set
+		XMLStyleUtilities.setXMLElementName(attributeSet, elementName);	//store the element's name in the attribute set
 		if(elementNamespaceURI!=null)  //if the element has a namespace URI specified
-			XMLStyleConstants.setXMLElementNamespaceURI(attributeSet, elementNamespaceURI);	//store the element's namespace URI in the attribute set
+			XMLStyleUtilities.setXMLElementNamespaceURI(attributeSet, elementNamespaceURI);	//store the element's namespace URI in the attribute set
 		final String localName=XMLUtilities.getLocalName(elementName);  //get the element's local name from the qualified name
-		XMLStyleConstants.setXMLElementLocalName(attributeSet, localName);	//store the element's local name in the attribute set
+		XMLStyleUtilities.setXMLElementLocalName(attributeSet, localName);	//store the element's local name in the attribute set
 		if(style!=null) //if style was given G***should we instead do this unconditionally?
 			XMLCSSStyleConstants.setXMLCSSStyle(attributeSet, style);	//store the CSS style in the attribute set
 		return attributeSet;	//return the attribute set we created
@@ -1193,7 +1193,7 @@ System.out.println("base URL: "+XMLStyleConstants.getBaseURL(swingDocumentElemen
 			((MutableAttributeSet)attributeSet).addAttribute("testAttribute", "testValue"); //G***testing
 	Debug.trace("After setting test attribute");
 */
-				final URI documentURI=XMLStyleConstants.getBaseURI(swingDocumentElement.getAttributes());  //get the URI of this document
+				final URI documentURI=XMLStyleUtilities.getBaseURI(swingDocumentElement.getAttributes());  //get the URI of this document
 				final StyleSheetList styleSheetList=getStylesheets(swingDocumentElement); //G***testing
 				//apply the stylesheets
 				final int styleSheetCount=styleSheetList.getLength(); //find out how many stylsheets there are
@@ -1272,7 +1272,7 @@ Debug.trace("applying local styles"); //G***del
 	{
 		final List styleSheetDescriptorList=new ArrayList();  //create a list to hold stylesheet descriptors
 		final AttributeSet attributeSet=swingDocumentElement.getAttributes();  //get the element's attribute set G***do we know this isn't null?
-		final NameValuePair[] processingInstructions=XMLStyleConstants.getXMLProcessingInstructions(attributeSet);  //get the processing instructions, if any (this will never return null)
+		final NameValuePair[] processingInstructions=XMLStyleUtilities.getXMLProcessingInstructions(attributeSet);  //get the processing instructions, if any (this will never return null)
 		  //find stylesheet references from processing instructions
 		for(int processingInstructionIndex=0; processingInstructionIndex<processingInstructions.length; ++processingInstructionIndex) //look at each processing instruction
 		{
@@ -1346,7 +1346,7 @@ Debug.trace("Found default stylesheet for namespace: ", namespaceURI);  //G***de
 		final XMLStyleSheetDescriptor[] styleSheetDescriptorArray=getStylesheetDescriptors(swingDocumentElement);
 		if(styleSheetDescriptorArray.length>0)  //if there are stylesheet descriptors
 		{
-			URI baseURI=XMLStyleConstants.getBaseURI(documentAttributeSet); //get the base URI of the XML document
+			URI baseURI=XMLStyleUtilities.getBaseURI(documentAttributeSet); //get the base URI of the XML document
 			if(baseURI==null) //if we couldn't found a base URI in the attributes
 				baseURI=getBaseURI();	//get the base URI from the document
 //G***del when not needed			final Iterator styleSheetDescriptorIterator=styleSheetDescriptorList.iterator();  //get an iterator to all stylesheet descriptors we've gathered so far
@@ -1391,7 +1391,7 @@ Debug.trace("Found default stylesheet for namespace: ", namespaceURI);  //G***de
 		{
 			final Element childElement=swingDocumentElement.getElement(childIndex); //get a reference to the child element
 			final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child element's attributes
-			final String childElementLocalName=XMLStyleConstants.getXMLElementLocalName(childAttributeSet);  //get the child element local name
+			final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);  //get the child element local name
 					//if this element is <head> and it's an HTML <head>
 			if(XHTMLConstants.ELEMENT_HEAD.equals(childElementLocalName)
 				  && XHTMLSwingTextUtilities.isHTML(childAttributeSet, documentAttributeSet))
@@ -1414,7 +1414,7 @@ Debug.trace("Found default stylesheet for namespace: ", namespaceURI);  //G***de
 	protected void getInternalStylesheets(final Element swingElement, final Element swingDocumentElement, final XMLCSSProcessor cssProcessor, final List styleSheetList)
 	{
 		final AttributeSet attributeSet=swingElement.getAttributes(); //get the attributes of this element
-		final String elementLocalName=XMLStyleConstants.getXMLElementLocalName(attributeSet);  //get the element's local name
+		final String elementLocalName=XMLStyleUtilities.getXMLElementLocalName(attributeSet);  //get the element's local name
 //G***del		if(XHTMLConstants.ELEMENT_STYLE.equals(elementLocalName)) //if this is a style element G***check the namespace and/or media type or something, too
 		  //if this is an HTML <style>
 		if(XHTMLConstants.ELEMENT_STYLE.equals(elementLocalName)
@@ -1461,10 +1461,10 @@ Debug.trace("Found default stylesheet for namespace: ", namespaceURI);  //G***de
 	{
 //G***fix when we support multiple namespaces		final List namespaceList=new ArrayList(); //create a list to store the namespaces
 		final AttributeSet attributeSet=swingDocumentElement.getAttributes();  //get the element's attribute set G***do we know this isn't null?
-		String namespaceURI=XMLStyleConstants.getXMLElementNamespaceURI(attributeSet);  //see what namespace the XML document element is in
+		String namespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(attributeSet);  //see what namespace the XML document element is in
 		if(namespaceURI==null)  //if there is no namespace defined
 		{
-			final MediaType mediaType=XMLStyleConstants.getMediaType(attributeSet); //see what media type this document is
+			final MediaType mediaType=XMLStyleUtilities.getMediaType(attributeSet); //see what media type this document is
 			if(mediaType!=null) //if we have a media type G***change this so that these media types aren't hard-coded in
 			{
 Debug.trace("getting default namespace URI, found media type: ", mediaType);  //G***del
@@ -1493,7 +1493,7 @@ Debug.trace("namespace URI: ", namespaceURI);  //G***del
 	protected static void applyStyleSheet(final CSSStyleSheet styleSheet, final Element swingElement) //G***maybe put this in a Swing utility class
 	{
 		final AttributeSet attributeSet=swingElement.getAttributes(); //get the attributes of this element
-		final String elementLocalName=XMLStyleConstants.getXMLElementLocalName(attributeSet);  //get the element's local name for quick lookup
+		final String elementLocalName=XMLStyleUtilities.getXMLElementLocalName(attributeSet);  //get the element's local name for quick lookup
 //G***del Debug.trace("applying stylesheet to element: ", elementLocalName);  //G***del
 		final CSSRuleList cssRuleList=styleSheet.getCssRules(); //get the list of CSS rules
 		for(int ruleIndex=0; ruleIndex<cssRuleList.getLength(); ++ruleIndex)	//look at each of our rules
@@ -1555,7 +1555,7 @@ Debug.trace("namespace URI: ", namespaceURI);  //G***del
 			if(styleValue.length()!=0)  //if there is a style value
 			{
 	//G***del Debug.trace("Found local style value: ", styleValue); //G***del
-				final String elementName=XMLStyleConstants.getXMLElementName(attributeSet); //get the element's name for informational purposes
+				final String elementName=XMLStyleUtilities.getXMLElementName(attributeSet); //get the element's name for informational purposes
 				final XMLCSSStyleDeclaration cssStyle=new XMLCSSStyleDeclaration(); //create a new style declaration
 				try
 				{
@@ -1608,13 +1608,13 @@ Debug.trace("namespace URI: ", namespaceURI);  //G***del
 	{
 //G***del Debug.trace("XMLCSSSelector checking to see if "+element.getNodeName()+" matches "+getCssText()); //G***del
 		final AttributeSet attributeSet=swingElement.getAttributes(); //get the attributes of this element
-		final String localName=XMLStyleConstants.getXMLElementLocalName(attributeSet);  //get the element's local name
+		final String localName=XMLStyleUtilities.getXMLElementLocalName(attributeSet);  //get the element's local name
 			//G***later, add the CSS ID checking
 			//G**later make this more robust for CSS 2 and CSS 3
 		if(selectorContext.getTagName().length()==0 || selectorContext.getTagName().equals(localName))  //if the tag names match, or we don't have a tag name to match with (which means we'll be matching class only)
 		{
 //G***del Debug.trace("Element "+element.getNodeName()+" matched, now checking to see if class: "+element.getAttributeNS(null, "class")+" equals the tag we expect: "+getTagClass());	//G***del
-			if(selectorContext.getTagClass().length()==0 || selectorContext.getTagClass().equals(XMLStyleConstants.getDefinedAttribute(attributeSet, "class")))	//if the class names match as well (or there isn't a specified class in this selector) G***check for namespaces here G***use a constant here
+			if(selectorContext.getTagClass().length()==0 || selectorContext.getTagClass().equals(XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, "class")))	//if the class names match as well (or there isn't a specified class in this selector) G***check for namespaces here G***use a constant here
 				return true;
 		}
 		return false;	//if we get to this point, this selector doesn't apply to this element
