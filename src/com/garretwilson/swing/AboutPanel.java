@@ -8,7 +8,7 @@ import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.dublincore.*;
 import com.garretwilson.rdf.version.*;
 import com.garretwilson.resources.icon.IconResources;
-import com.garretwilson.swing.rdf.RDFTabbedPane;
+import com.garretwilson.swing.rdf.RDFPanel;
 import com.garretwilson.text.CharacterConstants;
 
 /**A generic panel for displaying information about, for example, an application.
@@ -225,9 +225,9 @@ public class AboutPanel extends BasicPanel implements CharacterConstants
 			{
 				final RDF rdf=new RDF(); //create a new RDF data model
 				rdf.putResource(resource);	//put the resource in the data model 
-				final RDFTabbedPane rdfTabbedPane=new RDFTabbedPane(rdf, resource);  //create a new panel in which to show the resource
-					//show the properties in an information dialog, wrapping with a content panel so scrolling will occur properly
-				OptionPane.showMessageDialog(AboutPanel.this, new ContentPanel(rdfTabbedPane), (getTitle()!=null ? getTitle()+' ' : "")+"Properties", OptionPane.INFORMATION_MESSAGE);	//G***i18n
+				final RDFPanel rdfPanel=new RDFPanel(rdf, resource);  //create a new panel in which to show the resource
+					//show the properties in an information dialog
+				OptionPane.showMessageDialog(AboutPanel.this, rdfPanel, (getTitle()!=null ? getTitle()+' ' : "")+"Properties", OptionPane.INFORMATION_MESSAGE);	//G***i18n
 
 //TODO remove the new ContentPanel() when we've put the RDF tabbed pane into its own content panel 				
 				

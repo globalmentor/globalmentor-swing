@@ -1815,9 +1815,9 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 			if(rdf!=null) //if we have RDF
 			{
 			  final OEBPublication oebPublication=getOEBPublication(); //get the loaded publication
-				final RDFTabbedPane rdfTabbedPane=new RDFTabbedPane(rdf, oebPublication);  //create a new panel in which to show the RDF
-				  //show the properties in an information dialog, wrapping with a content panel so scrolling will occur properly
-				new JOptionPane(new ContentPanel(rdfTabbedPane), JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION).createDialog(Book.this, "Properties").show();  //G***i18n
+				final RDFPanel rdfPanel=new RDFPanel(rdf, oebPublication);  //create a new panel in which to show the RDF
+				  //show the properties in an information dialog
+				new JOptionPane(rdfPanel, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION).createDialog(Book.this, "Properties").show();  //G***i18n
 			}
 		  getXMLTextPane().requestFocus(); //put the focus back on the text pane, in case the focus was transferred
 		}
