@@ -3,14 +3,19 @@ package com.garretwilson.swing;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.net.*;
 import javax.swing.*;
+import com.garretwilson.awt.*;
 import com.garretwilson.lang.StringUtilities;
+import com.garretwilson.rdf.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.util.Debug;
 
-/**Main frame parent class for  an application.
+/**Main frame parent class for an application. This frame expects to contain
+	an <code>ApplicationPanel</code>.
 @author Garret Wilson
+@see ApplicationPanel
 */
 public abstract class ApplicationFrame extends JFrame
 {
@@ -30,15 +35,22 @@ public abstract class ApplicationFrame extends JFrame
 	public final static long MENU_HELP_ABOUT=2;
 
 
-	/**The file used for the currently opened document.*/
-	private File file=null;
+	/**The description used for the currently opened document.*/
+//G***del	private DocumentDescribable description=null;
 
 	/**The description of the currently opened document.*/
-//G***del if not needed	private DocumentDescribable documentDescription=new DocumentDescription();
+	private ResourceDescribable documentDescription=null;
 
+		/**@return The description of the currently opened document.*/
+		protected ResourceDescribable getDocumentDescription() {return documentDescription;}
+
+		/**Sets the description of the currently opened document.
+		@param description The description of the currently opened document.
+		*/
+		protected void setDocumentDescription(final ResourceDescribable description) {documentDescription=description;}
 
 	/**The action for creating a new file.*/
-	private Action fileNewAction;
+	private final Action fileNewAction;
 
 		/**@return The action for creating a new file.*/
 		public Action getFileNewAction() {return fileNewAction;}
@@ -62,62 +74,50 @@ public abstract class ApplicationFrame extends JFrame
 		public void setFileNewActions(final Action[] newFileNewActions) {fileNewActions=newFileNewActions;}
 
 	/**The action for opening a file.*/
-	private Action fileOpenAction;
+	private final Action fileOpenAction;
 
 		/**@return The action for opening a file.*/
 		public Action getFileOpenAction() {return fileOpenAction;}
 
 	/**The action for closing a file.*/
-	private Action fileCloseAction;
+	private final Action fileCloseAction;
 
 		/**@return The action for closing a file.*/
 		public Action getFileCloseAction() {return fileCloseAction;}
 
 	/**The action for saving a file.*/
-	private Action fileSaveAction;
+	private final Action fileSaveAction;
 
-		/**@return The action for saving a file.*/
+		/**@return The action for saving the file.*/
 		public Action getFileSaveAction() {return fileSaveAction;}
 
 	/**The action for saving a file under a different name.*/
-	private Action fileSaveAsAction;
+	private final Action fileSaveAsAction;
 
 		/**@return The action for saving a file under a different name.*/
 		public Action getFileSaveAsAction() {return fileSaveAsAction;}
 
 	/**The action for showing help contents.*/
-	private Action helpContentsAction;
+	private final Action helpContentsAction;
 
 		/**@return The action for showing help contents.*/
 		public Action getHelpContentsAction() {return helpContentsAction;}
 
 	/**The action for showing an about box.*/
-	private Action aboutAction;
+	private final Action aboutAction;
 
 		/**@return The action for showing an about box.*/
 		public Action getAboutAction() {return aboutAction;}
 
 	/**The action for exiting the application.*/
-	private Action exitAction;
+	private final Action exitAction;
 
 		/**@return The action for exiting the application.*/
 		public Action getExitAction() {return exitAction;}
 
-  /**The application toolbar.*/
-	private final JToolBar toolBar;
-
-		/**@return The application toolbar.*/
-		protected JToolBar getToolBar() {return toolBar;}
-
-	/**The application status bar.*/
-	private final JPanel statusBar;
-
-	/**The label to display the status.*/
-	private final JLabel statusStatusLabel;
-
 	/**The application menu bar.*/
 	private final JMenuBar menuBar;
-
+	
 	/**The file menu items shown.*/
 	private long fileMenuInclusions=MENU_FILE_OPEN | MENU_FILE_CLOSE | MENU_FILE_EXIT;
 
@@ -148,7 +148,7 @@ public abstract class ApplicationFrame extends JFrame
 		/**@return The copyright text, or <code>null</code> if there is no text.*/
 		public String getCopyright() {return copyright;}
 
-		/**Sets the copyright text. Should be called from <code>initializeData()</code>.
+		/**Sets the copyright text.
 		@param newCopyright The new copyright text, or <code>null</code> if there
 			should be no copyright text.
 		*/
@@ -160,7 +160,7 @@ public abstract class ApplicationFrame extends JFrame
 		/**@return The application name, or <code>null</code> if there is no name.*/
 		public String getApplicationName() {return applicationName;}
 
-		/**Sets the application name. Should be called from <code>initializeData()</code>.
+		/**Sets the application name.
 		@param newApplicationName The new application name, or
 			<code>null</code> if there should be no application name.
 		*/
@@ -172,121 +172,67 @@ public abstract class ApplicationFrame extends JFrame
 		/**@return The version text, or <code>null</code> if there is no text.*/
 		public String getVersion() {return version;}
 
-		/**Sets the version text. Should be called from <code>initializeData()</code>.
+		/**Sets the version text.
 		@param newVersion The new version text, or <code>null</code> if there
 			should be no version text.
 		*/
 		public void setVersion(final String newVersion) {version=newVersion;}
 
-/*G***del
-	//menu variables
-	private JMenuBar menuBar=new JMenuBar();
-		//File menu
-		private JMenu fileMenu=new JMenu();
-		//Edit menu
-		private JMenu editMenu=new JMenu();
-		//View menu
-		private JMenu viewMenu=new JMenu();
-		private ButtonGroup displayPageCountButtonGroup=new ButtonGroup();
-		private JRadioButtonMenuItem viewNumPagesOnePageMenuItem;
-		private JRadioButtonMenuItem viewNumPagesTwoPagesMenuItem;
-		private ButtonGroup layoutButtonGroup=new ButtonGroup();
-		private JRadioButtonMenuItem viewLayoutRedmondMenuItem;
-		private JRadioButtonMenuItem viewLayoutSanFranciscoMenuItem;
-		private JRadioButtonMenuItem viewLayoutSanFranciscoSmallMenuItem;
-		private JRadioButtonMenuItem viewLayoutCustomMenuItem;
-		//View|Zoom menu
-		JMenu viewZoomMenu=new JMenu();
-		private ButtonGroup zoomButtonGroup=new ButtonGroup();
-		private JCheckBoxMenuItem viewAntialiasMenuItem;
-		//Insert menu
-		private JMenu insertMenu=new JMenu();
-		//Go menu
-		private JMenu goMenu=new JMenu();
-		private JMenu goGuidesMenu=new JMenu();
-		private JMenu goBookmarksMenu=new JMenu();
-		//Help menu
-		private JMenu helpMenu = new JMenu();
-		private JCheckBoxMenuItem helpLogDebugMenuItem;
-	//toolbar variables
-	private JToolBar toolBar = new JToolBar();
-	//status bar variables
-	private JPanel statusBar=new JPanel();
-	GridBagLayout statusGridBagLayout=new GridBagLayout();	//create a layout for the status bar
-	JLabel statusStatusLabel=new JLabel();
-	JProgressBar statusProgressBar=new JProgressBar();
-//G***fix	JSlider statusSlider=new JSlider();
-	JScrollBar statusScrollBar=new JScrollBar(JScrollBar.HORIZONTAL);
-	JComboBox guideComboBox=new JComboBox();
-*/
 
 	/**Default constructor.
 	Enables window events.
 	*/
 	public ApplicationFrame()
 	{
-		this(true, true); //default to having a menu bar and a status bar
+		this(true); //create an application frame with a default application panel
 	}
 
-	/**Constructor that allows options to be set, such as the presence of a status
-		bar.
-	  Enables window events.
-	@param hasMenuBar Whether this frame should have a menu bar.
-	@param hasStatusBar Whether this frame should have a status bar.
+	/**Constructor with a default panel.
+	Enables window events.
+	@param initialize <code>true</code> if the panel should initialize itself by
+		calling the initialization methods.
 	*/
-	public ApplicationFrame(final boolean hasMenuBar, final boolean hasStatusBar)
+	public ApplicationFrame(final boolean initialize)
 	{
-/*G***del
-		Debug.assert(newReaderConfig!=null, "Reader configuration is null.");
-		setReaderConfig(newReaderConfig);	//save the reader configuration we were passed
-*/
+		this(new ApplicationPanel(), initialize); //create an application frame with a default application panel
+	}
+
+	/**Application panel constructor.
+	  Enables window events.
+	@param contentPane The container to be used as the content pane; usually
+		an <code>ApplicationPanel</code>.
+	*/
+	public ApplicationFrame(final Container contentPane)
+	{
+		this(contentPane, true);  //construct and initialize the frame
+	}
+
+	/**Application panel constructor with optional initialization.
+		Enables window events.
+	@param contentPane The container to be used as the content pane; usually
+		an <code>ApplicationPanel</code>.
+	@param initialize <code>true</code> if the panel should initialize itself by
+		calling the initialization methods.
+	*/
+	public ApplicationFrame(final Container contentPane, final boolean initialize)
+	{
+		this(contentPane, true, initialize);	//construct the application frame with a menubar 
+	}
+	
+	/**Application panel constructor with optional initialization.
+	  Enables window events.
+	@param contentPane The container to be used as the content pane; usually
+		an <code>ApplicationPanel</code>.
+	@param hasMenuBar Whether this frame should have a toolbar.
+	@param initialize <code>true</code> if the panel should initialize itself by
+		calling the initialization methods.
+	*/
+	public ApplicationFrame(final Container contentPane, final boolean hasMenuBar, final boolean initialize)
+	{
 		  //don't do anything automatically on close; we'll handle responding to close events
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		enableEvents(AWTEvent.WINDOW_EVENT_MASK); //enable window events, so that we can respond to close events
-		initializeData();  //create the application actions
-    final BorderLayout borderLayout=new BorderLayout();
-    this.getContentPane().setLayout(borderLayout);  //use a border layout for the content pane
-		if(true/**G***fix hasToolBar*/)  //if we should have a toolbar
-		{
-			toolBar=createToolBar();  //create the toolbar
-	    this.getContentPane().add(toolBar, BorderLayout.NORTH); //put the toolbar in the north of the content pane
-		}
-		else  //if we shouldn't have a toolbar
-		{
-			toolBar=null; //show that we don't have a toolbar
-		}
-		if(hasMenuBar)  //if we should have a menu bar
-		{
-			menuBar=createMenuBar();  //create the menu bar
-			setJMenuBar(menuBar); //set the menu bar
-		}
-		else  //if we shouldn't have a menu bar
-		{
-			menuBar=null; //show that we don't have a menu bar
-		}
-		if(hasStatusBar)  //if we should have a status bar
-		{
-//G***del Debug.trace("creating status label"); //G***del
-			statusStatusLabel=new JLabel();  //create a status label G***this isn't really designed correctly
-//G***del Debug.trace("creating status bar"); //G***del
-			statusBar=createStatusBar();  //create the menu bar
-//G***del Debug.trace("adding status bar"); //G***del
-	    this.getContentPane().add(statusBar, BorderLayout.SOUTH); //put the status bar in the south of the content pane
-		}
-		else  //if we shouldn't have a status bar
-		{
-			statusBar=null; //show that we don't have a status bar
-			statusStatusLabel=null; //show that we don't have a status label
-		}
-		initializeUI(); //initialize the user interface
-		updateActions();  //update the actions
-	}
-
-	/**Creates any application objects and initializes data.
-		Any class that overrides this method must call this version.
-	*/
-	protected void initializeData()
-	{
+		setContentPane(contentPane); //set the container as the content pane
 		fileNewAction=new FileNewAction();  //create the new action G***maybe lazily create these
 		fileOpenAction=new FileOpenAction();  //create the open action
 		fileCloseAction=new FileCloseAction();  //create the close action
@@ -297,6 +243,32 @@ public abstract class ApplicationFrame extends JFrame
 		helpContentsAction=new HelpContentsAction();
 		aboutAction=new AboutAction();
 		exitAction=new ExitAction();  //create the exit action
+		if(hasMenuBar)  //if we should have a menu bar
+		{
+			menuBar=createMenuBar();  //create the menu bar
+			setJMenuBar(menuBar); //set the menu bar
+		}
+		else  //if we shouldn't have a menu bar
+		{
+			menuBar=null; //show that we don't have a menu bar
+		}
+/*G***fix
+		initializeUI(); //initialize the user interface
+		updateActions();  //update the actions
+*/
+		if(initialize)  //if we should initialize
+		  initialize(); //initialize the frame
+	}
+
+
+	/**Initializes the frame. Should only be called once per instance.
+	@see #initializeUI
+	*/
+	protected void initialize()
+	{
+		initializeUI(); //initialize the user interface
+		pack();	//set the initial size to its default
+		updateStatus();  //update the actions
 	}
 
 	/**Initializes the user interface.
@@ -305,39 +277,39 @@ public abstract class ApplicationFrame extends JFrame
   protected void initializeUI()
   {
 		setTitle(getApplicationName());  //set the frame to reflect the application name
+		initializeMenuBar(getJMenuBar());	//initialize the menu bar
+//G***bring back		setSize(800, 600);	//default to 800X600; the window can be maximized after it's shown G***determine the initial size based upon the resolution
+//G***fix		setExtendedState(MAXIMIZED_BOTH);	//maximize the frame G***get this from preferences
+//G***transfer this to WindowUtilities, maybe		GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
+//G***fix		WindowUtilities.maximize(this); //maximize the frame G***remove this, as JDK 1.4 has a programmatic maximization
   }
 
-	/**@return A new toolbar.*/
-	protected JToolBar createToolBar()
+	/**Updates the states of the actions, including enabled/disabled status,
+		proxied actions, etc.
+	*/
+	protected void updateStatus()
 	{
-	  final JToolBar toolBar=new JToolBar();  //create the toolbar
-		//setup the toolbar
-		toolBar.putClientProperty("JToolBar.isRollover", Boolean.TRUE);	//fix; comment; G***testing
-		return toolBar; //return the toolbar we created
-	}
-
-	/**@return A new status bar.*/
-	protected JPanel createStatusBar()
-	{
-	  final JPanel statusBar=new JPanel();  //create the status bar
-		final GridBagLayout statusGridBagLayout=new GridBagLayout();	//create a layout for the status bar
-		statusBar.setBorder(BorderFactory.createEtchedBorder());	//set the status border
-//G***fix		statusFlowLayout.setAlignment(FlowLayout.LEFT);	//align the status components to the left
-		statusBar.setLayout(statusGridBagLayout);	//set the layout of the status bar
-		statusStatusLabel.setFont(statusBar.getFont().deriveFont((float)statusBar.getFont().getSize()-1));	//G***testing
-		statusBar.add(statusStatusLabel, new GridBagConstraints(0, 0, 1, 1, 0.5, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));	//add the status label to the status bar
-		return statusBar; //return the status bar we created
+		final ResourceDescribable description=getDocumentDescription();	//see what document is being described
+		getFileSaveAction().setEnabled(description!=null && description.isModified());	//only enable saving when there is a document that's modified
 	}
 
 	/**@return A new menu bar with appropriate menus.*/
 	protected JMenuBar createMenuBar()
 	{
 	  final JMenuBar menuBar=new JMenuBar();  //create the menu bar
+		return menuBar; //return the menu bar we created
+	}
+	
+	/**Initializes the menu bar. This will be called before the UI is updated.
+	@param menuBar The menu bar to be initialized.
+	@see #initializeUI
+	*/
+	protected void initializeMenuBar(final JMenuBar menuBar)
+	{
 		if(getFileMenuInclusions()!=MENU_FILE_NONE)  //if we should have a file menu
 			menuBar.add(createFileMenu());  //create and add a file menu
 		if(getHelpMenuInclusions()!=MENU_HELP_NONE)  //if we should have a help menu
-			menuBar.add(createHelpMenu());  //create and add a help menu
-		return menuBar; //return the menu bar we created
+			menuBar.add(createHelpMenu());  //create and add a help menu		
 	}
 
 	/**@return A new file menu that can be added to a menubar.*/
@@ -372,12 +344,12 @@ public abstract class ApplicationFrame extends JFrame
 		if((inclusions & MENU_FILE_CLOSE)!=0) //file|close
 		{
 			JMenuItem fileCloseMenuItem=fileMenu.add(getFileCloseAction());
-			fileCloseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.CTRL_MASK));	//add Ctrl+F4 as an accelerator G***why do we need this twice?
+//G***del			fileCloseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.CTRL_MASK));	//add Ctrl+F4 as an accelerator G***why do we need this twice?
 		}
 		if((inclusions & MENU_FILE_SAVE)!=0) //file|save
 		{
 			JMenuItem fileSaveMenuItem=fileMenu.add(getFileSaveAction());
-			fileSaveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK));	//add Ctrl+S as an accelerator G***i18n G***why do we need this twice?
+//G***del			fileSaveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK));	//add Ctrl+S as an accelerator G***i18n G***why do we need this twice?
 		}
 		if((inclusions & MENU_FILE_SAVE_AS)!=0) //file|save as
 		{
@@ -424,38 +396,27 @@ public abstract class ApplicationFrame extends JFrame
 
 	/**Opens a file.
 		<p>For normal operation, this method should not be modified and
-		<code>openFile(File)</code> should be overridden. Multiple document
-		applications may also override <code>getFile()</code> and
-		<code>setFile</code>.</p>
-	@return <code>true</code> if the operation was not cancelled
+		<code>openFile(URI)</code> should be overridden. Multiple document
+		applications may also override <code>getDocumentDescription()</code> and
+		<code>setDocumentDescription</code>.</p>
+	@return An object describing the file, or <code>null</code> if the operation
+		was cancelled.
 	@see #askOpenFile
 	@see #setFile
 	*/
-	public boolean openFile()
+	public ResourceDescribable openFile()
 	{
-		boolean result=false; //assume for now that the operation will be canceled
-/*G***del if not needed
-		final DocumentDescribable description=askOpenFile();  //get the file to use
-		if(description!=null)  //if a valid file was returned
+		ResourceDescribable description=null;	//assume for now that the operation will be canceled
+		final URI uri=askOpenFile();  //get the URI to use
+		if(uri!=null)  //if a valid URI was returned
 		{
-			result=openFile(description);  //attempt to open the file
-			if(result)  //if we opened the file successfully
+			description=openFile(uri);  //attempt to open the file
+			if(description!=null)  //if we opened the file successfully
 			{
-			  setFile(file);  //update the file, just in case they override openFile() and don't call this version
+				setDocumentDescription(description);  //update the file, just in case they override openFile() and don't call this version
 			}
 		}
-		return result;  //show whether the operation finished
-*/
-		final File file=askOpenFile();  //get the file to use
-		if(file!=null)  //if a valid file was returned
-		{
-			result=openFile(file);  //attempt to open the file
-			if(result)  //if we opened the file successfully
-			{
-			  setFile(file);  //update the file, just in case they override openFile() and don't call this version
-			}
-		}
-		return result;  //show whether the operation finished
+		return description;  //return the description
 	}
 
 	/**Closes the open file.*/
@@ -463,62 +424,107 @@ public abstract class ApplicationFrame extends JFrame
 	{
 		if(canCloseFile())  //if we can close
 		{
-		  setFile(null);  //show that no file is available
+		  setDocumentDescription(null);  //show that no file is available
 		}
 	}
 
 	/**Saves the open file.
-		By default the file is checked using <code>getFile()</code> and, if no file
-		is available, the <code>saveFileAs</code> method is called.
+		By default the location is checked using <code>getDocumentDescription</code>
+		and, if no file is available, the <code>saveFileAs</code> method is called.
 		<p>For normal operation, this method should not be modified and
-		<code>saveFile(File)</code> should be overridden. Multiple document
-		applications may also override <code>getFile()</code> and
-		<code>setFile</code>.</p>
+		<code>saveFile(Description)</code> should be overridden. Multiple document
+		applications may also override <code>getDocumentDescription()</code> and
+		<code>setDocumentDescription</code>.</p>
 	@return <code>true</code> if the operation was not cancelled.
-	@see #getFile
+	@see #getDocumentDescription
 	@see #saveFileAs
 	*/
 	public boolean saveFile()
 	{
 //G***del Debug.trace("saving file");
-/*G***del if not needed
-		final DocumentDescribably description=getDocumentDescription();  //get the file for saving
-//G***del Debug.trace("first file for saving: ", file);
-		if(description.getFile()!=null)  //if we have a file
-			return saveFile(description); //save using the file
-		else  //if we don't have a file
-			return saveFileAs(); //call the save as function
-*/
-		final File file=getFile();  //get the file for saving
-//G***del Debug.trace("first file for saving: ", file);
-		if(file!=null)  //if we have a file
-			return saveFile(file); //save using the file
-		else  //if we don't have a file
-			return saveFileAs(); //call the save as function
+		final ResourceDescribable description=getDocumentDescription(); //get a description of the document
+		if(description!=null) //if we have a description of the document
+		{
+//G**del Debug.trace("found document description");
+			if(!description.getResource().isAnonymous())  //if the file location is specified
+				return saveFile(description, description.getResource().getReferenceURI()); //save using the URI specified by the description
+			else  //if we don't have a file
+				return saveFileAs(description); //call the save as function
+		}
+		return false; //show that we didn't save the file
 	}
 
 	/**Saves the open file after first asking for a filename.
 	@return <code>true</code> if the operation was not cancelled.
-	@see #setFile
 	*/
 	public boolean saveFileAs()
 	{
-		boolean result=false; //start out assuming the file won't be saved
-		final File file=askSaveFile();  //get the file to use
-		if(file!=null)  //if a valid file was returned
+		final ResourceDescribable description=getDocumentDescription(); //get a description of the document
+		if(description!=null) //if we have a description of the document
 		{
-			result=saveFile(file); //save the file
+			return saveFileAs(description); //save the file with the description
+		}
+		else  //if we have no description
+			return false; //show that we couldn't save document
+	}
+
+	/**Saves the open file after first asking for a filename.
+	@param description The description of the document being saved.
+	@return <code>true</code> if the operation was not cancelled.
+	@see #setFile
+	*/
+	public boolean saveFileAs(final ResourceDescribable description)
+	{
+		boolean result=false; //start out assuming the file won't be saved
+		final URI uri=askSaveFile();  //get the URI to use
+		if(uri!=null)  //if a valid URI was returned
+		{
+			result=saveFile(description, uri); //save the file
 			if(result)  //if the file was saved without being canceled
 			{
-			  setFile(file);  //update the file, just in case they override saveFile() and don't call this version
+				if(!description.getResource().getReferenceURI().equals(uri))	//if the URI wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)
+				{
+						//create a copy of the resource description, using the new URI
+					final RDFResource newResource=new DefaultRDFResource(description.getResource(), uri);	//G***but what if the other resource was a special type?
+					documentDescription.setResource(newResource);	//update the resource to the one with the new URI
+				}
+//G***fix or del				setFile(file);  //update the file, just in case they override saveFile() and don't call this version
 			}
 		}
 		return result;  //show whether the operation completed
-/*G***del
-		else  //if a file was not returned to use
-			return false; //show that saving did not occur
-*/
+		
 	}
+
+	/**Saves the file at the location specified by the description.
+		Methods that override this version should call this version to update
+		the URI.
+	@param description The description of the document being saved.
+	@param uri The URI at which the file should be saved.
+	@return <code>true</code> if the operation was not cancelled.
+	*/
+	protected boolean saveFile(final ResourceDescribable description, final URI uri)
+	{
+		if(!description.getResource().getReferenceURI().equals(uri))	//if the URI should be changed
+		{
+				//create a copy of the resource description, using the new URI
+			final RDFResource newResource=new DefaultRDFResource(description.getResource(), uri);	//G***but what if the other resource was a special type?
+			documentDescription.setResource(newResource);	//update the resource to the one with the new URI
+		}
+		return true;  //this version always succeeds
+	}
+
+	/**Determines if a location has been specified for the given document.
+		This version checks to see if a file is defined in the description.
+	@param description A description of the opened document.
+	@return <code>true</code> if the description contains a specified location.
+	*/
+/*G***del when works	
+	protected boolean isLocationSpecified(final DocumentDescribable description)
+	{
+//G***del Debug.trace("is location anonymous: ", new Boolean(description.getResource().isAnonymous()));
+		return description.getFile()!=null; //see if there is a file specified
+	}
+*/
 
 	/**Shows the help contents.*/
 	public void helpContents()
@@ -549,24 +555,43 @@ public abstract class ApplicationFrame extends JFrame
 	*/
 	public void exit(final int status)
 	{
-		System.exit(status);	//close the program with the given exit status
+		if(canClose())	//if we can close	
+			System.exit(status);	//close the program with the given exit status
 	}
-	
 
-	/**Updates the states of the actions, including enabled/disabled status,
-		proxied actions, etc.
+	/**Determines whether the frame and application can close.
+	@return <code>true</code> if the application frame and application can close.
+	@see ApplicationPanel#canClose
+	@see #getDocumentDescription
+	@see #canClose(ResourceDescribable)
 	*/
-	protected void updateActions()
+	public boolean canClose()
 	{
+		return canCloseFile();	//return whether or not the current file can be closed
 	}
 
 	/**@return <code>true</code> if the currently open file can be closed, else
 		<code>false</code> if closing should be cancelled.
+	If the content pane is an <code>ApplicationPanel</code>, its
+		<code>canClose()</code> method is called.
+	If there is a document description, the frame's <code>canClose()</code> method
+		is called for the description. 
 	*/
 	public boolean canCloseFile()
 	{
-	  return true;  //default to allowing the file to be closed
-	}
+		boolean canClose=true;	//default to being able to be closed
+		if(getContentPane() instanceof ApplicationPanel)	//if the content pane is an application panel
+		{
+			canClose=((ApplicationPanel)getContentPane()).canClose();	//ask if the application panel can be closed
+		}
+		if(canClose)	//if everything looks like we can close so far
+		{
+			final ResourceDescribable description=getDocumentDescription();	//get the current document description
+			if(description!=null && description!=getContentPane())	//if we have a document description, and the description isn't the content pane (otherwise we would call canClose() twice)
+				canClose=canClose(description);	//see if we can close the description
+		}
+		return canClose;	//return whether we can close the frame
+	}	
 
 	/**Determines if the document with the given description can be closed.
 	@param description The description of the document requesting to be closed.
@@ -592,83 +617,56 @@ public abstract class ApplicationFrame extends JFrame
 	}
 
 	/**Asks the user for a file for opening.
-	@return The file to use for opening the document, or <code>null</code> if the
+	@return The URI to use for opening the document, or <code>null</code> if the
 		file should not be opened or if the user cancels.
 	*/
-	protected File askOpenFile()
+	protected URI askOpenFile()
 	{
 		return null;  //by default we do not ask for a file G***maybe make a default file asking
 	}
 
 	/**Opens the file at the given location.
 		<p>Any class that overrides this class should call this version <em>after</em>
-		the operation so that the file can be updated.</p>
-	@param file The file to open.
-	@return <code>true</code> if the operation was not cancelled.
+		the operation so that the description can be updated.</p>
+	@param uri The URI of the file to open.
+	@return A description of the opened document, or <code>null</code> if the
+		document was not opened.
 	*/
-	protected boolean openFile(final File file)
+	protected ResourceDescribable openFile(final URI uri)	//G***fix the "call this version afterwards" and delete if not needed
 	{
+/*G***fix; maybe this can't go here in the new architecture
+		if(!description.getResource().getReferenceURI().equals(uri))	//if the URI wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)
+		{
+				//create a copy of the resource description, using the new URI
+			final RDFResource newResource=new DefaultRDFResource(description.getResource(), uri);	//G***but what if the other resource was a special type?
+			documentDescription.setResource(newResource);	//update the resource to the one with the new URI
+		}
+*/		
+/*G***fix
 		setFile(file);  //set the file used for this document
 		return true;  //this version always succeeds
+*/
+		return null;	//G***fix
 	}
 
-	/**Asks the user for a file for saving.
-	@return The file to use for saving the document, or <code>null</code> if the
-		file should not be saved or if the user cancels.
+	/**Asks the user for a location for saving.
+	@return The location to use for saving the document, or <code>null</code>
+		if the file should not be saved or if the user cancels.
 	*/
-	protected File askSaveFile()
+	protected URI askSaveFile()
 	{
 		return null;  //by default we do not ask for a file G***maybe make a default file asking
-	}
-
-	/**Saves the file at the specified location.
-		This version only updates the filename for the currently open file.
-		<p>Any class that overrides this class should call this version so that the
-		file can be updated.</p>
-	@param file The location at which the file should be saved.
-	@return <code>true</code> if the operation was not cancelled.
-	*/
-	protected boolean saveFile(final File file)
-	{
-		setFile(file);  //set the file used for this document
-		return true;  //this version always succeeds
 	}
 
 	/**Retrieves the file used for the currently opened document.
 	@return The file used for the currently opened document, or <code>null</code>
 		if no file is available.
 	*/
+/*G***fix
 	protected File getFile()
 	{
 		return file;  //return whatever file we know about
 	}
-
-	/**Sets the file used for the currently opened document.
-	@param newFile The file to use for saving the document.
-	*/
-	protected void setFile(final File newFile)
-	{
-		file=newFile; //store the file
-	}
-
-
-
-	/**Retrieves the description of the currently opened resource.
-	@return A description of the currently opened resource, or <code>null</code>
-		if no resource is available.
-	*/
-/*G***fix
-	protected RDFResource getResourceDescription()
-	{
-		if(file!=null)  //if we have a file
-		{
-
-
-		}
-
-
-		return file;  //return whatever file we know about
-	}
 */
 
 	/**Sets the file used for the currently opened document.
@@ -680,13 +678,13 @@ public abstract class ApplicationFrame extends JFrame
 		file=newFile; //store the file
 	}
 */
-
 
 	/**Sets the application status label.
 	@param status The new status to display.
 	*/
 	public void setStatus(final String status)
 	{
+/*G***fix		
 //G***del Debug.trace("told to change status"); //G***del
 		if(statusStatusLabel!=null) //if we have a status label
 		{
@@ -695,6 +693,7 @@ public abstract class ApplicationFrame extends JFrame
 //G***del 			statusStatusLabel.repaint();  //G***del; testing
 //G***del 			statusBar.repaint();  //G***del; testing
 		}
+*/		
 	}
 
 	/**Displays an error messages for an exception.
@@ -732,9 +731,9 @@ public abstract class ApplicationFrame extends JFrame
 	protected void processWindowEvent(final WindowEvent windowEvent)
 	{
 		super.processWindowEvent(windowEvent);  //do the default processing
-		if(windowEvent.getID()==WindowEvent.WINDOW_CLOSING/*G***del && exitAction!=null*/)  //if this is a window closing event G***fix with the JDK 1.3 window close stuff
+		if(windowEvent.getID()==WindowEvent.WINDOW_CLOSING)  //if this is a window closing event G***fix with the JDK 1.3 window close stuff
 		{
-			getExitAction().actionPerformed(null);  //perform the exit action
+			exit();	//exit
 		}
 	}
 
@@ -800,7 +799,7 @@ public abstract class ApplicationFrame extends JFrame
 		*/
 		public void actionPerformed(ActionEvent e)
 		{
-			openFile(); //open a file
+//G***fix			openFile(); //open a file
 		}
 	}
 
@@ -901,8 +900,8 @@ public abstract class ApplicationFrame extends JFrame
 		public AboutAction()
 		{
 			super("About...");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "About Mentoract Reader");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Show more information about Mentoract Reader.");	//set the long description G***Int
+			putValue(SHORT_DESCRIPTION, "About the Application");	//set the short description G***Int
+			putValue(LONG_DESCRIPTION, "Show more information about the application.");	//set the long description G***Int
 			putValue(MNEMONIC_KEY, new Integer('a'));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.INFO_ICON_FILENAME)); //load the correct icon
 		}

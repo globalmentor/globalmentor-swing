@@ -25,10 +25,10 @@ public class MDIManager implements InternalFrameListener
 		protected JDesktopPane getDesktopPane() {return desktopPane;}
 
 	/**The application frame for which this object is a manager.*/
-	private final ApplicationFrame2 applicationFrame;
+	private final ApplicationFrame applicationFrame;
 
 		/**@return The application frame for which this object is a manager.*/
-		protected ApplicationFrame2 getApplicationFrame() {return applicationFrame;}
+		protected ApplicationFrame getApplicationFrame() {return applicationFrame;}
 
 	/**Creates a MDI destop manager that manages internal framems in a desktop
 		pane.
@@ -36,7 +36,7 @@ public class MDIManager implements InternalFrameListener
 		manager.
 	@param newDesktopPane The desktop pane that will holds the internal frames.
 	*/
-	public MDIManager(final ApplicationFrame2 newApplicationFrame, final JDesktopPane newDesktopPane)
+	public MDIManager(final ApplicationFrame newApplicationFrame, final JDesktopPane newDesktopPane)
 	{
 		desktopPane=newDesktopPane; //save the desktop pane
 		applicationFrame=newApplicationFrame; //save the application frame

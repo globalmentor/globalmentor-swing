@@ -164,4 +164,12 @@ public class ContentPanel extends JPanel
 	{
 	}
 
+	/**@return <code>true</code> if the panel can close.
+	@see ApplicationFrame#canClose
+	*/
+	public boolean canClose()
+	{
+		return true;  //default to allowing the panel to be closed
+	}
+
 }
