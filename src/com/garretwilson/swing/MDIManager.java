@@ -75,7 +75,7 @@ Debug.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
       }
     });
 			//listen for modifications of the "modified" property of the content pane
-		internalFrame.getContentPane().addPropertyChangeListener(Modifiable.MODIFIED_PROPERTY_NAME, new java.beans.PropertyChangeListener()
+		internalFrame.getContentPane().addPropertyChangeListener(Modifiable.MODIFIED_PROPERTY, new java.beans.PropertyChangeListener()
     {
       public void propertyChange(final PropertyChangeEvent propertyChangeEvent) //if the "modified" property changes in the explore panel
       {

@@ -2,6 +2,8 @@ package com.garretwilson.swing.rdf.tree;
 
 import java.util.*;
 import javax.swing.tree.*;
+
+import com.garretwilson.model.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.xpackage.FileOntologyConstants;
 import com.garretwilson.rdf.xpackage.XPackageUtilities;

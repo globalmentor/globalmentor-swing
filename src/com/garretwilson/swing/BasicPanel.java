@@ -47,7 +47,7 @@ import com.garretwilson.util.*;
 	<dd>Indicates the title has been changed.</dd>
 	<dt><code>BasicPanel.USER_MODE_PROPERTY</code> (<code>Integer</code>)</dt>
 	<dd>Indicates the user mode has been changed.</dd>
-	<dt><code>Modifiable.MODIFIED_PROPERTY_NAME</code> (<code>Boolean</code>)</dt>
+	<dt><code>Modifiable.MODIFIED_PROPERTY</code> (<code>Boolean</code>)</dt>
 	<dd>Indicates that the boolean modified property has been changed.</dd>
 </dl>
 @author Garret Wilson
@@ -105,7 +105,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 			{
 				modified=newModified; //update the value
 					//show that the modified property has changed
-				firePropertyChange(MODIFIED_PROPERTY_NAME, BooleanUtilities.toBoolean(oldModified), BooleanUtilities.toBoolean(newModified));
+				firePropertyChange(MODIFIED_PROPERTY, Boolean.valueOf(oldModified), Boolean.valueOf(newModified));
 			}
 		}
 
@@ -531,13 +531,13 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	/**Creates a property change listener that, when the the "modified" property
 		changes to <code>true</code>, updates the modified status to <code>true</code>.
 	Convenience method.
-	@see Modifiable#MODIFIED_PROPERTY_NAME
+	@see Modifiable#MODIFIED_PROPERTY
 	@see Boolean#TRUE
 	@see #setModified
 	*/
 	public PropertyChangeListener createModifyModifiedChangeListener()
 	{
-		return createModifyPropertyChangeListener(MODIFIED_PROPERTY_NAME, Boolean.TRUE);	//create a property change listener that will set modified to true if the modified property changes to true
+		return createModifyPropertyChangeListener(MODIFIED_PROPERTY, Boolean.TRUE);	//create a property change listener that will set modified to true if the modified property changes to true
 	}
 
 	/**Creates a property change listener that, when a property chnages,

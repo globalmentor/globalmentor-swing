@@ -26,13 +26,13 @@ public class RDFPanel extends TabbedViewPanel implements URIInputStreamable
 {
 
 	/**The default data views supported by this panel.*/
-	private final int DEFAULT_SUPPORTED_DATA_VIEWS=TREE_DATA_VIEW|SOURCE_DATA_VIEW;
+	private final int DEFAULT_SUPPORTED_DATA_VIEWS=TREE_MODEL_VIEW|SOURCE_MODEL_VIEW;
 
 	/**The data views supported by the panel, ORed together.*/
 	private int supportedDataViews;
 
 		/**@return A value representing the supported data views ORed together.*/
-		public int getSupportedDataViews() {return supportedDataViews;}
+		public int getSupportedModelViews() {return supportedDataViews;}
 	
 		/**Sets the data views supported by this panel. 
 		@param dataViews A value representing the supported data views ORed together.
@@ -43,16 +43,16 @@ public class RDFPanel extends TabbedViewPanel implements URIInputStreamable
 		}
 
 	/**The default default data view of this panel.*/
-	private final int DEFAULT_DEFAULT_DATA_VIEW=TREE_DATA_VIEW;
+	private final int DEFAULT_DEFAULT_DATA_VIEW=TREE_MODEL_VIEW;
 
 	/**The default data view of this panel.*/
 	private int defaultDataView;
 
-		/**@return The default view of the data, such as <code>SUMMARY_DATA_VIEW</code>.*/
-		public int getDefaultDataView() {return defaultDataView;}
+		/**@return The default view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.*/
+		public int getDefaultModelView() {return defaultDataView;}
 
 		/**Sets the default data view.
-		@param dataView The default view of the data, such as <code>SUMMARY_DATA_VIEW</code>.
+		@param dataView The default view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
 		*/
 		public void setDefaultDataView(final int dataView) {defaultDataView=dataView;}
 
@@ -213,8 +213,8 @@ public class RDFPanel extends TabbedViewPanel implements URIInputStreamable
 		super.initializeUI(); //do the default UI initialization
 //G***del; let the calling class do this		sourceTextPane.setEditable(false);	//don't let the text pane be edited
 		editable=true;	//default to being editable 
-		addView(TREE_DATA_VIEW, "RDF", rdfScrollPane);	//add the RDF component as the tree view G***i18n
-		addView(SOURCE_DATA_VIEW, "RDF+XML", xmlScrollPane);	//add the XML component as the source view G***i18n
+		addView(TREE_MODEL_VIEW, "RDF", rdfScrollPane);	//add the RDF component as the tree view G***i18n
+		addView(SOURCE_MODEL_VIEW, "RDF+XML", xmlScrollPane);	//add the XML component as the source view G***i18n
 	}
 
 	/**Returns an input stream for the given URI.
@@ -251,22 +251,13 @@ public class RDFPanel extends TabbedViewPanel implements URIInputStreamable
 	}
 */
 
-	/**@return The RDF data model, or <code>null</code> if there is no RDF.*/
-	public RDF getRDF()
+	/**@return The RDF data model, or <code>null</code> if there is no RDF.
+	@exception IOException Thrown if there was an error getting the model.
+	*/
+	public RDF getRDF() throws IOException
 	{
-		try
-		{
-			saveRDF(getDataView());	//store any RDF that is being edited, if any RDF is being edited
-		}
-		catch(IOException ioException)	//if there were any problems storing the RDF
-		{
-			return null;	//show that we don't have any RDF to return, as we can't store it
-		}
-		catch(URISyntaxException uriSyntaxException)	//if there were any URI syntax problems
-		{
-			return null;	//show that we don't have any RDF to return, as we can't store it
-		}
-		return rdf;	//return the RDF that was just stored or was already stored
+		saveModel(getModelView());	//store the data that is being edited, if any data is being edited
+		return rdf;	//return the data that was just stored or was already stored
 	}
 
 	/**Sets the RDF data model and resource.
@@ -281,35 +272,34 @@ public class RDFPanel extends TabbedViewPanel implements URIInputStreamable
 		rdfResource=resource;	//save the RDF resource
 		try
 		{
-			loadRDF(getDataView());	//try to load the RDF into our current data view
+			loadModel(getModelView());	//try to load the model into our current data view; if we succeed
 			setModified(false);	//show that the information has not been modified
 		}
-		catch(IOException ioException)
+		catch(IOException ioException)	//if there were any problems saving the model
 		{
-			Debug.error(ioException);	//G***fix better
-		}
+			OptionPane.showMessageDialog(this, ioException.getMessage(), ioException.getClass().getName(), JOptionPane.ERROR_MESSAGE);	//G***i18n; TODO fix in a common routine
+		}		
 	}
 
-	/**Loads the stored RDF from the local copy to the given view.
-	@param dataView The view of the data that should be loaded.
-	@exception IOException Thrown if there is an error loading the RDF into the
-		data view.
+	/**Loads the data from the model to the given view.
+	@param modelView The view of the data that should be loaded.
+	@exception IOException Thrown if there was an error loading the model.
 	*/
-	protected void loadRDF(final int dataView) throws IOException
+	protected void loadModel(final int modelView) throws IOException
 	{
-		switch(dataView)	//see which view of data we should load
+		switch(modelView)	//see which view of data we should load
 		{
-			case TREE_DATA_VIEW:	//if we're changing to the tree view
+			case TREE_MODEL_VIEW:	//if we're changing to the tree view
 				if(rdf!=null)	//if we have RDF
 				{
 					getRDFTree().setRDF(rdf, rdfResource); //set the resource in the RDF tree
 				}
 				else	//if we don't have any RDF
 				{
-//TODO fix loading no RDF					getXMLTextPane().setDocument(getXMLTextPane().getEditorKit().createDefaultDocument());	//create a default document
+//	TODO fix loading no RDF					getXMLTextPane().setDocument(getXMLTextPane().getEditorKit().createDefaultDocument());	//create a default document
 				}
 				break;
-			case SOURCE_DATA_VIEW:	//if we're changing to the source view
+			case SOURCE_MODEL_VIEW:	//if we're changing to the source view
 				getSourceTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the source text pane
 				if(rdf!=null)	//if we have RDF
 				{
@@ -329,22 +319,20 @@ public class RDFPanel extends TabbedViewPanel implements URIInputStreamable
 		}
 	}
 
-	/**Stores the current RDF being edited to the local copy.
-	If no RDF is being edited, no action occurs.
-	@param dataView The view of the data that should be stored.
-	@exception IOException Thrown if there is an error storing the XML from the
-		data view.
-	@exception URISyntaxException Thrown if a URI was incorrectly formed.
+	/**Stores the current data being edited to the model.
+	If no model is being edited or there is no valid view, no action occurs.
+	@param modelView The view of the model that should be stored.
+	@exception IOException Thrown if there was an error loading the model.
 	*/
-	protected void saveRDF(final int dataView) throws IOException, URISyntaxException
+	protected void saveModel(final int modelView) throws IOException
 	{
-		switch(dataView)	//see which view of data we have, in order to get the current RDF
+		switch(modelView)	//see which view of data we have, in order to get the current RDF
 		{
-			case TREE_DATA_VIEW:	//if we should store the RDF currently in the tree
+			case TREE_MODEL_VIEW:	//if we should store the RDF currently in the tree
 				rdf=getRDFTree().getRDF();	//store the RDF from the tree
 				rdfResource=getRDFTree().getResource();	//store the RDF resource from the tree
 				break;
-			case SOURCE_DATA_VIEW:	//if we should store the RDF source
+			case SOURCE_MODEL_VIEW:	//if we should store the RDF source
 				{
 					final String sourceString=getSourceTextPane().getText();	//get the current source text
 					if(sourceString.length()>0)	//if there is source text
@@ -359,6 +347,10 @@ public class RDFPanel extends TabbedViewPanel implements URIInputStreamable
 							rdf=rdfXMLProcessor.process(document);	//process the RDF from the XML
 							rdfResource=null;	//G***fix
 								//TODO find some way to find the original resource selected, if any
+						}
+						catch(URISyntaxException uriSyntaxException)	//TODO fix so that other types of exceptions are accepted; create a general ParseException or SyntaxException
+						{
+							throw (IOException)new IOException(uriSyntaxException.getMessage()).initCause(uriSyntaxException);
 						}
 						finally
 						{
@@ -378,53 +370,32 @@ public class RDFPanel extends TabbedViewPanel implements URIInputStreamable
 	@param oldView The view before the change.
 	@param newView The new view of the data
 	*/
-	protected void onDataViewChanged(final int oldView, final int newView)
-	{		
-		super.onDataViewChanged(oldView, newView);	//perform the default functionality		
-		try
+	protected void onModelViewChange(final int oldView, final int newView)
+	{
+		super.onModelViewChange(oldView, newView);	//perform the default functionality
+		switch(oldView)	//see which view we're changing from
 		{
-			if(isModified())	//if the data has been modified
-			{
-				saveRDF(oldView);	//store any RDF that was being edited in the old view, if any
-			}
-			switch(oldView)	//see which view we're changing from
-			{
 /*G***del if not needed
-				case TREE_DATA_VIEW:	//if we're changing from the tree view
+				case TREE_MODEL_VIEW:	//if we're changing from the tree view
 					getXMLTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the XML text pane any more
 					getXMLTextPane().setDocument(getXMLTextPane().getEditorKit().createDefaultDocument());	//remove the content from the XML text pane by installing a new document
 					break;
 */
-				case SOURCE_DATA_VIEW:	//if we're changing from the source view
-					getSourceTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the source text pane any more
-					getSourceTextPane().setDocument(getSourceTextPane().getEditorKit().createDefaultDocument());	//remove the content from the source text pane by installing a new document
-					break;
-			}
+			case SOURCE_MODEL_VIEW:	//if we're changing from the source view
+				getSourceTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the source text pane any more
+				getSourceTextPane().setDocument(getSourceTextPane().getEditorKit().createDefaultDocument());	//remove the content from the source text pane by installing a new document
+				break;
 		}
-		catch(Exception exception)	//if there were any problems storing the RDF
+		switch(newView)	//see which view we're changing to
 		{
-			setDataView(oldView);	//switch back to the old view
-			OptionPane.showMessageDialog(getSourceTextPane(), exception.getMessage(), exception.getClass().getName(), JOptionPane.ERROR_MESSAGE);	//G***i18n; TODO fix in a common routine
-			return;	//don't process further, because this would erase the source
-		}
-		try
-		{
-			loadRDF(newView);	//try to load the RDF into the new view
-			switch(newView)	//see which view we're changing to
-			{
 /*G***del if not needed
-				case TREE_DATA_VIEW:	//if we're changing to the tree view
+				case TREE_MODEL_VIEW:	//if we're changing to the tree view
 					getXMLTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to the XML text pane
 					break;
 */
-				case SOURCE_DATA_VIEW:	//if we're changing to the source view
-					getSourceTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to see if the source pane is modified
-					break;
-			}
-		}
-		catch(IOException ioException)
-		{
-			Debug.error(ioException);	//G***fix better
+			case SOURCE_MODEL_VIEW:	//if we're changing to the source view
+				getSourceTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to see if the source pane is modified
+				break;
 		}
 	}
 

@@ -167,7 +167,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 		exception) if the content pane parameter is <code>null</code>
 	@see JFrame#getContentPane
 	@see Modifiable
-	@see Modifiable#MODIFIED_PROPERTY_NAME
+	@see Modifiable#MODIFIED_PROPERTY
 	@see #getModifiedPropertyChangeListener
 	*/
 	public void setContentPane(final Container contentPane)
@@ -175,12 +175,12 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 		final Container oldContentPane=getContentPane();	//get the current content pane
 		if(oldContentPane instanceof Modifiable)	//if the old content pane is modifiable
 		{
-			oldContentPane.removePropertyChangeListener(Modifiable.MODIFIED_PROPERTY_NAME, getModifiedUpdateStatusPropertyChangeListener());	//remove the modified property change listener from the old content pane
+			oldContentPane.removePropertyChangeListener(Modifiable.MODIFIED_PROPERTY, getModifiedUpdateStatusPropertyChangeListener());	//remove the modified property change listener from the old content pane
 		}
 		super.setContentPane(contentPane);	//set the content pane normally
 		if(contentPane instanceof Modifiable)	//if the new content pane is modifiable
 		{
-			contentPane.addPropertyChangeListener(Modifiable.MODIFIED_PROPERTY_NAME, getModifiedUpdateStatusPropertyChangeListener());	//add a listener to update the status when the "modified" property changes
+			contentPane.addPropertyChangeListener(Modifiable.MODIFIED_PROPERTY, getModifiedUpdateStatusPropertyChangeListener());	//add a listener to update the status when the "modified" property changes
 		}
 	}
 

@@ -8,6 +8,7 @@ import javax.swing.*;
 import com.garretwilson.text.xml.XMLSerializer;
 import com.garretwilson.text.xml.qti.*;
 import com.garretwilson.lang.BooleanUtilities;
+import com.garretwilson.model.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.util.*;
 import org.w3c.dom.*;
@@ -52,7 +53,7 @@ public abstract class AbstractMDIDocumentPanel extends ApplicationPanel implemen
 			{
 				modified=newModified; //update the value
 					//show that the modified property has changed
-				firePropertyChange(MODIFIED_PROPERTY_NAME, BooleanUtilities.toBoolean(oldModified), BooleanUtilities.toBoolean(newModified));
+				firePropertyChange(MODIFIED_PROPERTY, Boolean.valueOf(oldModified), Boolean.valueOf(newModified));
 			}
 		}
 

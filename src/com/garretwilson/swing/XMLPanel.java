@@ -21,13 +21,13 @@ public class XMLPanel extends TabbedViewPanel
 {
 
 	/**The default data views supported by this panel.*/
-	private final int DEFAULT_SUPPORTED_DATA_VIEWS=WYSIWYG_DATA_VIEW|SOURCE_DATA_VIEW;
+	private final int DEFAULT_SUPPORTED_DATA_VIEWS=WYSIWYG_MODEL_VIEW|SOURCE_MODEL_VIEW;
 
 	/**The data views supported by the panel, ORed together.*/
 	private int supportedDataViews;
 
 		/**@return A value representing the supported data views ORed together.*/
-		public int getSupportedDataViews() {return supportedDataViews;}
+		public int getSupportedModelViews() {return supportedDataViews;}
 	
 		/**Sets the data views supported by this panel. 
 		@param dataViews A value representing the supported data views ORed together.
@@ -38,16 +38,16 @@ public class XMLPanel extends TabbedViewPanel
 		}
 
 	/**The default default data view of this panel.*/
-	private final int DEFAULT_DEFAULT_DATA_VIEW=WYSIWYG_DATA_VIEW;
+	private final int DEFAULT_DEFAULT_DATA_VIEW=WYSIWYG_MODEL_VIEW;
 
 	/**The default data view of this panel.*/
 	private int defaultDataView;
 
-		/**@return The default view of the data, such as <code>SUMMARY_DATA_VIEW</code>.*/
-		public int getDefaultDataView() {return defaultDataView;}
+		/**@return The default view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.*/
+		public int getDefaultModelView() {return defaultDataView;}
 
 		/**Sets the default data view.
-		@param dataView The default view of the data, such as <code>SUMMARY_DATA_VIEW</code>.
+		@param dataView The default view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
 		*/
 		public void setDefaultDataView(final int dataView) {defaultDataView=dataView;}
 
@@ -182,8 +182,8 @@ public class XMLPanel extends TabbedViewPanel
 		super.initializeUI(); //do the default UI initialization
 		getTabbedPane().setTabPlacement(JTabbedPane.BOTTOM);
 //G***fix		xmlTextPane.setContentType(MediaType.APPLICATION_XHTML_XML);	//set the content type to "application/xhtml+xml" G***maybe allow this panel to support multiple MIME types, and put the setting of the type back into XHTMLResourceKit
-		addView(WYSIWYG_DATA_VIEW, getXMLTextPane().getContentType(), getXMLScrollPane());	//add the XML text pane as the WYSIWYG view G***i18n
-		addView(SOURCE_DATA_VIEW, "XML", getSourceScrollPane());	//add the source XML text pane as the source view G***i18n
+		addView(WYSIWYG_MODEL_VIEW, getXMLTextPane().getContentType(), getXMLScrollPane());	//add the XML text pane as the WYSIWYG view G***i18n
+		addView(SOURCE_MODEL_VIEW, "XML", getSourceScrollPane());	//add the source XML text pane as the source view G***i18n
 //TODO check for the content type changing, and update the tab name in response
 
 				//add ourselves to listen to the XML text pane, so that if the XML text pane
@@ -219,18 +219,12 @@ public class XMLPanel extends TabbedViewPanel
 
 	/**@return The XML document representing the data model, or <code>null</code> if
 		there is no XML.
+	@exception IOException Thrown if there was an error loading the model.
 	*/
-	public Document getXML()
+	public Document getXML() throws IOException
 	{
-		try
-		{
-			saveXML(getDataView());	//store any XML that is being edited, if any XML is being edited
-		}
-		catch(IOException ioException)	//if there were any problems storing the XML
-		{
-			return null;	//show that we don't have any XML to return, as we can't store it
-		}
-		return xml;	//return the XML that was just stored or was already stored
+		saveModel(getModelView());	//store the data that is being edited, if any data is being edited
+		return xml;	//return the data that was just stored or was already stored
 	}
 
 	/**Sets the given XML data.
@@ -246,25 +240,24 @@ public class XMLPanel extends TabbedViewPanel
 		this.xml=xml;	//store the XML
 		try
 		{
-			loadXML(getDataView());	//try to load the XML into our current data view
+			loadModel(getModelView());	//try to load the model into our current data view
 			setModified(false);	//show that the information has not been modified
 		}
-		catch(IOException ioException)
+		catch(IOException ioException)	//if there were any problems saving the model
 		{
-			Debug.error(ioException);	//G***fix better
-		}
+			OptionPane.showMessageDialog(this, ioException.getMessage(), ioException.getClass().getName(), JOptionPane.ERROR_MESSAGE);	//G***i18n; TODO fix in a common routine
+		}		
 	}
 
-	/**Loads the stored XML from the local copy to the given view.
-	@param dataView The view of the data that should be loaded.
-	@exception IOException Thrown if there is an error loading the XML into the
-		data view.
+	/**Loads the data from the model to the given view.
+	@param modelView The view of the data that should be loaded.
+	@exception IOException Thrown if there was an error loading the model.
 	*/
-	protected void loadXML(final int dataView) throws IOException
+	protected void loadModel(final int modelView) throws IOException
 	{
-		switch(dataView)	//see which view of data we should load
+		switch(modelView)	//see which view of data we should load
 		{
-			case WYSIWYG_DATA_VIEW:	//if we're changing to the WYSIWYG view
+			case WYSIWYG_MODEL_VIEW:	//if we're changing to the WYSIWYG view
 				getXMLTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the XML text pane
 				if(xml!=null)	//if we have XML
 				{
@@ -276,7 +269,7 @@ public class XMLPanel extends TabbedViewPanel
 				}
 				getXMLTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to the XML text pane
 				break;
-			case SOURCE_DATA_VIEW:	//if we're changing to the source view
+			case SOURCE_MODEL_VIEW:	//if we're changing to the source view
 				getSourceTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the source text pane
 				if(xml!=null)	//if we have XML
 				{
@@ -294,17 +287,16 @@ public class XMLPanel extends TabbedViewPanel
 		}
 	}
 
-	/**Stores the current XML being edited to the local copy.
-	If no XML is being edited, no action occurs.
-	@param dataView The view of the data that should be stored.
-	@exception IOException Thrown if there is an error storing the XML from the
-		data view.
+	/**Stores the current data being edited to the model.
+	If no model is being edited or there is no valid view, no action occurs.
+	@param modelView The view of the model that should be stored.
+	@exception IOException Thrown if there was an error loading the model.
 	*/
-	protected void saveXML(final int dataView) throws IOException
+	protected void saveModel(final int modelView) throws IOException
 	{
-		switch(dataView)	//see which view of data we have, in order to get the current XML
+		switch(modelView)	//see which view of data we have, in order to get the current XML
 		{
-			case SOURCE_DATA_VIEW:	//if we should store the XML source
+			case SOURCE_MODEL_VIEW:	//if we should store the XML source
 				{
 					final String sourceString=getSourceTextPane().getText();	//get the current source text
 					if(sourceString.length()>0)	//if there is source text
@@ -328,7 +320,7 @@ public class XMLPanel extends TabbedViewPanel
 					}
 				}
 				break;
-			case WYSIWYG_DATA_VIEW:	//if we should store the XML in the XML text pane
+			case WYSIWYG_MODEL_VIEW:	//if we should store the XML in the XML text pane
 				if(getXMLTextPane().getDocument() instanceof XMLDocument)	//if this is an Swing XML document
 				{
 					final XMLDocument xmlDocument=(XMLDocument)getXMLTextPane().getDocument();	//get the XML document
@@ -342,49 +334,28 @@ public class XMLPanel extends TabbedViewPanel
 	@param oldView The view before the change.
 	@param newView The new view of the data
 	*/
-	protected void onDataViewChanged(final int oldView, final int newView)
-	{		
-		super.onDataViewChanged(oldView, newView);	//perform the default functionality		
-		try
+	protected void onModelViewChange(final int oldView, final int newView)
+	{
+		super.onModelViewChange(oldView, newView);	//perform the default functionality
+		switch(oldView)	//see which view we're changing from
 		{
-			if(isModified())	//if the data has been modified
-			{
-				saveXML(oldView);	//store any XML that was being edited in the old view, if any				
-			}
-			switch(oldView)	//see which view we're changing from
-			{
-				case WYSIWYG_DATA_VIEW:	//if we're changing from the WYSIWYG view
-					getXMLTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the XML text pane any more
-					getXMLTextPane().setDocument(getXMLTextPane().getEditorKit().createDefaultDocument());	//remove the content from the XML text pane by installing a new document
-					break;
-				case SOURCE_DATA_VIEW:	//if we're changing from the source view
-					getSourceTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the source text pane any more
-					getSourceTextPane().setDocument(getSourceTextPane().getEditorKit().createDefaultDocument());	//remove the content from the source text pane by installing a new document
-					break;
-			}
+			case WYSIWYG_MODEL_VIEW:	//if we're changing from the WYSIWYG view
+				getXMLTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the XML text pane any more
+				getXMLTextPane().setDocument(getXMLTextPane().getEditorKit().createDefaultDocument());	//remove the content from the XML text pane by installing a new document
+				break;
+			case SOURCE_MODEL_VIEW:	//if we're changing from the source view
+				getSourceTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the source text pane any more
+				getSourceTextPane().setDocument(getSourceTextPane().getEditorKit().createDefaultDocument());	//remove the content from the source text pane by installing a new document
+				break;
 		}
-		catch(IOException ioException)	//if there were any problems storing the XML G***does this handle all XML errors?
+		switch(newView)	//see which view we're changing to
 		{
-			setDataView(oldView);	//switch back to the old view
-			OptionPane.showMessageDialog(getSourceTextPane(), ioException.getMessage(), ioException.getClass().getName(), JOptionPane.ERROR_MESSAGE);	//G***i18n; TODO fix in a common routine
-			return;	//don't process further, because this would erase the source
-		}
-		try
-		{
-			loadXML(newView);	//try to load the XML into the new view
-			switch(newView)	//see which view we're changing to
-			{
-				case WYSIWYG_DATA_VIEW:	//if we're changing to the WYSIWYG view
-					getXMLTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to the XML text pane
-					break;
-				case SOURCE_DATA_VIEW:	//if we're changing to the source view
-					getSourceTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to see if the source pane is modified
-					break;
-			}
-		}
-		catch(IOException ioException)
-		{
-			Debug.error(ioException);	//G***fix better
+			case WYSIWYG_MODEL_VIEW:	//if we're changing to the WYSIWYG view
+				getXMLTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to the XML text pane
+				break;
+			case SOURCE_MODEL_VIEW:	//if we're changing to the source view
+				getSourceTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to see if the source pane is modified
+				break;
 		}
 	}
 
