@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import com.garretwilson.lang.*;
+import static com.garretwilson.lang.ObjectUtilities.*;
 import com.garretwilson.util.DefaultOrderComparator;
 import com.garretwilson.util.EmptyIterator;
 import com.garretwilson.util.IteratorUtilities;
@@ -427,8 +428,8 @@ public class ActionManager implements Cloneable
 			final Action action1=(Action)object1;	//cast the objects to actions
 			final Action action2=(Action)object2;
 				//get the orders, if any
-			final Integer orderInteger1=(Integer)ObjectUtilities.asInstance(action1.getValue(MENU_ORDER_PROPERTY), Integer.class);
-			final Integer orderInteger2=(Integer)ObjectUtilities.asInstance(action2.getValue(MENU_ORDER_PROPERTY), Integer.class);
+			final Integer orderInteger1=asInstance(action1.getValue(MENU_ORDER_PROPERTY), Integer.class);
+			final Integer orderInteger2=asInstance(action2.getValue(MENU_ORDER_PROPERTY), Integer.class);
 			if(orderInteger1==null)	//if the first action doesn't have an order
 			{
 				if(orderInteger2==null)	//if neither action has an order, sort by name
