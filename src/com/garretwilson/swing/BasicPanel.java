@@ -15,7 +15,7 @@ import com.garretwilson.swing.event.*;
 import com.garretwilson.util.*;
 
 /**An extended panel that has extra features beyond those in <code>JPanel</code>.
-<p>The component keeps track of the layout constraints used by the child
+<p>The panel keeps track of the layout constraints used by the child
 	components.</p>
 <p>The panel stores properties and fires property change events when a
 	property is modified.</p>
@@ -35,6 +35,9 @@ import com.garretwilson.util.*;
 	and <code>DocumentListener</code>, that do nothing but update the status.</p>
 <p>The panel can create a default <code>DocumentListener</code> that
 	automatically sets the modified status to <code>true</code>.</p>
+<p>The panel is scrollable, and by default takes care of its own width and/or
+	height rather than allowing any parent scroll width and height. This behavior
+	can be modified.</p> 
 <p>Bound properties:</p>
 <dl>
 	<dt><code>BasicPanel.TITLE_PROPERTY_NAME</code> (<code>String</code>)</dt>
@@ -50,7 +53,7 @@ import com.garretwilson.util.*;
 @see javax.swing.JOptionPane
 @see java.awt.GridBagLayout
 */
-public class BasicPanel extends JPanel implements ContainerConstants, CanClosable, DefaultFocusable, Modifiable
+public class BasicPanel extends JPanel implements Scrollable, ContainerConstants, CanClosable, DefaultFocusable, Modifiable
 {
 
 	/**The name of the bound title property.*/
@@ -602,6 +605,148 @@ public class BasicPanel extends JPanel implements ContainerConstants, CanClosabl
 				{
 					public void modifyUpdate(final DocumentEvent documentEvent) {updateStatus();}	//if the document is modified, update the status
 				};
+	}
+
+		//Scrollable methods
+
+
+	/**Returns the preferred size of the viewport for a view component.
+	<p>This version simply returns the component's preferred size.</p>
+	@return The preferred panel size when scrolling. 
+	@see Panel#getPreferredSize
+	*/
+	public Dimension getPreferredScrollableViewportSize()
+	{
+		return getPreferredSize();	//return the default preferred size
+	}
+
+
+	/**Determines the increment for unit scrolling. 
+	@param visibleRect The view area visible within the viewport.
+	@param orientation The orientation, either <code>SwingConstants.VERTICAL</code>
+		or <code>SwingConstants.HORIZONTAL</code>.
+	@param direction Less than zero to scroll up/left, greater than zero for down/right.
+	@return The unit increment for scrolling in the specified direction.
+	*/
+	public int getScrollableUnitIncrement(final Rectangle visibleRect, final int orientation, final int direction)
+	{
+		switch(orientation)	//see on which axis we're being scrolled
+		{
+			case SwingConstants.VERTICAL:
+				return visibleRect.height/10;
+			case SwingConstants.HORIZONTAL:
+				return visibleRect.width/10;
+			default:
+				throw new IllegalArgumentException("Invalid orientation: "+orientation);
+		}
+	}
+
+	/**Determines the increment for block scrolling.
+	@param visibleRect The view area visible within the viewport.
+	@param orientation The orientation, either <code>SwingConstants.VERTICAL</code>
+		or <code>SwingConstants.HORIZONTAL</code>.
+	@param direction Less than zero to scroll up/left, greater than zero for down/right.
+	@return The block increment for scrolling in the specified direction.
+	*/
+	public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction)
+	{
+		switch(orientation)	//see on which axis we're being scrolled
+		{
+			case SwingConstants.VERTICAL:
+				return visibleRect.height;
+			case SwingConstants.HORIZONTAL:
+				return visibleRect.width;
+			default:
+				throw new IllegalArgumentException("Invalid orientation: "+orientation);
+		}
+	}  
+
+	/**Whether a viewport should always force the width of this panel to match its own.*/
+	private boolean tracksViewportWidth=false;
+
+		/**Sets whether a viewport should always force the width of this panel to
+			match its own width, unless the panel at its smallest could not fit
+			inside the viewport.
+		@param horizontallySelfManaged <code>true</code> if the panel should
+			<em>not</em> be scrolled horizontally by any parent viewport, allowing
+			this panel to manage its own horizontal scrolling and/or wrapping. 
+		*/
+		public void setTracksViewportWidth(final boolean horizontallySelfManaged)
+		{
+			tracksViewportWidth=horizontallySelfManaged;
+		}
+    
+	/**Returns whether a viewport should always force the width of this 
+		panel to match the width of the viewport.
+	<p>This implementation defaults to <code>false</code>, allowing the viewport
+		to scroll horizontally as needed.</p>
+	@return <code>true</code> if a viewport should force the panel's width to
+		match its own width, allowing this panel to manage its own horizontal
+		scrolling and/or wrapping.
+	@see #setTracksViewportHeight
+	*/
+	public boolean getScrollableTracksViewportWidth()
+	{
+		if(getParent() instanceof JViewport)	//if the panel is inside a viewport
+		{
+			final JViewport viewport=(JViewport)getParent();	//cast the parent to a viewport
+			if(tracksViewportWidth)	//if we track our own width
+			{
+				return viewport.getWidth()>=getMinimumSize().width;	//make sure we can be as small as the viewport wants us to be
+			}
+			else	//if we don't track our own width, fill the viewport if we're not big enough
+			{
+				return getPreferredSize().width<viewport.getWidth();	//if we're smaller than the viewport, let the viewport size us to fill the viewport 
+			}
+		}
+		else	//if we're not in a viewport
+		{
+			return tracksViewportWidth;	//use whatever value we were assigned
+		} 
+	}
+
+	/**Whether a viewport should always force the height of this panel to match its own.*/
+	private boolean tracksViewportHeight=false;
+
+		/**Sets whether a viewport should always force the height of this panel to
+			match its own height, unless the panel at its smallest could not fit
+			inside the viewport
+		@param verticallySelfManaged <code>true</code> if the panel should
+			<em>not</em> be scrolled vertically by any parent viewport, allowing
+			this panel to manage its own vertical scrolling and/or wrapping. 
+		*/
+		public void setTracksViewportHeight(final boolean verticallySelfManaged)
+		{
+			tracksViewportHeight=verticallySelfManaged;
+		}
+
+	/**Returns whether a viewport should always force the height of this 
+		panel to match the height of the viewport.
+	<p>This implementation defaults to <code>false</code>, allowing the viewport
+		to scroll vertically as needed.</p>
+	@return <code>true</code> if a viewport should force the panel's height to
+		match its own height, allowing this panel to manage its own vertical
+		scrolling and/or wrapping.
+	@see #setTracksViewportHeight
+	*/
+	public boolean getScrollableTracksViewportHeight()
+	{
+		if(getParent() instanceof JViewport)	//if the panel is inside a viewport
+		{
+			final JViewport viewport=(JViewport)getParent();	//cast the parent to a viewport
+			if(tracksViewportHeight)	//if we track our own height
+			{
+				return viewport.getHeight()>=getMinimumSize().height;	//make sure we can be as small as the viewport wants us to be
+			}
+			else	//if we don't track our own height, fill the viewport if we're not big enough
+			{
+				return getPreferredSize().height<viewport.getHeight();	//if we're smaller than the viewport, let the viewport size us to fill the viewport 
+			}
+		}
+		else	//if we're not in a viewport
+		{
+			return tracksViewportHeight;	//use whatever value we were assigned
+		} 
 	}
 
 }

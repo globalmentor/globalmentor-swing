@@ -257,6 +257,7 @@ public class AddressPanel extends BasicVCardPanel
 		countryNameComboBox.setModel(new DefaultComboBoxModel(LocaleUtilities.getAvailableDisplayCountries()));	//G***i18n
 		countryNameComboBox.addActionListener(modifyActionListener);
 		final JScrollPane streetAddressScrollPane=new JScrollPane(streetAddressTextPane);
+			//TODO fix this with a derived text pane that is scrollable and allows tracksViewport... to be set
 		streetAddressScrollPane.setMinimumSize(new Dimension(streetAddressScrollPane.getMinimumSize().width, localityTextField.getPreferredSize().height*3));
 		streetAddressScrollPane.setPreferredSize(streetAddressScrollPane.getMinimumSize());
 

@@ -44,6 +44,8 @@ import com.garretwilson.swing.event.ProgressListener;
 import com.garretwilson.swing.text.DocumentConstants;
 import com.garretwilson.swing.text.DocumentUtilities;
 import com.garretwilson.swing.text.SwingTextUtilities;
+import com.garretwilson.text.CharacterConstants;
+import com.garretwilson.text.xml.XMLConstants;
 import com.garretwilson.text.xml.XMLText; //G***remove these in favor of W3C DOM
 import com.garretwilson.text.xml.XMLElement;
 import com.garretwilson.text.xml.XMLNode;
@@ -863,6 +865,8 @@ Debug.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEn
 		super.create(elementSpecs);	//create the document normally
 		writeLock();	//lock the document for writing G***do we really need to do this, as applying styles doesn't modify the document?
 //	G***fix		applyStyles(); //G***testing; put in the correct place, and make sure this gets called when repaginating, if we need to
+
+/*G***fix
 		final Element rootSwingElement=getRootElements()[0]; //get the first root element of the document -- this contains an element tree for each document loaded
 		final int swingDocumentElementCount=rootSwingElement.getElementCount(); //find out how many root elements there are
 		for(int swingDocumentElementIndex=0; swingDocumentElementIndex<swingDocumentElementCount; ++swingDocumentElementIndex) //look at each root element, each of which represents an XML document
@@ -870,6 +874,7 @@ Debug.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEn
 			final Element swingDocumentElement=rootSwingElement.getElement(swingDocumentElementIndex);  //get the first element, which is the root of the document tree
 			insertBlockElementEnds(swingDocumentElement);	//G***testing
 		}
+*/
 		writeUnlock();	//release the document writing lock
 	}
 
@@ -1784,4 +1789,146 @@ Debug.trace("Context "+contextIndex+": "+selectorContext.getTagName());	//G***de
      }
 	}
 
+/**Appends child text into a list of element specs.
+@param elementSpecList The list of element specs to be inserted into the document.
+@param text The text to be inserted.
+@param attributeSet The attribute set representing the text, or
+	<code>null</code> if default attributes should be used.
+@param baseURI The base URI of the document, used for generating full target
+	URIs for quick searching, or <code>null</code> if there is no base URI or
+	if the base URI is not applicable.
+@exception BadLocationException for an invalid starting offset
+@see XMLDocument#insert
+@see XMLDocument#appendElementSpecListContent
+*/
+protected void appendElementSpecListContent(final List elementSpecList, final String text, final AttributeSet attributeSet, final URI baseURI)
+{
+	final AttributeSet textAttributeSet;
+	if(attributeSet!=null)	//if there are no attributes provided (artificial text is being manually inserted, for instance)
+	{
+		textAttributeSet=attributeSet;	//use the attribute set provided	
+	}
+	else	//if there are no attributes provided (artificial text is being manually inserted, for instance)
+	{
+		final SimpleAttributeSet simpleAttributeSet=new SimpleAttributeSet();	//create a new attribute for this content
+		XMLStyleUtilities.setXMLElementName(simpleAttributeSet, XMLConstants.TEXT_NODE_NAME);	//set the name of the content to ensure it will not get its name from its parent element (this would happen if there was no name explicitely set)
+		textAttributeSet=simpleAttributeSet;	//use the default atribute set we created
+	}
+//G***del Debug.trace("inserting text data: \""+node.getNodeValue()+"\"");  //G***del
+	final StringBuffer textStringBuffer=new StringBuffer(text);  //G***testing
+	if(textStringBuffer.length()>0) //if there is actually content (don't add empty text)
+	{
+//G***del Debug.trace("before collapsing whitespace: ", textStringBuffer);  //G***del
+
+
+
+		StringBufferUtilities.collapse(textStringBuffer, CharacterConstants.WHITESPACE_CHARS, " ");	//G***testing
+//G***del Debug.trace("after collapsing whitespace: ", textStringBuffer);  //G***del
+//G***del Debug.trace("Adding text with attributes: ", contentAttributeSet);	//G***del
+//G***fix textStringBuffer.append(CharacterConstants.WORD_JOINER_CHAR);	//G***testing
+//G***fix textStringBuffer.append(CharacterConstants.ZERO_WIDTH_NO_BREAK_SPACE_CHAR);	//G***testing
+//G***fix textStringBuffer.append(ELEMENT_END_CHAR);	//put a dummy character at the end of the element so that caret positioning will work correctly at the end of block views
+		final String content=textStringBuffer.toString();	//convert the string buffer to a string
+		elementSpecList.add(new DefaultStyledDocument.ElementSpec(textAttributeSet, DefaultStyledDocument.ElementSpec.ContentType, content.toCharArray(), 0, content.length()));
+	}
+}
+
+	public void emphasis()	//G***testing
+	{
+		writeLock();  //G***testing
+
+		
+
+
+//G***fix		final Element[] buff=new Element[1];  //create an element array for insertion of elements
+		final Element characterElement=getCharacterElement(60);
+		final AttributeSet emAttributeSet=createAttributeSet("em", XHTMLConstants.XHTML_NAMESPACE_URI.toString());	//G***testirng
+//G***fix		final Element branchElement=createBranchElement(characterElement.getParentElement(), emAttributeSet);
+//G***fix		buff[0]=branchElement;
+
+	final List elementSpecList=new ArrayList();	//create an array to hold our element specs
+	elementSpecList.add(new DefaultStyledDocument.ElementSpec(emAttributeSet, DefaultStyledDocument.ElementSpec.StartTagType));
+appendElementSpecListContent(elementSpecList, "test", null, null);	//G***fix
+	elementSpecList.add(new DefaultStyledDocument.ElementSpec(emAttributeSet, DefaultStyledDocument.ElementSpec.EndTagType));
+
+	final DefaultStyledDocument.ElementSpec[] elementSpecs=(DefaultStyledDocument.ElementSpec[])elementSpecList.toArray(new DefaultStyledDocument.ElementSpec[elementSpecList.size()]);
+
+
+DefaultDocumentEvent evnt =	new DefaultDocumentEvent(60, 4, DocumentEvent.EventType.INSERT);
+//G***fix		evnt.addEdit(cEdit);
+//G***fix		buffer.create(1, buff, evnt);
+
+/*G***fix
+
+	try
+	{
+		insert(60, elementSpecs);
+	}
+	catch (BadLocationException e)
+	{
+		Debug.error(e);
+	}
+*/
+
+buffer.insert(60, 4, elementSpecs, evnt);
+
+// update bidi (possibly)
+insertUpdate(evnt, null);
+
+// notify the listeners
+evnt.end();
+fireInsertUpdate(evnt);
+fireUndoableEditUpdate(new UndoableEditEvent(this, evnt));
+
+
+
+/*G***fix
+		// update bidi (possibly)
+		super.insertUpdate(evnt, null);
+
+		// notify the listeners
+		evnt.end();
+		fireInsertUpdate(evnt);
+		fireUndoableEditUpdate(new UndoableEditEvent(this, evnt));
+*/
+
+/*G***del
+		final Element[] buff=new Element[1];  //create an element array for insertion of elements
+
+		createBranchElement()
+
+		final BranchElement section=new SectionElement(); //create a new section
+		final BranchElement html=new BranchElement(section, htmlAttributeSet); //create a new paragraph to represent the document
+		final BranchElement body=new BranchElement(html, bodyAttributeSet); //create a new paragraph to represent the HTML body
+		final BranchElement p=new BranchElement(body, pAttributeSet); //create a new paragraph to represent the paragraph
+		final LeafElement leaf=new LeafElement(p, null, 0, 1);  //create the leaf element
+		buff[0]=leaf; //insert the leaf
+		p.replace(0, 0, buff);
+		buff[0]=p;  //insert the p
+		body.replace(0, 0, buff);
+		buff[0]=body;  //insert the body
+		html.replace(0, 0, buff);
+
+			BranchElement paragraph = new BranchElement(section, null);
+
+			LeafElement brk = new LeafElement(paragraph, null, 0, 1);
+			buff[0] = brk;
+			paragraph.replace(0, 0, buff);
+
+			final Element[] sectionBuffer=new Element[2];  //G***testing
+			sectionBuffer[0] = html;
+			sectionBuffer[1] = paragraph;
+			section.replace(0, 0, sectionBuffer);
+*/
+/*G***fix
+		buff[0]=html;  //insert the html
+		section.replace(0, 0, buff);
+		writeUnlock();
+		return section;
+*/
+
+
+		writeUnlock();
+		
+	}
 }

@@ -16,8 +16,10 @@ import com.garretwilson.io.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.net.*;
 import com.garretwilson.rdf.*;
+import com.garretwilson.sun.demo.jfc.notepad.ElementTreePanel;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.event.*;
+import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.text.xml.css.*;
 import com.garretwilson.text.*;
 import com.garretwilson.text.xml.*;
@@ -164,18 +166,22 @@ final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);
 			}
 
 	/**The identifier for the previous page action.*/
-	public static final String PREVIOUS_PAGE_ACTION="previous-page-action";
+	public static final String PREVIOUS_PAGE_ACTION_NAME="previous-page-action";
 
 	/**The identifier for the next page action.*/
-	public static final String NEXT_PAGE_ACTION="next-page-action";
+	public static final String NEXT_PAGE_ACTION_NAME="next-page-action";
+
+	/**The identifier for the action to display the element tree.*/
+	public static final String DISPLAY_ELEMENT_TREE_ACTION_NAME="display-element-tree-action";
 
 	/**Default actions used by this editor kit to augment the super class default
 		actions.
 	*/
 	private static final Action[] DEFAULT_ACTIONS=
 	{
-		new PreviousPageAction(PREVIOUS_PAGE_ACTION),
-		new NextPageAction(NEXT_PAGE_ACTION)
+		new PreviousPageAction(PREVIOUS_PAGE_ACTION_NAME),
+		new NextPageAction(NEXT_PAGE_ACTION_NAME),
+		new DisplayElementTreeAction(DISPLAY_ELEMENT_TREE_ACTION_NAME),
 //G***del		new EndLineAction(endLineAction, false)	//G***testing
 	};
 
@@ -818,6 +824,11 @@ Debug.trace("hasInlineChildren: ", hasInlineChildren);	//G***del
 	{
 		//G***allow this to use the static XMLDocument.createAttributeSet after first extracting element information
 //G***del Debug.trace("Creating attribute set for node: ", xmlNode.getNodeName()); //G***del
+
+
+//TODO take advantage of XMLDocument.createAttributeSet
+
+
 		final SimpleAttributeSet attributeSet=new SimpleAttributeSet();	//create a new attribute for this element
 		XMLStyleUtilities.setXMLElementName(attributeSet, xmlNode.getNodeName());	//store the node's name in the attribute set
 //G***del		if(xmlNode.getNodeType()==xmlNode.ELEMENT_NODE) //if this node is an element
@@ -1878,7 +1889,7 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 	}
 
 
-	/**Action to go to the prvious available page(es).*/
+	/**Action to go to the previous available page(es).*/
 	protected static class PreviousPageAction extends XMLTextAction
 	{
 
@@ -1932,6 +1943,30 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 		}
 	}
 
+	/**Action to display the document element hierarchy.*/
+	protected static class DisplayElementTreeAction extends TextAction
+	{
+
+		/**Creates an element tree action with the appropriate name.
+		@param name The name of the action.
+		*/
+		public DisplayElementTreeAction(final String name)
+		{
+			super(name);  //do the default construction with the name
+		}
+
+		/**The operation to perform when this action is triggered.
+		@param actionEvent The action representing the event.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+//G***del Debug.notify("XMLEditorKit.PreviousPageAction.actionPerformed()");
+			final JTextComponent textComponent=getTextComponent(actionEvent);	//get the text component
+			if(Debug.isDebug())	//if debugging is turned on
+				ViewUtilities.printViews(textComponent, Debug.getOutput());	//print the views to the debug output
+			new BasicFrame("Elements", new ElementTreePanel(textComponent)).setVisible(true);	//show a new frame showing elements G***i18n
+		}
+	}
 
 	/**
 	 * @return HTMLDocument of <code>e</code>.

@@ -17,6 +17,7 @@ import java.awt.Graphics;
 import java.awt.*;  //G***del if not needed
 import java.awt.font.*; //G***del if not needed
 import java.awt.Shape;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent; //G***testing
 import java.awt.event.MouseMotionListener; //G***testing
@@ -163,10 +164,21 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 					((XMLEditorKit.XMLViewFactory)viewFactory).setPaged(isPaged()); //tell the editor kit whether it should be paged
 				}
 */
+/*G***del when works
+				removeKeymap(PAGED_KEYMAP_NAME);	//make sure the paged key map is not in effect
+				if(newPaged)  //if we should be paged, now
+				{
+					final Keymap pagedKeymap=addKeymap("Paged Keymap", getKeymap()); //create a new keymap for paging G***use a constant, maybe
+					loadKeymap(pagedKeymap, PAGED_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit is changed?
+				}
+*/
+
+/*G***del when works
+					final Keymap keyMap=addKeymap();	//we'll determine the new keymap based upon whether we're now paged
 				if(newPaged)  //if we should be paged, now
 				{
 						//G***maybe setup the keymap elsewhere
-				  final Keymap pagedKeymap=addKeymap("Paged Keymap", originalKeymap); //create a new keymap for paging G***use a constant, maybe
+				  keyMap=addKeymap("Paged Keymap", originalKeymap); //create a new keymap for paging G***use a constant, maybe
 						//G***rename DEFAULT_KEY_BINDINGS, perhaps to PAGED_KEY_BINDINGS, after we see what other key bindings are needed
 		  		loadKeymap(pagedKeymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap G***how do our actions get here from the editor kit?
 					setKeymap(pagedKeymap); //switch to our special keymap
@@ -175,22 +187,36 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 				{
 					setKeymap(originalKeymap); //switch back to our original keymap
 				}
+*/
+				updateKeymap();	//update the keymap to reflect our new paged condition
 			}
 		}
 
-	protected final Keymap originalKeymap;  //the keymap originally installed; we'll install keymaps under this
+	/**The name of the key map for normal XML key functions.*/
+	protected final static String XML_KEYMAP_NAME="xmlKeymap";
+	/**The name of the key map for paged key functions.*/
+	protected final static String PAGED_KEYMAP_NAME="pagedKeymap";
+
+//G***del when works	protected final Keymap originalKeymap;  //the keymap originally installed; we'll install keymaps under this
 
 	/**XML text pane default key bindings.*/
 	protected static final KeyBinding[] DEFAULT_KEY_BINDINGS=
 		{
-		  //bind (left arrow) to the XML editor kit's previous page action
-		  new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), XMLEditorKit.PREVIOUS_PAGE_ACTION),
-		  //bind (right arrow) to the XML editor kit's next page action
-		  new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), XMLEditorKit.NEXT_PAGE_ACTION),
-		  //bind (pageup) to the XML editor kit's previous page action
-		  new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0), XMLEditorKit.PREVIOUS_PAGE_ACTION),
-		  //bind (pagedown) to the XML editor kit's next page action
-		  new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0), XMLEditorKit.NEXT_PAGE_ACTION)
+			//bind (ctrl+shift+'e') to the XML editor kit's show element tree action
+			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK|InputEvent.SHIFT_DOWN_MASK), XMLEditorKit.DISPLAY_ELEMENT_TREE_ACTION_NAME)
+		};
+
+	/**XML text pane paged key bindings.*/
+	protected static final KeyBinding[] PAGED_KEY_BINDINGS=
+		{
+			//bind (left arrow) to the XML editor kit's previous page action
+			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), XMLEditorKit.PREVIOUS_PAGE_ACTION_NAME),
+			//bind (right arrow) to the XML editor kit's next page action
+			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), XMLEditorKit.NEXT_PAGE_ACTION_NAME),
+			//bind (pageup) to the XML editor kit's previous page action
+			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0), XMLEditorKit.PREVIOUS_PAGE_ACTION_NAME),
+			//bind (pagedown) to the XML editor kit's next page action
+			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0), XMLEditorKit.NEXT_PAGE_ACTION_NAME),
 		};
 
 	/**The the paged view, if any, displayed on this component. This view does not
@@ -494,7 +520,13 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	public XMLTextPane()
 	{
 		super();	//construct the parent class
-		originalKeymap=getKeymap();  //get the current key map and store it for future use
+//G***del when works		originalKeymap=getKeymap();  //get the current key map and store it for future use
+		final Keymap defaultKeymap=getKeymap();	//get the current keymap
+		final Keymap xmlKeymap=addKeymap(XML_KEYMAP_NAME, defaultKeymap); //create a new keymap for our custom actions
+		loadKeymap(defaultKeymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit changes?
+		final Keymap pagedKeymap=addKeymap(PAGED_KEYMAP_NAME, xmlKeymap); //create a new keymap for paging
+		loadKeymap(pagedKeymap, PAGED_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit is changed?
+		updateKeymap();	//update the keymap based upon our current settings
 		final ViewFactory xhtmlViewFactory=new XHTMLViewFactory();  //create a view factory fo XHTML
 		registerViewFactory(XHTMLConstants.XHTML_NAMESPACE_URI.toString(), xhtmlViewFactory);  //associate the XHTML view factory with XHTML elements
 		registerViewFactory(OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlViewFactory);  //associate the XHTML view factory with OEB elements
@@ -1269,6 +1301,22 @@ Debug.trace("creating OEB editor kit"); //G***del
 */
     }
 
+
+
+	/**Updates the installed keymap based upon the current settings, such as
+		whether the text pane is currently paged.
+	*/
+	protected void updateKeymap()
+	{
+		if(isPaged())	//if we're in paged mode
+		{
+			setKeymap(getKeymap(PAGED_KEYMAP_NAME));	//install the paged keymap
+		}
+		else	//if we aren't in paged mode
+		{
+			setKeymap(getKeymap(XML_KEYMAP_NAME));	//install the normal keymap
+		}
+	}
 
 
     // --- Scrollable  ----------------------------------------

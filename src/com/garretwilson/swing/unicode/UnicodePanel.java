@@ -34,9 +34,13 @@ public class UnicodePanel extends JPanel
 		unicodeTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     this.setLayout(borderLayout);
 		scrollPane.getViewport().add(unicodeTable);
+
+			//TODO whatever was trying to be done here can now probably be done with a BasicPanel.setTrackViewport...
+
 //G***fix		scrollPane.setPreferredSize(new Dimension(430, 200));
 //G***fix		scrollPane.setPreferredSize(new Dimension(430, unicodeTable.getPreferredScrollableViewportSize().height));
 //G***fix		scrollPane.setPreferredSize(unicodeTable.getPreferredScrollableViewportSize()); //G***testing
+
     this.add(scrollPane, BorderLayout.CENTER);
   }
 }
