@@ -2,6 +2,7 @@ package com.garretwilson.swing.text;
 
 import java.awt.*;
 import java.util.*;
+import static java.lang.Math.*;
 import static java.util.Collections.*;
 import java.util.List;
 import javax.swing.SwingUtilities;
@@ -62,20 +63,25 @@ public class ViewComponentManager //G***finish the class comments with examples 
 			/**@return The region along the axis relative to the origin.*/
 			public Region getRegion() {return region;}
 		
-		/**The alignment along the axis (-1.0 to +1.0) relative to the origin.*/
+		/**The alignment along the axis (0.0 to 1.0, inclusive) relative to the origin.*/
 		private final float alignment;
 			
-			/**@return The alignment along the axis (-1.0 to +1.0) relative to the origin.*/
+			/**@return The alignment along the axis (0.0 to 1.0, inclusive) relative to the origin.*/
 			public float getAlignment() {return alignment;}
 	
 		/**Constructs a location along an axis aligned in a region.
 		@param region The region along the axis relative to the origin.
-		@param alignment The alignment along the axis (-1.0 to +1.0) relative to the origin.
+		@param alignment The alignment along the axis (0.0 to 1.0, inclusive) relative to the origin.
+		@exception IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
 		*/
 		public AxisLocation(final Region region, final float alignment)
 		{
 			this.region=region;	//save the region
 			this.alignment=alignment;	//save the alignment
+			if(alignment<0 || alignment>1)	//if the alignment is not valid
+			{
+				throw new IllegalArgumentException("Alignment "+alignment+" must be constrained from 0.0 to 1.0, inclusive.");
+			}
 		}
 		
 		/**Determines the coordinate along the axis relative to the given origin and span based upon the region and alignment.
@@ -243,31 +249,34 @@ public class ViewComponentManager //G***finish the class comments with examples 
 	/**The current ratio of scaled height to full height.*/
 	protected float yMultiplier=1.0f;
 
-	/**The list of managed components.*/
-//G***del	protected final List componentList=new ArrayList(); //should we just use a set or something?
-
-	/**The map of points, keyed to components. Each location specifies the
-		preferred location of the component relative to the original size of the
-		view. Only components the locations of which should be managed have points
-		stored here.
-	*/
-//G***del	protected final Map componentLocationMap=new HashMap();
-
-	/**The map of points, keyed to components. Each location specifies the
-		scaled location of the component relative to the scaled size of the
-		view. Only components the locations of which should be managed have points
-		stored here.
-		<p>These values are calculated each time the view is scaled, but these points
-		do not represent actual screen locations as they must be offset from the
-		view origin at painting time.</p>
-	@see #paint
-	*/
-//G***del	protected final Map componentScaledLocationMap=new HashMap();
-
 	/**Whether we are currently being shown. Used so that new components
 		can be shown or hidden appropriately when they are first added.
 	*/
 	private boolean showing=false;
+
+	/**The minimum space needed for components in the left inset.*/
+	private int minimumLeftInset=0;
+
+		/**@return The minimum space needed for components in the left inset.*/
+		public int getMinimumLeftInset() {return minimumLeftInset;}
+
+	/**The minimum space needed for components in the right inset.*/
+	private int minimumRightInset=0;
+
+		/**@return The minimum space needed for components in the right inset.*/
+		public int getMinimumRightInset() {return minimumRightInset;}
+
+	/**The minimum space needed for components in the top inset.*/
+	private int minimumTopInset=0;
+
+		/**@return The minimum space needed for components in the top inset.*/
+		public int getMinimumTopInset() {return minimumTopInset;}
+
+	/**The minimum space needed for components in the bottom inset.*/
+	private int minimumBottomInset=0;
+
+		/**@return The minimum space needed for components in the bottom inset.*/
+		public int getMinimumBottomInset() {return minimumBottomInset;}
 
 	/**Constructor that specifies a view for which components will be managed.
 	@param ownerView The view that will contain Java AWT and/or Swing components.
@@ -416,9 +425,10 @@ public class ViewComponentManager //G***finish the class comments with examples 
 	/**Adds a component to be managed, along with a position.
 	@param component The component to be managed.
 	@param regionX The region along the X axis relative to the origin.
-	@param alignmentX The alignment along the X axis (-1.0 to +1.0) relative to the origin.
+	@param alignmentX The alignment along the X axis (0.0 to 1.0, inclusive) relative to the origin.
 	@param regionY The region along the Y axis relative to the origin.
-	@param alignmentY The alignment along the Y axis (-1.0 to +1.0) relative to the origin.
+	@param alignmentY The alignment along the Y axis (0.0 to 1.0, inclusive) relative to the origin.
+	@exception IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
 	*/
 	public synchronized void add(final Component component, final AxisLocation.Region regionX, final float alignmentX, final AxisLocation.Region regionY, final float alignmentY)
 	{
@@ -431,10 +441,11 @@ public class ViewComponentManager //G***finish the class comments with examples 
 		size changes, provided the manager is notified of the size change.
 	@param component The component to be managed.
 	@param regionX The region along the X axis relative to the origin.
-	@param alignmentX The alignment along the X axis (-1.0 to +1.0) relative to the origin.
+	@param alignmentX The alignment along the X axis (0.0 to 1.0, inclusive) relative to the origin.
 	@param regionY The region along the Y axis relative to the origin.
-	@param alignmentY The alignment along the Y axis (-1.0 to +1.0) relative to the origin.
+	@param alignmentY The alignment along the Y axis (.0 to 1.0, inclusive) relative to the origin.
 	@param size The size of the component, relative to the view size.
+	@exception IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
 	*/
 	public synchronized void add(final Component component, final AxisLocation.Region regionX, final float alignmentX, final AxisLocation.Region regionY, final float alignmentY, final Dimension size)
 	{
@@ -447,11 +458,12 @@ public class ViewComponentManager //G***finish the class comments with examples 
 		size changes, provided the manager is notified of the size change.
 	@param component The component to be managed.
 	@param regionX The region along the X axis relative to the origin.
-	@param alignmentX The alignment along the X axis (-1.0 to +1.0) relative to the origin.
+	@param alignmentX The alignment along the X axis (0.0 to 1.0, inclusive) relative to the origin.
 	@param regionY The region along the Y axis relative to the origin.
-	@param alignmentY The alignment along the Y axis (-1.0 to +1.0) relative to the origin.
+	@param alignmentY The alignment along the Y axis (0.0 to 1.0, inclusive) relative to the origin.
 	@param width The width of the component, relative to the view width.
 	@param height The height of the component, relative to the view width.
+		@exception IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
 	*/
 	public synchronized void add(final Component component, final AxisLocation.Region regionX, final float alignmentX, final AxisLocation.Region regionY, final float alignmentY, final int width, final int height)
 	{
@@ -634,46 +646,43 @@ Debug.traceStack(); //G***del
 	*/
 	protected void updateComponentScaledPosition(final ComponentInfo componentInfo)
 	{
-		if(componentInfo!=null) //if we have valid component information
+		final Dimension relativeSize=componentInfo.getSize(); //get the relative size of this component, if we have it
+		final Dimension actualSize;	//we'll determine the current display size, which will be the scaled size or the actual size if there is no scaled size
+		if(relativeSize!=null)  //if we have a preferred size for this component
 		{
-			final Dimension relativeSize=componentInfo.getSize(); //get the relative size of this component, if we have it
-			final Dimension actualSize;	//we'll determine the current display size, which will be the scaled size or the actual size if there is no scaled size
-			if(relativeSize!=null)  //if we have a preferred size for this component
-			{
-				actualSize=new Dimension(relativeSize); //create a new scaled size based on the preferred location
-				actualSize.width=Math.round(actualSize.width*xMultiplier);  //scale the size horizontally
-				actualSize.height=Math.round(actualSize.height*yMultiplier);  //scale the size vertically
-				componentInfo.setScaledSize(actualSize);  //store the scaled size
-			}
-			else	//if we don't have a preferred size for the component
-			{
-				actualSize=componentInfo.getComponent().getSize();	//just use the size of the component
-			}
-			final Position position=componentInfo.getPosition();	//get the position of the component
-			if(position instanceof RegionPosition)	//if the position specifies a region
-			{
-				final RegionPosition regionPosition=(RegionPosition)position;	//get the position as a region position
-				final View view=getView();	//get a reference to the view
-				final Insets insets=view instanceof Inset ? ((Inset)view).getInsets() : new Insets(0, 0, 0, 0);	//get the insets of the view, if the view reports its insets
-				final float x=regionPosition.getLocationX().getCoordinate(insets.left, scaledWidth-insets.left-insets.right, insets.right, actualSize.width);	//determine the X coordinate
-				final float y=regionPosition.getLocationY().getCoordinate(insets.top, scaledHeight-insets.top-insets.bottom, insets.bottom, actualSize.height);	//determine the Y coordinate
-				componentInfo.setScaledLocation(new Point(Math.round(x), Math.round(y)));  //store the scaled location
-			}
-			else if(position instanceof LocationPosition)	//if the position specifies an absolute location
-			{
-				final LocationPosition locationPosition=(LocationPosition)position;	//get the position as a location position
-				final Point location=locationPosition.getLocation();	//get the location position's location
-				float x=location.x*xMultiplier;  //scale the position horizontally
-				float y=location.y*yMultiplier;  //scale the position vertically
-				if(locationPosition.isCentered())	//if we should center the component at the location
-				{
-					x-=scaledWidth/2;	//center the component horizontally
-					y-=scaledHeight/2;	//center the component vertically
-				}
-				componentInfo.setScaledLocation(new Point(Math.round(x), Math.round(y)));  //store the scaled location
-			}
-			updateComponentPosition(componentInfo); //update the component's absolute location and size
+			actualSize=new Dimension(relativeSize); //create a new scaled size based on the preferred location
+			actualSize.width=Math.round(actualSize.width*xMultiplier);  //scale the size horizontally
+			actualSize.height=Math.round(actualSize.height*yMultiplier);  //scale the size vertically
+			componentInfo.setScaledSize(actualSize);  //store the scaled size
 		}
+		else	//if we don't have a preferred size for the component
+		{
+			actualSize=componentInfo.getComponent().getSize();	//just use the size of the component
+		}
+		final Position position=componentInfo.getPosition();	//get the position of the component
+		if(position instanceof RegionPosition)	//if the position specifies a region
+		{
+			final RegionPosition regionPosition=(RegionPosition)position;	//get the position as a region position
+			final View view=getView();	//get a reference to the view
+			final Insets insets=view instanceof Inset ? ((Inset)view).getInsets() : new Insets(0, 0, 0, 0);	//get the insets of the view, if the view reports its insets
+			final float x=regionPosition.getLocationX().getCoordinate(insets.left, scaledWidth-insets.left-insets.right, insets.right, actualSize.width);	//determine the X coordinate
+			final float y=regionPosition.getLocationY().getCoordinate(insets.top, scaledHeight-insets.top-insets.bottom, insets.bottom, actualSize.height);	//determine the Y coordinate
+			componentInfo.setScaledLocation(new Point(Math.round(x), Math.round(y)));  //store the scaled location
+		}
+		else if(position instanceof LocationPosition)	//if the position specifies an absolute location
+		{
+			final LocationPosition locationPosition=(LocationPosition)position;	//get the position as a location position
+			final Point location=locationPosition.getLocation();	//get the location position's location
+			float x=location.x*xMultiplier;  //scale the position horizontally
+			float y=location.y*yMultiplier;  //scale the position vertically
+			if(locationPosition.isCentered())	//if we should center the component at the location
+			{
+				x-=scaledWidth/2;	//center the component horizontally
+				y-=scaledHeight/2;	//center the component vertically
+			}
+			componentInfo.setScaledLocation(new Point(Math.round(x), Math.round(y)));  //store the scaled location
+		}
+		updateComponentPosition(componentInfo); //update the component's absolute location and size
 	}
 
 	/**Updates the absolute locations of all components we're keepting track of,
@@ -698,16 +707,14 @@ Debug.traceStack(); //G***del
 	*/
 	protected void updateComponentPosition(ComponentInfo componentInfo)
 	{
-		if(componentInfo!=null) //if we have valid component information TODO is this test needed anymore?
+		final Component component=componentInfo.getComponent();	//get the component being managed
+		final Point scaledLocation=componentInfo.getScaledLocation();  //get the scaled location of this component, if we have it
+		if(scaledLocation!=null)  //if we have a scaled location for this component
 		{
-			final Component component=componentInfo.getComponent();	//get the component being managed
-			final Point scaledLocation=componentInfo.getScaledLocation();  //get the scaled location of this component, if we have it
-			if(scaledLocation!=null)  //if we have a scaled location for this component
+			if(location.x>=0 && location.y>=0)  //if we have a valid view position
 			{
-				if(location.x>=0 && location.y>=0)  //if we have a valid view position
-				{
-					int x=location.x+scaledLocation.x;  //offset the component from the horizontal view origin
-					int y=location.y+scaledLocation.y;  //offset the component from the vertial view origin
+				int x=location.x+scaledLocation.x;  //offset the component from the horizontal view origin
+				int y=location.y+scaledLocation.y;  //offset the component from the vertial view origin
 /*TODO del when works
 					if(componentInfo.isCentered())  //if we should center the component at the location
 					{
@@ -715,13 +722,13 @@ Debug.traceStack(); //G***del
 						y-=component.getHeight()/2;  //center the component vertically
 					}
 */
-					component.setLocation(x, y);  //update the component's absolute location to be its scaled location relative to the location of the view, centered if necessary
-					final Dimension scaledSize=componentInfo.getScaledSize();  //get the scaled size of this component, if we have it
-					if(scaledSize!=null)  //if we have a scaled size for this component
-					{
-						component.setSize(scaledSize);  //update the component's size (sizes are absolute, and do not have to be offset from the view origin)
-					}
-					component.validate(); //tell the component to validate itself, laying out its child components if needed
+				component.setLocation(x, y);  //update the component's absolute location to be its scaled location relative to the location of the view, centered if necessary
+				final Dimension scaledSize=componentInfo.getScaledSize();  //get the scaled size of this component, if we have it
+				if(scaledSize!=null)  //if we have a scaled size for this component
+				{
+					component.setSize(scaledSize);  //update the component's size (sizes are absolute, and do not have to be offset from the view origin)
+				}
+				component.validate(); //tell the component to validate itself, laying out its child components if needed
 /*G***del; sizes are relative, and don't need to be updated relative to the view origin
 					final Dimension scaledSize=componentInfo.getScaledSize();  //get the scaled size of this component, if we have it
 					if(scaledSize!=null)  //if we have a scaled size for this component
@@ -736,6 +743,42 @@ Debug.traceStack(); //G***del
 						component.setLocation(x, y);  //update the component's absolute location to be its scaled location relative to the location of the view, centered if necessary
 */
 
+			}
+		}
+		updateMinimumInsets();	//update all the inset calculations, now that a component has changed its position and/or size
+	}
+
+	/**Updates the minimum insets based upon the current positions of all components.
+	The component positions of interest are primarily those with region-based positioning that are either in <code>BEFORE</code> or <code>AFTER</code> positions.
+	The component's current actual size is used for calculating minimum insets, which means it is assumed that <code>updateComponentPosition()</code> has already been called.
+	*/
+	protected void updateMinimumInsets()
+	{
+		minimumLeftInset=minimumRightInset=minimumTopInset=minimumBottomInset=0;	//reset the insets to zero
+		for(final ComponentInfo componentInfo:getComponentInfos())	//for each component information
+		{
+			final Dimension componentSize=componentInfo.getComponent().getSize();	//get the size of the component
+			final Position position=componentInfo.getPosition();	//get the position of the component
+			if(position instanceof RegionPosition)	//if the position specifies a region
+			{
+				final RegionPosition regionPosition=(RegionPosition)position;	//get the position as a region position TODO compensate for orientation for all the following updates
+				switch(regionPosition.getLocationX().getRegion())	//check the horizontal region
+				{
+					case BEFORE:
+						minimumLeftInset=max(minimumLeftInset, componentSize.width);	//update the minimum left inset
+						break;
+					case AFTER:
+						minimumRightInset=max(minimumRightInset, componentSize.width);	//update the minimum right inset
+						break;
+				}
+				switch(regionPosition.getLocationY().getRegion())	//check the vertical region
+				{
+					case BEFORE:
+						minimumTopInset=max(minimumTopInset, componentSize.height);	//update the minimum top inset
+						break;
+					case AFTER:
+						minimumBottomInset=max(minimumBottomInset, componentSize.height);	//update the minimum bottom inset
+						break;
 				}
 			}
 		}
@@ -857,9 +900,10 @@ Debug.traceStack(); //G***del
 		/**Position constructor that accepts a border position.
 		@param component The component being managed.
 		@param regionX The region along the X axis relative to the origin.
-		@param alignmentX The alignment along the X axis (-1.0 to +1.0) relative to the origin.
+		@param alignmentX The alignment along the X axis (0.0 to 1.0, inclusive) relative to the origin.
 		@param regionY The region along the Y axis relative to the origin.
-		@param alignmentY The alignment along the Y axis (-1.0 to +1.0) relative to the origin.
+		@param alignmentY The alignment along the Y axis (0.0 to 1.0, inclusive) relative to the origin.
+		@exception IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
 		*/
 		public ComponentInfo(final Component component, final AxisLocation.Region regionX, final float alignmentX, final AxisLocation.Region regionY, final float alignmentY)
 		{
@@ -870,11 +914,12 @@ Debug.traceStack(); //G***del
 		/**Size constructor with optional border specification.
 		@param component The component being managed.
 		@param regionX The region along the X axis relative to the origin.
-		@param alignmentX The alignment along the X axis (-1.0 to +1.0) relative to the origin.
+		@param alignmentX The alignment along the X axis (0.0 to 1.0, inclusive) relative to the origin.
 		@param regionY The region along the Y axis relative to the origin.
-		@param alignmentY The alignment along the Y axis (-1.0 to +1.0) relative to the origin.
+		@param alignmentY The alignment along the Y axis (0.0 to 1.0, inclusive) relative to the origin.
 		@param width The width of the component, relative to the view width.
 		@param height The height of the component, relative to the view width.
+		@exception IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
 		*/
 		public ComponentInfo(final Component component, final AxisLocation.Region regionX, final float alignmentX, final AxisLocation.Region regionY, final float alignmentY, final int width, final int height)
 		{

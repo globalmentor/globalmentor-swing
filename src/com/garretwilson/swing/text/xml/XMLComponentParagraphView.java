@@ -1,5 +1,7 @@
 package com.garretwilson.swing.text.xml;
 
+import static com.garretwilson.lang.MathUtilities.max;
+
 import java.awt.*;
 import javax.swing.text.*;
 import com.garretwilson.swing.text.*;
@@ -26,13 +28,57 @@ public class XMLComponentParagraphView extends XMLParagraphView implements ViewC
 		*/
 		public boolean isShowing() {return showing;}
 
-	/**Constructs a paragraph view for the given element.
+	/**<code>true</code> if the view should update minimum insets to compensate for components located in the insets, or <code>false</code> if the normal insets should be used.*/
+	private final boolean componentInsetsUpdated;
+
+		/**@return <code>true</code> if the view should update minimum insets to compensate for components located in the insets, or <code>false</code> if the normal insets should be used.*/
+		protected boolean isComponentInsetsUpdated() {return componentInsetsUpdated;}
+
+	/**@return The left inset, (&gt;=0);*/
+	protected short getLeftInset()
+	{
+		final short inset=super.getLeftInset();	//get the normal inset
+		return isComponentInsetsUpdated() ? max(inset, (short)getComponentManager().getMinimumLeftInset()) : inset;	//compensate for components in the inset if we should
+	}
+
+	/**@return The right inset, (&gt;=0);*/
+	protected short getRightInset()
+	{
+		final short inset=super.getRightInset();	//get the normal inset
+		return isComponentInsetsUpdated() ? max(inset, (short)getComponentManager().getMinimumRightInset()) : inset;	//compensate for components in the inset if we should
+	}
+
+	/**@return The top inset, (&gt;=0);*/
+	protected short getTopInset()
+	{
+		final short inset=super.getTopInset();	//get the normal inset
+		return isComponentInsetsUpdated() ? max(inset, (short)getComponentManager().getMinimumTopInset()) : inset;	//compensate for components in the inset if we should
+	}
+
+	/**@return The bottom inset, (&gt;=0);*/
+	protected short getBottomInset()
+	{
+		final short inset=super.getBottomInset();	//get the normal inset
+		return isComponentInsetsUpdated() ? max(inset, (short)getComponentManager().getMinimumBottomInset()) : inset;	//compensate for components in the inset if we should
+	}
+
+	/**Constructs a paragraph view for the given element, compensating for components in the insets.
 	@param element The element for which this view is responsible.
 	*/
 	public XMLComponentParagraphView(final Element element)
 	{
+		this(element, true);	//default to compensating for inset components
+	}
+
+	/**Constructs a paragraph view for the given element.
+	@param element The element for which this view is responsible.
+	@param compensateInsets <code>true</code> if the view should update minimum insets to compensate for components located in the insets, or <code>false</code> if the normal insets should be used.
+	*/
+	public XMLComponentParagraphView(final Element element, final boolean compensateInsets)
+	{
 		super(element);	//construct the parent class
 		componentManager=new ViewComponentManager(this);  //create a component manager to manage our components
+		this.componentInsetsUpdated=compensateInsets;	//save whether we should compensate for components in the insets
 	}
 
 	/**Called when the view is being hidden by a parent that hides views, such
@@ -79,7 +125,7 @@ public class XMLComponentParagraphView extends XMLParagraphView implements ViewC
 	*/
 	public View createFragmentView(final boolean isFirstFragment, final boolean isLastFragment)
 	{
-	  return new XMLComponentParagraphFragmentView(getElement(), getAxis(), this, isFirstFragment, isLastFragment);	//create a fragment of this view
+	  return new XMLComponentParagraphFragmentView(getElement(), getAxis(), this, isFirstFragment, isLastFragment, isComponentInsetsUpdated());	//create a fragment of this view
 	}
 
 	/**The class that serves as a fragment if the paragraph is broken.
@@ -104,17 +150,53 @@ public class XMLComponentParagraphView extends XMLParagraphView implements ViewC
 			*/
 			public boolean isShowing() {return showing;}
 
+		/**<code>true</code> if the view should update minimum insets to compensate for components located in the insets, or <code>false</code> if the normal insets should be used.*/
+		private final boolean componentInsetsUpdated;
+
+			/**@return <code>true</code> if the view should update minimum insets to compensate for components located in the insets, or <code>false</code> if the normal insets should be used.*/
+			protected boolean isComponentInsetsUpdated() {return componentInsetsUpdated;}
+
+		/**@return The left inset, (&gt;=0);*/
+		protected short getLeftInset()
+		{
+			final short inset=super.getLeftInset();	//get the normal inset
+			return isComponentInsetsUpdated() ? max(inset, (short)getComponentManager().getMinimumLeftInset()) : inset;	//compensate for components in the inset if we should
+		}
+
+		/**@return The right inset, (&gt;=0);*/
+		protected short getRightInset()
+		{
+			final short inset=super.getRightInset();	//get the normal inset
+			return isComponentInsetsUpdated() ? max(inset, (short)getComponentManager().getMinimumRightInset()) : inset;	//compensate for components in the inset if we should
+		}
+
+		/**@return The top inset, (&gt;=0);*/
+		protected short getTopInset()
+		{
+			final short inset=super.getTopInset();	//get the normal inset
+			return isComponentInsetsUpdated() ? max(inset, (short)getComponentManager().getMinimumTopInset()) : inset;	//compensate for components in the inset if we should
+		}
+
+		/**@return The bottom inset, (&gt;=0);*/
+		protected short getBottomInset()
+		{
+			final short inset=super.getBottomInset();	//get the normal inset
+			return isComponentInsetsUpdated() ? max(inset, (short)getComponentManager().getMinimumBottomInset()) : inset;	//compensate for components in the inset if we should
+		}
+
 		/**Constructs a fragment view for the paragraph.
 		@param element The element this view is responsible for.
 		@param axis The tiling axis, either View.X_AXIS or View.Y_AXIS.
 		@param wholeView The original, unfragmented view from which this fragment (or one or more intermediate fragments) was broken.
 		@param firstFragment Whether this is the first fragement of the original view.
 		@param lastFragment Whether this is the last fragment of the original view.
+		@param compensateInsets <code>true</code> if the view should update minimum insets to compensate for components located in the insets, or <code>false</code> if the normal insets should be used.
 		*/
-		public XMLComponentParagraphFragmentView(final Element element, final int axis, final View wholeView, final boolean firstFragment, final boolean lastFragment)
+		public XMLComponentParagraphFragmentView(final Element element, final int axis, final View wholeView, final boolean firstFragment, final boolean lastFragment, final boolean compensateInsets)
 		{
 			super(element, axis, wholeView, firstFragment, lastFragment); //do the default construction
 			componentManager=new ViewComponentManager(this);  //create a component manager to manage our components
+			this.componentInsetsUpdated=compensateInsets;	//save whether we should compensate for components in the insets
 		}
 
 		/**Creates a fragment view into which pieces of this view will be placed.
@@ -123,7 +205,7 @@ public class XMLComponentParagraphView extends XMLParagraphView implements ViewC
 		*/
 		public View createFragmentView(final boolean isFirstFragment, final boolean isLastFragment)
 		{
-		  return new XMLComponentParagraphFragmentView(getElement(), getAxis(), getWholeView(), isFirstFragment, isLastFragment);	//create a fragment of this view, indicating the original view
+		  return new XMLComponentParagraphFragmentView(getElement(), getAxis(), getWholeView(), isFirstFragment, isLastFragment, isComponentInsetsUpdated());	//create a fragment of this view, indicating the original view
 		}
 
 		/**Called when the view is being hidden by a parent that hides views, such

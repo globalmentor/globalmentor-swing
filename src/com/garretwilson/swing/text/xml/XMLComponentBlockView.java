@@ -4,12 +4,8 @@ import java.awt.*;
 
 import javax.swing.text.*;
 
-import com.garretwilson.swing.text.ViewComponentManageable;
-import com.garretwilson.swing.text.ViewComponentManager;
-import com.garretwilson.swing.text.ViewHidable;
-import com.garretwilson.swing.text.xml.XMLComponentParagraphView.XMLComponentParagraphFragmentView;
-import com.garretwilson.swing.text.xml.XMLParagraphView.XMLParagraphFragmentView;
-import com.garretwilson.util.Debug;
+import static com.garretwilson.lang.MathUtilities.*;
+import com.garretwilson.swing.text.*;
 
 /**Provides a block view with one or more components embedded. The children will
 	be loaded as with a normal block view, except that the added components will
@@ -42,15 +38,60 @@ public class XMLComponentBlockView extends XMLBlockView implements ViewComponent
 		@return Whether the object is showing.
 		*/
 		public boolean isShowing() {return showing;}
-	
-	/**Constructs a block view with the given component.
+
+	/**<code>true</code> if the view should update minimum insets to compensate for components located in the insets, or <code>false</code> if the normal insets should be used.*/
+	private final boolean componentInsetsUpdated;
+
+		/**@return <code>true</code> if the view should update minimum insets to compensate for components located in the insets, or <code>false</code> if the normal insets should be used.*/
+		protected boolean isComponentInsetsUpdated() {return componentInsetsUpdated;}
+
+	/**@return The left inset, (&gt;=0);*/
+	protected short getLeftInset()
+	{
+		final short inset=super.getLeftInset();	//get the normal inset
+		return isComponentInsetsUpdated() ? max(inset, (short)getComponentManager().getMinimumLeftInset()) : inset;	//compensate for components in the inset if we should
+	}
+
+	/**@return The right inset, (&gt;=0);*/
+	protected short getRightInset()
+	{
+		final short inset=super.getRightInset();	//get the normal inset
+		return isComponentInsetsUpdated() ? max(inset, (short)getComponentManager().getMinimumRightInset()) : inset;	//compensate for components in the inset if we should
+	}
+
+	/**@return The top inset, (&gt;=0);*/
+	protected short getTopInset()
+	{
+		final short inset=super.getTopInset();	//get the normal inset
+		return isComponentInsetsUpdated() ? max(inset, (short)getComponentManager().getMinimumTopInset()) : inset;	//compensate for components in the inset if we should
+	}
+
+	/**@return The bottom inset, (&gt;=0);*/
+	protected short getBottomInset()
+	{
+		final short inset=super.getBottomInset();	//get the normal inset
+		return isComponentInsetsUpdated() ? max(inset, (short)getComponentManager().getMinimumBottomInset()) : inset;	//compensate for components in the inset if we should
+	}
+
+	/**Constructs a block view with the given component, compensating for components in the insets.
 	@param element The element this view is responsible for.
 	@param axis The tiling axis, either <code>View.X_AXIS</code> or <code>View.Y_AXIS</code>.
 	*/
 	public XMLComponentBlockView(final Element element, final int axis)
 	{
+		this(element, axis, true);	//default to compensating for inset components
+	}
+
+	/**Constructs a block view with the given component.
+	@param element The element this view is responsible for.
+	@param axis The tiling axis, either <code>View.X_AXIS</code> or <code>View.Y_AXIS</code>.
+	@param compensateInsets <code>true</code> if the view should update minimum insets to compensate for components located in the insets, or <code>false</code> if the normal insets should be used.
+	*/
+	public XMLComponentBlockView(final Element element, final int axis, final boolean compensateInsets)
+	{
 		super(element, axis, true, true); //construct the parent, allowing expansion in both direction
 		componentManager=new ViewComponentManager(this);  //create a component manager to manage our components
+		this.componentInsetsUpdated=compensateInsets;	//save whether we should compensate for components in the insets
 	}
 
 	/**Called when the view is being hidden by a parent that hides views, such
@@ -97,7 +138,7 @@ public class XMLComponentBlockView extends XMLBlockView implements ViewComponent
 	*/
 	public View createFragmentView(final boolean isFirstFragment, final boolean isLastFragment)
 	{
-	  return new XMLComponentFragmentBlockView(getElement(), getAxis(), this, isFirstFragment, isLastFragment);	//create a fragment of this view
+	  return new XMLComponentFragmentBlockView(getElement(), getAxis(), this, isFirstFragment, isLastFragment, isComponentInsetsUpdated());	//create a fragment of this view
 	}
 
 	/**The class that serves as a fragment if the paragraph is broken.
@@ -122,17 +163,78 @@ public class XMLComponentBlockView extends XMLBlockView implements ViewComponent
 			*/
 			public boolean isShowing() {return showing;}
 
+		/**<code>true</code> if the view should update minimum insets to compensate for components located in the insets, or <code>false</code> if the normal insets should be used.*/
+		private final boolean componentInsetsUpdated;
+
+			/**@return <code>true</code> if the view should update minimum insets to compensate for components located in the insets, or <code>false</code> if the normal insets should be used.*/
+			protected boolean isComponentInsetsUpdated() {return componentInsetsUpdated;}
+
+		/**Sets the cached properties from the attributes.
+		This version compensates for the inset components, if necessary.
+		@see XMLComponentBlockView#isComponentInsetsUpdated()
+		*/
+/*TODO fix; this doesn't seem to work, probably because the properties need to be unsynchronized after adding components
+		protected void setPropertiesFromAttributes() 
+		{
+			super.setPropertiesFromAttributes();	//set the properties normally
+			if(isComponentInsetsUpdated())	//if we should compensate for the component insets
+			{
+				final short topInset=getTopInset();	//get the latest insets
+				final short leftInset=getLeftInset();
+				final short bottomInset=getBottomInset();
+				final short rightInset=getRightInset();
+				final ViewComponentManager componentManager=getComponentManager();	//get the component manager
+				final int minimumTopInset=componentManager.getMinimumTopInset();	//get the minimum component insets
+				final int minimumLeftInset=componentManager.getMinimumLeftInset();
+				final int minimumBottomInset=componentManager.getMinimumBottomInset();
+				final int minimumRightInset=componentManager.getMinimumRightInset();
+					//compensate for the minimum insets required for components
+			  setInsets(max(topInset, (short)minimumTopInset), max(leftInset, (short)minimumLeftInset), max(bottomInset, (short)minimumBottomInset), max(rightInset, (short)minimumRightInset));
+			}
+		}
+*/
+
+		/**@return The left inset, (&gt;=0);*/
+		protected short getLeftInset()
+		{
+			final short inset=super.getLeftInset();	//get the normal inset
+			return isComponentInsetsUpdated() ? max(inset, (short)getComponentManager().getMinimumLeftInset()) : inset;	//compensate for components in the inset if we should
+		}
+
+		/**@return The right inset, (&gt;=0);*/
+		protected short getRightInset()
+		{
+			final short inset=super.getRightInset();	//get the normal inset
+			return isComponentInsetsUpdated() ? max(inset, (short)getComponentManager().getMinimumRightInset()) : inset;	//compensate for components in the inset if we should
+		}
+
+		/**@return The top inset, (&gt;=0);*/
+		protected short getTopInset()
+		{
+			final short inset=super.getTopInset();	//get the normal inset
+			return isComponentInsetsUpdated() ? max(inset, (short)getComponentManager().getMinimumTopInset()) : inset;	//compensate for components in the inset if we should
+		}
+
+		/**@return The bottom inset, (&gt;=0);*/
+		protected short getBottomInset()
+		{
+			final short inset=super.getBottomInset();	//get the normal inset
+			return isComponentInsetsUpdated() ? max(inset, (short)getComponentManager().getMinimumBottomInset()) : inset;	//compensate for components in the inset if we should
+		}
+
 		/**Constructs a component fragment block view.
 		@param element The element this view is responsible for.
 		@param axis The tiling axis, either View.X_AXIS or View.Y_AXIS.
 		@param wholeView The original, unfragmented view from which this fragment (or one or more intermediate fragments) was broken.
 		@param firstFragment Whether this is the first fragment of the original view.
 		@param lastFragment Whether this is the last fragment of the original view.
+		@param compensateInsets <code>true</code> if the view should update minimum insets to compensate for components located in the insets, or <code>false</code> if the normal insets should be used.
 		*/
-		public XMLComponentFragmentBlockView(final Element element, final int axis, final View wholeView, final boolean firstFragment, final boolean lastFragment)
+		public XMLComponentFragmentBlockView(final Element element, final int axis, final View wholeView, final boolean firstFragment, final boolean lastFragment, final boolean compensateInsets)
 		{
 			super(element, axis, wholeView, firstFragment, lastFragment); //do the default construction
 			componentManager=new ViewComponentManager(this);  //create a component manager to manage our components
+			this.componentInsetsUpdated=compensateInsets;	//save whether we should compensate for components in the insets
 		}
 
 		/**Creates a fragment view into which pieces of this view will be placed.
@@ -141,7 +243,7 @@ public class XMLComponentBlockView extends XMLBlockView implements ViewComponent
 		*/
 		public View createFragmentView(final boolean isFirstFragment, final boolean isLastFragment)
 		{
-		  return new XMLComponentFragmentBlockView(getElement(), getAxis(), getWholeView(), isFirstFragment, isLastFragment);	//create a fragment of this view, indicating the original view
+		  return new XMLComponentFragmentBlockView(getElement(), getAxis(), getWholeView(), isFirstFragment, isLastFragment, isComponentInsetsUpdated());	//create a fragment of this view, indicating the original view
 		}
 
 		/**Called when the view is being hidden by a parent that hides views, such
