@@ -3,7 +3,7 @@ package com.garretwilson.swing.text.directory.vcard;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.event.DocumentListener;
-
+import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.lang.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
@@ -15,7 +15,7 @@ import com.garretwilson.text.directory.vcard.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class EmailPanel extends GridBagPanel
+public class EmailPanel extends BasicPanel
 {
 
 	/**The email text field.*/
@@ -126,7 +126,7 @@ public class EmailPanel extends GridBagPanel
 	*/
 	public EmailPanel(final String emailAddress, final int emailType)
 	{
-		super(false);	//construct the panel using a grid bag layout, but don't initialize the panel
+		super(new BasicGridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 //G***del		editTelephoneTypeAction=new EditTelephoneTypeAction();
 		addressTextField=new JTextField();
 		setDefaultFocusComponent(addressTextField);	//set the default focus component

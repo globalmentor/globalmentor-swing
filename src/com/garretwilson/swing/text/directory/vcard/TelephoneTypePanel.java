@@ -3,6 +3,7 @@ package com.garretwilson.swing.text.directory.vcard;
 import java.awt.*;
 import javax.swing.*;
 import com.garretwilson.text.directory.vcard.*;
+import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.swing.*;
 
 /**A panel allowing specification of the types of telephone of the <code>TEL</code>
@@ -11,7 +12,7 @@ import com.garretwilson.swing.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class TelephoneTypePanel extends GridBagPanel
+public class TelephoneTypePanel extends BasicPanel
 {
 
 	/**The checkbox for a telephone number associated with a residence.*/
@@ -173,7 +174,7 @@ public class TelephoneTypePanel extends GridBagPanel
 	*/
 	public TelephoneTypePanel(final int telephoneType)
 	{
-		super(false);	//construct the panel using a grid bag layout, but don't initialize the panel
+		super(new BasicGridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		homeCheckBox=new JCheckBox();
 		messageCheckBox=new JCheckBox();
 		workCheckBox=new JCheckBox();

@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.event.DocumentListener;
+import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.itu.*;
 import com.garretwilson.swing.*;
 import com.garretwilson.util.*;
@@ -16,7 +17,7 @@ import com.garretwilson.util.*;
 	and Web addresses".
 @author Garret Wilson
 */
-public class TelephoneNumberPanel extends GridBagPanel implements Verifiable
+public class TelephoneNumberPanel extends BasicPanel implements Verifiable
 {
 
 	/**The label of the country code.*/
@@ -121,7 +122,7 @@ public class TelephoneNumberPanel extends GridBagPanel implements Verifiable
 	*/
 	public TelephoneNumberPanel(final TelephoneNumber telephoneNumber)
 	{
-		super(false);	//construct the panel using a grid bag layout, but don't initialize the panel
+		super(new BasicGridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		countryCodeLabel=new JLabel();
 		countryCodeComboBox=new JComboBox();
 		nationalDestinationCodeLabel=new JLabel();

@@ -2,11 +2,12 @@ package com.garretwilson.swing;
 
 import java.awt.*;
 import javax.swing.*;
+import com.garretwilson.awt.BasicGridBagLayout;
 
 /**A panel showing status, such as text labels and progress bars.
 @author Garret Wilson
 */
-public class StatusPanel extends GridBagPanel
+public class StatusPanel extends BasicPanel
 {
 
 	/**Insets to use for the major status components.*/
@@ -22,10 +23,10 @@ public class StatusPanel extends GridBagPanel
 		protected JProgressBar getProgressBar() {return progressBar;}
 
 	/**The panel on which custom status components can be placed.*/
-	private final GridBagPanel statusComponentPanel;
+	private final BasicPanel statusComponentPanel;
 
 		/**@return The panel on which custom status components can be placed.*/
-		protected GridBagPanel getStatusComponentPanel() {return statusComponentPanel;}
+		protected BasicPanel getStatusComponentPanel() {return statusComponentPanel;}
 
 	/**Default constructor.*/
 	public StatusPanel()
@@ -39,8 +40,8 @@ public class StatusPanel extends GridBagPanel
 	*/
 	public StatusPanel(final boolean initialize)
 	{
-		super(false);	//construct the parent panel without initializing it
-		statusComponentPanel=new GridBagPanel();	//create the panel on which custom status components can be placed
+		super(new BasicGridBagLayout(), false);	//construct the parent panel without initializing it
+		statusComponentPanel=new BasicPanel(new BasicGridBagLayout());	//create the panel on which custom status components can be placed
 		progressBar=new JProgressBar();	//create the progress bar
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel
@@ -68,7 +69,7 @@ public class StatusPanel extends GridBagPanel
 	public void addStatusComponent(final Component component)
 	{
 			//add the status component to the status component panel in the next position horizontally
-		getStatusComponentPanel().add(component, getStatusComponentPanel().createNextBoxConstraints(BoxLayout.X_AXIS));
+		getStatusComponentPanel().add(component, ((BasicGridBagLayout)getStatusComponentPanel().getLayout()).createNextBoxConstraints(BasicGridBagLayout.X_AXIS));
 	}
 
 	/**Sets the range of values for the progress bar.

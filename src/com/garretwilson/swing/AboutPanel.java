@@ -2,8 +2,8 @@ package com.garretwilson.swing;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-
 import javax.swing.*;
+import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.dublincore.*;
 import com.garretwilson.rdf.version.*;
@@ -20,7 +20,7 @@ import com.garretwilson.text.CharacterConstants;
 </dl>
 @author Garret Wilson
 */
-public class AboutPanel extends GridBagPanel implements CharacterConstants
+public class AboutPanel extends BasicPanel implements CharacterConstants
 {
 
 	/**The action for showing the properties.*/
@@ -134,7 +134,7 @@ public class AboutPanel extends GridBagPanel implements CharacterConstants
 	*/
 	public AboutPanel(final RDFResource resource)
 	{
-		super(false);	//construct the panel using a grid bag layout, but don't initialize the panel
+		super(new BasicGridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		propertiesAction=new PropertiesAction();
 		titleLabel = new JTextArea();
 		versionLabel = new JLabel();

@@ -11,6 +11,7 @@ import java.util.*;
 import javax.swing.*;
 import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.util.*;
+import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
@@ -197,7 +198,7 @@ public class TelecommunicationsPanel extends ContentPanel implements Verifiable
 	*/
 	public TelecommunicationsPanel(final Telephone[] telephones, final Email[] emails)
 	{
-		super(new GridBagPanel(), false);	//construct the panel using a grid bag layout, but don't initialize the panel G***is this right? double-check construction with a panel
+		super(new BasicPanel(new BasicGridBagLayout()), false);	//construct the panel using a grid bag layout, but don't initialize the panel G***is this right? double-check construction with a panel
 		addTelephoneAction=new AddTelephoneAction();
 		addEmailAction=new AddEmailAction();
 //G***fix		removeAddressAction=new RemoveAddressAction();

@@ -4,13 +4,14 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.*;
 import javax.swing.*;
+import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.text.*;
 import com.garretwilson.util.*;
 
 /**A panel allowing selection of a language.
 @author Garret Wilson
 */
-public class LanguagePanel extends GridBagPanel
+public class LanguagePanel extends BasicPanel
 {
 	/**The label of the language combo box.*/
 	private final JLabel languageLabel;
@@ -51,7 +52,7 @@ public class LanguagePanel extends GridBagPanel
 	*/
 	public LanguagePanel(final Locale locale)
 	{
-		super(false);	//construct the panel using a grid bag layout, but don't initialize the panel
+		super(new BasicGridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		languageLabel=new JLabel();
 		languageComboBox=new JComboBox();
 		setDefaultFocusComponent(languageComboBox);	//set the default focus component

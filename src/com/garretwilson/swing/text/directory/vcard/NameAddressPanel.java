@@ -1,6 +1,7 @@
 package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
+import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.swing.*;
 import com.garretwilson.util.*;
 
@@ -10,7 +11,7 @@ import com.garretwilson.util.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class NameAddressPanel extends GridBagPanel implements Verifiable
+public class NameAddressPanel extends BasicPanel implements Verifiable
 {
 	/**The identification panel.*/
 	private final IdentificationPanel identificationPanel;
@@ -39,7 +40,7 @@ public class NameAddressPanel extends GridBagPanel implements Verifiable
 	/**Default constructor.*/
 	public NameAddressPanel()
 	{
-		super(false);	//construct the panel using a grid bag layout, but don't initialize the panel
+		super(new BasicGridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		identificationPanel=new IdentificationPanel();
 		addressesPanel=new AddressesPanel();
 		organizationPanel=new OrganizationPanel();

@@ -12,7 +12,7 @@ import com.garretwilson.swing.*;
 @author Garret Wilson
 @see java.awt.GridBagLayout
 */
-public class BasicVCardPanel extends GridBagPanel
+public class BasicVCardPanel extends BasicPanel
 {
 	/**Default constructor that uses a <code>GridBagLayout</code>.*/
 	public BasicVCardPanel()

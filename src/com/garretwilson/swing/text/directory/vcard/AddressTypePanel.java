@@ -3,6 +3,7 @@ package com.garretwilson.swing.text.directory.vcard;
 import java.awt.*;
 import javax.swing.*;
 import com.garretwilson.text.directory.vcard.*;
+import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.swing.*;
 
 /**A panel allowing specification of the types of address of the <code>ADR</code>
@@ -11,7 +12,7 @@ import com.garretwilson.swing.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class AddressTypePanel extends GridBagPanel
+public class AddressTypePanel extends BasicPanel
 {
 	
 	/**The checkbox for a domestic delivery address.*/
@@ -110,7 +111,7 @@ public class AddressTypePanel extends GridBagPanel
 	*/
 	public AddressTypePanel(final int addressType)
 	{
-		super(false);	//construct the panel using a grid bag layout
+		super(new BasicGridBagLayout(), false);	//construct the panel using a grid bag layout
 		domesticCheckBox=new JCheckBox();
 		internationalCheckBox=new JCheckBox();
 		postalCheckBox=new JCheckBox();
