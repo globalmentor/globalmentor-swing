@@ -12,16 +12,13 @@ import com.garretwilson.util.*;
 import com.garretwilson.util.prefs.*;
 
 /**An extended frame that has extra features beyond those in <code>JFrame</code>.
-<p>This class maintains its own local default close operation setting, and
-	sets the parent class default close operation to
+<p>The default close operation in this class by default is
+	<code>DISPOSE_ON_CLOSE</code>. This class maintains its own local default
+	close operation setting, and sets the parent class default close operation to
 	<code>DO_NOTHING_ON_CLOSE</code>. This allows the class listen to window
 	events and perform consistent <code>canClose()</code> checks for all methods
 	of closing. This is all handled transparently&mdash;once closing should occur,
 	the local default close operation setting is honored as normal.</p>
-<p>The default close operation in this class by default is
-	<code>DISPOSE_ON_CLOSE</code>. The action returned by
-	<code>getFileExitAction()</code> will reflect the default close operation
-	in effect.</p>
 <p>If the content pane implements <code>Modifiable</code>, the frame's
 	<code>updateStatus()</code> method will be called when the content pane is
 	modified.</p>

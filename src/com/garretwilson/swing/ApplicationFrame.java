@@ -13,9 +13,21 @@ import com.garretwilson.util.*;
 
 /**Main frame parent class for an application. This frame expects to contain
 	an <code>ApplicationPanel</code>.
+<p>If an <code>Application</code> is set for the frame, the close
+	operation changes to <code>EXIT_ON_CLOSE</code>. (This is essential to work
+	around a JDK bug that under certain instances runs a daemon thread that
+	prevents the JVM from exiting, even if the main program thread has finished
+	and the sole frame has closed.) If there is no <code>Application</code> set,
+	the close operation remains the default, <code>DISPOSE_ON_CLOSE</code>.</p>
+This class maintains the default close operation of
+	<code>DO_NOTHING_ON_CLOSE</code> . This allows the class listen to window
+	events and perform consistent <code>canClose()</code> checks for all methods
+	of closing. This is all handled transparently&mdash;once closing should occur,
+	the local default close operation setting is honored as normal.</p>
 <p>The class provides a method for displaying error messages.</p>
 @author Garret Wilson
 @see ApplicationPanel
+@see Application
 @see #displayError
 */
 public abstract class ApplicationFrame extends BasicFrame
@@ -353,6 +365,8 @@ public abstract class ApplicationFrame extends BasicFrame
 	{
 		super(contentPane, false);	//construct the parent class with the given content pane, but don't initialize it
 		this.application=application;	//store the application
+		if(application!=null)	//if this frame represents an application
+			setDefaultCloseOperation(EXIT_ON_CLOSE);	//exit when the frame closes
 		fileNewAction=new FileNewAction();  //create the new action G***maybe lazily create these
 		fileOpenAction=new FileOpenAction();  //create the open action
 		fileCloseAction=new FileCloseAction();  //create the close action

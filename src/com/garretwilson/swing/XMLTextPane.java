@@ -687,6 +687,49 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		return (URI)getDocument().getProperty(XMLDocument.BASE_URI_PROPERTY);	//return the value of the base URI property
 	}
 
+	/**Sets the text to the specified content, which must be well-formed XML.
+	<p>If the XML has no root element, it will be wrapped in
+	<code>&lt;div&gt;...&lt;/div&gt;</code>. This means that simple text will
+	also be considered and processed as XML. (It is usually desired that the
+	content type be set to "application/xhtml+xml").</p>
+	@param text The new text to be set.
+	@see #getText
+	*/
+	public void setText(String text)
+	{
+		if(text.length()>0)	//if there is any text
+		{
+			if(text.charAt(0)!='<')	//if this text doesn't start with markup G***use a constant
+				text="<div>"+text+"</div>";	//wrap the text with a <div> element G***this assumes a lot about HTML; make this more generic if we can
+		}
+		super.setText(text);	//set the text normally
+	}
+
+	/**
+	 * Returns the text contained in this <code>TextComponent</code>
+	 * in terms of the
+	 * content type of this editor.  If an exception is thrown while
+	 * attempting to retrieve the text, <code>null</code> will be returned.
+	 * This is implemented to call <code>JTextComponent.write</code> with
+	 * a <code>StringWriter</code>.
+	 *
+	 * @return the text
+	 * @see #setText
+	 */
+/*G***see if this already works
+	public String getText() {
+String txt;
+try {
+		StringWriter buf = new StringWriter();
+		write(buf);
+		txt = buf.toString();
+			} catch (IOException ioe) {
+					txt = null;
+			}
+			return txt;
+	}
+*/
+
 	/**Initializes from a URL to a file, which could be a document or, for OEB,
 		a package or a .zip file. This creates a model of the type appropriate for
 		the component (such as an OEB document) and initializes the model using the

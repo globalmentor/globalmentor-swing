@@ -335,19 +335,39 @@ G***fix
 		 * @exception RuntimeException (will eventually be a BadLocationException)
 		 *            if pos is invalid.
 		 */
-	public void read(Reader in, Document doc, int pos) throws IOException, BadLocationException
+	public void read(final Reader reader, final Document document, final int pos) throws IOException, BadLocationException
 	{
-		if(doc instanceof com.garretwilson.swing.text.xml.XMLDocument)	//make sure this is a document we know how to work with
+		if(document instanceof XMLDocument) //if this is a Swing XML document
 		{
-//G***fix			final XMLProcessor xmlProcessor=new XMLProcessor(in/*G***fix, fileLocation*/);	//create an XML processor
+			XMLDocument swingXMLDocument=(XMLDocument)document; //cast the document to an XML document
+			final URI baseURI=swingXMLDocument.getBaseURI();  //get the base URI from the document
+			final XMLProcessor xmlProcessor=new XMLProcessor();	//create a new XML processor
+			final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(reader, baseURI);	//parse the document
+			xmlDocument.normalize();  //normalize the document
+			tidyOEBXMLDocument((com.garretwilson.text.xml.XMLDocument)xmlDocument);	//tidy up the document (an important step if the document has text directly in the body and such) G***test, comment
+				//read and set any contained RDF
+			final RDFXMLProcessor rdfProcessor=new RDFXMLProcessor(); //create a new RDF processor
+			final RDF rdf;
 			try
 			{
-/*G***fix
-				final OEBPublication publication=new OEBPublication();
-				publication.load(in);	//G****testing
-*/
+				rdf=rdfProcessor.process(xmlDocument, baseURI);	//process any contained RDF
+			}
+			catch (URISyntaxException e)
+			{
+				throw new IOException(e.toString());	//TODO fix better
+			}  
+			swingXMLDocument.setRDF(rdf); //set the RDF in our document
+			setXML(xmlDocument, baseURI, getMediaType(), swingXMLDocument);  //G***fix
+		}
+		else  //if this is not an XML document we're reading into
+			super.read(reader, document, pos); //let the parent class do the reading
+/*G***del when works
+		if(doc instanceof com.garretwilson.swing.text.xml.XMLDocument)	//make sure this is a document we know how to work with
+		{
+//G***fix			final XMLProcessor xmlProcessor=new XMLProcessor(in);	//create an XML processor
+			try
+			{
 
-/*G***fix
 				final com.garretwilson.text.xml.XMLDocument xmlDocument=xmlProcessor.parseDocument();	//parse the document
 System.out.println("Adding the default OEB stylesheet.");	//G***del
 				xmlDocument.getStyleSheetList().add(new DefaultOEBCSSStyleSheet());	//G***put this somewhere else; perhaps in an OEBEditorKit
@@ -372,33 +392,17 @@ System.out.println("Ready to parse stylesheets.");	//G***del
 					}
 				}
 				((com.garretwilson.swing.text.xml.XMLDocument)doc).create(xmlDocument);
-*/
 			}
 			catch(Exception ex)
 			{
 				System.out.println(ex.getMessage());
 			}	//G***fix
-
-/*G***fix
-			HTMLDocument hdoc = (HTMLDocument) doc;
-			Parser p = getParser();
-			if (p == null) {
-		throw new IOException("Can't load parser");
-			}
-			if (pos > doc.getLength()) {
-		throw new BadLocationException("Invalid location", pos);
-			}
-
-			ParserCallback receiver = hdoc.getReader(pos);
-			Boolean ignoreCharset = (Boolean)doc.getProperty("IgnoreCharsetDirective");
-			p.parse(in, receiver, (ignoreCharset == null) ? false : ignoreCharset.booleanValue());
-			receiver.flush();
-*/
 		}
 		else	//if this isn't an XML document
 		{
 			super.read(in, doc, pos);	//let our parent read the document
 		}
+*/
 	}
 
 	/**Inserts content from the given stream which is expected to be in a format
