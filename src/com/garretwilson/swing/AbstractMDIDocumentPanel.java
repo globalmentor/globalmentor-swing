@@ -6,7 +6,6 @@ import java.net.URI;
 import java.util.*;
 import javax.swing.*;
 import com.garretwilson.text.xml.XMLSerializer;
-import com.garretwilson.text.xml.qti.*;
 import com.garretwilson.lang.BooleanUtilities;
 import com.garretwilson.model.*;
 import com.garretwilson.rdf.*;
