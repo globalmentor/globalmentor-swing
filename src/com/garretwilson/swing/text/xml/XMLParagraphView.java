@@ -114,7 +114,7 @@ public class XMLParagraphView extends javax.swing.text.ParagraphView implements 
 //G***del Debug.trace("Creating XMLParagraphView, i18n property: ", getDocument().getProperty("i18n")); //G***testing
 Debug.trace(); //G***testing
 
-		  strategy=new com.garretwilson.swing.text.TextLayoutStrategy();  //G***fix; testing i18n
+//TODO fix antialias and fonts		  strategy=new com.garretwilson.swing.text.TextLayoutStrategy();  //G***fix; testing i18n
 		}
 
 		/**
@@ -1296,7 +1296,7 @@ if(i==0)  //if this is our first view
 		<code>FlowView.LogicalView</code> because that class has package visibility.
 	@see FlowView#LogicalView
 	*/
-	protected static class LogicalView extends CompositeView  //G***perhaps derive this from our own version of CompositeView, but that may slow things down with the customer setParent(), and we may not need that; comment and explain why
+	protected static class LogicalView extends javax.swing.text.CompositeView  //G***perhaps derive this from our own version of CompositeView, but that may slow things down with the customer setParent(), and we may not need that; comment and explain why
 	{
 
 		/**Logical view constructor.

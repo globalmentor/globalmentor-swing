@@ -194,10 +194,11 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 		else  //if the media type isn't HTML
 		{
 			final String documentElementLocalName=XMLStyleUtilities.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
-			final String documentElementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element namespace URI
+			final String documentElementNamespaceURIString=XMLStyleUtilities.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element namespace URI
+			final URI documentElementNamespaceURI=documentElementNamespaceURIString!=null ? URI.create(documentElementNamespaceURIString) : null;
 				//TODO change all the XMLStyleUtilities.getXMLElementNamespaceURI() calls to return URIs
 			if(XHTMLConstants.ELEMENT_HTML.equals(documentElementLocalName)  //if the document element is an XHTML or OEB <html> element
-					&& XHTMLUtilities.isHTMLNamespaceURI(URI.create(documentElementNamespaceURI)))	//if the document namespace URI represents an XHTML namespace 
+					&& XHTMLUtilities.isHTMLNamespaceURI(documentElementNamespaceURI))	//if the document namespace URI represents an XHTML namespace 
 			{
 				return true;  //the document element is <html> in the HTML namespace
 			}

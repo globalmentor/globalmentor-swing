@@ -22,13 +22,14 @@ import com.garretwilson.util.Debug;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
 /**A view that arranges its children into a box shape by tiling its children
-along an axis, with no constraints.
+ 	along an axis, with no constraints.
 This class is a extension, rewrite, and bug fix of javax.swing.text.BoxView
 by Timothy Prinzing version 1.44 02/02/00 and is based on code from that class.
 @author Garret Wilson
 @see javax.swing.text.BoxView
 */
-public class XMLBlockView extends com.garretwilson.swing.text.CompositeView implements XMLCSSView	//G***newswing
+//G***fix public class XMLBlockView extends com.garretwilson.swing.text.CompositeView implements XMLCSSView	//G***newswing
+public class XMLBlockView extends BoxView implements XMLCSSView
 {
 
 	/**Whether we're allowed to expand horizontally.*/
@@ -38,35 +39,25 @@ public class XMLBlockView extends com.garretwilson.swing.text.CompositeView impl
 	protected final boolean isExpandY;
 
 	/**Constructs an XMLBlockView expandable on the flowing (non-tiling) axis.
-		@param elem The element this view is responsible for.
-		@param axis The tiling axis, either View.X_AXIS or View.Y_AXIS.
+	@param element The element this view is responsible for.
+	@param axis The tiling axis, either View.X_AXIS or View.Y_AXIS.
 	*/
-	public XMLBlockView(Element elem, int axis)
+	public XMLBlockView(final Element element, final int axis)
 	{
-		this(elem, axis, axis!=X_AXIS, axis!=Y_AXIS); //default to not flowing on the tiling axis
+		this(element, axis, axis!=X_AXIS, axis!=Y_AXIS); //default to not flowing on the tiling axis
 	}
 
 	/**Constructs an XMLBlockView, specifying whether the view should be allowed
 		to expand to a maximum size for the given axes.
-	@param elem The element this view is responsible for.
+	@param element The element this view is responsible for.
 	@param axis The tiling axis, either View.X_AXIS or View.Y_AXIS.
 	*/
-	public XMLBlockView(Element elem, int axis, final boolean expandX, final boolean expandY)
+	public XMLBlockView(final Element element, final int axis, final boolean expandX, final boolean expandY)
 	{
-	super(elem);
-	tempRect = new Rectangle();
-	this.axis = axis;
-	xOffsets = new int[0];
-	xSpans = new int[0];
-	xValid = false;
-	xAllocValid = false;
-	yOffsets = new int[0];
-	ySpans = new int[0];
-	yValid = false;
-	yAllocValid = false;
-	isExpandX=expandX;  //set whether we're allowed to expand horizontally
-	isExpandY=expandY;  //set whether we're allowed to expand vertically
-    }
+		super(element, axis);	//construct the parent class
+		isExpandX=expandX;  //set whether we're allowed to expand horizontally
+		isExpandY=expandY;  //set whether we're allowed to expand vertically
+	}
 
 	/**Loads all of the children to initialize the view.
 		This is called by the <a href="#setParent">setParent</a> method.
@@ -81,138 +72,7 @@ public class XMLBlockView extends com.garretwilson.swing.text.CompositeView impl
 	{
 		final View[] createdViews=createBlockElementChildViews(getElement(), viewFactory);  //create the child views
 		replace(0, 0, createdViews);  //load our created views as children
-/*G***del when works
-Debug.traceStack(); //G***del
-Debug.trace("Loading children for block element: ", XMLCSSStyleConstants.getXMLElementName(getElement().getAttributes()));  //G***del
-Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(getElement().getAttributes()));  //G***del
-		if(viewFactory==null) //if there is no view factory, the parent view has somehow changed
-			return; //don't create children
-		final Document document=getDocument();  //get a reference to our document
-		final Element element=getElement(); //get a reference to the element we represent
-		final AttributeSet attributeSet=getAttributes();  //get our attributes
-		final CSSStyleDeclaration cssStyle=XMLCSSStyleConstants.getXMLCSSStyle(attributeSet); //get the CSS style of the element
-
-//G***we probably don't need to pre-check -- we can just check as we go, because the same view structure should be created either way
-
-		//G***do we even need to check for block children? probably remove all the block children code, because if we didn't have block children and we had only inline views, we'd be a paragraph view
-		boolean hasBlockChildren=false, hasInlineChildren=false;	//check to see if there are block and/or inline children
-		for(int childIndex=element.getElementCount()-1; childIndex>=0 && !(hasBlockChildren && hasInlineChildren); --childIndex) //look at each child element (stop looking when we've found both block and inline child nodes)
-		{
-			final Element childElement=element.getElement(childIndex);  //get a reference to this child element
-			final CSSStyleDeclaration childCSSStyle=XMLCSSStyleConstants.getXMLCSSStyle(childElement.getAttributes()); //get the CSS style of the element (this method make sure the attributes are present)
-				//if this element is inline (text is always inline, regardless of what the display property says)
-			if(XMLCSSUtilities.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName()))
-				hasInlineChildren=true;	//show that there are inline children
-			else	//if this isn't inline, we'll assume it's some sort of block element
-				hasBlockChildren=true;	//show that there are block children
-		}
-
-//G***del		final boolean isBlockElement=!XMLCSSUtilities.isDisplayInline(cssStyle);	//see if this is a block-level element
-Debug.trace("Element has block children: "+hasBlockChildren); //G***del
-Debug.trace("Element has inline children: "+hasInlineChildren); //G***del
-		if(hasInlineChildren)	//if this element has both block and inline children, we'll have to create some anonymous blocks
-		{
-			final List childViewList=new ArrayList(element.getElementCount());  //create a list in which to store elements, knowing that we won't have more views than child elements
-//G***del when works			XMLCSSSimpleAttributeSet anonymousAttributeSet=null;	//we'll create an anonymous attribute set each time we create and anonymous block
-		  final Element[] inlineChildElements=new Element[element.getElementCount()]; //create an array of anonymous child elements; we know we'll never have more inline child elements than there are children of the original element
-		  int inlineChildElementCount=0;  //show that we haven't started collecting inline child elements, yet
-		  SimpleAttributeSet anonymousAttributeSet=null;	//we'll create an anonymous attribute set for each anonymous box when needed
-//G***del		  Element[] inlineChildElements;  //we'll create an array of anonymous child elements when needed
-//G***del		  AnonymousElement anonymousElement=null;  //we'll create an anonymous element when needed
-//G***del			SimpleAttributeSet anonymousAttributeSet;	//we'll create an anonymous attribute set each time we create and anonymous block
-//G***del			boolean buildingAnonymousElement=false;	//show that we haven't started started any anonymous blocks yet
-		  final int childElementCount=element.getElementCount();  //find out how many child elements there are
-			for(int childIndex=0; childIndex<childElementCount; ++childIndex) //look at each child element
-			{
-				final Element childElement=element.getElement(childIndex);  //get a reference to this child element
-				final CSSStyleDeclaration childCSSStyle=XMLCSSStyleConstants.getXMLCSSStyle(childElement.getAttributes()); //get the CSS style of the element (this method make sure the attributes are present)
-					//see if this child element is inline (text is always inline, regardless of what the display property says)
-				final boolean childIsInline=XMLCSSUtilities.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName());
-				if(childIsInline) //if this is an inline child element
-				{
-					try
-					{
-	//G***bring back for efficiency					final Segment segment=new Segment();  //create a new segment to receive test
-						//get the text of this inline child; if it is just whitespace, we'll create a hidden view for it
-						final String text=document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset());
-Debug.trace("Looking at inline text: '"+text+"' character code: "+Integer.toHexString(text.charAt(0)));  //G***del
-	//G***bring back for efficiency				  document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset(), segment);
-						if(text.trim().length()==0) //if there is nothing but whitespace in this inline element
-						{
-Debug.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElementName(attributeSet)); //G***del
-							if(inlineChildElementCount>0)	//if we've started but not finished an anonymous block, yet G***try to combine all these identical code sections
-							{
-									//create an anonymous element with the elements we've collected
-								final Element anonymousElement=new AnonymousElement(element, anonymousAttributeSet, inlineChildElements, 0, inlineChildElementCount);
-								childViewList.add(viewFactory.create(anonymousElement)); //create a view for the anonymous element and add the view to our list
-								inlineChildElementCount=0;  //show that we're not building an anonymous element anymore
-		//G***del						anonymousElement=null; //show that we're not building an anonymous element anymore
-							}
-							//G***fix: this does not currently compensate for elements like <pre>
-//G***del; testing							childViewList.add(new XMLParagraphView(childElement));  //G***testing
-							childViewList.add(new XMLHiddenView(childElement));  //create a hidden view for the whitespace inline element and add it to our list of views
-						}
-						else  //if there's more than whitespace here
-						{
-							if(inlineChildElementCount==0) //if we haven't started building an anonymous element, yet
-							{
-								anonymousAttributeSet=new SimpleAttributeSet();	//create an anonymous attribute set for this anonymous box
-		//G***del when works						anonymousAttributeSet=new XMLCSSSimpleAttributeSet();	//create an anonymous attribute set for this anonymous box
-		//G***fix						XMLCSSStyleConstants.setXMLElementName(anonymousAttributeSet, XMLStyleConstants.AnonymousNameValue);	//show by its name that this is an anonymous box
-								XMLStyleConstants.setXMLElementName(anonymousAttributeSet, XMLCSSStyleConstants.AnonymousAttributeValue); //show by its name that this is an anonymous box G***maybe change this to setAnonymous
-								final XMLCSSStyleDeclaration anonymousCSSStyle=new XMLCSSStyleDeclaration(); //create a new style declaration
-								anonymousCSSStyle.setDisplay(XMLCSSConstants.CSS_DISPLAY_BLOCK);	//show that the anonymous element should be a block element
-								XMLCSSStyleConstants.setXMLCSSStyle(anonymousAttributeSet, anonymousCSSStyle);	//store the constructed CSS style in the attribute set
-		//G***del						anonymousAttributeSet.addAttribute(StyleConstants.NameAttribute, XMLCSSStyleConstants.AnonymousAttributeValue);	//show by its name that this is an anonymous box G***maybe change this to setAnonymous
-		//G***del if not needed						XMLCSSStyleConstants.setParagraphView(anonymousAttributeSet, true);	//show that the anonymous block should be a paragraph view
-		//G***del						elementSpecList.add(new DefaultStyledDocument.ElementSpec(anonymousAttributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of an anonyous block element
-		//G***del when works						anonymousElement=new AnonymousElement(element, anonymousAttributeSet); //create an anonymous element
-							}
-							inlineChildElements[inlineChildElementCount++]=childElement;  //add the child element to the anonymous element and show that we've collected another one
-						}
-					}
-					catch(BadLocationException badLocationException)  //if we tried to access an invalid location (this shouldn't happen unless there are problems internal to an element)
-					{
-						Debug.error(badLocationException);  //report the error
-					}
-//G***del					anonymousElement.add(childElement); //add the child element to the anonymous element
-				}
-				else  //if this is a block element
-				{
-					if(inlineChildElementCount>0)	//if we've started but not finished an anonymous block, yet
-					{
-						  //create an anonymous element with the elements we've collected
-						final Element anonymousElement=new AnonymousElement(element, anonymousAttributeSet, inlineChildElements, 0, inlineChildElementCount);
-						childViewList.add(viewFactory.create(anonymousElement)); //create a view for the anonymous element and add the view to our list
-						inlineChildElementCount=0;  //show that we're not building an anonymous element anymore
-//G***del						anonymousElement=null; //show that we're not building an anonymous element anymore
-					}
-					childViewList.add(viewFactory.create(childElement)); //create a view normally for the child element and add the view to our list
-				}
-			}
-			if(inlineChildElementCount>0)	//if we started an anonymous block but never finished it (i.e. the last child was inline)
-			{
-					//create an anonymous element with the elements we've collected
-				final Element anonymousElement=new AnonymousElement(element, anonymousAttributeSet, inlineChildElements, 0, inlineChildElementCount);
-				childViewList.add(viewFactory.create(anonymousElement)); //create a view for the anonymous element and add the view to our list
-				inlineChildElementCount=0;  //show that we're not building an anonymous element anymore
-			}
-			if(childViewList.size()>0)  //if we have views to add (we always should, because we got here by finding inline children with block children)
-			{
-				final View[] addedViews=(View[])childViewList.toArray(new View[childViewList.size()]);  //convert the list of views to an array
-				replace(0, 0, addedViews);  //load our created views as children
-			}
-		}
-		else	//if we don't have any inline children, we can load the children normally
-			super.loadChildren(viewFactory);  //let the parent class load the children
-*/
 	}
-
-
-
-
-
-
 
 	/**Creates child views of a block element.
 		This is called by the <a href="#loadChildren">loadChildren</a> method as
@@ -315,14 +175,6 @@ childViewList.add(new XMLHiddenView(childElement));	//create a hidden view to hi
 		return new View[]{}; ////if there is no view factory (the parent view has somehow changed) or no elements, just return an empty array of views
 	}
 
-
-
-
-
-
-
-
-
 	/**Gathers child elements of a block element, ensuring that each child element
 		is a block element.
 		Inline child elements will be wrapped in one or more anonymous views.
@@ -410,14 +262,6 @@ childElementList.add(childElement);	//G***testing
 			childElementList.add(createAnonymousBlockElement(element, inlineChildElementList));	//create an anonymous block element and clear the list
 		return (Element[])childElementList.toArray(new Element[childElementList.size()]);  //convert the list of elements to an array
 	}
-
-
-
-
-
-
-
-
 
 	/*Creates an anonymous view representing the given child elements.
 	<p>All elements are removed from the collection after the anonymous view has
@@ -528,238 +372,6 @@ childElementList.add(childElement);	//G***testing
 			container.repaint();	//repaint our container
 	}
 
-    /**
-     * Fetch the axis property.
-     *
-     * @return the major axis of the box, either
-     *  View.X_AXIS or View.Y_AXIS.
-     */
-    public int getAxis() {
-	return axis;
-    }
-
-    /**
-     * Set the axis property.
-     *
-     * @param axis either View.X_AXIS or View.Y_AXIS
-     */
-    public void setAxis(int axis) {
-	this.axis = axis;
-	preferenceChanged(null, true, true);
-    }
-
-    /**
-     * Invalidate the layout along an axis.  This happens
-     * automatically if the preferences have changed for
-     * any of the child views.  In some cases the layout
-     * may need to be recalculated when the preferences
-     * have not changed.  The layout can be marked as
-     * invalid by calling this method.  The layout will
-     * be updated the next time the setSize method is called
-     * on this view (typically in paint).
-     *
-     * @param axis either View.X_AXIS or View.Y_AXIS
-     */
-    public void layoutChanged(int axis) {
-//G***del Debug.stackTrace(); //G***del
-/*G***del
-if(this instanceof XMLPagedView)  //G***del
-{
-	Debug.traceStack();
-}
-*/
-//G***del Debug.trace(getClass().getName());  //G***del
- 	if (axis == X_AXIS) {
- 	    xAllocValid = false;
- 	} else {
- 	    yAllocValid = false;
- 	}
-    }
-
-    /**
-     * Paints a child.  By default
-     * that is all it does, but a subclass can use this to paint
-     * things relative to the child.
-     *
-     * @param g the graphics context
-     * @param alloc the allocated region to paint into
-     * @param index the child index, >= 0 && < getViewCount()
-     */
-    protected void paintChild(Graphics g, Rectangle alloc, int index) {
-
-
-/*G***find out why we're getting a nullpointerexception when the child tries to get its parent
-if(Debug.isDebug() && getAttributes()!=null)  //G***del
-	Debug.trace("Inside XMLBlockView.paintChild(), name: "+getAttributes().getAttribute(StyleConstants.NameAttribute));	//G***del
-*/
-
-	View child = getView(index);
-
-//G***del Debug.trace("XMLBlockView.paintChild() child "+index+" parent: "+child.getParent()); //G***testing
-
-/*G***find out why the views have no parent to begin with
-if(child.getParent()==null) //G***testing
-	child.setParent(this);  //G***testing
-*/
-
-	child.paint(g, alloc);
-    }
-
-    /**
-     * Invalidates the layout and resizes the cache of
-     * requests/allocations.  The child allocations can still
-     * be accessed for the old layout, but the new children
-     * will have an offset and span of 0.
-     *
-     * @param index the starting index into the child views to insert
-     *   the new views.  This should be a value >= 0 and <= getViewCount.
-     * @param length the number of existing child views to remove.
-     *   This should be a value >= 0 and <= (getViewCount() - offset).
-     * @param views the child views to add.  This value can be null
-     *   to indicate no children are being added (useful to remove).
-     */
-    public void replace(int index, int length, View[] elems) {
-	super.replace(index, length, elems);
-/*G***del
-if(this instanceof XMLPagedView)  //G***del
-{
-	Debug.traceStack();
-}
-*/
-
-	// invalidate cache
-	int nInserted = (elems != null) ? elems.length : 0;
-	xOffsets = updateLayoutArray(xOffsets, index, nInserted);
-	xSpans = updateLayoutArray(xSpans, index, nInserted);
-	xValid = false;
-	xAllocValid = false;
-	yOffsets = updateLayoutArray(yOffsets, index, nInserted);
-	ySpans = updateLayoutArray(ySpans, index, nInserted);
-	yValid = false;
-	yAllocValid = false;
-    }
-
-    /**
-     * Resize the given layout array to match the new number of
-     * child views.  The current number of child views are used to
-     * produce the new array.  The contents of the old array are
-     * inserted into the new array at the appropriate places so that
-     * the old layout information is transferred to the new array.
-     */
-    int[] updateLayoutArray(int[] oldArray, int offset, int nInserted) {
-//G***del Debug.trace("updating layout array with inserted: ", nInserted);  //G***del
-
-	int n = getViewCount();
-//G***del Debug.trace("view count: ", n);  //G***del
-	int[] newArray = new int[n];
-
-	System.arraycopy(oldArray, 0, newArray, 0, offset);
-	System.arraycopy(oldArray, offset,
-			 newArray, offset + nInserted, n - nInserted - offset);
-	return newArray;
-    }
-
-    /**
-     * Forward the given DocumentEvent to the child views
-     * that need to be notified of the change to the model.
-     * If a child changed it's requirements and the allocation
-     * was valid prior to forwarding the portion of the box
-     * from the starting child to the end of the box will
-     * be repainted.
-     *
-     * @param ec changes to the element this view is responsible
-     *  for (may be null if there were no changes).
-     * @param e the change information from the associated document
-     * @param a the current allocation of the view
-     * @param f the factory to use to rebuild if the view has children
-     * @see #insertUpdate
-     * @see #removeUpdate
-     * @see #changedUpdate
-     */
-    protected void forwardUpdate(DocumentEvent.ElementChange ec,
-				     DocumentEvent e, Shape a, ViewFactory f) {
-//G***del Debug.trace("forward updating class: ", getClass().getName());  //G***del
-//G***del	setPropertiesFromAttributes();	//reload our cached properties from the attributes (newswing)
-	cacheSynchronized=false;	//show that our cached values need to be reloaded (newswing) G***make an accessor function to do this, like invalidateChache
-	boolean wasValid = isAllocationValid();
-	super.forwardUpdate(ec, e, a, f);
-
-	// determine if a repaint is needed
-	if (wasValid && (! isAllocationValid())) {
-	    // repaint is needed, if there is a hosting component and
-	    // and an allocated shape.
-	    Component c = getContainer();
-	    if ((a != null) && (c != null)) {
-		int pos = e.getOffset();
-		int index = getViewIndexAtPosition(pos);
-		Rectangle alloc = getInsideAllocation(a);
-		if (axis == X_AXIS) {
-		    alloc.x += xOffsets[index];
-		    alloc.width -= xSpans[index];
-		} else {
-		    alloc.y += yOffsets[index];
-		    alloc.height -= ySpans[index];
-		}
-		c.repaint(alloc.x, alloc.y, alloc.width, alloc.height);
-	    }
-	}
-    }
-
-    // --- View methods ---------------------------------------------
-
-    /**
-     * This is called by a child to indicated its
-     * preferred span has changed.  This is implemented to
-     * throw away cached layout information so that new
-     * calculations will be done the next time the children
-     * need an allocation.
-     *
-     * @param child the child view
-     * @param width true if the width preference should change
-     * @param height true if the height preference should change
-     */
-    public void preferenceChanged(View child, boolean width, boolean height) {
-if(this instanceof XMLPagedView)  //G***del
-{
-	Debug.traceStack();
-}
-	if (width) {
-	    xValid = false;
-	    xAllocValid = false;
-	}
-	if (height) {
-	    yValid = false;
-	    yAllocValid = false;
-	}
-	super.preferenceChanged(child, width, height);
-    }
-
-    /**
-     * Gets the resize weight.  A value of 0 or less is not resizable.
-     *
-     * @param axis may be either View.X_AXIS or View.Y_AXIS
-     * @return the weight
-     * @exception IllegalArgumentException for an invalid axis
-     */
-    public int getResizeWeight(int axis) {
-	checkRequests();
-        switch (axis) {
-        case View.X_AXIS:
-	    if ((xRequest.preferred != xRequest.minimum) &&
-		(xRequest.preferred != xRequest.maximum)) {
-		return 1;
-	    }
-	    return 0;
-        case View.Y_AXIS:
-	    if ((yRequest.preferred != yRequest.minimum) &&
-		(yRequest.preferred != yRequest.maximum)) {
-		return 1;
-	    }
-            return 0;
-        default:
-            throw new IllegalArgumentException("Invalid axis: " + axis);
-        }
-    }
 
     /**
      * Sets the size of the view.  If the size has changed, layout
@@ -769,17 +381,12 @@ if(this instanceof XMLPagedView)  //G***del
      * @param width the width >= 0
      * @param height the height >= 0
      */
+/*G***del if we can; this looks important, but may be very out of date
     public void setSize(float width, float height) {
 
 		  //G***testing to see if we can update the insets before sizes are calculated
 			synchronize();	//make sure we have the correct cached property values (newswing) //G***check to make sure this doesn't throw off calculations at the wrong time
 //G***del Debug.stackTrace();  //G***del
-if(this instanceof XMLPagedView)  //G***del
-{
-	Debug.trace("old width {0} new width {1} old height {2} new height {3}", new Object[]{new Float(this.width), new Float(width), new Float(this.height), new Float(height)});
-	Debug.trace("xAllocValid: "+xAllocValid+" yAllocValid: "+yAllocValid);  //G***del
-	Debug.trace(getClass().getName());
-}
 //G***del Debug.stackTrace(); //G***del
 	if (((int) width) != this.width) {
 	    xAllocValid = false;
@@ -787,11 +394,6 @@ if(this instanceof XMLPagedView)  //G***del
 	if (((int) height) != this.height) {
 	    yAllocValid = false;
 	}
-if(this instanceof XMLPagedView)  //G***del
-{
-Debug.trace("before layout");
-Debug.trace("xAllocValid: "+xAllocValid+" yAllocValid: "+yAllocValid);  //G***del
-}
 	if ((! xAllocValid) || (! yAllocValid)) {
 	    this.width = (int) width;
 	    this.height = (int) height;
@@ -804,649 +406,24 @@ Debug.trace("after layout");
 Debug.trace("xAllocValid: "+xAllocValid+" yAllocValid: "+yAllocValid);  //G***del
 }
     }
-
-    /**
-     * Renders using the given rendering surface and area
-     * on that surface.  Only the children that intersect
-     * the clip bounds of the given Graphics will be
-     * rendered.
-     *
-     * @param g the rendering surface to use
-     * @param allocation the allocated region to render into
-     * @see View#paint
-     */
-    public void paint(Graphics g, Shape allocation) {
-//G***del Debug.trace("Inside XMLBlockView.paint()");
-			synchronize();	//make sure we have the correct cached property values (newswing)
-
-			XMLCSSViewPainter.paint(g, allocation, this, getAttributes());	//paint our CSS-specific parts (newswing) G***decide whether we want to pass the attributes or not
-
-	Rectangle alloc = (allocation instanceof Rectangle) ?
-	                   (Rectangle)allocation : allocation.getBounds();
-	setSize(alloc.width, alloc.height);
-	int n = getViewCount();
-	int x = alloc.x + getLeftInset();
-	int y = alloc.y + getTopInset();
-	Rectangle clip = g.getClipBounds();
-	for (int i = 0; i < n; i++) {
-	    tempRect.x = x + xOffsets[i];
-	    tempRect.y = y + yOffsets[i];
-	    tempRect.width = xSpans[i];
-	    tempRect.height = ySpans[i];
-	if (tempRect.intersects(clip)) {
-		  paintChild(g, tempRect, i);
-	}
-	}
-    }
-
-    /**
-     * Fetches the allocation for the given child view.
-     * This enables finding out where various views
-     * are located.  This is implemented to return null
-     * if the layout is invalid, otherwise the
-     * superclass behavior is executed.
-     *
-     * @param index the index of the child, >= 0 && < getViewCount()
-     * @param a  the allocation to this view.
-     * @return the allocation to the child
-     */
-    public Shape getChildAllocation(int index, Shape a) {
-	if (a != null) {
-	    Shape ca = super.getChildAllocation(index, a);
-	    if ((ca != null) && (! isAllocationValid())) {
-		// The child allocation may not have been set yet.
-		Rectangle r = (ca instanceof Rectangle) ?
-		    (Rectangle) ca : ca.getBounds();
-		if ((r.width == 0) && (r.height == 0)) {
-		    return null;
-		}
-	    }
-	    return ca;
-	}
-	return null;
-    }
-
-    /**
-     * Provides a mapping from the document model coordinate space
-     * to the coordinate space of the view mapped to it.  This makes
-     * sure the allocation is valid before letting the superclass
-     * do its thing.
-     *
-     * @param pos the position to convert >= 0
-     * @param a the allocated region to render into
-     * @return the bounding box of the given position
-     * @exception BadLocationException  if the given position does
-     *  not represent a valid location in the associated document
-     * @see View#modelToView
-     */
-    public Shape modelToView(int pos, Shape a, Position.Bias b) throws BadLocationException {
-	if (! isAllocationValid()) {
-//G***del Debug.trace("XMLBlockView.modelToView() ready to get bounds.");	//G***del; testing image
-	    Rectangle alloc = a.getBounds();
-//G***del Debug.trace("XMLBlockView.modelToView() ready to set size.");	//G***del; testing image
-	    setSize(alloc.width, alloc.height);
-	}
-	return super.modelToView(pos, a, b);
-    }
-
-    /**
-     * Provides a mapping from the view coordinate space to the logical
-     * coordinate space of the model.
-     *
-     * @param x   x coordinate of the view location to convert >= 0
-     * @param y   y coordinate of the view location to convert >= 0
-     * @param a the allocated region to render into
-     * @return the location within the model that best represents the
-     *  given point in the view >= 0
-     * @see View#viewToModel
-     */
-    public int viewToModel(float x, float y, Shape a, Position.Bias[] bias) {
-/*G***del
-Debug.trace("Inside XMLBlockView.viewToModel for position x: "+x+" y: "+y);
-try{
-Debug.trace(((JTextComponent)getContainer()).getDocument().getText(getStartOffset(), 5));
-}catch(Exception e){};
 */
-	if (! isAllocationValid()) {
-	    Rectangle alloc = a.getBounds();
-	    setSize(alloc.width, alloc.height);
-	}
-	return super.viewToModel(x, y, a, bias);
-    }
 
-    /**
-     * Determines the desired alignment for this view along an
-     * axis.  This is implemented to give the total alignment
-     * needed to position the children with the alignment points
-     * lined up along the axis orthoginal to the axis that is
-     * being tiled.  The axis being tiled will request to be
-     * centered (i.e. 0.5f).
-     *
-     * @param axis may be either View.X_AXIS or View.Y_AXIS
-     * @returns the desired alignment >= 0.0f && <= 1.0f.  This should
-     *   be a value between 0.0 and 1.0 where 0 indicates alignment at the
-     *   origin and 1.0 indicates alignment to the full span
-     *   away from the origin.  An alignment of 0.5 would be the
-     *   center of the view.
-     * @exception IllegalArgumentException for an invalid axis
-     */
-    public float getAlignment(int axis) {
-	checkRequests();
-	switch (axis) {
-	case View.X_AXIS:
-	    return xRequest.alignment;
-	case View.Y_AXIS:
-	    return yRequest.alignment;
-	default:
-	    throw new IllegalArgumentException("Invalid axis: " + axis);
-	}
-    }
-
-    /**
-     * Determines the preferred span for this view along an
-     * axis.
-     *
-     * @param axis may be either View.X_AXIS or View.Y_AXIS
-     * @returns  the span the view would like to be rendered into >= 0.
-     *           Typically the view is told to render into the span
-     *           that is returned, although there is no guarantee.
-     *           The parent may choose to resize or break the view.
-     * @exception IllegalArgumentException for an invalid axis type
-     */
-    public float getPreferredSpan(int axis) {
-//G***del Debug.stackTrace(); //G***del
-Debug.trace("left inset: "+getLeftInset()+" right inset: "+getRightInset()+" top inset: "+getTopInset()+" bottom inset: "+getTopInset()); //G***del
-	checkRequests();
-	switch (axis) {
-	case View.X_AXIS:
-	    return ((float)xRequest.preferred) + getLeftInset() + getRightInset();
-	case View.Y_AXIS:
-	    return ((float)yRequest.preferred) + getTopInset() + getBottomInset();
-	default:
-	    throw new IllegalArgumentException("Invalid axis: " + axis);
-	}
-    }
-
-    /**
-     * Determines the minimum span for this view along an
-     * axis.
-     *
-     * @param axis may be either View.X_AXIS or View.Y_AXIS
-     * @returns  the span the view would like to be rendered into >= 0.
-     *           Typically the view is told to render into the span
-     *           that is returned, although there is no guarantee.
-     *           The parent may choose to resize or break the view.
-     * @exception IllegalArgumentException for an invalid axis type
-     */
-    public float getMinimumSpan(int axis) {
-	checkRequests();
-	switch (axis) {
-	case View.X_AXIS:
-	    return ((float)xRequest.minimum) + getLeftInset() + getRightInset();
-	case View.Y_AXIS:
-	    return ((float)yRequest.minimum) + getTopInset() + getBottomInset();
-	default:
-	    throw new IllegalArgumentException("Invalid axis: " + axis);
-	}
-    }
-
-    /**
-     * Determines the maximum span for this view along an
-     * axis.
-     *
-     * @param axis may be either View.X_AXIS or View.Y_AXIS
-     * @returns  the span the view would like to be rendered into >= 0.
-     *           Typically the view is told to render into the span
-     *           that is returned, although there is no guarantee.
-     *           The parent may choose to resize or break the view.
-     * @exception IllegalArgumentException for an invalid axis type
-     */
-    public float getMaximumSpan(int axis)
-		{
-			if((axis==X_AXIS && !isExpandX) || (axis==Y_AXIS && !isExpandY)) //if we can't expand along this axis (newswing)
-				return getPreferredSpan(axis);  //return the preferred size as our maximum
-else  //G***fix
-{
-	checkRequests();
-	switch (axis) {
-	case View.X_AXIS:
-	    return ((float)xRequest.maximum) + getLeftInset() + getRightInset();
-	case View.Y_AXIS:
-	    return ((float)yRequest.maximum) + getTopInset() + getBottomInset();
-	default:
-	    throw new IllegalArgumentException("Invalid axis: " + axis);
-	}
-}
-    }
-
-    // --- local methods ----------------------------------------------------
-
-    /**
-     * Are the allocations for the children still
-     * valid?
-     *
-     * @return true if allocations still valid
-     */
-    protected boolean isAllocationValid() {
-	return (xAllocValid && yAllocValid);
-    }
-
-    /**
-     * Determines if a point falls before an allocated region.
-     *
-     * @param x the X coordinate >= 0
-     * @param y the Y coordinate >= 0
-     * @param innerAlloc the allocated region.  This is the area
-     *   inside of the insets.
-     * @return true if the point lies before the region else false
-     */
-    protected boolean isBefore(int x, int y, Rectangle innerAlloc) {
-	if (axis == View.X_AXIS) {
-	    return (x < innerAlloc.x);
-	} else {
-	    return (y < innerAlloc.y);
-	}
-    }
-
-    /**
-     * Determines if a point falls after an allocated region.
-     *
-     * @param x the X coordinate >= 0
-     * @param y the Y coordinate >= 0
-     * @param innerAlloc the allocated region.  This is the area
-     *   inside of the insets.
-     * @return true if the point lies after the region else false
-     */
-    protected boolean isAfter(int x, int y, Rectangle innerAlloc) {
-	if (axis == View.X_AXIS) {
-	    return (x > (innerAlloc.width + innerAlloc.x));
-	} else {
-	    return (y > (innerAlloc.height + innerAlloc.y));
-	}
-    }
-
-    /**
-     * Fetches the child view at the given point.
-     *
-     * @param x the X coordinate >= 0
-     * @param y the Y coordinate >= 0
-     * @param alloc the parents inner allocation on entry, which should
-     *   be changed to the childs allocation on exit.
-     * @return the view
-     */
-    protected View getViewAtPoint(int x, int y, Rectangle alloc) {
-	int n = getViewCount();
-	if (axis == View.X_AXIS) {
-	    if (x < (alloc.x + xOffsets[0])) {
-		childAllocation(0, alloc);
-		return getView(0);
-	    }
-	    for (int i = 0; i < n; i++) {
-		if (x < (alloc.x + xOffsets[i])) {
-		    childAllocation(i - 1, alloc);
-		    return getView(i - 1);
-		}
-	    }
-	    childAllocation(n - 1, alloc);
-	    return getView(n - 1);
-	} else {
-	    if (y < (alloc.y + yOffsets[0])) {
-		childAllocation(0, alloc);
-		return getView(0);
-	    }
-	    for (int i = 0; i < n; i++) {
-		if (y < (alloc.y + yOffsets[i])) {
-		    childAllocation(i - 1, alloc);
-		    return getView(i - 1);
-		}
-	    }
-	    childAllocation(n - 1, alloc);
-	    return getView(n - 1);
-	}
-    }
-
-    /**
-     * Allocates a region for a child view.
-     *
-     * @param index the index of the child view to
-     *   allocate, >= 0 && < getViewCount()
-     * @param alloc the allocated region
-     */
-    protected void childAllocation(int index, Rectangle alloc) {
-	alloc.x += xOffsets[index];
-	alloc.y += yOffsets[index];
-	alloc.width = xSpans[index];
-	alloc.height = ySpans[index];
-    }
-
-    /**
-     * Performs layout of the children.  The size is the
-     * area inside of the insets.  This method calls
-     * the methods
-     * <a href="#layoutMajorAxis">layoutMajorAxis</a> and
-     * <a href="#layoutMinorAxis">layoutMinorAxis</a> as
-     * needed.  To change how layout is done those methods
-     * should be reimplemented.
-     *
-     * @param width the width >= 0
-     * @param height the height >= 0
-     */
-    protected void layout(int width, int height) {
-	checkRequests();
-
-	if (axis == X_AXIS) {
-	    if (! xAllocValid) {
-		layoutMajorAxis(width, X_AXIS, xOffsets, xSpans);
-	    }
-	    if (! yAllocValid) {
-		layoutMinorAxis(height, Y_AXIS, yOffsets, ySpans);
-	    }
-	} else {
-	    if (! xAllocValid) {
-		layoutMinorAxis(width, X_AXIS, xOffsets, xSpans);
-	    }
-	    if (! yAllocValid) {
-		layoutMajorAxis(height, Y_AXIS, yOffsets, ySpans);
-	    }
-	}
-	xAllocValid = true;
-	yAllocValid = true;
-
-	// flush changes to the children
-	int n = getViewCount();
-	for (int i = 0; i < n; i++) {
-	    View v = getView(i);
-	    v.setSize((float) xSpans[i], (float) ySpans[i]);
-	}
-    }
-
-    /**
-     * The current width of the box.  This is the width that
-     * it was last allocated.
-     */
-    public int getWidth() {
-	return width;
-    }
-
-    /**
-     * The current height of the box.  This is the height that
-     * it was last allocated.
-     */
-    public int getHeight() {
-	return height;
-    }
-
-    /**
-     * Perform layout for the major axis of the box (i.e. the
-     * axis that it represents).  The results of the layout should
-     * be placed in the given arrays which represent the allocations
-     * to the children along the major axis.
-     *
-     * @param targetSpan the total span given to the view, which
-     *  whould be used to layout the children.
-     * @param axis the axis being layed out.
-     * @param offsets the offsets from the origin of the view for
-     *  each of the child views.  This is a return value and is
-     *  filled in by the implementation of this method.
-     * @param spans the span of each child view.  This is a return
-     *  value and is filled in by the implementation of this method.
-     * @returns the offset and span for each child view in the
-     *  offsets and spans parameters.
-     */
-    protected void layoutMajorAxis(int targetSpan, int axis, int[] offsets, int[] spans) {
-	/*
-	 * first pass, calculate the preferred sizes
-	 * and the flexibility to adjust the sizes.
-	 */
-	long minimum = 0;
-	long maximum = 0;
-	long preferred = 0;
-	int n = getViewCount();
-	for (int i = 0; i < n; i++) {
-	    View v = getView(i);
-	    spans[i] = (int) v.getPreferredSpan(axis);
-	    preferred += spans[i];
-	    minimum += v.getMinimumSpan(axis);
-	    maximum += v.getMaximumSpan(axis);
-	}
-
-	/*
-	 * Second pass, expand or contract by as much as possible to reach
-	 * the target span.
-	 */
-
-	// determine the adjustment to be made
-	long desiredAdjustment = targetSpan - preferred;
-	float adjustmentFactor = 0.0f;
-	if (desiredAdjustment != 0) {
-	    float maximumAdjustment = (desiredAdjustment > 0) ?
-		maximum - preferred : preferred - minimum;
-            if (maximumAdjustment == 0.0f) {
-                adjustmentFactor = 0.0f;
-            }
-            else {
-                adjustmentFactor = desiredAdjustment / maximumAdjustment;
-                adjustmentFactor = Math.min(adjustmentFactor, 1.0f);
-                adjustmentFactor = Math.max(adjustmentFactor, -1.0f);
-            }
-	}
-
-	// make the adjustments
-	int totalOffset = 0;
-	for (int i = 0; i < n; i++) {
-	    View v = getView(i);
-	    offsets[i] = totalOffset;
-	    int availableSpan = (adjustmentFactor > 0.0f) ?
-		(int) v.getMaximumSpan(axis) - spans[i] :
-		spans[i] - (int) v.getMinimumSpan(axis);
-            float adjF = adjustmentFactor * availableSpan;
-            if (adjF < 0) {
-                adjF -= .5f;
-            }
-            else {
-                adjF += .5f;
-            }
-	    int adj = (int)adjF;
-	    spans[i] += adj;
-	    totalOffset = (int) Math.min((long) totalOffset + (long) spans[i], Integer.MAX_VALUE);
-	}
-    }
-
-    /**
-     * Perform layout for the minor axis of the box (i.e. the
-     * axis orthoginal to the axis that it represents).  The results
-     * of the layout should be placed in the given arrays which represent
-     * the allocations to the children along the minor axis.
-     *
-     * @param targetSpan the total span given to the view, which
-     *  whould be used to layout the children.
-     * @param axis the axis being layed out.
-     * @param offsets the offsets from the origin of the view for
-     *  each of the child views.  This is a return value and is
-     *  filled in by the implementation of this method.
-     * @param spans the span of each child view.  This is a return
-     *  value and is filled in by the implementation of this method.
-     * @returns the offset and span for each child view in the
-     *  offsets and spans parameters.
-     */
-    protected void layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans) {
-	int n = getViewCount();
-	for (int i = 0; i < n; i++) {
-	    View v = getView(i);
-	    int min = (int) v.getMinimumSpan(axis);
-	    int max = (int) v.getMaximumSpan(axis);
-	    if (max < targetSpan) {
-		// can't make the child this wide, align it
-		float align = v.getAlignment(axis);
-		offsets[i] = (int) ((targetSpan - max) * align);
-		spans[i] = max;
-	    } else {
-		// make it the target width, or as small as it can get.
-		offsets[i] = 0;
-		spans[i] = Math.max(min, targetSpan);
-	    }
-	}
-    }
-
-    protected SizeRequirements calculateMajorAxisRequirements(int axis, SizeRequirements r) {
-	// calculate tiled request
-	float min = 0;
-	float pref = 0;
-	float max = 0;
-
-	int n = getViewCount();
-	for (int i = 0; i < n; i++) {
-	    View v = getView(i);
-	    min += v.getMinimumSpan(axis);
-	    pref += v.getPreferredSpan(axis);
-	    max += v.getMaximumSpan(axis);
-	}
-
-	if (r == null) {
-	    r = new SizeRequirements();
-	}
-	r.alignment = 0.5f;
-	r.minimum = (int) min;
-	r.preferred = (int) pref;
-	r.maximum = (int) max;
-	return r;
-    }
-
-    protected SizeRequirements calculateMinorAxisRequirements(int axis, SizeRequirements r) {
-	int min = 0;
-	long pref = 0;
-	int max = Integer.MAX_VALUE;
-	int n = getViewCount();
-	for (int i = 0; i < n; i++) {
-	    View v = getView(i);
-	    min = Math.max((int) v.getMinimumSpan(axis), min);
-	    pref = Math.max((int) v.getPreferredSpan(axis), pref);
-	    max = Math.max((int) v.getMaximumSpan(axis), max);
-	}
-
-	if (r == null) {
-	    r = new SizeRequirements();
-	    r.alignment = 0.5f;
-	}
-	r.preferred = (int) pref;
-	r.minimum = min;
-	r.maximum = max;
-	return r;
-    }
-
-		/**
-		 * Checks the request cache and update if needed.
-		 */
-	void checkRequests()
-	{
-	if (axis == X_AXIS) {
-	    if (! xValid) {
-		xRequest = calculateMajorAxisRequirements(X_AXIS, xRequest);
-	    }
-	    if (! yValid) {
-		yRequest = calculateMinorAxisRequirements(Y_AXIS, yRequest);
-	    }
-	} else {
-	    if (! xValid) {
-		xRequest = calculateMinorAxisRequirements(X_AXIS, xRequest);
-	    }
-	    if (! yValid) {
-		yRequest = calculateMajorAxisRequirements(Y_AXIS, yRequest);
-	    }
-	}
-	yValid = true;
-	xValid = true;
-    }
+	/**Renders the block view using the given rendering surface and area on that surface.
+	Only the children that intersect the clip bounds of the given <code>Graphics</code>
+	will be rendered.
+	This version correctly paints XML CSS style.
+	@param graphics The rendering surface to use.
+	@param allocation The allocated region to render into.
+	@see XMLCSSViewPainter#paint
+	*/
+  public void paint(final Graphics graphics, Shape allocation)
+  {
+		XMLCSSViewPainter.paint(graphics, allocation, this, getAttributes());	//paint our CSS-specific parts (newswing) G***decide whether we want to pass the attributes or not
+		super.paint(graphics, allocation);	//do the default painting
+  }
 
 
-    protected void baselineLayout(int targetSpan, int axis, int[] offsets, int[] spans) {
-	int totalBelow = (int) (targetSpan * getAlignment(axis));
-	int totalAbove = targetSpan - totalBelow;
-	int n = getViewCount();
-	for (int i = 0; i < n; i++) {
-	    View v = getView(i);
-	    float align = v.getAlignment(axis);
-	    int span = (int) v.getPreferredSpan(axis);
-	    int below = (int) (span * align);
-	    int above = span - below;
-	    if (span > targetSpan) {
-		// check compress
-		if ((int) v.getMinimumSpan(axis) < span) {
-		    below = totalBelow;
-		    above = totalAbove;
-		} else {
-		    if ((v.getResizeWeight(axis) > 0) && (v.getMaximumSpan(axis) != span)) {
-			throw new Error("should not happen: " + v.getClass());
-		    }
-		}
-	    } else if (span < targetSpan) {
-		// check expand
-		if ((int) v.getMaximumSpan(axis) > span) {
-		    below = totalBelow;
-		    above = totalAbove;
-		}
-	    }
-/*
-	    if (v.getResizeWeight(axis) > 0) {
-		below = totalBelow;
-		above = totalAbove;
-	    }
-	    */
-	    offsets[i] = totalBelow - below;
-	    spans[i] = below + above;
-	}
-    }
-
-    protected SizeRequirements baselineRequirements(int axis, SizeRequirements r) {
-	int totalAbove = 0;
-	int totalBelow = 0;
-	int resizeWeight = 0;
-	int n = getViewCount();
-	for (int i = 0; i < n; i++) {
-	    View v = getView(i);
-	    int span = (int) v.getPreferredSpan(axis);
-	    int below = (int) (v.getAlignment(axis) * span);
-	    int above = span - below;
-	    totalAbove = Math.max(above, totalAbove);
-	    totalBelow = Math.max(below, totalBelow);
-	    resizeWeight += v.getResizeWeight(axis);
-	}
-
-	if (r == null) {
-	    r = new SizeRequirements();
-	}
-	r.preferred = totalAbove + totalBelow;
-	if (resizeWeight != 0) {
-	    r.maximum = Integer.MAX_VALUE;
-	    r.minimum = 0;
-	} else {
-	    r.maximum = r.preferred;
-	    r.minimum = r.preferred;
-	}
-	if (r.preferred > 0) {
-	    r.alignment = (float) totalBelow / r.preferred;
-	} else {
-	    r.alignment = 0.5f;
-	}
-	return r;
-    }
-
-    /**
-     * Fetch the offset of a particular childs current layout
-     */
-    protected int getOffset(int axis, int childIndex) {
-	int[] offsets = (axis == X_AXIS) ? xOffsets : yOffsets;
-	return offsets[childIndex];
-    }
-
-    /**
-     * Fetch the span of a particular childs current layout
-     */
-    protected int getSpan(int axis, int childIndex) {
-	int[] spans = (axis == X_AXIS) ? xSpans : ySpans;
-	return spans[childIndex];
-    }
-
+/*G***del refactor
 //G***fix		protected boolean flipEastAndWestAtEnds(int position, Position.Bias bias) {
 		public boolean flipEastAndWestAtEnds(int position, Position.Bias bias) {	//G***newswing
 	if(axis == Y_AXIS) {
@@ -1459,70 +436,42 @@ else  //G***fix
 		if(v != null && v instanceof com.garretwilson.swing.text.CompositeView) {	//G***newswing
 				return ((com.garretwilson.swing.text.CompositeView)v).flipEastAndWestAtEnds(position,
 										bias);
-/*G***del newswing
-		if(v != null && v instanceof CompositeView) {
-				return ((CompositeView)v).flipEastAndWestAtEnds(position,
-										bias);
-*/
+
+//			G***del newswing		if(v != null && v instanceof CompositeView) {
+//			G***del newswing				return ((CompositeView)v).flipEastAndWestAtEnds(position,
+//			G***del newswing										bias);
 		}
 	    }
 	}
 	return false;
     }
-
-    // --- variables ------------------------------------------------
-
-		int axis;
-    int width;
-    int height;
-
-    /*
-     * Request cache
-		 */
-    SizeRequirements xRequest;
-    SizeRequirements yRequest;
-/*G***del if not needed newswing
-		protected SizeRequirements xRequest;	//G***newswing
-		protected SizeRequirements yRequest;	//G***newswing
 */
-
-    /*
-     * Allocation cache
-     */
-		int[] xOffsets;
-		int[] xSpans;
-		int[] yOffsets;
-		int[] ySpans;
-
-		/** used in paint. */
-		Rectangle tempRect;
-
 
 	//G*** newswing ****
 
 	/**Whether the horizontal allocation is valid or needs to be updated.*/
-	private boolean xAllocValid;
+//G***del if not needed	private boolean xAllocValid;
 
 		/**@return whether the horizontal allocation is valid or needs to be updated.*/
-		public boolean isXAllocValid() {return xAllocValid;}
+//	G***del if not needed		public boolean isXAllocValid() {return xAllocValid;}
 
 		/**Sets whether the horizontal allocation is valid or needs to be updated.
 		@param <code>true</code> if the horizontal allocation is valid, or
 			<code>false</code> if it needs to be updated.
 		*/
-		protected void setXAllocValid(final boolean xAllocationValid) {xAllocValid=xAllocationValid;}
+//	G***del if not needed		protected void setXAllocValid(final boolean xAllocationValid) {xAllocValid=xAllocationValid;}
 
 	/**Whether the vertical allocation is valid or needs to be updated.*/
-	private boolean yAllocValid;
+//	G***del if not needed	private boolean yAllocValid;
 
 		/**@return whether the vertical allocation is valid or needs to be updated.*/
-		public boolean isYAllocValid() {return yAllocValid;}
+//	G***del if not needed		public boolean isYAllocValid() {return yAllocValid;}
 
 		/**Sets whether the vertical allocation is valid or needs to be updated.
 		@param <code>true</code> if the Vertical allocation is valid, or
 			<code>false</code> if it needs to be updated.
 		*/
-		protected void setYAllocValid(final boolean yAllocationValid) {yAllocValid=yAllocationValid;}
+//	G***del if not needed		protected void setYAllocValid(final boolean yAllocationValid) {yAllocValid=yAllocationValid;}
 
 	/**Whether the horizontal preference valid or needs to be updated.*/
 	private boolean xValid;

@@ -2122,7 +2122,9 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 //G***del Debug.notify("XMLEditorKit.PreviousPageAction.actionPerformed()");
 			final JTextComponent textComponent=getTextComponent(actionEvent);	//get the text component
 			if(Debug.isDebug())	//if debugging is turned on
-				ViewUtilities.printViews(textComponent, Debug.getOutput());	//print the views to the debug output
+			{
+				Debug.log(ViewUtilities.toString(textComponent));	//log the views to the debug output
+			}
 			new BasicFrame("Elements", new ElementTreePanel(textComponent)).setVisible(true);	//show a new frame showing elements G***i18n
 		}
 	}

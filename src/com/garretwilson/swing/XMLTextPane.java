@@ -293,7 +293,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 				if(pagedView!=null)  //if we have a paged view
 				{
 //G***del Debug.trace("ready to relayout"); //G***del
-					pagedView.relayout();  //relayout the paged view
+//TODO fix relayout					pagedView.relayout();  //relayout the paged view
 				}
 			}
 		}
@@ -336,7 +336,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 Debug.trace("Ready to relayout");
 //G***fix, if needed				  pagedView.changedUpdate(new javax.swing.text.AbstractDocument.DefaultDocumentEvent(0, getDocument().getLength(), DocumentEvent.EventType.CHANGE), getBounds(), pagedView.getViewFactory());  //send a synthetic changeUpdate() so that all the children and layout strategies can get a chance to reinitialize
 
-					pagedView.relayout();  //relayout the paged view
+//TODO fix relayout					pagedView.relayout();  //relayout the paged view
 				}
 /*G***fix
 				final XMLPagedView pagedView=getPagedView();  //get a reference to our paged view
@@ -1765,11 +1765,13 @@ Debug.notify("For target ID: "+url+" the text is "+getOEBTextPane().getDocument(
 	*/
 	public void go(final int offset)
 	{
+/*TODO fix
 		final int pageIndex=getPagedView().getPageIndex(offset); //get the page index of the specified position
 		if(pageIndex!=-1)
 		{
 		  setPageIndex(pageIndex);	//navigate to the specified page G***what if going to this page puts us on the wrong index?
 		}
+*/
 	}
 
 	/**Searches the document for the given text and returns its first
@@ -1824,6 +1826,7 @@ Debug.notify("For target ID: "+url+" the text is "+getOEBTextPane().getDocument(
 			document.getText(0, document.getLength(), documentSegment)
 	*/
 			searchOffset=documentText.indexOf(searchText.toUpperCase(), searchOffset); //G**testing
+/*TODO fix
 			if(searchOffset!=-1) //if a match was found
 			{
 				final int searchPageIndex=getPageIndex(searchOffset);  //get the page index of this offset
@@ -1833,6 +1836,7 @@ Debug.notify("For target ID: "+url+" the text is "+getOEBTextPane().getDocument(
 				setSearchPosition(searchOffset, searchText.length());  //update the search position, which updates our highlights
 //G***del Debug.trace("Search offset is now: "+getSearchOffset());  //G***del
 			}
+*/
 			return searchOffset;
 		}
 		catch(BadLocationException e) //since we're controlling everything, we should never get a bad location

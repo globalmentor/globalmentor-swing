@@ -31,14 +31,15 @@ import com.garretwilson.util.Debug;
 /**View of several pages.
 	<p>Although this class overrides <code>FlowView</code>, much of the layout is
 	actually a replication of code in <code>BoxView</code>, which is necessary
-	because the latter hides a lot of layout-related variable, which we need
+	because the latter hides a lot of layout-related variables, which we need
 	to update since we extend some of the functionality of <code>BoxView</code>.</p>
 	<p>This class, before hiding a page of views, informs each view that implements
 	<code>ViewHidable</code> that it is about to be hidden.</p>
 @see com.garretwilson.swing.text.ViewHidable
 @see FlowView
 */
-public class XMLPagedView extends XMLFlowView
+//G***fix public class XMLPagedView extends XMLFlowView
+public class XMLPagedView extends FlowView
 {
 
 	/**The task of paginating a document.*/
@@ -54,7 +55,7 @@ public class XMLPagedView extends XMLFlowView
 	private final static Font PAGE_NUMBER_FONT=new Font("Serif", Font.PLAIN, 12); //G***fix
 
 	/**Whether or not the flowing of this view is threaded.*/
-	private boolean threaded=true;	//(newswing threadlayout)
+	private boolean threaded=false;	//(newswing threadlayout)
 
 		/**@return Whether the view flowing should be threaded.*/
 		public boolean isThreaded() {return threaded;}	//(newswing threadlayout)
@@ -74,9 +75,6 @@ public class XMLPagedView extends XMLFlowView
 	/**The thread used to create the flow, if threading is used.*/
 	protected Thread layoutStrategyThread=null;	//(newswing threadlayout)
 
-	/**The cached information about our layout.*/
-	protected PageFlowLayoutInfo flowLayoutInfo;
-
 	/**Constructor specifying an element.
 	@param element The element this view is responsible for.
 	*/
@@ -88,7 +86,12 @@ public class XMLPagedView extends XMLFlowView
 //G***fix threadlayout		strategy=new PageFlowStrategy();	//G***testing
 		setThreaded(false);	//make this view threaded by default (newswing threadlayout)
 //G***bring back		setThreaded(true);	//make this view threaded by default (newswing threadlayout)
-		strategy=new PageFlowStrategy(this);	//create a flow strategy which may or may not be used in a threaded way (newswing threadlayout)
+		
+//TODO fix		strategy=new PageFlowStrategy(this);	//create a flow strategy which may or may not be used in a threaded way (newswing threadlayout)
+
+strategy=new TestFlowStrategy();	//G***testing
+
+
 //G***del		strategy=null;	//the strategy will be created each time it is needed, whether or not threading is used (newswing threadlayout)
 /*G***del
 		setXAllocationValid(false);	//show that we need to update the X axis, since we're just getting created
@@ -104,16 +107,25 @@ A copy of our...
 	private Shape paintAllocation=null;
 */
 
+	/**@return The layout pool for the pages.*/
+	protected View getPagePoolView() {return layoutPool;}
+
+	/**Sets the layout pool for the pages.
+	@param logicalView The logical view from which pages will be created.
+	*/
+	protected void setPagePoolView(final View logicalView) {layoutPool=logicalView;}
+
 	/**A temporary rectangle object used for painting.*/
 	protected Rectangle TempRectangle=new Rectangle();
 
 	/**@return The number of pages this view contains.*/
 	public int getPageCount()
 	{
+		return getViewCount();  //return the number of child views we have
 //G***fix		return getViewCount();  //return the number of child views we have
 //G***del Debug.trace("getPageCount(): ", flowLayoutInfo!=null ? flowLayoutInfo.getLength() : -50);
 		  //return the number of pages we've paginated or, if we have no layout info, return zero
-		return flowLayoutInfo!=null ? flowLayoutInfo.getLength() : 0;
+//TODO fix		return flowLayoutInfo!=null ? flowLayoutInfo.getLength() : 0;
 	}
 
 	/**The current index we're showing, or -1 for no page.*/
@@ -228,68 +240,62 @@ A copy of our...
 	}
 
 	/**The width of each page.*/
-	private float PageWidth;
+	private float pageWidth;
 
 		/**@return The width of each page.*/
-		public float getPageWidth() {return PageWidth;}
-
-		/**Sets the width of each page.
-		@param pageWidth The new page width.
-		*/
-		protected void setPageWidth(final float pageWidth) {PageWidth=pageWidth;}
+		public float getPageWidth() {return pageWidth;}
 
 	/**The height of each page.*/
-	private float PageHeight;
+	private float pageHeight;
 
 		/**@return The height of each page.*/
-		public float getPageHeight() {return PageHeight;}
+		public float getPageHeight() {return pageHeight;}
 
-		/**Sets the height of each page.
-		@param pageHeight The new page height.
-		*/
-		protected void setPageHeight(final float pageHeight) {PageHeight=pageHeight;}
-
-
-
-	//G***comment
-	//G***comment or -1 if...
-	public int getPageIndex(final int pos)
+	/**Sets the size of the pages.
+	@param width The new page width.
+	@param height The new page height.
+	*/
+	protected void setPageSize(final float width, final float height)
 	{
-		return flowLayoutInfo.getFlowSegmentIndex(pos); //use our calculated offsets to find which page this position represents
-/*G***del
-		final int viewCount=getViewCount();	//find out how many child views we have
-		for(int i=0; i<viewCount; ++i)		//look at each child view
+		pageWidth=width;	//set the width
+		pageHeight=height;	//set the height
+		getPagePoolView().setSize((int)width-50, (int)height-50);	//make sure the layout pool has the correct dimensions of the page so that it will do unrestrained layout correctly
+	}
+
+
+		//G***comment
+		//G***comment or -1 if...
+		public int getPageIndex(final int pos)
 		{
-			final View childView=getView(i);	//G***testing
-//G***del			final Element childElement=childView.getElement();	//G***testing
-//G***del Debug.trace("Child view "+i+" is "+childView.getClass().getName());	//G***del
-//G***del Debug.trace("For page: "+i+" the start offset is: "+childView.getStartOffset()+" end offset is: "+childView.getEndOffset());
-			if(pos>=childView.getStartOffset() && pos<childView.getEndOffset())	//G***testing
-				return i;
+//TODO fix			return flowLayoutInfo.getFlowSegmentIndex(pos); //use our calculated offsets to find which page this position represents
+			final int viewCount=getViewCount();	//find out how many child views we have
+			for(int i=0; i<viewCount; ++i)		//look at each child view
+			{
+				final View childView=getView(i);	//G***testing
+//	G***del			final Element childElement=childView.getElement();	//G***testing
+//	G***del Debug.trace("Child view "+i+" is "+childView.getClass().getName());	//G***del
+//	G***del Debug.trace("For page: "+i+" the start offset is: "+childView.getStartOffset()+" end offset is: "+childView.getEndOffset());
+				if(pos>=childView.getStartOffset() && pos<childView.getEndOffset())	//G***testing
+					return i;
+			}
+			return -1;	//G***testing
 		}
-		return -1;	//G***testing
-*/
-	}
 
-	//G***fix this with the correct modelToView() stuff
-	public int getPageStartOffset(final int pageIndex)
-	{
-		return isLaidOut(pageIndex) ? flowLayoutInfo.getStartOffset(pageIndex) : -1;
-/*G***del
-		final View childView=getView(pageIndex);	//get the view for the given page
-		return childView!=null ? childView.getStartOffset() : -1;  //return the start offset of the page, or -1 if there is no such page G***testing
-*/
-	}
+		//G***fix this with the correct modelToView() stuff
+		public int getPageStartOffset(final int pageIndex)
+		{
+//TODO fix			return isLaidOut(pageIndex) ? flowLayoutInfo.getStartOffset(pageIndex) : -1;
+			final View childView=getView(pageIndex);	//get the view for the given page
+			return childView!=null ? childView.getStartOffset() : -1;  //return the start offset of the page, or -1 if there is no such page G***testing
+		}
 
-	//G***fix this with the correct modelToView() stuff
-	public int getPageEndOffset(final int pageIndex)
-	{
-		return isLaidOut(pageIndex) ? flowLayoutInfo.getEndOffset(pageIndex) : -1;
-/*G***del
-		final View childView=getView(pageIndex);	//get the view for the given page
-		return childView!=null ? childView.getEndOffset() : -1;  //return the start offset of the page, or -1 if there is no such page G***testing
-*/
-	}
+		//G***fix this with the correct modelToView() stuff
+		public int getPageEndOffset(final int pageIndex)
+		{
+//TODO fix			return isLaidOut(pageIndex) ? flowLayoutInfo.getEndOffset(pageIndex) : -1;
+			final View childView=getView(pageIndex);	//get the view for the given page
+			return childView!=null ? childView.getEndOffset() : -1;  //return the start offset of the page, or -1 if there is no such page G***testing
+		}
 
 	/**@return <code>true</code> if the specified page is one of the pages being
 		displayed.
@@ -302,6 +308,24 @@ A copy of our...
 		return pageIndex>=getPageIndex() && pageIndex<getPageIndex()+getDisplayPageCount() && pageIndex<getPageCount();
 	}
 
+	/**Returns whether or not a page index has been laid out.
+		This is synchronized so that the
+		strategy will never by set to null while it is being checked.
+		@return <code>true</code> if the indicated view has been laid out.
+		@see #onLayoutComplete
+	//G***we need to change this to make sure that the page given is valid
+	*/
+	public synchronized boolean isLaidOut(final int pageIndex)	//(newswing threadlayout)
+	{
+		return pageIndex>=0 && pageIndex<getViewCount();
+/*G***fix all this		
+		//if we don't thread or if we're currently not threading, the view is laid out; if we are threading, ask the flow strategy for the answer G***what if the rowIndex is out of bounds?
+	//G***del System.out.println("XMLPagedView.isLaidOut() rowIndex: "+rowIndex+" layoutStrategyThread not null: "+(layoutStrategyThread!=null)+" strategy not null: "+(strategy!=null));	//G***del
+		return ((PageFlowStrategy)strategy).isLaidOut(pageIndex);  //ask the strategy whether the page is laid out G***fix cast
+	//G***del		return !isThreaded() || layoutStrategyThread==null || ((PageFlowStrategy)strategy).isLaidOut(rowIndex);
+*/
+}
+
 	/**Returns the child index of a particular page. Each page may or may not
 		have been prepaginated and added as a child view. If this page has, its
 		child index will be returned, otherwise -1.
@@ -312,6 +336,8 @@ A copy of our...
 	*/
 	protected int getPageChildIndex(final int pageIndex)
 	{
+		return pageIndex;
+		/*G***fix
 			//find out where this page begins in the model
 		final int startOffset=flowLayoutInfo!=null ? flowLayoutInfo.getStartOffset(pageIndex) : 0;
 //G***del		int childIndex=-1; //we'll find the child using this variable; assume for now that we won't find it
@@ -323,6 +349,7 @@ A copy of our...
 				return childViewIndex;  //return the index of this child
 		}
 		return -1;  //show that there is no child view starting at the correct index
+*/
 	}
 
 	/**Retrieves a page by its index. The paged view is first checked to see if
@@ -332,132 +359,7 @@ A copy of our...
 	*/
 	protected Page getPage(final int pageIndex) //G***change Page to PageView
 	{
-/*G***del
-		try
-		{
-*/
-			int childIndex=getPageChildIndex(pageIndex);  //get the index of the child view that represents this page
-			if(childIndex<0)  //if none of our children start at the correct location
-			{
-				final int startOffset=flowLayoutInfo.getStartOffset(pageIndex); //find out where this page begins in the model
-				final int endOffset=flowLayoutInfo.getEndOffset(pageIndex); //find out where this page begins in the model
-	//G***del Debug.trace("found ending offset: ", endOffset); //G***del
-				final FlowRange flowRange=flowLayoutInfo.getFlowRange(startOffset);  //find the range that matches this offset
-	//G***del Debug.trace("Found flow range: ", flowRange);
-				assert flowRange!=null : "No flow range for position "+startOffset;
-					//get a page pool view from which to paginate
-				final PagePoolView pagePoolView=getPagePoolView(flowRange.getStartOffset(), flowRange.getEndOffset());
-	//G***del Debug.trace("retrieved page pool view with parent: ", pagePoolView.getParent()!=null ? pagePoolView.getParent().getClass().getName() : "null"); //G***del
-	/*G***del
-			for(int i=0; i<pagePoolView.getViewCount(); ++i) //G***del; testing
-			{
-				final View view=pagePoolView.getView(i);
-	Debug.trace("pagePoolView Child view: "+i+" is: ", view.getClass().getName()); //G***del
-	Debug.trace("pagePoolView Child view parent: ", view.getParent()!=null ? view.getParent().getClass().getName() : "null");
-
-			}
-	*/
-				//dynamically create the specified view from the pool
-				//note that we must use the ending offset for all the content we own, so that
-				//  a page can retrieve all of its content instead of being cut off
-				//  (perhaps the layout algorithm needs more examination to determine why)
-				final View childView=((PageFlowStrategy)strategy).createRow(this, pagePoolView, startOffset, getEndOffset(), true); //G***fix cast
-	//G***del Debug.trace("Created page view with end offset: ", childView.getEndOffset());  //G***del
-//G***del 	Debug.trace("Created page view with start offset: ", childView.getStartOffset());  //G***del
-//G***del 	Debug.trace("Created page view with parent: ", childView.getParent()!=null ? childView.getParent().getClass().getName() : "null"); //G***del
-				childIndex=getViewCount()-1;  //the child to use is the one we just added
-				if(getViewCount()>getDisplayPageCount()*3) //if we have too many pages cached as child views
-					remove(0);  //remove the first one
-			}
-	/*G***del
-			final View pagedView=(Page)getView(childIndex); //G***del; testing
-			for(int i=0; i<pagedView.getViewCount(); ++i) //G***del; testing
-			{
-				final View view=pagedView.getView(i);
-	Debug.trace("page Child view: "+i+" is: ", view.getClass().getName()); //G***del
-	Debug.trace("page Child view parent: ", view.getParent()!=null ? view.getParent().getClass().getName() : "null");
-
-			}
-	*/
-			return (Page)getView(childIndex); //the child index should now point to a child view that represents the page
-/*G***del
-		}
-		catch(Throwable throwable)  //G***testing memory
-		{
-			Debug.error(throwable); //G***fix
-			return null;
-		}
-*/
-	}
-
-	/**A list of references to page pool views.*/
-	protected final java.util.List pagePoolViewReferenceList=new LinkedList();
-
-	/**Returns a pooled view of page views that represents the given range. These
-		page pool views are cached with soft references so that if a page pool has
-		been created before, the same one will be returned again as long as its
-		memory has not been reclaimed. If a pool with the given range has not yet
-		been created, or if its memory has been reclaimed, a new one is created and
-		cached.
-	@param startOffset The beginning model position the pooled view should represent.
-	@param endOffset The non-inclusive ending model position the pooled view
-		should represent.
-	*/
-	protected	PagePoolView getPagePoolView(final int startOffset, final int endOffset)  //G***maybe synchronize on the list, later
-	{
-//G***del System.out.println("getting page pool view, reference list count: "+pagePoolViewReferenceList.size()); //G***del
-		final Iterator iterator=pagePoolViewReferenceList.iterator(); //get an iterator to the page pool view references
-		while(iterator.hasNext()) //while there are more page pool view references
-		{
-			final Reference pagePoolViewReference=(Reference)iterator.next(); //get the next page pool view reference
-		  final PagePoolView pagePoolView=(PagePoolView)pagePoolViewReference.get();  //get the page pool view itself
-		  if(pagePoolView!=null)  //if this page pool's memory has not been reclaimed
-			{
-					//if this page pool view matches the range that was given
-				if(pagePoolView.getStartOffset()==startOffset && pagePoolView.getEndOffset()==endOffset)
-					return pagePoolView;  //we've found one; return the page pool view
-/*G***del
-				else //G***del if(pagePoolViewReferenceList.size()>2) //G***testing; del
-					iterator.remove();  //G***testing; del
-*/
-			}
-			else  //if this page pool's memory has been reclaimed
-			{
-			  iterator.remove();  //remove the reference to the page pool
-			}
-		}
-		  //if we can't find a matching page pool view, create a new one and add it to the cache
-		final PagePoolView pagePoolView=new PagePoolView(getElement(), getFlowAxis(), startOffset, endOffset);  //create a new page pool view G***we may want to hard-code this to Y_AXIS later; this mistake has caused hours of debugging
-		pagePoolView.setParent(this);  //show that we're the parent of this pooled view
-		pagePoolView.setSize((int)getPageWidth(), (int)getPageHeight());	//make sure the layout pool has the correct dimensions of the page so that it will do unrestrained layout correctly
-		pagePoolViewReferenceList.add(new SoftReference(pagePoolView)); //create a soft reference to this page pool view and add it to our cache
-		return pagePoolView;  //return the page pool view we created
-	}
-
-	/**Removes all cached page pool views.*/
-	protected void clearPagePoolViews()
-	{
-		pagePoolViewReferenceList.clear();  //remove all page pool view references from our list
-	}
-
-	/**If the view implements <code>ViewReleasable</code> it is notified that it
-		is should release as much information as it can in order to free up memory.
-		All child views of the view are notified as well, and so on down the
-		hierarchy.
-	*/
-	protected void releaseView(final View view) //G***del if not needed; if keep, comment view param
-	{
-		if(view!=null)  //if we have a valid view
-		{
-			if(view instanceof ViewReleasable) //if this is a releasable view
-			{
-//G***del	Debug.trace("Inside releaseView(), found hidable: "+view);  //G**del
-				((ViewReleasable)view).release(); //tell the view to release memory
-			}
-			final int viewCount=view.getViewCount();  //get the number of child views
-			for(int i=0; i<viewCount; ++i)  //look at each child view
-				releaseView(view.getView(i));  //tell this child view to release memory
-		}
+		return (Page)getView(pageIndex);	//G***testing
 	}
 
 	/**Removes one of the children at the given position. This is a convenience
@@ -496,6 +398,7 @@ A copy of our...
 		which may reference layout structures, all of these are first cleared.
 	@see XMLBlockView#relayout
 	*/
+/*TODO fix
 	public void relayout()
 	{
 		while(getViewCount()>0) //while there are more views
@@ -503,10 +406,11 @@ A copy of our...
 		clearPagePoolViews(); //clear all of our cached page pool views
 		super.relayout(); //do the default relayout, which actually invalidates the views and repaints the component
 	}
+*/
 
 	/**Because a paged view merely uses its child views as cached pages, it is not
 		interested in knowing if their preferences have changed. Furthermore,
-		because we are the parent view of layout pool views, we should not invalid
+		because we are the parent view of layout pool views, we should not invalidate
 		our layout just because a layout pool is being constructed. We therefore
 		ignore all preference changes by our child views.
 	@param child The child view.
@@ -589,7 +493,7 @@ A copy of our...
 				if(TempRectangle.intersects(clipRectangle))	//if this area needs painted and this is a valid page
 				{
 					final Page pageView=getPage(pageIndex); //get a reference to this page, which will paginate it if needed
-//G***del Debug.trace("Ready to paint page "+pageIndex+" with parent: ", pageView.getParent()!=null ? pageView.getParent().getClass().getName() : "null"); //G***del
+Debug.trace("Ready to paint page "+pageIndex+" with parent: ", pageView.getParent()!=null ? pageView.getParent().getClass().getName() : "null"); //G***del
 				//G***move this line up so that only pages that need to get repainted
 				  paintPage(g, TempRectangle, pageView, pageIndex); //paint this page
 				}
@@ -658,8 +562,10 @@ A copy of our...
 			TempRectangle.y+=yDelta;	//advance to the next vertical page position
 		}
 		  //G***testing to see if paintChild() now messes up the allocation validity
+/*G***test refactor
 				setXAllocValid(true);	//show that our horizontal allocation is valid again
 				setYAllocValid(true);	//show that our vertical allocation is valid again
+*/
 
 //G***del Debug.trace();
 	}
@@ -746,22 +652,25 @@ A copy of our...
 	{
 		final View childView=getView(index);	//get a reference to the requested child view
 		int adjustAmount=0;	//we'll assume we won't have to adjust the span any to account for insets
-		if(childView instanceof Page)	//if this is a page (that's what we expect it to be)
+		assert childView instanceof Page : "Expected a page child.";
+		final Page page=(Page)childView;	//cast the child view to a page
+		if(getFlowAxis()==X_AXIS)	//if we're flowing horizontally
 		{
-			final Page page=(Page)childView;	//cast the child view to a page
-			if(getFlowAxis()==X_AXIS)	//if we're flowing horizontally
-				adjustAmount=page.getPublicLeftInset()+page.getPublicRightInset();	//add the left and right insets together
-			else	//if we're flowing vertically
-				adjustAmount=page.getPublicTopInset()+page.getPublicBottomInset();	//add the top and bottom insets together
-					//G***should we check for an invalid flow axis?
+			adjustAmount=page.getPublicLeftInset()+page.getPublicRightInset();	//add the left and right insets together
 		}
+		else	//if we're flowing vertically
+		{
+			adjustAmount=page.getPublicTopInset()+page.getPublicBottomInset();	//add the top and bottom insets together
+		}
+					//G***should we check for an invalid flow axis?
 //G***del System.out.println("XMLPagedView.getFlowSpan found an adjust amount of: "+adjustAmount);	//G***del
 //G***fix		return super.getFlowSpan(index)-(adjustAmount*4)/*G***testing *4*/;	//return the default span, accounting for any insets
 //G***fix		return layoutSpan-(adjustAmount*4)/*G***testing *4*/;	//return the default span, accounting for any insets
 //G***del		return layoutSpan;	//G***fix
 
 			//G***put this line in a lower view such as XMLBlockView
-		return layoutSpan-adjustAmount;	//return the default span, accounting for any insets
+//G***testing		return layoutSpan-adjustAmount;	//return the default span, accounting for any insets
+		return (int)getPageHeight()-adjustAmount;
 	}
 
 	/**Calculates the location along the flow axis at which the flow span will start,
@@ -773,20 +682,21 @@ A copy of our...
 	{
 		final View childView=getView(index);	//get a reference to the requested child
 		int adjustAmount=0;	//we'll assume we won't have to adjust the span any to account for insets
-		if(childView instanceof Page)	//if this is a page (that's what we expect it to be)
+		assert childView instanceof Page : "Expected a page child.";
+		final Page page=(Page)childView;	//cast the child view to a page
+		if(getFlowAxis()==X_AXIS)	//if we're flowing horizontally
 		{
-			final Page page=(Page)childView;	//cast the child view to a page
-			if(getFlowAxis()==X_AXIS)	//if we're flowing horizontally
-				adjustAmount=page.getPublicLeftInset();	//compensate for the left inset
-			else	//if we're flowing vertically
-				adjustAmount=page.getPublicTopInset();	//compensate for the top inset
-					//G***should we check for an invalid flow axis?
+			adjustAmount=page.getPublicLeftInset();	//compensate for the left inset
 		}
+		else	//if we're flowing vertically
+		{
+			adjustAmount=page.getPublicTopInset();	//compensate for the top inset
+		}
+				//G***should we check for an invalid flow axis?
 //G***del System.out.println("XMLPagedView.getFlowStart found an adjust amount of: "+adjustAmount);	//G***del
 //G***fix		return super.getFlowStart(index)+adjustAmount;	//return the default star of the flow, accounting for any inset
 //G***fix		return adjustAmount;	//return the default star of the flow, accounting for any inset
 //G***del		return 0;
-
 			//G***put this line in a lower view such as XMLBlockView
 		return adjustAmount;	//return the default star of the flow, accounting for any inset
 	}
@@ -803,6 +713,98 @@ A copy of our...
 
 	/* ***BoxView methods*** */
 
+	/**Loads all of the children to initialize the view.
+	This version ensures that our container knows about this paged view.
+	@param viewFactory The view factor to be used to create views.
+	*/
+	protected void loadChildren(final ViewFactory viewFactory)
+	{
+		final Container container=getContainer();	//get a reference to our container G***all this should probably go somewhere else
+		if(container instanceof XMLTextPane)	//if the container is an XML text pane
+			((XMLTextPane)container).setPagedView(this);	//tell it that it has a paged view
+		if(getPagePoolView()==null)	//if there is no layout pool, yet
+		{
+	    setPagePoolView(new PagePoolView(getElement()));	//create our own special layout pool before the super class gets a chance to create one
+		}
+		super.loadChildren(viewFactory);	//load our children normally
+	}
+
+  /**Sets the size of the view, causing layout to occur if needed. 
+  This version updates the page size and then calls the layout method with the
+  page size inside of the insets.
+  @param width the width >= 0
+  @param height the height >= 0
+   */
+	public void setSize(float width, float height)
+	{
+		final int flowAxis=getFlowAxis();	//get the flow axis
+		final int axis=getAxis();	//get our tiling axis
+		final int displayPageCount=getDisplayPageCount();	//see how many pages we're displaying
+		final float pageWidth, pageHeight;
+		if(axis==X_AXIS)	//if we're tiling on the X axis
+		{
+			pageWidth=(width/displayPageCount);	//show that the pages will be a fraction of our width
+			pageHeight=height;	//show that the pages will be the same height
+		}
+		else	//if we're tiling on the Y axis
+		{
+			pageWidth=width;	//show that the widths will all be the same
+			pageHeight=(height/displayPageCount);	//show that the pages will each be a fraction of the total height
+		}
+		setPageSize(pageWidth, pageHeight);	//update the page size, which will update the page pool and the pooled child views TODO maybe do this when reparenting
+		super.setSize(width, height);
+//G***del		super.setSize(getPageWidth(), getPageHeight());
+/*G***fix
+layout((int)(width - getLeftInset() - getRightInset()), 
+       (int)(height - getTopInset() - getBottomInset()));
+*/
+  }
+
+	/**
+	 * Perform layout for the minor axis of the box (i.e. the
+	 * axis orthoginal to the axis that it represents).  The results 
+	 * of the layout should be placed in the given arrays which represent 
+	 * the allocations to the children along the minor axis.
+	 * <p>
+	 * This is implemented to do a baseline layout of the children
+	 * by calling BoxView.baselineLayout.
+	 *
+	 * @param targetSpan the total span given to the view, which
+	 *  whould be used to layout the children.
+	 * @param axis the axis being layed out.
+	 * @param offsets the offsets from the origin of the view for
+	 *  each of the child views.  This is a return value and is
+	 *  filled in by the implementation of this method.
+	 * @param spans the span of each child view.  This is a return
+	 *  value and is filled in by the implementation of this method.
+	 * @return the offset and span for each child view in the
+	 *  offsets and spans parameters
+	 */
+protected void layoutMajorAxis(int targetSpan, int axis, int[] offsets, int[] spans)
+{
+	final int pageWidth=(int)getPageWidth();
+	int offset=0;
+for(int i=0; i<offsets.length; ++i)
+{
+	offsets[i]=offset;
+	offset+=pageWidth;
+	spans[i]=pageWidth;
+}
+//G***del        	baselineLayout(targetSpan, axis, offsets, spans);
+	}
+
+protected SizeRequirements calculateMajorAxisRequirements(int axis, SizeRequirements r)
+{
+  if (r == null) {
+    r = new SizeRequirements();
+}
+//G***del  r=baselineRequirements(axis, r);
+r.alignment=0;
+r.minimum=0;
+r.maximum=(int)getPageWidth();
+r.preferred=(int)getPageWidth();
+return r;
+	}
 //G***fix getViewAtPoint()
 
 //G***fix childAllocation()
@@ -812,10 +814,11 @@ A copy of our...
 	@param width The new width (>=0).
 	@param height The new height (>=0).
 	*/
+/*G***determine if this needs to be used
 	public void setSize(float width, float height)	//(newswing threadlayout)
 	{
 //G***del Debug.trace("setSize(): width: "+width+", height: "+height+" from oldWidth:"+getWidth()+", oldHeight: "+getHeight());	//G***del
-		if(/*G***del isThreaded() && */isPaginating())	//if we are currently laying out the view, either in a separate thread or periodically G***maybe take put the isThreaded() inside the block and decide how to restart paginating if we're simply repaginating later in the AWT thread
+		if(isPaginating())	//if we are currently laying out the view, either in a separate thread or periodically G***maybe take put the isThreaded() inside the block and decide how to restart paginating if we're simply repaginating later in the AWT thread
 		{
 
 //G***important; this needs fixed, because it now thinks things are threaded if pagination is going on
@@ -851,330 +854,7 @@ System.out.println(e);	//G***del
 //G***del		if(!isThreaded() || layoutStrategyThread==null)	//if we don't support threading, or we aren't threading at the moment
 			super.setSize(width, height);
 	}
-
-	/**Performs layout of the children. The size is the area inside of the insets.
-		This version simply repaginates, creating new page views, and does not call
-		the parent verions.
-	@param width The width (>=0).
-	@param height The height (>=0).
-	@see XMLPagedLayout#Page
-	*/
-	protected void layout(int width, int height)
-	{
-		if(flowLayoutInfo==null)  //if we have no flow layout information G***find out why this isn't being created sometimes
-		{
-Debug.traceStack("no flowlayout"); //G***del
-
-//G***fix			Debug.warn("flow layout information not created; this needs fixed");  //G***del
-		  return; //G***fix; this means that pagination has started before children has been loaded; what to do?
-		}
-//G***del Debug.traceStack(); //G***del
-//G***del Debug.trace("XMLPagedView.layout() width: "+width+" height: "+height);
-		if(!isThreaded() || layoutStrategyThread==null)	//only do the layout if we don't support threading, or we aren't currently threading
-		{
-//G***del System.out.println("Inside layout() with width: "+width+" height: "+height);	//G***del
-			final int flowAxis=getFlowAxis();	//get the flow axis
-			final int axis=getAxis();	//get our tiling axis
-			final int displayPageCount=getDisplayPageCount();	//see how many pages we're displaying
-			if(axis==X_AXIS)	//if we're tiling on the X axis
-			{
-				setPageWidth(width/displayPageCount);	//show that the pages will be a fraction of our width
-				setPageHeight(height);	//show that the pages will be the same height
-			}
-			else	//if we're tiling on the Y axis
-			{
-				setPageWidth(width);	//show that the widths will all be the same
-				setPageHeight(height/displayPageCount);	//show that the pages will each be a fraction of the total height
-			}
-			final int newSpan=(flowAxis==X_AXIS) ? width : height;	//get our new span
-					//G***del; testing
-				layoutChanged(flowAxis);	//invalidate our flow axis
-				layoutChanged(getAxis());	//invalidate our tiling axis G***perhaps we might want to change this to just invalidate X_AXIS and then Y_AXIS, so that we'll make sure we get them both
-
-			if(layoutSpan!=newSpan)	//if our flow axis has changed
-			{
-				layoutChanged(flowAxis);	//invalidate our flow axis
-				layoutChanged(getAxis());	//invalidate our tiling axis G***perhaps we might want to change this to just invalidate X_AXIS and then Y_AXIS, so that we'll make sure we get them both
-				layoutSpan=newSpan;	//show that our span has changed
-			//G***probably put an isAllocationValid() here
-			}
-
-	//G***testing
-		// repair the flow if necessary
-			if(!isPaginating() && !isAllocationValid()) //if we're not already paginating and the allocation is no longer valid
-			{
-				setPaginating(true);  //show that we're now paginating
-				pagePoolViewReferenceList.clear();  //remove all our cached page pool views, since they will be invalid
-				flowLayoutInfo.setLength(0);  //show that we haven't laid out the flow information, yet
-				removeAll();  //remove all of our children (cached pages)
-//G***del if we can				System.gc();  //before we start repagination, do garbage collection if we can
-				int oldBoxSpan = (axis == X_AXIS) ? width : height;
-Debug.trace("Getting ready to repaginate all pages.");	//G***del
-				if(isThreaded())	//if we support threading
-				{
-Debug.trace("Threading supported.");  //G***del
-
-//G***del				try{Thread.sleep(3000);}catch(Exception e){}				  //G***del; testing applet
-
-	//G***del		final PageFlowStrategy flowStrategy=new PageFlowStrategy(this);	//G***testing threadlayout
-						lastLayoutWidth=width;	//show what width we're laying out (newswing threadlayout)
-						lastLayoutHeight=height;	//show what height we're laying out (newswing threadlayout)
-//G***del if not needed						strategy=new PageFlowStrategy(this);	//create a new flow strategy (we have to create one each time,
-						layoutStrategyThread=new Thread((PageFlowStrategy)strategy);	//create a new thread for flowing (newswing threadlayout)
-						layoutStrategyThread.setName("Layout Strategy Thread");	//G***del; testing
-						layoutStrategyThread.start();	//start the layout process (newswing threadlayout)
-				}
-				else	//if we do not support threading (newswing threadlayout)
-				{
-//G***del when works					strategy.layout(this);	//do layout the normal way
-
-
-
-//G***del				final XMLFlowView flowView=this; //make a note of the flow view to use layout
-				lastLayoutWidth=width;	//show what width we're laying out (newswing threadlayout) G***maybe bring this up so that it always gets set
-				lastLayoutHeight=height;	//show what height we're laying out (newswing threadlayout)
-				//create an instance of a layout object and queue it to layout the next section in the AWT thread
-				SwingUtilities.invokeLater(new FlowRangeLayerOut(this, (PageFlowStrategy)strategy, flowLayoutInfo, true));  //G***fix cast
-/*G***del
-
-				SwingUtilities.invokeLater(new Runnable()	//G***testing
-					{
-						public void run()
-						{
-
-					((PageFlowStrategy)strategy).layout(flowView, new FlowLayoutInfo());	//do layout the normal way G***fix cast
-Debug.trace("Finished paged view layout");
-			setXAllocValid(true);	//show that our horizontal allocation is valid again
-			setYAllocValid(true);	//show that our vertical allocation is valid again
-			setPaginating(false); //show that we're not paginating anymore
-						}
-					});
-
 */
-
-
-
-
-
-
-
-
-
-
-
-
-/*G***testing ViewReleasable
-					((PageFlowStrategy)strategy).layout(this, new FlowLayoutInfo());	//do layout the normal way G***fix cast
-Debug.trace("Finished paged view layout");
-*/
-//G***del Debug.stackTrace(); //G***del
-				}
-
-/*G***see how we can make this work with threading; this is probably needed if this is not the top-level view
-							int newBoxSpan = (int) getPreferredSpan(axis);
-							if (oldBoxSpan != newBoxSpan) {
-									View p = getParent();
-									p.preferenceChanged(this, (axis == X_AXIS), (axis == Y_AXIS));
-							}
-*/
-		}
-
-	//G***fix System.out.println("Getting ready to repaginate all pages.");	//G***del
-	//G***fix 			strategy.layout(this);	//G***decide where to put this eventually
-
-
-	/*G***fix
-		// repair the flow if necessary
-		if (! isAllocationValid()) {
-				int oldBoxSpan = (axis == X_AXIS) ? width : height;
-				strategy.layout(this);
-							int newBoxSpan = (int) getPreferredSpan(axis);
-							if (oldBoxSpan != newBoxSpan) {
-									View p = getParent();
-									p.preferenceChanged(this, (axis == X_AXIS), (axis == Y_AXIS));
-							}
-		}
-	*/
-
-		if(!isThreaded())	//if we're not threading (newswing threadlayout)
-		{
-//G***del Debug.trace("Setting xAllocValid and yAllocValid to true");
-
-/*G***bring back testing ViewReleasable
-			setXAllocValid(true);	//show that our horizontal allocation is valid again
-			setYAllocValid(true);	//show that our vertical allocation is valid again
-*/
-
-/*G***del if not needed; this really hangs up the system on low-memory machines
-			final int viewCount=getViewCount();	//find out how many child views we have
-			for(int i=0; i<viewCount; ++i)		//look at each child view
-			{
-				getView(i).setSize(getPageWidth(), getPageHeight());	//update the size of each view so they will already be resized
-//G***del Debug.trace("after setting page size index "+i+", xAllocValid: "+isXAllocValid()+" yAllocValid: "+isYAllocValid());
-			}
-*/
-				//G***right now we're forcing valid allocation, because in some works 800X600 will cause infinite cycles
-				//G***don't leave these in; find out why they are changing
-/*G***del
-			setXAllocValid(true);	//show that our horizontal allocation is valid again
-			setYAllocValid(true);	//show that our vertical allocation is valid again
-*/
-
-		}
-
-
-		// repair the flow if necessary
-	//G***del if we don't need	if (! isAllocationValid()) {
-	//G***del if not needed			int oldBoxSpan = (axis == X_AXIS) ? width : height;
-	/*G***del when works
-	System.out.println("Getting ready to repaginate all pages.");	//G***del
-				strategy.layout(this);
-	*/
-	//G***del			setPageIndex(0);	//go to the first page G***make a method here that will make sure we stay on the same page
-	//G***del System.out.println("Resetting back to page zero");
-	/*G***del if not needed
-							int newBoxSpan = (int) getPreferredSpan(axis);
-							if (oldBoxSpan != newBoxSpan) {
-									View p = getParent();
-									p.preferenceChanged(this, (axis == X_AXIS), (axis == Y_AXIS));
-							}
-	*/
-			}
-		}
-
-	/**Callback function called by the flow strategy to indicate that another row
-		is being laid out.
-	@param rowIndex The index of the row undergoing layout.
-	*/
-	synchronized protected void onLayoutRow(final int rowIndex)	//(newswing threadlayout)
-	{
-/*G***del this enire function, maybe
-Debug.trace("Inside XMLPagedView.onLayoutRow() with rowIndex: ", rowIndex);	//G***del
-//G***del System.out.println("Inside XMLPagedView.onLayoutRow() with rowIndex: "+rowIndex);	//G***del
-		if(isThreaded())	//if we're threading (otherwise, this would probably cause endless loops)
-		{
-			final Container container=getContainer();	//get a reference to our container
-			if(container!=null)	//if we're in a container
-				container.repaint();	//repaint our container
-*/
-/*G***del
-			SwingUtilities.invokeLater(new Runnable()	//don't repaint the container here (in this thread); invoke it later in the event thread
-				{
-					public void run()
-					{
-						final Container container=getContainer();	//get a reference to our container
-						if(container!=null)	//if we're in a container
-							container.repaint();	//repaint our container
-					}
-				});
-*/
-//G***del		}
-	}
-
-	/**Callback function called by the flow strategy to indicate that another page
-		has been laid out.
-	@param pageIndex The index of the page undergoing layout.
-	*/
-	protected void onPageLayoutComplete(final int pageIndex)
-	{
-		//fire a page event with our current page number, since our page count changed
-		firePageEvent(new PageEvent(this, getPageIndex(), getPageCount()));
-		if(pageIndex>getPageIndex() && pageIndex<getPageIndex()+getDisplayPageCount())  //if this is one of the pages we're showing
-		{
-			final Container container=getContainer();	//get a reference to our container
-			if(container!=null)	//if we're in a container
-				container.repaint();	//repaint our container
-		}
-/*G***del
-			SwingUtilities.invokeLater(new Runnable()	//don't repaint the container here (in this thread); invoke it later in the event thread
-				{
-					public void run()
-					{
-						final Container container=getContainer();	//get a reference to our container
-						if(container!=null)	//if we're in a container
-							container.repaint();	//repaint our container
-					}
-				});
-*/
-	}
-
-	/**Indicates that the layout has completed. This is synchronized so that the
-		layout thread will never by set to <code>null</code> while it is being
-		checked.
-		@see #isLaidOut
-	*/
-	public synchronized void onLayoutComplete()	//(newswing threadlayout)
-	{
-/*G***fix
-						int newBoxSpan = (int) getPreferredSpan(axis);
-						if (oldBoxSpan != newBoxSpan) {
-								View p = getParent();
-								p.preferenceChanged(this, (axis == X_AXIS), (axis == Y_AXIS));
-						}
-*/
-//G***delSystem.out.println("onLayoutComplete()");	//G***del
-//G***del		strategy=null;
-		layoutStrategyThread=null;	//set the layout thread to null, since we don't need it anymore
-		setXAllocValid(true);	//show that our horizontal allocation is valid again
-		setYAllocValid(true);	//show that our vertical allocation is valid again
-		setPaginating(false); //show that we're not paginating anymore
-		final int viewCount=getViewCount();	//find out how many child views we have
-
-		if(isThreaded())	//if we're threading (otherwise, this would probably cause endless loops) G***fix this so that we don't needlessly paint the page if it's already been painted
-		{
-			final Container container=getContainer();	//get a reference to our container
-			if(container!=null)	//if we're in a container
-				container.repaint();	//repaint our container
-		}
-
-/*G***del
-		for(int i=0; i<viewCount; ++i)		//look at each child view
-			getView(i).setSize(getPageWidth(), getPageHeight());	//update the size of each view so they will already be resized
-*/
-	}
-
-	/**Returns whether or not a page index has been laid out.
-		This is synchronized so that the
-		strategy will never by set to null while it is being checked.
-		@return <code>true</code> if the indicated view has been laid out.
-		@see #onLayoutComplete
-//G***we need to change this to make sure that the page given is valid
-	*/
-	public synchronized boolean isLaidOut(final int pageIndex)	//(newswing threadlayout)
-	{		//if we don't thread or if we're currently not threading, the view is laid out; if we are threading, ask the flow strategy for the answer G***what if the rowIndex is out of bounds?
-//G***del System.out.println("XMLPagedView.isLaidOut() rowIndex: "+rowIndex+" layoutStrategyThread not null: "+(layoutStrategyThread!=null)+" strategy not null: "+(strategy!=null));	//G***del
-		return ((PageFlowStrategy)strategy).isLaidOut(pageIndex);  //ask the strategy whether the page is laid out G***fix cast
-//G***del		return !isThreaded() || layoutStrategyThread==null || ((PageFlowStrategy)strategy).isLaidOut(rowIndex);
-	}
-
-	/**Checks the request cache and update if needed. This overrides the default
-	functionality to simply return the size of the pages.*/
-/*G***del
-	protected void checkRequests()
-	{
-//G***del System.out.println("Checking requests, width: "+getWidth()+" height: "+getHeight());	//G***del
-		super.checkRequests();	//G***fix
-//G***del System.out.println("X request: "+xRequest);	//G***del
-//G***del System.out.println("Y request: "+yRequest);	//G***del
-*/
-/*G***fix
-		final int axis=getAxis();	//get our tiling axis
-		final int displayPageCount=getDisplayPageCount();	//see how many pages we're displaying
-//G***fix		if(axis==X_AXIS)	//if we're tiling on the X axis
-		{
-			if(!isXValid())	//if our horizontal preferences aren't valid
-			{
-				xRequest=new SizeRequirements(getWidth(), getWidth(), getWidth(), 0);	//G***testing
-			}
-			if(!isYValid())	//if our vertical preferences aren't valid
-			{
-				yRequest=new SizeRequirements(getHeight(), getHeight(), getHeight(), 0);	//G***testing
-			}
-		}
-		setXValid(true);	//show that our horizontal preference is valid again
-		setYValid(true);	//show that our vertical preference is valid again
-*/
-//G***del	}
 
 
 	/**Returns the allocation for a specified child view.
@@ -1212,7 +892,7 @@ Debug.trace("Inside XMLPagedView.onLayoutRow() with rowIndex: ", rowIndex);	//G*
 		final int pageHeight=(int)getPageHeight();	//get the height of each page
 //G***del when works		int n = getViewCount();
 		int pageIndex;	//we'll store here the index of the page we find
-		if(axis==View.X_AXIS)	//if this view flows horizontally (the default)
+		if(getAxis()==View.X_AXIS)	//if this view flows horizontally (the default)
 		{
 	    if(x<(alloc.x+getLeftInset()))	//if this location is before our first displayed page G***here again we could use those calculated values in the xAlloc[] array
 			{
@@ -1497,6 +1177,7 @@ Debug.trace("pageWidth: "+pageWidth+" pageWidth/pos: "+pageWidth/(x-(alloc.x+get
 	@param views The child views to add, or <code>null</code> to indicate that no
 		children are being added (i.e. children are being removed).
 	*/
+/*G***decide what to do with this; (refactor)
 	public void replace(int index, int length, View[] views)
 	{
 		final boolean xValid=isXValid();  //make a note of all our allocation states so that we can restore them
@@ -1509,6 +1190,7 @@ Debug.trace("pageWidth: "+pageWidth+" pageWidth/pos: "+pageWidth/(x-(alloc.x+get
 		setXAllocValid(xAllocValid);
 		setYAllocValid(yAllocValid);
 	}
+*/
 
 	/**Notification from the document that attributes were changed in an area
 		this paged view is responsible for.
@@ -1524,247 +1206,6 @@ Debug.trace("pageWidth: "+pageWidth+" pageWidth/pos: "+pageWidth/(x-(alloc.x+get
 		super.changedUpdate(changes, a, f);	//do the default updating
 	}
 */
-
-//G***later we might want to have a vertical justification variable:		private int justification;
-
-	/**Loads all of the children to initialize the view. This is called by the
-		<code>setParent</code> method. This is reimplemented to not load any
-		children directly, as they are created in the process of formatting.
-		This function does make sure that a layout pool is created that will store
-		logical views and do preliminary sizing.
-	@param f The view factor to be used to create views
-	*/
-	protected void loadChildren(ViewFactory f)
-	{
-/*G***use, maybe
-		final View[] createdViews=XMLBlockView.createBlockElementChildViews(getElement(), viewFactory);  //create the child views
-		replace(0, 0, createdViews);  //load our created views as children
-*/
-
-		final Container container=getContainer();	//get a reference to our container G***all this should probably go somewhere else
-		if(container instanceof XMLTextPane)	//if the container is an XML text pane
-			((XMLTextPane)container).setPagedView(this);	//tell it that it has a paged view
-/*G***del, put in the right place
-							//G***there's probably a better way to do this
-						final Document document=element.getDocument();	//see which document owns this element
-						if(document instanceof OEBDocument)	//if it's an OEB document
-							((OEBDocument)document).BodyView=bodyView;	//let it know which view represents the body G***do this much better
-	//G***fix						(OEBDocument)document.setBodyView(bodyView);	//let it know which view holds the
-*/
-
-/*G***del
-		if(layoutPool==null)	//if we don't have a layout pool, yet //G***del all of this when we can
-		{
-//G***del				//get a page pool view from which to paginate
-//G***del; this actually loads things			layoutPool=getPagePoolView(getElement().getStartOffset(), getElement().getEndOffset());
-		  layoutPool=new PagePoolView(getElement(), getFlowAxis(), getElement().getStartOffset(), getElement().getEndOffset());	//create a pool for the pages G***we may want to hard-code this to Y_AXIS later; this mistake has caused hours of debugging
-		}
-*/
-
-
-Debug.trace("create flowlayout"); //G***del
-
-		//if we haven't already, create flow layout information about ranges that can be flowed independently of others
-		if(flowLayoutInfo==null)  //if we haven't created flow layout information, yet
-		{
-			flowLayoutInfo=new PageFlowLayoutInfo();  //create new flow layout information
-/*G***del when works
-			final Element element=getElement(); //get the element we represent
-			final int childElementCount=element.getElementCount(); //find out how many elements we represent
-*/
-			final Element[] viewChildElements=getViewChildElements(getStartOffset(), getEndOffset()); //get all the child elements
-			final int childElementCount=viewChildElements.length;  //find out how many child elements there are
-			int startOffset=getStartOffset(); //start with the first offset
-	//G***del		int endOffset=getEndOffset(); //assume we won't find any place before the ending offset
-			for(int i=0; i<childElementCount; ++i) //look at each child element
-			{
-				int endOffset=-1;  //we'll set this to a positive number if we find the end of a new flow range
-
-//G***del when works				final Element childElement=element.getElement(i); //get a reference to this element
-				final Element childElement=viewChildElements[i]; //get a reference to this element
-				final AttributeSet childAttributeSet=childElement.getAttributes();  //get the attributes of the element
-//G***del Debug.trace("looking at child element: ", XMLCSSStyleConstants.getXMLElementName(childAttributeSet)); //G***del
-				final String pageBreakBefore=XMLCSSStyleUtilities.getPageBreakBefore(childAttributeSet); //get the value of the page-break-before CSS property, if any
-				final String pageBreakAfter=XMLCSSStyleUtilities.getPageBreakAfter(childAttributeSet); //get the value of the page-break-after CSS property, if any
-//G***del Debug.trace("page break before: ", pageBreakBefore); //G***del
-					//if this element always wants breaks before it and this isn't the first child element
-				if(i>0 && XMLCSSConstants.CSS_PAGE_BREAK_BEFORE_ALWAYS.equals(pageBreakBefore))
-				{
-//G***del when works					endOffset=element.getElement(i-1).getEndOffset(); //this flow range ends after the last element
-					endOffset=viewChildElements[i-1].getEndOffset(); //this flow range ends after the last element
-				}
-					//if this element always wants breaks after it
-				else if(XMLCSSConstants.CSS_PAGE_BREAK_AFTER_ALWAYS.equals(pageBreakAfter))
-				{
-					endOffset=childElement.getEndOffset(); //find the end of this element
-				}
-				else if(XMLStyleUtilities.isPageBreakView(childElement.getAttributes())) //G***maybe just check for the page-break-after attribute
-				{
-					endOffset=childElement.getEndOffset(); //find the end of this element
-				}
-				if(endOffset>startOffset) //if we found the end of a flow range
-				{
-					final FlowRange flowRange=new FlowRange(startOffset, endOffset);  //create a new flow range, ending with this element
-//G***del 	Debug.trace("Found flow range: ", flowRange);
-					flowLayoutInfo.addFlowRange(flowRange); //add this flow range to our list
-					startOffset=endOffset;  //we'll start the next flow range where this one left off
-				}
-			}
-			final int endOffset=getEndOffset(); //find the end of our entire paged view
-			if(endOffset-startOffset>0) //if there is any content we didn't account for
-			{
-				final FlowRange flowRange=new FlowRange(startOffset, endOffset);  //create a new flow range, ending with the end of the content we know about
-				flowLayoutInfo.addFlowRange(flowRange); //add this flow range to our list
-//G***del 	Debug.trace("Found flow range: ", flowRange);
-			}
-//G***del Debug.trace("created flow ranges: ", flowLayoutInfo.flowRangeList.size()); //G***del
-		}
-//G***del //G***testing; bring back		layoutPool.setParent(this);	//set the parent of the logical view pool, which will make it load its children
-	}
-
-	/**Fetches the child view index representing the given position in the model.
-		Since the logical view of a paged view does not necessarily have one view
-		for each child element (a child element in a logical view may be
-		an entire document, represented by several views), this method is implemented
-		to correctly iterate pages to locate one matching the position.
-		Only pages that have been paginated and are cached as child views are
-		searched.
-	@param pos The requested position (>=0).
-	@returns The index of the view representing the given position, or -1 if no
-		view represents that position.
-	*/
-/*G***del; this is already implemented in XMLFlowView
-	protected int getViewIndexAtPosition(int pos)
-	{
-//G***del Debug.trace("Searching paged view for position: ", pos);  //G***del
-		for(int childViewIndex=getViewCount()-1; childViewIndex>=0; --childViewIndex)  //look at each of our children to see if we've already paginated this view
-		{
-			final View childView=getView(childViewIndex); //get a reference to this view
-//G***del Debug.trace("Searching paged view for position: ", pos);  //G***del
-			if(pos>=childView.getStartOffset() && pos<childView.getEndOffset()) //if this position falls within the range of this view
-				return childViewIndex;  //return the index of this child
-		}
-		return -1;  //show that there is no child view that contains the given position
-	}
-*/
-
-	/**Returns all child elements for which views should be created. If
-		a paged view holds multiple documents, for example, the children of those
-		document elements will be included. An XHTML document, furthermore, will
-		return the contents of its <code>&lt;body&gt;</code> element.
-		It is assumed that the ranges precisely enclose any child elements within
-		that range, so any elements that start within the given range will be
-		included.
-	@param newStartOffset This range's starting offset.
-	@param newEndOffset This range's ending offset.
-	@return An array of elements for which views should be created.
-	*/
-	protected Element[] getViewChildElements(final int startOffset, final int endOffset)
-	{
-//G***del Debug.trace("Getting view child elements"); //G***del
-//G***del Debug.trace("start offset: ", startOffset); //G***del
-//G***del Debug.trace("end offset: ", endOffset); //G***del
-		final java.util.List viewChildElementList=new ArrayList();  //create a list in which to store the elements as we find them
-		final Element element=getElement(); //get a reference to our element
-		final int documentElementCount=element.getElementCount();  //find out how many child elements there are (representing XML documents)
-		for(int documentElementIndex=0; documentElementIndex<documentElementCount; ++documentElementIndex) //look at each element representing an XML document
-		{
-//G***del Debug.trace("looking at document: ", documentElementIndex); //G***del
-		  final Element documentElement=element.getElement(documentElementIndex); //get a reference to this child element
-//G***del Debug.trace("document start offset: ", documentElement.getStartOffset()); //G***del
-//G***del Debug.trace("document end offset: ", documentElement.getEndOffset()); //G***del
-		    //if this document's range overlaps with our range
-//G***del; only takes care of one case of overlapping			if(documentElement.getStartOffset()>=startOffset && documentElement.getStartOffset()<endOffset)
-			if(documentElement.getStartOffset()<endOffset && documentElement.getEndOffset()>startOffset)
-		  {
-//G***del Debug.trace("document within our range"); //G***del
-				final AttributeSet documentAttributeSet=documentElement.getAttributes();  //get the attributes of the document element
-				if(XMLStyleUtilities.isPageBreakView(documentAttributeSet)) //if this is a page break element
-				{
-//G***del Debug.trace("found page break view"); //G***del
-					viewChildElementList.add(documentElement);  //add this element to our list of elements; it's not a top-level document like the others G***this is a terrible hack; fix
-				}
-				else
-				{
-	//G***del if not needed				Element baseElement=documentElement;  //we'll find out which element to use as the parent; in most documents, that will be the document element; in HTML elements, it will be the <body> element
-//G***del					final MediaType documentMediaType=XMLStyleConstants.getMediaType(documentAttributeSet);  //get the media type of the document
-//G***del					final String documentElementLocalName=XMLStyleConstants.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
-//G***del					final String documentElementNamespaceURI=XMLStyleConstants.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element local name
-					final int childElementCount=documentElement.getElementCount();  //find out how many children are in the document
-					for(int childIndex=0; childIndex<childElementCount; ++childIndex)  //look at the children of the document element
-					{
-						final Element childElement=documentElement.getElement(childIndex); //get a reference to the child element
-
-//G***del; only accounts for one case of overlapping						if(childElement.getStartOffset()>=startOffset && childElement.getStartOffset()<endOffset) //if this child element starts within our range
-						  //if this child element's range overlaps with our range
-						if(childElement.getStartOffset()<endOffset && childElement.getEndOffset()>startOffset)
-						{
-							final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child element's attributes
-							final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);  //get the child element local name
-//G***del Debug.trace("Looking at child: ", childElementLocalName); //G***del
-//G***del							boolean isHTMLBody=false; //we'll determine if this element is a <body> element of XHTML
-							if(XHTMLConstants.ELEMENT_BODY.equals(childElementLocalName))  //if this element is <body>
-							{
-/*G***del
-								//we'll determine if this body element is HTML by one of following:
-								//  * the element is in the XHTML or OEB namespace
-								//  * the element is in no namespace but the document is of type text/html or text/x-oeb1-document
-								//  * the element is in no namespace and the document element is
-								//      an <html> element in the XHTML or OEB namespace
-								final String childElementNamespaceURI=XMLStyleConstants.getXMLElementNamespaceURI(childAttributeSet);  //get the child element local name
-								if(childElementNamespaceURI!=null)  //if the body element has a namespace
-								{
-										//if it's part of the XHTML or OEB namespace
-									if(XHTMLConstants.XHTML_NAMESPACE_URI.equals(childElementNamespaceURI)
-											|| OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(childElementNamespaceURI))
-										isHTMLBody=true;  //show that this is an HTML body element
-								}
-								else  //if the body element has no namespace
-								{
-										//if the document type is text/html or text/x-oeb1-document
-									if(documentMediaType!=null && (documentMediaType.match(MediaType.TEXT_HTML) || documentMediaType.match(MediaType.TEXT_X_OEB1_DOCUMENT)))
-										isHTMLBody=true;  //is an HTML body element
-									else if(XHTMLConstants.ELEMENT_HTML.equals(documentElementLocalName)  //if the document element is an XHTML or OEB <html> element
-											&& (XHTMLConstants.XHTML_NAMESPACE_URI.equals(documentElementNamespaceURI) || OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(documentElementNamespaceURI)))
-										isHTMLBody=true;  //is an HTML body element
-								}
-							}
-							if(isHTMLBody)  //if this element is an XHTML <body> element
-							{
-*/
-								if(XHTMLSwingTextUtilities.isHTMLElement(childAttributeSet, documentAttributeSet)) //if this is an HTML element
-								{
-//G***del Debug.trace("is HTML body");  //G***del
-									final int bodyChildElementCount=childElement.getElementCount(); //find out how many children the body element has
-									for(int bodyChildIndex=0; bodyChildIndex<bodyChildElementCount; ++bodyChildIndex) //look at each of the body element's children
-									{
-	//G***del Debug.trace("Adding body child element: ", bodyChildIndex);
-										final Element bodyChildElement=childElement.getElement(bodyChildIndex); //get this child element of the body element
-										if(bodyChildElement.getStartOffset()>=startOffset && bodyChildElement.getStartOffset()<endOffset) //if this child element starts within our range G***should we merely check for overlaps here?
-											viewChildElementList.add(bodyChildElement);  //add this body child element to our list of elements
-									}
-								}
-							}
-							else  //if this element is not an XHTML <body> element
-							{
-//G***del 		Debug.trace("Adding child element: ", childIndex);
-								viewChildElementList.add(childElement);  //add this child element to our list of elements
-							}
-						}
-					}
-				}
-		  }
-		}
-	  return (Element[])viewChildElementList.toArray(new Element[viewChildElementList.size()]); //return the views as an array of views
-	}
-
-	//G***we need to override this so that the parent class doesn't try to use the layout pool, which we don't use or even create in this class
-	//G***check, comment
-	protected SizeRequirements calculateMinorAxisRequirements(int axis, SizeRequirements r)
-	{
-		return baselineRequirements(axis, r); //G***does this have anything to do with what we want to return?
-	}
-
 
 	//page events
 
@@ -1831,99 +1272,6 @@ Debug.trace("create flowlayout"); //G***del
 
 	/* ***XMLPagedView.PagePoolView*** */
 
-	/**This class is used to layout our child views behind the scenes and store
-		them as a layout pool from which we will create physical views.
-		This class descends from <code>BoxView</code> so that the size of the views
-		can be set automatically.
-	*/
-	class PagePoolView extends BoxView
-	{
-
-		/**The start of this range.*/
-		private int startOffset;
-
-		  /**@return The start of this range.*/
-			public int getStartOffset() {return startOffset;}
-
-		/**The non-inclusive end of this range.*/
-		private int endOffset;
-
-		  /**@return The non-inclusive end of this range.*/
-			public int getEndOffset() {return endOffset;}
-
-		/**Constructor that requires an element.
-		@param element The element which hold the information the views in this pool
-			represent.
-		@param axis The layout axis, either View.X_AXIS or View.Y_AXIS.
-		@param newStartOffset This range's starting offset.
-		@param newEndOffset This range's ending offset.
-		*/
-		PagePoolView(Element element, int axis, final int newStartOffset, final int newEndOffset)
-		{
-			super(element, axis);	//construct the parent class
-			startOffset=newStartOffset; //save the starting offset
-			endOffset=newEndOffset; //save the ending offset
-		  setInsets((short)25, (short)25, (short)25, (short)25);	//G***fix; testing
-		}
-
-		/**Loads the children into this view pool. Only the children within the
-			view's range (specified in the constructor) will be loaded.
-		@param viewFactory The factory to use to create the child views.
-		*/
-		protected void loadChildren(ViewFactory viewFactory)
-		{
-			if(viewFactory==null) //if there is no view factory, we can't load the children
-				return; //we can't do anything
-			final int startOffset=getStartOffset(); //find out where we should start
-			final int endOffset=getEndOffset(); //find out where we should end
-//G***del Debug.trace("loading children for page pool, offsets "+startOffset+" to "+endOffset);
-			  //G***testing; comment; eventually put in the view factory
-			final Element[] viewChildElements=getViewChildElements(startOffset, endOffset); //get the child elements that fall within our range
-		  //create an anonymous element that simply holds the elements we just loaded
-			//this temporary element will go away after we've created views
-		  final Element anonymousElement=new AnonymousElement(getElement(), null, viewChildElements, 0, viewChildElements.length);
-				//G***is it good to make an anonymous element simply for enumerating child elements to XMLBlockView?
-			final View[] createdViews=XMLBlockView.createBlockElementChildViews(anonymousElement, viewFactory);  //create the child views
-			this.replace(0, 0, createdViews);  //add the views as child views to this view pool (use this to show that we shouldn't use the XMLPagedView version)
-		}
-
-		/**Returns the index of the child at the given model position in the pool.
-		@param pos The position (>=0) in the model.
-		@return The index of the view representing the given position, or -1 if there
-			is no view on this pool which represents that position.
-		*/
-		protected int getViewIndexAtPosition(int pos)
-		{
-//G***del Debug.trace("looking for view at position: ", pos); //G***del
-//G***del Debug.trace("startoffset: ", getStartOffset());
-//G***del Debug.trace("endoffset: ", getEndOffset());
-
-//G***del Debug.trace("child views: ", getViewCount());
-
-			//this is an expensive operation, but this class usually contains only a partial list of views, which may not correspond to the complete list of original elements
-			if(pos<getStartOffset() || pos>=getEndOffset())	//if the position is before or after the content
-				return -1;	//show that the given position is not on this page
-			for(int viewIndex=getViewCount()-1; viewIndex>=0; --viewIndex)	//look at all the views from the last to the first
-			{
-				final View view=getView(viewIndex);	//get a reference to this view
-//G***del Debug.trace("View "+viewIndex+" is of class: ", view.getClass().getName());
-//G***del Debug.trace("startoffset: ", view.getStartOffset());
-//G***del Debug.trace("endoffset: ", view.getEndOffset());
-				if(pos>=view.getStartOffset() && pos<view.getEndOffset())	//if this view holds the requested position
-					return viewIndex;	//return the index to this view
-			}
-			return -1;	//if we make it to this point, we haven't been able to find a view with the specified position
-		}
-
-		//G***testing
-/*G***del
-    public void loadChildren(final int startOffset, final int endOffset)
-		{
-			final ViewFactory f=getViewFactory(); //G***testing
-    }
-*/
-	}
-
 	/***XMLPagedView.Page***/
 
 	/**Internally-created view that holds the view representing child views
@@ -1931,7 +1279,7 @@ Debug.trace("create flowlayout"); //G***del
 		correctly returns starting and ending offsets based upon the child views
 		it contains, not the element it represents.
 	*/
-	class Page extends XMLBlockView	//G***testing BoxView
+	class Page extends BoxView
 	{
 		/**Page constructor that specifies the element from which the information
 			will come.
@@ -1940,30 +1288,94 @@ Debug.trace("create flowlayout"); //G***del
 		Page(Element element)
 		{
 			super(element, View.Y_AXIS);	//the information inside each page will be flowed vertically
-		  setInsets((short)25, (short)25, (short)25, (short)25);	//G***fix; testing; need here and in setPropertiesFromAttributes() for hack to work
+			setInsets((short)25, (short)25, (short)25, (short)25);	//G***fix; testing; need here and in setPropertiesFromAttributes() for hack to work
 		}
 
 		/**Sets the cached properties from the attributes. This version forces the
 		  margins to a particular size.
 		*/
+/*G***fix
 		protected void setPropertiesFromAttributes()  //G***fix; hack because of new style-based margins
 		{
 			super.setPropertiesFromAttributes();  //set the attributes normally
 			setInsets((short)25, (short)25, (short)25, (short)25);	//G***fix; testing
 		}
+*/
 
 		//G***fix, comment; these are present because they aren't public in CompositeView
 		public short getPublicLeftInset() {return getLeftInset();}
 		public short getPublicRightInset() {return getRightInset();}
 		public short getPublicTopInset() {return getTopInset();}
 		public short getPublicBottomInset() {return getBottomInset();}
-
-
 		/**Each page does not need to fill its children, since its parent
 			<code>XMLPagedView</code> will load its children with the views it created.
 			This function therefore does nothing.
 		*/
 		protected void loadChildren(ViewFactory f) {}
+
+		/**Each fragment is a subset of the content in the breaking <code>XMLBlockView</code>.
+		@return The starting offset of this page, which is the starting offset of the
+			view with the lowest starting offset
+		@see View#getRange
+		*/
+//G***testing
+		public int getStartOffset()
+		{
+			int startOffset=Integer.MAX_VALUE;	//we'll start out with a high number, and we'll end up with the lowest starting offset of all the views
+			final int numViews=getViewCount();	//find out how many view are on this page
+//G***del System.out.println("getStartOffset() viewCount: "+numViews+" name: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" super: "+super.getStartOffset());	//G***del
+			if(numViews>0)	//if we have child views
+			{
+				for(int viewIndex=0; viewIndex<numViews; ++viewIndex)	//look at each view on this page
+				{
+					final View view=getView(viewIndex);	//get a reference to this view
+					startOffset=Math.min(startOffset, view.getStartOffset());	//if this view has a lower starting offset, use its starting offset
+//G***del System.out.println("  View: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" child: "+(String)view.getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" startOffset: "+view.getStartOffset()+" New start offset: "+startOffset);	//G***del
+				}
+				return startOffset;	//return the starting offset we found
+			}
+			else	//if we don't have any child views
+				return super.getStartOffset();	//return the default starting offset
+		}
+
+		/**Each fragment is a subset of the content in the breaking <code>XMLBlockView</code>.
+		@return The ending offset of this page, which is the ending offset of the
+			view with the largest ending offset
+		@see View#getRange
+		*/
+//G***testing
+		public int getEndOffset()
+		{
+			int endOffset=0;	//start out with a low ending offset, and we'll wind up with the largest ending offset
+			final int numViews=getViewCount();	//find out how many view are on this page
+//G***del System.out.println("getEndOffset() viewCount: "+numViews+" name: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" super: "+super.getEndOffset());	//G***del
+			if(numViews>0)	//if we have child views
+			{
+				for(int viewIndex=0; viewIndex<numViews; ++viewIndex)	//look at each view on this page
+				{
+					final View view=getView(viewIndex);	//get a reference to this view
+
+
+					final int viewEndOffset=view.getEndOffset();  //G***testing
+					if(viewEndOffset>endOffset) //G***testing
+					{
+//G***del Debug.trace("Transitioning from "+endOffset+" to "+viewEndOffset+" because of view of type: "+view.getClass().getName()+" of name: "+XMLStyleConstants.getXMLElementName(view.getElement().getAttributes()));  //G***del
+						endOffset=viewEndOffset;  //G***del
+//G***del Debug.trace("  View: "+XMLStyleConstants.getXMLElementName(getElement().getAttributes())+" child: "+XMLStyleConstants.getXMLElementName(view.getElement().getAttributes())+" endOffset: "+view.getEndOffset()+" New end offset: "+endOffset);	//G***del
+					}
+
+/*G***bring back
+Debug.trace("old endOffset: ", endOffset);  //G***del
+					endOffset=Math.max(endOffset, view.getEndOffset());	//if this view has a larger ending offset, use that instead
+Debug.trace("new endOffset: ", endOffset);  //G***del
+Debug.trace("  View: "+XMLStyleConstants.getXMLElementName(getElement().getAttributes())+" child: "+XMLStyleConstants.getXMLElementName(view.getElement().getAttributes())+" endOffset: "+view.getEndOffset()+" New end offset: "+endOffset);	//G***del
+*/
+				}
+				return endOffset;	//return the largest ending offset we found
+			}
+			else	//if we don't have any child views
+				return super.getEndOffset();	//return the default ending offset
+		}
 
 
     /**
@@ -2205,915 +1617,766 @@ Debug.trace("create flowlayout"); //G***del
 //G***fix	}
 
 
-
-	/* ***XMLPagedView.PageFlowStrategy*** */
-
-		/**
-		 * Strategy for maintaining the physical form
-		 * of the flow.  The default implementation is
-		 * completely stateless, and recalculates the
-		 * entire flow if the layout is invalid on the
-		 * given FlowView.  Alternative strategies can
-		 * be implemented by subclassing, and might
-		 * perform incrementatal repair to the layout
-		 * or alternative breaking behavior.
-		 */
-//G***testing
-	/**Strategy for paginating views from the layout pool and putting them into
-		child views. This strategy is stateful, keeping track of last layout
-		position and related information.
-	*/
-//G***del threadlayout	public static class PageFlowStrategy extends XMLFlowView.FlowStrategy
-	public class PageFlowStrategy extends XMLFlowView.FlowStrategy implements Runnable
-	{
-
-		/**Whether or not the layout process should stop; used for threading.*/
-		protected boolean stopLayout=false;	//(newswing threadlayout)
-
-		/**The index of the last row that was laid out; used for threading.*/
-//G***del		private int lastLayoutRowIndex=-1;	//(newswing threadlayout)
-
-		/**The index of the last page index that was laid out; used for threading.*/
-//G***del		private int currentPageIndex=-1;	//(newswing threadlayout)
-
-		/**The view being flowed; used for threading.*/
-		private XMLPagedView flowView=null;	//(newswing threadlayout)
-
-		/**The offset at which layout is occurring.*/
-		private int offset;
-
-			/**@return The offset at which layout is occurring.*/
-			protected int getOffset() {return offset;}
-
-			/**Sets the offset at which layout is occurring.
-		  @param newOffset The new offset at which layout is occurring.
-		  */
-			protected void setOffset(final int newOffset) {offset=newOffset;}
-
-		/**The page index being laid out.*/
-		private int pageIndex=0;
-
-		  /**@return The page index being laid out.*/
-			protected int getPageIndex() {return pageIndex;}
-
-		  /**Sets the page index being laid out.
-			@param newPageIndex The new index of the page being laid out.
-		  */
-			protected void setPageIndex(final int newPageIndex) {pageIndex=newPageIndex;}
-
-
-//G***del int p0=0; //G***testing
-
-//G***del PagePoolView segmentLayoutPool=null;  //G***testnig
-
-//G***del int pageIndex=0;  //G***fix
-
-		/**Resets the stateful flowing information so that layout will occur at the
-		  beginning of the model the next time <code>layout()</code> is called.
-		@see #layout
-		*/
-		public void reset()
-		{
-			offset=0; //start at the beginning
-//G***del			segmentLayoutPool=null; //remove any pooled information
-			setPageIndex(0);  //show that we're starting at the first page index
-		}
-
-		/*Constructor that accepts the view to be flowed.
-		@param newFlowView The view to be flowed.
-		*/
-		public PageFlowStrategy(final XMLPagedView newFlowView)	//(newswing threadlayout)
-		{
-			flowView=newFlowView;	//save a reference to the view to be flowed
-		}
-
-		public void run()	//G***testing threadlayout
-		{
-try
+	/**Returns all child elements for which views should be created. If
+	a paged view holds multiple documents, for example, the children of those
+	document elements will be included. An XHTML document, furthermore, will
+	return the contents of its <code>&lt;body&gt;</code> element.
+	It is assumed that the ranges precisely enclose any child elements within
+	that range, so any elements that start within the given range will be
+	included.
+@param newStartOffset This range's starting offset.
+@param newEndOffset This range's ending offset.
+@return An array of elements for which views should be created.
+*/
+protected Element[] getViewChildElements(final int startOffset, final int endOffset)
 {
-Debug.trace("Inside layout thread, ready to begin layout.");
-			layout(flowView);
-Debug.trace("Inside layout thread, just finished layout.");
-			if(!stopLayout)	//if the layout wasn't interruped
-				flowView.onLayoutComplete();
-Debug.trace("Inside layout thread, exiting run() method.");
-}
-catch(Throwable throwable)  //G***fix; testing
-{
-System.err.println("caught error in PageFlowStrategy.run(): "+throwable);
-throwable.printStackTrace();
-}
-		}
-
-		/**Indicates if a page has been laid out, which includes checking its
-		  validity (i.e. that is it not below zero).
-		  This does not need to be synchronized,
-			as it	simply checks an atomic variable. The only race condition that could
-			occur is that the row could be laid out before the function returns, in
-			which case <code>false</code> would be incorrectly returned, meaning
-			painting would simply occur slightly later.
-		@param pageIndex The index of the page to check.
-		@return <code>true</code> if the row indicated has been laid out.
-		*/
-		public boolean isLaidOut(final int pageIndex)	//(newswing threadlayout)
-		{
-//G***del Debug.trace("layout page index: ", getPageIndex());  //G***del
-			return pageIndex>=0 && pageIndex<getPageIndex(); //show whether or not this page is before the one we're laying out, meaning it has already been laid out
-//G***del			return rowIndex<=lastLayoutRowIndex;	//show whether or not we have a record of this row being laid out
-		}
-
-	/**
-	 * Gives notification that something was inserted into the document
-	 * in a location that the given flow view is responsible for.  The
-	 * strategy should update the appropriate changed region (which
-	 * depends upon the strategy used for repair).
-	 *
-	 * @param e the change information from the associated document
-	 * @param alloc the current allocation of the view inside of the insets.
-	 *   This value will be null if the view has not yet been displayed.
-	 * @see View#insertUpdate
-	 */
-/*G***fix
-				public void insertUpdate(FlowView fv, DocumentEvent e, Rectangle alloc) {
-			// force layout, should do something more intelligent about
-			// incurring damage and triggering a new layout.  This is just
-			// about as brute force as it can get.
-			if (alloc != null) {
-		fv.setSize(alloc.width, alloc.height);
-		Component host = fv.getContainer();
-		host.repaint(alloc.x, alloc.y, alloc.width, alloc.height);
-			} else {
-		// use existing size, if it has been set
-		int w = fv.getWidth();
-		int h = fv.getHeight();
-		if ((w > 0) && (h > 0)) {
-				fv.setSize(w, h);
-		}
-			}
-	}
-*/
-
-	/**
-	 * Gives notification that something was removed from the document
-	 * in a location that the given flow view is responsible for.
-	 *
-	 * @param e the change information from the associated document
-	 * @param alloc the current allocation of the view inside of the insets.
-	 * @see View#removeUpdate
-	 */
-/*G***fix
-				public void removeUpdate(FlowView fv, DocumentEvent e, Rectangle alloc) {
-			// force layout, should do something more intelligent about
-			// incurring damage and triggering a new layout.
-			if (alloc != null) {
-		fv.setSize(alloc.width, alloc.height);
-		Component host = fv.getContainer();
-		host.repaint(alloc.x, alloc.y, alloc.width, alloc.height);
-			} else {
-		// use existing size, if it has been set
-		int w = fv.getWidth();
-		int h = fv.getHeight();
-		if ((w > 0) && (h > 0)) {
-				fv.setSize(w, h);
-		}
-			}
-	}
-*/
-
-	/**
-	 * Gives notification from the document that attributes were changed
-	 * in a location that this view is responsible for.
-	 *
-	 * @param changes the change information from the associated document
-	 * @param a the current allocation of the view
-	 * @param f the factory to use to rebuild if the view has children
-	 * @see View#changedUpdate
-	 */
-/*G***fix
-				public void changedUpdate(FlowView fv, DocumentEvent e, Rectangle alloc) {
-			// force layout, should do something more intelligent about
-			// incurring damage and triggering a new layout.
-			if (alloc != null) {
-		fv.setSize(alloc.width, alloc.height);
-		Component host = fv.getContainer();
-		host.repaint(alloc.x, alloc.y, alloc.width, alloc.height);
-			} else {
-		// use existing size, if it has been set
-		int w = fv.getWidth();
-		int h = fv.getHeight();
-		if ((w > 0) && (h > 0)) {
-				fv.setSize(w, h);
-		}
-			}
-	}
-*/
-
-		/**Updates the flow on the given <code>FlowView</code> This causes all of the
-			views in the layout pool to be repaginated to match the given constraints
-			for each row. This is called by <code>XMLPagedView</code> to update the pages.
-		@param flowView The flow view which will be repaginated.
-		*/
-		public void layout(XMLFlowView flowView)
-		{
-			reset();  //reset the strategy
-		  layout(flowView, null); //layout the flow view, specifying that we don't just want the flow layout information -- we want layout to actually occur
-		}
-
-/*G***del
-int p0=0; //G***testing
-
-PagePoolView segmentLayoutPool=null;  //G***testnig
-
-int pageIndex=0;  //G***fix
-*/
-
-//G***del FlowRange flowRange=null;
-
-
-		/**Calculates the flow on the given <code>FlowView</code>, causing all he
-		  views in the layout pool to be repaginated to match the given constraints
-			for each row. If a flow layout information object is given, this method
-			updates the flow layout information; otherwise, this method adds the
-			paginated views to the flow view as children.
-			This is called by <code>XMLPagedView</code> to update the pages.
-		@param flowView The flow view which will be repaginated.
-		@param flowLayoutInfo A new flow layout information object to be updated
-			with the pagination information, or <code>null</code> if the flow view
-			itself should be updated by directly adding the paginated views as
-			children.
-		@return <code>true</code> if this call to <code>layout()</code> suceeeded
-			in laying out all views for the content that the paged view represents.
-		*/
-		public boolean layout(final XMLFlowView flowView, final FlowLayoutInfo layoutInfo)
-		{
-//G***Del Debug.traceStack(); //G***del
-Debug.trace();
-//G***del if we can System.gc();  //G***testing ViewReleasable
-//G***del if we can Thread.yield();  //G***testing ViewReleasable
-
-//G***del Debug.trace(this, "layout() of paged view: "+flowView.getClass().getName());
-/*G***del
-Debug.trace("Inside XMLPagedView.PageFlowStrategy.layout()"); //G***fix
-Debug.trace("View looks like this:"); //G***del
-if(Debug.isDebug()) //G***del
-	com.globalmentor.mentoract.ReaderFrame.displayView(flowView, 0, flowView.getDocument()); //G***del; place display logic somewhere better
-*/
-
-
-//G***bring back			fireMadeProgress(new ProgressEvent(flowView, PAGINATE_TASK, "Repaginating pages...", 0, 1));	//show that we are ready to start paginating pages, but we haven't really started, yet G***i18n
-
-			stopLayout=false;	//show that we haven't been notified to stop, yet
-//G***del; replaced by pageIndex			lastLayoutRowIndex=-1;	//show that we have not yet laid out any rows
-
-//G***bring back; testing	    int p0 = flowView.getStartOffset();	//G***testing
-		  int p0=getOffset(); //find out at which position we're doing the layout
-	    int p1 = flowView.getEndOffset();
-//G***del			int pageIndex=getPageIndex(); //see which page we're paginating now
-
-
-//G***del if(flowRange==null) //G***testing
-//G***del {
-//G***del Debug.trace("Looking for flow range for position: ", p0);
-	final FlowRange flowRange=flowLayoutInfo.getFlowRange(p0);  //find the range that matches this offset
-//G***del Debug.trace("Found flow range: ", flowRange);
-
-	if(flowRange==null) //G***testing
+//G***del Debug.trace("Getting view child elements"); //G***del
+//G***del Debug.trace("start offset: ", startOffset); //G***del
+//G***del Debug.trace("end offset: ", endOffset); //G***del
+	final java.util.List viewChildElementList=new ArrayList();  //create a list in which to store the elements as we find them
+	final Element element=getElement(); //get a reference to our element
+	final int documentElementCount=element.getElementCount();  //find out how many child elements there are (representing XML documents)
+	for(int documentElementIndex=0; documentElementIndex<documentElementCount; ++documentElementIndex) //look at each element representing an XML document
 	{
-		relayout();
-		return true;
-	}
-
-	assert flowRange!=null : "No flow range for position "+p0;
-//G***del Debug.trace("Flow view: ", flowView);
-
-
-
-		//get a page pool view from which to paginate
-	final PagePoolView logicalView=getPagePoolView(flowRange.getStartOffset(), flowRange.getEndOffset());
-/*G***del when works
-	PagePoolView segmentLayoutPool=new PagePoolView(flowView.getElement(), flowView.getFlowAxis(), flowRange.getStartOffset(), flowRange.getEndOffset());	//create a pool for the pages G***we may want to hard-code this to Y_AXIS later; this mistake has caused hours of debugging
-	segmentLayoutPool.setParent(flowView);  //G***testing
-*/
-//G***del	final ViewFactory factory=flowView
-		//G***put these next lines in a PagePoolView.
-/*G***del
-	final Element flowElement=flowView.getElement();
-	int endOffset=flowElement.getElement(flowElement.getElementCount()-1).getEndOffset();
-	for(int i=0; i<flowElement.getElementCount(); ++i)
-	{
-		final Element childElement=flowElement.getElement(i);
-		if(childElement.getStartOffset()>=0 && XMLStyleConstants.isPageBreakView(childElement.getAttributes()))
-		{
-			endOffset=childElement.getEndOffset();
-			break;
-		}
-	}
-	segmentLayoutPool.loadChildren(p0, endOffset);
-*/
-//G***del }
-
-
-/*G***del when works, maybe
-if(p0==0) //G***testing
-	    flowView.removeAll();
-*/
-
-
-//G***bring back			final View logicalView=getLogicalView(flowView);	//get a reference to the logical view
-//G***del			final View logicalView=segmentLayoutPool; //G***testing; comment
-/*G***del
-Debug.trace("Logical views look like like this:"); //G***del
-if(Debug.isDebug()) //G***del
-	com.globalmentor.mentoract.ReaderFrame.displayView(logicalView, 0, logicalView.getDocument()); //G***del; place display logic somewhere better
-*/
-
-//G***bring back if(p0==0) //G***testing
-{
-
-
-				//G***testing setParent()
-//G***fix		  layoutPool.setParent(flowView);	//set the parent of the logical view pool, which will make it load its children
-
-//G***del							hideView(pageView); //tell the view that it is being hidden
-
-//G***del			hideView(logicalView); //G***testing; since we're getting ready to layout, make sure the view knows it should be hidden (this is necessary for applet views, for example)
-
-	    final int numViews=logicalView.getViewCount();	//get the number of views
-//G***del Debug.trace("Ready to look at: "+numViews+" paged view child views");
-//G***del Debug.trace("Ready to look through views.");
-				//even though XMLFlowView.layout() will do this as well, we need to set the parent (which will invalidate preferences down the hierarchy) *before* we set the size (G***see if we want to take code from XMLFlowView and put it here to keep this from being done twice)
-			for(int i=0; i<numViews; ++i)	//look at each view and invalidate the layout (this is required for correct table row reflowing)
+Debug.trace("looking at document: ", documentElementIndex); //G***del
+	  final Element documentElement=element.getElement(documentElementIndex); //get a reference to this child element
+Debug.trace("document start offset: ", documentElement.getStartOffset()); //G***del
+Debug.trace("document end offset: ", documentElement.getEndOffset()); //G***del
+	    //if this document's range overlaps with our range
+//G***del; only takes care of one case of overlapping			if(documentElement.getStartOffset()>=startOffset && documentElement.getStartOffset()<endOffset)
+		if(documentElement.getStartOffset()<endOffset && documentElement.getEndOffset()>startOffset)
+	  {
+Debug.trace("document within our range"); //G***del
+			final AttributeSet documentAttributeSet=documentElement.getAttributes();  //get the attributes of the document element
+Debug.trace("document attribute set", documentAttributeSet); //G***del
+			if(XMLStyleUtilities.isPageBreakView(documentAttributeSet)) //if this is a page break element
 			{
-				final View view=logicalView.getView(i); //get the child view
-//G***del Debug.trace("view is of type: "+view.getClass().getName());
-				ViewUtilities.hideView(view); //since we're getting ready to layout, make sure the view knows it should be hidden (this is necessary for applet views, for example)
-
-//G***del Debug.trace("before setting parent, view parent is: ", view.getParent()!=null ? view.getParent().getClass().getName() : "null");
-				  //G***do we really need this view.setParent()? it seems to work without out, at least initially
-				view.setParent(logicalView);	//set this view's parent, which (with our Swing code changes) will invalidate the layout down the hierarchy
-			}
-
-//G***del Debug.trace("Ready to set size of logical view.");
-			if(flowView instanceof XMLPagedView)	//if this is a paged view we're laying out
-			{
-
-//G***del logicalView.preferenceChanged(null, flowView.getFlowAxis()==X_AXIS, flowView.getFlowAxis()==Y_AXIS);	//G***testing
-				//G***optimize: it may be that we want to set the width (or height, depending on flow direction) to a constant, and the other to a very high number; this way, doesn't pagination occur? this may not matter, though, since the logical view doesn't flow
-//G***del Debug.trace("Before setting the logical view to width: "+(int)((XMLPagedView)flowView).getPageWidth()+" height: "+(int)((XMLPagedView)flowView).getPageHeight());	//G***del
-				logicalView.setSize((int)((XMLPagedView)flowView).getPageWidth(), (int)((XMLPagedView)flowView).getPageHeight());	//make sure the layout pool has the correct dimensions of the page so that it will do unrestrained layout correctly
-//G***del Debug.trace("After setting the logical view to width: "+(int)((XMLPagedView)flowView).getPageWidth()+" height: "+(int)((XMLPagedView)flowView).getPageHeight());	//G***del
-			}
-			else	//if this is just a normal flow view we're laying out
-				logicalView.setSize(flowView.getWidth(), flowView.getHeight());	//make sure the layout pool has the correct dimensions so that it will do unrestrained layout correctly
-//G***del Debug.trace("Finished setting size of logical view.");
-}
-
-//G***del		  int flowSegmentIndex=0; //this keeps track of how many flow segments (rows) we've paginated, regardless of how many we keep
-		  int rowIndex=0; //indicates the literal child index at which the row will be added, *if* we add the paginated views to the flow view
-		  //layout rows until we reach the end of our content
-		  for(int flowSegmentIndex=0; p0<p1; flowSegmentIndex++)
-			{
-				final float progressMultiplier=(float)(p1+1)/(p0+1);  //find out how many times we should multiply our progress by to get our goal; the ratio of goal to progress
-//G***del Debug.trace("progressMultiplier: "+progressMultiplier);
-				final int estimatedLastPageIndex=((int)((pageIndex+1)*progressMultiplier))-1;  //get an estimate of the number of pages
-				fireMadeProgress(new ProgressEvent(flowView, PAGINATE_TASK, "Paginating page "+(pageIndex+1)+" of ~"+(estimatedLastPageIndex+1)+"...", pageIndex, estimatedLastPageIndex+1));	//show that we are paginating the specified page, and the number of pages we guess there will be G***i18n
-//G***del fireMadeProgress(new ProgressEvent(flowView, PAGINATE_TASK, "Paginating page "+pageIndex+"...", flowSegmentIndex+1, estimatedLastRowIndex+1));	//G***fix
-
-/*G***del when works
-				final View row=flowView.createRow();  //create a "row" representing a page
-				flowView.append(row); //add that page
-				int next=layoutRow(flowView, logicalView, rowIndex, p0, flowRange.getEndOffset()); //fit as much as we can on this page
-				if (row.getViewCount()==0)  //if  nothing would fit on the page
-				{
-				  row.append(createView(flowView, logicalView, p0, Integer.MAX_VALUE, rowIndex));  //append a view so that we'll have something on the page
-				  next=row.getEndOffset();  //for the next page, we'll start at the next position in the model
-				}
-*/
-//G***del Debug.trace("Creating new row starting at flow range: ", flowRange.getStartOffset()); //G***del
-//G***del Debug.trace("Creating new row ending at flow range: ", flowRange.getEndOffset()); //G***del
-				//create the next row
-				final View row=createRow(flowView, logicalView, p0, flowRange.getEndOffset(), layoutInfo==null);
-				if(row==null) //if we ran out of content G***why would this happen? perhaps inaccessible content as part of the base hierarchy? This problem probably needs to be fixed closer to the root cause
-				  break;  //stop trying to paginate
-				final int next=row.getEndOffset();  //for the next page, we'll start at the next position in the model
-//G***del Debug.trace("Finished paginating row: ", flowSegmentIndex+1);
-//G***del Debug.trace("We think we're at page index: ", pageIndex);
-//G***del Debug.trace("Next position is: ", next);
-//G***del Debug.trace("Flow view end is: ", p1);
-				if(layoutInfo!=null)  //if we're only supposed to give layout information
-				{
-
-
-/*G***del
-//G***del; testing image repaint
-	      final int logicalViewCount=logicalView.getViewCount();	//get the number of logical views
-				for(int logicalViewIndex=0; logicalViewIndex<logicalViewCount; ++logicalViewIndex)	//look at each logical view to see if it's one that was removed
-				{
-				  final View childView=logicalView.getView(logicalViewIndex); //get the child view
-					if(childView.getParent()!=logicalView)  //if this view doesn't have a parent (it was probably one that was just removed)
-					{
-//G***del Debug.trace("Reparenting view: "+view.getClass().getName());
-						childView.setParent(logicalView);	//set this view's parent so that it will no longer be null
-					}
-				}
-*/
-
-
-
-					final int startOffset=row.getStartOffset(); //get the flow segment's start offset
-					final int endOffset=row.getEndOffset(); //get the flow segment's ending offset
-					layoutInfo.setStartOffset(pageIndex, startOffset);  //update this segment's start offset
-					layoutInfo.setEndOffset(pageIndex, row.getEndOffset());  //update this segment's end offset
-					layoutInfo.setLength(pageIndex+1);  //update the number of pages we have
-//G***del when works					flowView.remove(rowIndex);  //remove the row from the flow view G***do we even need to add it in the first place, if we modify the other methods?
-
-
-
-	//G***testing; make more efficient; comment
-/*G***fix
-					final int logicalViewCount=logicalView.getViewCount();	//get the number of logical views
-					for(int logicalViewIndex=0; logicalViewIndex<logicalViewCount; ++logicalViewIndex)	//look at each logical view to see if it's one that was removed
-					{
-						final View childView=logicalView.getView(logicalViewIndex); //get the child view
-						if(childView.getEndOffset()<startOffset)  //if this view in the layout pool can no longer be involved in paginations
-							releaseView(childView); //ask this child to release its memory
-//G***del						System.gc();  //G***testing ViewReleasable
-//G***del						Thread.yield();  //G***testing ViewReleasable
-					}
-*/
-
-				}
-				else  //if we're actually adding rows to the flow view
-					++rowIndex; //go to the next row
-				if(flowView instanceof XMLPagedView)	//if this is a paged view we're laying out
-				{
-					((XMLPagedView)flowView).onPageLayoutComplete(pageIndex); //show that we've completed the layout of this page
-				}
-				++pageIndex;  //show that we're on the next page
-//G***del				setPageIndex(pageIndex); //update our persistent page index record
-				if(next>p0) //if we've advanced, as we should have
-				{
-//G***del Debug.trace("Advancing to position: ", next);
-
-			    p0=next;  //update our position
-					setOffset(p0);  //update our layout offset
-//G***del Debug.trace("new p0: ", p0);
-//G***del Debug.trace("new p1: ", p1);
-					if(p0<p1 && p0>=flowRange.getEndOffset()) //G***testing; comment; comment important p0<p1
-					{
-//G***del						logicalView=null; //G***maybe pass this from method to method; fix
-						return false;  //G***del; testing
-					}
-				}
-				else  //if we've somehow gone backwards
-				{
-return false;	//G***fix		    throw new StateInvariantError("infinite loop in formatting");
-				}
-	    }
-//G***remove the layout pool or something
-//G***del or bring back; testing			super.layout(flowView);	//G***testing
-//G***del			lastLayoutRowIndex=getViewCount()-1;	//at this point, we've laid out all the rows (newswing threadlayout) G***update for new flow segment info
-//G***del Debug.trace("Updated lastLayoutRowIndex to: ", lastLayoutRowIndex);
-			fireMadeProgress(new ProgressEvent(flowView, PAGINATE_TASK, "Paginated all "+getViewCount()+" pages.", getViewCount(), getViewCount()));	//show that we paginated all the pages G***i18n
-//G***del Debug.trace("Ready to garbage collect");
-//G***del if we can			System.gc();  //now that we've finished repaginating, try to garbage collect unused objects
-//G***del Debug.trace("Garbage collected; returning true");
-		  return true;  //show that we finished layout out all the information
-		}
-
-		//G***comment
-		protected View createRow(final XMLFlowView flowView, final View layoutPoolView, final int startOffset, final int endOffset, final boolean isPersistent)
-		{
-//G***del Debug.trace("Requested to create row for start offset: ", startOffset);
-//G***del Debug.trace("Requested to create row for end offset: ", endOffset);
-			final View rowView=flowView.createRow();  //create a "row" representing a page
-		  flowView.append(rowView); //add that page
-			final int rowIndex=flowView.getViewCount()-1; //the row index will be that of the last view added
-//G***del Debug.trace("added row end offset: ", rowView.getEndOffset());  //G***del
-//G***del Debug.trace("ready to layout row ending: ", endOffset); //G***del
-			layoutRow(flowView, layoutPoolView, rowView, rowIndex, startOffset, endOffset); //fit as much as we can on this page
-			if(rowView.getViewCount()==0)  //if  nothing would fit on the page
-			{
-//G***del Debug.trace("nothing would fit on the page"); //G***del
-				final View view=createView(flowView, layoutPoolView, startOffset, Integer.MAX_VALUE, -1); //try to create a view with as much information as possible
-				if(view!=null)	//if got a view back (there is at least some information left) G***note that we added this check for null to stop a pagination problem when there was no information -- we probably should really fix the source of the problem, which might be a badly-formed default element hierarchy
-					rowView.append(view);  //append a view so that we'll have something on the page G***fix -1 (rowIndex)
-//G***del				next=row.getEndOffset();  //for the next page, we'll start at the next position in the model
-			}
-/*G***fix later
-			if(isPersistent)  //G***fix; allow calling method to do this
-				flowView.append(rowView); //add that page
-*/
-
-		  if(isPersistent)  //if we should keep the rows we lay out
-			{
-/*G***del
-Debug.trace("created and keeping view:");
-ViewUtilities.printView(rowView, Debug.getOutput());
-*/
-			  ViewUtilities.reparentHierarchy(rowView); //make sure all the child views have correct parents (previous layouts could cause, for instance, a paragraph row to think it has a parent of a now-unused paragraph fragement)
-/*G***del
-Debug.trace("after reparenting:");
-ViewUtilities.printView(rowView, Debug.getOutput());
-*/
-			}
-			else  //if we shouldn't keep the rows we lay out
-			{
-//G***del Debug.trace("removing page view with start offset: ", rowView.getStartOffset());  //G***del
-				flowView.remove(rowIndex);  //remove the row from the flow view G***do we even need to add it in the first place, if we modify the other methods?
-			}
-			return rowView; //return the row we created
-		}
-
-
-		/**Creates a row of views that will fit within the layout span of the row.
-			This is called by the layout method. This is overridden to update the record
-			of the last row laid out for threading.
-		@param rowIndex the index of the row to fill in with views. The
-			row is assumed to be empty on entry.
-		@param pos  The current position in the children of
-			this views element from which to start.
-		@param endOffset The last offset (noninclusive) to lay out.
-		@return The position to start the next row.
-		*/
-		protected int layoutRow(XMLFlowView flowView, final View layoutPoolView, final View rowView, int rowIndex, int pos, final int endOffset)	//(newswing threadlayout)
-		{
-//G***del Debug.trace("Inside XMLPagedView.layoutRow(), rowIndex: ", rowIndex);	//G***del
-//G***del; replaced by pageIndex			lastLayoutRowIndex=rowIndex-1;	//assume we've already laid out the row before this one
-			if(stopLayout)	//if we should stop the layout process
-			{
-Debug.trace("We should stop now.");	//G***del
-				final View row=flowView.getView(rowIndex);	//get a reference to this empty row that was added earlier in layout()
-		    row.append(createView(flowView, layoutPoolView, pos, Integer.MAX_VALUE, rowIndex));	//G***comment
-Debug.trace("Appended a big row.");	//G***del
-				return flowView.getEndOffset();	//return the end offset of the view, pretending this row contains everything, in order to stop the layout process
-			}
-			else	//if we shouldn't stop, yet
-				return super.layoutRow(flowView, layoutPoolView, rowView, rowIndex, pos, endOffset);	//do the default layout
-		}
-
-		/**Adjusts the given row (page) to fit within the layout span.
-			By default this will try to find the highest break weight possible nearest
-			the end of the row.  If a forced break is encountered, the break will be
-			positioned there.
-		@param flowView The view being paginated.
-		@param rowIndex The index of the row to adjust to the current layout span.
-		@param desiredSpan The current layout span (>=0).
-		@param x The location the page starts at.
-		*/
-		protected void adjustRow(XMLFlowView flowView, final View layoutPoolView, int rowIndex, int desiredSpan, int x)
-		{
-//G***del Debug.trace("adjustRow() with rowIndex: "+rowIndex+" desiredSpan: "+desiredSpan);	//G***del
-//G***del System.out.println("adjustRow() with rowIndex: "+rowIndex+" desiredSpan: "+desiredSpan);	//G***del
-			final View row=flowView.getView(rowIndex);	//get a reference to the row (representing a page) at this index
-			final int flowAxis=flowView.getFlowAxis();	//find out which axis we're flowing along
-			final int viewCount=row.getViewCount();		//find out how many views there are on this page
-//G***bring back			final View logicalView=getLogicalView(flowView);	//get a reference to the logical view
-//G***del			final View logicalView=segmentLayoutPool; //G***testing; comment
-			int span=0;	//G***comment these
-			int bestWeight=BadBreakWeight;
-			int bestSpan=0;
-			int bestIndex=-1;
-			int bestOffset=0;
-//G***del			View view;	//this will hold each view we look at
-			for(int viewIndex=0; viewIndex<viewCount; ++viewIndex)
-			{
-				final View view=row.getView(viewIndex);	//get a reference to this view
-//G***del Debug.trace("adjustRow() looking at view: "+viewIndex+" with preferredSpan: "+view.getPreferredSpan(flowAxis));	//G***del
-//G***del System.out.println("adjustRow() looking at view: "+viewIndex+" with preferredSpan: "+view.getPreferredSpan(flowAxis));	//G***del
-
-/*G***del
-				for(int i=0; i<view.getViewCount(); ++i)	//G***del
-System.out.println("  child view: "+i+" preferredSpan: "+view.getView(i).getPreferredSpan(flowAxis));	//G***del
-*/
-
-				final int spanLeft=desiredSpan-span;	//find out how much room is left
-				final int breakWeight=view.getBreakWeight(flowAxis, x+span, spanLeft);	//get the break weight for this view based upon the amount of room left
-
-				final AttributeSet attributeSet=view.getAttributes(); //get the view's attributes
-				  //see how the view considers breaking after it
-//G***fix				final String pageBreakAfter=XMLCSSStyleConstants.getPageBreakAfter(attributeSet);
-				  //see how the view considers breaking before it
-				final String pageBreakBefore=XMLCSSStyleUtilities.getPageBreakBefore(attributeSet);
-/*G***fix; not having this only works for page-break-before because the pre-paginate information gather already divides page breaks
-						//if this view always wants page breaks before it, and this isn't the first view in the row
-				if(viewIndex>0 && XMLCSSConstants.CSS_PAGE_BREAK_BEFORE_ALWAYS.equals(pageBreakBefore))
-				{
-					bestWeight=ForcedBreakWeight; //show that we're being forced to break
-					bestIndex=viewIndex;  //G***testing
-					bestSpan=span;  //G***del
-					break;  //G***testing
-				}
-				else
-*/
-				if(breakWeight>=bestWeight)	//if this is as good or better a place to break than we've found so far
-				{
-					bestWeight=breakWeight;	//show that we've found a new weight to break on
-					bestIndex=viewIndex;	//show that we've found a new index to break at
-//G***del System.out.println("adding "+span+" to bestSpan");	//G***del
-					bestSpan=span;		//show that we've found a new best space to cover
-					if(breakWeight>=ForcedBreakWeight)	//if this break weight means a break should be forced
-						break;	//don't look for any more places to break
-				}
-				span+=view.getPreferredSpan(flowAxis);	//find out how much room this view wants to take up
-			}
-			if(bestIndex<0)	//if we couldn't find anything else to break
-				return;	//leave everything the way it is
-			int spanLeft=desiredSpan-bestSpan;	//since we found a place to break, subtract that view's space from the space we have left
-//G***del Debug.trace("best view to break: ", bestIndex); //G***del
-			final View breakView=row.getView(bestIndex);	//get the view to break on
-//G***del Debug.trace("break view is a: ", breakView.getClass().getName()); //G***del
-				//see if the view we'll break fits in the space provided
-			final boolean breakViewFits=breakView.getPreferredSpan(flowAxis)<=spanLeft;
-				//ignoring for the moment the condition of if the view can be broken,
-				//  if we have to break on a boundary, it will be after this view if it fits
-				//  and if it doesn't fit we'll break before the view
-//G***del		  int breakBeforeIndex=breakViewFits ? bestIndex+1 : bestIndex;
-			final View brokenView=breakView.breakView(flowAxis, breakView.getStartOffset(), x+bestSpan, spanLeft);	//break the view
-//G***del Debug.trace("Broke view is a: ", brokenView.getClass().getName());
-//G***del Debug.trace("Broke view has an ending: ", brokenView.getEndOffset());
-//G***del Debug.trace("Broke view, has a preferred span of: "+brokenView.getPreferredSpan(flowAxis));
-//G***del Debug.trace("span left: ", spanLeft); //G***del
-//G***we need to do something somewhere up here for the case in which the
-//breaking point naturally falls between views
-			View[] replacementViewArray;	//we'll place the replacement views, if any, in the array we create for this variable
-			//G***this works! maybe make it check to make sure there is at least one view on the page; actually, the function before this probably takes care of checking that
-			if(brokenView.getPreferredSpan(flowAxis)>spanLeft)	//if the view we broke still can't fit within this view
-			{
-				replacementViewArray=null;
-//G***del when works				replacementViewArray=new View[0];
-//G***del				--breakBeforeIndex;  //show that we're now breaking
+Debug.trace("found page break view"); //G***del
+				viewChildElementList.add(documentElement);  //add this element to our list of elements; it's not a top-level document like the others G***this is a terrible hack; fix
 			}
 			else
 			{
-				replacementViewArray=new View[1];	//create a new array
-				replacementViewArray[0]=brokenView;	//put our view in the array
-//G***del				breakBeforeIndex=-1;  //show that we're not breaking on the border between views
-			}
-				//If we're not replacing the view with anything, or if the original
-				//  view fit, that means we're breaking on a boundary; make sure it's
-				//  a boundray on which a page break can be made.
-			if(replacementViewArray==null || breakViewFits)
-			{
-			  int breakBeforeIndex=breakViewFits ? bestIndex+1 : bestIndex; //see if we're breaking before or after the view
-				while(breakBeforeIndex>0) //if there are views before this one, make sure they don't care if we break after them{
+//G***del if not needed				Element baseElement=documentElement;  //we'll find out which element to use as the parent; in most documents, that will be the document element; in HTML elements, it will be the <body> element
+//G***del					final MediaType documentMediaType=XMLStyleConstants.getMediaType(documentAttributeSet);  //get the media type of the document
+//G***del					final String documentElementLocalName=XMLStyleConstants.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
+//G***del					final String documentElementNamespaceURI=XMLStyleConstants.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element local name
+				final int childElementCount=documentElement.getElementCount();  //find out how many children are in the document
+				for(int childIndex=0; childIndex<childElementCount; ++childIndex)  //look at the children of the document element
 				{
-					final View previousView=row.getView(breakBeforeIndex-1);	//get a reference to the view before the one being broken
-					final AttributeSet attributeSet=previousView.getAttributes(); //get the view's attributes
-					  //see how the view considers breaking after it
-					final String pageBreakAfter=XMLCSSStyleUtilities.getPageBreakAfter(attributeSet);
-						//if we should avoid breaking after this view
-					if(XMLCSSConstants.CSS_PAGE_BREAK_AFTER_AVOID.equals(pageBreakAfter))
-						--breakBeforeIndex; //we'll try breaking sooner
-					else  //if the view before doesn't mind a break after it
-						break;  //this break will work for us
-				}
-					//if we found a border for which the previous view didn't mind breaking,
-					//  and it wasn't the first view, and it's not more than where we were
-					//  breaking already (the latter is a special case meaning the view
-					//  fit originally, so don't disturb the replacement view array)
-				if(breakBeforeIndex>0 && breakBeforeIndex<=bestIndex)
-				{
-					bestIndex=breakBeforeIndex; //we'll now break on this border
-					replacementViewArray=null;  //don't replace the view with anything, since we're breaking on a border
-				}
-			}
-		  final int adjustOffset=bestIndex; //find the index at which we should do the adjustment
-			final int adjustLength=viewCount-bestIndex; //we'll remove all the views in this row starting with our adjustment index
+					final Element childElement=documentElement.getElement(childIndex); //get a reference to the child element
 
-				//G***we probably should instead have a replace() method here that returns the views to the pool directly instead of afterwards
-			row.replace(adjustOffset, adjustLength, replacementViewArray);	//replace the extra views with our broken one
-//G***del			row.replace(bestIndex, viewCount-bestIndex, viewArray);	//replace the extra views with our broken one
-/*G***del
-		  for(int removedViewIndex=0; removedViewIndex<removedViews.length; ++removedViewIndex) //look at all the views we removed to see if any of them should be reparented back into the pool
-			{
-				final View removedView=removedViews[removedViewIndex]; //get a reference to this removed view
-*/
-				  //G***do we want to replace this with ViewUtilities.reparentNullHierarchy()?
-	      final int logicalViewCount=layoutPoolView.getViewCount();	//get the number of logical views
-				for(int logicalViewIndex=0; logicalViewIndex<logicalViewCount; ++logicalViewIndex)	//look at each logical view to see if it's one that was removed
-				{
-				  final View childView=layoutPoolView.getView(logicalViewIndex); //get the child view
-					if(childView.getParent()==null)  //if this view doesn't have a parent (it was probably one that was just removed)
+//G***del; only accounts for one case of overlapping						if(childElement.getStartOffset()>=startOffset && childElement.getStartOffset()<endOffset) //if this child element starts within our range
+					  //if this child element's range overlaps with our range
+					if(childElement.getStartOffset()<endOffset && childElement.getEndOffset()>startOffset)
 					{
-//G***del Debug.trace("Reparenting view: "+view.getClass().getName());
-						childView.setParent(layoutPoolView);	//set this view's parent so that it will no longer be null
+						final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child element's attributes
+						final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);  //get the child element local name
+//G***del Debug.trace("Looking at child: ", childElementLocalName); //G***del
+//G***del							boolean isHTMLBody=false; //we'll determine if this element is a <body> element of XHTML
+						if(XHTMLConstants.ELEMENT_BODY.equals(childElementLocalName))  //if this element is <body>
+						{
+/*G***del
+							//we'll determine if this body element is HTML by one of following:
+							//  * the element is in the XHTML or OEB namespace
+							//  * the element is in no namespace but the document is of type text/html or text/x-oeb1-document
+							//  * the element is in no namespace and the document element is
+							//      an <html> element in the XHTML or OEB namespace
+							final String childElementNamespaceURI=XMLStyleConstants.getXMLElementNamespaceURI(childAttributeSet);  //get the child element local name
+							if(childElementNamespaceURI!=null)  //if the body element has a namespace
+							{
+									//if it's part of the XHTML or OEB namespace
+								if(XHTMLConstants.XHTML_NAMESPACE_URI.equals(childElementNamespaceURI)
+										|| OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(childElementNamespaceURI))
+									isHTMLBody=true;  //show that this is an HTML body element
+							}
+							else  //if the body element has no namespace
+							{
+									//if the document type is text/html or text/x-oeb1-document
+								if(documentMediaType!=null && (documentMediaType.match(MediaType.TEXT_HTML) || documentMediaType.match(MediaType.TEXT_X_OEB1_DOCUMENT)))
+									isHTMLBody=true;  //is an HTML body element
+								else if(XHTMLConstants.ELEMENT_HTML.equals(documentElementLocalName)  //if the document element is an XHTML or OEB <html> element
+										&& (XHTMLConstants.XHTML_NAMESPACE_URI.equals(documentElementNamespaceURI) || OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(documentElementNamespaceURI)))
+									isHTMLBody=true;  //is an HTML body element
+							}
+						}
+						if(isHTMLBody)  //if this element is an XHTML <body> element
+						{
+*/
+							if(XHTMLSwingTextUtilities.isHTMLElement(childAttributeSet, documentAttributeSet)) //if this is an HTML element
+							{
+//G***del Debug.trace("is HTML body");  //G***del
+								final int bodyChildElementCount=childElement.getElementCount(); //find out how many children the body element has
+								for(int bodyChildIndex=0; bodyChildIndex<bodyChildElementCount; ++bodyChildIndex) //look at each of the body element's children
+								{
+//G***del Debug.trace("Adding body child element: ", bodyChildIndex);
+									final Element bodyChildElement=childElement.getElement(bodyChildIndex); //get this child element of the body element
+									if(bodyChildElement.getStartOffset()>=startOffset && bodyChildElement.getStartOffset()<endOffset) //if this child element starts within our range G***should we merely check for overlaps here?
+										viewChildElementList.add(bodyChildElement);  //add this body child element to our list of elements
+								}
+							}
+						}
+						else  //if this element is not an XHTML <body> element
+						{
+//G***del 		Debug.trace("Adding child element: ", childIndex);
+							viewChildElementList.add(childElement);  //add this child element to our list of elements
+						}
 					}
 				}
-		}
-
-
-	/**
-	 * Creates a view that can be used to represent the current piece
-	 * of the flow.  This can be either an entire view from the
-	 * logical view, or a fragment of the logical view.
-	 *
-	 * @param fv the view holding the flow
-	 * @param startOffset the start location for the view being created
-	 * @param spanLeft the about of span left to fill in the row
-	 * @param rowIndex the row the view will be placed into
-		@return A view covering the requested area, or <code>null</code> if there is
-			no view that contains the requested model position.
-		*/
-//G***do we even need rowIndex?
-	protected View createView(XMLFlowView fv, final View layoutPoolView, int startOffset, int spanLeft, int rowIndex)
-	{
-//G***del Debug.traceStack(); //G***del
-
-	    // Get the child view that contains the given starting position
-//G***bring back	    View lv = getLogicalView(fv);
-//G***del			final View lv=segmentLayoutPool; //G***testing; comment
-//G***del Debug.trace("startOffset: ", startOffset);
-//G***del Debug.trace("logical view start offset: ", layoutPoolView.getStartOffset());
-//G***del Debug.trace("logical view end offset: ", layoutPoolView.getEndOffset());
-//G***del Debug.trace("logical view is of class: ", layoutPoolView.getClass().getName());
-	    int childIndex = layoutPoolView.getViewIndex(startOffset, Position.Bias.Forward);
-//G***del Debug.trace("childIndex: ", childIndex);
-
-			if(childIndex<0)  //if there is no view in the pool that contains this offset (this can happen with the page-break-before behavior, for example)
-				return null;  //show that we have no view that covers the requested model position
-
-	    View v = layoutPoolView.getView(childIndex);
-
-	    if (startOffset==v.getStartOffset()) {
-		// return the entire view
-		return v;
-	    }
-
-	    // return a fragment.
-//G***del Debug.trace("there's no view that starts at this location; we'll create a fragment at start offset: ", startOffset);
-//G***del Debug.trace("our fragment will end: ", v.getEndOffset());
-	    v = v.createFragment(startOffset, v.getEndOffset());
-	    return v;
-		}
-
-
-	}
-
-	/**Information about a range that can be flowed independently of other
-		sections.
-	@author Garret Wilson
-	*/
-	protected static class FlowRange
-	{
-		/**The start of this range.*/
-		private int startOffset;
-
-		  /**@return The start of this range.*/
-			public int getStartOffset() {return startOffset;}
-
-		/**The non-inclusive end of this range.*/
-		private int endOffset;
-
-		  /**@return The non-inclusive end of this range.*/
-			public int getEndOffset() {return endOffset;}
-
-		/**Creates a range with new starting and ending offsets.
-		@param newStartOffset This range's starting offset.
-		@param newEndOffset This range's ending offset.
-		*/
-		public FlowRange(final int newStartOffset, final int newEndOffset)
-		{
-			startOffset=newStartOffset; //save the starting offset
-			endOffset=newEndOffset; //save the ending offset
-		}
-
-		/**@return A string representation of this flow range.*/
-		public String toString()
-		{
-			return getClass().getName()+" ["+getStartOffset()+", "+getEndOffset()+"]";
-		}
-	}
-
-	/**Lightweight object containing information about the flow layout offsets and
-		groups of flow layout offsets. This class adds the functionality of
-		determining groups of flow segments that can be repaginated independently
-		of the others.
-	@author Garret Wilson
-	*/
-	public static class PageFlowLayoutInfo extends XMLFlowView.FlowLayoutInfo
-	{
-		/**The list of ranges that can be flowed independently of the others.*/
-		private java.util.List flowRangeList=new ArrayList();
-
-		/**Adds a flow range to the list.
-		@flowRange The range to add to the list of flow ranges.
-		*/
-		public void addFlowRange(final FlowRange flowRange)
-		{
-			flowRangeList.add(flowRange);
-		}
-
-		/**Returns the range that includes the given offset.
-		@param offset The offset for which to locate a range.
-		@return The range that includes the offset, or <code>null</code> if a range
-			could not be found for the given offset.
-		*/
-		public FlowRange getFlowRange(final int offset)
-		{
-			final Iterator iterator=flowRangeList.iterator(); //get an iterator to look through the ranges
-			while(iterator.hasNext()) //while there are more ranges
-			{
-				final FlowRange flowRange=(FlowRange)iterator.next(); //get the next flow range
-//G***del Debug.trace("Looking at flow range: ", flowRange);  //G***del
-				if(offset>=flowRange.getStartOffset() && offset<flowRange.getEndOffset()) //if this offset lies within this range
-					return flowRange; //return this flow range
 			}
-			return null;  //show that we couldn't find a matching range
-		}
-
-
+	  }
 	}
+  return (Element[])viewChildElementList.toArray(new Element[viewChildElementList.size()]); //return the views as an array of views
+}
 
 
-	/**Runnable object which allows a section of the flow to be laid out in
-		the AWT thread.
-	@see #setPaginating
-	@see #PageFlowStrategy
-	*/
-	protected class FlowRangeLayerOut implements Runnable
-	{
 
-		/**The view to lay out.*/
-		private final XMLFlowView flowView;
 
-		/**The layout strategy to be used for laying out the next range.*/
-		private final PageFlowStrategy pageFlowStrategy;
+/**
+ * Lays out the children.  If the span along the flow
+ * axis has changed, layout is marked as invalid which
+ * which will cause the superclass behavior to recalculate
+ * the layout along the box axis.  The FlowStrategy.layout
+ * method will be called to rebuild the flow rows as 
+ * appropriate.  If the height of this view changes 
+ * (determined by the perferred size along the box axis),
+ * a preferenceChanged is called.  Following all of that,
+ * the normal box layout of the superclass is performed.
+ *
+ * @param width  the width to lay out against >= 0.  This is
+ *   the width inside of the inset area.
+ * @param height the height to lay out against >= 0 This
+ *   is the height inside of the inset area.
+ */
+protected void layout(int width, int height) {
+final int faxis = getFlowAxis();
+int newSpan;
+if (faxis == X_AXIS) {
+  newSpan = (int)width;
+} else {
+  newSpan = (int)height;
+}
+if (layoutSpan != newSpan) {
+  layoutChanged(faxis);
+  layoutChanged(getAxis());
+  layoutSpan = newSpan;
+}
 
-		/**The object containing the layout information to be gathered.*/
-		private final FlowLayoutInfo flowLayoutInfo;
+// repair the flow if necessary
+if (! isLayoutValid(faxis)) {
+  final int heightAxis = getAxis();
+  int oldFlowHeight = (int)((heightAxis == X_AXIS)? getWidth() : getHeight());
+  strategy.layout(this);
+  int newFlowHeight = (int) getPreferredSpan(heightAxis);
+  if (oldFlowHeight != newFlowHeight) {
+View p = getParent();
+if (p != null) {
+    p.preferenceChanged(this, (heightAxis == X_AXIS), (heightAxis == Y_AXIS));
+}
 
-		/**Whether layout should be reset before it starts.*/
-		private boolean shouldResetLayout;
-
-		/**Creates an object that can lay out a range of a view in another thread
-		  using the specified strategy.
-		@param view The view a range of which should be reflowed.
-		@param strategy The strategy to use to lay out the view.
-		@param layoutInfo The object which will receive layout information, or
-			<code>null</code> if persistent layout should take place.
-		@param reset Whether the layout should be reset before layout begins; in
-			other words, <code>true</code> if this is the first step in the layout
-			process.
-		*/
-		public FlowRangeLayerOut(final XMLFlowView view, final PageFlowStrategy strategy, final FlowLayoutInfo layoutInfo, final boolean reset)
-		{
-			flowView=view;  //save the view
-			pageFlowStrategy=strategy;  //save the strategy
-			flowLayoutInfo=layoutInfo;  //save the layout info object
-			shouldResetLayout=reset;  //save whether we should reset the layout
-		}
-
-		/**Lays out a range of the flow using the page flow strategy. If this range
-		  completes our range, paginating is indicated to have finished; otherwise,
-			another class is queued into the AWT thread for layout out the next
-			range.
-		 */
-		public void run()
-		{
-try
+            // PENDING(shannonh)
+            // Temporary fix for 4250847
+            // Can be removed when TraversalContext is added
+Component host = getContainer();
+if (host != null) {
+    //nb idk 12/12/2001 host should not be equal to null. We need to add assertion here
+    host.repaint();
+}
+  }
+}
+super.layout(width, height);
+/*G***fix
+final int flowAxis=getFlowAxis();	//get the flow axis
+final int axis=getAxis();	//get our tiling axis
+final int displayPageCount=getDisplayPageCount();	//see how many pages we're displaying
+if(axis==X_AXIS)	//if we're tiling on the X axis
 {
-Debug.trace();
-		  if(shouldResetLayout) //if we should reset the layout (i.e. this is the first layout call)
-				pageFlowStrategy.reset(); //reset the strategy so that we'll start laying out information at the beginning
-			final boolean finishedLayout=pageFlowStrategy.layout(flowView, flowLayoutInfo);	//G***testing; comment
-		  if(finishedLayout)  //if we finished the layout //G***probably put this in onPagelayoutComplete or something
-			{
-				Debug.trace("Finished paged view layout");
-				setXAllocValid(true);	//show that our horizontal allocation is valid again
-				setYAllocValid(true);	//show that our vertical allocation is valid again
-				setPaginating(false); //show that we're not paginating anymore
-			}
-			else  //if we haven't finished
-			{
-//G***del Debug.notify("getting ready to fire page even with page index: "+getPageIndex()); //G***del
-/*G***del when works
-				//fire a page event with our current page number, since our page number changed
-				firePageEvent(new PageEvent(XMLPagedView.this, getPageIndex(), getPageCount()));
-//G***del				PageIndex=newPageIndex;	//actually change the page number
-				final Container container=getContainer();	//get a reference to our container
-				if(container!=null)	//if we're in a container
-					container.repaint();	//repaint our container G***check
+	setPageWidth(width/displayPageCount);	//show that the pages will be a fraction of our width
+	setPageHeight(height);	//show that the pages will be the same height
+}
+else	//if we're tiling on the Y axis
+{
+	setPageWidth(width);	//show that the widths will all be the same
+	setPageHeight(height/displayPageCount);	//show that the pages will each be a fraction of the total height
+}
 */
-				//create another instance of ourselves and queue it to layout the next section in the AWT thread
-				SwingUtilities.invokeLater(new FlowRangeLayerOut(flowView, pageFlowStrategy, flowLayoutInfo, false));
-			}
-}
-catch(Throwable throwable)  //G***fix; testing
-{
-System.err.println("caught error in FlowRangeLayerOut.run(): "+throwable);
-throwable.printStackTrace();
 }
 
-		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Strategy for maintaining the physical form
+ * of the flow.  The default implementation is
+ * completely stateless, and recalculates the
+ * entire flow if the layout is invalid on the
+ * given FlowView.  Alternative strategies can
+ * be implemented by subclassing, and might 
+ * perform incrementatal repair to the layout
+ * or alternative breaking behavior.
+ */
+public static class TestFlowStrategy extends FlowStrategy {
+
+/**
+* Gives notification that something was inserted into the document
+* in a location that the given flow view is responsible for.  The
+* strategy should update the appropriate changed region (which
+* depends upon the strategy used for repair).
+*
+* @param e the change information from the associated document
+* @param alloc the current allocation of the view inside of the insets.
+*   This value will be null if the view has not yet been displayed.
+* @see View#insertUpdate
+*/
+    public void insertUpdate(FlowView fv, DocumentEvent e, Rectangle alloc) {
+  if (alloc != null) {
+Component host = fv.getContainer();
+if (host != null) {
+    host.repaint(alloc.x, alloc.y, alloc.width, alloc.height);
+}
+  } else {
+fv.layoutChanged(View.X_AXIS);
+fv.layoutChanged(View.Y_AXIS);
+  }
+}
+
+/**
+* Gives notification that something was removed from the document
+* in a location that the given flow view is responsible for.
+*
+* @param e the change information from the associated document
+* @param alloc the current allocation of the view inside of the insets.
+* @see View#removeUpdate
+*/
+    public void removeUpdate(FlowView fv, DocumentEvent e, Rectangle alloc) {
+  if (alloc != null) {
+Component host = fv.getContainer();
+if (host != null) {
+    host.repaint(alloc.x, alloc.y, alloc.width, alloc.height);
+}
+  } else {
+fv.layoutChanged(View.X_AXIS);
+fv.layoutChanged(View.Y_AXIS);
+  }
+}
+
+/**
+* Gives notification from the document that attributes were changed
+* in a location that this view is responsible for.
+*
+     * @param fv     the <code>FlowView</code> containing the changes
+     * @param e      the <code>DocumentEvent</code> describing the changes
+     *               done to the Document
+     * @param alloc  Bounds of the View
+* @see View#changedUpdate
+*/
+    public void changedUpdate(FlowView fv, DocumentEvent e, Rectangle alloc) {
+  if (alloc != null) {
+Component host = fv.getContainer();
+if (host != null) {
+    host.repaint(alloc.x, alloc.y, alloc.width, alloc.height);
+}
+  } else {
+fv.layoutChanged(View.X_AXIS);
+fv.layoutChanged(View.Y_AXIS);
+  }
+}
+
+/** 
+* Update the flow on the given FlowView.  By default, this causes 
+* all of the rows (child views) to be rebuilt to match the given 
+* constraints for each row.  This is called by a FlowView.layout 
+* to update the child views in the flow.
+*
+* @param fv the view to reflow
+*/
+public void layout(FlowView fv) {
+  int p0 = fv.getStartOffset(); 
+  int p1 = fv.getEndOffset();
+
+  // we want to preserve all views from the logicalView from being 
+  // removed
+  View lv = getLogicalView(fv);
+  int n = lv.getViewCount();
+  for( int i = 0; i < n; i++ ) {
+View v = lv.getView(i);
+v.setParent(lv);
+  }
+  fv.removeAll();
+  for (int rowIndex = 0; p0 < p1; rowIndex++) {
+View row = ((XMLPagedView)fv).createRow();
+fv.append(row);
+
+// layout the row to the current span.  If nothing fits,
+// force something.
+int next = layoutRow(fv, rowIndex, p0);
+if (row.getViewCount() == 0) {
+    row.append(createView(fv, p0, Integer.MAX_VALUE, rowIndex));
+    next = row.getEndOffset();
+}
+if (next <= p0) {
+    throw new AssertionError("infinite loop in formatting");
+} else {
+    p0 = next;
+}
+  }
+}
+
+/**
+* Creates a row of views that will fit within the 
+* layout span of the row.  This is called by the layout method.
+* This is implemented to fill the row by repeatedly calling
+* the createView method until the available span has been
+* exhausted, a forced break was encountered, or the createView
+* method returned null.  If the remaining span was exhaused, 
+* the adjustRow method will be called to perform adjustments
+* to the row to try and make it fit into the given span.
+*
+* @param rowIndex the index of the row to fill in with views.  The
+*   row is assumed to be empty on entry.
+* @param pos  The current position in the children of
+*   this views element from which to start.  
+* @return the position to start the next row
+*/
+protected int layoutRow(FlowView fv, int rowIndex, int pos) {
+  View row = fv.getView(rowIndex);
+  int x = fv.getFlowStart(rowIndex);
+  int spanLeft = fv.getFlowSpan(rowIndex);
+  int end = fv.getEndOffset();
+  TabExpander te = (fv instanceof TabExpander) ? (TabExpander)fv : null;
+
+  // Indentation.
+  int preX = x;
+  int availableSpan = spanLeft;
+  preX = x;
+  
+  final int flowAxis = fv.getFlowAxis();
+  boolean forcedBreak = false;
+  while (pos < end  && spanLeft >= 0) {
+View v = createView(fv, pos, spanLeft, rowIndex);
+if ((v == null) 
+                || (spanLeft == 0 
+                    &&  v.getPreferredSpan(flowAxis) > 0)) {
+    break;
+}
+
+int chunkSpan;
+if ((flowAxis == X_AXIS) && (v instanceof TabableView)) {
+    chunkSpan = (int) ((TabableView)v).getTabbedSpan(x, te);
+} else {
+    chunkSpan = (int) v.getPreferredSpan(flowAxis);
+}
+
+// If a forced break is necessary, break
+if (v.getBreakWeight(flowAxis, pos, spanLeft) >= ForcedBreakWeight) {
+    int n = row.getViewCount();
+    if (n > 0) {
+	/* If this is a forced break and it's not the only view
+	 * the view should be replaced with a call to breakView.
+	 * If it's it only view, it should be used directly.  In
+	 * either case no more children should be added beyond this
+	 * view.
+	 */
+	v = v.breakView(flowAxis, pos, x, spanLeft);
+	if (v != null) {
+	    if ((flowAxis == X_AXIS) && (v instanceof TabableView)) {
+		chunkSpan = (int) ((TabableView)v).getTabbedSpan(x, te);
+	    } else {
+		chunkSpan = (int) v.getPreferredSpan(flowAxis);
+	    }
+	} else {
+	    chunkSpan = 0;
 	}
+    }
+    forcedBreak = true;
+}
 
-	/**Class for iterating through child elements, G***del if not needed
-	private class ChildIterator
-	{
+spanLeft -= chunkSpan;
+x += chunkSpan;
+if (v != null) {
+    row.append(v);
+    pos = v.getEndOffset();
+}
+if (forcedBreak) {
+    break;
+}
 
+  }
+  if (spanLeft < 0) {
+// This row is too long and needs to be adjusted.
+adjustRow(fv, rowIndex, availableSpan, preX);
+  } else if (row.getViewCount() == 0) {
+// Impossible spec... put in whatever is left.
+View v = createView(fv, pos, Integer.MAX_VALUE, rowIndex);
+row.append(v);
+  }
+  return row.getEndOffset();
+}
 
-	}
+/**
+* Adjusts the given row if possible to fit within the
+* layout span.  By default this will try to find the 
+* highest break weight possible nearest the end of
+* the row.  If a forced break is encountered, the
+* break will be positioned there.
+* 
+* @param rowIndex the row to adjust to the current layout
+*  span.
+* @param desiredSpan the current layout span >= 0
+* @param x the location r starts at.
+*/
+    protected void adjustRow(FlowView fv, int rowIndex, int desiredSpan, int x) {
+  final int flowAxis = fv.getFlowAxis();
+  View r = fv.getView(rowIndex);
+  int n = r.getViewCount();
+  int span = 0;
+  int bestWeight = BadBreakWeight;
+  int bestSpan = 0;
+  int bestIndex = -1;
+  int bestOffset = 0;
+  View v;
+  for (int i = 0; i < n; i++) {
+v = r.getView(i);
+int spanLeft = desiredSpan - span;
+
+int w = v.getBreakWeight(flowAxis, x + span, spanLeft);
+if ((w >= bestWeight) && (w > BadBreakWeight)) {
+    bestWeight = w;
+    bestIndex = i;
+    bestSpan = span;
+    if (w >= ForcedBreakWeight) {
+	// it's a forced break, so there is
+	// no point in searching further.
+	break;
+    }
+}
+span += v.getPreferredSpan(flowAxis);
+  }
+  if (bestIndex < 0) {
+// there is nothing that can be broken, leave
+// it in it's current state.
+return;
+  }
+
+  // Break the best candidate view, and patch up the row.
+  int spanLeft = desiredSpan - bestSpan;
+  v = r.getView(bestIndex);
+  v = v.breakView(flowAxis, v.getStartOffset(), x + bestSpan, spanLeft);
+  View[] va = new View[1];
+  va[0] = v;
+  View lv = getLogicalView(fv);
+  for (int i = bestIndex; i < n; i++) {
+View tmpView = r.getView(i);
+if (contains(lv,tmpView)) {
+    tmpView.setParent(lv);
+} else if (tmpView.getViewCount() > 0) {
+    recursiveReparent(tmpView, lv);
+}
+  }
+  r.replace(bestIndex, n - bestIndex, va);
+}
+
+private void recursiveReparent(View v, View logicalView) {
+  int n = v.getViewCount();
+  for (int i = 0; i < n; i++) {
+View tmpView = v.getView(i);
+if (contains(logicalView,tmpView)) {
+    tmpView.setParent(logicalView);
+} else {
+    recursiveReparent(tmpView, logicalView);
+}
+  }
+}
+
+private boolean contains(View logicalView, View v) {
+  int n = logicalView.getViewCount();
+  for (int i = 0; i < n; i++) {
+if (logicalView.getView(i) == v) {
+    return true;
+}
+  }
+  return false;
+}
+
+/**
+* Creates a view that can be used to represent the current piece
+* of the flow.  This can be either an entire view from the
+* logical view, or a fragment of the logical view.
+*
+* @param fv the view holding the flow
+* @param startOffset the start location for the view being created
+* @param spanLeft the about of span left to fill in the row
+* @param rowIndex the row the view will be placed into
+*/
+protected View createView(FlowView fv, int startOffset, int spanLeft, int rowIndex) {
+  // Get the child view that contains the given starting position
+  View lv = getLogicalView(fv);
+  int childIndex = lv.getViewIndex(startOffset, Position.Bias.Forward);
+  View v = lv.getView(childIndex);
+  if (startOffset==v.getStartOffset()) {
+// return the entire view
+return v;
+  }
+  
+  // return a fragment.
+  v = v.createFragment(startOffset, v.getEndOffset());
+  return v;
+}
+}
+
+/**
+ * This class can be used to represent a logical view for 
+ * a flow.  It keeps the children updated to reflect the state
+ * of the model, gives the logical child views access to the
+ * view hierarchy, and calculates a preferred span.  It doesn't
+ * do any rendering, layout, or model/view translation.
+ */
+protected class PagePoolView extends BoxView {
+
+PagePoolView(Element elem) {
+  super(elem, XMLPagedView.this.getAxis()==View.X_AXIS ? View.Y_AXIS : View.X_AXIS);
+}
+/*G***del
+    protected int getViewIndexAtPosition(int pos) {
+  Element elem = getElement();
+  if (elem.isLeaf()) {
+return 0;
+  }
+  return super.getViewIndexAtPosition(pos);
+}
+*/
+    
+    
+		/**Loads the children into this view pool. Only the children within the
+		view's range (specified in the constructor) will be loaded.
+	@param viewFactory The factory to use to create the child views.
 	*/
+	protected void loadChildren(ViewFactory viewFactory)
+	{
+		if(viewFactory==null) //if there is no view factory, we can't load the children
+			return; //we can't do anything
+		final int startOffset=getStartOffset(); //find out where we should start
+		final int endOffset=getEndOffset(); //find out where we should end
+//G***del Debug.trace("loading children for page pool, offsets "+startOffset+" to "+endOffset);
+		  //G***testing; comment; eventually put in the view factory
+		final Element[] viewChildElements=getViewChildElements(startOffset, endOffset); //get the child elements that fall within our range
+	  //create an anonymous element that simply holds the elements we just loaded
+		//this temporary element will go away after we've created views
+	  final Element anonymousElement=new AnonymousElement(getElement(), null, viewChildElements, 0, viewChildElements.length);
+			//G***is it good to make an anonymous element simply for enumerating child elements to XMLBlockView?
+		final View[] createdViews=XMLBlockView.createBlockElementChildViews(anonymousElement, viewFactory);  //create the child views
+		this.replace(0, 0, createdViews);  //add the views as child views to this view pool (use this to show that we shouldn't use the XMLPagedView version)
+	}
+    
+	/**Returns the index of the child at the given model position in the pool.
+	@param pos The position (>=0) in the model.
+	@return The index of the view representing the given position, or -1 if there
+		is no view on this pool which represents that position.
+	*/
+	protected int getViewIndexAtPosition(int pos)
+	{
+//G***del Debug.trace("looking for view at position: ", pos); //G***del
+//G***del Debug.trace("startoffset: ", getStartOffset());
+//G***del Debug.trace("endoffset: ", getEndOffset());
+
+//G***del Debug.trace("child views: ", getViewCount());
+
+		//this is an expensive operation, but this class usually contains only a partial list of views, which may not correspond to the complete list of original elements
+		if(pos<getStartOffset() || pos>=getEndOffset())	//if the position is before or after the content
+			return -1;	//show that the given position is not on this page
+		for(int viewIndex=getViewCount()-1; viewIndex>=0; --viewIndex)	//look at all the views from the last to the first
+		{
+			final View view=getView(viewIndex);	//get a reference to this view
+//G***del Debug.trace("View "+viewIndex+" is of class: ", view.getClass().getName());
+//G***del Debug.trace("startoffset: ", view.getStartOffset());
+//G***del Debug.trace("endoffset: ", view.getEndOffset());
+			if(pos>=view.getStartOffset() && pos<view.getEndOffset())	//if this view holds the requested position
+				return viewIndex;	//return the index to this view
+		}
+		return -1;	//if we make it to this point, we haven't been able to find a view with the specified position
+	}
+    
+    
+    
+/*G***del
+    protected void loadChildren(ViewFactory f) {
+  Element elem = getElement();
+  if (elem.isLeaf()) {
+View v = new LabelView(elem);
+append(v);
+  } else {
+super.loadChildren(f);
+  }
+}
+*/
+
+/**
+* Fetches the attributes to use when rendering.  This view
+* isn't directly responsible for an element so it returns
+* the outer classes attributes.
+*/
+    public AttributeSet getAttributes() {
+  View p = getParent();
+  return (p != null) ? p.getAttributes() : null;
+}
+
+/**
+* Determines the preferred span for this view along an
+* axis.
+*
+* @param axis may be either View.X_AXIS or View.Y_AXIS
+* @return   the span the view would like to be rendered into.
+*           Typically the view is told to render into the span
+*           that is returned, although there is no guarantee.  
+*           The parent may choose to resize or break the view.
+* @see View#getPreferredSpan
+*/
+    public float getPreferredSpan(int axis) {
+  float maxpref = 0;
+  float pref = 0;
+  int n = getViewCount();
+  for (int i = 0; i < n; i++) {
+View v = getView(i);
+pref += v.getPreferredSpan(axis);
+if (v.getBreakWeight(axis, 0, Integer.MAX_VALUE) >= ForcedBreakWeight) {
+    maxpref = Math.max(maxpref, pref);
+    pref = 0;
+}
+  }
+  maxpref = Math.max(maxpref, pref);
+  return maxpref;
+}
+
+/**
+* Determines the minimum span for this view along an
+* axis.  The is implemented to find the minimum unbreakable
+* span.
+*
+* @param axis may be either View.X_AXIS or View.Y_AXIS
+* @return  the span the view would like to be rendered into.
+*           Typically the view is told to render into the span
+*           that is returned, although there is no guarantee.  
+*           The parent may choose to resize or break the view.
+* @see View#getPreferredSpan
+*/
+    public float getMinimumSpan(int axis) {
+  float maxmin = 0;
+  float min = 0;
+  boolean nowrap = false;
+  int n = getViewCount();
+  for (int i = 0; i < n; i++) {
+View v = getView(i);
+if (v.getBreakWeight(axis, 0, Integer.MAX_VALUE) == BadBreakWeight) {
+    min += v.getPreferredSpan(axis);
+    nowrap = true;
+} else if (nowrap) {
+    maxmin = Math.max(min, maxmin);
+    nowrap = false;
+    min = 0;
+}
+  }
+  maxmin = Math.max(maxmin, min);
+  return maxmin;
+}
+
+/**
+* Forward the DocumentEvent to the given child view.  This
+* is implemented to reparent the child to the logical view
+* (the children may have been parented by a row in the flow
+* if they fit without breaking) and then execute the superclass 
+* behavior.
+*
+* @param v the child view to forward the event to.
+* @param e the change information from the associated document
+* @param a the current allocation of the view
+* @param f the factory to use to rebuild if the view has children
+* @see #forwardUpdate
+* @since 1.3
+*/
+    protected void forwardUpdateToView(View v, DocumentEvent e, 
+			   Shape a, ViewFactory f) {
+  v.setParent(this);
+  super.forwardUpdateToView(v, e, a, f);
+}
+
+// The following methods don't do anything useful, they
+// simply keep the class from being abstract.
+
+/**
+* Renders using the given rendering surface and area on that
+* surface.  This is implemented to do nothing, the logical
+* view is never visible.
+*
+* @param g the rendering surface to use
+* @param allocation the allocated region to render into
+* @see View#paint
+*/
+    public void paint(Graphics g, Shape allocation) {
+}
+
+/**
+* Tests whether a point lies before the rectangle range.
+* Implemented to return false, as hit detection is not
+* performed on the logical view.
+*
+* @param x the X coordinate >= 0
+* @param y the Y coordinate >= 0
+* @param alloc the rectangle
+* @return true if the point is before the specified range
+*/
+    protected boolean isBefore(int x, int y, Rectangle alloc) {
+  return false;
+}
+
+/**
+* Tests whether a point lies after the rectangle range.
+* Implemented to return false, as hit detection is not
+* performed on the logical view.
+*
+* @param x the X coordinate >= 0
+* @param y the Y coordinate >= 0
+* @param alloc the rectangle
+* @return true if the point is after the specified range
+*/
+    protected boolean isAfter(int x, int y, Rectangle alloc) {
+  return false;
+}
+
+/**
+* Fetches the child view at the given point.
+* Implemented to return null, as hit detection is not
+* performed on the logical view.
+*
+* @param x the X coordinate >= 0
+* @param y the Y coordinate >= 0
+* @param alloc the parent's allocation on entry, which should
+*   be changed to the child's allocation on exit
+* @return the child view
+*/
+    protected View getViewAtPoint(int x, int y, Rectangle alloc) {
+  return null;
+}
+
+/**
+* Returns the allocation for a given child.
+* Implemented to do nothing, as the logical view doesn't
+* perform layout on the children.
+*
+* @param index the index of the child, >= 0 && < getViewCount()
+* @param a  the allocation to the interior of the box on entry, 
+*   and the allocation of the child view at the index on exit.
+*/
+    protected void childAllocation(int index, Rectangle a) {
+}
+}
 
 }

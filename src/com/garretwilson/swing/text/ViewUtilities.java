@@ -152,4 +152,62 @@ public class ViewUtilities
 		}
 	}
 
+	//G***testing; code modified from _Core Swing Advanced Programming_ by Kim Topley; comment
+	public static String toString(final JTextComponent component)
+	{
+		return toString(component.getUI().getRootView(component));
+	}
+
+	public static String toString(final View view)
+	{
+		return format(view, 0, new StringBuilder()).toString();
+	}
+
+	protected static StringBuilder format(final View view, final int indent, final StringBuilder stringBuilder)
+	{
+		final Document document=view.getDocument();
+		String name=view.getClass().getName();
+		for(int i=0; i<indent; ++i)
+		{
+			stringBuilder.append('\t');
+		}
+//G***del			printStream.print("\t");
+		int start=view.getStartOffset();
+		int end=view.getEndOffset();
+//G***del		float preferredSpanX=view.getPreferredSpan(View.X_AXIS);
+//G***del		float preferredSpanY=view.getPreferredSpan(View.Y_AXIS);
+//G***del		Debug.trace(indentString+name+"; offsets ["+start+", "+end+"] preferred spans ["+preferredSpanX+", "+preferredSpanY+"] parent: "+view.getParent());
+		stringBuilder.append(name).append("; offsets [").append(start).append(", ").append(end).append("] parent: ");
+		stringBuilder.append(view.getParent()!=null ? view.getParent().getClass().getName() : "null");
+		stringBuilder.append('\n');
+//G***del		printStream.println(indentString+"  attributes: "+AttributeSetUtilities.getAttributeSetString(view.getAttributes()));  //G***del
+//G***del		printStream.println(name+"; offsets ["+start+", "+end+"] preferred spans ["+preferredSpanX+", "+preferredSpanY+"]");
+		int viewCount=view.getViewCount();
+		if(viewCount==0)
+		{
+			int length=Math.min(32, end-start);
+			try
+			{
+				String text=document.getText(start, length);
+				for(int i=0; i<indent; ++i)
+				{
+					stringBuilder.append('\t');
+				}
+				stringBuilder.append('[').append(text).append(']');
+				stringBuilder.append('\n');
+//G***del				printStream.println("["+text+"]");
+			}
+			catch(BadLocationException e)
+			{
+				Debug.error(e);
+		  }
+		}
+		else
+		{
+			for(int i=0; i<viewCount; ++i)
+				format(view.getView(i), indent+1, stringBuilder);
+		}
+		return stringBuilder;
+	}
+
 }

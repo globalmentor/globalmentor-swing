@@ -49,6 +49,7 @@ import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.event.ProgressListener;
 import com.garretwilson.swing.text.DocumentConstants;
 import com.garretwilson.swing.text.DocumentUtilities;
+import com.garretwilson.swing.text.PureGapContent;
 import com.garretwilson.swing.text.SwingTextUtilities;
 import com.garretwilson.text.CharacterConstants;
 import com.garretwilson.text.xml.XMLConstants;
@@ -224,6 +225,7 @@ final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);
 	/**Default constructor.*/
 	public XMLDocument()
 	{
+//G***fix		super(new PureGapContent(BUFFER_SIZE_DEFAULT), new XMLCSSStyleContext());	//construct the parent class, specifying our own type of style context that knows how to deal with CSS attributes
 		super(new XMLCSSStyleContext());	//construct the parent class, specifying our own type of style context that knows how to deal with CSS attributes
 		swingStylesheetApplier=new SwingXMLCSSStylesheetApplier();	//create a new Swing stylesheet applier
 		xmlStylesheetApplier=new XMLCSSStylesheetApplier(this);	//create a new XML stylesheet applier, using ourselves as the input stream locator
@@ -933,6 +935,7 @@ Debug.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEn
 		{
 			if(getLength()>0)	//if we have any characters
 			{
+					//TODO del; this doesn't even work, as getLength() and remove() ignore the ending '\n'---this only removed the '\n' already present in the content
 				final String text=getText(getLength()-1, 1);	//TODO comment
 				if("\n".equals(text))	//if the document ends with an end-of-line character
 				{
@@ -982,13 +985,16 @@ Debug.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEn
 Debug.trace("creating document with XML documents", xmlDocumentArray.length);
 		try
 		{
+Debug.trace("ready to create, old length is:", getLength());
 	    if(getLength()!=0)	//if there is any content
 	    {
 	    	remove(0, getLength());	//remove the content
+Debug.trace("tried to remove everything, new length is:", getLength());
 	    }
 	    writeLock();	//get a write lock on the document
 	    try
 			{
+	    	
 	//G***TODO make our own gap content without an implied break			final Content content=getContent();	//get the current content
 				final Content content=getContent();	//get the current content
 				UndoableEdit contentEdit;
@@ -999,13 +1005,16 @@ Debug.trace("creating document with XML documents", xmlDocumentArray.length);
 		//	G***del Debug.trace("Looking at XML document: ", xmlDocumentIndex); //G***del
 						final org.w3c.dom.Document xmlDocument=xmlDocumentArray[xmlDocumentIndex];	//get a reference to this document
 			xmlDocument.normalize();	//G***do we want to do this here? probably not---or maybe so. Maybe we can normalize on the fly in the Swing document, not in the source
-						getContent(xmlDocument, stringBuilder);					
+						if(xmlDocumentIndex>0)	//if this is not the first document to insert
+						{
+							stringBuilder.append(CharacterConstants.OBJECT_REPLACEMENT_CHAR);	//append a character for the page break element to represent
+						}
+						getContent(xmlDocument, stringBuilder);
 					}
-Debug.trace("got content", stringBuilder.toString());
 					contentEdit=content.insertString(0, stringBuilder.toString());
 				}
 	    	final SectionElement sectionElement=new SectionElement();	//create a section element for all the data
-	    	final Element[] childElements=new Element[xmlDocumentArray.length];	//create a new array of child elements
+	    	final Element[] childElements=new Element[xmlDocumentArray.length*2-1];	//create a new array of child elements, allowing for interspersed page breaks
 	    	int offset=0;
 				for(int xmlDocumentIndex=0; xmlDocumentIndex<xmlDocumentArray.length; ++xmlDocumentIndex)	//look at each of the documents they passed to us
 				{
@@ -1018,17 +1027,15 @@ Debug.trace("got content", stringBuilder.toString());
 					final XMLCSSStylesheetApplier xmlCSSStylesheetApplier=getXMLStylesheetApplier();	//G***testing
 					final CSSStyleSheet[] stylesheets=xmlCSSStylesheetApplier.getStylesheets(xmlDocument, baseURI, mediaType);	//G***testing
 					for(int i=0; i<stylesheets.length; xmlCSSStylesheetApplier.applyStyleSheet(stylesheets[i++], xmlDocumentElement));	//G***testing
-	/*G***fix
 					if(xmlDocumentIndex>0)	//if this is not the first document to insert
 					{
 									//G***check to see if we should actually do this, first (from the CSS attributes)
 	//	G***del System.out.println("Adding page break element.");	//G***del
-								appendElementSpecListPageBreak(elementSpecList);  //append a page break
+						childElements[xmlDocumentIndex*2-1]=createPageBreakElement(sectionElement, offset);	//put a page break before this document
+						offset=childElements[xmlDocumentIndex*2-1].getEndOffset();
 					}
-	*/
-					
-					childElements[xmlDocumentIndex]=createElement(sectionElement, content, offset, xmlDocument, baseURI);	//TODO important: fix offset for multiple documents
-					offset=childElements[xmlDocumentIndex].getEndOffset();
+					childElements[xmlDocumentIndex*2]=createElement(sectionElement, offset, xmlDocument, baseURI);	//add the child element for this document
+					offset=childElements[xmlDocumentIndex*2].getEndOffset();
 					final MutableAttributeSet documentAttributeSet=(MutableAttributeSet)childElements[xmlDocumentIndex].getAttributes();
 	
 					if(baseURI!=null) //if there is a base URI
@@ -1163,9 +1170,9 @@ Debug.trace("after unlock, content is", getContent().length());
 	@exception BadLocationException for an invalid starting offset
 	@see XMLDocument#insert
 	*/
-	protected Element createElement(final Element parentElement, final Content content, final int offset, final org.w3c.dom.Document xmlDocument, final URI baseURI)
+	protected Element createElement(final Element parentElement, final int offset, final org.w3c.dom.Document xmlDocument, final URI baseURI)
 	{
-		return createElement(parentElement, content, offset, xmlDocument.getDocumentElement(), baseURI);
+		return createElement(parentElement, offset, xmlDocument.getDocumentElement(), baseURI);
 	}
 		
 	/**Appends information from an XML element tree into a list of element specs.
@@ -1178,7 +1185,7 @@ Debug.trace("after unlock, content is", getContent().length());
 	@exception BadLocationException for an invalid starting offset
 	@see XMLDocument#insert
 	*/
-	protected Element createElement(final Element parentElement, final Content content, int offset, final org.w3c.dom.Element xmlElement, final URI baseURI)
+	protected Element createElement(final Element parentElement, int offset, final org.w3c.dom.Element xmlElement, final URI baseURI)
 	{
 		final MutableAttributeSet attributeSet=createAttributeSet(xmlElement, baseURI);	//create an attribute set for this element
 		final BranchElement branchElement=new BranchElement(parentElement, attributeSet);	//create a branch Swing element to represent this XML element
@@ -1194,7 +1201,7 @@ Debug.trace("after unlock, content is", getContent().length());
 				{
 					case Node.ELEMENT_NODE:	//if this is an element
 							//create and add an element for this child element
-						final Element childElement=createElement(branchElement, content, offset, (org.w3c.dom.Element)node, baseURI);
+						final Element childElement=createElement(branchElement, offset, (org.w3c.dom.Element)node, baseURI);
 						offset=childElement.getEndOffset();	//G***testing
 						childElementList.add(childElement);
 						break;
@@ -1202,7 +1209,7 @@ Debug.trace("after unlock, content is", getContent().length());
 					case Node.CDATA_SECTION_NODE:	//if this is a CDATA section node
 						{
 							final MutableAttributeSet textAttributeSet=createAttributeSet(node, baseURI);	//create and fill an attribute set for the text node
-							final Element textElement=createElement(branchElement, content, offset, node.getNodeValue(), textAttributeSet);	//create and add an element for text
+							final Element textElement=createElement(branchElement, offset, node.getNodeValue(), textAttributeSet);	//create and add an element for text
 							offset=textElement.getEndOffset();	//G***testing
 Debug.trace("we created a text element, we now think the offset is", offset);
 							childElementList.add(textElement);	//create and add an element for text
@@ -1215,7 +1222,7 @@ Debug.trace("we created a text element, we now think the offset is", offset);
 		{
 			final SimpleAttributeSet simpleAttributeSet=new SimpleAttributeSet();	//create a new attribute for this content
 			XMLStyleUtilities.setXMLElementName(simpleAttributeSet, XMLConstants.TEXT_NODE_NAME);	//set the name of the content to ensure it will not get its name from its parent element (this would happen if there was no name explicitely set)
-			childElementList.add(createElement(branchElement, content, offset, String.valueOf(CharacterConstants.OBJECT_REPLACEMENT_CHAR), simpleAttributeSet));	//create and add an element for the dummy character
+			childElementList.add(createElement(branchElement, offset, String.valueOf(CharacterConstants.OBJECT_REPLACEMENT_CHAR), simpleAttributeSet));	//create and add an element for the dummy character
 		}
 		final Element[] childElements=childElementList.toArray(new Element[childElementList.size()]);	//get the child elements as an array
 		branchElement.replace(0, branchElement.getChildCount(), childElements);	//add these children to the branch
@@ -1232,7 +1239,7 @@ Debug.trace("we created a text element, we now think the offset is", offset);
 	@exception BadLocationException for an invalid starting offset
 	@see XMLDocument#insert
 	*/
-	protected Element createElement(final Element parentElement, final Content content, final int offset, final String text, final AttributeSet attributeSet)
+	protected Element createElement(final Element parentElement, final int offset, final String text, final AttributeSet attributeSet)
 	{
 Debug.trace("ready to append text", text, "at offset", offset);
 		if(text.length()==0)
@@ -1263,6 +1270,25 @@ Debug.trace("end", end);
 */
 		return new LeafElement(parentElement, attributeSet, offset, end);	//return a new leaf element for the text
 	}
+
+	
+	/**Creates and returns a page break element.
+	*/
+	protected Element createPageBreakElement(final Element parentElement, final int offset)
+	{
+//G***del Debug.trace("XMLDocument.appendElementSpecListPageBreak()");	//G***del
+		final SimpleAttributeSet pageBreakAttributeSet=new SimpleAttributeSet();	//create a page break attribute set G***create this and keep it in the constructor for optimization
+//G***del if we can get away with it		XMLStyleConstants.setXMLElementName(pageBreakAttributeSet, XMLCSSStyleConstants.AnonymousAttributeValue); //show by its name that this is an anonymous box G***maybe change this to setAnonymous
+		XMLStyleUtilities.setPageBreakView(pageBreakAttributeSet, true);	//show that this element should be a page break view
+		final XMLCSSStyleDeclaration cssStyle=new XMLCSSStyleDeclaration(); //create a new style declaration
+		cssStyle.setDisplay(XMLCSSConstants.CSS_DISPLAY_BLOCK);	//show that the page break element should be a block element, so no anonymous blocks will be created around it
+		XMLCSSStyleUtilities.setXMLCSSStyle(pageBreakAttributeSet, cssStyle);	//store the constructed CSS style in the attribute set
+		final BranchElement pageBreakElement=new BranchElement(parentElement, pageBreakAttributeSet);	//create a branch Swing element to represent the page break
+		final Element childElement=createElement(pageBreakElement, offset, String.valueOf(CharacterConstants.OBJECT_REPLACEMENT_CHAR), null);
+		pageBreakElement.replace(0, pageBreakElement.getChildCount(), new Element[]{childElement});	//add these dummy child element to the page break element
+		return pageBreakElement;	//return the page break element
+	}
+
 		
 	protected void insertBlockElementEnds(final Element element)	//G***testing
 	{
