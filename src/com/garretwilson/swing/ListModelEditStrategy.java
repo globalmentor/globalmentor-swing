@@ -40,6 +40,18 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 		/**@return The action for editing an item.*/
 		protected Action getEditAction() {return editAction;}
 
+	/**The action for moving an item up.*/
+	private final Action moveUpAction;
+
+		/**@return The action for moving an item up.*/
+		protected Action getMoveUpAction() {return moveUpAction;}
+
+	/**The action for moving an item down.*/
+	private final Action moveDownAction;
+
+		/**@return The action for moving an item down.*/
+		protected Action getMoveDownAction() {return moveDownAction;}
+		
 	/**The listener that updates the status in response to list data changes.*/
 	protected final ListDataListener updateStatusListDataListener;
 
@@ -133,6 +145,8 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 		addAction=new AddAction();
 		deleteAction=new DeleteAction();
 		editAction=new EditAction();
+		moveUpAction=new MoveUpAction();
+		moveDownAction=new MoveDownAction();
 		updateStatus();	//update the initial status
 	}
 
@@ -141,9 +155,12 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 	*/
 	public void updateStatus()
 	{
-		final int selectedIndex=getSelectedIndex();	//get the selected index
+		final int selectedIndex=getLeadSelectionIndex();	//get the selected index
+		final int length=getListModel()!=null ? getListModel().getSize() : 0;	//see how many items are in the list model
 		getDeleteAction().setEnabled(selectedIndex>=0);	//only enable the delete action if there is something selected to be deleted
 		getEditAction().setEnabled(selectedIndex>=0);	//only enable the edit action if there is something selected to be edited
+		getMoveUpAction().setEnabled(selectedIndex>0);	//only enable the move up action if there is something selected that can be moved up
+		getMoveDownAction().setEnabled(selectedIndex>=0 && selectedIndex<length-1);	//only enable the move down action if there is something selected that can be moved down
 	}
 
 	/**Creates a new item and, if editing is successful, adds it to the list.*/
@@ -183,7 +200,7 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 	/**Deletes the currently selected item in the list.*/
 	public void delete()
 	{
-		delete(getSelectedIndex());	//delete the selected index
+		delete(getLeadSelectionIndex());	//delete the selected index
 	}
 
 	/**Deletes an item in the list.
@@ -191,9 +208,9 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 	*/
 	public void delete(final int index)
 	{
-		if(index>=0)	//if a valid index is requested
+		final ListModel listModel=getListModel();	//get the list model
+		if(index>=0 && index<listModel.getSize())	//if a valid index is requested
 		{
-			final ListModel listModel=getListModel();	//get the list model
 			final Object item=listModel.getElementAt(index);	//get the currently selected item
 				//ask the user for confimation to delete the item
 			if(OptionPane.showConfirmDialog(getParentComponent(), "Are you sure you want to delete the item, \""+item+"\"?", "Confirm delete", OptionPane.OK_CANCEL_OPTION)==OptionPane.OK_OPTION)	//G***i18n
@@ -217,17 +234,17 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 	/**Edits the currently selected item in the list.*/
 	public void edit()
 	{
-		edit(getSelectedIndex());	//edit the selected index
+		edit(getLeadSelectionIndex());	//edit the selected index
 	}
 
-	/**Edits the currently selected item in the list.
+	/**Edits an item in the list.
 	@param index The index of the item to delete. 
 	*/
 	public void edit(final int index)
 	{
-		if(index>=0)	//if a valid index is selected
+		final ListModel listModel=getListModel();	//get the list model
+		if(index>=0 && index<listModel.getSize())	//if a valid index is indicated
 		{
-			final ListModel listModel=getListModel();	//get the list model
 			final Object newItem=editItem(listModel.getElementAt(index));	//edit the selected item
 			if(newItem!=null)	//if the edit went successfully
 			{
@@ -247,9 +264,78 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 		}
 	}
 
-	/**@return The currently selected index of the list model.*/
-	protected abstract int getSelectedIndex();
+	/**Moves the currently selected item up one index in the list.*/
+	public void moveUp()
+	{
+		moveUp(getLeadSelectionIndex());	//move up the selected index
+	}
 
+	/**Moves an item up in the list.
+	 @param index The index of the item to move. 
+	*/
+	public void moveUp(final int index)
+	{
+		if(index>0 && index<getListModel().getSize())	//if a valid index is indicated
+		{
+			move(index, index-1);	//move the item up one index
+		}
+	}
+
+	/**Moves the currently selected item down one index in the list.*/
+	public void moveDown()
+	{
+		moveDown(getLeadSelectionIndex());	//move down the selected index
+	}
+
+	/**Moves an item down in the list.
+	 @param index The index of the item to move. 
+	 */
+	public void moveDown(final int index)
+	{
+		if(index>=0 && index<getListModel().getSize()-1)	//if a valid index is indicated
+		{
+			move(index, index+1);	//move the item down one index
+		}
+	}
+	
+	/**Moves an item in the list.
+	The lead selection is moved along with the item if appropriate.
+	 @param oldIndex The index of the item to move. 
+	 @param newIndex The new index to which to move the item.
+	*/
+	protected void move(final int oldIndex, final int newIndex)
+	{
+		final int oldLeadSelectionIndex=getLeadSelectionIndex();	//get the current lead selection index
+		final ListModel listModel=getListModel();	//get the list model
+		final Object item=listModel.getElementAt(oldIndex);	//get the element at this index
+		if(listModel instanceof DefaultListModel)	//if the list model is a default list model
+		{
+			((DefaultListModel)listModel).remove(oldIndex);	//remove the item from its old index
+			((DefaultListModel)listModel).insertElementAt(item, newIndex);	//insert the item at its new index
+		}
+		else if(listModel instanceof List)	//if the list model implements the list interface
+		{
+			((List)listModel).remove(oldIndex);	//remove the item from its old index
+			((List)listModel).add(newIndex, item);	//insert the item at its new index
+		}
+		if(getModifiable()!=null)	//if we have a modifiable object
+		{					
+			getModifiable().setModified(true);	//editing an item modifies the object
+		}
+		if(oldLeadSelectionIndex==oldIndex)	//if the old index had thelead selection
+		{
+			setLeadSelectionIndex(newIndex);	//move the lead selection index along with the item
+		}
+	}
+	
+	/**@return The current main selection index of the list model.*/
+	protected abstract int getLeadSelectionIndex();
+
+	/**Sets the current main seletion index of the list model.
+	@param index The new index to become the main selection.
+	*/
+	protected abstract void setLeadSelectionIndex(final int index);
+	
 	/**Creates a new default object to be edited.
 	@return The new default object.
 	@exception IllegalAccessException Thrown if the class or its nullary 
@@ -269,7 +355,7 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 	protected abstract Object editItem(final Object item);
 
 	/**Action for adding an item to the list.*/
-	class AddAction extends AbstractAction
+	protected class AddAction extends AbstractAction
 	{
 		/**Default constructor.*/
 		public AddAction()
@@ -291,7 +377,7 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 	}
 
 	/**Action for deleting an item from the list.*/
-	class DeleteAction extends AbstractAction
+	protected class DeleteAction extends AbstractAction
 	{
 		/**Default constructor.*/
 		public DeleteAction()
@@ -334,4 +420,48 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 		}
 	}
 
+	/**Action for moving an item up in the list.*/
+	protected class MoveUpAction extends AbstractAction
+	{
+		/**Default constructor.*/
+		public MoveUpAction()
+		{
+			super("Move Up");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "Move up");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Move the selected item up in the list.");	//set the long description G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_U));  //set the mnemonic key G***i18n
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.MOVE_UP_ICON_FILENAME)); //load the correct icon
+		}
+		
+		/**Called when the action should be performed.
+		 @param actionEvent The event causing the action.
+		 */
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+			moveUp();	//move the item up
+		}
+	}
+
+	/**Action for moving an item down in the list.*/
+	protected class MoveDownAction extends AbstractAction
+	{
+		/**Default constructor.*/
+		public MoveDownAction()
+		{
+			super("Move Down");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "Move down");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Move the selected item down in the list.");	//set the long description G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_D));  //set the mnemonic key G***i18n
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.MOVE_DOWN_ICON_FILENAME)); //load the correct icon
+		}
+		
+		/**Called when the action should be performed.
+		 @param actionEvent The event causing the action.
+		 */
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+			moveDown();	//move the item down
+		}
+	}
+	
 }

@@ -39,8 +39,6 @@ public class CheckBoxListCellRenderer extends JCheckBox implements ListCellRende
   public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus)
   {
 		setComponentOrientation(list.getComponentOrientation());
-		setBackground(list.getBackground());
-		setForeground(list.getForeground());
 		setSelected(isSelected);  //show whether the item is selected
 /*G***fix
 	if (value instanceof Icon) {
@@ -65,7 +63,7 @@ public class CheckBoxListCellRenderer extends JCheckBox implements ListCellRende
 	  setFont(list.getFont());
 	  setBorder((cellHasFocus) ? UIManager.getBorder("List.focusCellHighlightBorder") : noFocusBorder);
 			//G***fix; setBorder() doesn't seem to work, but this method is inconsistent with the normal UI representation
-		if(cellHasFocus)  //if this cell has the focus, show the focus using the selection attributes
+		if(cellHasFocus || index==list.getLeadSelectionIndex())  //if this cell has the focus (or it's the lead selection index), show the focus using the selection attributes
 		{
 			setBackground(list.getSelectionBackground());
 			setForeground(list.getSelectionForeground());

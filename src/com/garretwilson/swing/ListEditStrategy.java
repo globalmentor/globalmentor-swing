@@ -84,25 +84,57 @@ public abstract class ListEditStrategy extends ListModelEditStrategy
 			final boolean isMultipleSelectionAllowed=selectionMode!=ListSelectionModel.SINGLE_SELECTION;	//see if multiple selections are allowed, either single intervals or multiple intervals
 			final int listModelSize=list.getModel().getSize();	//see how long the list is
 	//G***maybe just go with the way things work now, even though the lead selection may not be visible		final int selectedIndex=list.getSelectedIndex();	//get the first selected index 
-			final int selectedIndex=getSelectedIndex();	//get the selected index
+			final int selectedIndex=getLeadSelectionIndex();	//get the selected index
 	//G***del if not needed		final boolean isLeadSelected=leadSelectionIndex>=0 && list.isSelectedIndex(leadSelectionIndex);	//see whether the lead index is selected
 			getSelectAllAction().setEnabled(isMultipleSelectionAllowed && isListEnabled && listModelSize>0);	//only allow all items to be selected if there are items
 			getSelectNoneAction().setEnabled(isMultipleSelectionAllowed && isListEnabled && listModelSize>0);	//only allow no items to be selected if there are items
 			getAddAction().setEnabled(isListEnabled);	//only enable the add action if the list is enabled
 			getDeleteAction().setEnabled(isListEnabled && selectedIndex>=0);	//only enable the delete action if there is something selected to be deleted
 			getEditAction().setEnabled(isListEnabled && selectedIndex>=0);	//only enable the edit action if there is something selected to be edited
+			getMoveUpAction().setEnabled(isListEnabled && selectedIndex>0);	//only enable the move up action if there is something selected that can be moved up
 		}
 	}
 
 	/**@return The currently selected index of the list model.
-	This implementation return the lead selection index of the list.
+	This implementation return the lead selection index of the list selection model.
 	@see JList#getLeadSelectionIndex()
 	*/
-	public int getSelectedIndex()
+	public int getLeadSelectionIndex()
 	{
-		return getList()!=null ? getList().getLeadSelectionIndex() : -1;	//return the list's lead selection index, keeping in mind that this method can be called from the parent class constructor
+		return getList()!=null ? getList().getSelectionModel().getLeadSelectionIndex() : -1;	//return the list's lead selection index, keeping in mind that this method can be called from the parent class constructor
 	}
 
+	/**Sets the current main seletion index of the list model.
+	This implementation sets the lead selection index of the list selection model.
+	@param index The new index to become the main selection.
+	*/
+	public void setLeadSelectionIndex(final int index)
+	{
+		if(getList()!=null)	//if there is a list
+		{
+			getList().getSelectionModel().setLeadSelectionIndex(index);	//update the lead selection index
+		}
+	}
+
+	/**Moves an item in the list.
+	 This implementation ensures the item retains its selection state.
+	 @param oldIndex The index of the item to move. 
+	 @param newIndex The new index to which to move the item.
+	 */
+	protected void move(final int oldIndex, final int newIndex)
+	{
+		final boolean isSelected=getList().getSelectionModel().isSelectedIndex(oldIndex);	//see if the old index is selected
+		super.move(oldIndex, newIndex);	//move the item
+		if(isSelected)	//if the item was selected
+		{
+			getList().getSelectionModel().addSelectionInterval(newIndex, newIndex);	//make sure the item is selected
+		}
+		else	//if the item was not selected
+		{
+			getList().getSelectionModel().removeSelectionInterval(newIndex, newIndex);	//make unselect the item at its new index
+		}
+	}
+		
 	/**Selects all list entries.*/
 	public void selectAll()
 	{

@@ -36,8 +36,6 @@ public class RadioButtonListCellRenderer extends JRadioButton implements ListCel
   public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus)
   {
 		setComponentOrientation(list.getComponentOrientation());
-		setBackground(list.getBackground());
-		setForeground(list.getForeground());
 		setSelected(isSelected);  //show whether the item is selected
 /*G***fix
 	if (value instanceof Icon) {
@@ -61,7 +59,17 @@ public class RadioButtonListCellRenderer extends JRadioButton implements ListCel
 		setEnabled(list.isEnabled());
 	  setFont(list.getFont());
 	  setBorder((cellHasFocus) ? UIManager.getBorder("List.focusCellHighlightBorder") : noFocusBorder);
-		return this;  //return ourselves as the component
+	  if(cellHasFocus || index==list.getLeadSelectionIndex())  //if this cell has the focus (or it's the lead selection index), show the focus using the selection attributes
+	  {
+	  	setBackground(list.getSelectionBackground());
+	  	setForeground(list.getSelectionForeground());
+	  }
+	  else
+	  {
+	  	setBackground(list.getBackground());
+	  	setForeground(list.getForeground());
+	  }
+	  return this;  //return ourselves as the component
 	}
 
 	/**Retrieves text for a list item. This can be overridden in a derived class

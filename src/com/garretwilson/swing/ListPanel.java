@@ -31,7 +31,10 @@ public class ListPanel extends ContentPanel implements Editable
 	protected final JButton addButton;
 	protected final JButton deleteButton;
 	protected final JButton editButton;
-
+	protected final JToolBar.Separator moveSeparator;
+	protected final JButton moveUpButton;
+	protected final JButton moveDownButton;
+	
 	/**The edit strategy for editing items in the list, or <code>null</code> if there is no edit strategy.*/
 	private final ListEditStrategy editStrategy;
 
@@ -104,6 +107,9 @@ public class ListPanel extends ContentPanel implements Editable
 		addButton=new JButton(editStrategy.getAddAction());
 		deleteButton=new JButton(editStrategy.getDeleteAction());
 		editButton=new JButton(editStrategy.getEditAction());
+		moveSeparator=ToolBarUtilities.createToolBarSeparator(buttonToolBar);
+		moveUpButton=new JButton(editStrategy.getMoveUpAction());
+		moveDownButton=new JButton(editStrategy.getMoveDownAction());
 		editable=false;	//default to not being editable
 		initialize();	//initialize the panel
 	}
@@ -120,6 +126,9 @@ public class ListPanel extends ContentPanel implements Editable
 		buttonToolBar.add(addButton);
 		buttonToolBar.add(deleteButton);
 		buttonToolBar.add(editButton);
+		buttonToolBar.add(moveSeparator);
+		buttonToolBar.add(moveUpButton);
+		buttonToolBar.add(moveDownButton);
 		add(buttonToolBar, BorderLayout.LINE_END);
 	}
 
@@ -139,7 +148,10 @@ public class ListPanel extends ContentPanel implements Editable
 		editSeparator.setVisible(isMultipleSelectionAllowed && isEditable);	//only show the edit separator if editing is allowed, and we're showing buttons before it
 		addButton.setVisible(isEditable);	//only show the add button if editing is allowed
 		deleteButton.setVisible(isEditable);	//only show the delete button if editing is allowed
-		editButton.setVisible(isEditable);	//only show the edit button if editing is allowed
+		editButton.setVisible(isEditable);	//only show the edit button if editing is allowed	
+		moveSeparator.setVisible(isEditable);	//only show the move separator if editing is allowed
+		moveUpButton.setVisible(isEditable);	//only show the move up button if editing is allowed
+		moveDownButton.setVisible(isEditable);	//only show the move down button if editing is allowed
 	}
 
 }

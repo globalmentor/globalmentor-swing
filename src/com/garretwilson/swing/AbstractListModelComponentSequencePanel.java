@@ -370,11 +370,19 @@ public abstract class AbstractListModelComponentSequencePanel extends AbstractCo
 		}
 
 		/**@return The currently selected index of the list model.*/
-		protected int getSelectedIndex()
+		protected int getLeadSelectionIndex()
 		{
 			return getIndex();	//return the current index
 		}
 
+		/**Sets the current main seletion index of the list model.
+		@param index The new index to become the main selection.
+		*/
+		public void setLeadSelectionIndex(final int index)
+		{
+			go(index);	//go to the indicated index
+		}
+		
 		/**@return The component acting as the parent for windows.*/
 //G***del if not needed		protected Component getParentComponent() {return AbstractListModelComponentSequencePanel.this;}
 
