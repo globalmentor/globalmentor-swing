@@ -25,10 +25,30 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 //G***del if not needed	private boolean hasStatusBar=true;
 
   /**The application toolbar.*/
-	private final JToolBar toolBar;
+	private JToolBar toolBar=null;
 
-		/**@return The application toolbar.*/
+		/**@return The application toolbar, or <code>null</code> if there is no toolbar.*/
 		public JToolBar getToolBar() {return toolBar;}
+
+		/**Sets the application toolbar.
+		@param newToolBar The new toolbar to use, or <code>null</code> if there should
+			be no toolbar.
+		*/
+		public void setToolBar(final JToolBar newToolBar)
+		{
+			if(toolBar!=newToolBar)	//if the toolbar is really changing
+			{
+				if(toolBar!=null)	//if we currently have a toolbar
+				{
+					remove(toolBar);	//remove the old toolbar
+				}
+				toolBar=newToolBar;	//save the toolbar
+				if(newToolBar!=null)	//if we were given a new toolbar
+				{
+					add(newToolBar, BorderLayout.NORTH); //put the toolbar in the north
+				}
+			}
+		}
 
 	/**The application status bar.*/
 	private final JPanel statusBar;	//TODO create a StatusBar panel
@@ -105,15 +125,8 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 	public ApplicationPanel(final boolean hasToolBar, final boolean hasStatusBar, final boolean initialize)
 	{
 		super(false);  //construct the parent class without intializing
-		if(hasToolBar)  //if we should have a toolbar
-		{
-		  toolBar=createToolBar();  //create the toolbar
-	    add(toolBar, BorderLayout.NORTH); //put the toolbar in the north
-		}
-		else  //if we shouldn't have a toolbar
-		{
-			toolBar=null; //show that we don't have a toolbar
-		}
+		final JToolBar toolbar=hasToolBar ? createToolBar() : null;	//create a toolbar if we should have one
+		setToolBar(toolbar);	//set the toolbar
 		if(hasStatusBar)  //if we should have a status bar
 		{
 //G***del Debug.trace("creating status label"); //G***del

@@ -32,7 +32,8 @@ public class ContentPanel extends BasicPanel implements CanClosable
 		/**Sets the main content component in the center of the panel.
 		<p>If the panel is inside a <code>JOptionPane</code>, the window containing
 			to ensure the component has enough room.</p>  
-		@param newContentComponent The new component for the center of the panel.
+		@param newContentComponent The new component for the center of the panel,
+			or <code>null</code> for no content component.
 		*/
 		public void setContentComponent(final Component newContentComponent)
 		{
@@ -41,7 +42,10 @@ public class ContentPanel extends BasicPanel implements CanClosable
 			  if(contentComponent!=null)  //if we already have an content component
 					remove(contentComponent);   //remove the current one
 				contentComponent=newContentComponent; //store the content component
-		  	add(newContentComponent, BorderLayout.CENTER);  //put the content component in the center of the panel
+				if(newContentComponent!=null)	//if we were given a new content component
+				{
+			  	add(newContentComponent, BorderLayout.CENTER);  //put the content component in the center of the panel
+				}
 /*G***del when revalidate() works---maybe even remove WindowUtilities.packWindow()		  	
 		  	if(getParentOptionPane()!=null)	//if this panel is inside an option pane
 		  	{
@@ -53,7 +57,10 @@ public class ContentPanel extends BasicPanel implements CanClosable
 		  	newContentComponent.repaint();	//repaint the component (important if we're inside a JOptionPane, for instance)
 */
 				revalidate();	//update the layout
-				newContentComponent.repaint();	//repaint the component (important if we're inside a JOptionPane, for instance)
+				if(newContentComponent!=null)	//if we were given a new content component
+				{
+					newContentComponent.repaint();	//repaint the component (important if we're inside a JOptionPane, for instance)
+				}
 				if(newContentComponent instanceof DefaultFocusable)	//if the content component knows what should be focused by default
 				{
 					((DefaultFocusable)newContentComponent).requestDefaultFocusComponentFocus();	//let the component request the focus for its default focus component
