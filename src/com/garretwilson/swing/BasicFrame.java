@@ -414,11 +414,24 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 		if(isTopLevel || menuActionIterator.hasNext())	//if the parent action has children, or if the action is a top-level action
 		{
 			final JMenu menu=new JMenu(action);	//create a new menu from the action
+			Component lastComponent=null;	//keep track of the last component we added
 			while(menuActionIterator.hasNext())	//while there are more actions
 			{
 				final Action childAction=(Action)menuActionIterator.next();	//get the next child action
-				final JMenuItem childMenuItem=createMenuItem(childAction, actionManager, false);	//create a new menu item and/or child menu items for the action, specifying that this is not a top-level action
-				menu.add(childMenuItem);	//add the child menu item
+				if(childAction instanceof ActionManager.SeparatorAction)		//if this is a separator action
+				{
+						//don't put two separators in a row, and don't put a separator as the first component 
+					if(lastComponent!=null && !(lastComponent instanceof JSeparator))	//if this isn't the first component and it doesn't come before a separator
+					{
+						lastComponent=new JPopupMenu.Separator();	//create a menu separator
+						menu.add(lastComponent);	//add the separator
+					}				
+				}
+				else	//if this is a normal action
+				{
+					final JMenuItem childMenuItem=createMenuItem(childAction, actionManager, false);	//create a new menu item and/or child menu items for the action, specifying that this is not a top-level action
+					lastComponent=menu.add(childMenuItem);	//add the child menu item
+				}			
 			}
 			return menu;	//show that we created a complete menu to represent the action
 		}

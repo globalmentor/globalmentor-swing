@@ -358,6 +358,28 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 	*/ 
 	protected abstract void write(final Resource resource, final Component component, final OutputStream outputStream) throws IOException;
 
+	/**Action for creating a new file.*/
+	public static class NewAction extends AbstractAction
+	{
+		/**Default constructor.*/
+		public NewAction()
+		{
+			super("New...");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "Create a new file ");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Create a new file.");	//set the long description G***i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_N));  //set the mnemonic key G***i18n
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.NEW_ICON_FILENAME)); //load the correct icon
+			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_NEW_MENU_ACTION_ORDER));	//set the order
+		}
+
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+		}
+	}
+
 	/**Action for opening a resource.*/
 	class OpenAction extends AbstractAction
 	{

@@ -1,5 +1,6 @@
 package com.garretwilson.swing;
 
+import java.awt.Component;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
@@ -163,8 +164,8 @@ public class ActionManager implements Cloneable
 	*/
 	public ActionManager merge(final ActionManager actionManager)
 	{
-		final ActionManager mergedActionManager=(ActionManager)clone();	//clone this given action manager
-		final Iterator actionListEntryIterator=menuActionListMap.entrySet().iterator();	//get an entry to all action lists, keyed to actions
+		final ActionManager mergedActionManager=(ActionManager)clone();	//clone this action manager
+		final Iterator actionListEntryIterator=actionManager.menuActionListMap.entrySet().iterator();	//get an iterator to all action lists in the merging manager, keyed to actions
 		while(actionListEntryIterator.hasNext())	//while there are more entries
 		{
 			final Map.Entry actionListEntry=(Map.Entry)actionListEntryIterator.next();	//get the next entry
@@ -232,6 +233,21 @@ public class ActionManager implements Cloneable
 		Collections.sort(sortedActionList, new ActionMenuOrderComparator(actionList));	//sort the actions by menu order, defaulting to the order they were in before sorting
 	}
 	return sortedActionList!=null ? Collections.unmodifiableList(sortedActionList).iterator() : null;	//return a read-only iterator to the sorted actions, if there are any
+*/
+
+	/**Creates a component, such as a button, to represent the given action.
+	<p>Most methods should call <code>MenuUtilities.createComponent(Action)</code>
+		or <code>ToolBarUtilities.createComponent(Action)</code>, as those methods
+		correctly create separators for those contexts.</p>
+	@param action The action for which a component should be created.
+	@param The new component to represent the action.
+	@see 
+	*/
+/*G***maybe fix later
+	public static Component createComponent(final Action action)
+	{
+		return new JButton(action);	//return a new button to represent the action
+	}
 */
 
 	/**@return An independent copy of this action manager with the same action relationships.*/
@@ -372,8 +388,19 @@ public class ActionManager implements Cloneable
 		/**Default constructor.*/
 		public SeparatorAction()
 		{
+			this(-1);	//create action with no order
+		}
+
+		/**Order constructor.
+		@param order The order of the menu, or -1 if there should be no order
+		 */
+		public SeparatorAction(final int order)
+		{
 			super("-");	//create the base class
-//G***del if not needed			putValue(MENU_ORDER_PROPERTY, new Integer(HELP_MENU_ACTION_ORDER));	//set the order
+			if(order>=0)	//if a valid order was given
+			{
+				putValue(MENU_ORDER_PROPERTY, new Integer(order));	//set the order
+			}
 		}
 
 		/**Called when the action should be performed.
