@@ -924,7 +924,7 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 	*/
 	public void setXML(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray, final XMLDocument swingXMLDocument)
 	{
-		if(false)
+		if(false)	//TODO testing newstuff 
 		{
 			swingXMLDocument.create(xmlDocumentArray, baseURIArray, mediaTypeArray);	//G***testing newstuff
 			

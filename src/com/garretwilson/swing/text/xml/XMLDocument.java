@@ -27,6 +27,7 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
+import javax.swing.text.AbstractDocument.DefaultDocumentEvent;
 import javax.swing.text.DefaultStyledDocument.ElementBuffer;
 import javax.swing.undo.UndoableEdit;
 
@@ -116,10 +117,16 @@ final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);
 	private EventListenerList progressListenerList=new EventListenerList();
 
 	/**The object that applies stylesheets to the document.*/
-	private final SwingXMLCSSStylesheetApplier stylesheetApplier=new SwingXMLCSSStylesheetApplier();
+	private final SwingXMLCSSStylesheetApplier swingStylesheetApplier;
 
 		/**@return The object that applies stylesheets to the document.*/
-		protected SwingXMLCSSStylesheetApplier getStylesheetApplier() {return stylesheetApplier;}
+		protected SwingXMLCSSStylesheetApplier getSwingStylesheetApplier() {return swingStylesheetApplier;}
+
+	/**The object that applies stylesheets to an XML document.*/
+	private final XMLCSSStylesheetApplier xmlStylesheetApplier;
+
+		/**@return The object that applies stylesheets to the XML document.*/
+		protected XMLCSSStylesheetApplier getXMLStylesheetApplier() {return xmlStylesheetApplier;}
 
 	/**A map of all full element target IDs (URI+#+id).*/
 	private Map linkTargetMap=new HashMap();
@@ -218,6 +225,8 @@ final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);
 	public XMLDocument()
 	{
 		super(new XMLCSSStyleContext());	//construct the parent class, specifying our own type of style context that knows how to deal with CSS attributes
+		swingStylesheetApplier=new SwingXMLCSSStylesheetApplier();	//create a new Swing stylesheet applier
+		xmlStylesheetApplier=new XMLCSSStylesheetApplier(this);	//create a new XML stylesheet applier, using ourselves as the input stream locator
 //G***fix		setProperty(AbstractDocument.I18NProperty);  //G***testing i18n
 //G***fix		putProperty("i18n", Boolean.TRUE);  //G***testing i18n
 Debug.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n
@@ -344,20 +353,18 @@ Debug.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n
 		{
 			case Node.ELEMENT_NODE: //if this node is an element
 				{
-					org.w3c.dom.Element xmlElement=(org.w3c.dom.Element)xmlNode;  //cast the node to an element
-/*TODO fix
-final CSSStyleDeclaration cssStyle=xmlCSSStylesheetApplier.getStyle(xmlElement);	//see if we've already applied a style to this element
-if(cssStyle!=null)
-{
-	XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, cssStyle);	
-}
-else
-{
-	//give every attribute set a default empty CSS style; if not, this will cause huge performance hits when trying to create them on the fly when styles are applied
-	XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, new XMLCSSStyleDeclaration());
-}
-*/
-					NamedNodeMap attributeNodeMap=xmlElement.getAttributes(); //get a reference to the attributes
+					final org.w3c.dom.Element xmlElement=(org.w3c.dom.Element)xmlNode;  //cast the node to an element
+					final CSSStyleDeclaration cssStyle=getXMLStylesheetApplier().getStyle(xmlElement);	//see if we've already applied a style to this element
+					if(cssStyle!=null)
+					{
+						XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, cssStyle);	
+					}
+					else
+					{
+						//give every attribute set a default empty CSS style; if not, this will cause huge performance hits when trying to create them on the fly when styles are applied TODO recheck
+						XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, new XMLCSSStyleDeclaration());
+					}
+					final NamedNodeMap attributeNodeMap=xmlElement.getAttributes(); //get a reference to the attributes
 					//store the XML attributes
 					for(int attributeIndex=0; attributeIndex<attributeNodeMap.getLength(); ++attributeIndex)	//look at each of the attributes
 					{
@@ -963,6 +970,7 @@ Debug.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEn
 */
 	}
 
+
 	/**Sets the given XML data in the document.
 	@param xmlDocumentArray The array of XML documents to set in the Swing document.
 	@param baseURIArray The array of base URIs, corresponding to the XML documents.
@@ -983,19 +991,32 @@ Debug.trace("creating document with XML documents", xmlDocumentArray.length);
 			{
 	//G***TODO make our own gap content without an implied break			final Content content=getContent();	//get the current content
 				final Content content=getContent();	//get the current content
-//G***del				final StringBuilder stringBuilder=new StringBuilder();	//G***testing
+				UndoableEdit contentEdit;
+				{
+					final StringBuilder stringBuilder=new StringBuilder();	//G***testing
+					for(int xmlDocumentIndex=0; xmlDocumentIndex<xmlDocumentArray.length; ++xmlDocumentIndex)	//look at each of the documents they passed to us
+					{
+		//	G***del Debug.trace("Looking at XML document: ", xmlDocumentIndex); //G***del
+						final org.w3c.dom.Document xmlDocument=xmlDocumentArray[xmlDocumentIndex];	//get a reference to this document
+			xmlDocument.normalize();	//G***do we want to do this here? probably not---or maybe so. Maybe we can normalize on the fly in the Swing document, not in the source
+						getContent(xmlDocument, stringBuilder);					
+					}
+Debug.trace("got content", stringBuilder.toString());
+					contentEdit=content.insertString(0, stringBuilder.toString());
+				}
 	    	final SectionElement sectionElement=new SectionElement();	//create a section element for all the data
 	    	final Element[] childElements=new Element[xmlDocumentArray.length];	//create a new array of child elements
+	    	int offset=0;
 				for(int xmlDocumentIndex=0; xmlDocumentIndex<xmlDocumentArray.length; ++xmlDocumentIndex)	//look at each of the documents they passed to us
 				{
 	//	G***del Debug.trace("Looking at XML document: ", xmlDocumentIndex); //G***del
 					final org.w3c.dom.Document xmlDocument=xmlDocumentArray[xmlDocumentIndex];	//get a reference to this document
-		xmlDocument.normalize();	//G***do we want to do this here? probably not---or maybe so. Maybe we can normalize on the fly in the Swing document, not in the source
+//G***del		xmlDocument.normalize();	//G***do we want to do this here? probably not---or maybe so. Maybe we can normalize on the fly in the Swing document, not in the source
 					final URI baseURI=baseURIArray[xmlDocumentIndex]; //get a reference to the base URI
 					final ContentType mediaType=mediaTypeArray[xmlDocumentIndex]; //get a reference to the media type
-					XMLCSSStylesheetApplier xmlCSSStylesheetApplier=new XMLCSSStylesheetApplier(this);	//G***testing
-					final CSSStyleSheet[] stylesheets=xmlCSSStylesheetApplier.getStylesheets(xmlDocument, baseURI, mediaType);	//G***testing
 					final org.w3c.dom.Element xmlDocumentElement=xmlDocument.getDocumentElement();	//get the root of the document
+					final XMLCSSStylesheetApplier xmlCSSStylesheetApplier=getXMLStylesheetApplier();	//G***testing
+					final CSSStyleSheet[] stylesheets=xmlCSSStylesheetApplier.getStylesheets(xmlDocument, baseURI, mediaType);	//G***testing
 					for(int i=0; i<stylesheets.length; xmlCSSStylesheetApplier.applyStyleSheet(stylesheets[i++], xmlDocumentElement));	//G***testing
 	/*G***fix
 					if(xmlDocumentIndex>0)	//if this is not the first document to insert
@@ -1006,7 +1027,8 @@ Debug.trace("creating document with XML documents", xmlDocumentArray.length);
 					}
 	*/
 					
-					childElements[xmlDocumentIndex]=createElement(sectionElement, content, 0, xmlDocument, baseURI);	//TODO important: fix offset for multiple documents
+					childElements[xmlDocumentIndex]=createElement(sectionElement, content, offset, xmlDocument, baseURI);	//TODO important: fix offset for multiple documents
+					offset=childElements[xmlDocumentIndex].getEndOffset();
 					final MutableAttributeSet documentAttributeSet=(MutableAttributeSet)childElements[xmlDocumentIndex].getAttributes();
 	
 					if(baseURI!=null) //if there is a base URI
@@ -1064,18 +1086,24 @@ Debug.trace("ready to insert", stringBuilder.length());
 	
 //G***fix				UndoableEdit cEdit = content.insertString(0, stringBuilder.toString());
 //G**fix				final int length=content.length();
+				
+				
+				
+				
 				final int length=sectionElement.getEndOffset();
-Debug.trace("we thing the amount of content we added is", length);
+Debug.trace("we think the amount of content we added is", length);
 		    DefaultDocumentEvent event=new DefaultDocumentEvent(0, length, DocumentEvent.EventType.INSERT);
 //G***fix		    event.addEdit(cEdit);
 //G***fix buffer.create(length, data, evnt);
 				buffer=new ElementBuffer(sectionElement);	//TODO testing
+/*G***fix
 		    // update bidi (possibly)
 	//G***del	    super.insertUpdate(evnt, null);
 		    insertUpdate(event, null);
 	//G***fix	    event.end();	//TODO notify the listeners?
 		    fireInsertUpdate(event);
 		    fireUndoableEditUpdate(new UndoableEditEvent(this, event));
+*/
 			}
 	    finally
 	    {
@@ -1089,7 +1117,41 @@ Debug.trace("after unlock, content is", getContent().length());
     }
 	}
 
+	protected int getContent(final org.w3c.dom.Document xmlDocument, final StringBuilder stringBuilder)
+	{
+		return getContent(xmlDocument.getDocumentElement(), stringBuilder);
+	}
 
+	protected int getContent(final org.w3c.dom.Element xmlElement, final StringBuilder stringBuilder)
+	{
+		int childContentLength=0;
+		final NodeList childNodeList=xmlElement.getChildNodes();  //get the list of child nodes
+		final int childNodeCount=childNodeList.getLength();	//see how many child nodes there are
+		for(int childIndex=0; childIndex<childNodeCount; ++childIndex)	//look at each child node
+		{
+			final Node node=childNodeList.item(childIndex);	//look at this node
+			switch(node.getNodeType())	//see which type of object this is
+			{
+				case Node.ELEMENT_NODE:	//if this is an element
+					childContentLength+=getContent((org.w3c.dom.Element)node, stringBuilder);
+					break;
+				case Node.TEXT_NODE:	//if this is a text node
+				case Node.CDATA_SECTION_NODE:	//if this is a CDATA section node
+					{
+						final int begin=stringBuilder.length();	//get the insertion point
+						stringBuilder.append(node.getNodeValue());
+						childContentLength+=StringBuilderUtilities.collapse(stringBuilder, CharacterConstants.WHITESPACE_CHARS, " ", begin);	//collapse all whitespace into spaces TODO fix across element boundaries
+					}
+					break;
+			}
+		}
+		if(childContentLength==0)
+		{
+			stringBuilder.append(CharacterConstants.OBJECT_REPLACEMENT_CHAR);
+			++childContentLength;
+		}
+		return childContentLength;
+	}
 
 	/**Appends information from an XML element tree into a list of element specs.
 	@param elementSpecList The list of element specs to be inserted into the document.
@@ -1189,6 +1251,7 @@ final StringBuilder stringBuilder=new StringBuilder(text);	//create a string bui
 Debug.trace("new length", newLength);
 		final int end=offset+newLength;	//see where the inserted, collapsed text ends
 Debug.trace("end", end);
+/*G***del if not needed
 		try
 		{
 			content.insertString(offset, stringBuilder.toString());	//insert the text
@@ -1197,6 +1260,7 @@ Debug.trace("end", end);
 		{
 			throw new AssertionError(badLocationException);
 		}
+*/
 		return new LeafElement(parentElement, attributeSet, offset, end);	//return a new leaf element for the text
 	}
 		
@@ -1561,7 +1625,7 @@ Debug.trace("looking at first root element");  //G***fix
 				final URI documentBaseURI=XMLStyleUtilities.getBaseURI(documentAttributeSet);  //get the URI of this document
 				final ContentType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet); //see what media type this document is
 					//get all styelsheets for this document
-				final CSSStyleSheet[] styleSheets=getStylesheetApplier().getStylesheets(swingDocumentElement, documentBaseURI, documentMediaType);
+				final CSSStyleSheet[] styleSheets=getSwingStylesheetApplier().getStylesheets(swingDocumentElement, documentBaseURI, documentMediaType);
 				//apply the stylesheets
 				for(int i=0; i<styleSheets.length; ++i) //look at each stylesheet
 				{
@@ -1571,7 +1635,7 @@ Debug.trace(progressMessage); //G***del
 					fireMadeProgress(new ProgressEvent(this, APPLY_STYLESHEET_TASK, progressMessage, swingDocumentElementIndex, swingDocumentElementCount));	//fire a progress message saying that we're applying a stylesheet
 //G***del System.out.println("applying stylesheet: "+i+" of "+styleSheetList.getLength());  //G***del
 					final CSSStyleSheet cssStyleSheet=styleSheets[i];  //get a reference to this stylesheet, assuming that it's a CSS stylesheet (that's all that's currently supported)
-					getStylesheetApplier().applyStyleSheet(cssStyleSheet, swingDocumentElement);  //apply the stylesheet to the document
+					getSwingStylesheetApplier().applyStyleSheet(cssStyleSheet, swingDocumentElement);  //apply the stylesheet to the document
 //G***fix					applyStyleSheet(cssStyleSheet, swingDocumentElement);  //apply the stylesheet to the document
 				}
 Debug.trace("applying local styles"); //G***del
@@ -1618,7 +1682,7 @@ Debug.trace("applying local styles"); //G***del
 	/**Class to apply styles to Swing elements.
 	@author Garret Wilson
 	*/
-	protected class SwingXMLCSSStylesheetApplier extends AbstractXMLCSSStylesheetApplier
+	protected class SwingXMLCSSStylesheetApplier extends AbstractXMLCSSStylesheetApplier<Element, Element>
 	{
 
 		/**Returns an input stream for the given URI.
@@ -1636,7 +1700,7 @@ Debug.trace("applying local styles"); //G***del
 		@param The object representing the XML document.
 		@return The object representing the root element of the XML document.
 		*/
-		protected Object getDocumentElement(final Object document)
+		protected Element getDocumentElement(final Element document)
 		{
 			return document;	//in Swing the XML document is represented by the root element in the document hierarchy---in this implementation, the document element hierarchy is a direct descendant of the section element
 		}
@@ -1646,27 +1710,27 @@ Debug.trace("applying local styles"); //G***del
 		@return A non-<code>null</code> array of name-value pairs representing
 			processing instructions.
 		*/
-		protected NameValuePair[] getDocumentProcessingInstructions(final Object document)
+		protected NameValuePair[] getDocumentProcessingInstructions(final Element document)
 		{
-			return XMLStyleUtilities.getXMLProcessingInstructions(((Element)document).getAttributes());  //get the processing instructions from the attributes of the document, which is really a Swing element			
+			return XMLStyleUtilities.getXMLProcessingInstructions(document.getAttributes());  //get the processing instructions from the attributes of the document, which is really a Swing element			
 		}
 
 		/**Retrieves the namespace URI of the given element.
 		@param element The element for which the namespace URI should be returned.
 		@return The namespace URI of the given element.
 		*/
-		protected String getElementNamespaceURI(final Object element)
+		protected String getElementNamespaceURI(final Element element)
 		{
-			return XMLStyleUtilities.getXMLElementNamespaceURI(((Element)element).getAttributes());	//return the element's namespace URI from the Swing element's attributes
+			return XMLStyleUtilities.getXMLElementNamespaceURI(element.getAttributes());	//return the element's namespace URI from the Swing element's attributes
 		}
 
 		/**Retrieves the local name of the given element.
 		@param element The element for which the local name should be returned.
 		@return The local name of the given element.
 		*/
-		protected String getElementLocalName(final Object element)
+		protected String getElementLocalName(final Element element)
 		{
-			return XMLStyleUtilities.getXMLElementLocalName(((Element)element).getAttributes());	//return the element's local name from the Swing element's attributes
+			return XMLStyleUtilities.getXMLElementLocalName(element.getAttributes());	//return the element's local name from the Swing element's attributes
 		}
 
 		/**Retrieves the value of one of the element's attributes.
@@ -1676,18 +1740,18 @@ Debug.trace("applying local styles"); //G***del
 		@return The value of the specified attribute, or <code>null</code> if there
 			is no such attribute.
 		*/
-		protected String getElementAttributeValue(final Object element, final String attributeNamespaceURI, final String attributeLocalName)
+		protected String getElementAttributeValue(final Element element, final String attributeNamespaceURI, final String attributeLocalName)
 		{
-			return XMLStyleUtilities.getXMLAttributeValue(((Element)element).getAttributes(), attributeNamespaceURI, attributeLocalName);	//return the XML attribute value from the element's attributes
+			return XMLStyleUtilities.getXMLAttributeValue(element.getAttributes(), attributeNamespaceURI, attributeLocalName);	//return the XML attribute value from the element's attributes
 		}
 
 		/**Retrieves the parent element for the given element.
 		@param element The element for which a parent should be found.
 		@return The element's parent, or <code>null</code> if no parent could be found.
 		 */
-		protected Object getParentElement(final Object element)
+		protected Element getParentElement(final Element element)
 		{
-			final Element parentElement=((Element)element).getParentElement(); //get this element's parent
+			final Element parentElement=element.getParentElement(); //get this element's parent
 			return parentElement instanceof SectionElement ? null : parentElement;	//return the parent element, unless we've reached the parent section element 
 		}
 	
@@ -1695,30 +1759,41 @@ Debug.trace("applying local styles"); //G***del
 		@param element The parent element.
 		@return The number of child elements this element has.
 		*/
-		protected int getChildElementCount(final Object element)
+		protected int getChildCount(final Element element)
 		{
-			return ((Element)element).getElementCount();	//return the number of child elements
+			return element.getElementCount();	//return the number of child elements
 		}
-		
+
+		/**Determines if the given indexed child of an element is an element.
+		This version always returns <code>true</code>, as all Swing element children are also elements.
+		@param element The parent element.
+		@param index The zero-based index of the child.
+		@return <code>true</code> if the the child of the element at the given index is an element.
+		*/
+		protected boolean isChildElement(final Element element, final int index)
+		{
+			return true;	//there are no non-element children of elements
+		}
+
 		/**Retrieves the given indexed child of an element.
 		@param element The parent element.
 		@param index The zero-based index of the child.
 		@return The child of the element at the given index.
 		*/
-		protected Object getChildElement(final Object element, final int index)
+		protected Element getChildElement(final Element element, final int index)
 		{
-			return ((Element)element).getElement(index);	//return the child element at the given index
+			return element.getElement(index);	//return the child element at the given index
 		}
 
 		/**Retrieves all child text of the given element.
 		@param element The element for which text should be returned.
 		@return The text content of the element.
 		*/
-		protected String getElementText(final Object element)
+		protected String getElementText(final Element element)
 		{
 			try
 			{
-				return SwingTextUtilities.getText((Element)element);  //return the text of the element
+				return SwingTextUtilities.getText(element);  //return the text of the element
 			}
 			catch(BadLocationException badLocationException)	//we should never get a bad location exception
 			{
@@ -1730,9 +1805,9 @@ Debug.trace("applying local styles"); //G***del
 		@param element The element for which style information should be imported
 		@param cssStyle The style information to import.	
 		*/
-		protected void importCSSStyle(final Object element, final CSSStyleDeclaration cssStyle)
+		protected void importCSSStyle(final Element element, final CSSStyleDeclaration cssStyle)
 		{
-			final AttributeSet attributeSet=((Element)element).getAttributes();	//get the element's attributes
+			final AttributeSet attributeSet=element.getAttributes();	//get the element's attributes
 			CSSStyleDeclaration elementStyle=(XMLCSSStyleDeclaration)XMLCSSStyleUtilities.getXMLCSSStyle(attributeSet);  //get this element's style
 			if(elementStyle==null) //if there is no existing style (usually the editor kit will have supplied one already to reduce the performance hit here)
 			{
