@@ -15,6 +15,9 @@ import com.garretwilson.util.*;
 		initial focus component is given the focus when the pane is displayed.</li>  
 	<li>If the message object implements <code>Verifiable</code>, the input
 		is verified before the pane is allowed to close.</li>
+	<li>If <code>setValue()</code> is called with an explicit
+		<code>Integer</code> value, that value will be returned even if options
+		are present.</li>
 </ul>
 @author Garret Wilson
 @see DefaultFocusable
@@ -288,6 +291,7 @@ public class OptionPane extends JOptionPane
      * @return an integer indicating the option chosen by the user,
      *         or CLOSED_OPTION if the user closed the Dialog
      */
+/*G***del when new JDK1.4 version works 
     public static int showOptionDialog(Component parentComponent, Object message,
                                        String title, int optionType,
                                        int messageType, Icon icon,
@@ -321,6 +325,94 @@ public class OptionPane extends JOptionPane
         }
         return CLOSED_OPTION;
     }
+*/
+
+	/**
+	 * Brings up a dialog with a specified icon, where the initial
+	 * choice is determined by the <code>initialValue</code> parameter and
+	 * the number of choices is determined by the <code>optionType</code> 
+	 * parameter.
+	 * <p>
+	 * If <code>optionType</code> is <code>YES_NO_OPTION</code>,
+	 * or <code>YES_NO_CANCEL_OPTION</code>
+	 * and the <code>options</code> parameter is <code>null</code>,
+	 * then the options are
+	 * supplied by the look and feel. 
+	 * <p>
+	 * The <code>messageType</code> parameter is primarily used to supply
+	 * a default icon from the look and feel.
+	 *
+	 * @param parentComponent determines the <code>Frame</code>
+	 *			in which the dialog is displayed;  if 
+	 *                  <code>null</code>, or if the
+	 *			<code>parentComponent</code> has no
+	 *			<code>Frame</code>, a 
+	 *                  default <code>Frame</code> is used
+	 * @param message   the <code>Object</code> to display
+	 * @param title     the title string for the dialog
+	 * @param optionType an integer designating the options available on the
+	 *			dialog: <code>YES_NO_OPTION</code>,
+	 *			or <code>YES_NO_CANCEL_OPTION</code>
+	 * @param messageType an integer designating the kind of message this is, 
+	 *                  primarily used to determine the icon from the
+	 *			pluggable Look and Feel: <code>ERROR_MESSAGE</code>,
+	 *			<code>INFORMATION_MESSAGE</code>, 
+	 *                  <code>WARNING_MESSAGE</code>,
+	 *                  <code>QUESTION_MESSAGE</code>,
+	 *			or <code>PLAIN_MESSAGE</code>
+	 * @param icon      the icon to display in the dialog
+	 * @param options   an array of objects indicating the possible choices
+	 *                  the user can make; if the objects are components, they
+	 *                  are rendered properly; non-<code>String</code>
+	 *			objects are
+	 *                  rendered using their <code>toString</code> methods;
+	 *                  if this parameter is <code>null</code>,
+	 *			the options are determined by the Look and Feel
+	 * @param initialValue the object that represents the default selection
+	 *                  for the dialog; only meaningful if <code>options</code>
+	 *			is used; can be <code>null</code>
+	 * @return an integer indicating the option chosen by the user, 
+	 *         		or <code>CLOSED_OPTION</code> if the user closed
+	 *                  the dialog
+	 * @exception HeadlessException if
+	 *   <code>GraphicsEnvironment.isHeadless</code> returns
+	 *   <code>true</code>
+	 * @see java.awt.GraphicsEnvironment#isHeadless
+	 */
+	public static int showOptionDialog(Component parentComponent,
+			Object message, String title, int optionType, int messageType,
+			Icon icon, Object[] options, Object initialValue)
+			throws HeadlessException {
+			JOptionPane             pane = new OptionPane(message, messageType,
+																										 optionType, icon,
+																										 options, initialValue);
+
+			pane.setInitialValue(initialValue);
+			pane.setComponentOrientation(((parentComponent == null) ?
+		getRootFrame() : parentComponent).getComponentOrientation());
+
+			JDialog         dialog = pane.createDialog(parentComponent, title);
+
+			pane.selectInitialValue();
+			dialog.show();
+			dialog.dispose();
+
+			Object        selectedValue = pane.getValue();
+
+			if(selectedValue == null)
+					return CLOSED_OPTION;
+			if(options!=null)
+			{
+				for(int counter = 0, maxCounter = options.length;
+						counter < maxCounter; counter++) {
+						if(options[counter].equals(selectedValue))
+								return counter;
+				}
+			}
+			if(selectedValue instanceof Integer)	//if the selected value is an integer, always return it, even if there are options present (newswing)
+				return ((Integer)selectedValue).intValue();
+			return CLOSED_OPTION;
+	}
 
     /**
      * Creates and returns a new <code>JDialog</code> wrapping
