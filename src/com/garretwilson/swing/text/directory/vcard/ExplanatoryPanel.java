@@ -6,8 +6,8 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
 import java.net.*;
 import java.util.*;
+import static java.util.Collections.*;
 import javax.swing.*;
-import javax.swing.event.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.swing.*;
@@ -66,7 +66,7 @@ public class ExplanatoryPanel extends BasicVCardPanel
 	public void setCategories(final LocaleText[] categories)
 	{
 		final ModifiableSet availableCategorySet=Categories.getAvailableCategorySet();	//get the available categores
-		CollectionUtilities.addAll(availableCategorySet, categories);	//add all the categories to the available category set, which will only add the ones that aren't there already
+		addAll(availableCategorySet, categories);	//add all the categories to the available category set, which will only add the ones that aren't there already
 		final List availableCategoryList=new ArrayList(availableCategorySet);	//create a list of available categories
 		Collections.sort(availableCategoryList);	//sort the list of available categories
 		categorySwingList.setListData(availableCategoryList.toArray());	//put the available categories in the list

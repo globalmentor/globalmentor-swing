@@ -3,6 +3,7 @@ package com.garretwilson.swing;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.*;
+import static java.util.Collections.*;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.text.*;
@@ -69,8 +70,8 @@ public class LanguagePanel extends BasicPanel
 		languageLabel.setText("Language");	//G***i18n
 //G***testing		languageComboBox.setEditable(true);
 		final List languageList=new ArrayList();	//G***testing
-		CollectionUtilities.addAll(languageList, Locale.getAvailableLocales());
-		Collections.sort(languageList, new Comparator()
+		addAll(languageList, Locale.getAvailableLocales());
+		sort(languageList, new Comparator()
 				{
 					public int compare(Object o1, Object o2) {return ((Locale)o1).toString().compareTo(((Locale)o2).toString());}
 				}
