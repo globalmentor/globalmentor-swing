@@ -112,7 +112,9 @@ public class NamePanel extends BasicVCardPanel
 		}
 	}
 	
-	/**@return An object representing the VCard name information entered.*/
+	/**@return An object representing the VCard name information entered, or
+		<code>null</code> if no name was entered.
+	*/
 	public Name getVCardName()
 	{
 			//get the values from the components
@@ -122,7 +124,15 @@ public class NamePanel extends BasicVCardPanel
 		final String[] honorificPrefixes=StringTokenizerUtilities.getTokens(new StringTokenizer(honorificPrefixComboBox.getSelectedItem().toString().trim(), VALUE_DELIMITERS));
 		final String[] honorificSuffixes=StringTokenizerUtilities.getTokens(new StringTokenizer(honorificSuffixComboBox.getSelectedItem().toString().trim(), VALUE_DELIMITERS));
 		final Locale locale=selectLanguageAction.getLocale();
-		return new Name(familyNames, givenNames, additionalNames, honorificPrefixes, honorificSuffixes, locale);	//create and return a name representing the entered information
+			//if any part(s) of the name was given 
+		if(familyNames.length>0 || givenNames.length>0 || additionalNames.length>0 || honorificPrefixes.length>0 || honorificSuffixes.length>0)
+		{
+			return new Name(familyNames, givenNames, additionalNames, honorificPrefixes, honorificSuffixes, locale);	//create and return a name representing the entered information
+		}
+		else	//if no name was given
+		{
+			return null;	//no name was entered
+		}
 	}
 
 	/**Default constructor.*/

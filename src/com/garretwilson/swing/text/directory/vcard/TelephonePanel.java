@@ -2,14 +2,14 @@ package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeListener;
-
+import java.beans.*;
 import javax.swing.*;
 import com.garretwilson.itu.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.itu.*;
 import com.garretwilson.text.directory.vcard.*;
+import com.garretwilson.util.*;
 
 /**A panel containing fields for the <code>TEL</code> type of a vCard
 	<code>text/directory</code>	profile as defined in
@@ -19,7 +19,7 @@ import com.garretwilson.text.directory.vcard.*;
 	buttons.</p>
 @author Garret Wilson
 */
-public class TelephonePanel extends BasicVCardPanel
+public class TelephonePanel extends BasicVCardPanel implements Verifiable
 {
 
 	/**The action for editing the telephone type.*/
@@ -246,6 +246,15 @@ public class TelephonePanel extends BasicVCardPanel
 		{
 			return false;	//show that the action was cancelled
 		}
+	}
+
+	/**Verifies the component.
+	@return <code>true</code> if the component contents are valid, <code>false</code>
+		if not.
+	*/
+	public boolean verify()
+	{
+		return telephoneNumberPanel.verify();	//let the telephone number panel verify itself
 	}
 
 	/**Action for editing the telephone type.*/

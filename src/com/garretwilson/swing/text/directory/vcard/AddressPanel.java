@@ -50,7 +50,7 @@ public class AddressPanel extends BasicVCardPanel
 			{
 				this.addressType=addressType;	//store the address type locally
 				setModified(true);	//show that we've changed the address type
-				addressTypeButton.setText(	//update the telephone type button
+				addressTypeButton.setText(	//update the address type button
 						addressType!=Address.NO_ADDRESS_TYPE	//if there is an address type
 						? Address.getAddressTypeString(addressType)	//show it
 						: "");	//if there is no address type, show nothing
@@ -135,7 +135,7 @@ public class AddressPanel extends BasicVCardPanel
 	*/
 	public void setAddress(final Address address)
 	{
-		if(address!=null)	//if there is a name
+		if(address!=null)	//if there is an address
 		{
 			postOfficeBoxTextField.setText(address.getPostOfficeBox()!=null ? address.getPostOfficeBox() : "");
 			extendedAddresses=address.getExtendedAddresses();	//save the extended addresses so we won't lose them
@@ -290,7 +290,7 @@ public class AddressPanel extends BasicVCardPanel
 	@return <code>true</code> if the user accepted the changes and the type was
 		updated, otherwise <code>false</code> if the user cancelled.
 	*/
-	public boolean editTelephoneType()
+	public boolean editAddressType()
 	{
 		final AddressTypePanel addressTypePanel=new AddressTypePanel(getAddressType());	//create a new panel with our current address type 
 			//ask for the new address type; if they accept the changes
@@ -323,7 +323,7 @@ public class AddressPanel extends BasicVCardPanel
 		*/
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
-			editTelephoneType();	//edit the telephone type
+			editAddressType();	//edit the address type
 		}
 	}
 

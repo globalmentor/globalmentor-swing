@@ -1,10 +1,12 @@
 package com.garretwilson.swing.text.directory.vcard;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.event.*;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.MessageFormat;
+import java.util.*;
 import javax.swing.*;
 import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.util.*;
@@ -26,10 +28,16 @@ public class AddressesPanel extends ContentPanel
 		/**@return The action for adding a new address.*/
 		public Action getAddAddressAction() {return addAddressAction;}
 
-	/**The action for removing an address.*/
+	/**The action for adding a new label.*/
+	private final Action addLabelAction;
+
+		/**@return The action for adding a new label.*/
+		public Action getAddLabelAction() {return addLabelAction;}
+
+	/**The action for removing an address or label.*/
 	private final Action removeAddressAction;
 
-		/**@return The action for removing an address.*/
+		/**@return The action for removing an address or label.*/
 		public Action getRemoveAddressAction() {return removeAddressAction;}
 
 	/**A property change listener to change the modified status when the
@@ -47,55 +55,106 @@ public class AddressesPanel extends ContentPanel
 	protected JTabbedPane getTabbedPane() {return (JTabbedPane)getContentComponent();}
 
 	/**The stored array of labels we keep so that they won't be lost.*/ 
-	private LocaleText[] labels=new LocaleText[]{};	//TODO allow these to be edited in the panel
+//G***del	private LocaleText[] labels=new LocaleText[]{};	//TODO allow these to be edited in the panel
 	
 	/**Places the labels into the tabs.
 	@param labels The labels to place in the tabs.
 	*/
+/*G***del
 	public void setLabels(LocaleText[] labels)
 	{
 		this.labels=labels;	//save the labels for later
 	}
+*/
 	
 	/**@return An array of entered labels.*/
+/*G***del
 	public LocaleText[] getLabels()
 	{
 		return labels;	//return the labels we stored
 	}
+*/
+
+	/**Places the addresses and labels into the tabs.
+	If both arrays are empty, a default address will be placed in the first tab.
+	@param addresses The addresses to place in the tabs.
+	@param labels The labels to place in the tabs.
+	*/
+	public void setAddresses(final Address[] addresses, final Label[] labels)
+	{
+		getTabbedPane().removeAll();	//remove all tabs
+		if(addresses.length>0 || labels.length>0)	//if there is at least one address or label
+		{
+			addAddresses(addresses);	//add the addresses
+			addLabels(labels);	//add the labels
+		}
+		else	//if there are no addresses or labels
+		{
+			addAddresses(new Address[]{new Address()});	//add a single default address
+		}
+		setDefaultFocusComponent(getTabbedPane().getComponentAt(0));	//set the default focus component to be the first tab (we'll always have at least one tab)
+	}
 	
 	/**Places the addresses into the tabs.
-	@param addresses The addresses to place in the tabs. If the array is empty,
-		a default address will be placed in the first tab.
+	@param addresses The addresses to place in the tabs.
 	*/
-	public void setAddresses(Address[] addresses)
+	protected void addAddresses(final Address[] addresses)
 	{
-		if(addresses.length<1)	//if there isn't at least one address
-			addresses=new Address[]{new Address()};	//create a new array containing a single default address
-		getTabbedPane().removeAll();	//remove all tabs
 		for(int i=0; i<addresses.length; ++i)	//look at each of the addresses
 		{
 			addAddress(addresses[i]);	//add this address to the tabbed pane
 		}
-		setDefaultFocusComponent(getTabbedPane().getComponentAt(0));	//set the default focus component to be the first tab (we'll always have at least one tab)
 	}
 	
 	/**@return An array of entered addresses.*/
 	public Address[] getAddresses()
 	{
 		final List addressList=new ArrayList(getTabbedPane().getTabCount());	//create a list in which to store the addresses, making room for the maximum amout of addresses we could get 
-//G***del		final Address[] addresses=new Address[getTabbedPane().getTabCount()];	//create an array of addresses, based upon the number of tabs
 		for(int i=0; i<getTabbedPane().getTabCount(); ++i)	//look at each tab
 		{
-			final AddressPanel addressPanel=(AddressPanel)getTabbedPane().getComponentAt(i);	//get this address panel
-			final Address address=addressPanel.getAddress();	//get this address
-			if(address!=null)	//if an address was entered in this panel
+			final Component component=getTabbedPane().getComponentAt(i);	//get this component
+			if(component instanceof AddressPanel)	//if this is an address panel
 			{
-				addressList.add(address);	//add this address to our list
+				final AddressPanel addressPanel=(AddressPanel)component;	//get this address panel
+				final Address address=addressPanel.getAddress();	//get this address
+				if(address!=null)	//if an address was entered in this panel
+				{
+					addressList.add(address);	//add this address to our list
+				}
 			}
-//G***del			addresses[i]=addressPanel.getAddress();	//get this address
 		}
-//G***del		return addresses;	//return the addresses we collected
 		return (Address[])addressList.toArray(new Address[addressList.size()]);	//return an array of the addresses we collected
+	}
+
+	/**Places the labels into the tabs.
+	@param labels The labels to place in the tabs.
+	*/
+	protected void addLabels(final Label[] labels)
+	{
+		for(int i=0; i<labels.length; ++i)	//look at each of the labels
+		{
+			addLabel(labels[i]);	//add this label to the tabbed pane
+		}
+	}
+	
+	/**@return An array of entered labels.*/
+	public Label[] getLabels()
+	{
+		final List labelList=new ArrayList(getTabbedPane().getTabCount());	//create a list in which to store the labels, making room for the maximum amout of labels we could get 
+		for(int i=0; i<getTabbedPane().getTabCount(); ++i)	//look at each tab
+		{
+			final Component component=getTabbedPane().getComponentAt(i);	//get this component
+			if(component instanceof LabelPanel)	//if this is an label panel
+			{
+				final LabelPanel labelPanel=(LabelPanel)component;	//get this label panel
+				final Label label=labelPanel.getLabel();	//get this label
+				if(label!=null)	//if a label was entered in this panel
+				{
+					labelList.add(label);	//add this address to our list
+				}
+			}
+		}
+		return (Label[])labelList.toArray(new Label[labelList.size()]);	//return an array of the labels we collected
 	}
 
 	/**Sets whether the object has been modified.
@@ -122,23 +181,25 @@ public class AddressesPanel extends ContentPanel
 	/**Default constructor.*/
 	public AddressesPanel()
 	{
-		this(new Address[]{new Address()});	//construct an address panel with one default address
+		this(new Address[]{new Address()}, new Label[]{});	//construct an address panel with one default address
 	}
 
 	/**Addresses constructor.
-	@param addresses The addresses to place in the tabs. If the array is empty,
-		a default address will be placed in the first tab.
+	If both arrays are empty, a default address will be placed in the first tab.
+	@param addresses The addresses to place in the tabs.
+	@param labels The labels to place in the tabs.
 	*/
-	public AddressesPanel(final Address[] addresses)
+	public AddressesPanel(final Address[] addresses, final Label[] labels)
 	{
 		super(new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 //G***fix		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 //G***fix		tabbedPane=new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 		addAddressAction=new AddAddressAction();
+		addLabelAction=new AddLabelAction();
 		removeAddressAction=new RemoveAddressAction();
 		modifyModifiedPropertyChangeListener=createModifyModifiedChangeListener();	//create a property change listener to change the modified status when the modified property is set to true
 		initialize();	//initialize the panel
-		setAddresses(addresses);	//set the addresses to those given
+		setAddresses(addresses, labels);	//set the addresses to those given
 	}
 
 	/**Initializes the user interface.*/
@@ -149,6 +210,7 @@ public class AddressesPanel extends ContentPanel
 		setTitle("Addresses");	//G***i18n
 		final JPanel buttonPanel=new JPanel(new FlowLayout(FlowLayout.CENTER));
 		buttonPanel.add(new JButton(getAddAddressAction()));
+		buttonPanel.add(new JButton(getAddLabelAction()));
 		buttonPanel.add(new JButton(getRemoveAddressAction()));
 		add(buttonPanel, BorderLayout.SOUTH);
 /*G***fix gridbag
@@ -161,7 +223,8 @@ public class AddressesPanel extends ContentPanel
 	protected void updateStatus()
 	{
 		super.updateStatus();	//do the default status updating
-		getRemoveAddressAction().setEnabled(getTabbedPane().getTabCount()>1);	//don't allow all the tabs to be removed
+//G***del when works		getRemoveAddressAction().setEnabled(getTabbedPane().getTabCount()>1);	//don't allow all the tabs to be removed
+		getRemoveAddressAction().setEnabled(getTabbedPane().getTabCount()>0);	//only allow removal if there are tabs to be removed
 	}
 
 	/**Adds an address to the tabbed pane.
@@ -187,25 +250,55 @@ public class AddressesPanel extends ContentPanel
 			//TODO add an icon to each tab
 		getTabbedPane().addTab(title, addressPanel);	//add the panel
 		setModified(true);	//show that we've been modified
+		updateStatus();	//update the status
 	}
 
-	/**Removes the currently selected address.
+	/**Adds a label to the tabbed pane.
+	@param label The label to add.
+	@return The label panel that represents the added label.
+	*/
+	public LabelPanel addLabel(final Label label)
+	{
+		final LabelPanel labelPanel=new LabelPanel(label);	//create a new label panel for this label
+		addLabelPanel(labelPanel);	//add the label panel
+		return labelPanel;	//return the panel we creatd for the label		
+	}
+
+	/**Adds a label panel to the tabbed pane.
+	@param label The label to add.
+	@return The label panel that represents the added label.
+	*/
+	protected void addLabelPanel(final LabelPanel labelPanel)
+	{
+		labelPanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);	//listen for changes to the label and update the modified status in response
+		final String title="Label";	//get a title for the address G***i18n
+			//TODO add an icon to each tab
+		getTabbedPane().addTab(title, labelPanel);	//add the panel
+		setModified(true);	//show that we've been modified
+		updateStatus();	//update the status
+	}
+
+	/**Removes the currently selected address or label.
 	@return <code>true</code> if the address was moved, or <code>false</code> if
 		the action was cancelled or if there is only one address remaining.
 	*/
 	public boolean removeAddress()
 	{
-		if(getTabbedPane().getTabCount()>1)	//if we have more than one address
+//G***del if not needed		if(getTabbedPane().getTabCount()>1)	//if we have more than one address
 		{
 			final Component selectedComponent=getTabbedPane().getSelectedComponent();	//get the component selected in the tabbed pane
 			if(selectedComponent!=null)	//if a component is selected
 			{
-					//if they really want to delete the address
-				if(JOptionPane.showConfirmDialog(this, "Are you sure you want to permanently remove this address?", "Remove Address", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)	//G***i18n
+					//determine the name of the thing we're deleting
+				final String objectName=selectedComponent instanceof LabelPanel ? "label" : "address";	//G***i18n				
+					//if they really want to delete the address or label
+				if(JOptionPane.showConfirmDialog(this, MessageFormat.format("Are you sure you want to permanently remove this {0}?", new Object[]{objectName}),
+						MessageFormat.format("Remove {0}", new Object[]{objectName}), JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)	//G***i18n
 				{
 					selectedComponent.removePropertyChangeListener(modifyModifiedPropertyChangeListener);	//stop listening for changes
 					getTabbedPane().remove(selectedComponent);	//remove the selected component
 					setModified(true);	//show that we've been modified
+					updateStatus();	//update the status
 					return true;	//show that we removed the address
 				}
 			}
@@ -255,7 +348,7 @@ public class AddressesPanel extends ContentPanel
 			putValue(SHORT_DESCRIPTION, "Add an address");	//set the short description G***i18n
 			putValue(LONG_DESCRIPTION, "Add a new address.");	//set the long description G***i18n
 			putValue(MNEMONIC_KEY, new Integer('a'));  //set the mnemonic key G***i18n
-			putValue(SMALL_ICON, IconResources.getIcon(IconResources.ADD_ICON_FILENAME)); //load the correct icon
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.ADD_ICON_FILENAME)); //load the correct icon TODO use a better icon
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.CTRL_MASK)); //add the accelerator
 		}
 	
@@ -265,12 +358,40 @@ public class AddressesPanel extends ContentPanel
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
 			final AddressPanel addressPanel=new AddressPanel(new Address());	//create a default address panel
-			if(addressPanel.editTelephoneType())	//ask the user for the address type; if they accept the changes
+			if(addressPanel.editAddressType())	//ask the user for the address type; if they accept the changes
 			{
 				addAddressPanel(addressPanel);	//add the address panel
 				getTabbedPane().setSelectedComponent(addressPanel);	//select the new address panel
 				addressPanel.requestDefaultFocusComponentFocus();	//focus on the default panel TODO add this functionality into a listener to the tabbed pane, maybe, probably not, because we don't want to lose the old focus when changing tabs
-//G***del if not needed				updateStatus();	//update the status
+			}
+		}
+	}
+
+	/**Action for adding a label.*/
+	class AddLabelAction extends AbstractAction
+	{
+		/**Default constructor.*/
+		public AddLabelAction()
+		{
+			super("Add Label");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "Add a label");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Add a new label.");	//set the long description G***i18n
+			putValue(MNEMONIC_KEY, new Integer('l'));  //set the mnemonic key G***i18n
+			putValue(SMALL_ICON, IconResources.getIcon(IconResources.ADD_ICON_FILENAME)); //load the correct icon TODO use a better icon
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.CTRL_MASK)); //add the accelerator
+		}
+	
+		/**Called when the action should be performed.
+		@param actionEvent The event causing the action.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+			final LabelPanel labelPanel=new LabelPanel(new Label());	//create a default label panel
+			if(labelPanel.editAddressType())	//ask the user for the address type; if they accept the changes
+			{
+				addLabelPanel(labelPanel);	//add the label panel
+				getTabbedPane().setSelectedComponent(labelPanel);	//select the new label panel
+				labelPanel.requestDefaultFocusComponentFocus();	//focus on the default panel TODO add this functionality into a listener to the tabbed pane, maybe, probably not, because we don't want to lose the old focus when changing tabs
 			}
 		}
 	}
@@ -281,9 +402,9 @@ public class AddressesPanel extends ContentPanel
 		/**Default constructor.*/
 		public RemoveAddressAction()
 		{
-			super("Remove Address");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Remove this address");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Remove the selected address.");	//set the long description G***i18n
+			super("Remove");	//create the base class G***i18n
+			putValue(SHORT_DESCRIPTION, "Remove this address or label");	//set the short description G***i18n
+			putValue(LONG_DESCRIPTION, "Remove the selected address or label.");	//set the long description G***i18n
 			putValue(MNEMONIC_KEY, new Integer('e'));  //set the mnemonic key G***i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SUBTRACT_ICON_FILENAME)); //load the correct icon
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.CTRL_MASK)); //add the accelerator
@@ -295,7 +416,6 @@ public class AddressesPanel extends ContentPanel
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
 			removeAddress();	//remove the selected address
-			updateStatus();	//update the status
 		}
 	}
 

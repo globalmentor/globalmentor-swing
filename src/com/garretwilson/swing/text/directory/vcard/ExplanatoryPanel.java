@@ -4,6 +4,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
+import java.net.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -17,7 +18,7 @@ import com.garretwilson.util.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class ExplanatoryPanel extends BasicVCardPanel
+public class ExplanatoryPanel extends BasicVCardPanel implements Verifiable
 {
 
 	/**The label of the categories list.*/
@@ -49,6 +50,15 @@ public class ExplanatoryPanel extends BasicVCardPanel
 
 		/**@return The note text pane.*/
 		public JTextPane getNoteTextPane() {return noteTextPane;}
+
+	/**The label of the URL.*/
+	private final JLabel urlLabel;
+
+	/**The URL text field.*/
+	private final JTextField urlTextField;
+
+		/**@return The URL text field.*/
+		public JTextField getURLTextField() {return urlTextField;}
 	
 	/**Sets the application categories.
 	@param categories An array of application categories that should be selected.
@@ -99,6 +109,39 @@ public class ExplanatoryPanel extends BasicVCardPanel
 		return note!=null ? new LocaleText(note, selectNoteLanguageAction.getLocale()) : null;
 	}
 
+	/**Places the URL into the field.
+	@param url The URL information to place in the field, or
+		<code>null</code> if there is no URL.
+	*/
+	public void setURL(final URI url)
+	{
+		getURLTextField().setText(url!=null ? url.toString() : "");	//show the URL, if there is one
+	}
+
+	/**@return An object representing the URL entered, or
+		<code>null</code> if no URL number was entered or the text is not a valid
+		URI.
+	*/
+	public URI getURL()
+	{
+		final String urlString=getURLTextField().getText().trim();	//get the URL text entered
+		if(urlString.length()>0)	//if there is URL information entered
+		{
+			try
+			{
+				return new URI(urlString);	//create and return a URI from the entered information
+			}
+			catch(URISyntaxException uriSyntaxExceptoin)	//if the information isn't a valid URI
+			{
+				return null;	//show that we don't understand the entered information
+			}
+		}
+		else	//if no URL was entered
+		{
+			return null;	//nothing was entered
+		}
+	}
+
 	/**Default constructor.*/
 	public ExplanatoryPanel()
 	{
@@ -127,6 +170,16 @@ public class ExplanatoryPanel extends BasicVCardPanel
 	*/
 	public ExplanatoryPanel(final LocaleText[] categories, final LocaleText note)
 	{
+		this(categories, note, null);	//create a panel with no URL
+	}
+
+	/**Full constructor.
+	@param categories An array of application categories that should be selected.
+	@param note The supplemental information, or <code>null</code> for no information.
+	@param url The associated URL, or <code>null</code> for no URL.
+	*/
+	public ExplanatoryPanel(final LocaleText[] categories, final LocaleText note, final URI url)
+	{
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		categoryLabel=new JLabel();
 		categoryList=new JList();
@@ -134,10 +187,13 @@ public class ExplanatoryPanel extends BasicVCardPanel
 		noteLabel=new JLabel();
 		noteTextPane=new JTextPane();
 		selectNoteLanguageAction=new SelectLanguageAction(null, noteTextPane);
+		urlLabel=new JLabel();
+		urlTextField=new JTextField();
 		setDefaultFocusComponent(noteTextPane);	//set the default focus component
 		initialize();	//initialize the panel
 		setCategories(categories);	//set the given categories
 		setNote(note);	//set the given note
+		setURL(url);	//set the given URL
 	}
 	
 	/**Initializes the user interface.*/
@@ -159,12 +215,39 @@ public class ExplanatoryPanel extends BasicVCardPanel
 		getSelectNoteLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectNoteLanguageButton=createSelectLanguageButton(getSelectNoteLanguageAction());
 		final JScrollPane noteScrollPane=new JScrollPane(noteTextPane);
+		urlLabel.setText("Web Site URL");	//G***i18n
+		urlTextField.getDocument().addDocumentListener(modifyDocumentListener);
 		add(categoryLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(selectCategoryLanguageButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(categoryScrollPane, new GridBagConstraints(0, 1, 2, 1, 0.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, NO_INSETS, 0, 0));
+		add(categoryScrollPane, new GridBagConstraints(0, 1, 2, 3, 0.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, NO_INSETS, 0, 0));
 		add(noteLabel, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(selectNoteLanguageButton, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(noteScrollPane, new GridBagConstraints(2, 1, 2, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, NO_INSETS, 0, 0));
+		add(noteScrollPane, new GridBagConstraints(2, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, NO_INSETS, 0, 0));
+		add(urlLabel, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+		add(urlTextField, new GridBagConstraints(2, 3, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
+	}
+
+	/**Verifies the component.
+	@return <code>true</code> if the component contents are valid, <code>false</code>
+		if not.
+	*/
+	public boolean verify()
+	{
+		final String urlString=urlTextField.getText().trim();	//get the URL text entered
+		if(urlString.length()>0)	//if there is URL information entered
+		{
+			try
+			{
+				new URI(urlString);	//try to create a URI from the entered information
+			}
+			catch(URISyntaxException uriSyntaxException)	//if the information isn't a valid URI
+			{
+				JOptionPane.showMessageDialog(this, "The URL you entered is inavlid: "+uriSyntaxException.getMessage(), "Invalid URL", JOptionPane.ERROR_MESSAGE);	//G***i18n
+				urlTextField.requestFocusInWindow(); //focus on the URL text field
+				return false; //show that verification failed
+			}
+		}
+		return true;  //if we couldn't find any problems, verification succeeded
 	}
 
 	/**Action for selecting a language for the selected category.

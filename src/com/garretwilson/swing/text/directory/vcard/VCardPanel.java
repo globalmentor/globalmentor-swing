@@ -1,15 +1,8 @@
 package com.garretwilson.swing.text.directory.vcard;
 
-import java.awt.*;
 import java.beans.PropertyChangeListener;
-import java.io.*;
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
-import com.garretwilson.io.*;
-import com.garretwilson.lang.*;
 import com.garretwilson.swing.*;
-import com.garretwilson.text.*;
 import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.util.*;
 
@@ -18,7 +11,7 @@ import com.garretwilson.util.*;
 	"vCard MIME Directory Profile".
 @author Garret Wilson
 */
-public class VCardPanel extends ContentPanel
+public class VCardPanel extends ContentPanel implements Verifiable
 {
 
 	/**@return The tabbed pane component.*/
@@ -87,8 +80,7 @@ public class VCardPanel extends ContentPanel
 		getIdentificationPanel().setVCardName(vcard.getName());
 		getIdentificationPanel().setFormattedName(vcard.getFormattedName());
 		getIdentificationPanel().setNicknames(LocaleText.toLocaleTextArray(vcard.getNicknameList()));
-		getAddressesPanel().setAddresses((Address[])vcard.getAddressList().toArray(new Address[vcard.getAddressList().size()]));
-		getAddressesPanel().setLabels((LocaleText[])vcard.getLabelList().toArray(new LocaleText[vcard.getLabelList().size()]));
+		getAddressesPanel().setAddresses(vcard.getAddresses(), vcard.getLabels());
 		getOrganizationPanel().setOrganizationName(vcard.getOrganizationName());
 		getOrganizationPanel().setUnits(vcard.getOrganizationUnits());
 		getOrganizationPanel().setJobTitle(vcard.getTitle());
@@ -98,6 +90,7 @@ public class VCardPanel extends ContentPanel
 		getTelecommunicationsPanel().setTelecommunications(telephones, emails);
 		getExplanatoryPanel().setCategories(LocaleText.toLocaleTextArray(vcard.getCategoryList()));
 		getExplanatoryPanel().setNote(vcard.getNote());
+		getExplanatoryPanel().setURL(vcard.getURL());
 	}
 
 	/**@return A vCard object representing the information being edited.*/
@@ -118,6 +111,7 @@ public class VCardPanel extends ContentPanel
 		vcard.setEmails(getTelecommunicationsPanel().getEmails());
 		vcard.setCategories(getExplanatoryPanel().getCategories());
 		vcard.setNote(getExplanatoryPanel().getNote());
+		vcard.setURL(getExplanatoryPanel().getURL());
 		return vcard;	//return the vcard we constructed
 	}
 
@@ -146,6 +140,25 @@ public class VCardPanel extends ContentPanel
 		explanatoryPanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);
 		getTabbedPane().addTab("Name/Address", nameAddressPanel);	//G***i18n
 		getTabbedPane().addTab("Explanatory", explanatoryPanel);	//G***i18n
+	}
+
+	/**Verifies the component.
+	@return <code>true</code> if the component contents are valid, <code>false</code>
+		if not.
+	*/
+	public boolean verify()
+	{
+		if(!nameAddressPanel.verify())	//if the name/address panel doesn't verify
+		{
+			getTabbedPane().setSelectedComponent(nameAddressPanel);	//select the name/address panel
+			return false;	//show that verification failed
+		}
+		if(!explanatoryPanel.verify())	//if the explanatory panel doesn't verify
+		{
+			getTabbedPane().setSelectedComponent(explanatoryPanel);	//select the explanatory panel
+			return false;	//show that verification failed
+		}
+		return true;  //if we couldn't find any problems, verification succeeded
 	}
 
 }

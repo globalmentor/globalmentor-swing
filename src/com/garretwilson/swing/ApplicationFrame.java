@@ -50,7 +50,7 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 	/**The preference for storing the horizontal position.*/
 	public final String BOUNDS_X_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.x");
 	/**The preference for storing the vertical position.*/
-	public final String BOUNDS_Y_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.x");
+	public final String BOUNDS_Y_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.y");
 	/**The preference for storing the width.*/
 	public final String BOUNDS_WIDTH_PREFERENCE=PreferencesUtilities.getPreferenceName(getClass(), "bounds.width");
 	/**The preference for storing the height.*/
@@ -395,14 +395,15 @@ public abstract class ApplicationFrame extends JFrame implements CanClosable
 		setContentPane(contentPane); //set the container as the content pane
 		addComponentListener(new ComponentAdapter()	//listen for the window bounds changes and save or restore the bounds in the preferences
 				{
-					public void componentMoved(ComponentEvent e) {saveBoundsPreferences();}	//save the new bounds
-					public void componentResized(ComponentEvent e) {saveBoundsPreferences();}	//save the new bounds
-					public void componentShown(ComponentEvent e) {restoreBoundsPreferences();}	//restore the new bounds
+					public void componentMoved(ComponentEvent e) {if(isVisible()) saveBoundsPreferences();}	//save the new bounds if we are visible
+					public void componentResized(ComponentEvent e) {if(isVisible()) saveBoundsPreferences();}	//save the new bounds if we are visible
+					public void componentShown(ComponentEvent e) {if(isVisible()) restoreBoundsPreferences();}	//restore the new bounds if we are visible
 				});
-		addWindowStateListener(new WindowStateListener()	//listen for the window state changing so that we can save it in the preferences
-				{
-public void windowStateChanged(WindowEvent e) {/*G***fix saveStatePreferences();*/}	//save the new state
-				});
+//TODO actually, this window state change needs to be fixed---it isn't working correctly
+//G***del		addWindowStateListener(new WindowStateListener()	//listen for the window state changing so that we can save it in the preferences
+//G***del				{
+//G***del public void windowStateChanged(WindowEvent e) {/*G***fix saveStatePreferences();*/}	//save the new state
+//G***del				});
 		fileNewAction=new FileNewAction();  //create the new action G***maybe lazily create these
 		fileOpenAction=new FileOpenAction();  //create the open action
 		fileCloseAction=new FileCloseAction();  //create the close action
@@ -942,6 +943,21 @@ public void windowStateChanged(WindowEvent e) {/*G***fix saveStatePreferences();
 
 	/**Makes the component visible or invisible.
 		This version resets the bounds of the frame to the last known bounds as
+		saved in the preferences if the window is being made visible. 
+	@param newVisible <code>true</code> to make the component visible;
+		<code>false</code> to make it invisible.
+	*/
+	public void setVisible(final boolean newVisible)
+	{
+		if(!isVisible() && newVisible)	//if the frame is becoming visible
+		{
+			restoreBoundsPreferences();	//restore the bounds (this will be done again after coming visible, because setting the bounds while hidden will not correctly set the window extended state)
+		}
+		super.setVisible(newVisible);	//set the visibility normally
+	}
+
+	/**Makes the component visible or invisible.
+		This version resets the bounds of the frame to the last known bounds as
 		saved in the preferences. 
 	@param newVisible <code>true</code> to make the component visible;
 		<code>false</code> to make it invisible.
@@ -972,52 +988,49 @@ public void windowStateChanged(WindowEvent e) {/*G***fix saveStatePreferences();
 	}
 */
 
-	/**If the window is visible, saves its bounds in the preferences.*/
+	/**Saves the bounds in the preferences.*/
 	protected void saveBoundsPreferences()
 	{
-		if(isVisible())	//if we are visible, save the new bounds in the preferences
+		final Preferences preferences=getPreferences();	//get the preferences
+		final Rectangle bounds=getBounds();	//get the current bounds
+		final int extendedState=getExtendedState();	//get the current extended state
+		preferences.putInt(EXTENDED_STATE_PREFERENCE, extendedState);	//store the extended state
+		if((extendedState&MAXIMIZED_HORIZ)!=MAXIMIZED_HORIZ)	//if we aren't maximized horizontally
 		{
-			final Preferences preferences=getPreferences();	//get the preferences
-			final Rectangle bounds=getBounds();	//get the current bounds
-			final int extendedState=getExtendedState();	//get the current extended state
-			preferences.putInt(EXTENDED_STATE_PREFERENCE, extendedState);	//store the extended state
-			if((extendedState|MAXIMIZED_HORIZ)==MAXIMIZED_HORIZ)	//if we aren't maximized horizontally
-			{
-				preferences.putInt(BOUNDS_X_PREFERENCE, bounds.x);	//save the horizontal bounds
-				preferences.putInt(BOUNDS_WIDTH_PREFERENCE, bounds.width);
-			}
-			if((extendedState|MAXIMIZED_VERT)==MAXIMIZED_VERT)	//if we aren't maximized vertically
-			{
-				preferences.putInt(BOUNDS_Y_PREFERENCE, bounds.y);	//save the vertical bounds
-				preferences.putInt(BOUNDS_HEIGHT_PREFERENCE, bounds.height);
-			}
+			preferences.putInt(BOUNDS_X_PREFERENCE, bounds.x);	//save the horizontal bounds
+			preferences.putInt(BOUNDS_WIDTH_PREFERENCE, bounds.width);
+		}
+		if((extendedState&MAXIMIZED_VERT)!=MAXIMIZED_VERT)	//if we aren't maximized vertically
+		{
+			preferences.putInt(BOUNDS_Y_PREFERENCE, bounds.y);	//save the vertical bounds
+			preferences.putInt(BOUNDS_HEIGHT_PREFERENCE, bounds.height);
 		}
 	}
 
-	/**If the window is visible, restores its bounds from the preferences.*/
+	/**Restores the bounds from the preferences.*/
 	public void restoreBoundsPreferences()
 	{
-		if(isVisible())	//if the frame is now visible
+		final Preferences preferences=getPreferences();	//get the preferences
+		final int extendedState=preferences.getInt(EXTENDED_STATE_PREFERENCE, NORMAL);	//get the stored extended state
+		final int x=preferences.getInt(BOUNDS_X_PREFERENCE, 0);	//get the stored bounds, using invalid dimensions for defaults
+		final int y=preferences.getInt(BOUNDS_Y_PREFERENCE, 0);
+		final int width=preferences.getInt(BOUNDS_WIDTH_PREFERENCE, -1);
+		final int height=preferences.getInt(BOUNDS_HEIGHT_PREFERENCE, -1);
+
+//TODO maybe the stuff gets changed around here---the height and width seem to be changed, but the x and y seem to be lost
+
+		if(width>=0 && height>=0)	//if we had valid dimensions stored
 		{
-			final Preferences preferences=getPreferences();	//get the preferences
-			final int extendedState=preferences.getInt(EXTENDED_STATE_PREFERENCE, NORMAL);	//get the stored extended state
-			final int x=preferences.getInt(BOUNDS_X_PREFERENCE, 0);	//get the stored bounds, using invalid dimensions for defaults
-			final int y=preferences.getInt(BOUNDS_Y_PREFERENCE, 0);
-			final int width=preferences.getInt(BOUNDS_WIDTH_PREFERENCE, -1);
-			final int height=preferences.getInt(BOUNDS_HEIGHT_PREFERENCE, -1);
-			if(width>=0 && height>=0)	//if we had valid dimensions stored
-			{
-				setBounds(x, y, width, height);	//restore the bounds we had saved in preferences
-				setExtendedState(extendedState);	//update the extended state to match that stored
-			}
-			else	//if no bounds are stored in preferences
-			{
-				setSize(800, 600);	//set a default size, which will be saved
-				WindowUtilities.center(this);	//center the window, which will save the new location
-				setExtendedState(MAXIMIZED_BOTH);	//maximize the window 
-			}
-			validate();	//make sure the components are all laid out correctly after was changed the size
+			setBounds(x, y, width, height);	//restore the bounds we had saved in preferences
+			setExtendedState(extendedState);	//update the extended state to match that stored
 		}
+		else	//if no bounds are stored in preferences
+		{
+			setSize(800, 600);	//set a default size, which will be saved
+			WindowUtilities.center(this);	//center the window, which will save the new location
+			setExtendedState(MAXIMIZED_BOTH);	//maximize the window 
+		}
+		validate();	//make sure the components are all laid out correctly after was changed the size
 	}
 
 	public void setExtendedState(int state)

@@ -72,7 +72,9 @@ public class IdentificationPanel extends BasicVCardPanel
 		namePanel.setVCardName(name);	//set the name in the name panel
 	}
 	
-	/**@return An object representing the VCard name information entered.*/
+	/**@return An object representing the VCard name information entered, or
+		<code>null</code> if no name was entered.
+	*/
 	public Name getVCardName()
 	{
 		return namePanel.getVCardName();	//get the name from the name panel
@@ -192,8 +194,8 @@ public class IdentificationPanel extends BasicVCardPanel
 					public void modifyUpdate(final DocumentEvent documentEvent)	//if the formatted name text field is modified
 					{
 							//see if the formatted name matches the default formatted version of the information in the name field, or if there's no information in the formatted text field
-						shouldUpdateFormattedName=formattedNameTextField.getText().equals(namePanel.getVCardName().toString())
-								|| formattedNameTextField.getText().trim().length()==0;
+						shouldUpdateFormattedName=formattedNameTextField.getText().trim().length()==0
+								|| (getVCardName()!=null && formattedNameTextField.getText().equals(getVCardName().toString()));
 					}
 				});
 		formattedNameTextField.getDocument().addDocumentListener(modifyDocumentListener);
@@ -217,7 +219,7 @@ public class IdentificationPanel extends BasicVCardPanel
 		super.updateStatus();	//do the default status updating
 		if(shouldUpdateFormattedName)	//if the formatted name matched the information in the name panel the last time the formatted name was modified
 		{
-			formattedNameTextField.setText(namePanel.getVCardName().toString());	//update the formatted name label to reflect the current state of the name information
+			formattedNameTextField.setText(getVCardName()!=null ? getVCardName().toString() : "");	//update the formatted name label to reflect the current state of the name information
 		}
 	}
 	

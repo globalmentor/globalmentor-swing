@@ -5,8 +5,8 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.event.DocumentListener;
 import com.garretwilson.itu.*;
-//G***del when works import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
+import com.garretwilson.util.*;
 
 /**A panel allowing entry of an international public telecommunication number
 	for geographic areas as defined in ITU-T E.164,
@@ -16,7 +16,7 @@ import com.garretwilson.swing.*;
 	and Web addresses".
 @author Garret Wilson
 */
-public class TelephoneNumberPanel extends BasicPanel
+public class TelephoneNumberPanel extends BasicPanel implements Verifiable
 {
 
 	/**The label of the country code.*/
@@ -92,7 +92,7 @@ public class TelephoneNumberPanel extends BasicPanel
 		final String countryCode=((String)countryCodeComboBox.getSelectedItem()).trim();
 		final String nationalDestinationCode=nationalDestinationCodeTextField.getText().trim();
 		final String subscriberNumber=subscriberNumberTextField.getText().trim();
-		if(countryCode.length()>0 || nationalDestinationCode.length()>0 || subscriberNumber.length()>0)	//if information was given in any of the fields
+		if(countryCode.length()>0 && (nationalDestinationCode.length()>0 || subscriberNumber.length()>0))	//if a country code was given, along with information in either of the other fields
 		{
 			try
 			{
@@ -159,5 +159,30 @@ public class TelephoneNumberPanel extends BasicPanel
 		add(subscriberNumberLabel, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(subscriberNumberTextField, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		setTelephoneNumber(null);	//clear the fields
+	}
+
+	/**Verifies the component.
+	@return <code>true</code> if the component contents are valid, <code>false</code>
+		if not.
+	*/
+	public boolean verify()
+	{
+		final String countryCode=((String)countryCodeComboBox.getSelectedItem()).trim();
+		final String nationalDestinationCode=nationalDestinationCodeTextField.getText().trim();
+		final String subscriberNumber=subscriberNumberTextField.getText().trim();
+		if(countryCode.length()>0 && (nationalDestinationCode.length()>0 || subscriberNumber.length()>0))	//if a country code was given, along with information in either of the other fields
+		{
+			try
+			{
+				new TelephoneNumber(countryCode, nationalDestinationCode, subscriberNumber);	//try to create a telephone number representing the entered information
+			}
+			catch(TelephoneNumberSyntaxException telephoneNumberSyntaxException)	//if the information isn't a valid telephone number
+			{
+				JOptionPane.showMessageDialog(this, "The telephone number you entered is invalid: "+telephoneNumberSyntaxException.getMessage(), "Invalid telephone number", JOptionPane.ERROR_MESSAGE);	//G***i18n
+				nationalDestinationCodeTextField.requestFocusInWindow(); //focus on part of the telephone number text field
+				return false; //show that verification failed
+			}
+		}
+		return true;  //if we couldn't find any problems, verification succeeded
 	}
 }
