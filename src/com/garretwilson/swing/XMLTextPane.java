@@ -234,8 +234,10 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 	/**XML text pane default key bindings.*/
 	protected static final KeyBinding[] DEFAULT_KEY_BINDINGS=
 		{
-			//bind (ctrl+shift+'e') to the XML editor kit's show element tree action
-			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK|InputEvent.SHIFT_DOWN_MASK), XMLEditorKit.DISPLAY_ELEMENT_TREE_ACTION_NAME)
+			//bind (ctrl+shift+'e') to the editor kit's show element tree action
+			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK|InputEvent.SHIFT_DOWN_MASK), BasicStyledEditorKit.DISPLAY_ELEMENT_TREE_ACTION_NAME),
+			//bind (ctrl+shift+'u') to the editor kit's show element tree action
+			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK|InputEvent.SHIFT_DOWN_MASK), BasicStyledEditorKit.DISPLAY_UNICODE_TABLE_ACTION_NAME)
 		};
 
 	/**XML text pane paged key bindings.*/
@@ -571,7 +573,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		registerLinkController(XHTMLConstants.XHTML_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML view factory with XHTML elements
 		registerLinkController(OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML link controller with OEB elements
 //G***del; doesn't work		setBackground(Color.white); //G***set to get the background color from the document itself
-		setEditorKit(new XMLEditorKit(this));	//create a new XML editor kit and use it
+		setEditorKit(new XMLEditorKit(this));	//create a new XML editor kit and use it TODO why do we need this if our create default editor kit method already sets the editor kit?
 /*G***del when works
 		final Keymap keymap=getKeymap();  //get the current key map
 		loadKeymap(keymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap G***how do our actions get here from the editor kit?
@@ -688,26 +690,15 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		return (XMLDocument)getDocument();	//get the document, cast it to an XMLDocument, and return it
 	}
 
-	/**Returns the editor kit, a descendant of com.garretwilson.swing.text.xml.XMLEditorKit.
-		This is a convenience function that automaticaly casts to a com.garretwilson.swing.text.xml.XMLDocument.
-	@return The editor kit.
-	@see JTextPane#getStyledEditorKit
-	*/
-	protected final XMLEditorKit getXMLEditorKit()
-	{
-		return (XMLEditorKit)getEditorKit();	//get the editor kit, cast it to an XML editor kit, and return it
-	}
-
-
 	/* ***JEditorPane methods*** */
 
 	/**Creates and returns the editor kit to use by default. This version returns
 		a com.garretwilson.swing.text.xml.XMLEditorKit
 	@return The default editor kit.
 	*/
-	protected XMLEditorKit createDefaultEditorKit()
+	protected EditorKit createDefaultEditorKit()
 	{
-		return new XMLEditorKit(this);	//create an XML editor kit and return it
+		return new BasicStyledEditorKit(this);	//create an XML editor kit and return it
 	}
 
 	/**Sets the editor kit for handling content. Since an XMLTextPane requires a
@@ -981,8 +972,8 @@ Debug.trace("found zip file: ", uri);  //G***del
 	*/
 	protected void load(final URI baseURI, final InputStream inputStream) throws IOException
 	{
-		final XMLEditorKit xmlEditorKit=(XMLEditorKit)getEditorKit();	//get the current editor kit, and assume it's an XML editor kit G***we might want to check just to make sure
-		final Document document=xmlEditorKit.createDefaultDocument();	//create a default document
+		final EditorKit editorKit=getEditorKit();	//get the current editor kit, and assume it's an XML editor kit G***we might want to check just to make sure
+		final Document document=editorKit.createDefaultDocument();	//create a default document
 		document.putProperty(Document.StreamDescriptionProperty, URIUtilities.toValidURL(baseURI));	//store a URL version of the URI in the document, as getPage() expects this to be a URL
 		DocumentUtilities.setBaseURI(document, baseURI);	//store the base URI in the document
 Debug.trace("reading from stream"); //G***del
@@ -1028,14 +1019,14 @@ Debug.trace("reading from stream"); //G***del
 		public void run()
 		{
 			final EditorKit editorKit=getEditorKit();	//get the current editor kit
-			if(editorKit instanceof XMLEditorKit)	//if this is an XML editor kit
+			if(editorKit instanceof BasicStyledEditorKit)	//if this is our basic editor kit
 			{
 					//G***this might all go away when we revamp progress management
-				((XMLEditorKit)editorKit).addProgressListener(XMLTextPane.this);	//show that we want to be notified of any progress the XML editor kit makes G***should one of these go in the XMLTextPane? will it conflict with this one?
+				((BasicStyledEditorKit)editorKit).addProgressListener(XMLTextPane.this);	//show that we want to be notified of any progress the XML editor kit makes G***should one of these go in the XMLTextPane? will it conflict with this one?
 			}
-			if(document instanceof XMLDocument) //if this is an XML document
+			if(document instanceof BasicStyledDocument) //if this is a basic document
 			{
-				((XMLDocument)document).addProgressListener(XMLTextPane.this);	//show that we want to be notified of any progress the XML document makes G***should this go here or elsewhere? should this bubble up to the editor kit instead?
+				((BasicStyledEditorKit)document).addProgressListener(XMLTextPane.this);	//show that we want to be notified of any progress the XML document makes G***should this go here or elsewhere? should this bubble up to the editor kit instead?
 			}
 			try
 			{
@@ -1047,13 +1038,13 @@ Debug.trace("reading from stream"); //G***del
 			}
 			finally
 			{
-				if(editorKit instanceof XMLEditorKit)	//if this is an XML editor kit
+				if(editorKit instanceof BasicStyledEditorKit)	//if this is a basic editor kit
 				{
-					((XMLEditorKit)editorKit).removeProgressListener(XMLTextPane.this);	//show the editor kit that we no longer want to be notified of any progress the XML editor kit makes
+					((BasicStyledEditorKit)editorKit).removeProgressListener(XMLTextPane.this);	//show the editor kit that we no longer want to be notified of any progress the XML editor kit makes
 				}
-				if(document instanceof XMLDocument) //if this is an XML document
+				if(document instanceof BasicStyledDocument) //if this is a basic document
 				{
-					((XMLDocument)document).removeProgressListener(XMLTextPane.this);	//show the document that we no longer want to be notified of any progress the document makes
+					((BasicStyledDocument)document).removeProgressListener(XMLTextPane.this);	//show the document that we no longer want to be notified of any progress the document makes
 				}
 			}
 		}

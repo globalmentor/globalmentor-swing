@@ -1,46 +1,59 @@
 package com.garretwilson.swing.unicode;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.table.*;
+import java.awt.Component;
+import java.io.*;
+import java.net.URI;
 
-/**A panel for displaying characters based upon Unicode code points.
+import javax.swing.*;
+
+import com.garretwilson.resources.icon.IconResources;
+import com.garretwilson.swing.*;
+
+/**A panel that shows the set of Unicode code points and related information.
 @author Garret Wilson
 */
-public class UnicodePanel extends JPanel
+public class UnicodePanel extends ToolStatusPanel
 {
-	TableModel unicodeTableModel=new UnicodeTableModel();
-  BorderLayout borderLayout = new BorderLayout();
-  JTable unicodeTable = new JTable();
-	JScrollPane scrollPane=new JScrollPane();
+
+	/**The table containing the Unicode code points.*/
+	private final JTable unicodeTable;
+
+		/**@retuirn The table containing the Unicode code points.*/
+		protected JTable getUnicodeTable() {return unicodeTable;}
 
 	/**Default constructor.*/
 	public UnicodePanel()
 	{
-    try
-    {
-      jbInit();
-    }
-    catch(Exception e)
-    {
-      e.printStackTrace();
-    }
+		super(true, true, false);  //construct the parent class with a toolbar and status bar but don't initialize the panel
+		unicodeTable=new JTable(new UnicodeTableModel());	//create the Unicode table with a Unicode table model
+		initialize(); //initialize the panel
 	}
 
-	/**Initializes the UI.*/
-  private void jbInit() throws Exception
-  {
-		unicodeTable.setModel(unicodeTableModel);
-		unicodeTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-    this.setLayout(borderLayout);
-		scrollPane.getViewport().add(unicodeTable);
+	/**Initializes the user interface.*/
+	protected void initializeUI()
+	{
+		super.initializeUI();	//do the default initialization
+		unicodeTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);	//allow horizontal scrolling
+		unicodeTable.setCellSelectionEnabled(true);
+		unicodeTable.setRowSelectionAllowed(false);
+		unicodeTable.setColumnSelectionAllowed(false);
+		setContentComponent(new JScrollPane(unicodeTable));	//put the Unicode table in the center of the panel
+		setDefaultFocusComponent(unicodeTable);
+	}
 
-			//TODO whatever was trying to be done here can now probably be done with a BasicPanel.setTrackViewport...
-
-//G***fix		scrollPane.setPreferredSize(new Dimension(430, 200));
-//G***fix		scrollPane.setPreferredSize(new Dimension(430, unicodeTable.getPreferredScrollableViewportSize().height));
-//G***fix		scrollPane.setPreferredSize(unicodeTable.getPreferredScrollableViewportSize()); //G***testing
-
-    this.add(scrollPane, BorderLayout.CENTER);
-  }
+	/**Initializes actions in the action manager.
+	@param actionManager The implementation that manages actions.
+	*/
+/*TODO fix
+	protected void initializeActions(final ActionManager actionManager)
+	{
+		super.initializeActions(actionManager);	//do the default initialization
+		final Action fileMenuAction=actionManager.addMenuAction(ActionManager.getFileMenuAction());	//file
+		actionManager.addMenuAction(fileMenuAction, sdiDecorator.getResourceComponentManager().getOpenAction());	//file|open
+		actionManager.addMenuAction(fileMenuAction, sdiDecorator.getResourceComponentManager().getSaveAction());	//file|save
+			//set up the tool actions
+		actionManager.addToolAction(sdiDecorator.getResourceComponentManager().getOpenAction());	//open
+		actionManager.addToolAction(sdiDecorator.getResourceComponentManager().getSaveAction());	//save
+	}
+*/
 }

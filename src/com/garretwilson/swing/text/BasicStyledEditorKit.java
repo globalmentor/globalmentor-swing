@@ -15,6 +15,8 @@ import com.garretwilson.sun.demo.jfc.notepad.ElementTreePanel;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.event.*;
 import com.garretwilson.swing.text.ViewUtilities;
+import com.garretwilson.swing.unicode.UnicodePanel;
+import com.garretwilson.swing.unicode.UnicodeTableModel;
 import com.garretwilson.util.*;
 
 /**A styled editor kit with basic functionality, including:
@@ -86,12 +88,14 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 	/**The identifier for the action to display the element tree.*/
 	public static final String DISPLAY_ELEMENT_TREE_ACTION_NAME="display-element-tree-action";
 
-	/**Default actions used by this editor kit to augment the super class default
-		actions.
-	*/
+	/**The identifier for the action to display the Unicode table.*/
+	public static final String DISPLAY_UNICODE_TABLE_ACTION_NAME="display-unicode-table-action";
+
+	/**Default actions used by this editor kit to augment the super class default actions.*/
 	private static final Action[] DEFAULT_ACTIONS=
 	{
 		new DisplayElementTreeAction(DISPLAY_ELEMENT_TREE_ACTION_NAME),
+		new DisplayUnicodeTableAction(DISPLAY_UNICODE_TABLE_ACTION_NAME)
 	};
 
 	/**The access to input streams via URIs.*/
@@ -186,6 +190,28 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 				Debug.log(ViewUtilities.toString(textComponent));	//log the views to the debug output
 			}
 			new BasicFrame("Elements", new ElementTreePanel(textComponent)).setVisible(true);	//show a new frame showing elements G***i18n
+		}
+	}
+
+	/**Action to display the Unicode table.*/
+	protected static class DisplayUnicodeTableAction extends TextAction
+	{
+
+		/**Creates a Unicode table action with the appropriate name.
+		@param name The name of the action.
+		*/
+		public DisplayUnicodeTableAction(final String name)
+		{
+			super(name);  //do the default construction with the name
+		}
+
+		/**The operation to perform when this action is triggered.
+		@param actionEvent The action representing the event.
+		*/
+		public void actionPerformed(final ActionEvent actionEvent)
+		{
+//TODO fix			new BasicFrame("Unicode", new JScrollPane(new UnicodePanel())).setVisible(true);	//show a new frame showing elements G***i18n
+			BasicOptionPane.showMessageDialog(null, new JScrollPane(new UnicodePanel()), "Unicode", BasicOptionPane.INFORMATION_MESSAGE);	//G***i18n
 		}
 	}
 
