@@ -1,11 +1,13 @@
 package com.garretwilson.swing;
 
 import java.awt.Component;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URI;
 import javax.swing.*;
 import com.garretwilson.io.*;
 import com.garretwilson.model.*;
+import com.garretwilson.net.URIConstants;
+import com.garretwilson.rdf.DefaultRDFResource;
 import com.garretwilson.rdf.RDFFileProcessor;
 
 /**An implementation of a resource selector that selects resources from a
@@ -30,6 +32,25 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 		this.parentComponent=parentComponent;	//save the parent component
 	}
 
+	/**Retrieves a description of the resource with the given reference URI.
+	@param referenceURI The reference URI of the resource in question.
+	@return A description of the identified resource.
+	@exception IOException Thrown if there is an error retrieving the resource
+		description.
+	*/
+	public Resource getResource(final URI referenceURI) throws IOException
+	{
+		if(URIConstants.FILE_SCHEME.equals(referenceURI.getScheme()))	//if this is a file:// URI
+		{ 
+			final File file=new File(referenceURI);	//create a new file from the reference URI
+			return new RDFFileProcessor().createResource(file);	//return a resource representing the selected file
+		}
+		else	//if this is not a file URI
+		{
+			return new DefaultRDFResource(referenceURI);	//create a default resource from the reference URI
+		}
+	}
+
 	/**Selects a resource for input.
 	@param oldResource The currently selected resource, if applicable, or
 		<code>null</code> if there is no selected resource.
@@ -50,7 +71,7 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 			final File selectedFile=fileChooser.getSelectedFile();	//get the file they chose
 			if(selectedFile!=null)	//if they chose a file
 			{
-				return new RDFFileProcessor().createResource(selectedFile);	//return a resource representing the selected file
+				return getResource(selectedFile.toURI());	//convert the file into a URI and create a resource to describe it
 			}
 		}
 		return null;	//show that we couldn't select a file	

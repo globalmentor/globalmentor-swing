@@ -60,6 +60,8 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 
 		/**@return The preferences that should be used for this frame, or the default
 			preferences for this class if no preferences are specifically set.
+		@exception SecurityException Thrown if a security manager is present and
+			it denies <code>RuntimePermission("preferences")</code>.
 		*/
 		public Preferences getPreferences()
 		{
@@ -584,40 +586,54 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable
 	protected void saveBoundsPreferences()
 	{
 		final Preferences preferences=getPreferences();	//get the preferences
-		final Rectangle bounds=getBounds();	//get the current bounds
-		final int extendedState=getExtendedState();	//get the current extended state
-		preferences.putInt(EXTENDED_STATE_PREFERENCE, extendedState);	//store the extended state
-		if(extendedState!=MAXIMIZED_HORIZ && extendedState!=MAXIMIZED_BOTH)	//if we aren't maximized horizontally
+		try
 		{
-			preferences.putInt(BOUNDS_X_PREFERENCE, bounds.x);	//save the horizontal bounds
-			preferences.putInt(BOUNDS_WIDTH_PREFERENCE, bounds.width);
+			final Rectangle bounds=getBounds();	//get the current bounds
+			final int extendedState=getExtendedState();	//get the current extended state
+			preferences.putInt(EXTENDED_STATE_PREFERENCE, extendedState);	//store the extended state
+			if(extendedState!=MAXIMIZED_HORIZ && extendedState!=MAXIMIZED_BOTH)	//if we aren't maximized horizontally
+			{
+				preferences.putInt(BOUNDS_X_PREFERENCE, bounds.x);	//save the horizontal bounds
+				preferences.putInt(BOUNDS_WIDTH_PREFERENCE, bounds.width);
+			}
+			if(extendedState!=MAXIMIZED_VERT && extendedState!=MAXIMIZED_BOTH)	//if we aren't maximized vertically
+			{
+				preferences.putInt(BOUNDS_Y_PREFERENCE, bounds.y);	//save the vertical bounds
+				preferences.putInt(BOUNDS_HEIGHT_PREFERENCE, bounds.height);
+			}
 		}
-		if(extendedState!=MAXIMIZED_VERT && extendedState!=MAXIMIZED_BOTH)	//if we aren't maximized vertically
+		catch(SecurityException securityException)	//if we can't access preferences
 		{
-			preferences.putInt(BOUNDS_Y_PREFERENCE, bounds.y);	//save the vertical bounds
-			preferences.putInt(BOUNDS_HEIGHT_PREFERENCE, bounds.height);
+			Debug.warn(securityException);	//warn of the security problem			
 		}
 	}
 
 	/**Restores the bounds from the preferences.*/
 	public void restoreBoundsPreferences()
 	{
-		final Preferences preferences=getPreferences();	//get the preferences
-		final int extendedState=preferences.getInt(EXTENDED_STATE_PREFERENCE, NORMAL);	//get the stored extended state
-		final int x=preferences.getInt(BOUNDS_X_PREFERENCE, 0);	//get the stored bounds, using invalid dimensions for defaults
-		final int y=preferences.getInt(BOUNDS_Y_PREFERENCE, 0);
-		final int width=preferences.getInt(BOUNDS_WIDTH_PREFERENCE, -1);
-		final int height=preferences.getInt(BOUNDS_HEIGHT_PREFERENCE, -1);
-
+		boolean useDefault=true;	//we'll use the defaults if we can't load the saved values
+		try
+		{
+			final Preferences preferences=getPreferences();	//get the preferences
+			final int extendedState=preferences.getInt(EXTENDED_STATE_PREFERENCE, NORMAL);	//get the stored extended state
+			final int x=preferences.getInt(BOUNDS_X_PREFERENCE, 0);	//get the stored bounds, using invalid dimensions for defaults
+			final int y=preferences.getInt(BOUNDS_Y_PREFERENCE, 0);
+			final int width=preferences.getInt(BOUNDS_WIDTH_PREFERENCE, -1);
+			final int height=preferences.getInt(BOUNDS_HEIGHT_PREFERENCE, -1);
 //TODO maybe the stuff gets changed around here---the height and width seem to be changed, but the x and y seem to be lost
 //G***there's some sort of timing issue: when debugging, the things get changed correctly, but in real time often the x and y coordinates get set before the extended state is updated to maximized
-
-		if(width>=0 && height>=0)	//if we had valid dimensions stored
-		{
-			setBounds(x, y, width, height);	//restore the bounds we had saved in preferences
-			setExtendedState(extendedState);	//update the extended state to match that stored
+			useDefault=width<0 || height<0;	//use the default if we didn't get valid dimensions
+			if(!useDefault)	//if we had valid dimensions stored
+			{
+				setBounds(x, y, width, height);	//restore the bounds we had saved in preferences
+				setExtendedState(extendedState);	//update the extended state to match that stored
+			}
 		}
-		else	//if no bounds are stored in preferences
+		catch(SecurityException securityException)	//if we can't access preferences
+		{
+			Debug.warn(securityException);	//warn of the security problem			
+		}
+		if(useDefault)	//if no bounds are stored in preferences
 		{
 			setSize(800, 600);	//set a default size, which will be saved
 			WindowUtilities.center(this);	//center the window, which will save the new location

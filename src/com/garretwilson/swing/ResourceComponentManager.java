@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.Event;
 import java.awt.event.*;
 import java.io.*;
+import java.net.URI;
+
 import javax.swing.*;
 import com.garretwilson.model.*;
 import com.garretwilson.resources.icon.IconResources;
@@ -147,28 +149,56 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 	}
 
 	/**Opens a resource.
-	<p>For normal operation, this method should not be modified and
-		<code>open(URI)</code> should be overridden. Multiple document
-		applications may also override <code>getResourceComponentState()</code> and
-		<code>setResourceComponentState()</code>.</p>
 	@return <code>true</code> if the resource was successfully opened, or
 		<code>false</code>if the operation was canceled.
-	@see #askOpen
-	@see #setResourceViewState
+	@see #open(Resource)
 	*/
 	public boolean open()
 	{
-		//G***what if we're already open?
-		//G***should this be load() instead of open(?
+		return open((Resource)null);	//open without yet knowing which resource to open
+	}
+
+	/**Opens a resource from the location specified.
+	@param referenceURI The URI of the resource to open.
+	@return <code>true</code> if the resource was successfully opened, or
+		<code>false</code>if the operation was canceled.
+	*/
+	public boolean open(final URI referenceURI)
+	{
 		try
 		{
-			final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
-				//ask for a resource for input
-			final Resource resource=getResourceSelector().selectInputResource(resourceComponentState!=null ? resourceComponentState.getResource() : null);
-			if(resource!=null)  //if a valid resource was returned
+			final Resource resource=getResourceSelector().getResource(referenceURI);	//get a description of the resource
+			return open(resource);	//open the resource
+		}
+		catch(final IOException ioException)	//if there is an error opening the resource
+		{
+			SwingApplication.displayApplicationError(getParentComponent(), ioException);	//display the error to the user
+		}
+		return false;	//show that we couldn't open anything, for some reason
+	}
+
+	/**Opens the specified resource.
+	@param resource The resource to open, or <code>null</code> if a resource
+		should be chosen.
+	@return <code>true</code> if the resource was successfully opened, or
+		<code>false</code>if the operation was canceled.
+	@see ResourceSelector#selectInputResource(Resource)
+	@see #setResourceComponentState(ResourceComponentState)
+	*/
+	protected boolean open(Resource resource)
+	{
+		try
+		{
+			if(resource==null)	//if no resource was indicated
+			{
+				final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
+					//ask for a resource for input
+				resource=getResourceSelector().selectInputResource(resourceComponentState!=null ? resourceComponentState.getResource() : null);
+			}
+			if(resource!=null)  //if we now have a valid resource
 			{
 				assert resource.getReferenceURI()!=null : "Selected resource has no URI.";
-				final ResourceComponentState newResourceComponentState=open(resource);	//try to open the resource
+				final ResourceComponentState newResourceComponentState=read(resource);	//try to open the resource
 				if(newResourceComponentState!=null)	//if we succeed in opening the resource
 				{
 					setResourceComponentState(newResourceComponentState);	//change to the new state
@@ -183,20 +213,20 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 		return false;	//show that we couldn't open anything, for some reason
 	}
 
-	/**Loads the resource from the location specified.
+	/**Reads the specified resource.
 	@param resource The resource to open.
 	@return An object representing the opened resource and its state, or
 		<code>null</code> if the process was canceled.
 	@exception IOException Thrown if there was an error reading the resource.
 	*/
-	protected ResourceComponentState open(final Resource resource) throws IOException
+	protected ResourceComponentState read(final Resource resource) throws IOException
 	{
 //TODO change the cursor while we open
 			//get an input stream to the resource
 		final InputStream inputStream=getResourceSelector().getInputStream(resource.getReferenceURI());
 		try
 		{
-			final Component component=open(resource, inputStream);	//read the component from the input stream
+			final Component component=read(resource, inputStream);	//read the component from the input stream
 			final ResourceComponentState resourceComponentState=new ResourceComponentState(resource, component);	//create a new state for the resource
 			return resourceComponentState;	//save the component state
 		}
@@ -206,12 +236,12 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 		}
 	}
 
-	/**Opens a resource from an input stream.
+	/**Reads a resource from an input stream.
 	@param resource The resource to open.
 	@param inputStream The input stream from which to read the data.
 	@throws IOException Thrown if there is an error reading the data.
 	*/ 
-	public abstract Component open(final Resource resource, final InputStream inputStream) throws IOException;
+	protected abstract Component read(final Resource resource, final InputStream inputStream) throws IOException;
 
 	/**Saves the current resource.
 	<p>If the current resource component is verifiable, the component is first
@@ -238,7 +268,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 				{
 					try
 					{
-						save(resourceComponentState.getResource(), resourceComponentState.getComponent()); //save using the resource we already have
+						write(resourceComponentState.getResource(), resourceComponentState.getComponent()); //save using the resource we already have
 						return true;
 					}
 					catch(IOException ioException)	//if there is an error saving the resource
@@ -282,7 +312,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 			final Resource resource=getResourceSelector().selectOutputResource(resourceComponentState.getResource());  //get the resource to use for saving
 			if(resource!=null)  //if a valid resource was returned
 			{
-				save(resource, resourceComponentState.getComponent()); //save the resource
+				write(resource, resourceComponentState.getComponent()); //save the resource
 				resourceComponentState.setResource(resource);	//change the resource of the component state
 /*G***del if not needed
 				if(!ObjectUtilities.equals(resourceComponentState.getResource().getReferenceURI(), uri))	//if the URI isn't the same //TODO fix or delete comment: wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)
@@ -301,18 +331,18 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 		return false;  //show that we couldn't save the resource		
 	}
 
-	/**Saves a resource.
+	/**Writes a resource.
 	@param resource The resource to save.
 	@param component The component that contains the data to save.
 	@exception IOException Thrown if there was an error writing the resource.
 	*/
-	protected void save(final Resource resource, final Component component) throws IOException
+	protected void write(final Resource resource, final Component component) throws IOException
 	{
 //TODO change the cursor while we save
 		final OutputStream outputStream=getResourceSelector().getOutputStream(resource.getReferenceURI());	//get an output stream to this resource's URI
 		try
 		{
-			save(resource, component, outputStream);	//write the component to the output stream
+			write(resource, component, outputStream);	//write the component to the output stream
 		}
 		finally
 		{
@@ -326,7 +356,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 	@param outputStream The input stream to which to write the data.
 	@throws IOException Thrown if there is an error writing the data.
 	*/ 
-	public abstract void save(final Resource resource, final Component component, final OutputStream outputStream) throws IOException;
+	protected abstract void write(final Resource resource, final Component component, final OutputStream outputStream) throws IOException;
 
 	/**Action for opening a resource.*/
 	class OpenAction extends AbstractAction

@@ -6,6 +6,7 @@ import javax.swing.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.dublincore.DCUtilities;
 import com.garretwilson.resources.icon.IconResources;
+import com.garretwilson.util.Debug;
 
 /**Main frame parent class for an application.
 <p>If an <code>Application</code> is set for the frame, the close
@@ -197,7 +198,14 @@ public class ApplicationFrame extends BasicFrame
 		if(application!=null)	//if this frame represents an application
 		{
 			setDefaultCloseOperation(EXIT_ON_CLOSE);	//exit when the frame closes
-			setPreferences(application.getPreferences());	//use the application preference node
+			try
+			{
+				setPreferences(application.getPreferences());	//use the application preference node
+			}
+			catch(SecurityException securityException)	//if we can't access preferences
+			{
+				Debug.warn(securityException);	//warn of the security problem			
+			}
 		}
 		closeAction=new CloseAction();  //create the close action
 		exitAction=new ExitAction();  //create the exit action

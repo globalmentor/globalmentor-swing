@@ -21,6 +21,15 @@ public abstract class SwingApplication extends Application
 		super(referenceURI);	//construct the parent class
 	}
 
+	/**Reference URI and arguments constructor.
+	@param referenceURI The reference URI of the application.
+	@param args The command line arguments.
+	*/
+	public SwingApplication(final URI referenceURI, final String[] args)
+	{
+		super(referenceURI, args);	//construct the parent class
+	}
+
 	/**Displays an error message to the user for a throwable object.
 	@param throwable The condition that caused the error.
 	*/
@@ -261,7 +270,7 @@ public abstract class SwingApplication extends Application
 		}
 		catch(Throwable throwable)  //if there are any errors
 		{
-			error(throwable);	//report the error
+			application.displayError(throwable);	//report the error
 			return -1;	//show that there was an error
 		}
 	}
