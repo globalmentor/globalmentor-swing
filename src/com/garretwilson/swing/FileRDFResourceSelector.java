@@ -6,7 +6,7 @@ import java.net.URI;
 import javax.swing.*;
 import com.garretwilson.io.*;
 import com.garretwilson.model.*;
-import com.garretwilson.net.URIConstants;
+import static com.garretwilson.net.URIConstants.*;
 import com.garretwilson.rdf.DefaultRDFResource;
 import com.garretwilson.rdf.RDFFileProcessor;
 
@@ -40,7 +40,7 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 	*/
 	public Resource getResource(final URI referenceURI) throws IOException
 	{
-		if(URIConstants.FILE_SCHEME.equals(referenceURI.getScheme()))	//if this is a file:// URI
+		if(FILE_SCHEME.equals(referenceURI.getScheme()))	//if this is a file:// URI
 		{ 
 			final File file=new File(referenceURI);	//create a new file from the reference URI
 			return new RDFFileProcessor().createResource(file);	//return a resource representing the selected file
@@ -56,12 +56,15 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 		<code>null</code> if there is no selected resource.
 	@return The selected resource, or <code>null</code> if selection was
 		canceled.
+	@exception SecurityException Thrown if selecting an input resource is not allowed.
 	@exception IOException Thrown if there is an error locating a resource.
 	*/
-	public Resource selectInputResource(final Resource oldResource) throws IOException
+	public Resource selectInputResource(final Resource oldResource) throws SecurityException, IOException
 	{
-			//if we were given a resource with a valid URI, create a file from that URI and get the parent directory of that file
-		final File currentDirectory=oldResource!=null && oldResource.getReferenceURI()!=null ? new File(oldResource.getReferenceURI()).getParentFile() : null;
+			//if we were given a resource with a valid file URI, create a file from that URI and get the parent directory of that file
+		final File currentDirectory=oldResource!=null && oldResource.getReferenceURI()!=null && FILE_SCHEME.equals(oldResource.getReferenceURI().getScheme())
+				? new File(oldResource.getReferenceURI()).getParentFile()	//get the parent file
+				: null;	//if this was not a file URI, we can't get the current directory
 		final JFileChooser fileChooser=new JFileChooser(currentDirectory);	//create a new dialog for listing files TODO set the current directory
 //G***fix current directory				fileChooser.setCurrentDirectory(getReaderConfig().getFileLocations().getCurrentDirectory());	//change the file chooser directory to the reader's current directory
 		final int option=fileChooser.showOpenDialog(getParentComponent());	//show the open dialog
@@ -83,9 +86,10 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 		<code>null</code> if there is no selected resource.
 	@return The selected resource, or <code>null</code> if selection was
 		canceled.
+	@exception SecurityException Thrown if selecting an output resource is not allowed.
 	@exception IOException Thrown if there is an error locating a resource.
 	*/
-	public Resource selectOutputResource(final Resource oldResource) throws IOException
+	public Resource selectOutputResource(final Resource oldResource) throws SecurityException, IOException
 	{
 	return null;	//TODO fix save dialog
 	}

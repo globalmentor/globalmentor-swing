@@ -26,31 +26,31 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 	private final Action addAction;
 
 		/**@return The action for adding an item.*/
-		protected Action getAddAction() {return addAction;}
+		public Action getAddAction() {return addAction;}
 
 	/**The action for deleting an item.*/
 	private final Action deleteAction;
 
 		/**@return The action for deleting an item.*/
-		protected Action getDeleteAction() {return deleteAction;}
+		public Action getDeleteAction() {return deleteAction;}
 
 	/**The action for editing an item.*/
 	private final Action editAction;
 
 		/**@return The action for editing an item.*/
-		protected Action getEditAction() {return editAction;}
+		public Action getEditAction() {return editAction;}
 
 	/**The action for moving an item up.*/
 	private final Action moveUpAction;
 
 		/**@return The action for moving an item up.*/
-		protected Action getMoveUpAction() {return moveUpAction;}
+		public Action getMoveUpAction() {return moveUpAction;}
 
 	/**The action for moving an item down.*/
 	private final Action moveDownAction;
 
 		/**@return The action for moving an item down.*/
-		protected Action getMoveDownAction() {return moveDownAction;}
+		public Action getMoveDownAction() {return moveDownAction;}
 		
 	/**The listener that updates the status in response to list data changes.*/
 	protected final ListDataListener updateStatusListDataListener;

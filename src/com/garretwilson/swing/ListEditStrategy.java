@@ -17,13 +17,13 @@ public abstract class ListEditStrategy extends ListModelEditStrategy
 	private final Action selectAllAction;
 
 		/**@return The action for selecting all items.*/
-		protected Action getSelectAllAction() {return selectAllAction;}
+		public Action getSelectAllAction() {return selectAllAction;}
 
 	/**The action for selecting no items.*/
 	private final Action selectNoneAction;
 
 		/**@return The action for selecting no items.*/
-		protected Action getSelectNoneAction() {return selectNoneAction;}
+		public Action getSelectNoneAction() {return selectNoneAction;}
 
 	/**The list component.*/
 	private final JList list;

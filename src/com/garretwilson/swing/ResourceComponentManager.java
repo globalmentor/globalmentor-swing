@@ -312,6 +312,10 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 				}
 			}
 		}
+		catch(final SecurityException securityException)	//if there is an error selecting the resource
+		{
+			SwingApplication.displayApplicationError(getParentComponent(), securityException);	//display the error to the user
+		}
 		catch(final IOException ioException)	//if there is an error opening the resource
 		{
 			SwingApplication.displayApplicationError(getParentComponent(), ioException);	//display the error to the user
@@ -430,6 +434,10 @@ public abstract class ResourceComponentManager extends BoundPropertyObject imple
 	//G***fix or del				setFile(file);  //update the file, just in case they override saveFile() and don't call this version
 				return true;	//show that the resource was successfully saved
 			}
+		}
+		catch(final SecurityException securityException)	//if there is an error selecting the resource
+		{
+			SwingApplication.displayApplicationError(getParentComponent(), securityException);	//display the error to the user
 		}
 		catch(IOException ioException)	//if there is an error saving the resource
 		{
