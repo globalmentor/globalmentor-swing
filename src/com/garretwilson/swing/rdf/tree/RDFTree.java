@@ -41,18 +41,18 @@ public class RDFTree extends JTree	//TODO eventually delete this class and just 
 	/**The object that determines how the resources will be sorted,
 		or <code>null</code> if the resources should not be sorted.
 	*/
-	private Comparator comparator=null;
+//TODO fix	private Comparator comparator=null;
 
 		/**@return The object that determines how the resources will be sorted,
 			or <code>null</code> if the resources should not be sorted.
 		*/
-		public Comparator getComparator() {return comparator;}
+//TODO fix		public Comparator getComparator() {return comparator;}
 
 		/**Sets the method of sorting the resources.
 		@param newComparator The object that determines how the resources will be
 			sorted, or <code>null</code> if the resources should not be sorted.
 		*/
-		public void setComparator(final Comparator newComparator) {comparator=newComparator;}
+//TODO fix		public void setComparator(final Comparator newComparator) {comparator=newComparator;}
 
 	/**Default constructor.*/
 	public RDFTree()
@@ -119,7 +119,8 @@ public class RDFTree extends JTree	//TODO eventually delete this class and just 
 		}
 		else  //if no specific resource was given
 		{
-			treeNode=new RDFTreeNode(rdf, rdfXMLifier, getComparator()); //create a tree node for the entire RDF data model, using the comparator we have, if any
+			treeNode=new RDFTreeNode(rdf, rdfXMLifier); //create a tree node for the entire RDF data model, using the comparator we have, if any
+//TODO fix			treeNode=new RDFTreeNode(rdf, rdfXMLifier, getComparator()); //create a tree node for the entire RDF data model, using the comparator we have, if any
 		}
 		setModel(new DefaultTreeModel(treeNode));  //create a new model and set the model for the tree
 	}

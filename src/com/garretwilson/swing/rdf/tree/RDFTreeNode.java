@@ -30,27 +30,29 @@ public class RDFTreeNode extends DynamicTreeNode
 	/**The object that determines how the resources will be sorted,
 		or <code>null</code> if the resources should not be sorted.
 	*/
-	private Comparator comparator=null;
+//TODO fix	private Comparator comparator=null;
 
 		/**@return The object that determines how the resources will be sorted,
 			or <code>null</code> if the resources should not be sorted.
 		*/
-		public Comparator getComparator() {return comparator;}
+//TODO fix		public Comparator getComparator() {return comparator;}
 
 		/**Sets the method of sorting the resources.
 		@param newComparator The object that determines how the resources will be
 			sorted, or <code>null</code> if the resources should not be sorted.
 		*/
-		public void setComparator(final Comparator newComparator) {comparator=newComparator;}
+//TODO fix		public void setComparator(final Comparator newComparator) {comparator=newComparator;}
 
 	/**Constructs a tree node from an RDF data model.
 	@param rdf The RDF data model represented by this node.
 	@param rdfXMLifier The RDF XML-ifier to use for creating labels.
 	*/
+/*TODO fix
 	public RDFTreeNode(final RDF rdf, final RDFXMLifier rdfXMLifier)
 	{
 		this(rdf, rdfXMLifier, null);	//construct the tree node without a comparator
 	}
+*/
 
 	/**Constructs a tree node from an RDF data model.
 	@param rdf The RDF data model represented by this node.
@@ -58,11 +60,11 @@ public class RDFTreeNode extends DynamicTreeNode
 	@param comparator The object that determines how the resources will be
 		sorted, or <code>null</code> if the resources should not be sorted.
 	*/
-	public RDFTreeNode(final RDF rdf, final RDFXMLifier rdfXMLifier, final Comparator comparator)
+	public RDFTreeNode(final RDF rdf, final RDFXMLifier rdfXMLifier/*TODO fix, final Comparator comparator*/)
 	{
 		super(rdf); //store the RDF data model as the user object
 		xmlifier=rdfXMLifier; //save the XMLifier we'll use for generating labels
-		setComparator(comparator);	//set the comparator
+//TODO fix		setComparator(comparator);	//set the comparator
 	}
 
   /**@return <code>true</code> if the RDF data model has no resources.*/
@@ -75,7 +77,8 @@ public class RDFTreeNode extends DynamicTreeNode
 	protected void loadChildNodes()
 	{
 			//get an iterator to the root RDF resources, sorting them if requested
-		final Iterator rootResourceIterator=getRDF().getRootResourceIterator(getComparator());
+//TODO fix		final Iterator rootResourceIterator=getRDF().getRootResourceIterator(getComparator());
+		final Iterator rootResourceIterator=getRDF().getRootResourceIterator(null);
 		while(rootResourceIterator.hasNext()) //while there are root resources remaining
 		{
 			final RDFResource resource=(RDFResource)rootResourceIterator.next();  //get the next root resource
