@@ -128,7 +128,7 @@ public class UserObjectTreeCellRenderer extends DefaultTreeCellRenderer
 		If the value is a <code>DefaultMutableTreeNode</code>, the user object is
 		examined and any icon registered for the user item's class is used.
 		Otherwise, the default icon (that configured by the parent class) is used.
-		Note that this version only works property with implementations of
+		Note that this version only works properly with implementations of
 		<code>DefaultTreeCellRenderer</code> that return an instance of
 		<code>JLabel</code>.
 	@param tree The tree component.
@@ -155,23 +155,39 @@ public class UserObjectTreeCellRenderer extends DefaultTreeCellRenderer
 				final DefaultMutableTreeNode defaultMutableTreeNode=(DefaultMutableTreeNode)value;  //cast the value to the type of node that will let us get the user object
 				  //get the key associated with the user object
 				final Object userObjectKey=getUserObjectKey(defaultMutableTreeNode.getUserObject());
-//G***del				final Class userObjectClass=defaultMutableTreeNode.getUserObject().getClass(); //get the class of the user object being stored
-				final Icon openIcon=getOpenIcon(userObjectKey); //get the open icon registered for this user object key
-				final Icon closedIcon=getClosedIcon(userObjectKey); //get the closed icon registered for this user object key
-				final Icon leafIcon=getLeafIcon(userObjectKey); //get the leaf icon registered for this user object key
-				final Icon icon;  //we'll try to assign a new icon here
-				if(value instanceof IconTreeNode && ((IconTreeNode)value).getIcon()!=null) //if the tree node is an icon tree node with an icon
+				Icon icon=null;  //we'll try to assign a new icon here
+				if(isLeaf)  //if this is a leaf node
 				{
-					icon=((IconTreeNode)value).getIcon(); //use the tree node's icon
+					if(value instanceof IconTreeNode)	//if the tree node is an icon tree node
+					{
+						icon=((IconTreeNode)value).getLeafIcon();	//get the leaf icon
+					}
+					if(icon==null)	//if the tree node is not an icon tree node, or it didn't have an appropriate icon
+					{
+						icon=getLeafIcon(userObjectKey); //get the leaf icon registered for this user object key
+					}
 				}
-				else  //if the tree node is not an icon tree node
+				else if(isExpanded)  //if this value is expanded
 				{
-					if(isLeaf)  //if this is a leaf node
-						icon=leafIcon;  //set the icon to the leaf icon we found
-					else if(isExpanded)  //if this value is expanded
-						icon=openIcon;  //set the icon to the open icon we found
-					else  //if we shouldn't look for a leaf or closed icon
-						icon=closedIcon;  //we'll go with the closed icon we found
+					if(value instanceof IconTreeNode)	//if the tree node is an icon tree node
+					{
+						icon=((IconTreeNode)value).getOpenIcon();	//get the open icon
+					}
+					if(icon==null)	//if the tree node is not an icon tree node, or it didn't have an appropriate icon
+					{
+						icon=getOpenIcon(userObjectKey); //get the open icon registered for this user object key
+					}
+				}
+				else  //if we shouldn't look for a leaf or open icon
+				{
+					if(value instanceof IconTreeNode)	//if the tree node is an icon tree node
+					{
+						icon=((IconTreeNode)value).getClosedIcon();	//get the closed icon
+					}
+					if(icon==null)	//if the tree node is not an icon tree node, or it didn't have an appropriate icon
+					{
+						icon=getClosedIcon(userObjectKey); //get the closed icon registered for this user object key
+					}
 				}
 				if(icon!=null)  //if we found a new icon to use
 				{
