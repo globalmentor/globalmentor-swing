@@ -24,7 +24,8 @@ import com.garretwilson.util.*;
 	panel because a root focus traversal cycle, the correct default focus
 	component will be selected.</p>
 <p>The panel can create default listeners, such as <code>ActionListener</code>
-	and <code>DocumentListener</code>, that do nothing but update the status.</p> 
+	and <code>DocumentListener</code>, that do nothing but update the status.</p>
+<p>The panel provides a shared constant inset object specifying no insets.</p> 
 <p>Bound properties:</p>
 <dl>
 	<dt><code>DefaultPanel.TITLE_PROPERTY_NAME</code> (<code>String</code>)</dt>
@@ -37,6 +38,9 @@ import com.garretwilson.util.*;
 */
 public class DefaultPanel extends JPanel implements CanClosable, DefaultFocusable
 {
+
+	/**An object specifying no insets.*/
+	public final static Insets NO_INSETS=new Insets(0, 0, 0, 0);
 
 	/**The name of the bound title property.*/
 	public final String TITLE_PROPERTY_NAME=DefaultPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"title";	//G***maybe later move this to a titleable interface

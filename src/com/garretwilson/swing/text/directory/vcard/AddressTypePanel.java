@@ -57,8 +57,8 @@ public class AddressTypePanel extends DefaultPanel
 		public JCheckBox getPreferredCheckbox() {return preferredCheckBox;}
 
 	/**Places the delivery address type into the various fields.
-	@param addressType The new delivery address type, one of the
-		<code>Address.XXX_ADDRESS_TYPE</code> constants.
+	@param addressType The new delivery address type, one or more of the
+		<code>Address.XXX_ADDRESS_TYPE</code> constants ORed together.
 	@see Address
 	*/
 	public void setAddressType(final int addressType)
@@ -72,8 +72,8 @@ public class AddressTypePanel extends DefaultPanel
 		preferredCheckBox.setSelected((addressType & Address.PREFERRED_ADDRESS_TYPE)!=0);
 	}
 	
-	/**@return The delivery address type, one of the
-		<code>Address.XXX_ADDRESS_TYPE</code> constants.
+	/**@return The delivery address type, a combination of the
+		<code>Address.XXX_ADDRESS_TYPE</code> constants ORed together.
 	@see Address
 	*/
 	public int getAddressType()
@@ -96,8 +96,19 @@ public class AddressTypePanel extends DefaultPanel
 		return addressType;	//return the address type
 	}
 
-	/**Default constructor.*/
+	/**Default constructor.
+	@see Address#DEFAULT_ADDRESS_TYPE
+	*/
 	public AddressTypePanel()
+	{
+		this(Address.DEFAULT_ADDRESS_TYPE);	//construct the panel with the default address type
+	}
+
+	/**Address type constructor.
+	@param addressType The new delivery address type, one or more of the
+		<code>Address.XXX_ADDRESS_TYPE</code> constants ORed together.
+	*/
+	public AddressTypePanel(final int addressType)
 	{
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		domesticCheckBox=new JCheckBox();
@@ -109,6 +120,7 @@ public class AddressTypePanel extends DefaultPanel
 		preferredCheckBox=new JCheckBox();
 		setDefaultFocusComponent(preferredCheckBox);	//set the default focus component
 		initialize();	//initialize the panel
+		setAddressType(addressType);	//set the given addres type
 	}
 	
 	/**Initializes the user interface.*/
@@ -140,8 +152,6 @@ public class AddressTypePanel extends DefaultPanel
 		add(postalCheckBox, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 8, 0, 0), 0, 0));
 		add(parcelCheckBox, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 8, 0, 0), 0, 0));
 */
-		setAddressType(Address.NO_ADDRESS_TYPE);	//clear the fields
-
 	}
 
 }

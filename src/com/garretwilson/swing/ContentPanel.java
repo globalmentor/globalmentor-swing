@@ -49,7 +49,7 @@ public class ContentPanel extends DefaultPanel implements CanClosable
 		  			//TODO remove the JOptionPane check when this enlarges but not shrinks the window
 					WindowUtilities.packWindow(this);	//pack the window we're inside, if there is one, to ensure there's enough room to view this component
 		  	}
-		  	newContentComponent.repaint();	//repaint the component (important if we're inside a JOptionPane, for instance
+		  	newContentComponent.repaint();	//repaint the component (important if we're inside a JOptionPane, for instance)
 				if(newContentComponent instanceof DefaultFocusable)	//if the content component knows what should be focused by default
 				{
 					((DefaultFocusable)newContentComponent).requestDefaultFocusComponentFocus();	//let the component request the focus for its default focus component

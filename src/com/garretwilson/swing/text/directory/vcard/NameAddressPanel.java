@@ -16,6 +16,9 @@ public class NameAddressPanel extends DefaultPanel
 
 	/**The addresses panel.*/
 	private final AddressesPanel addressesPanel;
+
+	/**The telecommunications panel.*/
+	private final TelecommunicationsPanel telecommunicationsPanel;
 	
 	/**Default constructor.*/
 	public NameAddressPanel()
@@ -23,6 +26,7 @@ public class NameAddressPanel extends DefaultPanel
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		identificationPanel=new IdentificationPanel();
 		addressesPanel=new AddressesPanel();
+		telecommunicationsPanel=new TelecommunicationsPanel();
 		setDefaultFocusComponent(identificationPanel);	//set the default focus component
 		initialize();	//initialize the panel
 	}
@@ -31,8 +35,9 @@ public class NameAddressPanel extends DefaultPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		add(identificationPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		add(addressesPanel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		add(identificationPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		add(addressesPanel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		add(telecommunicationsPanel, new GridBagConstraints(2, 0, 1, 2, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 	}
 
 }

@@ -75,7 +75,7 @@ public class IdentificationPanel extends DefaultPanel
 		namePanel.getHonorificPrefixComboBox().addActionListener(createUpdateStatusActionListener());
 		namePanel.getHonorificSuffixComboBox().addActionListener(createUpdateStatusActionListener());
 		formattedNameLabel.setText("Formatted Name");	//G***i18n
-		formattedNameTextField.setColumns(16);
+		formattedNameTextField.setColumns(10);
 		formattedNameTextField.getDocument().addDocumentListener(new DocumentModifyAdapter()
 				{
 					public void modifyUpdate(final DocumentEvent documentEvent)	//if the formatted name text field is modified
@@ -86,10 +86,10 @@ public class IdentificationPanel extends DefaultPanel
 					}
 				});
 		nicknameLabel.setText("Nickname");	//G***i18n
-		nicknameTextField.setColumns(10);
-		add(namePanel, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		nicknameTextField.setColumns(8);
+		add(namePanel, new GridBagConstraints(0, 0, 2, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		add(nicknameTextField, new GridBagConstraints(0, 2, 1, 1, 0.4, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		add(nicknameTextField, new GridBagConstraints(0, 2, 1, 1, 0.4, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		add(formattedNameLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		add(formattedNameTextField, new GridBagConstraints(1, 2, 1, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 	}

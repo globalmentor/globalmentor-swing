@@ -8,7 +8,7 @@ import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
 
-/**A panel allowing entry of one or more addresses a vCard <code>text/directory</code>
+/**A panel allowing entry of one or more addresses of a vCard <code>text/directory</code>
 	profile as defined in <a href="http://www.ietf.org/rfc/rfc2426.txt">RFC 2426</a>,
 	"vCard MIME Directory Profile".
 @author Garret Wilson
