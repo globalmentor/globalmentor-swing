@@ -25,7 +25,7 @@ import com.garretwilson.util.*;
 @see ResourceComponentManager#ResourceComponentState
 @author Garret Wilson
 */
-public abstract class ResourceComponentManager extends BoundPropertyObject
+public abstract class ResourceComponentManager extends BoundPropertyObject implements CanClosable
 {
 
 	/**The property indicating the current resource and component.*/
@@ -168,6 +168,17 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 		}
 	}
 
+	/**Determines if the current resource, if any, and its component can close.
+	@return <code>true</code> if the resource, if any, and its component can close.
+	@see #canClose(ResourceComponentState)
+	*/
+	public boolean canClose()
+	{
+		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
+			//if we have a resource component state, see if we can close it
+		return resourceComponentState!=null? canClose(resourceComponentState) : true;
+	}
+	
 	/**Determines if a resource and its component can close.
 		This verion asks the resource component if it can close, if that component
 		implements <code>CanClosable</code>.
@@ -184,7 +195,22 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 		{
 			return false;	//the component doesn't want to close for some reason
 		}
-		return true;	//default to allowing closure
+		if(component instanceof Modifiable && ((Modifiable)component).isModified())	//if the component says it can close, but it has been modified
+		{
+			final Resource resource=resourceComponentState.getResource();	//get the resource
+			final String resourceURIString=resource.getReferenceURI()!=null ? resource.getReferenceURI().toString() : "";	//get a string representing the resource URI, if there is one
+				//see if they want to save the changes
+			switch(BasicOptionPane.showConfirmDialog(component, "Save modified resource "+resourceURIString+ "?", "Resource Modified", BasicOptionPane.YES_NO_CANCEL_OPTION))	//G***i18n
+			{
+				case BasicOptionPane.YES_OPTION:	//if they want to save the changes
+					return save();	//save the selected resource and report whether the save was successful TODO use a save method that allows the resource to be specified
+				case BasicOptionPane.NO_OPTION:	//if they do not want to save the changes
+					return true;	//allow the resource to close
+				default:	//if they want to cancel (they pressed the cancel button *or* they just hit Esc)
+					return false;	//don't allow the resource to close
+			}
+		}
+		return true;	//default to allowing the component to be closed
 	}
 
 	/**Unloads the open resource, if any.
@@ -193,6 +219,7 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 	*/
 	public void close()
 	{
+		/*G***decide which semantics we like
 		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
 		if(resourceComponentState!=null)	//if a resource is open
 		{
@@ -200,6 +227,12 @@ public abstract class ResourceComponentManager extends BoundPropertyObject
 			{
 				close(resourceComponentState);	//close this resource component state
 			}
+		}
+*/
+		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
+		if(resourceComponentState!=null)	//if a resource is open
+		{
+			close(resourceComponentState);	//close this resource component state
 		}
 	}
 

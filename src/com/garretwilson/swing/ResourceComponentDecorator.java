@@ -3,12 +3,16 @@ package com.garretwilson.swing;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import com.garretwilson.swing.ResourceComponentManager.ResourceComponentState;
+import com.garretwilson.util.CanClosable;
+import com.garretwilson.util.Debug;
+
 /**Abstract class that can decorate a user interface from component changes
 	of a resource component manager.
 @author Garret Wilson
 @see ResourceComponentManager
 */
-public abstract class ResourceComponentDecorator
+public abstract class ResourceComponentDecorator implements CanClosable
 {
 
 	/**The delegate manager of resource components.*/
@@ -40,5 +44,13 @@ public abstract class ResourceComponentDecorator
 		<code>null</code> if there is no new component.
 	*/
 	protected abstract void onResourceComponentStateChange(final ResourceComponentManager.ResourceComponentState oldResourceComponentState, final ResourceComponentManager.ResourceComponentState newResourceComponentState);
+
+	/**Determines if the resource component manager can close.
+	@return <code>true</code> if resource component manager can close
+	*/
+	public boolean canClose()
+	{
+		return getResourceComponentManager().canClose();	//see if the resource component manager can close
+	}
 
 }
