@@ -13,7 +13,7 @@ public class IconResources implements IconResourceConstants
 {
 
 	/**The map of icons that will be released when no longer is use.*/
-	protected static final Map iconMap=new WeakValueHashMap();
+	protected static final Map<String, ImageIcon> iconMap=new WeakValueHashMap();
 
 	/**This class cannot be publicly instantiated.*/
 	private IconResources() {}
@@ -26,7 +26,7 @@ public class IconResources implements IconResourceConstants
 	*/
 	public static ImageIcon getIcon(final String filename)
 	{
-		ImageIcon imageIcon=(ImageIcon)iconMap.get(filename); //see if we have the icon
+		ImageIcon imageIcon=iconMap.get(filename); //see if we have the icon
 		if(imageIcon==null)  //if we haven't loaded this icon yet, or the icon has been garage collected
 		{
 		  imageIcon=new ImageIcon(IconResources.class.getResource(filename));	//load the icon
