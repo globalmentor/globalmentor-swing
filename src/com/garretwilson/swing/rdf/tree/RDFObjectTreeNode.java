@@ -2,6 +2,7 @@ package com.garretwilson.swing.rdf.tree;
 
 import java.util.*;
 import com.garretwilson.swing.tree.*;
+import com.garretwilson.util.Debug;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.rdfs.*;
 

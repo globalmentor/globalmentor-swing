@@ -2,6 +2,9 @@ package com.garretwilson.swing.tree;
 
 import javax.swing.tree.*;
 
+import com.garretwilson.util.Debug;
+import com.globalmentor.marmot.ui.tree.BurrowTreeNode;
+
 /**A tree node that can dynamically load its children when needed.
 	Child classes should override <code>loadChildNodes()</code>.
 @author Garret Wilson
