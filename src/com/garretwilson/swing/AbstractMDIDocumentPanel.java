@@ -16,7 +16,7 @@ import org.w3c.dom.*;
 	architecture.
 @author Garret Wilson
 */
-public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implements RDFResourceState	//G***eventually delete this class and replace it with ResourceApplicationPanel
+public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implements ObjectState<RDFResource>	//G***eventually delete this class and replace it with ResourceApplicationPanel
 {
 //TODO make this class implement com.garretwilson.io.Streamable as well (create that class)
 
@@ -60,18 +60,12 @@ public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implement
 	private RDFResource resource;
 
 		/**@return The non-<code>null</code> resource that describes this document.*/
-		public RDFResource getRDFResource() {return resource;}
-
-		/**@return The non-<code>null</code> resource being described.*/
-		public Resource getResource() {return getRDFResource();}
-
-		/**@return The non-<code>null</code> object being described.*/
-		public Object getObject() {return getRDFResource();}		
+		public RDFResource getObject() {return resource;}
 
 		/**Sets the resource that describes this document.
 		@param resource The resource that describes this document.
 		*/
-		public void setRDFResource(final RDFResource resource) {this.resource=resource;}	//G***maybe throw an exception if the resource is null
+		public void setObject(final RDFResource resource) {this.resource=resource;}	//G***maybe throw an exception if the resource is null
 
 	/**Sets the reference URI of the document. This results in the resource
 		returned by <code>getResource()</code> being changed to another object,

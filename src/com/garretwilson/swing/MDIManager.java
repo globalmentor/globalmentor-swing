@@ -12,6 +12,7 @@ import com.garretwilson.rdf.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.Debug;
 import com.garretwilson.util.Modifiable;
+import com.garretwilson.util.ObjectState;
 
 /**Class that manages multiple documents in a <code>JDesktopPane</code>.
 @author Garret Wilson
@@ -108,7 +109,7 @@ Debug.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
 	@return The currently selected MDI document, or <code>null</code> if no
 		MDI document is selected.
 	*/
-	public RDFResourceState getMDIDocument()
+	public ObjectState<RDFResource> getMDIDocument()
 	{
 		return getMDIDocument(getSelectedFrame());  //get the MDI document from the currently selected internal frame
 	}
@@ -119,14 +120,14 @@ Debug.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
 	@return The internal frame's MDI document, or <code>null</code> if the
 		internal frame has no MDI document.
 	*/
-	public static RDFResourceState getMDIDocument(final JInternalFrame internalFrame)
+	public static ObjectState<RDFResource> getMDIDocument(final JInternalFrame internalFrame)
 	{
 		if(internalFrame!=null) //if there is an internal frame
 		{
 			final Container contentPane=internalFrame.getContentPane(); //get the content pane of the internal frame
-			if(contentPane instanceof RDFResourceState) //if this is an MDI document
+			if(contentPane instanceof ObjectState) //if this is an MDI document
 			{
-				return (RDFResourceState)contentPane; //return the content pane cast to an MDI document
+				return (ObjectState<RDFResource>)contentPane; //return the content pane cast to an MDI document
 
 			}
 		}
@@ -161,7 +162,7 @@ Debug.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
 	*/
 	public boolean canCloseInternalFrame(final JInternalFrame internalFrame)
 	{
-		final RDFResourceState mdiDocument=getMDIDocument(internalFrame);  //see if there is an MDI document in the frame
+		final ObjectState<RDFResource> mdiDocument=getMDIDocument(internalFrame);  //see if there is an MDI document in the frame
 		if(mdiDocument!=null) //if there is an MDI document
 		{
 			return getApplicationFrame().canClose(mdiDocument); //see if we can close the MDI document

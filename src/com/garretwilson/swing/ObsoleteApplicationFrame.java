@@ -61,15 +61,15 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 //G***del	private DocumentDescribable description=null;
 
 	/**The description of the currently opened document.*/
-	private RDFResourceState documentDescription=null;
+	private ObjectState<RDFResource> documentDescription=null;
 
 		/**@return The description of the currently opened document.*/
-		protected RDFResourceState getDocumentDescription() {return documentDescription;}
+		protected ObjectState<RDFResource> getDocumentDescription() {return documentDescription;}
 
 		/**Sets the description of the currently opened document.
 		@param description The description of the currently opened document.
 		*/
-		protected void setDocumentDescription(final RDFResourceState description) {documentDescription=description;}
+		protected void setDocumentDescription(final ObjectState<RDFResource> description) {documentDescription=description;}
 
 	/**The action for creating a new file.*/
 	private final Action fileNewAction;
@@ -526,9 +526,9 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	@see #askOpenFile
 	@see #setFile
 	*/
-	public RDFResourceState openFile()
+	public ObjectState<RDFResource> openFile()
 	{
-		RDFResourceState description=null;	//assume for now that the operation will be canceled
+		ObjectState<RDFResource> description=null;	//assume for now that the operation will be canceled
 		final URI uri=askOpenFile();  //get the URI to use
 		if(uri!=null)  //if a valid URI was returned
 		{
@@ -564,12 +564,12 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	public boolean saveFile()
 	{
 //G***del Debug.trace("saving file");
-		final RDFResourceState description=getDocumentDescription(); //get a description of the document
+		final ObjectState<RDFResource> description=getDocumentDescription(); //get a description of the document
 		if(description!=null) //if we have a description of the document
 		{
 //G**del Debug.trace("found document description");
-			if(description.getRDFResource().getReferenceURI()!=null)  //if the file location is specified
-				return saveFile(description, description.getRDFResource().getReferenceURI()); //save using the URI specified by the description
+			if(description.getObject().getReferenceURI()!=null)  //if the file location is specified
+				return saveFile(description, description.getObject().getReferenceURI()); //save using the URI specified by the description
 			else  //if we don't have a file
 				return saveFileAs(description); //call the save as function
 		}
@@ -581,7 +581,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	*/
 	public boolean saveFileAs()
 	{
-		final RDFResourceState description=getDocumentDescription(); //get a description of the document
+		final ObjectState<RDFResource> description=getDocumentDescription(); //get a description of the document
 		if(description!=null) //if we have a description of the document
 		{
 			return saveFileAs(description); //save the file with the description
@@ -595,7 +595,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	@return <code>true</code> if the operation was not cancelled.
 	@see #setFile
 	*/
-	public boolean saveFileAs(final RDFResourceState description)
+	public boolean saveFileAs(final ObjectState<RDFResource> description)
 	{
 		boolean result=false; //start out assuming the file won't be saved
 		final URI uri=askSaveFile();  //get the URI to use
@@ -604,9 +604,9 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 			result=saveFile(description, uri); //save the file
 			if(result)  //if the file was saved without being canceled
 			{
-				if(!ObjectUtilities.equals(description.getRDFResource().getReferenceURI(), uri))	//if the URI wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)
+				if(!ObjectUtilities.equals(description.getObject().getReferenceURI(), uri))	//if the URI wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)
 				{
-					description.getRDFResource().setReferenceURI(uri);	//update the resource description's URI
+					description.getObject().setReferenceURI(uri);	//update the resource description's URI
 /*G***del when works
 						//create a copy of the resource description, using the new URI
 					final RDFResource newResource=new DefaultRDFResource(description.getRDFResource(), uri);	//G***but what if the other resource was a special type?
@@ -627,11 +627,11 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	@param uri The URI at which the file should be saved.
 	@return <code>true</code> if the operation was not cancelled.
 	*/
-	protected boolean saveFile(final RDFResourceState description, final URI uri)
+	protected boolean saveFile(final ObjectState<RDFResource> description, final URI uri)
 	{
-		if(!ObjectUtilities.equals(description.getRDFResource().getReferenceURI(), uri))	//if the URI should be changed
+		if(!ObjectUtilities.equals(description.getObject().getReferenceURI(), uri))	//if the URI should be changed
 		{
-			description.getRDFResource().setReferenceURI(uri);	//update the resource description's URI
+			description.getObject().setReferenceURI(uri);	//update the resource description's URI
 /*G***del when works
 				//create a copy of the resource description, using the new URI
 			final RDFResource newResource=new DefaultRDFResource(description.getRDFResource(), uri);	//G***but what if the other resource was a special type?
@@ -712,7 +712,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		}
 		if(canClose)	//if everything looks like we can close so far
 		{
-			final RDFResourceState description=getDocumentDescription();	//get the current document description
+			final ObjectState<RDFResource> description=getDocumentDescription();	//get the current document description
 			if(description!=null && description!=getContentPane())	//if we have a document description, and the description isn't the content pane (otherwise we would call canClose() twice)
 				canClose=canClose(description);	//see if we can close the description
 		}
@@ -724,7 +724,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	@return <code>true</code> if the specified document can be closed, else
 		<code>false</code> if closing should be canceled.
 	*/
-	public boolean canClose(final RDFResourceState description)
+	public boolean canClose(final ObjectState<RDFResource> description)
 	{
 		if(description.isModified()) //if the document has been modified
 		{
@@ -758,7 +758,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	@return A description of the opened document, or <code>null</code> if the
 		document was not opened.
 	*/
-	protected RDFResourceState openFile(final URI uri)	//G***fix the "call this version afterwards" and delete if not needed
+	protected ObjectState<RDFResource> openFile(final URI uri)	//G***fix the "call this version afterwards" and delete if not needed
 	{
 /*G***fix; maybe this can't go here in the new architecture
 		if(!description.getResource().getReferenceURI().equals(uri))	//if the URI wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)

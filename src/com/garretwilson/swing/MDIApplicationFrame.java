@@ -11,6 +11,7 @@ import javax.swing.event.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.Debug;
+import com.garretwilson.util.ObjectState;
 
 /**Main frame parent class for a multiple document interface (MDI) application.
 @author Garret Wilson
@@ -36,9 +37,9 @@ public abstract class MDIApplicationFrame extends ObsoleteApplicationFrame
 		@return The description used for the object, or <code>null</code> if the
 			object has no associated description.
 		*/
-		protected RDFResourceState getDocumentDescription(final Object key)
+		protected ObjectState<RDFResource> getDocumentDescription(final Object key)
 		{
-			return (RDFResourceState)descriptionMap.get(key);  //return the description associated with the kay
+			return (ObjectState<RDFResource>)descriptionMap.get(key);  //return the description associated with the kay
 		}
 
 		/**Associates a description with an object. The object is stored in a weak
@@ -49,7 +50,7 @@ public abstract class MDIApplicationFrame extends ObsoleteApplicationFrame
 		@param description The descrption to associate with the object, or
 			<code>null</code> if the file association should be removed.
 		*/
-		protected void setDocumentDescription(final Object key, final RDFResourceState description)
+		protected void setDocumentDescription(final Object key, final ObjectState<RDFResource> description)
 		{
 			if(description!=null)  //if a valid description was passed
 			  descriptionMap.put(key, description); //put the description in the map, keyed to the key
@@ -144,7 +145,7 @@ public abstract class MDIApplicationFrame extends ObsoleteApplicationFrame
 		opened).
 	@see #getDocumentDescription(Object)
 	*/
-	protected RDFResourceState getDocumentDescription()
+	protected ObjectState<RDFResource> getDocumentDescription()
 	{
 		final JInternalFrame internalFrame=getDesktopPane().getSelectedFrame();  //get the currently selected internal frame
 		return internalFrame!=null ? getDocumentDescription(internalFrame) : null;  //return a file for the frame, if it's available
@@ -155,14 +156,14 @@ public abstract class MDIApplicationFrame extends ObsoleteApplicationFrame
 	@param description The description of the currently opened document.
 	@see #setDocumentDescription(Object, RDFResourceState)
 	*/
-	protected void setDocumentDescription(final RDFResourceState description)
+	protected void setDocumentDescription(final ObjectState<RDFResource> description)
 	{
 Debug.trace("setting description: ", description); //G***del
 		final JInternalFrame internalFrame=getMDIManager().getSelectedFrame();  //get the currently selected internal frame
 		if(internalFrame!=null) //if there is an internal frame open
 		{
 		  setDocumentDescription(internalFrame, description);  //store the description, keyed to the internal frame
-Debug.trace("setting frame title: ", description.getRDFResource().getReferenceURI()); //G***del
+Debug.trace("setting frame title: ", description.getObject().getReferenceURI()); //G***del
 		  updateTitle(internalFrame);  //update the internal frame's title
 		}
 	}
@@ -223,12 +224,12 @@ Debug.trace("setting frame title: ", description.getRDFResource().getReferenceUR
 	protected void updateTitle(final JInternalFrame internalFrame)
 	{
 		String title; //we'll assign a title to this string
-		final RDFResourceState description=getDocumentDescription(internalFrame); //get the file associated with this frame
+		final ObjectState<RDFResource> description=getDocumentDescription(internalFrame); //get the file associated with this frame
 		if(description!=null)  //if a description is available
 		{
 //G***del			try
 			{
-			  title=description.getRDFResource().getReferenceURI().toString(); //show the canonical file path in the title G***maybe show something special for an anonymous resource
+			  title=description.getObject().getReferenceURI().toString(); //show the canonical file path in the title G***maybe show something special for an anonymous resource
 //G***del				title=file.getCanonicalPath(); //show the canonical file path in the title
 			}
 /*G***del			

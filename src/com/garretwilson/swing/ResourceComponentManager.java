@@ -77,10 +77,10 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 		public ResourceSelector<R> getResourceSelector() {return resourceSelector;}
 
 	/**The state of the resource and its view.*/
-	private ResourceComponentState<R> resourceComponentState;
+	private ResourceComponentState resourceComponentState;
 
 		/**@return The state of the resource and its view.*/
-		protected ResourceComponentState<R> getResourceComponentState() {return resourceComponentState;}
+		protected ResourceComponentState getResourceComponentState() {return resourceComponentState;}
 
 		/**Sets the state of the resource and its view.
 		<p>The component will be added appropriately to the parent component.</p>
@@ -88,9 +88,9 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 		@param newResourceComponentState The new state of the resource and its view.
 		@see #getParentComponent()
 		*/
-		public void setResourceComponentState(final ResourceComponentState<R> newResourceComponentState)
+		public void setResourceComponentState(final ResourceComponentState newResourceComponentState)
 		{
-			final ResourceComponentState<R> oldResourceComponentState=resourceComponentState; //get the old value
+			final ResourceComponentState oldResourceComponentState=resourceComponentState; //get the old value
 			if(oldResourceComponentState!=newResourceComponentState)  //if the value is really changing
 			{
 				if(oldResourceComponentState!=null && oldResourceComponentState.getComponent() instanceof Modifiable)	//if the old component was modifiable
@@ -141,7 +141,7 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 	/**Updates the states of the actions, including enabled/disabled status, proxied actions, etc.*/
 	public void updateStatus()
 	{
-		final ResourceComponentState<R> resourceComponentState=getResourceComponentState();	//get the current state of the resource component
+		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current state of the resource component
 		getCloseAction().setEnabled(resourceComponentState!=null);	//only enable the close action when there is a component open
 		if(resourceComponentState!=null)	//if we have a resource and its component
 		{
@@ -173,7 +173,7 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 	*/
 	public boolean canClose()
 	{
-		final ResourceComponentState<R> resourceComponentState=getResourceComponentState();	//get the current resource component state
+		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
 			//if we have a resource component state, see if we can close it
 		return resourceComponentState!=null? canClose(resourceComponentState) : true;
 	}
@@ -186,7 +186,7 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 	@return <code>true</code> if the resource and its component can close.
 	@see CanClosable#canClose()
 	*/
-	protected boolean canClose(final ResourceComponentState<R> resourceComponentState)
+	protected boolean canClose(final ResourceComponentState resourceComponentState)
 	{
 		final Component component=resourceComponentState.getComponent();	//get the resource component
 			//if the component can be checked for closing, and it doesn't wish to close
@@ -228,7 +228,7 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 			}
 		}
 */
-		final ResourceComponentState<R> resourceComponentState=getResourceComponentState();	//get the current resource component state
+		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
 		if(resourceComponentState!=null)	//if a resource is open
 		{
 			close(resourceComponentState);	//close this resource component state
@@ -240,7 +240,7 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 	@param resourceComponentState The state information of the resource that
 		should be checked for closing.
 	*/
-	protected void close(final ResourceComponentState<R> resourceComponentState)
+	protected void close(final ResourceComponentState resourceComponentState)
 	{
 		setResourceComponentState(null);	//close the resource by switching to no resource G***maybe transfer this up to close()---or maybe do nothing at all
 	}
@@ -296,14 +296,14 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 		{
 			if(resource==null)	//if no resource was indicated
 			{
-				final ResourceComponentState<R> resourceComponentState=getResourceComponentState();	//get the current resource component state
+				final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
 					//ask for a resource for input
 				resource=getResourceSelector().selectInputResource(resourceComponentState!=null ? resourceComponentState.getResource() : null);
 			}
 			if(resource!=null)  //if we now have a valid resource
 			{
 				assert resource.getReferenceURI()!=null : "Selected resource has no URI.";
-				final ResourceComponentState<R> newResourceComponentState=read(resource);	//try to open the resource
+				final ResourceComponentState newResourceComponentState=read(resource);	//try to open the resource
 				if(newResourceComponentState!=null)	//if we succeed in opening the resource
 				{
 					setResourceComponentState(newResourceComponentState);	//change to the new state
@@ -328,7 +328,7 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 		<code>null</code> if the process was canceled.
 	@exception IOException Thrown if there was an error reading the resource.
 	*/
-	protected ResourceComponentState<R> read(final R resource) throws IOException
+	protected ResourceComponentState read(final R resource) throws IOException
 	{
 //TODO change the cursor while we open
 			//get an input stream to the resource
@@ -336,7 +336,7 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 		try
 		{
 			final Component component=read(resource, inputStream);	//read the component from the input stream
-			final ResourceComponentState<R> resourceComponentState=new ResourceComponentState<R>(resource, component);	//create a new state for the resource
+			final ResourceComponentState resourceComponentState=new ResourceComponentState(resource, component);	//create a new state for the resource
 			return resourceComponentState;	//return the component state
 		}
 		finally
@@ -367,7 +367,7 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 	*/
 	public boolean save()
 	{
-		final ResourceComponentState<R> resourceComponentState=getResourceComponentState();	//get the current resource component state
+		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
 		if(resourceComponentState!=null)	//if a resource is open
 		{
 				//if the component is verifiable, make sure it verifies before we save the contents
@@ -401,7 +401,7 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 	*/
 	public boolean saveAs()
 	{
-		final ResourceComponentState<R> resourceComponentState=getResourceComponentState();	//get the current resource component state
+		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
 		if(resourceComponentState!=null)	//if a resource is open
 		{
 			return saveAs(resourceComponentState); //save the resource using a user-specified URI
@@ -415,7 +415,7 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 	@return <code>true</code> if the operation was not canceled.
 	@see #setResourceComponentState(ResourceComponentState)
 	*/
-	protected boolean saveAs(final ResourceComponentState<R> resourceComponentState)
+	protected boolean saveAs(final ResourceComponentState resourceComponentState)
 	{
 		try
 		{
@@ -478,7 +478,7 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 	*/
 	public void revert()
 	{
-		final ResourceComponentState<R> resourceComponentState=getResourceComponentState();	//get the current resource component state
+		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
 		if(resourceComponentState!=null)	//if a resource is open
 		{
 //G***del if not needed			if(canClose(resourceComponentState))	//if we can close the open resource
@@ -493,7 +493,7 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 	@param resourceComponentState The state information of the resource that
 		should be checked for closing.
 	*/
-	protected void revert(final ResourceComponentState<R> resourceComponentState)
+	protected void revert(final ResourceComponentState resourceComponentState)
 	{
 	}
 
@@ -619,8 +619,13 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 	@param <R2> The type of resource the state of which is being stored.
 	@author Garret Wilson
 	*/
-	public static class ResourceComponentState<R2 extends Resource> extends DefaultResourceState<R2>
+	public class ResourceComponentState extends DefaultObjectState<R>
 	{
+
+		/**@return The non-<code>null</code> resource being described by delegating to <code>getObject()</code>.
+		@see DefaultObjectState#getObject()
+		*/
+		public R getResource() {return getObject();}
 
 		/**Sets the resource being described.
 		<p>This method delegates to the parent class, and is declared here solely
@@ -628,9 +633,9 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 		@param resource The new resource to describe.
 		@exception NullPointerException Thrown if the resource is <code>null</code>.
 		*/
-		protected void setResource(final R2 resource)
+		protected void setResource(final R resource)
 		{
-			super.setResource(resource);	//set the resource object
+			super.setObject(resource);	//set the resource object
 		}
 
 		/**The component that acts as a view to the resource.*/
@@ -644,7 +649,7 @@ public abstract class ResourceComponentManager<R extends Resource> extends Bound
 		@param component The component that represents a view of the resource.
 		@exception NullPointerException Thrown if the resource is <code>null</code>.
 		*/
-		public ResourceComponentState(final R2 resource, final Component component)
+		public ResourceComponentState(final R resource, final Component component)
 		{
 			super(resource);	//construct the parent class
 			this.component=component;	//save the resource component

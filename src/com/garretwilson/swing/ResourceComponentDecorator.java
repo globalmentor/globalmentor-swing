@@ -32,7 +32,7 @@ public abstract class ResourceComponentDecorator<R extends Resource> implements 
 				{
 					public void propertyChange(final PropertyChangeEvent propertyChangeEvent)	//when the resource component state changes, call the appropriate method
 					{
-						onResourceComponentStateChange((ResourceComponentManager.ResourceComponentState)propertyChangeEvent.getOldValue(), (ResourceComponentManager.ResourceComponentState)propertyChangeEvent.getNewValue()); 
+						onResourceComponentStateChange((ResourceComponentManager<R>.ResourceComponentState)propertyChangeEvent.getOldValue(), (ResourceComponentManager<R>.ResourceComponentState)propertyChangeEvent.getNewValue()); 
 					}
 				});
 	}
@@ -43,7 +43,7 @@ public abstract class ResourceComponentDecorator<R extends Resource> implements 
 	@param newResourceComponentState The new resource and component, or
 		<code>null</code> if there is no new component.
 	*/
-	protected abstract void onResourceComponentStateChange(final ResourceComponentManager.ResourceComponentState<R> oldResourceComponentState, final ResourceComponentManager.ResourceComponentState<R> newResourceComponentState);
+	protected abstract void onResourceComponentStateChange(final ResourceComponentManager<R>.ResourceComponentState oldResourceComponentState, final ResourceComponentManager<R>.ResourceComponentState newResourceComponentState);
 
 	/**Determines if the resource component manager can close.
 	@return <code>true</code> if resource component manager can close

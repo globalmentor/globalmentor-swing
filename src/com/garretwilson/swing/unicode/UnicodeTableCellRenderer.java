@@ -1,6 +1,8 @@
 package com.garretwilson.swing.unicode;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -26,17 +28,23 @@ public class UnicodeTableCellRenderer extends DefaultTableCellRenderer
 	*/
 	public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column)
 	{
+		setBackground(null);	//remove any cached background color
 		final Component component=super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);	//do the default configuration of the render component
 		if(value instanceof Integer)	//the value should be an integer object
 		{
 			final String text;	//we'll determine the value to display
+			final String description;	//we'll determine the description
 			final Integer codePoint=((Integer)value).intValue();	//get the integer value of the code point
 			final UnicodeCharacter unicodeCharacter=UnicodeData.getUnicodeCharacter(codePoint);	//get the character information for this code point			
 			if(unicodeCharacter!=null)	//if we have a description of this code point
 			{
 				if(unicodeCharacter.isControl())	//if this is a control character
 				{
-					text=unicodeCharacter.getUniqueCharacterName();	//use the unique character name of the character TODO update the font, maybe
+//G***del					text="<html>"+unicodeCharacter.getUniqueCharacterName()+"</html>";	//use the unique character name of the character TODO update the font, maybe					
+					text=unicodeCharacter.getCharacterName();	//show "<control>" in place of the character
+					final Font baseFont=getFont();	//get the current font
+					final Font newFont=baseFont.deriveFont((float)Math.round(baseFont.getSize()/2));	//reduce the size of the normal text
+					setFont(newFont);	//change the font
 				}
 				else	//if this is not a control character
 				{
@@ -44,12 +52,17 @@ public class UnicodeTableCellRenderer extends DefaultTableCellRenderer
 					text=String.valueOf(character);	//get a string representing that character TODO fix to work with extended Unicode code points
 					setFont(FontUtilities.getFont(character, table.getFont()));	//make sure the font supports the character
 				}
+				description=unicodeCharacter.getUniqueCharacterName();	//use the character name for the description
 			}
 			else	//if we don't know anything about this code point
 			{
-				text=UnicodeCharacter.getCodePointString(codePoint);	//just list the code point value TODO use an "unassigned" icon
+//TODO del				text=UnicodeCharacter.getCodePointString(codePoint);	//just list the code point value TODO use an "unassigned" icon
+				text="";	//don't show anything for the unassigned code point
+				setBackground(Color.LIGHT_GRAY);	//set the background color to indicate an unassigned code point
+				description="?";	//show an unassigned description
 			}
 			setValue(text);	//update the value
+			setToolTipText(description);	//show the description in the tooltip
 		}
 		return component;	//return the render component
 	}
