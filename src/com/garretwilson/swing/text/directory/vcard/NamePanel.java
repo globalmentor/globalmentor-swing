@@ -116,6 +116,15 @@ public class NamePanel extends DefaultPanel
 	/**Default constructor.*/
 	public NamePanel()
 	{
+		this(null);	//construct a panel with no name	
+	}
+
+	/**Name constructor.
+	@param name The name to place in the fields, or <code>null</code> if no
+		information should be displayed.
+	*/
+	public NamePanel(final Name name)
+	{
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		familyNameLabel=new JLabel();
 		familyNameTextField=new JTextField();
@@ -129,6 +138,7 @@ public class NamePanel extends DefaultPanel
 		honorificSuffixComboBox=new JComboBox();
 		setDefaultFocusComponent(givenNameTextField);	//set the default focus component
 		initialize();	//initialize the panel
+		setVCardName(name);	//set the given name
 	}
 	
 	/**Initializes the user interface.*/
@@ -171,6 +181,5 @@ public class NamePanel extends DefaultPanel
 		add(familyNameTextField, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		add(honorificSuffixLabel, new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		add(honorificSuffixComboBox, new GridBagConstraints(4, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		setVCardName(null);	//clear the fields
 	}
 }

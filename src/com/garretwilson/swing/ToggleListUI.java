@@ -34,12 +34,12 @@ public class ToggleListUI extends BasicListUI
 	    SwingUtilities.replaceUIActionMap(list, map);
 		}
 */
-		final ActionMap map=createActionMap();  //create our custom action map G***later reimplement this to check to see if a map has already been created and stored in the UI, as does BasicListUI
+		final ActionMap map=createToggleActionMap();  //create our custom action map TODO later reimplement this to check to see if a map has already been created and stored in the UI, as does BasicListUI
 				//G***find a way to merge these actions with the ones we're adding; maybe just
 		SwingUtilities.replaceUIActionMap(list, map); //replace the list's map with our custom one
 	}
 
-	protected ActionMap createActionMap()
+	protected ActionMap createToggleActionMap()
 	{
 		final ActionMap map=new ActionMapUIResource();
 		map.put("selectPreviousRow",
@@ -321,5 +321,9 @@ public class ToggleListUI extends BasicListUI
 				}
 			}
 		}
+
+		public void mouseReleased(MouseEvent e) {}	//TODO fix to replicate the new consumed check in BasicListUI.java	1.91 02/02/15
+
+
 	}
 }
