@@ -8,6 +8,9 @@ import javax.swing.text.View;
 public interface FragmentView
 {
 
+	/**@return The original, unfragmented view from which this fragment (or one or more intermediate fragments) was broken.*/
+	public View getWholeView();
+
 	/**Returns the whether this is the first fragment in relation to the original
 	  view. A paragraph, for example, might be fragmented into several views, but
 	  only the first fragment should be indented.

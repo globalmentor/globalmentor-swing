@@ -1653,7 +1653,7 @@ Debug.trace("G***search");
 		/**The class that serves as a fragment if a table row is broken.
 		@author Garret Wilson
 		*/
-		protected class XMLTableRowFragmentView extends XMLFragmentBlockView
+		protected class XMLTableRowFragmentView extends XMLFragmentBlockView	//TODO probably eventually make this static and pass the original view as a parameter
 		{
 
 			/**Constructs a fragment view for the table row.
@@ -1664,7 +1664,7 @@ Debug.trace("G***search");
 			*/
 			public XMLTableRowFragmentView(Element element, final boolean firstFragment, final boolean lastFragment)
 			{
-				super(element, X_AXIS, firstFragment, lastFragment); //do the default construction
+				super(element, X_AXIS, XMLTableView.this, firstFragment, lastFragment); //do the default construction
 			}
 		}
 

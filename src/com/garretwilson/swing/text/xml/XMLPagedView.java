@@ -471,7 +471,7 @@ super.changedUpdate(changes, a, f);
 
 	/**Renders using the given rendering surface and area on that surface. This
 		function only paints the currently selected page.
-	@param g The rendering surface to use.
+	@param graphics The rendering surface to use.
 	@param allocation The allocated region to render into.
 	@see View#paint
 	@see BoxView#paint
@@ -479,7 +479,7 @@ super.changedUpdate(changes, a, f);
 	@see XMLPagedView.getPageIndex
 	@see #paintPage
 	*/
-	public void paint(Graphics g, Shape allocation)
+	public void paint(final Graphics graphics, final Shape allocation)
 	{
 			//get a rectangle that outlines our allocation
 		final Rectangle allocationRectangle=(allocation instanceof Rectangle) ? (Rectangle)allocation : allocation.getBounds();
@@ -504,31 +504,13 @@ super.changedUpdate(changes, a, f);
 		TempRectangle.height=(int)getPageHeight();	//find out how hight to make each page
 		final int xDelta=getAxis()==X_AXIS ? TempRectangle.width : 0;	//find out how much we should move each page horizontally
 		final int yDelta=getAxis()==Y_AXIS ? TempRectangle.height : 0;	//find out how much we should move each page vertically
-		final Rectangle clipRectangle=g.getClipBounds();	//find out the clipping bounds
-		//paint each page
-		for(int pageIndex=pageBeginIndex; pageIndex<pageEndIndex; ++pageIndex)	//look at each page to paint (although this may be more pages than we have to paint)
-		{
-			if(isLaidOut(pageIndex)/*G***del if we can && pageIndex>=0 && pageIndex<pageCount*/)	//if this page has been laid out (this function works for threading and non-threading situations) (newswing threadlayout)
-			{
-				if(TempRectangle.intersects(clipRectangle))	//if this area needs painted and this is a valid page
-				{
-					final Page pageView=getPage(pageIndex); //get a reference to this page, which will paginate it if needed
-Debug.trace("Ready to paint page "+pageIndex+" with parent: ", pageView.getParent()!=null ? pageView.getParent().getClass().getName() : "null"); //G***del
-				//G***move this line up so that only pages that need to get repainted
-				  paintPage(g, TempRectangle, pageView, pageIndex); //paint this page
-				}
-//G***del					paintChild(g, TempRectangle, childIndex);	//paint this child
-			}
-			TempRectangle.x+=xDelta;	//advance to the next horizontal page position
-			TempRectangle.y+=yDelta;	//advance to the next vertical page position
-		}
+		final Rectangle clipRectangle=graphics.getClipBounds();	//find out the clipping bounds
 		//paint the dividers and page numbers for each page G***probably put this in a separate function
-			//G***maybe save these parameters and change back to them later
-		g.setColor(Color.black);  //change to black for the divider
-		g.setFont(PAGE_NUMBER_FONT);  //set the font for the page number
-		TempRectangle.x=allocationRectangle.x+getLeftInset();	//reset the page rectangle
-		TempRectangle.y=allocationRectangle.y+getTopInset();	//reset the page rectangle
-		final Graphics2D graphics2D=(Graphics2D)g;  //cast to the 2D version of graphics
+		final Color originalColor=graphics.getColor();	//get the original graphics color
+		final Font originalFont=graphics.getFont();	//get the original graphics font
+		graphics.setColor(Color.black);  //change to black for the divider
+		graphics.setFont(PAGE_NUMBER_FONT);  //set the font for the page number
+		final Graphics2D graphics2D=(Graphics2D)graphics;  //cast to the 2D version of graphics
 		final FontRenderContext fontRenderContext=graphics2D.getFontRenderContext();  //get the font rendering context
 		for(int pageIndex=pageBeginIndex; pageIndex<pageEndIndex; ++pageIndex)	//look at each page (although this may be more pages than we have to paint)
 		{
@@ -576,18 +558,32 @@ Debug.trace("Ready to paint page "+pageIndex+" with parent: ", pageView.getParen
 					pageNumberX=TempRectangle.x+(int)((float)(pageLeftInset-pageNumberBounds.getWidth())/2);	//G***fix; comment; use local variable
 				final int pageNumberY=TempRectangle.y+TempRectangle.height-pageBottomInset+(int)((float)(pageBottomInset-pageNumberBounds.getHeight())/2);	//G***fix; comment; use local variable
 					//G***take into account the size of the font, make it a nicer color, etc.
-				g.drawString(pageNumberString, pageNumberX, pageNumberY);	//G***testing; i18n
+				graphics.drawString(pageNumberString, pageNumberX, pageNumberY);	//G***testing; i18n
 			}
 			TempRectangle.x+=xDelta;	//advance to the next horizontal page position
 			TempRectangle.y+=yDelta;	//advance to the next vertical page position
 		}
-		  //G***testing to see if paintChild() now messes up the allocation validity
-/*G***test refactor
-				setXAllocValid(true);	//show that our horizontal allocation is valid again
-				setYAllocValid(true);	//show that our vertical allocation is valid again
-*/
-
-//G***del Debug.trace();
+		graphics.setColor(originalColor);  //revert to the original color
+		graphics.setFont(originalFont);  //revert to the original font
+		//paint each page
+		TempRectangle.x=allocationRectangle.x+getLeftInset();	//reset the page rectangle
+		TempRectangle.y=allocationRectangle.y+getTopInset();	//reset the page rectangle
+		for(int pageIndex=pageBeginIndex; pageIndex<pageEndIndex; ++pageIndex)	//look at each page to paint (although this may be more pages than we have to paint)
+		{
+			if(isLaidOut(pageIndex)/*G***del if we can && pageIndex>=0 && pageIndex<pageCount*/)	//if this page has been laid out (this function works for threading and non-threading situations) (newswing threadlayout)
+			{
+				if(TempRectangle.intersects(clipRectangle))	//if this area needs painted and this is a valid page
+				{
+					final Page pageView=getPage(pageIndex); //get a reference to this page, which will paginate it if needed
+Debug.trace("Ready to paint page "+pageIndex+" with parent: ", pageView.getParent()!=null ? pageView.getParent().getClass().getName() : "null"); //G***del
+				//G***move this line up so that only pages that need to get repainted
+				  paintPage(graphics, TempRectangle, pageView, pageIndex); //paint this page
+				}
+//G***del					paintChild(g, TempRectangle, childIndex);	//paint this child
+			}
+			TempRectangle.x+=xDelta;	//advance to the next horizontal page position
+			TempRectangle.y+=yDelta;	//advance to the next vertical page position
+		}
 	}
 
 	protected void paintSpineSection(final Graphics2D graphics2D, final int topX, final int topY, final int height, int horizontalDelta, final Color color1, final Color color2)
@@ -1936,9 +1932,8 @@ return v;
 		}
     
 		/**Forward the document event to the given child view.
-		This implementation first reparents the child to the logical view,
-		as the child may have been given a parent page if the child
-		could fit without break.
+		This implementation first reparents the child to the logical view, as the child
+		may have been given a parent page if the child could fit without breaking.
 		@param view The child view to forward the event to.
 		@param event The change information from the associated document.
 		@param allocation The current allocation of the view.

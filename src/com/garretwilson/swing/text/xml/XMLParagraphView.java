@@ -9,14 +9,11 @@ import javax.swing.text.*;
 
 import com.garretwilson.swing.text.ContainerBoxView;
 import com.garretwilson.swing.text.ContainerView;
-import com.garretwilson.swing.text.FragmentView;
 import com.garretwilson.swing.text.FragmentViewFactory;
 import com.garretwilson.swing.text.SwingTextUtilities;
 import com.garretwilson.swing.text.ViewBreakStrategy;
-import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.text.ViewsFactory;
 import com.garretwilson.swing.text.ViewReleasable;
-import com.garretwilson.swing.text.ContainerView.ContainerBreakStrategy;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSView;
 import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
@@ -30,7 +27,7 @@ public class XMLParagraphView extends ParagraphView implements XMLCSSView, Fragm
 {
 
 	/**The shared default break strategy for container views.*/
-	protected final static ViewBreakStrategy DEFAULT_BREAK_STRATEGY=new ContainerBreakStrategy();
+	protected final static ViewBreakStrategy DEFAULT_BREAK_STRATEGY=ContainerBoxView.DEFAULT_BREAK_STRATEGY;
 
 	/**The stategy for breaking this view into fragments.*/
 	private ViewBreakStrategy breakStrategy=DEFAULT_BREAK_STRATEGY;
@@ -415,7 +412,7 @@ Debug.trace(); //G***testing
 	*/
 	public View createFragmentView(final boolean isFirstFragment, final boolean isLastFragment)
 	{
-	  return new XMLParagraphFragmentView(getElement(), getAxis(), isFirstFragment, isLastFragment);	//create a fragment of the view
+	  return new XMLParagraphFragmentView(getElement(), getAxis(), this, isFirstFragment, isLastFragment);	//create a fragment of this view
 	}
 
 	/**Internally created view that holds the views representing a paragraph line.
@@ -516,7 +513,7 @@ Debug.trace(); //G***testing
 	 * @returns the offset and span for each child view in the
 	 *  offsets and spans parameters.
 	 */
-		protected void layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans)
+		protected void layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans)	//TODO verify this method
 		{
 			baselineLayout(targetSpan, axis, offsets, spans); //do a baseline layout of the row
 			for(int i=0; i<offsets.length; ++i) //look at each of the offsets
@@ -575,10 +572,8 @@ Debug.trace(); //G***testing
 		<code>FlowView.LogicalView</code> because that class has package visibility.
 	@see FlowView#LogicalView
 	*/
-	protected class LinePoolView extends ContainerView  //TODO see if using ContainerView (derived from BoxView) is more expensive than using a CompositeView; the former contains convenient overrides of offset methods, but we don't need (or probably want) the extra layout overhead
+	protected class LinePoolView extends ContainerView
 	{
-
-//TODO use a view decorator for the pool view and do our own loading
 		
 		/**Logical view constructor.
 		@param element The element this logical view represents.
@@ -673,9 +668,9 @@ Debug.trace(); //G***testing
 		@return Whether or not the child views represent the child elements of the
 			element this view is responsible for.
 		*/
-		protected boolean updateChildren(final DocumentEvent.ElementChange elementChange, final DocumentEvent documentEvent, final ViewFactory viewFactory)	//TODO do we still need this after the rewrite?
+		protected boolean updateChildren(final DocumentEvent.ElementChange elementChange, final DocumentEvent documentEvent, final ViewFactory viewFactory)
 		{
-			final Element[] removedElems=elementChange.getChildrenRemoved();
+			final Element[] removedElems=elementChange.getChildrenRemoved();	//TODO comment and verify
 			final Element[] addedElems=elementChange.getChildrenAdded();
 			View[] added=null;
 			if(addedElems!=null)
@@ -692,157 +687,21 @@ Debug.trace(); //G***testing
 			return true;
 		}
 
-		/**
-		 * Determines the preferred span for this view along an
-		 * axis.
-		 *
-		 * @param axis may be either View.X_AXIS or View.Y_AXIS
-		 * @return   the span the view would like to be rendered into.
-		 *           Typically the view is told to render into the span
-		 *           that is returned, although there is no guarantee.  
-		 *           The parent may choose to resize or break the view.
-		 * @see View#getPreferredSpan
-		 */
-	        public float getPreferredSpan(int axis) {
-		    float maxpref = 0;
-		    float pref = 0;
-		    int n = getViewCount();
-		    for (int i = 0; i < n; i++) {
-			View v = getView(i);
-			pref += v.getPreferredSpan(axis);
-			if (v.getBreakWeight(axis, 0, Integer.MAX_VALUE) >= ForcedBreakWeight) {
-			    maxpref = Math.max(maxpref, pref);
-			    pref = 0;
-			}
-		    }
-		    maxpref = Math.max(maxpref, pref);
-		    return maxpref;
+		/**Forward the document event to the given child view.
+		This implementation first reparents the child to the logical view, as the child
+		may have been given a parent line if the child could fit without breaking.
+		@param view The child view to forward the event to.
+		@param event The change information from the associated document.
+		@param allocation The current allocation of the view.
+		@param factory The factory to use to rebuild if the view has children.
+		*/
+		protected void forwardUpdateToView(final View view, final DocumentEvent event, final Shape allocation, final ViewFactory factory)
+		{
+			view.setParent(this);	//reparent the view to the pool G***check about hierarchy reparenting; see XMLPagedView.PagePoolView
+			super.forwardUpdateToView(view, event, allocation, factory);	//forward the update normally
 		}
 
-		/**
-		 * Determines the minimum span for this view along an
-		 * axis.  The is implemented to find the minimum unbreakable
-		 * span.
-		 *
-		 * @param axis may be either View.X_AXIS or View.Y_AXIS
-		 * @return  the span the view would like to be rendered into.
-		 *           Typically the view is told to render into the span
-		 *           that is returned, although there is no guarantee.  
-		 *           The parent may choose to resize or break the view.
-		 * @see View#getPreferredSpan
-		 */
-	        public float getMinimumSpan(int axis) {
-		    float maxmin = 0;
-		    float min = 0;
-		    boolean nowrap = false;
-		    int n = getViewCount();
-		    for (int i = 0; i < n; i++) {
-			View v = getView(i);
-			if (v.getBreakWeight(axis, 0, Integer.MAX_VALUE) == BadBreakWeight) {
-			    min += v.getPreferredSpan(axis);
-			    nowrap = true;
-			} else if (nowrap) {
-			    maxmin = Math.max(min, maxmin);
-			    nowrap = false;
-			    min = 0;
-			}
-		    }
-		    maxmin = Math.max(maxmin, min);
-		    return maxmin;
-		}
-
-		/**
-		 * Forward the DocumentEvent to the given child view.  This
-		 * is implemented to reparent the child to the logical view
-		 * (the children may have been parented by a row in the flow
-		 * if they fit without breaking) and then execute the superclass 
-		 * behavior.
-		 *
-		 * @param v the child view to forward the event to.
-		 * @param e the change information from the associated document
-		 * @param a the current allocation of the view
-		 * @param f the factory to use to rebuild if the view has children
-		 * @see #forwardUpdate
-		 * @since 1.3
-		 */
-	        protected void forwardUpdateToView(View v, DocumentEvent e, 
-						   Shape a, ViewFactory f) {
-		    v.setParent(this);
-		    super.forwardUpdateToView(v, e, a, f);
-		}
-
-	// The following methods don't do anything useful, they
-	// simply keep the class from being abstract.
-
-
-	/**
-	 * Renders using the given rendering surface and area on that
-	 * surface.  This is implemented to do nothing, the logical
-	 * view is never visible.
-	 *
-	 * @param g the rendering surface to use
-	 * @param allocation the allocated region to render into
-	 * @see View#paint
-	 */
-        public void paint(Graphics g, Shape allocation) {
 	}
-
-	/**
-	 * Tests whether a point lies before the rectangle range.
-	 * Implemented to return false, as hit detection is not
-	 * performed on the logical view.
-	 *
-	 * @param x the X coordinate >= 0
-	 * @param y the Y coordinate >= 0
-	 * @param alloc the rectangle
-	 * @return true if the point is before the specified range
-	 */
-        protected boolean isBefore(int x, int y, Rectangle alloc) {
-	    return false;
-	}
-
-	/**
-	 * Tests whether a point lies after the rectangle range.
-	 * Implemented to return false, as hit detection is not
-	 * performed on the logical view.
-	 *
-	 * @param x the X coordinate >= 0
-	 * @param y the Y coordinate >= 0
-	 * @param alloc the rectangle
-	 * @return true if the point is after the specified range
-	 */
-        protected boolean isAfter(int x, int y, Rectangle alloc) {
-	    return false;
-	}
-
-	/**
-	 * Fetches the child view at the given point.
-	 * Implemented to return null, as hit detection is not
-	 * performed on the logical view.
-	 *
-	 * @param x the X coordinate >= 0
-	 * @param y the Y coordinate >= 0
-	 * @param alloc the parent's allocation on entry, which should
-	 *   be changed to the child's allocation on exit
-	 * @return the child view
-	 */
-        protected View getViewAtPoint(int x, int y, Rectangle alloc) {
-	    return null;
-	}
-
-	/**
-	 * Returns the allocation for a given child.
-	 * Implemented to do nothing, as the logical view doesn't
-	 * perform layout on the children.
-	 *
-	 * @param index the index of the child, >= 0 && < getViewCount()
-	 * @param a  the allocation to the interior of the box on entry,
-	 *   and the allocation of the child view at the index on exit.
-	 */
-        protected void childAllocation(int index, Rectangle a) {
-	}
-    }
-
 
 	/**The class that serves as a fragment if the paragraph is broken.
 	@author Garret Wilson
@@ -853,12 +712,13 @@ Debug.trace(); //G***testing
 		/**Constructs a fragment view for the paragraph.
 		@param element The element this view is responsible for.
 		@param axis The tiling axis, either View.X_AXIS or View.Y_AXIS.
+		@param wholeView The original, unfragmented view from which this fragment (or one or more intermediate fragments) was broken.
 		@param firstFragment Whether this is the first fragement of the original view.
 		@param lastFragment Whether this is the last fragment of the original view.
 		*/
-		public XMLParagraphFragmentView(Element element, int axis, final boolean firstFragment, final boolean lastFragment)
+		public XMLParagraphFragmentView(final Element element, final int axis, final View wholeView, final boolean firstFragment, final boolean lastFragment)
 		{
-			super(element, axis, firstFragment, lastFragment); //do the default construction
+			super(element, axis, wholeView, firstFragment, lastFragment); //do the default construction
 		}
 
 		/**Perform layout for the minor axis of the box (i.e. the axis orthoginal to

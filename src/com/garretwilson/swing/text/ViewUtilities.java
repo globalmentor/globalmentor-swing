@@ -17,6 +17,21 @@ public class ViewUtilities
 	/**Default constructor.*/
 	public ViewUtilities() {} //G***do we want to allow the view utilities class to be instantiated?
 
+
+	/**Determines the logical parent of the view.
+	This returns the actual parent unless the view is a fragment,
+		in which case the original, unbroken view is returned.
+	@param view The view for which a logical parent should be found.
+	@return The logical parent of the view, or <code>null</code> if the view has no parent.
+	@see View#getParent()
+	@see FragmentView#getWholeView()
+	*/
+	public static View getLogicalParent(final View view)
+	{
+		final View parent=view.getParent();	//get the normal parent
+		return parent instanceof FragmentView ? ((FragmentView)parent).getWholeView() : parent;	//return the parent's unbroken view, if the parent is a fragment; otherwise, just return the parent 
+	}
+	
 	/**If the view implements <code>ViewHidable</code> it is notified that it
 		is about to be hidden. All child views of the view are notified as well, and
 		so on down the hierarchy.

@@ -2,6 +2,7 @@ package com.garretwilson.swing.text.xml;
 
 import java.awt.*;
 import javax.swing.text.*;
+
 import com.garretwilson.swing.text.ViewHidable;
 import com.garretwilson.util.Debug;
 
@@ -25,7 +26,7 @@ public class XMLComponentBlockView extends XMLBlockView implements ViewHidable
 	protected boolean isFirstFragment=true;
 
 		/**@return <code>true</code> if this is the first fragment of the original view.*/
-		public boolean isFirstFragment() {return isFirstFragment;}
+		public final boolean isFirstFragment() {return isFirstFragment;}
 
 	/**Whether this is the last fragment of the original view.*/
 	protected boolean isLastFragment=true;
@@ -529,7 +530,7 @@ Debug.trace("setting properties, background color: ", getBackgroundColor());  //
 		westComponent,
 		beforeFirstLineComponent,
 		beforeLineBeginsComponent,
-		isFirstFragment, isLastFragment);
+		XMLComponentBlockView.this, isFirstFragment, isLastFragment);
 
 //G***del; make sure works with new BreakStrategy framework		fragmentView.setParent(getParent());				  //G***testing; comment
 

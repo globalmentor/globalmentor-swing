@@ -1,8 +1,5 @@
 package com.garretwilson.swing.text;
 
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.util.*;
 
 import javax.swing.text.*;
@@ -14,13 +11,14 @@ No assumptions are made about the order, size, or offsets of the child views, un
 This class consequently determines view index based upon document position without relying on underlying
 element order and offsets.
 Beginning and ending offsets are determined based upon the contained views.
+This view knows how to break into fragments along the tiling axis.
 @author Garret Wilson
 */
 public class ContainerBoxView extends BoxView
 {
 
 	/**The shared default break strategy for container views.*/
-	protected final static ViewBreakStrategy DEFAULT_BREAK_STRATEGY=new ContainerBreakStrategy();
+	public final static ViewBreakStrategy DEFAULT_BREAK_STRATEGY=new ContainerBreakStrategy();
 
 	/**The stategy for breaking this view into fragments.*/
 	private ViewBreakStrategy breakStrategy=DEFAULT_BREAK_STRATEGY;
@@ -135,22 +133,15 @@ public class ContainerBoxView extends BoxView
 	}
 
 	/**Returns the index of the child at the given model position in the container.
+	This implementation queries each view directly and does not assume that there is
+	a direct correspondence between each child view and the underlying element hierarchy.
 	@param pos The position (>=0) in the model.
 	@return The index of the view representing the given position, or -1 if there
 		is no view on this container which represents that position.
 	*/
 	protected int getViewIndexAtPosition(final int pos)
 	{
-		if(pos>=getStartOffset() && pos<getEndOffset())	//if the position is within the content this view is responsible for (this will save us time if the request is for content outside of this view)
-		{
-			for(int viewIndex=getViewCount()-1; viewIndex>=0; --viewIndex)	//look at all the views from the last to the first
-			{
-				final View childView=getView(viewIndex);	//get a reference to this child view
-				if(pos>=childView.getStartOffset() && pos<childView.getEndOffset())	//if this child view holds the requested position
-					return viewIndex;	//return the index to this child view
-			}
-		}
-		return -1;	//if we make it to this point, we haven't been able to find a view with the specified position
+		return ContainerView.getViewIndexAtPosition(this, pos);	//delegate to the utility method
 	}
 
 	/**A break strategy for views that contain other views and may be parceled up into fragments.

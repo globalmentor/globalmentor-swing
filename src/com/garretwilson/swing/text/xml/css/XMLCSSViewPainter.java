@@ -6,6 +6,7 @@ import java.awt.font.LineMetrics;
 import java.awt.geom.Rectangle2D;
 import javax.swing.text.*;
 import com.garretwilson.swing.text.FragmentView;
+import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.text.xml.XMLListView;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities;
@@ -86,12 +87,12 @@ Debug.trace("View painter parent view's class: ", view.getClass().getName());  /
 					{
 						Boolean isListOrdered=null;	//we'll find out whether the list is ordered
 						int depthIndex=-1;	//we'll find out how many lists are nested (indicating nesting with a zero-based index)
-						View parent=parentView;	//start with the parent we already know about
-						while(parent!=null)	//while there is still a parent to check
+						View logicalParent=ViewUtilities.getLogicalParent(view);	//start with the logical parent (the real parent could be a fragment, in which case we wouldn't know if it was a list or not)
+						while(logicalParent!=null)	//while there is still a parent to check
 						{
-							if(parent instanceof XMLListView)	//if this parent is a list view
+							if(logicalParent instanceof XMLListView)	//if this parent is a list view
 							{
-								final XMLListView listView=(XMLListView)parent;	//cast the parent to a list view
+								final XMLListView listView=(XMLListView)logicalParent;	//cast the parent to a list view
 								if(isListOrdered==null)	//if we don't yet know whether the list should be ordered
 								{
 									isListOrdered=Boolean.valueOf(listView.isOrdered());	//we'll go with whether the closest enclosing list is ordered
@@ -101,7 +102,7 @@ Debug.trace("View painter parent view's class: ", view.getClass().getName());  /
 									++depthIndex;	//show that this list is counted as an enclosing list
 								}
 							}
-							parent=parent.getParent();	//look at the parent's parent
+							logicalParent=ViewUtilities.getLogicalParent(logicalParent);	//look at the logical parent's logical parent, looking behind fragments to the original views
 						}
 
 						if(depthIndex>=0)	//if we have at least one enclosing list

@@ -235,27 +235,6 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 		return anonymousElement;	//return the anonymous element we created
 	}
 
-
-
-	/**Invalidates the layout and asks the container to repaint itself.
-	This is a convenience function for <code>layoutChanged()</code> and
-	<code>Component.repaint()</code>
-	@see #layoutChanged
-	@see Container#repaint
-	*/
-	public void relayout()
-	{
-		layoutChanged(X_AXIS);	//invalidate our horizontal axis
-		layoutChanged(Y_AXIS);	//invalidate our vertical axis
-//G***del if not needed		setParent(getParent()); //G***testing
-//G***del		strategy.insertUpdate( this, null, null );
-//G***fix; doesn't work		changedUpdate(null, null, getViewFactory());  //send a synthetic changeUpdate() so that all the children and layout strategies can get a chance to reinitialize
-		final Container container=getContainer();	//get a reference to our container
-		if(container!=null)	//if we're in a container
-			container.repaint();	//repaint our container
-	}
-
-
 	/**Renders the block view using the given rendering surface and area on that surface.
 	Only the children that intersect the clip bounds of the given <code>Graphics</code> will be rendered.
 	This version correctly paints XML CSS style.
@@ -265,6 +244,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 	*/
   public void paint(final Graphics graphics, Shape allocation)
   {
+		synchronize();	//make sure we have the correct cached property values
 		XMLCSSViewPainter.paint(graphics, allocation, this, getAttributes());	//paint our CSS-specific parts (newswing) G***decide whether we want to pass the attributes or not
 		super.paint(graphics, allocation);	//do the default painting
   }
@@ -345,7 +325,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 	*/
 	public View createFragmentView(final boolean isFirstFragment, final boolean isLastFragment)
 	{
-	  return new XMLFragmentBlockView(getElement(), getAxis(), isFirstFragment, isLastFragment);	//create a fragment of the view
+	  return new XMLFragmentBlockView(getElement(), getAxis(), this, isFirstFragment, isLastFragment);	//create a fragment of this view
 	}
 
 	/**Whether or not the cached values have been synchronized.*/
@@ -354,9 +334,8 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 	/**Synchronizes the view's cached valiues with the model. This causes the
 		font, metrics, color, etc to be recached if the cache has been invalidated.
 	*/
-	protected void synchronize()	//TODO maybe update all this with the ContainerView cache methods; or maybe not, if orthogonal information is being cached
+	protected void synchronize()
 	{
-//G***del Debug.stackTrace(); //G***del
 		if(!cacheSynchronized)	//if the cache isn't synchronized
 			setPropertiesFromAttributes();	//calculate our properties from our attributes
 	}
@@ -364,14 +343,13 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 	/**Sets the cached properties from the attributes.*/
 	protected void setPropertiesFromAttributes()
 	{
-//G***del Debug.stackTrace(); //G***del
-		cacheSynchronized=true;	//show that we have the most up-to-date information in the cache
 /*G***del
 Debug.trace("*****Inside XMLBlockView.setPropertiesFromAttributes()");
-Debug.trace("element is: "+getElement().getName());	//G***del
-Debug.trace("element is: "+Debug.getNullStatus(getElement()));	//G***del
-Debug.trace("element attributes is: "+Debug.getNullStatus(getElement().getAttributes()));	//G***del
-Debug.trace("getAttributes() is: "+Debug.getNullStatus(getAttributes()));	//G***del
+Debug.trace("element name is:", getElement().getName());	//G***del
+Debug.trace("element is:", getElement());	//G***del
+Debug.trace("XML element name is:", XMLStyleUtilities.getXMLElementName(getAttributes()));	//G***del
+Debug.trace("element attributes is: ", getElement()!=null ? getElement().getAttributes() : null);	//G***del
+Debug.trace("getAttributes() is: ", getAttributes());	//G***del
 */
 		final AttributeSet attributeSet=getAttributes();	//get our attributes
 		if(attributeSet!=null)	//if we have attributes
@@ -390,16 +368,46 @@ Debug.trace("getAttributes() is: "+Debug.getNullStatus(getAttributes()));	//G***
 		  //G***we may want to set the insets in setPropertiesFromAttributes(); for
 			//percentages, getPreferredeSpan(), etc. will have to look at the preferred
 			//span and make calculations based upon the percentages
-			//G***probably have some other exernal helper class that sets the margins based upon the attributes
+			//G***probably have some other external helper class that sets the margins based upon the attributes
 			final short marginTop=(short)Math.round(XMLCSSStyleUtilities.getMarginTop(attributeSet)); //get the top margin from the attributes
 			final short marginLeft=(short)Math.round(XMLCSSStyleUtilities.getMarginLeft(attributeSet, font)); //get the left margin from the attributes
+Debug.trace("margin left:", marginLeft);
 			final short marginBottom=(short)Math.round(XMLCSSStyleUtilities.getMarginBottom(attributeSet)); //get the bottom margin from the attributes
 			final short marginRight=(short)Math.round(XMLCSSStyleUtilities.getMarginRight(attributeSet, font)); //get the right margin from the attributes
 		  setInsets(marginTop, marginLeft, marginBottom, marginRight);	//G***fix; testing
 			}
 		}
+		cacheSynchronized=true;	//show that we now have the most up-to-date information in the cache
 	}
 
+	/**@return The left inset (>=0), ensuring the information is up to date.*/
+	protected short getLeftInset()
+	{
+		synchronize();	//make sure our cached properties are updated.
+		return super.getLeftInset();	//return the value
+	}
+
+	/**@return The right inset (>=0), ensuring the information is up to date.*/
+	protected short getRightInset()
+	{
+		synchronize();	//make sure our cached properties are updated.
+		return super.getRightInset();	//return the value
+	}
+
+	/**@return The top inset (>=0), ensuring the information is up to date.*/
+	protected short getTopInset()
+	{
+		synchronize();	//make sure our cached properties are updated.
+		return super.getTopInset();	//return the value
+	}
+
+	/**@return The bottom inset (>=0), ensuring the information is up to date.*/
+	protected short getBottomInset()
+	{
+		synchronize();	//make sure our cached properties are updated.
+		return super.getBottomInset();	//return the value
+	}
+	
 	/**The background color of the block view.*/
 	private Color backgroundColor;
 

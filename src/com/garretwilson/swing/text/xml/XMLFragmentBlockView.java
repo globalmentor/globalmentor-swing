@@ -1,6 +1,7 @@
 package com.garretwilson.swing.text.xml;
 
 import javax.swing.text.Element;
+import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
 import com.garretwilson.swing.text.FragmentView;
 
@@ -12,6 +13,11 @@ import com.garretwilson.swing.text.FragmentView;
 */
 public class XMLFragmentBlockView extends XMLBlockView implements FragmentView
 {
+	/**The original, unfragmented view from which this fragment (or one or more intermediate fragments) was broken.*/
+	private final View wholeView;
+	
+		/**@return The original, unfragmented view from which this fragment (or one or more intermediate fragments) was broken.*/
+		public View getWholeView() {return wholeView;}
 
 	/**Whether this is the first fragment of the original view.*/
 	private boolean isFirstFragment;
@@ -25,17 +31,30 @@ public class XMLFragmentBlockView extends XMLBlockView implements FragmentView
 		/**@return <code>true</code> if this is the last fragment of the original view.*/
 		public boolean isLastFragment() {return isLastFragment;}
 
-	/**Constructs an a fragment block view..
+	/**Constructs a fragment block view..
 	@param element The element this view is responsible for.
 	@param axis The tiling axis, either View.X_AXIS or View.Y_AXIS.
-	@param firstFragment Whether this is the first fragement of the original view.
-	@param lastFragment Whether this is the last fragement of the original view.
+	@param wholeView The original, unfragmented view from which this fragment (or one or more intermediate fragments) was broken.
+	@param firstFragment Whether this is the first fragment of the original view.
+	@param lastFragment Whether this is the last fragment of the original view.
 	*/
-	public XMLFragmentBlockView(final Element element, final int axis, final boolean firstFragment, final boolean lastFragment)
+	public XMLFragmentBlockView(final Element element, final int axis, final View wholeView, final boolean firstFragment, final boolean lastFragment)
 	{
 		super(element, axis); //do the default consructing
+		this.wholeView=wholeView;	//save the original whole view
 		isFirstFragment=firstFragment;  //save whether we are the first fragment of the original view
 		isLastFragment=lastFragment;  //save whether we are the last fragment of the original view
+	}
+
+	/**Creates a fragment view into which pieces of this view will be placed.
+	@param isFirstFragment Whether this fragment holds the first part of the
+		original view.
+	@param isLastFragment Whether this fragment holds the last part of the
+		original view.
+	*/
+	public View createFragmentView(final boolean isFirstFragment, final boolean isLastFragment)
+	{
+	  return new XMLFragmentBlockView(getElement(), getAxis(), getWholeView(), isFirstFragment, isLastFragment);	//create a fragment of this view, indicating the original view
 	}
 
 	/**Fragment views do not load their own children. Instead, the method
