@@ -17,7 +17,7 @@ import java.util.*; //G***del if not needed
 //G***del import com.garretwilson.swing.text.TestTableView; //G***del maybe
 import com.garretwilson.swing.text.AnonymousElement;
 import com.garretwilson.swing.text.DefaultViewFactory;
-import com.garretwilson.swing.text.xml.css.XMLCSSStyleConstants;
+import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants;
 //G***del import com.garretwilson.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
@@ -1894,7 +1894,7 @@ Debug.traceStack(); //G***del
 //G***del Debug.trace("Attribute set: "+attributeSet);	//G***del
 			if(attributeSet!=null)	//if this element has attributes
 			{
-				final CSSPrimitiveValue cssDisplayProperty=(CSSPrimitiveValue)XMLCSSStyleConstants.getCSSPropertyCSSValue(attributeSet, XMLCSSConstants.CSS_PROP_DISPLAY, false);	//get the display property for this element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
+				final CSSPrimitiveValue cssDisplayProperty=(CSSPrimitiveValue)XMLCSSStyleUtilities.getCSSPropertyCSSValue(attributeSet, XMLCSSConstants.CSS_PROP_DISPLAY, false);	//get the display property for this element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
 //G***del when works				final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)attributeSet.getAttribute(XMLCSSConstants.CSS_PROP_DISPLAY);	//get the display property G***can we be sure this will be a primitive value?
 				if(cssDisplayProperty!=null)	//if this element has a CSS display property
 				{

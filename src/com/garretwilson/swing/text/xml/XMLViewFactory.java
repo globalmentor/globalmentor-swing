@@ -43,8 +43,9 @@ import com.garretwilson.swing.XMLTextPane;
 import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.event.ProgressListener;
 import com.garretwilson.swing.text.DocumentUtilities;
+import com.garretwilson.swing.text.StyleUtilities;
 import com.garretwilson.swing.text.ViewsFactory;
-import com.garretwilson.swing.text.xml.css.XMLCSSStyleConstants;
+import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.NamedNodeMap;
@@ -175,6 +176,11 @@ public class XMLViewFactory implements ViewsFactory
 		}
 		if(attributeSet!=null)  //if we have an attribute set
 		{
+				//check the visibility status before going to any registered view factories
+			if(!StyleUtilities.isVisible(attributeSet))	//if for some reason this element should not be visible
+			{
+				return new XMLHiddenView(element);	//create a hidden view
+			}
 				//delegate to the registered view factory if we can
 			/*G***fix final */String elementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(attributeSet); //get the namespace of this element, if it has one
 //G***del Debug.trace("Looking for view factory for namespace: ", elementNamespaceURI); //G***del
@@ -218,7 +224,7 @@ public class XMLViewFactory implements ViewsFactory
 //G***del Debug.trace("2"); //G***del
 
 
-			final CSSStyleDeclaration cssStyle=XMLCSSStyleConstants.getXMLCSSStyle(attributeSet); //get the CSS style of the element
+			final CSSStyleDeclaration cssStyle=XMLCSSStyleUtilities.getXMLCSSStyle(attributeSet); //get the CSS style of the element
 
 
 //G***del				if(cssStyle!=null)  //if this element has style
@@ -226,7 +232,7 @@ public class XMLViewFactory implements ViewsFactory
 			for(int childIndex=element.getElementCount()-1; childIndex>=0 && !(hasBlockChildren && hasInlineChildren); --childIndex) //look at each child element (stop looking when we've found both block and inline child nodes)
 			{
 				final Element childElement=element.getElement(childIndex);  //get a reference to this child element
-				final CSSStyleDeclaration childCSSStyle=XMLCSSStyleConstants.getXMLCSSStyle(childElement.getAttributes()); //get the CSS style of the element (this method makes sure the attributes are present)
+				final CSSStyleDeclaration childCSSStyle=XMLCSSStyleUtilities.getXMLCSSStyle(childElement.getAttributes()); //get the CSS style of the element (this method makes sure the attributes are present)
 Debug.trace("Child "+childIndex+" attributes: ", com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(childElement.getAttributes()));
 Debug.trace("Child "+childIndex+" style: ", childCSSStyle);
 					//if this element is inline (text is always inline, regardless of what the display property says)
@@ -337,7 +343,7 @@ Debug.trace("Ready to create children for: ", element.getNodeName());  //G***del
 Debug.trace("3"); //G***del
 //G***del				final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)attributeSet.getAttribute(XMLCSSConstants.CSS_PROP_DISPLAY);	//get the display property G***can we be sure this will be a primitive value?
 			//G***use the style constants to get the display property, maybe
-			final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)XMLCSSStyleConstants.getCSSPropertyCSSValue(attributeSet, XMLCSSConstants.CSS_PROP_DISPLAY, false);	//get the display property for this element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
+			final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)XMLCSSStyleUtilities.getCSSPropertyCSSValue(attributeSet, XMLCSSConstants.CSS_PROP_DISPLAY, false);	//get the display property for this element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
 Debug.trace("4"); //G***del
 			if(cssDisplayProperty!=null)	//if this element has a CSS display property
 			{

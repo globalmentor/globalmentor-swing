@@ -6,7 +6,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
 import com.garretwilson.io.MediaType;
-import com.garretwilson.swing.text.xml.XMLAttribute;
+import com.garretwilson.swing.text.StyleUtilities;
 import com.garretwilson.text.xml.XMLUtilities;
 import com.garretwilson.util.NameValuePair;
 
@@ -20,7 +20,7 @@ import com.garretwilson.util.NameValuePair;
 @author Garret Wilson
 @see com.garretwilson.swing.text.xml.XMLAttribute
 */
-public class XMLStyleUtilities implements XMLStyleConstants
+public class XMLStyleUtilities extends StyleUtilities implements XMLStyleConstants
 {
 
 	/**An empty array of name/value pairs to return when, for example, no
@@ -76,19 +76,6 @@ public class XMLStyleUtilities implements XMLStyleConstants
 
 	/**The name of the map of XML attributes.*/
 //G***fix	public final static String XMLAttributesAttributeName="XMLAttributes";
-
-	/**Returns an attribute in the attribute set only if it is defined; the attribute
-		is not resolved by searching the parent attribute set hierarchy.
-	@param attributeSet The attribute set, which may be <code>null</code>.
-	@return The attribute if the attribute is defined, else <code>null</code>.
-	*/
-	public static Object getDefinedAttribute(final AttributeSet attributeSet, final String attributeName)
-	{
-		return attributeSet!=null ? //make sure there is an attributeset
-			(attributeSet.isDefined(attributeName) ? attributeSet.getAttribute(attributeName) : null) :
-			null;	//return the attribute if it is defined, or null if it isn't
-	}
-
 
 	/**Returns an XML attribute with the given namespace and local name from the attribute set.
 		The attribute is resolved by searching the parent attribute set hierarchy.
@@ -532,4 +519,3 @@ public class XMLStyleUtilities implements XMLStyleConstants
 */
 
 }
-

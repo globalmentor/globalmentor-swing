@@ -63,6 +63,44 @@ Debug.trace("view ends at: ", view.getEndOffset());
 	}
 */
 
+	/**Determines the ending row model position of the row that contains
+	the specified model position.  The component given must have a
+	 * size to compute the result.  If the component doesn't have a size
+	 * a value of -1 will be returned.
+	 *
+	 * @param c the editor
+	 * @param offs the offset in the document >= 0
+	 * @return the position >= 0 if the request can be computed, otherwise
+	 *  a value of -1 will be returned.
+	 * @exception BadLocationException if the offset is out of range
+	 */
+/**G**fix if needed	
+	public static final int getRowEnd(JTextComponent c, int offs) throws BadLocationException
+	{
+		Rectangle r;
+		if(c instanceof XMLTextPane)	//G***newswing
+		{
+			r = ((XMLTextPane)c).modelToView(offs, Position.Bias.Backward);	//G***newswing
+		}
+		else
+		{
+			r = c.modelToView(offs);
+		}
+if (r == null) {
+		return -1;
+}
+int n = c.getDocument().getLength();
+int lastOffs = offs;
+int y = r.y;
+while ((r != null) && (y == r.y)) {
+		offs = lastOffs;
+		lastOffs += 1;
+		r = (lastOffs <= n) ? c.modelToView(lastOffs) : null;
+}
+return offs;
+	}
+*/
+
 	/**Returns a document's text for the given element.
 	@param element The element from which text should be retrieved.
 	@return The document's text that lies within the element's range.
@@ -118,6 +156,5 @@ Debug.trace("text sibling count: ", siblingCount);  //G***del
 						swingParentElement.replace(siblingCount, 0, swingElementBuffer); //place the leaf element in the parent
 
 */
-
 
 }

@@ -35,6 +35,20 @@ import org.w3c.dom.css.*;
 public class XMLEditorKit extends StyledEditorKit
 {
 
+	/**The character used to mark the end of an element so that caret positioning
+		will work correctly at the end of block views.
+	*/
+//G***fix	final static char ELEMENT_END_CHAR=CharacterConstants.ZERO_WIDTH_NO_BREAK_SPACE_CHAR;	
+		//G***fix; the ZWNBSP seems to make Swing want to break a line early or something
+//G***fix final static char ELEMENT_END_CHAR=CharacterConstants.ZERO_WIDTH_SPACE_CHAR;	
+
+//G***fix final static char ELEMENT_END_CHAR='\n';	
+
+final static char ELEMENT_END_CHAR=CharacterConstants.ZERO_WIDTH_SPACE_CHAR;	
+final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);	
+//G***fix final static char ELEMENT_END_CHAR=CharacterConstants.ZERO_WIDTH_NO_BREAK_SPACE_CHAR;	
+//G***fix	final static char ELEMENT_END_CHAR=CharacterConstants.PARAGRAPH_SIGN_CHAR;	
+
 	/**The XML media type this editor kit supports, defaulting to <code>text/xml</code>.*/
 	private MediaType mediaType=new MediaType(MediaType.TEXT, MediaType.XML);
 
@@ -149,6 +163,22 @@ public class XMLEditorKit extends StyledEditorKit
 				namespaceLinkControllerMap.clear();  //clear all registered link controllers
 			}
 
+	/**The identifier for the previous page action.*/
+	public static final String PREVIOUS_PAGE_ACTION="previous-page-action";
+
+	/**The identifier for the next page action.*/
+	public static final String NEXT_PAGE_ACTION="next-page-action";
+
+	/**Default actions used by this editor kit to augment the super class default
+		actions.
+	*/
+	private static final Action[] DEFAULT_ACTIONS=
+	{
+		new PreviousPageAction(PREVIOUS_PAGE_ACTION),
+		new NextPageAction(NEXT_PAGE_ACTION),
+		new EndLineAction(endLineAction, false)	//G***testing
+	};
+
 	/**Default constructor.*/
 	public XMLEditorKit() {}
 
@@ -242,6 +272,12 @@ public class XMLEditorKit extends StyledEditorKit
 //G***del System.out.println("Going to next child.");
 					childNode=nextNode;	//look at the next node
 				}
+			}
+			else
+			{
+//G***fix				final boolean isHTMLDocument=XHTMLSwingTextUtilities.isHTMLDocumentElement(documentAttributeSet);	//see if this is an HTML document
+				
+				
 			}
 		}
 
@@ -486,30 +522,30 @@ System.out.println("Ready to parse stylesheets.");	//G***del
 			final org.w3c.dom.Document xmlDocument=xmlDocumentArray[xmlDocumentIndex];	//get a reference to this document
 		  final URI baseURI=baseURIArray[xmlDocumentIndex]; //get a reference to the base URI
 		  final MediaType mediaType=mediaTypeArray[xmlDocumentIndex]; //get a reference to the media type
-			final org.w3c.dom.Element xmlRoot=xmlDocument.getDocumentElement();	//get the root of the document
+			final org.w3c.dom.Element xmlDocumentElement=xmlDocument.getDocumentElement();	//get the root of the document
 			if(xmlDocumentIndex>0)	//if this is not the first document to insert
 			{
 							//G***check to see if we should actually do this, first (from the CSS attributes)
 //G***del System.out.println("Adding page break element.");	//G***del
 						appendElementSpecListPageBreak(elementSpecList);  //append a page break
 			}
-			final MutableAttributeSet attributeSet=appendElementSpecList(elementSpecList, xmlRoot, baseURI);	//insert this document's root element into our list our list of elements
+			final MutableAttributeSet documentAttributeSet=appendElementSpecList(elementSpecList, xmlDocumentElement, baseURI);	//insert this document's root element into our list our list of elements
 			if(baseURI!=null) //if there is a base URI
 			{
-				XMLStyleUtilities.setBaseURI(attributeSet, baseURI); //add the base URI as an attribute
-				XMLStyleUtilities.setTargetURI(attributeSet, baseURI);  //because this element is the root of the document, its base URI acts as a linking target as well; store the target URI for quick searching
+				XMLStyleUtilities.setBaseURI(documentAttributeSet, baseURI); //add the base URI as an attribute
+				XMLStyleUtilities.setTargetURI(documentAttributeSet, baseURI);  //because this element is the root of the document, its base URI acts as a linking target as well; store the target URI for quick searching
 			}
 			if(mediaType!=null) //if there is a media type
 			{
-				XMLStyleUtilities.setMediaType(attributeSet, mediaType); //add the media type as an attribute
+				XMLStyleUtilities.setMediaType(documentAttributeSet, mediaType); //add the media type as an attribute
 			}
 		  final DocumentType documentType=xmlDocument.getDoctype(); //get the XML document's doctype, if any
 			if(documentType!=null) //if this document has a doctype
 			{
 				if(documentType.getPublicId()!=null)  //if the document has a public ID
-				  XMLStyleUtilities.setXMLDocTypePublicID(attributeSet, documentType.getPublicId());  //store the public ID
+				  XMLStyleUtilities.setXMLDocTypePublicID(documentAttributeSet, documentType.getPublicId());  //store the public ID
 				if(documentType.getSystemId()!=null)  //if the document has a public ID
-					XMLStyleUtilities.setXMLDocTypeSystemID(attributeSet, documentType.getSystemId());  //store the system ID
+					XMLStyleUtilities.setXMLDocTypeSystemID(documentAttributeSet, documentType.getSystemId());  //store the system ID
 			}
 				//store the processing instructions
 			final List processingInstructionList=XMLUtilities.getNodesByName(xmlDocument, Node.PROCESSING_INSTRUCTION_NODE, "*", false);  //get a list of all the processing instructions in the document G***use a constant here
@@ -525,8 +561,19 @@ System.out.println("Ready to parse stylesheets.");	//G***del
 					attributeSet.addAttribute(XMLStyleConstants.XML_PROCESSING_INSTRUCTION_ATTRIBUTE_START+processingInstruction.getTarget(), processingInstruction.getData());
 */
 				}
-				XMLStyleUtilities.setXMLProcessingInstructions(attributeSet, processingInstructions); //add the processing instructions
+				XMLStyleUtilities.setXMLProcessingInstructions(documentAttributeSet, processingInstructions); //add the processing instructions
 			}
+/*G***fix
+			if(XHTMLSwingTextUtilities.isHTMLDocumentElement(documentAttributeSet);	//see if this is an HTML document
+			{
+				if(childAttributeSet instanceof MutableAttributeSet)	//G***testing
+				{
+					final MutableAttributeSet mutableChildAttributeSet=(MutableAttributeSet)childAttributeSet;
+					mutableChildAttributeSet.addAttribute("$hidden", Boolean.TRUE);	//G***testing
+										
+				}
+			}
+*/
 		}
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(null, DefaultStyledDocument.ElementSpec.EndTagType));	//finish the element that encloses all the documents
 		return elementSpecList; //return the element spec list we constructed
@@ -546,15 +593,6 @@ System.out.println("Ready to parse stylesheets.");	//G***del
 	{
 //G***del Debug.trace("XMLDocument.appendElementSpecList: element ", xmlElement.getNodeName());	//G***del
 		final SimpleAttributeSet attributeSet=createAttributeSet(xmlElement, baseURI);	//create and fill an attribute set based upon this element's CSS style
-		final int numChildNodes=xmlElement.getChildNodes().getLength();	//G***testing image
-//G***del Debug.trace("Number of child  nodes: ", numChildNodes);	//G***del
-/*G***fix
-		if(numChildNodes==0)	//G***testing image
-			element.appendText(" ");	//only put a single space in this element so that it will have some content G***testing image
-*/
-
-		if(numChildNodes==0)	//G***testing image
-			XMLUtilities.appendText(xmlElement, " "); //only put a single space in this element so that it will have some content G***testing image; probably move elsewhere so we won't have to modify the original XML source tree
 //G***del Debug.trace("Attribute set: ", attributeSet);  //G***del
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(attributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a Swing element to model this XML element
 		appendElementSpecListContent(elementSpecList, xmlElement, attributeSet, baseURI);	//append the content of the element
@@ -562,7 +600,7 @@ System.out.println("Ready to parse stylesheets.");	//G***del
 		return attributeSet;  //return the attribute set used for the element
 	}
 
-	/**Appends information from an XML element tree (not including the element tag)
+	/**Appends the tree contents of an XML element (not including the element tag)
 		into a list of element specs.
 	@param elementSpecList The list of element specs to be inserted into the document.
 	@param xmlElement The XML element tree.
@@ -653,94 +691,99 @@ Debug.trace("hasInlineChildren: ", hasInlineChildren);	//G***del
 */
 //G***del Debug.trace("Ready to create children for: ", xmlElement.getNodeName());  //G***del
 		  final NodeList childNodeList=xmlElement.getChildNodes();  //get the list of child nodes
-			for(int childIndex=0; childIndex<childNodeList.getLength(); childIndex++)	//look at each child node
+			final int childNodeCount=childNodeList.getLength();	//see how many child nodes there are
+			if(childNodeCount>0)	//if this element has children
 			{
-				final Node node=childNodeList.item(childIndex);	//look at this node
-				appendElementSpecListNode(elementSpecList, node, attributeSet, baseURI);	//append this node's information
+				for(int childIndex=0; childIndex<childNodeCount; childIndex++)	//look at each child node
+				{
+					final Node node=childNodeList.item(childIndex);	//look at this node
+					appendElementSpecListNode(elementSpecList, node, baseURI);	//append this node's information
+				}
+			}
+			else	//if this element has no children, we'll have to add dummy text
+			{
+					//add a dummy object replacment character so that this element will have some text to represent
+				elementSpecList.add(new DefaultStyledDocument.ElementSpec(null, DefaultStyledDocument.ElementSpec.ContentType, new char[]{CharacterConstants.OBJECT_REPLACEMENT_CHAR}, 0, 1));
+//G***del when works					//append a dummy character for the element to represent
+//G***del when works				appendElementSpecListContent(elementSpecList, String.valueOf(CharacterConstants.OBJECT_REPLACEMENT_CHAR), null, baseURI);
 			}
 //G***del		}
 	}
 
 	/**Appends information from an XML child node into a list of element specs.
 	@param elementSpecList The list of element specs to be inserted into the document.
-	@param xmlNode The XML element's child node tree.
+	@param node The XML element's child node tree.
 	@param baseURI The base URI of the document, used for generating full target
-		URIs for quick searching.
-//G***del	@param inline Whether or not this is inline content. G***see if we can remove this
+		URIs for quick searching, or <code>null</code> if there is no base URI or
+		if the base URI is not applicable.
+	@return The attribute set used to represent the node; this attribute set
+		can be manipulated after the method returns.
 	@exception BadLocationException for an invalid starting offset
 	@see XMLDocument#insert
 	@see XMLDocument#appendElementSpecListContent
 	*/
-	protected void appendElementSpecListNode(final List elementSpecList, final org.w3c.dom.Node node, final SimpleAttributeSet attributeSet, final URI baseURI)
+	protected MutableAttributeSet appendElementSpecListNode(final List elementSpecList, final org.w3c.dom.Node node, final URI baseURI)
 	{
 //G***del Debug.trace("appending element spec list node: ", node.getNodeName());  //G***del
 		switch(node.getNodeType())	//see which type of object this is
 		{
 			case Node.ELEMENT_NODE:	//if this is an element
-				appendElementSpecList(elementSpecList, (org.w3c.dom.Element)node, baseURI);	//insert this element into our element spec list
-				break;
+				return appendElementSpecList(elementSpecList, (org.w3c.dom.Element)node, baseURI);	//insert this element into our element spec list
 			case Node.TEXT_NODE:	//if this is a text node
 			case Node.CDATA_SECTION_NODE:	//if this is a CDATA section node
 				{
-//G***fix						final AttributeSet attr=isInline ? attributeSet : null;	//G***testing
-//G***del when works						XMLCSSSimpleAttributeSet contentAttributeSet;	//the attributes for text content
-
-
-//G***see if this really slows things down					final SimpleAttributeSet contentAttributeSet=createAttributeSet(node, baseURL);	//create and fill an attribute set
-
-//G***del Debug.trace("looking at text node with value: \""+node.getNodeValue()+"\"");  //G***del
-
-						//G***can this be replaced with something more general, or will that really slow things down?
-					final SimpleAttributeSet contentAttributeSet=new SimpleAttributeSet();	//create a new attribute for this content G***why not just use the create attributes method? oh, because it's just for an element; so make it for nodes, too
-					XMLStyleUtilities.setXMLElementName(contentAttributeSet, node.getNodeName());	//set the name of the content to ensure it will not get its name from its parent element (this would happen if there was no name explicitely set)
-
-//G***del Debug.trace("inserting text data: \""+node.getNodeValue()+"\"");  //G***del
-					final StringBuffer textStringBuffer=new StringBuffer(node.getNodeValue());  //G***testing
-					if(textStringBuffer.length()>0) //if there is actually content (don't add empty text)
-					{
-//G***del Debug.trace("before collapsing whitespace: ", textStringBuffer);  //G***del
-						StringBufferUtilities.collapse(textStringBuffer, CharacterConstants.WHITESPACE_CHARS, " ");	//G***testing
-//G***del Debug.trace("after collapsing whitespace: ", textStringBuffer);  //G***del
-	//G***del Debug.trace("Adding text with attributes: ", contentAttributeSet);	//G***del
-						elementSpecList.add(new DefaultStyledDocument.ElementSpec(contentAttributeSet, DefaultStyledDocument.ElementSpec.ContentType, textStringBuffer.toString().toCharArray(), 0, textStringBuffer.length()));
-					}
+						//G***see if this really slows things down
+					final MutableAttributeSet textAttributeSet=createAttributeSet(node, baseURI);	//create and fill an attribute set
+					appendElementSpecListContent(elementSpecList, node.getNodeValue(), textAttributeSet, baseURI);	//append the content
+					return textAttributeSet;	//return the attribute set of the text
 				}
-				break;
+			default:	//TODO fix for inserting unknown nodes into the Swing document
+				return new SimpleAttributeSet();	//create and return a new, empty attribute set 
 		}
-//G***fix System.out.println("text is null?");
-//G***fix System.out.println(text==null);
-//G***fix System.out.println("Adding text: "+StringUtilities.replaceEvery(text, '\n', "\\n"));	//G***del
-/*G***fix
-						boolean collapseWhitespace=true;  //G***testing; comment
-Debug.trace("Checking for pre parent.");
-						XMLNode parentNode=(XMLNode)node.getParentNode(); //G***testing; comment G***put all this into an XMLUtilities.hasParent()...
-						while(parentNode!=null)
-						{
-Debug.trace("Found parent: "+parentNode.getNodeName());
-							if(parentNode.getNodeName().equals("pre")) //G***testing; use constant; comment; use DTD or put in view instead
-							{
-Debug.trace("found pre parent.");
-								collapseWhitespace=false;
-								break;
-							}
-							parentNode=(XMLNode)parentNode.getParentNode(); //G***testing; comment
-						}
-						if(collapseWhitespace)  //G***fix; comment
-*/
-//G***del Debug.trace("before collapse: "+text);  //G***del
+	}
+
+	/**Appends child text into a list of element specs.
+	@param elementSpecList The list of element specs to be inserted into the document.
+	@param text The text to be inserted.
+	@param attributeSet The attribute set representing the text, or
+		<code>null</code> if default attributes should be used.
+	@param baseURI The base URI of the document, used for generating full target
+		URIs for quick searching, or <code>null</code> if there is no base URI or
+		if the base URI is not applicable.
+	@exception BadLocationException for an invalid starting offset
+	@see XMLDocument#insert
+	@see XMLDocument#appendElementSpecListContent
+	*/
+	protected void appendElementSpecListContent(final List elementSpecList, final String text, final AttributeSet attributeSet, final URI baseURI)
+	{
+		final AttributeSet textAttributeSet;
+		if(attributeSet!=null)	//if there are no attributes provided (artificial text is being manually inserted, for instance)
+		{
+			textAttributeSet=attributeSet;	//use the attribute set provided	
+		}
+		else	//if there are no attributes provided (artificial text is being manually inserted, for instance)
+		{
+			final SimpleAttributeSet simpleAttributeSet=new SimpleAttributeSet();	//create a new attribute for this content
+			XMLStyleUtilities.setXMLElementName(simpleAttributeSet, XMLConstants.TEXT_NODE_NAME);	//set the name of the content to ensure it will not get its name from its parent element (this would happen if there was no name explicitely set)
+			textAttributeSet=simpleAttributeSet;	//use the default atribute set we created
+		}
+//G***del Debug.trace("inserting text data: \""+node.getNodeValue()+"\"");  //G***del
+		final StringBuffer textStringBuffer=new StringBuffer(text);  //G***testing
+		if(textStringBuffer.length()>0) //if there is actually content (don't add empty text)
+		{
+//G***del Debug.trace("before collapsing whitespace: ", textStringBuffer);  //G***del
 
 
-//G***del				  text=StringUtilities.collapseEveryChar(text, StringUtilities.WHITESPACE_STRING, " ");	//G***testing
 
-//G***original				StringBufferUtilities.collapse(textStringBuffer, StringUtilities.WHITESPACE_STRING, " ");	//G***testing
-
-
-//G***del Debug.trace("after collapse: "+text);   //G***del
-/*G***fix
-						else  //G***del
-Debug.trace("Non-collapsed text: "+text);
-*/
-
+			StringBufferUtilities.collapse(textStringBuffer, CharacterConstants.WHITESPACE_CHARS, " ");	//G***testing
+//G***del Debug.trace("after collapsing whitespace: ", textStringBuffer);  //G***del
+//G***del Debug.trace("Adding text with attributes: ", contentAttributeSet);	//G***del
+//G***fix textStringBuffer.append(CharacterConstants.WORD_JOINER_CHAR);	//G***testing
+//G***fix textStringBuffer.append(CharacterConstants.ZERO_WIDTH_NO_BREAK_SPACE_CHAR);	//G***testing
+//G***fix textStringBuffer.append(ELEMENT_END_CHAR);	//put a dummy character at the end of the element so that caret positioning will work correctly at the end of block views
+			final String content=textStringBuffer.toString();	//convert the string buffer to a string
+			elementSpecList.add(new DefaultStyledDocument.ElementSpec(textAttributeSet, DefaultStyledDocument.ElementSpec.ContentType, content.toCharArray(), 0, content.length()));
+		}
 	}
 
 	/**Appends a page break to the element spec list.
@@ -756,23 +799,24 @@ Debug.trace("Non-collapsed text: "+text);
 		XMLStyleUtilities.setPageBreakView(pageBreakAttributeSet, true);	//show that this element should be a page break view
 		final XMLCSSStyleDeclaration cssStyle=new XMLCSSStyleDeclaration(); //create a new style declaration
 		cssStyle.setDisplay(XMLCSSConstants.CSS_DISPLAY_BLOCK);	//show that the page break element should be a block element, so no anonymous blocks will be created around it
-		XMLCSSStyleConstants.setXMLCSSStyle(pageBreakAttributeSet, cssStyle);	//store the constructed CSS style in the attribute set
+		XMLCSSStyleUtilities.setXMLCSSStyle(pageBreakAttributeSet, cssStyle);	//store the constructed CSS style in the attribute set
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(pageBreakAttributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a page break element spec
 //G***fix		final SimpleAttributeSet contentAttributeSet=new SimpleAttributeSet();	//create a new attribute for this content
-		elementSpecList.add(new DefaultStyledDocument.ElementSpec(null, DefaultStyledDocument.ElementSpec.ContentType, new char[]{' '}, 0, 1)); //add a space of content under the page break
+			//add a dummy object replacment character so that this element will have some text to represent
+		elementSpecList.add(new DefaultStyledDocument.ElementSpec(null, DefaultStyledDocument.ElementSpec.ContentType, new char[]{CharacterConstants.OBJECT_REPLACEMENT_CHAR}, 0, 1));
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(pageBreakAttributeSet, DefaultStyledDocument.ElementSpec.EndTagType));	//finish the page break element spec
 	}
 
-	/**Creates an attribute set for the given element.
-	@param element The XML element with CSS attributes.
+	/**Creates an attribute set for the given XML node.
+	@param node The XML node, such as an element or text.
 	@param baseURI The base URI of the document, used for generating full target
-		URIs for quick searching.
+		URIs for quick searching, or <code>null</code> if there is no base URI or
+		if the base URI is not applicable.
 	@return An attribute set reflecting the CSS attributes of the element.
 	*/
-//G***del when works	protected XMLCSSSimpleAttributeSet createAttributeSet(final XMLElement element)
 	protected SimpleAttributeSet createAttributeSet(final Node xmlNode, final URI baseURI)
 	{
-		//G***allow this to use the static XMLDocument.createAttributeSet after first extrating element information
+		//G***allow this to use the static XMLDocument.createAttributeSet after first extracting element information
 //G***del Debug.trace("Creating attribute set for node: ", xmlNode.getNodeName()); //G***del
 		final SimpleAttributeSet attributeSet=new SimpleAttributeSet();	//create a new attribute for this element
 		XMLStyleUtilities.setXMLElementName(attributeSet, xmlNode.getNodeName());	//store the node's name in the attribute set
@@ -790,38 +834,42 @@ Debug.trace("Non-collapsed text: "+text);
 
 		//G***give every attribute set a default empty CSS style; later fix this in the application section to create as needed and to clear them before application
 
-
-
 //G***del when moved to the set-style routines		XMLCSSStyleConstants.setXMLCSSStyle(attributeSet, new XMLCSSStyleDeclaration());	//give every attribute set a default empty CSS style
 
-
-		if(xmlNode.getNodeType()==Node.ELEMENT_NODE) //if this node is an element
+		switch(xmlNode.getNodeType())	//see what type of node for which to create an attribute set
 		{
-		  //give every attribute set a default empty CSS style; if not, this will cause huge performance hits when trying to create them on the fly when styles are applied
-		  XMLCSSStyleConstants.setXMLCSSStyle(attributeSet, new XMLCSSStyleDeclaration());
-		  org.w3c.dom.Element xmlElement=(org.w3c.dom.Element)xmlNode;  //cast the node to an element
-			NamedNodeMap attributeNodeMap=xmlElement.getAttributes(); //get a reference to the attributes
-			//store the XML attributes
-			for(int attributeIndex=0; attributeIndex<attributeNodeMap.getLength(); ++attributeIndex)	//look at each of the attributes
-			{
-				final Attr xmlAttribute=(Attr)attributeNodeMap.item(attributeIndex);	//get a reference to this attribute
-					//add this XML attribute to the Swing atribute set as the value of our special XML attribute key
-				XMLStyleUtilities.addXMLAttribute(attributeSet, xmlAttribute.getNamespaceURI(), xmlAttribute.getNodeName(), xmlAttribute.getNodeValue());
-			}
-			if(xmlElement.getChildNodes().getLength()==0)  //if the element has no child nodes
-			{
-				XMLStyleUtilities.setXMLEmptyElement(attributeSet, true); //show that this is an empty element (dummy child text may be added later, so without this it would be hard to tell
-			}
-		}
-		final String targetID=getTargetID(attributeSet);  //get the target ID specified in the attribute set
-		if(targetID!=null)  //if this attribute set has a target ID
-		{
-			try
-			{
-			  final URI targetURI=URIUtilities.createURI(baseURI, "#"+targetID);	//create a full URI from the target ID used as a fragment G***use a constant here
-				XMLStyleUtilities.setTargetURI(attributeSet, targetURI);  //store the target URI for quick searching
-			}
-			catch(URISyntaxException e) {} //ignore any errors and simply don't store the target URL
+			case Node.ELEMENT_NODE: //if this node is an element
+				{
+				  //give every attribute set a default empty CSS style; if not, this will cause huge performance hits when trying to create them on the fly when styles are applied
+				  XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, new XMLCSSStyleDeclaration());
+				  org.w3c.dom.Element xmlElement=(org.w3c.dom.Element)xmlNode;  //cast the node to an element
+					NamedNodeMap attributeNodeMap=xmlElement.getAttributes(); //get a reference to the attributes
+					//store the XML attributes
+					for(int attributeIndex=0; attributeIndex<attributeNodeMap.getLength(); ++attributeIndex)	//look at each of the attributes
+					{
+						final Attr xmlAttribute=(Attr)attributeNodeMap.item(attributeIndex);	//get a reference to this attribute
+							//add this XML attribute to the Swing atribute set as the value of our special XML attribute key
+						XMLStyleUtilities.addXMLAttribute(attributeSet, xmlAttribute.getNamespaceURI(), xmlAttribute.getNodeName(), xmlAttribute.getNodeValue());
+					}
+					if(xmlElement.getChildNodes().getLength()==0)  //if the element has no child nodes
+					{
+						XMLStyleUtilities.setXMLEmptyElement(attributeSet, true); //show that this is an empty element (dummy child text may be added later, so without this it would be hard to tell)
+					}
+					final String targetID=getTargetID(attributeSet);  //get the target ID specified in the attribute set
+					if(targetID!=null)  //if this attribute set has a target ID
+					{
+						try
+						{
+							final URI targetURI=URIUtilities.resolveFragment(baseURI, targetID);	//create a full URI from the target ID used as a fragment
+							XMLStyleUtilities.setTargetURI(attributeSet, targetURI);  //store the target URI for quick searching
+						}
+						catch(IllegalArgumentException illegalArgumentException) {} //ignore any errors and simply don't store the target URL
+					}
+				}
+				break;
+			case Node.TEXT_NODE:	//if this is a text node
+			case Node.CDATA_SECTION_NODE:	//if this is a CDATA section node
+				break;	//do nothing---the node is already set up
 		}
 		return attributeSet;	//return the attribute set we created
 	}
@@ -998,8 +1046,10 @@ Debug.trace("Non-collapsed text: "+text);
 				try
 				{
 						//get the text this content Swing element represents
-					final String text=swingElement.getDocument().getText(swingElement.getStartOffset(), swingElement.getEndOffset()-swingElement.getStartOffset());
-					return xmlDocument.createTextNode(text); //create a text node with the content and return the node
+					final StringBuffer stringBuffer=new StringBuffer(swingElement.getDocument().getText(swingElement.getStartOffset(), swingElement.getEndOffset()-swingElement.getStartOffset()));
+							//remove every instance of the artificial end-of-block-element character, as well as any hard return that the user might have entered during editing
+					StringBufferUtilities.removeEveryChar(stringBuffer, ELEMENT_END_STRING+'\n');
+					return xmlDocument.createTextNode(stringBuffer.toString()); //create a text node with the content and return the node
 				}
 				catch(BadLocationException badLocationException)  //in the unlikely event that we try to access a bad location
 				{
@@ -1026,7 +1076,7 @@ Debug.trace("Non-collapsed text: "+text);
 				if(childXMLNode.getNodeType()==Node.ELEMENT_NODE) //if this is an element
 				{
 						//get the display CSS property for the child element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
-					final CSSPrimitiveValue cssDisplayProperty=(CSSPrimitiveValue)XMLCSSStyleConstants.getCSSPropertyCSSValue(childSwingElement.getAttributes(), XMLCSSConstants.CSS_PROP_DISPLAY, false);
+					final CSSPrimitiveValue cssDisplayProperty=(CSSPrimitiveValue)XMLCSSStyleUtilities.getCSSPropertyCSSValue(childSwingElement.getAttributes(), XMLCSSConstants.CSS_PROP_DISPLAY, false);
 					isInlineChild=cssDisplayProperty!=null ? //if the child element knows its CSS display
 						XMLCSSConstants.CSS_DISPLAY_INLINE.equals(cssDisplayProperty.getStringValue()) :  //see if the display is "inline"
 						true;  //if there is no display, assume it is inline
@@ -1280,8 +1330,6 @@ Debug.trace("installing XMLEditorKit"); //G***del
 		}
 */
 
-
-
 	/**Fetches the command list for the editor. This is the list of commands
 		supported by the superclass augmented by the collection of commands defined
 		locally for such things as page operations.
@@ -1289,7 +1337,7 @@ Debug.trace("installing XMLEditorKit"); //G***del
 	*/
 	public Action[] getActions()
 	{
-		return TextAction.augmentList(super.getActions(), this.DEFAULT_ACTIONS);
+		return TextAction.augmentList(super.getActions(), DEFAULT_ACTIONS);
 	}
 
 		/**
@@ -1711,21 +1759,6 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 		/** HTML used when inserting pre. */
 //G***fix		private static final String INSERT_PRE_HTML = "<pre></pre>";
 
-	/**The identifier for the previous page action.*/
-	public static final String PREVIOUS_PAGE_ACTION="previous-page-action";
-
-	/**The identifier for the next page action.*/
-	public static final String NEXT_PAGE_ACTION="next-page-action";
-
-	/**Default actions used by this editor kit to augment the super class default
-		actions.
-	*/
-	private static final Action[] DEFAULT_ACTIONS=
-	{
-		new PreviousPageAction(PREVIOUS_PAGE_ACTION),
-		new NextPageAction(NEXT_PAGE_ACTION)
-	};
-
 	/**An abstract <code>Action</code> providing convenience methods for working
 		with XML documents.
 		<p>NOTE: None of the convenience methods obtain a lock on the document. If
@@ -1898,6 +1931,140 @@ Debug.trace("found nodes: "+nodeList.getLength());  //G***del
 		  }
 		}
 	}
+
+	/*
+	 * Position the caret to the end of the line.
+	 * @see DefaultEditorKit#endLineAction
+	 * @see DefaultEditorKit#selectEndLineAction
+	 * @see DefaultEditorKit#getActions
+	 */
+	public static class EndLineAction extends TextAction
+	{
+
+		private boolean select;
+
+			/** 
+			 * Create this action with the appropriate identifier. 
+			 * @param nm  the name of the action, Action.NAME.
+			 * @param select whether to extend the selection when
+			 *  changing the caret position.
+			 */
+			EndLineAction(String nm, boolean select) {
+					super(nm);
+					this.select = select;
+			}
+
+			/** The operation to perform when this action is triggered. */
+			public void actionPerformed(ActionEvent e)
+			{
+					JTextComponent target = getTextComponent(e);
+					if (target != null) {
+							try {
+									int offs = target.getCaretPosition();
+
+
+
+								final Caret caret=target.getCaret();
+								int p0 = Math.min(caret.getDot(), caret.getMark());
+								int p1 = Math.max(caret.getDot(), caret.getMark());
+/*G***fix									
+									final Caret caret=target.getCaret();
+									if(caret instanceof XMLCaret)	//if this is an XML caret
+									{
+										final XMLCaret xmlCaret=(XMLCaret)caret;
+										final Point endPoint=getRowEnd(target, offs);
+										if(endPoint!=null)	//G***testing
+										{
+											final MouseEvent mouseEvent=new MouseEvent(target, -1, System.currentTimeMillis(),
+													0, endPoint.x, endPoint.y, 1, false);
+											xmlCaret.positionCaret(mouseEvent);
+										}
+									}
+									else	//if this is a normal caret
+									{
+*/
+//G***fix int endOffs = getRowEnd(target, offs);
+
+
+
+
+										int endOffs = Utilities.getRowEnd(target, offs);
+										if (select) {
+												target.moveCaretPosition(endOffs);
+										} else {
+												target.setCaretPosition(endOffs);
+										}
+//G**fix									}
+							} catch (BadLocationException bl) {
+			UIManager.getLookAndFeel().provideErrorFeedback(target);
+							}
+					}
+			}
+			
+		/**
+		 * Determines the ending row model position of the row that contains
+		 * the specified model position.  The component given must have a
+		 * size to compute the result.  If the component doesn't have a size
+		 * a value of -1 will be returned.
+		 *
+		 * @param c the editor
+		 * @param offs the offset in the document >= 0
+		 * @return the position >= 0 if the request can be computed, otherwise
+		 *  a value of -1 will be returned.
+		 * @exception BadLocationException if the offset is out of range
+		 */
+		public static final int getRowEnd(JTextComponent c, int offs) throws BadLocationException
+		{
+			Rectangle r;
+			if(c instanceof XMLTextPane)	//G***newswing
+			{
+				r = ((XMLTextPane)c).modelToView(offs, Position.Bias.Backward);	//G***newswing
+			}
+			else
+			{
+				r = c.modelToView(offs);
+			}
+	if (r == null) {
+			return -1;
+	}
+	int n = c.getDocument().getLength();
+	int lastOffs = offs;
+	int y = r.y;
+	while ((r != null) && (y == r.y)) {
+			offs = lastOffs;
+			lastOffs += 1;
+			r = (lastOffs <= n) ? c.modelToView(lastOffs) : null;
+	}
+	return offs;
+		}
+
+
+/*G***del
+		public static final Point getRowEnd(JTextComponent c, int offs) throws BadLocationException {
+	Rectangle r = c.modelToView(offs);
+	Rectangle lastRectangle=r;
+	if (r == null) {
+		return null;
+//G***fix			return -1;
+	}
+	int n = c.getDocument().getLength();
+	int lastOffs = offs;
+	int y = r.y;
+	while ((r != null) && (y == r.y)) {
+			offs = lastOffs;
+			lastOffs += 1;
+			lastRectangle=r;
+			r = (lastOffs <= n) ? c.modelToView(lastOffs) : null;
+	}
+	return new Point(lastRectangle.x+10, lastRectangle.y);
+//G**testing	return offs;
+		}
+*/			
+
+	}
+
+
+
 
 	/**
 	 * @return HTMLDocument of <code>e</code>.

@@ -27,7 +27,7 @@ import com.garretwilson.swing.text.FragmentView;
 import com.garretwilson.swing.text.TextLayoutStrategy;
 import com.garretwilson.swing.text.ViewsFactory;
 import com.garretwilson.swing.text.ViewReleasable;
-import com.garretwilson.swing.text.xml.css.XMLCSSStyleConstants;
+import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSView;
 import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants; //G***maybe make everything that comes in through the XMLCSSStyleConstants class be agnostic of CSS, and remove the CSS-specific style strings
@@ -201,15 +201,15 @@ Debug.trace(); //G***testing
 		final AttributeSet attributeSet=getAttributes();	//get our attributes
 		if(attributeSet!=null)	//if we have attributes
 		{
-			setBackgroundColor(XMLCSSStyleConstants.getBackgroundColor(attributeSet));	//set the background color from the attributes
+			setBackgroundColor(XMLCSSStyleUtilities.getBackgroundColor(attributeSet));	//set the background color from the attributes
 			setParagraphInsets(attributeSet);	//G***fix
 			setJustification(StyleConstants.getAlignment(attributeSet));	//G***fix
 //G***del			setJustification(StyleConstants.ALIGN_JUSTIFIED);	//G***fix
 //G***fix			setLineSpacing(StyleConstants.getLineSpacing(attributeSet));	//G***fix
 //G***fix			setLineSpacing(2);	//G***fix; testing
 //G***del			setLineSpacing(1.5f);	//G***fix; testing
-			setLineSpacing(XMLCSSStyleConstants.getLineHeight(attributeSet));	//set the line height amount from our CSS attributes G***fix this to correctly use the number
-		  setVisible(!XMLCSSConstants.CSS_DISPLAY_NONE.equals(XMLCSSStyleConstants.getDisplay(attributeSet))); //the paragraph is visible only if it doesn't have a display of "none"
+			setLineSpacing(XMLCSSStyleUtilities.getLineHeight(attributeSet));	//set the line height amount from our CSS attributes G***fix this to correctly use the number
+		  setVisible(!XMLCSSConstants.CSS_DISPLAY_NONE.equals(XMLCSSStyleUtilities.getDisplay(attributeSet))); //the paragraph is visible only if it doesn't have a display of "none"
 //G***del			LineSpacing=3;	//G***fix; testing
 
 			final Document document=getDocument();	//get our document
@@ -218,7 +218,7 @@ Debug.trace(); //G***testing
 				final StyledDocument styledDocument=(StyledDocument)document;	//cast the document to a styled document
 				final Font font=styledDocument.getFont(attributeSet);	//let the document get the font from the attributes
 //G***find some way to cache the font in the attributes
-				setFirstLineIndent(XMLCSSStyleConstants.getTextIndent(attributeSet, font));	//set the text indent amount from the CSS property in the attributes, providing a font in case the length is in ems
+				setFirstLineIndent(XMLCSSStyleUtilities.getTextIndent(attributeSet, font));	//set the text indent amount from the CSS property in the attributes, providing a font in case the length is in ems
 
 
 
@@ -228,10 +228,10 @@ Debug.trace(); //G***testing
 				//percentages, getPreferredeSpan(), etc. will have to look at the preferred
 				//span and make calculations based upon the percentages
 				//G***probably have some other exernal helper class that sets the margins based upon the attributes
-				final short marginTop=(short)Math.round(XMLCSSStyleConstants.getMarginTop(attributeSet)); //get the top margin from the attributes
-				final short marginLeft=(short)Math.round(XMLCSSStyleConstants.getMarginLeft(attributeSet, font)); //get the left margin from the attributes
-				final short marginBottom=(short)Math.round(XMLCSSStyleConstants.getMarginBottom(attributeSet)); //get the bottom margin from the attributes
-				final short marginRight=(short)Math.round(XMLCSSStyleConstants.getMarginRight(attributeSet, font)); //get the right margin from the attributes
+				final short marginTop=(short)Math.round(XMLCSSStyleUtilities.getMarginTop(attributeSet)); //get the top margin from the attributes
+				final short marginLeft=(short)Math.round(XMLCSSStyleUtilities.getMarginLeft(attributeSet, font)); //get the left margin from the attributes
+				final short marginBottom=(short)Math.round(XMLCSSStyleUtilities.getMarginBottom(attributeSet)); //get the bottom margin from the attributes
+				final short marginRight=(short)Math.round(XMLCSSStyleUtilities.getMarginRight(attributeSet, font)); //get the right margin from the attributes
 				setInsets(marginTop, marginLeft, marginBottom, marginRight);	//G***fix; testing
 			}
 		}
@@ -778,7 +778,7 @@ if(layoutPool.getViewCount()>0) //G***del
 				{
 	*/
 				final View parentView=getParent();  //get our parent view
-				final String parentDisplay=XMLCSSStyleConstants.getDisplay(parentView.getAttributes()); //see what kind of parent we have
+				final String parentDisplay=XMLCSSStyleUtilities.getDisplay(parentView.getAttributes()); //see what kind of parent we have
 				final boolean isInTableCell=XMLCSSConstants.CSS_DISPLAY_TABLE_CELL.equals(parentDisplay);  //see if we're inside a table cell
 				/*G***del when works
 				if(XMLCSSConstants.CSS_DISPLAY_TABLE_CELL.equals(parentDisplay))  //if we're inside a table cell
@@ -955,7 +955,7 @@ System.out.println("Adding TestRow addition of: "+addition);	//G***del
 				if(childView instanceof XMLInlineView)  //if this is an XML inline view
 					verticalAlign=((XMLInlineView)childView).getVerticalAlign();  //get the cached vertical alignment value directly from the view
 				else  //if the view is another type
-					verticalAlign=XMLCSSStyleConstants.getVerticalAlign(childView.getAttributes()); //get the vertical alignment specified by the inline view
+					verticalAlign=XMLCSSStyleUtilities.getVerticalAlign(childView.getAttributes()); //get the vertical alignment specified by the inline view
 				final int relativeIndex=i>0 ? i-1 : (offsets.length>1 ? i+1 : i);  //we'll move the offset relative to the offset before us or, if this is the first offset, the one after us; if there is only one offset, use ourselves
 //G***del Debug.trace("Relative index: ", relativeIndex); //G***del
 				  //G***this currently doesn't work for subscripts of subscripts or superscripts of superscripts or a superscript followed by a subscript, etc.

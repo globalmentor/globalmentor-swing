@@ -20,7 +20,7 @@ import com.garretwilson.swing.text.AnonymousElement;
 //G***del if not needed import com.garretwilson.swing.text.ViewHidable;
 import com.garretwilson.swing.text.ViewReleasable;
 import com.garretwilson.swing.text.ViewUtilities;
-import com.garretwilson.swing.text.xml.css.XMLCSSStyleConstants;
+import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants; //G***maybe make everything that comes in through the XMLCSSStyleConstants class be agnostic of CSS, and remove the CSS-specific style strings
 import com.garretwilson.text.xml.oeb.OEBConstants;
@@ -1584,8 +1584,8 @@ Debug.trace("create flowlayout"); //G***del
 				final Element childElement=viewChildElements[i]; //get a reference to this element
 				final AttributeSet childAttributeSet=childElement.getAttributes();  //get the attributes of the element
 //G***del Debug.trace("looking at child element: ", XMLCSSStyleConstants.getXMLElementName(childAttributeSet)); //G***del
-				final String pageBreakBefore=XMLCSSStyleConstants.getPageBreakBefore(childAttributeSet); //get the value of the page-break-before CSS property, if any
-				final String pageBreakAfter=XMLCSSStyleConstants.getPageBreakAfter(childAttributeSet); //get the value of the page-break-after CSS property, if any
+				final String pageBreakBefore=XMLCSSStyleUtilities.getPageBreakBefore(childAttributeSet); //get the value of the page-break-before CSS property, if any
+				final String pageBreakAfter=XMLCSSStyleUtilities.getPageBreakAfter(childAttributeSet); //get the value of the page-break-after CSS property, if any
 //G***del Debug.trace("page break before: ", pageBreakBefore); //G***del
 					//if this element always wants breaks before it and this isn't the first child element
 				if(i>0 && XMLCSSConstants.CSS_PAGE_BREAK_BEFORE_ALWAYS.equals(pageBreakBefore))
@@ -1732,7 +1732,7 @@ Debug.trace("create flowlayout"); //G***del
 							if(isHTMLBody)  //if this element is an XHTML <body> element
 							{
 */
-								if(XHTMLSwingTextUtilities.isHTML(childAttributeSet, documentAttributeSet)) //if this is an HTML element
+								if(XHTMLSwingTextUtilities.isHTMLElement(childAttributeSet, documentAttributeSet)) //if this is an HTML element
 								{
 //G***del Debug.trace("is HTML body");  //G***del
 									final int bodyChildElementCount=childElement.getElementCount(); //find out how many children the body element has
@@ -2794,7 +2794,7 @@ System.out.println("  child view: "+i+" preferredSpan: "+view.getView(i).getPref
 				  //see how the view considers breaking after it
 //G***fix				final String pageBreakAfter=XMLCSSStyleConstants.getPageBreakAfter(attributeSet);
 				  //see how the view considers breaking before it
-				final String pageBreakBefore=XMLCSSStyleConstants.getPageBreakBefore(attributeSet);
+				final String pageBreakBefore=XMLCSSStyleUtilities.getPageBreakBefore(attributeSet);
 /*G***fix; not having this only works for page-break-before because the pre-paginate information gather already divides page breaks
 						//if this view always wants page breaks before it, and this isn't the first view in the row
 				if(viewIndex>0 && XMLCSSConstants.CSS_PAGE_BREAK_BEFORE_ALWAYS.equals(pageBreakBefore))
@@ -2861,7 +2861,7 @@ System.out.println("  child view: "+i+" preferredSpan: "+view.getView(i).getPref
 					final View previousView=row.getView(breakBeforeIndex-1);	//get a reference to the view before the one being broken
 					final AttributeSet attributeSet=previousView.getAttributes(); //get the view's attributes
 					  //see how the view considers breaking after it
-					final String pageBreakAfter=XMLCSSStyleConstants.getPageBreakAfter(attributeSet);
+					final String pageBreakAfter=XMLCSSStyleUtilities.getPageBreakAfter(attributeSet);
 						//if we should avoid breaking after this view
 					if(XMLCSSConstants.CSS_PAGE_BREAK_AFTER_AVOID.equals(pageBreakAfter))
 						--breakBeforeIndex; //we'll try breaking sooner

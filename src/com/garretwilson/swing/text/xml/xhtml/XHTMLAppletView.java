@@ -64,13 +64,13 @@ public class XHTMLAppletView extends XMLAbstractAppletView implements XHTMLConst
 			final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child's attributes
 
 
-			final String childElementName=XMLStyleUtilities.getXMLElementName(childAttributeSet);	//get the name of this child element
+			final String childElementName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);	//get the name of this child element
 //G***del		  final String childElementName=(String)childAttributeSet.getAttribute(StyleConstants.NameAttribute);	//get the name of this child element
 		  if(childElementName.equals(ELEMENT_PARAM))  //if this is a param element
 			{
-				final String parameterName=(String)childAttributeSet.getAttribute(ELEMENT_PARAM_ATTRIBUTE_NAME);	//get the param name attribute G***check about resolving parents (we don't want to resolve), use namespaces
+				final String parameterName=XMLStyleUtilities.getXMLAttributeValue(childAttributeSet, null, ELEMENT_PARAM_ATTRIBUTE_NAME);	//get the param name attribute
 				Debug.assert(parameterName!=null, "<param> name is null");  //G***fix
-				final String parameterValue=(String)childAttributeSet.getAttribute(ELEMENT_PARAM_ATTRIBUTE_VALUE);	//get the param value attribute G***check about resolving parents (we don't want to resolve), use namespaces
+				final String parameterValue=XMLStyleUtilities.getXMLAttributeValue(childAttributeSet, null, ELEMENT_PARAM_ATTRIBUTE_VALUE);	//get the param value attribute
 				Debug.assert(parameterValue!=null, "<param> value is null");  //G***fix
 //G***del Debug.trace("Param name: "+parameterName+" value: "+parameterValue); //G***del
 				final Parameter parameter=new Parameter(parameterName, parameterValue); //create a new parameter

@@ -17,6 +17,15 @@ public class XMLHiddenView extends View //G***should this be put in com.garretwi
 		super(element);	//construct the parent class
 	}
 
+	/**Returns a boolean value that indicates whether the view is visible or not.
+	<p>Hidden views always return <code>false</code>.</p> 
+	@return <code>false</code>, indicating that the view is not visible.
+	*/
+	public boolean isVisible()
+	{
+		return false;
+	}
+
 	/**Performs no rendering for the hidden view.
 	@param graphics The rendering surface to use.
 	@param allocation The allocated region to render into.

@@ -34,13 +34,13 @@ public class XMLCSSViewPainter implements XMLCSSConstants
 		final boolean isFirstFragment=isFragmentView ? ((FragmentView)view).isFirstFragment() : true;
 			//paint the background
 //G***del unless gets too slow		final Color backgroundColor=cssView.getBackgroundColor();	//get the background color for the view
-		final Color backgroundColor=XMLCSSStyleConstants.getBackgroundColor(attributeSet);	//get the background color from the attributes
-		final Color foregroundColor=XMLCSSStyleConstants.getForeground(attributeSet);	//get the foreground color from the attributes
+		final Color backgroundColor=XMLCSSStyleUtilities.getBackgroundColor(attributeSet);	//get the background color from the attributes
+		final Color foregroundColor=XMLCSSStyleUtilities.getForeground(attributeSet);	//get the foreground color from the attributes
 		graphics.setColor(foregroundColor); //change to the foreground color for drawing G***do we want to save the old value?
 		  //G***testing; move
 		if(backgroundColor!=null)	//if we have a background color
 		{
-Debug.trace("Background for "+XMLCSSStyleConstants.getXMLElementName(attributeSet)+": "+backgroundColor); //G***del
+Debug.trace("Background for "+XMLCSSStyleUtilities.getXMLElementName(attributeSet)+": "+backgroundColor); //G***del
 			final Color originalColor=graphics.getColor();	//get the original graphics color
 			graphics.setColor(backgroundColor);	//switch to the background color
 			graphics.fillRect(allocRect.x, allocRect.y, allocRect.width, allocRect.height);	//fill the rectangle with the correct color
@@ -48,7 +48,7 @@ Debug.trace("Background for "+XMLCSSStyleConstants.getXMLElementName(attributeSe
 		}
 			//G***right now, we paint the marker to the left of the element, which will cause
 			//  it to not be repainted at times; somehow invalidate the region if so
-		final String display=XMLCSSStyleConstants.getDisplay(attributeSet); //get the CSS display property value
+		final String display=XMLCSSStyleUtilities.getDisplay(attributeSet); //get the CSS display property value
 		  //if this is a list item, and it's the first fragment (if the list item has been fragmented)
 		if(CSS_DISPLAY_LIST_ITEM.equals(display) && isFirstFragment)
 		{
@@ -66,7 +66,7 @@ Debug.trace("View painter parent view's class: ", view.getClass().getName());  /
 							final Font font=styledDocument.getFont(attributeSet);	//let the document get the font from the attributes
 
 				final AttributeSet parentAttributeSet=parentView.getAttributes(); //get the parent's attributes
-				final float parentLeftMargin=XMLCSSStyleConstants.getMarginLeft(parentAttributeSet, font);  //get the parent's left margin G***i18n
+				final float parentLeftMargin=XMLCSSStyleUtilities.getMarginLeft(parentAttributeSet, font);  //get the parent's left margin G***i18n
 				final float markerX=allocRect.x-parentLeftMargin; //find out where the marker should be located horizontally
 				View relativeSizeView=view; //we'll get the deepest view we can in order to judge the size of the marker
 				while(relativeSizeView.getViewCount()>0)  //while there are child views
@@ -74,7 +74,7 @@ Debug.trace("View painter parent view's class: ", view.getClass().getName());  /
 					relativeSizeView=relativeSizeView.getView(0);  //get the first child view
 				}
 				final float relativeHeight=relativeSizeView.getPreferredSpan(View.Y_AXIS);  //find the height of the view we're using as a guide
-				final String listStyleType=XMLCSSStyleConstants.getListStyleType(attributeSet);  //get the type of list style
+				final String listStyleType=XMLCSSStyleUtilities.getListStyleType(attributeSet);  //get the type of list style
 				if(CSS_LIST_STYLE_TYPE_DISC.equals(listStyleType))  //if the marker should be a disc
 				{
 					final float markerHeight=relativeHeight/3;  //make the marker partially as high as the deepest child G***make this a constant from somewhere
@@ -92,7 +92,7 @@ Debug.trace("View painter parent view's class: ", view.getClass().getName());  /
 						final Element siblingElement=parentElement.getElement(i); //get a reference to this sibling
 						if(siblingElement!=element)  //if we still haven't found ourselves
 						{
-							final String siblingDisplay=XMLCSSStyleConstants.getDisplay(siblingElement.getAttributes()); //get the CSS display property value of the sibling
+							final String siblingDisplay=XMLCSSStyleUtilities.getDisplay(siblingElement.getAttributes()); //get the CSS display property value of the sibling
 							if(CSS_DISPLAY_LIST_ITEM.equals(siblingDisplay)) //if this is a list item
 								++listItemIndex;  //we've found another list item that isn't us
 						}

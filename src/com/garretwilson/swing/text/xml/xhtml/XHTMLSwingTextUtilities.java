@@ -1,15 +1,18 @@
 package com.garretwilson.swing.text.xml.xhtml;
 
 import java.io.File;
+import java.net.URI;
+
 import javax.swing.text.*;
 import com.garretwilson.io.FileUtilities;
 import com.garretwilson.io.MediaType;
 import com.garretwilson.swing.text.xml.XMLStyleUtilities;
 import com.garretwilson.text.xml.oeb.OEBConstants;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
+import com.garretwilson.text.xml.xhtml.XHTMLUtilities;
 import com.garretwilson.util.Debug;
 
-/**Provides utility functions to manipulate Swing text classes.
+/**Provides utility functions to manipulate Swing text classes representing XHTML.
 @author Garret Wilson
 */
 public class XHTMLSwingTextUtilities implements XHTMLConstants
@@ -69,53 +72,168 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 		return false; //this does not appear to be an image element
 	}
 
-	/**Determines if the specified attribute set represents an HTML element.
-		An element is considered to be an HTML element if:
+	/**Returns all child elements for which views should be created. If
+		a paged view holds multiple documents, for example, the children of those
+		document elements will be included. An XHTML document, furthermore, will
+		return the contents of its <code>&lt;body&gt;</code> element.
+		It is assumed that the ranges precisely enclose any child elements within
+		that range, so any elements that start within the given range will be
+		included.
+	@param newStartOffset This range's starting offset.
+	@param newEndOffset This range's ending offset.
+	@return An array of elements for which views should be created.
+	*/
+/*G***del when works
+	protected boolean isHTMLDocumentElement(final AttributeSet documentAttributeSet)
+	{
+		final Element element=getElement(); //get a reference to our element
+		final int documentElementCount=element.getElementCount();  //find out how many child elements there are (representing XML documents)
+		for(int documentElementIndex=0; documentElementIndex<documentElementCount; ++documentElementIndex) //look at each element representing an XML document
+		{
+			final Element documentElement=element.getElement(documentElementIndex); //get a reference to this child element
+				//if this document starts within our range
+			if(documentElement.getStartOffset()>=startOffset && documentElement.getStartOffset()<endOffset)
+			{
+				final AttributeSet documentAttributeSet=documentElement.getAttributes();  //get the attributes of the document element
+				if(XMLStyleUtilities.isPageBreakView(documentAttributeSet)) //if this is a page break element
+				{
+	Debug.trace("found page break view"); //G***del
+					viewChildElementList.add(documentElement);  //add this element to our list of elements; it's not a top-level document like the others G***this is a terrible hack; fix
+				}
+				else
+				{
+	//G***del if not needed				Element baseElement=documentElement;  //we'll find out which element to use as the parent; in most documents, that will be the document element; in HTML elements, it will be the <body> element
+					final MediaType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet);  //get the media type of the document
+					final String documentElementLocalName=XMLStyleUtilities.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
+					final String documentElementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element local name
+					final int childElementCount=documentElement.getElementCount();  //find out how many children are in the document
+					for(int childIndex=0; childIndex<childElementCount; ++childIndex)  //look at the children of the document element
+					{
+						final Element childElement=documentElement.getElement(childIndex); //get a reference to the child element
+						if(childElement.getStartOffset()>=startOffset && childElement.getStartOffset()<endOffset) //if this child element starts within our range
+						{
+							final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child element's attributes
+							final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);  //get the child element local name
+		Debug.trace("Looking at child: ", childElementLocalName); //G***del
+							boolean isHTMLBody=false; //we'll determine if this element is a <body> element of XHTML
+							if(XHTMLConstants.ELEMENT_BODY.equals(childElementLocalName))  //if this element is "body"
+							{
+								//we'll determine if this body element is HTML by one of following:
+								//  * the element is in the XHTML or OEB namespace
+								//  * the element is in no namespace but the document is of type text/html or text/x-oeb1-document
+								//  * the element is in no namespace and the document element is
+								//      an <html> element in the XHTML or OEB namespace
+								final String childElementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(childAttributeSet);  //get the child element local name
+								if(childElementNamespaceURI!=null)  //if the body element has a namespace
+								{
+										//if it's part of the XHTML or OEB namespace
+									if(XHTMLConstants.XHTML_NAMESPACE_URI.equals(childElementNamespaceURI)
+											|| OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(childElementNamespaceURI))
+										isHTMLBody=true;  //show that this is an HTML body element
+								}
+								else  //if the body element has no namespace
+								{
+										//if the document type is text/html or text/x-oeb1-document
+									if(documentMediaType!=null && (documentMediaType.equals(MediaType.TEXT_HTML) || documentMediaType.equals(MediaType.TEXT_X_OEB1_DOCUMENT)))
+										isHTMLBody=true;  //is an HTML body element
+									else if(XHTMLConstants.ELEMENT_HTML.equals(documentElementLocalName)  //if the document element is an XHTML or OEB <html> element
+											&& (XHTMLConstants.XHTML_NAMESPACE_URI.equals(documentElementNamespaceURI) || OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(documentElementNamespaceURI)))
+										isHTMLBody=true;  //is an HTML body element
+								}
+							}
+							if(isHTMLBody)  //if this element is an XHTML <body> element
+							{
+								final int bodyChildElementCount=childElement.getElementCount(); //find out how many children the body element has
+								for(int bodyChildIndex=0; bodyChildIndex<bodyChildElementCount; ++bodyChildIndex) //look at each of the body element's children
+								{
+		Debug.trace("Adding body child element: ", bodyChildIndex);
+									final Element bodyChildElement=childElement.getElement(bodyChildIndex); //get this child element of the body element
+									if(bodyChildElement.getStartOffset()>=startOffset && bodyChildElement.getStartOffset()<endOffset) //if this child element starts within our range
+										viewChildElementList.add(bodyChildElement);  //add this body child element to our list of elements
+								}
+							}
+							else  //if this element is not an XHTML <body> element
+							{
+		Debug.trace("Adding child element: ", childIndex);
+								viewChildElementList.add(childElement);  //add this child element to our list of elements
+							}
+						}
+					}
+				}
+			}
+		}
+		return (Element[])viewChildElementList.toArray(new Element[viewChildElementList.size()]); //return the views as an array of views
+	}
+*/
+
+	/**Determines if the specified attribute set represents an HTML document.
+		An element is considered to be a document element if one of the following
+			are true:
 		<ul>
-			<li>The element is in the XHTML or OEB namespace.</li>
-			<li>The element is in no namespace but the document is of type
-				<code>text/html</code>, <code>application/xhtml+xml</code>,
-				or <code>text/x-oeb1-document</code>.</li>
-		  <li>The element is in no namespace and the document element is an
-				<code>&lt;html&gt;</code> element in the XHTML or OEB namespace.</li>
+			<li>The document has an HTML media type.</li>
+			<li>The document element is an <code>&lt;html&gt;</code> element in an
+				HTML namespace.</li>
+		</ul>
+	@param documentAttributeSet The document element's attribute set.
+	@return <code>true</code> if the specified attribute set represents an XHTML
+		or OEB element, or <code>false</code> if otherwise or the specified
+		attribute set was <code>null</code>.
+	@see XHTMLUtilities#isHTML(MediaType)
+	@see XHTMLUtilities#isHTMLNamespaceURI(URI)
+	*/
+	public static boolean isHTMLDocumentElement(final AttributeSet documentAttributeSet)
+	{
+		final MediaType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet);  //get the media type of the document
+			//if the document media type is an HTML media type
+		if(XHTMLUtilities.isHTML(documentMediaType)) 
+		{
+			return true;  //this is an HTML media type
+		}
+		else  //if the media type isn't HTML
+		{
+			final String documentElementLocalName=XMLStyleUtilities.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
+			final String documentElementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element namespace URI
+				//TODO change all the XMLStyleUtilities.getXMLElementNamespaceURI() calls to return URIs
+			if(XHTMLConstants.ELEMENT_HTML.equals(documentElementLocalName)  //if the document element is an XHTML or OEB <html> element
+					&& XHTMLUtilities.isHTMLNamespaceURI(URI.create(documentElementNamespaceURI)))	//if the document namespace URI represents an XHTML namespace 
+			{
+				return true;  //the document element is <html> in the HTML namespace
+			}
+		}
+		return false; //the element doesn't seem to be an HTML document
+	}
+
+	/**Determines if the specified attribute set represents an HTML element.
+		An element is considered to be an HTML element if one of the following
+			are true:
+		<ul>
+			<li>The element is in an HTML namespace.</li>
+			<li>The element is in no namespace but the document has an HTML
+				media type.</li>
+		  <li>The element is in no namespace but the document element is an
+				<code>&lt;html&gt;</code> element in an HTML namespace.</li>
 		</ul>
 	@param attributeSet The attribute set which might represent an HTML element.
 	@param documentAttributeSet The document element's attribute set.
 	@return <code>true</code> if the specified attribute set represents an XHTML
 		or OEB element, or <code>false</code> if otherwise or the specified
 		attribute set was <code>null</code>.
+	@see XHTMLUtilities#isHTML(MediaType)
+	@see XHTMLUtilities#isHTMLNamespaceURI(URI)
+	@see #isHTMLDocumentElement(AttributeSet)
 	*/
-	public static boolean isHTML(final AttributeSet attributeSet, final AttributeSet documentAttributeSet)
+	public static boolean isHTMLElement(final AttributeSet attributeSet, final AttributeSet documentAttributeSet)
 	{
 		final String elementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(attributeSet);  //get the element namespace
-		final String elementLocalName=XMLStyleUtilities.getXMLElementLocalName(attributeSet);  //get the element local name
 		if(elementNamespaceURI!=null)  //if the element has a namespace
 		{
-				//if it's part of the XHTML or OEB namespace
-			if(XHTMLConstants.XHTML_NAMESPACE_URI.equals(elementNamespaceURI)
-					|| OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(elementNamespaceURI))
+				//TODO change all the XMLStyleUtilities.getXMLElementNamespaceURI() calls to return URIs
+			if(XHTMLUtilities.isHTMLNamespaceURI(URI.create(elementNamespaceURI)))	//if the URI represents an XHTML namespace 
 				return true;  //show that this is an XHTML element
 		}
-		else  //if the body element has no namespace
+		else if(isHTMLDocumentElement(documentAttributeSet))	//if the element has no namespace but the document is an HTML document
 		{
-		  final MediaType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet);  //get the media type of the document
-				//if the document type is text/html or text/x-oeb1-document or application/xhtml+xml
-			if(documentMediaType!=null && (documentMediaType.equals(MediaType.TEXT_HTML)
-				|| documentMediaType.equals(MediaType.APPLICATION_XHTML_XML)
-				|| documentMediaType.equals(MediaType.TEXT_X_OEB1_DOCUMENT)))
-			{
-				return true;  //this is an HTML media type
-			}
-			else  //if the media type isn't HTML
-			{
-				final String documentElementLocalName=XMLStyleUtilities.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
-				final String documentElementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element local name
-				if(XHTMLConstants.ELEMENT_HTML.equals(documentElementLocalName)  //if the document element is an XHTML or OEB <html> element
-					&& (XHTMLConstants.XHTML_NAMESPACE_URI.equals(documentElementNamespaceURI) || OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(documentElementNamespaceURI)))
-				{
-					return true;  //the document element is <html> in the HTML namespace
-				}
-			}
+			return true;	//this element is in an HTML document
 		}
 		return false; //the element doesn't seem to be HTML
 	}

@@ -2,11 +2,12 @@ package com.garretwilson.swing.text;
 
 import java.util.Enumeration;
 import javax.swing.text.*;
+import javax.swing.text.StyleConstants;
 
 /**Allows Java Swing attribute sets to be manipulated.
 @author Garret Wilson
 */
-public class AttributeSetUtilities
+public class AttributeSetUtilities	//G***do we really want this class with a StyleUtilities class?
 {
 
 	/**This class cannot be publicly instantiated.*/

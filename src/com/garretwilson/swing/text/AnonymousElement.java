@@ -1,6 +1,7 @@
 package com.garretwilson.swing.text;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import javax.swing.text.*;
 
@@ -25,11 +26,23 @@ public class AnonymousElement implements Element  //G***isn't there a better nam
 	final Element[] childElementArray;
 
 	/**Creates an anonymous element enclosing the given elements as children.
+		The elements are stored locally, with no reference to the original collection.
+	@param parent The parent element of which this element owns a subset of child
+		views.
+	@param attributes The attributes of this element.
+	@param childElementCollection The collection of elements this element should contain.
+	*/
+	public AnonymousElement(final Element parent, final AttributeSet attributes, final Collection childElementCollection)
+	{
+		this(parent, attributes, (Element[])childElementCollection.toArray(new Element[childElementCollection.size()]));	//construct the element with the child elements in an array 
+	}
+
+	/**Creates an anonymous element enclosing the given elements as children.
 		The elements are stored locally, with no reference to the original array.
 	@param parent The parent element of which this element owns a subset of child
 		views.
 	@param attributes The attributes of this element.
-	@param childElements The elements this element contains.
+	@param childElements The elements this element should contain.
 	*/
 	public AnonymousElement(final Element parent, final AttributeSet attributes, final Element[] childElements)
 	{
@@ -42,10 +55,10 @@ public class AnonymousElement implements Element  //G***isn't there a better nam
 	@param parent The parent element of which this element owns a subset of child
 		views.
 	@param attributes The attributes of this element.
-	@param childElements The elements this element contains.
+	@param childElements The elements this element should contain.
 	@param childElementStartIndex The index of the first child element to use
 		(0&lt;=<code>childElementStartIndex</code>&lt;<code>childElements.length</code>).
-	@param childElementCount The number of childElements to use.
+	@param childElementCount The number of child elements to use.
 	*/
 	public AnonymousElement(final Element parent, final AttributeSet attributes, final Element[] childElements, final int childElementStartIndex, final int childElementCount)
 	{

@@ -64,7 +64,7 @@ import com.garretwilson.text.xml.xhtml.XHTMLConstants;  //G***move
 import com.garretwilson.text.xml.xhtml.XHTMLUtilities;
 import com.garretwilson.sound.sampled.SampledSoundUtilities;
 import com.garretwilson.swing.text.Bidi;
-import com.garretwilson.swing.text.xml.css.XMLCSSStyleConstants;
+import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.garretwilson.util.Debug;
@@ -324,7 +324,7 @@ Debug.trace("loading code2000");
 		final String localName=XMLUtilities.getLocalName(elementName);  //get the element's local name from the qualified name
 		XMLStyleUtilities.setXMLElementLocalName(attributeSet, localName);	//store the element's local name in the attribute set
 		if(style!=null) //if style was given G***should we instead do this unconditionally?
-			XMLCSSStyleConstants.setXMLCSSStyle(attributeSet, style);	//store the CSS style in the attribute set
+			XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, style);	//store the CSS style in the attribute set
 		return attributeSet;	//return the attribute set we created
 	}
 
@@ -351,13 +351,13 @@ Debug.trace("loading code2000");
 */
 
 		int style=Font.PLAIN;	//start out assuming we'll have a plain font
-		if(XMLCSSStyleConstants.isBold(attributeSet))	//if the attributes specify bold (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
+		if(XMLCSSStyleUtilities.isBold(attributeSet))	//if the attributes specify bold (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
 			style|=Font.BOLD;	//add bold to our font style
 //G***del Debug.trace("is bold: ", new Boolean(XMLCSSStyleConstants.isBold(attributeSet)));  //G***del
-		if(XMLCSSStyleConstants.isItalic(attributeSet))	//if the font attributes specify italics (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
+		if(XMLCSSStyleUtilities.isItalic(attributeSet))	//if the font attributes specify italics (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
 			style|=Font.ITALIC;	//add italics to our font style
 		String family=null; //show that we haven't found a font family
-		final String[] fontFamilyNameArray=XMLCSSStyleConstants.getFontFamilyNames(attributeSet); //get the array of font family names
+		final String[] fontFamilyNameArray=XMLCSSStyleUtilities.getFontFamilyNames(attributeSet); //get the array of font family names
 		for(int i=0; i<fontFamilyNameArray.length; ++i) //look at each of the specified fonts
 		{
 		  final String fontFamilyName=fontFamilyNameArray[i]; //get this font family name
@@ -398,7 +398,7 @@ Debug.trace("Looking for font family name: ", fontFamilyName);
 			family="Serif";   //use the default G***use a constant; maybe use a different default
 Debug.trace("Decided on font family: ", family); //G***del
 //G***del when works		final String family=StyleConstants.getFontFamily(attributeSet);	//get the font family from the attributes (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set) G***change to use CSS attributes
-		float size=XMLCSSStyleConstants.getFontSize(attributeSet);	//get the font size from the attributes (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
+		float size=XMLCSSStyleUtilities.getFontSize(attributeSet);	//get the font size from the attributes (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
 
 /*G***put this in the style instead
 		//if the attributes specify either superscript or subscript (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
@@ -851,26 +851,64 @@ Debug.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEn
 
 		}
 
-		/**
-		 * Replaces the contents of the document with the given
-		 * element specifications.  This is called before insert if
-		 * the loading is done in bursts.  This is the only method called
-		 * if loading the document entirely in one burst.
-		 */
-//G***fix; made public so that XMLEditorKit (currently OEBEditorKit) can access it
-		public void create(ElementSpec[] data) {
-Debug.trace("XMLDocument.create()");
-		  super.create(data);
-/*G***del; testing bidiarray
-        final int chngStart = 0;
-        final int chngEnd =  this.getLength();
-Debug.trace("change start: "+chngStart+" change end: "+chngEnd);
-        final int firstPStart = getParagraphElement(chngStart).getStartOffset();
-        final int lastPEnd = getParagraphElement(chngEnd).getEndOffset();
-Debug.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEnd);
-		calculateBidiLevels(firstPStart, lastPEnd);
-*/
+	/**Initialize the document to reflect the given element structure
+		(i.e. the structure reported by the <code>getDefaultRootElement</code>
+		method. If the document contained any data it will first be removed.
+	@param elementSpecs The array of element specifications that define the document.
+		<p>This version is public so that it can be accessed by the editor kit.</p>
+	@see XMLEditorKit#setXML(org.w3c.dom.Document[], URI[], MediaType[], XMLDocument)
+	*/
+	public void create(ElementSpec[] elementSpecs)
+	{
+		super.create(elementSpecs);	//create the document normally
+		writeLock();	//lock the document for writing G***do we really need to do this, as applying styles doesn't modify the document?
+//	G***fix		applyStyles(); //G***testing; put in the correct place, and make sure this gets called when repaginating, if we need to
+		final Element rootSwingElement=getRootElements()[0]; //get the first root element of the document -- this contains an element tree for each document loaded
+		final int swingDocumentElementCount=rootSwingElement.getElementCount(); //find out how many root elements there are
+		for(int swingDocumentElementIndex=0; swingDocumentElementIndex<swingDocumentElementCount; ++swingDocumentElementIndex) //look at each root element, each of which represents an XML document
+		{
+			final Element swingDocumentElement=rootSwingElement.getElement(swingDocumentElementIndex);  //get the first element, which is the root of the document tree
+			insertBlockElementEnds(swingDocumentElement);	//G***testing
 		}
+		writeUnlock();	//release the document writing lock
+	}
+
+
+	protected void insertBlockElementEnds(final Element element)	//G***testing
+	{
+		Element previousChildElement=null;	//keep track of the last child element
+		AttributeSet previousChildAttributeSet=null;	//keep track of the last child element's attributes
+		boolean isPreviousChildElementInline=false;	//keep track of whether the last child element was inline
+		final int childElementCount=element.getElementCount(); //find out how many child elements there are
+		for(int childElementIndex=0; childElementIndex<childElementCount; ++childElementIndex) //look at each child element
+		{
+			final Element childElement=element.getElement(childElementIndex);  //get this child element
+			final AttributeSet childAttributeSet=childElement.getAttributes();	//get the attributes of the child
+			final CSSStyleDeclaration childCSSStyle=XMLCSSStyleUtilities.getXMLCSSStyle(childElement.getAttributes()); //get the CSS style of the element (this method makes sure the attributes are present)
+			//see if this element is inline (text is always inline, regardless of what the display property says) G***probably make some convenience method for this, and update XMLViewFactory
+			final boolean isInline=XMLCSSUtilities.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName());
+			if(!isInline)	//if this element is not inline, add an element end character
+			{
+				try
+				{
+					insertString(childElement.getEndOffset(), XMLEditorKit.ELEMENT_END_STRING, childAttributeSet);	//G***testing
+						//if an inline child came before a block child, it will make an anonymous view so add an end to it as well
+					if(previousChildElement!=null && isPreviousChildElementInline)
+					{
+						insertString(previousChildElement.getEndOffset(), XMLEditorKit.ELEMENT_END_STRING, previousChildAttributeSet);	//G***testing
+					}
+				}
+				catch (BadLocationException e)
+				{
+					Debug.error(e);	//G***fix
+				}
+			}
+			insertBlockElementEnds(childElement);	//insert block ends for this child element's children
+			previousChildElement=childElement;						//the current child element now becomes the previous child element
+			previousChildAttributeSet=childAttributeSet;	//
+			isPreviousChildElementInline=isInline;				//
+		}
+	}
 
     /**
      * Notifies all listeners that have registered interest for
@@ -882,7 +920,6 @@ Debug.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEn
      * @see EventListenerList
      */
     protected void fireInsertUpdate(DocumentEvent e) {
-
 		applyStyles(); //G***testing; put in the correct place, and make sure this gets called when repaginating, if we need to
 			super.fireInsertUpdate(e);
     }
@@ -1133,7 +1170,7 @@ Debug.trace("pos: ", pos);  //G***del
 			final AttributeSet paragraphAttributeSet=paragraphElement.getAttributes();  //get the paragraph's attributes
 			Debug.assert(paragraphAttributeSet!=null, "Paragraph has no attributes.");
 Debug.trace("this paragraph attribute set: ", com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(paragraphAttributeSet));  //G***del; use relative class name
-		  final CSSStyleDeclaration paragraphCSSStyle=XMLCSSStyleConstants.getXMLCSSStyle(paragraphAttributeSet); //get the CSS style of the element (this method makes sure the attributes are present)
+		  final CSSStyleDeclaration paragraphCSSStyle=XMLCSSStyleUtilities.getXMLCSSStyle(paragraphAttributeSet); //get the CSS style of the element (this method makes sure the attributes are present)
 		  if(!XMLCSSUtilities.isDisplayInline(paragraphCSSStyle))  //if this element is marked as a paragraph
 //G***del whenw orks			if(XMLStyleConstants.isParagraphView(paragraphAttributeSet))  //if this element is not marked as a paragraph
 			{
@@ -1412,7 +1449,7 @@ Debug.trace("Found default stylesheet for namespace: ", namespaceURI);  //G***de
 			final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);  //get the child element local name
 					//if this element is <head> and it's an HTML <head>
 			if(XHTMLConstants.ELEMENT_HEAD.equals(childElementLocalName)
-				  && XHTMLSwingTextUtilities.isHTML(childAttributeSet, documentAttributeSet))
+				  && XHTMLSwingTextUtilities.isHTMLElement(childAttributeSet, documentAttributeSet))
 			{
 				getInternalStylesheets(childElement, swingDocumentElement, cssProcessor, styleSheetList); //get the internal stylesheets from the HTML <head> element
 			}
@@ -1436,7 +1473,7 @@ Debug.trace("Found default stylesheet for namespace: ", namespaceURI);  //G***de
 //G***del		if(XHTMLConstants.ELEMENT_STYLE.equals(elementLocalName)) //if this is a style element G***check the namespace and/or media type or something, too
 		  //if this is an HTML <style>
 		if(XHTMLConstants.ELEMENT_STYLE.equals(elementLocalName)
-				&& XHTMLSwingTextUtilities.isHTML(attributeSet, swingDocumentElement.getAttributes()))
+				&& XHTMLSwingTextUtilities.isHTMLElement(attributeSet, swingDocumentElement.getAttributes()))
 		{
 			try
 			{
@@ -1489,7 +1526,7 @@ Debug.trace("getting default namespace URI, found media type: ", mediaType);  //
 				if(XHTMLUtilities.isHTML(mediaType))	//if this is an HTML media type TODO this can probably be improved or the method placed elsewhere
 				{					
 					namespaceURI=XHTMLConstants.XHTML_NAMESPACE_URI;  //use the XHTML namespace
-					if(mediaType.equals(mediaType.TEXT_X_OEB1_DOCUMENT)) //if the media type is for an OEB document
+					if(mediaType.equals(MediaType.TEXT_X_OEB1_DOCUMENT)) //if the media type is for an OEB document
 						namespaceURI=OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString();  //use the OEB document namespace
 				}
 Debug.trace("namespace URI: ", namespaceURI);  //G***del
@@ -1524,12 +1561,12 @@ Debug.trace("namespace URI: ", namespaceURI);  //G***del
 				if(isApplicable(cssStyleRule, swingElement, elementLocalName)) //if this style rule applies to this element
 				{
 //G***del when not needed		  		final AttributeSet attributeSet=swingElement.getAttributes();  //get the element's attribute set G***do we know this isn't null?
-				  XMLCSSStyleDeclaration elementStyle=(XMLCSSStyleDeclaration)XMLCSSStyleConstants.getXMLCSSStyle(attributeSet);  //get this element's style G***fix to use the normal CSS DOM, putting the importStyle() method into a generic Swing utility class
+				  XMLCSSStyleDeclaration elementStyle=(XMLCSSStyleDeclaration)XMLCSSStyleUtilities.getXMLCSSStyle(attributeSet);  //get this element's style G***fix to use the normal CSS DOM, putting the importStyle() method into a generic Swing utility class
 				  if(elementStyle==null) //if there is no existing style (usually the editor kit will have supplied one already to reduce the performance hit here)
 					{
 						elementStyle=new XMLCSSStyleDeclaration();  //create an empty default style
 						Debug.assert(attributeSet instanceof MutableAttributeSet, "Attribute set not mutable");
-						XMLCSSStyleConstants.setXMLCSSStyle((MutableAttributeSet)attributeSet, elementStyle);	//put the style in the attributes
+						XMLCSSStyleUtilities.setXMLCSSStyle((MutableAttributeSet)attributeSet, elementStyle);	//put the style in the attributes
 					}
 //G***del					Debug.trace("style rule is of type: ", cssStyleRule.getClass().getName());  //G***del
 					elementStyle.importStyle((XMLCSSStyleDeclaration)cssStyleRule.getStyle());  //import the style G***use generic DOM and move this to a utility class
@@ -1583,12 +1620,12 @@ Debug.trace("namespace URI: ", namespaceURI);  //G***del
 						//G***we may want to change this to the new style processing methods
 					final ParseReader localStyleReader=new ParseReader(styleValue, "Element "+elementName+" Local Style");	//create a string reader from the value of this local style attribute G***i18n
 					XMLCSSProcessor.parseRuleSet(localStyleReader, cssStyle); //read the style into our style declaration
-					XMLCSSStyleDeclaration elementStyle=(XMLCSSStyleDeclaration)XMLCSSStyleConstants.getXMLCSSStyle(attributeSet);  //get this element's style G***fix to use the normal CSS DOM, putting the importStyle() method into a generic Swing utility class
+					XMLCSSStyleDeclaration elementStyle=(XMLCSSStyleDeclaration)XMLCSSStyleUtilities.getXMLCSSStyle(attributeSet);  //get this element's style G***fix to use the normal CSS DOM, putting the importStyle() method into a generic Swing utility class
 				  if(elementStyle==null) //if there is no existing style (usually the editor kit will have supplied one already to reduce the performance hit here)
 					{
 						elementStyle=new XMLCSSStyleDeclaration();  //create an empty default style
 						Debug.assert(attributeSet instanceof MutableAttributeSet, "Attribute set not mutable");
-						XMLCSSStyleConstants.setXMLCSSStyle((MutableAttributeSet)attributeSet, elementStyle);	//put the style in the attributes
+						XMLCSSStyleUtilities.setXMLCSSStyle((MutableAttributeSet)attributeSet, elementStyle);	//put the style in the attributes
 					}
 					elementStyle.importStyle((XMLCSSStyleDeclaration)cssStyle);  //import the style G***use generic DOM and move this to a utility class
 /*G***del when works

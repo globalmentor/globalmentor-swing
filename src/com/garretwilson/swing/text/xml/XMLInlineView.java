@@ -14,7 +14,7 @@ import com.garretwilson.awt.FontUtilities;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 //G***del when works import com.garretwilson.swing.text.xml.css.XMLCSSSimpleAttributeSet;
-import com.garretwilson.swing.text.xml.css.XMLCSSStyleConstants;
+import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.AttributeSetUtilities; //G***del when not needed
 import com.garretwilson.util.Debug;
 
@@ -154,8 +154,8 @@ public class XMLInlineView extends GlyphView implements TabableView
 					BackgroundColor = null;
 				}
 */
-				setUnderline(XMLCSSStyleConstants.isUnderline(attributeSet));	//find out whether underline is specified in the attributes
-				setVerticalAlign(XMLCSSStyleConstants.getVerticalAlign(attributeSet));  //update the vertical alignment value
+				setUnderline(XMLCSSStyleUtilities.isUnderline(attributeSet));	//find out whether underline is specified in the attributes
+				setVerticalAlign(XMLCSSStyleUtilities.getVerticalAlign(attributeSet));  //update the vertical alignment value
 /*G***fix
 				setStrikeThrough(StyleConstants.isStrikeThrough(attr));
 				setSuperscript(StyleConstants.isSuperscript(attr));

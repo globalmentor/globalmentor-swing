@@ -3,15 +3,18 @@ package com.garretwilson.swing.text.xml;
 import java.awt.*;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.swing.text.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.SizeRequirements;
+
+import com.garretwilson.lang.CharSequenceUtilities;
 import com.garretwilson.swing.text.AnonymousElement;
-import com.garretwilson.swing.text.xml.XMLStyleUtilities;
-import com.garretwilson.swing.text.xml.css.XMLCSSStyleConstants;	//G***maybe change to XMLStyleConstants
+import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;	//G***maybe change to XMLStyleConstants
 import com.garretwilson.swing.text.xml.css.XMLCSSView;
 import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
+import com.garretwilson.text.CharacterConstants;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities;
@@ -220,7 +223,7 @@ Debug.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElement
 	@param element The element representing a block view.
 //G***del	@param attributeSet The attributes of the element, which may or may not be the
 		same as <code>element.getAttributes()</code>.
-	@param viewFactory The view factory.
+	@param viewFactory The factory used to create child views.
 	@return An array of created child views, which may be empty if there are no
 		child elements or an invalid view factory was passed.
 	@see CompositeView#setParent
@@ -238,16 +241,15 @@ Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.Attrib
 		{
 			final Document document=element.getDocument();  //get a reference to the document
 	//G***del		final CSSStyleDeclaration cssStyle=XMLCSSStyleConstants.getXMLCSSStyle(attributeSet); //get the CSS style of the element
-			final List childViewList=new ArrayList(element.getElementCount());  //create a list in which to store elements, knowing that we won't have more views than child elements
-			final Element[] inlineChildElements=new Element[element.getElementCount()]; //create an array of anonymous child elements; we know we'll never have more inline child elements than there are children of the original element
-			int inlineChildElementCount=0;  //show that we haven't started collecting inline child elements, yet
-			SimpleAttributeSet anonymousAttributeSet=null;	//we'll create an anonymous attribute set for each anonymous box when needed
 			final int childElementCount=element.getElementCount();  //find out how many child elements there are
+			final List childViewList=new ArrayList(childElementCount);  //create a list in which to store elements, knowing that we won't have more views than child elements
+			final List inlineChildElementList=new ArrayList(childElementCount);  //create a list in which to store inline child elements; we know we'll never have more inline child elements than there are children of the original element
 			for(int childIndex=0; childIndex<childElementCount; ++childIndex) //look at each child element
 			{
 				final Element childElement=element.getElement(childIndex);  //get a reference to this child element
 //G***del Debug.trace("looking at block view child: ", XMLCSSStyleConstants.getXMLElementLocalName(childElement.getAttributes()));  //G***del
-				final CSSStyleDeclaration childCSSStyle=XMLCSSStyleConstants.getXMLCSSStyle(childElement.getAttributes()); //get the CSS style of the element (this method make sure the attributes are present)
+				final AttributeSet childAttributeSet=childElement.getAttributes();	//get the attributes of the child element
+				final CSSStyleDeclaration childCSSStyle=XMLCSSStyleUtilities.getXMLCSSStyle(childAttributeSet); //get the CSS style of the element (this method make sure the attributes are present)
 					//see if this child element is inline (text is always inline, regardless of what the display property says)
 				final boolean childIsInline=XMLCSSUtilities.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName());
 				if(childIsInline) //if this is an inline child element
@@ -260,38 +262,20 @@ Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.Attrib
 						final String text=document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset());
 	//G***del Debug.trace("Looking at inline text: '"+text+"' character code: "+Integer.toHexString(text.charAt(0)));  //G***del
 	//G***bring back for efficiency				  document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset(), segment);
-						if(text.trim().length()==0 && !XMLStyleUtilities.isXMLEmptyElement(childElement.getAttributes())) //if there is nothing but whitespace in this inline element, and this isn't really just an empty element G***maybe only get the attribute set once
+								//if there are no visible characters (or the end-of-element character mark), and this isn't really just an empty element
+						if(CharSequenceUtilities.notCharIndexOf(text, CharacterConstants.WHITESPACE_CHARS+CharacterConstants.CONTROL_CHARS+XMLEditorKit.ELEMENT_END_CHAR)<0	
+								&& !XMLStyleUtilities.isXMLEmptyElement(childAttributeSet))
 						{
 	//G***del Debug.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElementName(attributeSet)); //G***del
-							if(inlineChildElementCount>0)	//if we've started but not finished an anonymous block, yet G***try to combine all these identical code sections
-							{
-									//create an anonymous element with the elements we've collected
-								final Element anonymousElement=new AnonymousElement(element, anonymousAttributeSet, inlineChildElements, 0, inlineChildElementCount);
-								childViewList.add(viewFactory.create(anonymousElement)); //create a view for the anonymous element and add the view to our list
-								inlineChildElementCount=0;  //show that we're not building an anonymous element anymore
-		//G***del						anonymousElement=null; //show that we're not building an anonymous element anymore
-							}
+							if(inlineChildElementList.size()>0)	//if we've started but not finished an anonymous block, yet
+								childViewList.add(createAnonymousBlockView(element, inlineChildElementList, viewFactory));	//create an anonymous block view and clear the list
 							//G***fix: this does not currently compensate for elements like <pre>
 	//G***del; testing							childViewList.add(new XMLParagraphView(childElement));  //G***testing
 							childViewList.add(new XMLHiddenView(childElement));  //create a hidden view for the whitespace inline element and add it to our list of views
 						}
 						else  //if there's more than whitespace here
 						{
-							if(inlineChildElementCount==0) //if we haven't started building an anonymous element, yet
-							{
-								anonymousAttributeSet=new SimpleAttributeSet();	//create an anonymous attribute set for this anonymous box
-		//G***del when works						anonymousAttributeSet=new XMLCSSSimpleAttributeSet();	//create an anonymous attribute set for this anonymous box
-		//G***fix						XMLCSSStyleConstants.setXMLElementName(anonymousAttributeSet, XMLStyleConstants.AnonymousNameValue);	//show by its name that this is an anonymous box
-								XMLStyleUtilities.setXMLElementName(anonymousAttributeSet, XMLCSSStyleConstants.AnonymousAttributeValue); //show by its name that this is an anonymous box G***maybe change this to setAnonymous
-								final XMLCSSStyleDeclaration anonymousCSSStyle=new XMLCSSStyleDeclaration(); //create a new style declaration
-								anonymousCSSStyle.setDisplay(XMLCSSConstants.CSS_DISPLAY_BLOCK);	//show that the anonymous element should be a block element
-								XMLCSSStyleConstants.setXMLCSSStyle(anonymousAttributeSet, anonymousCSSStyle);	//store the constructed CSS style in the attribute set
-		//G***del						anonymousAttributeSet.addAttribute(StyleConstants.NameAttribute, XMLCSSStyleConstants.AnonymousAttributeValue);	//show by its name that this is an anonymous box G***maybe change this to setAnonymous
-		//G***del if not needed						XMLCSSStyleConstants.setParagraphView(anonymousAttributeSet, true);	//show that the anonymous block should be a paragraph view
-		//G***del						elementSpecList.add(new DefaultStyledDocument.ElementSpec(anonymousAttributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of an anonyous block element
-		//G***del when works						anonymousElement=new AnonymousElement(element, anonymousAttributeSet); //create an anonymous element
-							}
-							inlineChildElements[inlineChildElementCount++]=childElement;  //add the child element to the anonymous element and show that we've collected another one
+							inlineChildElementList.add(childElement);  //add the child element to the inline element list
 						}
 					}
 					catch(BadLocationException badLocationException)  //if we tried to access an invalid location (this shouldn't happen unless there are problems internal to an element)
@@ -302,34 +286,63 @@ Debug.trace("Block element has attributes: ", com.garretwilson.swing.text.Attrib
 				}
 				else  //if this is a block element
 				{
-					if(inlineChildElementCount>0)	//if we've started but not finished an anonymous block, yet
-					{
-							//create an anonymous element with the elements we've collected
-						final Element anonymousElement=new AnonymousElement(element, anonymousAttributeSet, inlineChildElements, 0, inlineChildElementCount);
-						childViewList.add(viewFactory.create(anonymousElement)); //create a view for the anonymous element and add the view to our list
-						inlineChildElementCount=0;  //show that we're not building an anonymous element anymore
-	//G***del						anonymousElement=null; //show that we're not building an anonymous element anymore
-					}
+					if(inlineChildElementList.size()>0)	//if we've started but not finished an anonymous block, yet
+						childViewList.add(createAnonymousBlockView(element, inlineChildElementList, viewFactory));	//create an anonymous block view and clear the list
 					childViewList.add(viewFactory.create(childElement)); //create a view normally for the child element and add the view to our list
 				}
 			}
-			if(inlineChildElementCount>0)	//if we started an anonymous block but never finished it (i.e. the last child was inline)
-			{
-					//create an anonymous element with the elements we've collected
-				final Element anonymousElement=new AnonymousElement(element, anonymousAttributeSet, inlineChildElements, 0, inlineChildElementCount);
-				childViewList.add(viewFactory.create(anonymousElement)); //create a view for the anonymous element and add the view to our list
-				inlineChildElementCount=0;  //show that we're not building an anonymous element anymore
-			}
+			if(inlineChildElementList.size()>0)	//if we started an anonymous block but never finished it (i.e. the last child was inline)
+				childViewList.add(createAnonymousBlockView(element, inlineChildElementList, viewFactory));	//create an anonymous block view and clear the list
 			return (View[])childViewList.toArray(new View[childViewList.size()]);  //convert the list of views to an array
 		}
 		else  //if there is no view factory, the parent view has somehow changed
 			return new View[]{}; //don't create children because we don't have a view factory
 	}
 
-
-
-
-
+	/*Creates an anonymous view representing the given child elements.
+	<p>All elements are removed from the collection after the anonymous view has
+		been created.</p>
+	<p>If no child elements are present, no anonymous view is created.</p>
+	<p>If no child elements are visible, a hidden view will be created instead.</p> 
+	@param parentElement The parent element of which this element owns a subset of child
+		views.
+	@param childElementCollection The collection of elements to be a child of the
+		anonymous view.
+	@param viewFactory The view factory used to create the anonymous view.
+	*/
+	protected static View createAnonymousBlockView(final Element parentElement, final Collection childElementCollection, final ViewFactory viewFactory)
+	{
+		final MutableAttributeSet anonymousAttributeSet=new SimpleAttributeSet();	//create an anonymous attribute set for this anonymous box
+		XMLStyleUtilities.setXMLElementName(anonymousAttributeSet, XMLCSSStyleUtilities.AnonymousAttributeValue); //show by its name that this is an anonymous box G***maybe change this to setAnonymous
+		final XMLCSSStyleDeclaration anonymousCSSStyle=new XMLCSSStyleDeclaration(); //create a new style declaration
+		anonymousCSSStyle.setDisplay(XMLCSSConstants.CSS_DISPLAY_BLOCK);	//show that the anonymous element should be a block element
+		XMLCSSStyleUtilities.setXMLCSSStyle(anonymousAttributeSet, anonymousCSSStyle);	//store the constructed CSS style in the attribute set
+				//put the child elements into an array
+		final Element[] childElements=(Element[])childElementCollection.toArray(new Element[childElementCollection.size()]);
+		boolean isHidden=true;	//this anonymous view should be hidden unless we find at least one visible view
+		for(int i=childElements.length-1; i>=0; --i)	//see if any child elements are visible
+		{
+			final Element childElement=childElements[i];	//get a reference to this child element
+			final AttributeSet childAttributeSet=childElement.getAttributes();	//get the child element attributes
+				//if this child element doesn't have a CSS display of "none", it's visible unless something else (the editor kit, for instance) specified it to be hidden 
+			if(!XMLCSSConstants.CSS_DISPLAY_NONE.equals(XMLCSSStyleUtilities.getDisplay(childAttributeSet)))
+			{
+				if(XMLStyleUtilities.isVisible(childAttributeSet))	//if we haven't for some reason we've explicitly set this view to be hidden
+				{
+					isHidden=false;	//we've found a visible child, so we can't make the anonymous element hidden
+					break;	//stop looking for visible children
+				} 
+			}
+		}
+		if(isHidden)	//if no child elements are visible
+		{
+			XMLStyleUtilities.setVisible(anonymousAttributeSet, false);	//hide the anonymous element
+		} 
+			//create an anonymous element with the elements we've collected
+		final Element anonymousElement=new AnonymousElement(parentElement, anonymousAttributeSet, childElementCollection);
+		childElementCollection.clear();	//remove all the child elements from the collection
+		return viewFactory.create(anonymousElement); //create a view for the anonymous element and return that view, discarding our reference to the element
+	}
 
 	/**Invalidates the layout and asks the container to repaint itself.
 	This is a convenience function for <code>layoutChanged()</code> and
@@ -1742,7 +1755,7 @@ Debug.trace("getAttributes() is: "+Debug.getNullStatus(getAttributes()));	//G***
 		if(attributeSet!=null)	//if we have attributes
 		{
 //G***del Debug.trace("*****Inside XMLBlockView.setPropertiesFromAttributes() for element: "+XMLStyleConstants.getXMLElementName(attributeSet));  //G***del
-			setBackgroundColor(XMLCSSStyleConstants.getBackgroundColor(attributeSet));	//set the background color from the attributes
+			setBackgroundColor(XMLCSSStyleUtilities.getBackgroundColor(attributeSet));	//set the background color from the attributes
 //G***del Debug.trace("New background color: "+getBackgroundColor());
 
 			final Document document=getDocument();	//get our document
@@ -1756,10 +1769,10 @@ Debug.trace("getAttributes() is: "+Debug.getNullStatus(getAttributes()));	//G***
 			//percentages, getPreferredeSpan(), etc. will have to look at the preferred
 			//span and make calculations based upon the percentages
 			//G***probably have some other exernal helper class that sets the margins based upon the attributes
-			final short marginTop=(short)Math.round(XMLCSSStyleConstants.getMarginTop(attributeSet)); //get the top margin from the attributes
-			final short marginLeft=(short)Math.round(XMLCSSStyleConstants.getMarginLeft(attributeSet, font)); //get the left margin from the attributes
-			final short marginBottom=(short)Math.round(XMLCSSStyleConstants.getMarginBottom(attributeSet)); //get the bottom margin from the attributes
-			final short marginRight=(short)Math.round(XMLCSSStyleConstants.getMarginRight(attributeSet, font)); //get the right margin from the attributes
+			final short marginTop=(short)Math.round(XMLCSSStyleUtilities.getMarginTop(attributeSet)); //get the top margin from the attributes
+			final short marginLeft=(short)Math.round(XMLCSSStyleUtilities.getMarginLeft(attributeSet, font)); //get the left margin from the attributes
+			final short marginBottom=(short)Math.round(XMLCSSStyleUtilities.getMarginBottom(attributeSet)); //get the bottom margin from the attributes
+			final short marginRight=(short)Math.round(XMLCSSStyleUtilities.getMarginRight(attributeSet, font)); //get the right margin from the attributes
 		  setInsets(marginTop, marginLeft, marginBottom, marginRight);	//G***fix; testing
 			}
 		}

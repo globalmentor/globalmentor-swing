@@ -6,12 +6,15 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import com.garretwilson.io.MediaType;
 import com.garretwilson.swing.text.*;
+import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.garretwilson.text.xml.oeb.OEBConstants;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
 import com.garretwilson.util.Debug;
 
 /**A view to represent an entire section. This view understands that its
 	child elements represent XML document trees.
+<p>This implementation performs special processing on XHTML document, hiding
+	content before and after the body element.</p>
 @author Garret Wilson
 */
 public class XMLSectionView extends XMLBlockView
@@ -93,6 +96,7 @@ Debug.trace("Getting view child elements"); //G***del
 				}
 				else
 				{
+//G***del if not needed final boolean isHTMLDocument=XHTMLSwingTextUtilities.isHTMLDocumentElement(documentAttributeSet);	//see if this is an HTML document
 	//G***del if not needed				Element baseElement=documentElement;  //we'll find out which element to use as the parent; in most documents, that will be the document element; in HTML elements, it will be the <body> element
 					final MediaType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet);  //get the media type of the document
 					final String documentElementLocalName=XMLStyleUtilities.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
@@ -106,33 +110,8 @@ Debug.trace("Getting view child elements"); //G***del
 							final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child element's attributes
 							final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);  //get the child element local name
 		Debug.trace("Looking at child: ", childElementLocalName); //G***del
-							boolean isHTMLBody=false; //we'll determine if this element is a <body> element of XHTML
-							if(XHTMLConstants.ELEMENT_BODY.equals(childElementLocalName))  //if this element is "body"
-							{
-								//we'll determine if this body element is HTML by one of following:
-								//  * the element is in the XHTML or OEB namespace
-								//  * the element is in no namespace but the document is of type text/html or text/x-oeb1-document
-								//  * the element is in no namespace and the document element is
-								//      an <html> element in the XHTML or OEB namespace
-								final String childElementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(childAttributeSet);  //get the child element local name
-								if(childElementNamespaceURI!=null)  //if the body element has a namespace
-								{
-										//if it's part of the XHTML or OEB namespace
-									if(XHTMLConstants.XHTML_NAMESPACE_URI.equals(childElementNamespaceURI)
-											|| OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(childElementNamespaceURI))
-										isHTMLBody=true;  //show that this is an HTML body element
-								}
-								else  //if the body element has no namespace
-								{
-										//if the document type is text/html or text/x-oeb1-document
-									if(documentMediaType!=null && (documentMediaType.equals(MediaType.TEXT_HTML) || documentMediaType.equals(MediaType.TEXT_X_OEB1_DOCUMENT)))
-										isHTMLBody=true;  //is an HTML body element
-									else if(XHTMLConstants.ELEMENT_HTML.equals(documentElementLocalName)  //if the document element is an XHTML or OEB <html> element
-											&& (XHTMLConstants.XHTML_NAMESPACE_URI.equals(documentElementNamespaceURI) || OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(documentElementNamespaceURI)))
-										isHTMLBody=true;  //is an HTML body element
-								}
-							}
-							if(isHTMLBody)  //if this element is an XHTML <body> element
+								//if this element is an HTML <body> element 
+							if(XHTMLConstants.ELEMENT_BODY.equals(childElementLocalName) && XHTMLSwingTextUtilities.isHTMLElement(childAttributeSet, documentAttributeSet))  
 							{
 								final int bodyChildElementCount=childElement.getElementCount(); //find out how many children the body element has
 								for(int bodyChildIndex=0; bodyChildIndex<bodyChildElementCount; ++bodyChildIndex) //look at each of the body element's children

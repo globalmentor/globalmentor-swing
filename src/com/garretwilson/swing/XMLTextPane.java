@@ -47,11 +47,13 @@ import com.garretwilson.swing.event.ProgressListener;
 import com.garretwilson.swing.text.*;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.oeb.OEBEditorKit;  //G***move elsewhere if we can
+import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLLinkController;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLViewFactory;
 import com.garretwilson.text.xml.XMLReader;
 import com.garretwilson.text.xml.oeb.OEBConstants;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
+import com.garretwilson.text.xml.xhtml.XHTMLUtilities;
 import com.garretwilson.util.Debug;
 import com.garretwilson.util.zip.*;
 import edu.stanford.ejalbert.BrowserLauncher;
@@ -480,7 +482,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 
 
 		setXMLDocument(doc);	//set the document
-		addMouseMotionListener(this);	//keep track of mouse movements G***fix; currently used for updating hyperlink on page change
+//G***del; this is done in the default constructor		addMouseMotionListener(this);	//keep track of mouse movements G***fix; currently used for updating hyperlink on page change
 //G***del when works		addKeyListener(this);  //show that we want to be notified of key presses so that we can implement paging functionality
 	}
 
@@ -505,6 +507,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		final Keymap keymap=getKeymap();  //get the current key map
 		loadKeymap(keymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap G***how do our actions get here from the editor kit?
 */
+//G***fix		setCaret(new XMLCaret(getCaret()));	//G***testing
 		addMouseMotionListener(this);	//keep track of mouse movements G***fix; currently used for updating hyperlink on page change
 	}
 
@@ -1221,13 +1224,17 @@ Debug.trace("creating editor kit for content type: ", type);  //G***del; fix
 				return new OEBEditorKit();  //assume that this is an OEB file in a zip file G***allow for other types of files in zip files later by exploring the package
 			}
 */
+			if(XHTMLUtilities.isHTML(mediaType))	//if this is an XHTML media type
+			{
+				return new XHTMLEditorKit(mediaType);	//create a new XHTML editor kit for this media type
+			}
 				//if this is an OEB package
-		  if(/*G***fix mediaType.equals(OEBConstants.OEB10_DOCUMENT_MEDIA_TYPE) || */mediaType.equals(OEBConstants.OEB10_PACKAGE_MEDIA_TYPE))
+		  else if(/*G***fix mediaType.equals(OEBConstants.OEB10_DOCUMENT_MEDIA_TYPE) || */mediaType.equals(OEBConstants.OEB10_PACKAGE_MEDIA_TYPE))
 			{
 Debug.trace("creating OEB editor kit"); //G***del
 				return new OEBEditorKit();  //create a new OEB editor kit for the OEB package
 			}
-
+//TODO have a XMLUtilities.isXML(mediaType), and if not, create an editor kit normally using the parent class
 		  return new XMLEditorKit(mediaType); //create a new XML editor kit for the specified type
 
 
@@ -1293,6 +1300,21 @@ System.out.println("Inside XMLTextPage.insertUpdate(), fetching new paged view."
 		super.insertUpdate(e);	//do the default action
 	}
 */
+
+	/**Converts the given location in the model to a place in
+		the view coordinate system.
+	<p>This version provides access to the text UI version that allows a
+		determination based upon a bias.</p>
+	@param pos The local location in the model to translate (>=0).
+  @return The coordinates as a rectangle.
+	@exception BadLocationException  if the given position does not
+		represent a valid location in the associated document.
+	@see TextUI#modelToView
+	*/
+	public Rectangle modelToView(int pos, Position.Bias bias) throws BadLocationException
+	{
+		return getUI().modelToView(this, pos, bias);	//ask the UI for the correct view rectangle
+	}
 
 	/**Override of the <code>paint()</code> method to make sure a valid page is
 		being shown.
