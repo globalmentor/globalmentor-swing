@@ -138,6 +138,7 @@ public class ContentPanel extends JPanel
 	protected void initialize()
 	{
 		initializeUI(); //initialize the user interface
+		updateStatus();  //update the actions
 	}
 
 	/**Creates any application objects and initializes data.
@@ -154,13 +155,12 @@ public class ContentPanel extends JPanel
 	*/
   protected void initializeUI()
   {
-		updateActions();  //update the actions G***this should probably be put inside initialize() after the call to initializeUI()
   }
 
 	/**Updates the states of the actions, including enabled/disabled status,
 		proxied actions, etc.
 	*/
-	protected void updateActions()
+	protected void updateStatus()
 	{
 	}
 

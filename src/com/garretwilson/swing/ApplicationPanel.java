@@ -151,7 +151,7 @@ public class ApplicationPanel extends ContentPanel //G***maybe replace the conte
 		if(statusBar!=null) //if we have a status bar
 			initializeStatusBar(statusBar);  //initialize the status bar
   }
-
+	
 	/**@return A new toolbar.*/
 	protected JToolBar createToolBar()
 	{

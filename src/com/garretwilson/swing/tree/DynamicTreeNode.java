@@ -41,17 +41,25 @@ public abstract class DynamicTreeNode extends DefaultMutableTreeNode
 
 	/**@return The number of children, loading the child nodes dynamically if
 		needed.
-	@see #loadChildNodes
+	@see #ensureChildNodesLoaded
 	*/
 	public int getChildCount()
+	{
+		ensureChildNodesLoaded();	//make sure children have been loaded
+    return super.getChildCount(); //return the number of children normally, now that we've loaded children if needed
+  }
+  
+	/**Loads children if they haven't already been loaded.
+	@see #loadChildNodes
+	*/
+	public void ensureChildNodesLoaded()
 	{
 		if(!isChildNodesLoaded) //if the children are not yet loaded
 		{
 			isChildNodesLoaded=true;  //show that we've loaded the child nodes (this is done before the actual loading so that future calls to getChildCount() won't cause reloading)
 			loadChildNodes(); //load the child nodes
 		}
-    return super.getChildCount(); //return the number of children normally, now that we've loaded children if needed
-  }
+	}  
 
 	/**Dynamically loads child nodes when needed. Must be overridden to
 		appropriately load children.

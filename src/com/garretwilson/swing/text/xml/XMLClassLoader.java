@@ -80,7 +80,7 @@ public class XMLClassLoader extends SecureClassLoader implements JavaConstants, 
 		try
 		{
 				//replace '.' with '/' and append ".class"
-			String href=name.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR).concat(String.valueOf(EXTENSION_SEPARATOR)).concat(CLASS_EXTENSION);
+			String href=name.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR).concat(String.valueOf(EXTENSION_SEPARATOR)).concat(JavaConstants.CLASS_EXTENSION);
 			if(baseURL!=null) //if we have a base URL
 				href=URLUtilities.createURL(baseURL, href).toString(); //create an href relative to the base URL
 			final String finalHRef=href;  //put the href in a variable we wont' modify
