@@ -302,7 +302,8 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 	*/
 	public View breakView(final int axis, final int offset, final float pos, final float length)
 	{
-		return getBreakStrategy().breakView(this, axis, offset, pos, length, this);	//ask the view break strategy to break our view, using this view as the view fragment factory
+		final float marginSpan=(axis==X_AXIS) ? getLeftInset()+getRightInset() : getTopInset()+getBottomInset();	//see how much margin we have to allow for
+		return getBreakStrategy().breakView(this, axis, offset, pos, length-marginSpan, this);	//ask the view break strategy to break our view, using this view as the view fragment factory
 	}
 	
 	/**Creates a view that represents a portion of the element.
