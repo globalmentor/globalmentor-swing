@@ -213,7 +213,7 @@ public abstract class ListModelEditStrategy //TODO use generics when they are av
 		{
 			final Object item=listModel.getElementAt(index);	//get the currently selected item
 				//ask the user for confimation to delete the item
-			if(OptionPane.showConfirmDialog(getParentComponent(), "Are you sure you want to delete the item, \""+item+"\"?", "Confirm delete", OptionPane.OK_CANCEL_OPTION)==OptionPane.OK_OPTION)	//G***i18n
+			if(BasicOptionPane.showConfirmDialog(getParentComponent(), "Are you sure you want to delete the item, \""+item+"\"?", "Confirm delete", BasicOptionPane.OK_CANCEL_OPTION)==BasicOptionPane.OK_OPTION)	//G***i18n
 			{
 				if(listModel instanceof DefaultListModel)	//if the list model is a default list model
 				{

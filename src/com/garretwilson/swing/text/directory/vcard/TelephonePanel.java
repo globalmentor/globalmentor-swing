@@ -220,7 +220,7 @@ public class TelephonePanel extends BasicVCardPanel
 	{
 		final TelephoneTypePanel telephoneTypePanel=new TelephoneTypePanel(getTelephoneType());	//create a new panel with our current telephone type 
 			//ask for the new telephone type; if they accept the changes
-		if(OptionPane.showConfirmDialog(this, telephoneTypePanel, "Telephone Intended Uses", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//G***i18n
+		if(BasicOptionPane.showConfirmDialog(this, telephoneTypePanel, "Telephone Intended Uses", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//G***i18n
 		{
 			setTelephoneType(telephoneTypePanel.getTelephoneType());	//update the telephone type
 			return true;	//show that the user accepted the changes and that they were updated		

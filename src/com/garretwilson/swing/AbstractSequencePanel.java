@@ -387,9 +387,9 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		}
 	}
 	
-	/**Finishes the sequence by setting the option panel value to
-		<code>JOptionPane.OK_OPTION</code>, if this panel is embedded in an option
-		pane.
+	/**Finishes the sequence.
+	This version sets the option panel value to <code>JOptionPane.OK_OPTION</code>
+		if this panel is embedded in an option pane.
 	@see JOptionPane#OK_OPTION
 	@see BasicPanel#setOptionPaneValue
 	*/
@@ -452,7 +452,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 			initialButton=getAdvanceButton();
 		} 
 			//show an option pane in the parent component using the given title
-		return OptionPane.showOptionDialog(parentComponent, this, title,
+		return BasicOptionPane.showOptionDialog(parentComponent, this, title,
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 				buttons, initialButton);
 	}

@@ -199,7 +199,7 @@ public abstract class SwingApplication extends Application
 		System.err.println(message);	//display the error in the error output
 		final String wrappedMessage=StringUtilities.wrap(message, 100);	//wrap the error message at 100 characters G***probably use a constant here
 			//show the error in a dialog box, using the default error title if we weren't given one
-		OptionPane.showMessageDialog(parentComponent, wrappedMessage, title, OptionPane.ERROR_MESSAGE);	
+		BasicOptionPane.showMessageDialog(parentComponent, wrappedMessage, title, BasicOptionPane.ERROR_MESSAGE);	
 	}
 
 	/**Attempts to determine the <code>SwingApplication</code> for the given

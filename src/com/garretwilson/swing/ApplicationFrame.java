@@ -234,7 +234,7 @@ public class ApplicationFrame extends BasicFrame
 			//determine a title for the dialog, based upon the application title
 		final String dialogTitle="About"+(aboutPanel.getTitle()!=null ? " "+aboutPanel.getTitle() : "");	//G***i18n
 		//have an option pane create and show a new dialog using our about panel
-		OptionPane.showMessageDialog(this, aboutPanel, dialogTitle, JOptionPane.INFORMATION_MESSAGE);	//G***check and see why we originally had a more complex version
+		BasicOptionPane.showMessageDialog(this, aboutPanel, dialogTitle, JOptionPane.INFORMATION_MESSAGE);	//G***check and see why we originally had a more complex version
 	}
 
 	/**Determines whether the frame and application can close.

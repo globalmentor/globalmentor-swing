@@ -226,7 +226,7 @@ public class AboutPanel extends BasicPanel implements CharacterConstants
 				final RDFPanel rdfPanel=new RDFPanel(new RDFResourceModel(resource));  //create a new panel in which to show the resource
 				rdfPanel.setEditable(false);	//don't allow this RDF to be edited
 					//show the properties in an information dialog
-				OptionPane.showMessageDialog(AboutPanel.this, rdfPanel, (getTitle()!=null ? getTitle()+' ' : "")+"Properties", OptionPane.INFORMATION_MESSAGE);	//G***i18n
+				BasicOptionPane.showMessageDialog(AboutPanel.this, rdfPanel, (getTitle()!=null ? getTitle()+' ' : "")+"Properties", BasicOptionPane.INFORMATION_MESSAGE);	//G***i18n
 			}
 		}
 	}

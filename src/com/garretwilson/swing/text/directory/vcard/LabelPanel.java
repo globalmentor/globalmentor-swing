@@ -157,7 +157,7 @@ public class LabelPanel extends BasicVCardPanel
 	{
 		final AddressTypePanel addressTypePanel=new AddressTypePanel(getAddressType());	//create a new panel with our current address type 
 			//ask for the new address type; if they accept the changes
-		if(OptionPane.showConfirmDialog(this, addressTypePanel, "Delivery Address Type", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//G***i18n
+		if(BasicOptionPane.showConfirmDialog(this, addressTypePanel, "Delivery Address Type", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//G***i18n
 		{
 			setAddressType(addressTypePanel.getAddressType());	//update the address type
 			return true;	//show that the user accepted the changes and that they were updated		

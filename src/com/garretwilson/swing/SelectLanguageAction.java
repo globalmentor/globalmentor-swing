@@ -95,7 +95,7 @@ public class SelectLanguageAction extends AbstractAction
 	{
 		final LanguagePanel languagePanel=new LanguagePanel(getLocale());	//create a new language panel
 			//ask for a new language; if the user accepts the changes
-		if(OptionPane.showConfirmDialog(parentComponent, languagePanel, "Select language", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//G***i18n
+		if(BasicOptionPane.showConfirmDialog(parentComponent, languagePanel, "Select language", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//G***i18n
 		{
 			setLocale(languagePanel.getLanguage());	//update the language
 		}

@@ -20,33 +20,34 @@ import com.garretwilson.util.*;
 		are present.</li>
 </ul>
 @author Garret Wilson
+@see BasicDialog
 @see DefaultFocusable
 @see Verifiable
 */
-public class OptionPane extends JOptionPane
+public class BasicOptionPane extends JOptionPane
 {
 
     /**
-     * Creates a <code>OptionPane</code> with a test message.
+     * Creates a <code>BasicOptionPane</code> with a test message.
      */
-    public OptionPane() {
+    public BasicOptionPane() {
         super();
     }
 
     /**
-     * Creates a instance of <code>OptionPane</code> to display a
+     * Creates a instance of <code>BasicOptionPane</code> to display a
      * message using the
      * plain-message message type and the default options delivered by
      * the UI.
      *
      * @param message the <code>Object</code> to display
      */
-    public OptionPane(Object message) {
+    public BasicOptionPane(Object message) {
         super(message);
     }
 
     /**
-     * Creates an instance of <code>OptionPane</code> to display a message
+     * Creates an instance of <code>BasicOptionPane</code> to display a message
      * with the specified message type and the default options,
      *
      * @param message the <code>Object</code> to display
@@ -54,12 +55,12 @@ public class OptionPane extends JOptionPane
      *                    ERROR_MESSAGE, INFORMATION_MESSAGE, WARNING_MESSAGE,
      *                    QUESTION_MESSAGE, or PLAIN_MESSAGE
      */
-    public OptionPane(Object message, int messageType) {
+    public BasicOptionPane(Object message, int messageType) {
         super(message, messageType);
     }
 
     /**
-     * Creates an instance of <code>OptionPane</code> to display a message
+     * Creates an instance of <code>BasicOptionPane</code> to display a message
      * with the specified message type and options.
      *
      * @param message the <code>Object</code> to display
@@ -70,12 +71,12 @@ public class OptionPane extends JOptionPane
      *                   DEFAULT_OPTION, YES_NO_OPTION, YES_NO_CANCEL_OPTION
      *                   OK_CANCEL_OPTION
      */
-    public OptionPane(Object message, int messageType, int optionType) {
+    public BasicOptionPane(Object message, int messageType, int optionType) {
         super(message, messageType, optionType);
     }
 
     /**
-     * Creates an instance of <code>OptionPane</code> to display a message
+     * Creates an instance of <code>BasicOptionPane</code> to display a message
      * with the specified message type, options, and icon.
      *
      * @param message the <code>Object</code> to display
@@ -87,13 +88,13 @@ public class OptionPane extends JOptionPane
      *                   OK_CANCEL_OPTION
      * @param icon the <code>Icon</code> image to display
      */
-    public OptionPane(Object message, int messageType, int optionType,
+    public BasicOptionPane(Object message, int messageType, int optionType,
                        Icon icon) {
         super(message, messageType, optionType, icon);
     }
 
     /**
-     * Creates an instance of <code>OptionPane</code> to display a message
+     * Creates an instance of <code>BasicOptionPane</code> to display a message
      * with the specified message type, icon, and options.
      * None of the options is initially selected.
      * <p>
@@ -102,7 +103,7 @@ public class OptionPane extends JOptionPane
      * <code>Strings</code> (which are wrapped in a <code>JButton</code>).
      * If you provide <code>Component</code>s, you must ensure that when the
      * <code>Component</code> is clicked it messages <code>setValue</code>
-     * in the created <code>OptionPane</code>.
+     * in the created <code>BasicOptionPane</code>.
      *
      * @param message the <code>Object</code> to display
      * @param messageType the type of message to be displayed:
@@ -115,13 +116,13 @@ public class OptionPane extends JOptionPane
      * @param icon the <code>Icon</code> image to display
      * @param options  the choices the user can select
      */
-    public OptionPane(Object message, int messageType, int optionType,
+    public BasicOptionPane(Object message, int messageType, int optionType,
                        Icon icon, Object[] options) {
         super(message, messageType, optionType, icon, options);
     }
 
     /**
-     * Creates an instance of <code>OptionPane</code> to display a message
+     * Creates an instance of <code>BasicOptionPane</code> to display a message
      * with the specified message type, icon, and options, with the
      * initially-selected option specified.
      *
@@ -137,7 +138,7 @@ public class OptionPane extends JOptionPane
      * @param options  the choices the user can select
      * @param initialValue the choice that is initially selected
      */
-    public OptionPane(Object message, int messageType, int optionType,
+    public BasicOptionPane(Object message, int messageType, int optionType,
                        Icon icon, Object[] options, Object initialValue) {
 				super(message, messageType, optionType, icon, options, initialValue);
     }
@@ -460,7 +461,7 @@ public class OptionPane extends JOptionPane
 			Object message, String title, int optionType, int messageType,
 			Icon icon, Object[] options, Object initialValue)
 			throws HeadlessException {
-			JOptionPane             pane = new OptionPane(message, messageType,
+			JOptionPane             pane = new BasicOptionPane(message, messageType,
 																										 optionType, icon,
 																										 options, initialValue);
 
@@ -516,9 +517,9 @@ public class OptionPane extends JOptionPane
 
         Window window = getWindowForComponent(parentComponent);
         if (window instanceof Frame) {
-            dialog = new JDialog((Frame)window, title, true);
+            dialog = new BasicDialog((Frame)window, title, true);
         } else {
-            dialog = new JDialog((Dialog)window, title, true);
+            dialog = new BasicDialog((Dialog)window, title, true);
         }
 
         final Container             contentPane = dialog.getContentPane();
@@ -545,7 +546,7 @@ public class OptionPane extends JOptionPane
         });
         addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
-                if(dialog.isVisible() && event.getSource() == OptionPane.this &&
+                if(dialog.isVisible() && event.getSource() == BasicOptionPane.this &&
                    (event.getPropertyName().equals(VALUE_PROPERTY) ||
                     event.getPropertyName().equals(INPUT_VALUE_PROPERTY)))
 								{
@@ -631,6 +632,5 @@ public class OptionPane extends JOptionPane
             return (Window)parentComponent;
         return getWindowForComponent(parentComponent.getParent());
     }
-
 
 }
