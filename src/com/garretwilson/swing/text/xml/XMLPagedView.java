@@ -6,6 +6,8 @@ import java.awt.geom.*;
 import java.lang.ref.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 import javax.swing.SwingUtilities;
 import javax.swing.text.*;
 import javax.swing.event.*;
@@ -15,6 +17,7 @@ import javax.mail.internet.ContentType;
 import com.garretwilson.awt.EventQueueUtilities;
 import com.garretwilson.lang.JavaUtilities;
 import com.garretwilson.swing.ComponentUtilities;
+import com.garretwilson.swing.SwingApplication;
 import com.garretwilson.swing.XMLTextPane;	//G***del when we can find a better place to set the paged view variable of XMLTextPane
 import com.garretwilson.swing.event.PageEvent;
 import com.garretwilson.swing.event.PageListener;
@@ -45,6 +48,8 @@ import com.garretwilson.util.Debug;
 */
 public class XMLPagedView extends FlowView
 {
+
+	protected final static boolean THREADED=false;	//TODO fix threading
 
 	/**The task of paginating a document.*/
 	public final static String PAGINATE_TASK="PAGINATE";
@@ -87,6 +92,8 @@ public class XMLPagedView extends FlowView
 	/**@return The bottom inset of each page (>=0).*/
 	protected short getPageBottomInset() {return pageBottomInset;}
 
+	protected PaginateStrategy getStrategy() {return (PaginateStrategy)strategy;}
+	
 	/**Constructor specifying an element.
 	@param element The element this view is responsible for.
 	*/
@@ -98,9 +105,13 @@ public class XMLPagedView extends FlowView
 //G***fix threadlayout		strategy=new PageFlowStrategy();	//G***testing
 //TODO fix		strategy=new PageFlowStrategy(this);	//create a flow strategy which may or may not be used in a threaded way (newswing threadlayout)
 
-strategy=new PaginateStrategy();	//G***testing
+		strategy=new PaginateStrategy();	//install our custom paginate strategy
 
 		setPageInsets((short)25, (short)25, (short)25, (short)25);	//set the page insets TODO allow this to be customized
+		if(THREADED)	//if we should thread layout
+		{
+			new Thread(layoutRunner, "Layout Thread").start();	//start a thread for layout TODO improve variable access
+		}
 	}
 
 
@@ -246,12 +257,13 @@ A copy of our...
 		return getCanonicalPageIndex(getPageIndex());	//make sure the page index is in canonical form which is the first page index
 	}
 
-	/**@return The index directly after the last visible valid pages, not counting page slots that aren't filled.*/
+	/**@return The index directly after the last visible valid pages, not counting page slots that aren't filled and compensating for pagination.*/
 	protected int getPageEndIndex()
 	{
 		final int firstPageIndex=getPageBeginIndex();	//get the index of the first visible page
 		final int displayPageCount=firstPageIndex==0 ? 1 : getDisplayPageCount();	//there's only one page in the first set
-		return Math.min(firstPageIndex+displayPageCount, getPageCount());	//return the last visible page, making sure we don't go beyond our page count
+		final int pageCount=isPaginating() ? getPageCount() : Math.max(getPageCount()-1, 0);	//don't count the last page if we are paginating---it is being laid out
+		return Math.min(firstPageIndex+displayPageCount, pageCount);	//return the last visible page, making sure we don't go beyond our page count
 	}
 
 	/**Determines the absolute index from the beginning of allowable page display positions.
@@ -321,7 +333,7 @@ A copy of our...
 		pageWidth=width;	//set the width
 		pageHeight=height;	//set the height
 			//make sure the layout pool has the correct dimensions of the page so that it will do unrestrained layout correctly
-		getPagePoolView().setSize((int)width-getPageLeftInset()-getPageRightInset(), (int)height-getPageTopInset()-getPageBottomInset());	//set the size of the page pool to be exactly the size of the displayed page; giving insets to the page pool results in incorrect layout
+//TODO del when works		getPagePoolView().setSize((int)width-getPageLeftInset()-getPageRightInset(), (int)height-getPageTopInset()-getPageBottomInset());	//set the size of the page pool to be exactly the size of the displayed page; giving insets to the page pool results in incorrect layout
 	}
 
 	/**Determines the index of the page at the given position
@@ -542,35 +554,15 @@ super.changedUpdate(changes, a, f);
 		graphics2D.setPaint(originalPaint); //set the paint back to its original paint
 	}
 
-	/**Whether we are currently in the midst of paginating the document.*/
-	private boolean paginating=false;
-
 	/**@return <code>true</code> if this view supports threading in some form and
 		there the layout process is currently occurring.
 	*/
 	public boolean isPaginating()
 	{
-		return paginating;  //G***test; comment
-/*G***del when works
-		final Thread thread=layoutStrategyThread;	//get a reference to the layout strategy thread that we know won't change to null while we're checking it (unless, of course, it is already null)
-		return isThreaded() && thread!=null && thread.isAlive();	//return if we thread and there is a layout thread currently running
-*/
-	}
-
-	/**Sets whether pagination is occurring.
-	@param newPaginating Whether pagination is occurring.
-	*/
-	protected void setPaginating(final boolean newPaginating)
-	{
-		paginating=newPaginating; //update the paginating variable
+		return layoutRunner.isLayingOut();	//return whether the layout runner is currently performing layout
 	}
 
 	/* ***FlowView methods*** */
-
-		/**
-		 * Fetch the constraining span to flow against for
-		 * the given child index.
-		 */
 
 	/*Returns the span of the view at the given child index, minus any insets.
 	@index The index of the child view.
@@ -646,14 +638,22 @@ super.changedUpdate(changes, a, f);
 		super.loadChildren(viewFactory);	//load our children normally
 	}
 
+	
   /**Sets the size of the view, causing layout to occur if needed. 
   This version updates the page size and then calls the layout method with the
   page size inside of the insets.
   @param width the width >= 0
   @param height the height >= 0
    */
+/*TODO del when works
 	public void setSize(float width, float height)
 	{
+	  	final PaginateStrategy strategy=getStrategy();
+	  	synchronized(strategy)
+	  	{
+	  		if(!THREADED || layoutThread==null)
+	  		{
+
 		final int flowAxis=getFlowAxis();	//get the flow axis
 		final int axis=getAxis();	//get our tiling axis
 		final int displayPageCount=getDisplayPageCount();	//see how many pages we're displaying
@@ -670,8 +670,142 @@ super.changedUpdate(changes, a, f);
 		}
 		setPageSize(pageWidth, pageHeight);	//update the page size, which will update the page pool and the pooled child views
 		super.setSize(width, height);	//set the size normally
+	  		}
+	  	}
 	}
+*/
 
+	/**The dimensions queued for layout, if threaded.*/
+	protected Queue<Dimension> layoutDimensionQueue=new ConcurrentLinkedQueue<Dimension>();
+
+  /**
+   * Lays out the children.  If the span along the flow
+   * axis has changed, layout is marked as invalid which
+   * which will cause the superclass behavior to recalculate
+   * the layout along the box axis.  The FlowStrategy.layout
+   * method will be called to rebuild the flow rows as 
+   * appropriate.  If the height of this view changes 
+   * (determined by the perferred size along the box axis),
+   * a preferenceChanged is called.  Following all of that,
+   * the normal box layout of the superclass is performed.
+   *
+   * @param width  the width to lay out against >= 0.  This is
+   *   the width inside of the inset area.
+   * @param height the height to lay out against >= 0 This
+   *   is the height inside of the inset area.
+   */
+  protected void layout(int width, int height)
+  {
+  	if(THREADED)	//if we should thread layout
+  	{
+  		layoutDimensionQueue.add(new Dimension(width, height));
+  		synchronized(layoutRunner)	//make sure the thread isn't checking the stop flag
+  		{
+  			layoutRunner.notify();	//tell the thread to wake up and check the stop flag if it is sleeping  			
+  		}
+  	}
+  	else	//if layout should be synchronous
+  	{
+  		layoutImmediately(width, height);	//do the layout now
+  	}
+  }
+
+  /**Immediately lays out the view.
+  This version updates the page size and then calls the super layout method.
+  @param width The layout width (>=0).
+  @param height The layout height (>=0).
+  */
+  protected void layoutImmediately(final int width, int height)
+  {  	
+		final int flowAxis=getFlowAxis();	//get the flow axis
+		final int axis=getAxis();	//get our tiling axis
+		final int displayPageCount=getDisplayPageCount();	//see how many pages we're displaying
+		final float pageWidth, pageHeight;
+		if(axis==X_AXIS)	//if we're tiling on the X axis
+		{
+			pageWidth=(width/displayPageCount);	//show that the pages will be a fraction of our width
+			pageHeight=height;	//show that the pages will be the same height
+		}
+		else	//if we're tiling on the Y axis
+		{
+			pageWidth=width;	//show that the widths will all be the same
+			pageHeight=(height/displayPageCount);	//show that the pages will each be a fraction of the total height
+		}
+		setPageSize(pageWidth, pageHeight);	//update the page size, which will update the page pool and the pooled child views
+  	super.layout(width, height);	//do the default layout
+  }
+  
+  /**The instance of the class that performs layout; in this implementation, in a separate thread.*/
+  private final LayoutRunner layoutRunner=new LayoutRunner();
+    
+  /**The class that performs layout.
+  This implementation runs this class in a separate thread.
+  @author Garret Wilson.
+  */
+  protected class LayoutRunner implements Runnable
+  {
+  	/**Whether layout should be stopped.*/
+  	private boolean stopped=false;
+
+	  	/**Stops the current series of layouts and ends the thread.*/
+	  	public void stop()
+	  	{
+	  		stopped=false;	//set the stop flag to false
+	  		synchronized(this)	//make sure the thread isn't checking the stop flag
+	  		{
+	    		notify();	//tell the thread to wake up and check the stop flag if it is sleeping  			
+	  		}
+	  	}
+	  
+	  /**Whether layout is currently occurring.*/
+	  private boolean isLayingOut=false;
+
+		  /**@return Whether layout is currently occurring.*/
+		  public boolean isLayingOut() {return isLayingOut;}
+
+  	/**Performs layout on all dimensions in the queue and then sleeps and waits for more to arrive.*/
+  	public void run()
+  	{
+  		do
+  		{
+  			try
+  			{
+	 				final Dimension dimension=layoutDimensionQueue.poll();	//get another dimension from the queue
+	 				if(dimension!=null)	//if there is another dimension ready to lay out
+	 				{
+	 					isLayingOut=true;	//show that layout has started
+	 					try
+	 					{
+	 						layoutImmediately(dimension.width, dimension.height);	//do the layout
+	 					}
+	 					finally
+	 					{
+	 						isLayingOut=false;	//always show that layout has stopped
+	 					}
+	  			}
+	  			synchronized(this)	//make sure nothing is added to the queue after we check it but before we go to sleep
+	  			{
+	  				if(!stopped && layoutDimensionQueue.size()==0)	//if nothing is left in the queue (and we should keep going)
+	  				{
+	  					try
+							{
+								wait();	//wait for more dimensions to be added to the queue
+							}
+	  					catch(final InterruptedException interruptedException)	//if we are interrupted waiting for more dimensions to lay out, don't do anything special
+							{
+							}
+	  				}
+	  			}
+  			}
+  			catch(final Exception exception)	//if anything wrong happens in the main thread loop, report it and keep going
+  			{
+ 		  		SwingApplication.displayApplicationError(getContainer(), exception);
+  			}
+  		}
+  		while(!stopped);	//keep going until we are stopped
+  	}
+  }
+  
 	/**Performs layout for the minor axis of the view (the page width).
 	This version assumes all pages have the same width and are layed out
 	<code>displayPageCount</code> at a time.
@@ -1041,10 +1175,13 @@ return super.modelToView(pos, a, b);
 		
 	}
 
-	/**Strategy for pagination.
+	
+
+	
+	/**Flow strategy with no customizations&mdash;only used for debugging. 
 	@author Garret Wilson
 	*/
-	public class PaginateStrategy extends FlowStrategy
+	public class DebugFlowStrategy extends FlowStrategy
 	{
 
 /**
@@ -1121,37 +1258,15 @@ fv.layoutChanged(View.Y_AXIS);
 * @param fv the view to reflow
 */
 public void layout(FlowView fv) {
-		//TODO move to subclass
-	fireMadeProgress(new ProgressEvent(fv, PAGINATE_TASK, "Repaginating pages...", 0, 1));	//show that we are ready to start paginating pages, but we haven't really started, yet G***i18n
-	final Container container=fv.getContainer();	//see if the flow view has a container (it always should);
-	final Cursor originalCursor=container!=null ? ComponentUtilities.setCursor(container, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)) : null;	//show the wait cursor
-	try
-	{
-	
-	/*G***testing vertical; del; fixed
-  fv.removeAll();
-	layoutPool=null;	//G***testing vertical position
-	loadChildren(getViewFactory());
-layoutPool.setSize((int)getWidth()-getPageLeftInset()-getPageRightInset(), (int)getHeight()-getPageTopInset()-getPageBottomInset());	//set the size of the page pool to be exactly the size of the displayed page; giving insets to the page pool results in incorrect layout
-*/
-
-
-
-
   int p0 = fv.getStartOffset(); 
   int p1 = fv.getEndOffset();
 
   // we want to preserve all views from the logicalView from being 
   // removed
   View lv = getLogicalView(fv);
-  	//G***del; fixed vertical bug
-//G***fix	lv.setSize((int)getWidth()-getPageLeftInset()-getPageRightInset(), (int)getHeight()-getPageTopInset()-getPageBottomInset());	//set the size of the page pool to be exactly the size of the displayed page; giving insets to the page pool results in incorrect layout
-//G***fix ViewUtilities.reparentHierarchy(lv); //make sure all the child views have correct parents (previous layouts could cause, for instance, a paragraph row to think it has a parent of a now-unused paragraph fragement)
-//G***fix	lv.setSize((int)getWidth()-getPageLeftInset()-getPageRightInset(), (int)getHeight()-getPageTopInset()-getPageBottomInset());	//set the size of the page pool to be exactly the size of the displayed page; giving insets to the page pool results in incorrect layout
   int n = lv.getViewCount();
   for( int i = 0; i < n; i++ ) {
 View v = lv.getView(i);
-//TODO del ViewUtilities.reparentHierarchy(v); //make sure all the child views have correct parents (previous layouts could cause, for instance, a paragraph row to think it has a parent of a now-unused paragraph fragement)
 v.setParent(lv);
   }
   fv.removeAll();
@@ -1173,18 +1288,6 @@ if (next <= p0) {
 }
   }
 
-	}
-	finally	//always put the cursor back to how we found it
-	{
-		if(container!=null && originalCursor!=null)	//if there is a container and we know the original cursor
-		{
-			container.setCursor(originalCursor); //set the cursor back to its original form
-		}
-	}
-	fireMadeProgress(new ProgressEvent(fv, PAGINATE_TASK, "Paginated all "+fv.getViewCount()+" pages.", fv.getViewCount(), fv.getViewCount()));	//show that we paginated all the pages G***i18n
-	//fire a page event with our current page number, since our page count changed
-	firePageEvent(new PageEvent(this, getPageIndex(), getPageCount()));
-
 }
 
 /**
@@ -1204,12 +1307,6 @@ if (next <= p0) {
 * @return the position to start the next row
 */
 protected int layoutRow(FlowView fv, int rowIndex, int pos) {
-
-		//TODO transfer to subclass
-	final float progress=(float)fv.getEndOffset()/pos;	//find out how far we are along the content
-	final float estimatedRowCount=rowIndex*progress;	//find out the total rows by multiplying the number of rows *already* collected by the progress
-	fireMadeProgress(new ProgressEvent(fv, PAGINATE_TASK, "Paginating page "+(rowIndex+1)+" of ~"+Math.round(estimatedRowCount)+"...", rowIndex, estimatedRowCount));	//show that we are paginating the specified page, and the number of pages we guess there will be G***i18n
-	
 	
 	View row = fv.getView(rowIndex);
   int x = fv.getFlowStart(rowIndex);
@@ -1397,6 +1494,74 @@ return v;
   return v;
 }
 }
+	
+	/**Strategy for pagination.
+	@author Garret Wilson
+	*/
+	public class PaginateStrategy extends DebugFlowStrategy
+	{
+		/**Updates the flow on the given flow view.
+		@param flowView The view to reflow.
+		*/
+		public void layout(final FlowView flowView)
+		{
+			final Container container=flowView.getContainer();	//see if the flow view has a container (it always should)
+			final Cursor originalCursor=container!=null ? ComponentUtilities.setCursor(container, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)) : null;	//show the wait cursor
+			try
+			{
+				fireMadeProgress(new ProgressEvent(flowView, PAGINATE_TASK, "Repaginating pages...", 0, 1));	//show that we are ready to start paginating pages, but we haven't really started, yet G***i18n
+					//make sure the layout pool has the correct dimensions of the page so that it will do unrestrained layout correctly TODO check the axis to make sure we use the correct insets
+				getPagePoolView().setSize((int)getPageWidth()-getPageLeftInset()-getPageRightInset(), (int)getPageHeight()-getPageTopInset()-getPageBottomInset());	//set the size of the page pool to be exactly the size of the displayed page; giving insets to the page pool results in incorrect layout
+				super.layout(flowView);	//do the layout normally
+/*TODO fix end-of-pagination repainting
+				if(container!=null)	//if we're in a container
+				{
+					container.repaint();	//repaint our container G***check
+					SwingUtilities.invokeLater(new Runnable()	//invoke the hyperlink traversal until a later time in the event thread, so the mouse click won't be re-interpreted when we arrive at the hyperlink destination
+							{
+								public void run() {container.repaint();}	//if the hyperlink was not for a special-case URI, just go to the URI
+							});
+
+				}
+*/
+			}
+			finally	//always put the cursor back to how we found it
+			{
+				if(container!=null && originalCursor!=null)	//if there is a container and we know the original cursor
+				{
+					container.setCursor(originalCursor); //set the cursor back to its original form
+				}
+			}
+			fireMadeProgress(new ProgressEvent(flowView, PAGINATE_TASK, "Paginated all "+flowView.getViewCount()+" pages.", flowView.getViewCount(), flowView.getViewCount()));	//show that we paginated all the pages G***i18n
+				//fire a page event with our current page number, since our page count changed
+			firePageEvent(new PageEvent(this, getPageIndex(), getPageCount()));
+		}
+
+		/**Creates a row of views that will fit within the layout span of the row.
+		This is called by the layout method.
+		@param flowView The view to reflow.
+		@param rowIndex The index of the row to fill in with views.
+			The row is assumed to be empty on entry.
+		@param pos The current position in the children of this views element from which to start.  
+		@return The position to start the next row.
+		*/
+		protected int layoutRow(final FlowView flowView, final int rowIndex, final int pos)
+		{
+			final float progress=(float)flowView.getEndOffset()/pos;	//find out how far we are along the content
+			final float estimatedRowCount=rowIndex*progress;	//find out the total rows by multiplying the number of rows *already* collected by the progress
+			fireMadeProgress(new ProgressEvent(flowView, PAGINATE_TASK, "Paginating page "+(rowIndex+1)+" of ~"+Math.round(estimatedRowCount)+"...", rowIndex, estimatedRowCount));	//show that we are paginating the specified page, and the number of pages we guess there will be G***i18n
+			final int nextPos=super.layoutRow(flowView, rowIndex, pos);	//do the default layout
+/*TODO fix end-of-pagination repainting
+			final Container container=getContainer();	//get a reference to our container
+			if(container!=null)	//if we're in a container
+			{
+				container.repaint();	//repaint our container G***check
+			}
+*/
+			return nextPos;	//return the next position for layout
+		}
+
+	}
 
 	/**The logical view of child elements which will be paginated into pages.
 	Because pagination is a meta-flowing that requires underlying layout on paragraphs and
