@@ -5,7 +5,7 @@ import javax.swing.tree.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.xpackage.FilePropertiesConstants;
 import com.garretwilson.rdf.xpackage.XPackageUtilities;
-import com.garretwilson.util.Debug;
+import com.garretwilson.util.*;
 
 /**Utilities for manipulating trees of RDF resources.
 @author Garret Wilson

@@ -197,7 +197,7 @@ public abstract class AbstractMDIDocumentPanel extends ApplicationPanel implemen
 			if(isModified())	//see if the document has been modified
 			{
 				
-				
+/*G***fix				
 				
 				final RDFResource resource=getSelectedResource();	//get the currently selected resource
 					//see if they want to save the changes
@@ -212,6 +212,7 @@ public abstract class AbstractMDIDocumentPanel extends ApplicationPanel implemen
 					default:	//if they want to cancel (they pressed the cancel button *or* they just hit Esc
 						return false;	//don't allow the resource to close
 				}
+*/
 			}
 			else	//if the resource isn't modified
 				return true;	//allow it to close
