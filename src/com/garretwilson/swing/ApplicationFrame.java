@@ -34,12 +34,12 @@ public class ApplicationFrame extends BasicFrame
 	/**The application this frame represents, or <code>null</code> if there is no
 		application information.
 	*/
-	private final SwingApplication application;
+	private final SwingApplication<?> application;
 
 		/**@return The application this frame represents, or <code>null</code> if
 			there is no application information.
 		*/
-		public final SwingApplication getApplication() {return application;}
+		public final SwingApplication<?> getApplication() {return application;}
 
 	/**The action for file|exit; defaults to <code>getExitAction()</code>.*/
 	private Action fileExitAction;
@@ -133,7 +133,7 @@ public class ApplicationFrame extends BasicFrame
 	/**Default constructor.*/
 	public ApplicationFrame()
 	{
-		this((SwingApplication)null);	//construct the frame with no application	
+		this((SwingApplication<?>)null);	//construct the frame with no application	
 	}
 
 	/**Application constructor.
@@ -141,7 +141,7 @@ public class ApplicationFrame extends BasicFrame
 		<code>null</code> if there is no application information available or this
 		frame doesn't represent an application.
 	*/
-	public ApplicationFrame(final SwingApplication application)
+	public ApplicationFrame(final SwingApplication<?> application)
 	{
 		this(application, true); //create an application frame with a default application panel and initialize
 	}
@@ -152,7 +152,7 @@ public class ApplicationFrame extends BasicFrame
 	*/
 	public ApplicationFrame(final boolean initialize)
 	{
-		this((SwingApplication)null, initialize);	//construct the frame with no application	
+		this((SwingApplication<?>)null, initialize);	//construct the frame with no application	
 	}
 
 	/**Application constructor with a content pane and optional initialization.
@@ -162,7 +162,7 @@ public class ApplicationFrame extends BasicFrame
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public ApplicationFrame(final SwingApplication application, final boolean initialize)
+	public ApplicationFrame(final SwingApplication<?> application, final boolean initialize)
 	{
 		this(application, null, initialize); //create an application frame with the default content pane
 	}
@@ -183,7 +183,7 @@ public class ApplicationFrame extends BasicFrame
 	@param applicationComponent The component to be used as application component,
 		or <code>null</code> if the default application component should be used.
 	*/
-	public ApplicationFrame(final SwingApplication application, final Component applicationComponent)
+	public ApplicationFrame(final SwingApplication<?> application, final Component applicationComponent)
 	{
 		this(application, applicationComponent, true);  //construct and initialize the frame
 	}
@@ -208,7 +208,7 @@ public class ApplicationFrame extends BasicFrame
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public ApplicationFrame(final SwingApplication application, final Component applicationComponent, final boolean initialize)
+	public ApplicationFrame(final SwingApplication<?> application, final Component applicationComponent, final boolean initialize)
 	{
 		super(false);	//construct the parent class, but don't initialize it
 		setContentPane(new ApplicationContentPane(applicationComponent, false, false));	//create a special application content pane and place the application component inside it		
@@ -238,7 +238,7 @@ public class ApplicationFrame extends BasicFrame
 	protected void initializeActions(final ActionManager actionManager)
 	{
 		super.initializeActions(actionManager);	//do the default initialization
-		final SwingApplication application=getApplication();	//get our application, if there is one
+		final SwingApplication<?> application=getApplication();	//get our application, if there is one
 		final Action fileMenuAction=ActionManager.getFileMenuAction();
 		actionManager.addMenuAction(fileMenuAction);	//file
 		actionManager.addMenuAction(fileMenuAction, getCloseProxyAction());	//file|close/exit

@@ -1,5 +1,6 @@
 package com.garretwilson.swing.rdf.tree;
 
+import java.io.IOException;
 import java.util.*;
 import com.garretwilson.swing.tree.*;
 import com.garretwilson.rdf.*;
@@ -73,8 +74,10 @@ public class RDFTreeNode extends DynamicTreeNode
 		return getRDF().getResourceCount()==0;  //this is a leaf if there are no resources in this RDF data model
 	}
 
-	/**Dynamically loads child nodes for all resources.*/
-	protected void loadChildNodes()
+	/**Dynamically loads child nodes for all resources.
+	@exception IOException if there is an error loading the child nodes.
+	*/
+	protected void loadChildNodes() throws IOException
 	{
 			//get an iterator to the root RDF resources, sorting them if requested
 //TODO fix		final Iterator rootResourceIterator=getRDF().getRootResourceIterator(getComparator());

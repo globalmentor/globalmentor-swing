@@ -1,12 +1,17 @@
 package com.garretwilson.swing.tree;
 
+import java.io.IOException;
+
 import javax.swing.tree.*;
 
+import com.garretwilson.swing.SwingApplication;
 import com.garretwilson.util.Debug;
 import com.globalmentor.marmot.ui.tree.BurrowTreeNode;
 
 /**A tree node that can dynamically load its children when needed.
-	Child classes should override <code>loadChildNodes()</code>.
+Child classes should override <code>loadChildNodes()</code>.
+<p>This class also keeps track of whether there was an error loading nodes,
+resetting this error status when the nodes are unloaded.</p>
 @author Garret Wilson
 @see #loadChildNodes
 */
@@ -18,6 +23,17 @@ public abstract class DynamicTreeNode extends DefaultMutableTreeNode
 
 		/**@return Whether the child nodes have been loaded.*/
 		public boolean isChildNodesLoaded() {return isChildNodesLoaded;}
+
+	/**The error encountered when trying to load, or <code>null</code> if no error was encountered.*/
+	private IOException loadError=null;
+
+		/**@return The error encountered when trying to load, or <code>null</code> if no error was encountered.*/
+		public IOException getLoadError() {return loadError;}
+
+		/**Sets the error encountered when trying to load
+		@param error The error encountered when trying to load, or <code>null</code> if no error was encountered.
+		*/
+		protected void setLoadError(final IOException error) {loadError=error;}
 
 	/**Creates a tree node that has no parent and no children, but which
 		allows children.
@@ -56,6 +72,7 @@ public abstract class DynamicTreeNode extends DefaultMutableTreeNode
   }
   
 	/**Loads children if they haven't already been loaded.
+	If there is an error loading the child nodes, the load error variable will be set.
 	@see #loadChildNodes
 	*/
 	public void ensureChildNodesLoaded()
@@ -64,20 +81,31 @@ public abstract class DynamicTreeNode extends DefaultMutableTreeNode
 		{
 			isChildNodesLoaded=true;  //show that we've loaded the child nodes (this is done before the actual loading so that future calls to getChildCount() won't cause reloading)
 			removeAllChildren();	//make sure we've removed all children before trying to load the children
-			loadChildNodes(); //load the child nodes
+			try
+			{
+				loadChildNodes(); //load the child nodes
+			}
+			catch(final IOException ioException)	//if there was an error loading the child loads
+			{
+				loadError=ioException;	//save the load error
+				SwingApplication.displayApplicationError(null, ioException);	//display the error
+			}
 		}
 	}  
 
-	/**Dynamically loads child nodes when needed. Must be overridden to
-		appropriately load children.
+	/**Dynamically loads child nodes when needed. Must be overridden to appropriately load children.
+	@exception IOException if there is an error loading the child nodes.
 	*/
-	protected abstract void loadChildNodes();
+	protected abstract void loadChildNodes() throws IOException;
 	
-	/**Unloads all child nodes and sets the state to unloaded.*/
+	/**Unloads all child nodes and sets the state to unloaded.
+	Any error condition is reset. 
+	*/
 	public void unloadChildNodes()
 	{
 		removeAllChildren();	//remove all the children
 		isChildNodesLoaded=false;	//show that we have no nodes loaded
+		setLoadError(null);	//show that there is no load error.
 	}
 
 }

@@ -186,7 +186,7 @@ public abstract class SwingApplication<C> extends Application<C>
 	*/
 	public static void displayErrorDefault(final Component parentComponent, final String title, final Throwable throwable)
 	{
-		Debug.trace(throwable);	//log the error
+		Debug.error(throwable);	//log the error
 			//display a message for the throwable, using the throwable local class name for the title if no title was given
 		displayErrorDefault(parentComponent, title!=null ? title : ClassUtilities.getLocalName(throwable.getClass()), getDisplayErrorMessage(throwable));
 	}

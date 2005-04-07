@@ -1,5 +1,6 @@
 package com.garretwilson.swing.rdf.tree;
 
+import java.io.IOException;
 import java.util.*;
 import com.garretwilson.swing.tree.*;
 import com.garretwilson.util.Debug;
@@ -107,8 +108,10 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 			  || ((RDFResource)getUserObject()).getPropertyCount()==0;  //this is a leaf if this is a literal or a resource with no properties
 	}
 
-	/**Dynamically loads child nodes for all properties.*/
-	protected void loadChildNodes()
+	/**Dynamically loads child nodes for all properties.
+	@exception IOException if there is an error loading the child nodes.
+	*/
+	protected void loadChildNodes() throws IOException
 	{
 		removeAllChildren();	//remove all children G***maybe put this in some common place
 //TODO see if we should use this		public void unloadChildNodes()
