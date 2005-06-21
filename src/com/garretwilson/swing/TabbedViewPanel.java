@@ -7,7 +7,6 @@ import java.io.IOException;
 import javax.swing.*;
 import javax.swing.event.*;
 import com.garretwilson.awt.BasicGridBagLayout;
-import com.garretwilson.model.Model;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.*;
 

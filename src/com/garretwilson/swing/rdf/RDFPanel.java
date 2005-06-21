@@ -11,7 +11,6 @@ import com.garretwilson.text.CharacterEncodingConstants;
 import com.garretwilson.text.xml.XMLDOMImplementation;
 import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.text.xml.XMLSerializer;
-import com.garretwilson.model.Model;
 import com.garretwilson.model.ResourceModel;
 import com.garretwilson.rdf.*;
 import org.w3c.dom.*;
