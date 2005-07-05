@@ -301,7 +301,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 			}
 			else	//if we have no list of event listeners
 			{
-				return emptyArray(eventListenerType);	//send back an empty array
+				return createArray(eventListenerType, 0);	//send back an empty array
 			}
 		}
 
