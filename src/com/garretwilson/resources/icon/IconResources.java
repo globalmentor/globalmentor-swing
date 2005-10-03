@@ -13,7 +13,7 @@ public class IconResources implements IconResourceConstants
 {
 
 	/**The map of icons that will be released when no longer is use.*/
-	protected static final Map<String, ImageIcon> iconMap=new WeakValueHashMap();
+	protected static final Map<String, ImageIcon> iconMap=new WeakValueHashMap<String, ImageIcon>();
 
 	/**This class cannot be publicly instantiated.*/
 	private IconResources() {}
