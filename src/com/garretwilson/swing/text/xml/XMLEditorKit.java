@@ -1272,7 +1272,7 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 			else	//if there are no attributes provided (artificial text is being manually inserted, for instance)
 			{
 				final SimpleAttributeSet simpleAttributeSet=new SimpleAttributeSet();	//create a new attribute for this content
-				XMLStyleUtilities.setXMLElementName(simpleAttributeSet, XMLConstants.TEXT_NODE_NAME);	//set the name of the content to ensure it will not get its name from its parent element (this would happen if there was no name explicitely set)
+				XMLStyleUtilities.setXMLElementName(simpleAttributeSet, XMLConstants.TEXT_NODE_NAME);	//set the name of the content to ensure it will not get its name from its parent element (this would happen if there was no name explicitly set)
 				textAttributeSet=simpleAttributeSet;	//use the default atribute set we created
 			}
 //	G***del Debug.trace("inserting text data: \""+node.getNodeValue()+"\"");  //G***del

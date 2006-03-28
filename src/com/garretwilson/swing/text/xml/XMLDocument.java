@@ -813,7 +813,7 @@ Debug.trace("we created a text element, we now think the offset is", offset);
 		if(childElementList.size()==0)	//if there are no child elements
 		{
 			final SimpleAttributeSet simpleAttributeSet=new SimpleAttributeSet();	//create a new attribute for this content
-			XMLStyleUtilities.setXMLElementName(simpleAttributeSet, XMLConstants.TEXT_NODE_NAME);	//set the name of the content to ensure it will not get its name from its parent element (this would happen if there was no name explicitely set)
+			XMLStyleUtilities.setXMLElementName(simpleAttributeSet, XMLConstants.TEXT_NODE_NAME);	//set the name of the content to ensure it will not get its name from its parent element (this would happen if there was no name explicitly set)
 			childElementList.add(createElement(branchElement, offset, String.valueOf(CharacterConstants.OBJECT_REPLACEMENT_CHAR), simpleAttributeSet));	//create and add an element for the dummy character
 		}
 		final Element[] childElements=childElementList.toArray(new Element[childElementList.size()]);	//get the child elements as an array
