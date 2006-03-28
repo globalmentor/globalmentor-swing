@@ -162,7 +162,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 		final Object userObject=getUserObject();  //get the user object we're representing
 		final RDFResource property=getProperty(); //see if the object should be considered in the context of a property
 		final StringBuffer stringBuffer=new StringBuffer(); //create a new string buffer
-		if(property!=null)  //if we we are the object of a property
+		if(property!=null)  //if we are the object of a property
 		{
 			stringBuffer.append(getXMLifier().getLabel(property)); //append "property"
 		}
