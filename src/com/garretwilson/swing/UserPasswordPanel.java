@@ -29,7 +29,7 @@ public class UserPasswordPanel extends BasicPanel
 		@param username The new username value.
 		@exception NullPointerException if the given username is <code>null</code>.
 		*/
-		public void setUsername(final String username) {usernameField.setText(checkNull(username));}
+		public void setUsername(final String username) {usernameField.setText(checkInstance(username, "User name cannot be null."));}
 
 	/**The panel for password input.*/
 	protected final PasswordPanel passwordPanel;

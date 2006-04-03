@@ -82,7 +82,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	public BasicStyledDocument(final Content content, final StyleContext styles, final URIInputStreamable uriInputStreamable)
 	{
 		super(content, styles);	//construct the parent class
-		this.uriInputStreamable=checkNull(uriInputStreamable, "Missing URIInputStreamable");	//store the URIInputStreamable
+		this.uriInputStreamable=checkInstance(uriInputStreamable, "Missing URIInputStreamable");	//store the URIInputStreamable
 		//G***fix		setProperty(AbstractDocument.I18NProperty);  //G***testing i18n
 		//G***fix		putProperty("i18n", Boolean.TRUE);  //G***testing i18n
 		Debug.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n		

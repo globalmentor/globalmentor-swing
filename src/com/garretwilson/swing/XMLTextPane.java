@@ -138,7 +138,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		@param newURIInputStreamable The access to input streams via URIs based upon the first document loaded
 		@exception NullPointerException if the given object is <code>null</code>.
 		*/
-		public void setBaseURIInputStreamable(final URIInputStreamable newURIInputStreamable) {baseURIInputStreamable=checkNull(newURIInputStreamable);}
+		public void setBaseURIInputStreamable(final URIInputStreamable newURIInputStreamable) {baseURIInputStreamable=checkInstance(newURIInputStreamable, "URI input streamable cannot be null.");}
 
 	/**The access to input streams via URIs.*/
 	private URIInputStreamable uriInputStreamable;
@@ -150,7 +150,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		@param newURIInputStreamable The object that allows acces to input streams via URIs.
 		@exception NullPointerException if the given object is <code>null</code>.
 		*/
-		public void setURIInputStreamable(final URIInputStreamable newURIInputStreamable) {uriInputStreamable=checkNull(newURIInputStreamable);}
+		public void setURIInputStreamable(final URIInputStreamable newURIInputStreamable) {uriInputStreamable=checkInstance(newURIInputStreamable);}
 
 	/**The implementation to use for retrieving an output stream to a URI.*/
 	private URIOutputStreamable uriOutputStreamable;
@@ -162,7 +162,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		@param outputStreamable The implementation to use for accessing a URI for output.
 		@exception NullPointerException if the given object is <code>null</code>.
 		*/
-		public void setURIOutputStreamable(final URIOutputStreamable outputStreamable) {uriOutputStreamable=checkNull(outputStreamable);}
+		public void setURIOutputStreamable(final URIOutputStreamable outputStreamable) {uriOutputStreamable=checkInstance(outputStreamable);}
 
 	/**The current position of the mouse.*/
 //G***del JDK1.5	private Point mousePosition=new Point(0, 0);

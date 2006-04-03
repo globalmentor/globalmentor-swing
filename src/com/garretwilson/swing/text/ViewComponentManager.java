@@ -178,7 +178,7 @@ public class ViewComponentManager //G***finish the class comments with examples 
 		*/
 		public LocationPosition(final Point location, final boolean centered)
 		{
-			this.location=checkNull(location, "Location cannot be null.");	//save the location
+			this.location=checkInstance(location, "Location cannot be null.");	//save the location
 			this.centered=centered;	//save the centered specification
 		}
 

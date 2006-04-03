@@ -1060,10 +1060,10 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 		*/
 		public ContentData(final O object, final URI baseURI, final ContentType contentType, final RDFResource description)
 		{
-			this.object=checkNull(object, "Object cannot be null");
+			this.object=checkInstance(object, "Object cannot be null");
 			this.baseURI=baseURI;
 //TODO del when works			this.baseURI=checkNull(baseURI, "Base URI cannot be null");
-			this.contentType=checkNull(contentType, "Content type cannot be null");
+			this.contentType=checkInstance(contentType, "Content type cannot be null");
 			this.description=description;
 		}
 	}

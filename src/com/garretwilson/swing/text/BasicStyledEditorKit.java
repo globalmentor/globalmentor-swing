@@ -123,7 +123,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 	*/
 	public BasicStyledEditorKit(final URIInputStreamable uriInputStreamable)
 	{
-		this.uriInputStreamable=checkNull(uriInputStreamable, "Missing URIInputStreamable");	//store the URIInputStreamable
+		this.uriInputStreamable=checkInstance(uriInputStreamable, "Missing URIInputStreamable");	//store the URIInputStreamable
 	}
 
 	/**Constructor that specifies the specific media type supported.
