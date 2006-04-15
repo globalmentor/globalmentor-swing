@@ -3,14 +3,12 @@ package com.garretwilson.net;
 import java.net.*;
 
 import static com.garretwilson.swing.BasicOptionPane.*;
-import com.garretwilson.swing.PasswordPanel;
 import com.garretwilson.swing.UserPasswordPanel;
-
 
 /**Authenticator class which uses Swing to authenticate users.
 @author Garret Wilson
 */
-public class SwingAuthenticator /*G***fix extends Authenticator*/ implements Authenticable
+public class SwingAuthenticator extends AbstractAuthenticable	//TODO move to a Swing package
 {
 
 	/**Determines user and password information.
@@ -42,25 +40,6 @@ public class SwingAuthenticator /*G***fix extends Authenticator*/ implements Aut
     private RequestorType requestingAuthType;
 	}
 */
-
-	/**Determines password information in relation to a given description.
-	@param prompt A description of the authentication.
-	@return The password authentication collected from the user, or <code>null</code> if none is provided.
-	*/
-	public PasswordAuthentication getPasswordAuthentication(final String prompt)
-	{
-		return getPasswordAuthentication(null, prompt, null);	//get password authentication for no specific URI, allowing any user to be specified
-	}
-
-	/**Determines password information in relation to a given URI and description.
-	@param uri The URI for which authentication is requested, or <code>null</code> if there is no relevant URI.
-	@param prompt A description of the authentication.
-	@return The password authentication collected from the user, or <code>null</code> if none is provided.
-	*/
-	public PasswordAuthentication getPasswordAuthentication(final URI uri, final String prompt)
-	{
-		return getPasswordAuthentication(uri, prompt, null);	//get password authentication, allowing any user to be specified
-	}
 
 	/**Determines password information for a given user in relation to a given URI and description.
 	The user must not be allowed to change the username, if one is provided.
