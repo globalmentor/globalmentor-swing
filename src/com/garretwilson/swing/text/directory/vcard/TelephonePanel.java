@@ -7,6 +7,7 @@ import com.garretwilson.itu.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.itu.*;
+import com.garretwilson.text.SyntaxException;
 import com.garretwilson.text.directory.vcard.*;
 
 /**A panel containing fields for the <code>TEL</code> type of a vCard
@@ -116,7 +117,7 @@ public class TelephonePanel extends BasicVCardPanel
 			{
 				return new Telephone(telephoneNumber, telephoneType);	//create and return telephone information representing the entered information
 			}
-			catch(TelephoneNumberSyntaxException telephoneNumberSyntaxException)	//if the information isn't a valid telephone number (this should never happen, as we just received a valid telephone number)
+			catch(SyntaxException syntaxException)	//if the information isn't a valid telephone number (this should never happen, as we just received a valid telephone number)
 			{
 				return null;	//show that we don't understand the entered information
 			}

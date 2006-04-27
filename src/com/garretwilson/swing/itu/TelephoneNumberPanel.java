@@ -6,6 +6,7 @@ import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.itu.*;
 import com.garretwilson.swing.*;
+import com.garretwilson.text.SyntaxException;
 
 /**A panel allowing entry of an international public telecommunication number
 	for geographic areas as defined in ITU-T E.164,
@@ -97,7 +98,7 @@ public class TelephoneNumberPanel extends ModifiablePanel
 			{
 				return new TelephoneNumber(countryCode, nationalDestinationCode, subscriberNumber);	//create and return a telephone number representing the entered information
 			}
-			catch(TelephoneNumberSyntaxException telephoneNumberSyntaxException)	//if the information isn't a valid telephone number
+			catch(SyntaxException SyntaxException)	//if the information isn't a valid telephone number
 			{
 				return null;	//show that we don't understand the entered information
 			}
@@ -173,9 +174,9 @@ public class TelephoneNumberPanel extends ModifiablePanel
 			{
 				new TelephoneNumber(countryCode, nationalDestinationCode, subscriberNumber);	//try to create a telephone number representing the entered information
 			}
-			catch(TelephoneNumberSyntaxException telephoneNumberSyntaxException)	//if the information isn't a valid telephone number
+			catch(SyntaxException syntaxException)	//if the information isn't a valid telephone number
 			{
-				JOptionPane.showMessageDialog(this, "The telephone number you entered is invalid: "+telephoneNumberSyntaxException.getMessage(), "Invalid telephone number", JOptionPane.ERROR_MESSAGE);	//G***i18n
+				JOptionPane.showMessageDialog(this, "The telephone number you entered is invalid: "+syntaxException.getMessage(), "Invalid telephone number", JOptionPane.ERROR_MESSAGE);	//G***i18n
 				nationalDestinationCodeTextField.requestFocusInWindow(); //focus on part of the telephone number text field
 				return false; //show that verification failed
 			}
