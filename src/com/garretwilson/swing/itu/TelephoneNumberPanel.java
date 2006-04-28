@@ -6,6 +6,7 @@ import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.itu.*;
 import com.garretwilson.swing.*;
+import com.garretwilson.text.ArgumentSyntaxException;
 import com.garretwilson.text.SyntaxException;
 
 /**A panel allowing entry of an international public telecommunication number
@@ -71,9 +72,9 @@ public class TelephoneNumberPanel extends ModifiablePanel
 	{
 		if(telephoneNumber!=null)	//if there is a telephone number
 		{
-			countryCodeComboBox.setSelectedItem(telephoneNumber.getCountryCode());
-			nationalDestinationCodeTextField.setText(telephoneNumber.getNationalDestinationCode());
-			subscriberNumberTextField.setText(telephoneNumber.getSubscriberNumber());
+			countryCodeComboBox.setSelectedItem(telephoneNumber.getCCString());
+			nationalDestinationCodeTextField.setText(telephoneNumber.getNDCString());
+			subscriberNumberTextField.setText(telephoneNumber.getSNString());
 		}
 		else	//if there is no telephone number, clear the fields
 		{
@@ -98,7 +99,7 @@ public class TelephoneNumberPanel extends ModifiablePanel
 			{
 				return new TelephoneNumber(countryCode, nationalDestinationCode, subscriberNumber);	//create and return a telephone number representing the entered information
 			}
-			catch(SyntaxException SyntaxException)	//if the information isn't a valid telephone number
+			catch(final ArgumentSyntaxException SyntaxException)	//if the information isn't a valid telephone number
 			{
 				return null;	//show that we don't understand the entered information
 			}
@@ -174,7 +175,7 @@ public class TelephoneNumberPanel extends ModifiablePanel
 			{
 				new TelephoneNumber(countryCode, nationalDestinationCode, subscriberNumber);	//try to create a telephone number representing the entered information
 			}
-			catch(SyntaxException syntaxException)	//if the information isn't a valid telephone number
+			catch(final ArgumentSyntaxException syntaxException)	//if the information isn't a valid telephone number
 			{
 				JOptionPane.showMessageDialog(this, "The telephone number you entered is invalid: "+syntaxException.getMessage(), "Invalid telephone number", JOptionPane.ERROR_MESSAGE);	//G***i18n
 				nationalDestinationCodeTextField.requestFocusInWindow(); //focus on part of the telephone number text field
