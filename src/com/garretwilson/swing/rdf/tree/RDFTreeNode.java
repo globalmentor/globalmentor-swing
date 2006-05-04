@@ -81,10 +81,8 @@ public class RDFTreeNode extends DynamicTreeNode
 	{
 			//get an iterator to the root RDF resources, sorting them if requested
 //TODO fix		final Iterator rootResourceIterator=getRDF().getRootResourceIterator(getComparator());
-		final Iterator rootResourceIterator=getRDF().getRootResourceIterator(null);
-		while(rootResourceIterator.hasNext()) //while there are root resources remaining
+		for(final RDFResource resource:getRDF().getRootResources())
 		{
-			final RDFResource resource=(RDFResource)rootResourceIterator.next();  //get the next root resource
 				//create a new tree node to represent the resource
 			final RDFObjectTreeNode rdfResourceNode=new RDFObjectTreeNode(resource, getXMLifier());
 			add(rdfResourceNode); //add the resource node to this RDF data model node
