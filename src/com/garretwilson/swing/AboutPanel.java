@@ -10,7 +10,7 @@ import com.garretwilson.rdf.dublincore.*;
 import com.garretwilson.rdf.version.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.rdf.RDFPanel;
-import com.garretwilson.text.CharacterConstants;
+import static com.garretwilson.text.CharacterConstants.*;
 
 /**A generic panel for displaying information about, for example, an application.
 <p>This panel recognizes the following resource properties:</p>
@@ -21,7 +21,7 @@ import com.garretwilson.text.CharacterConstants;
 </dl>
 @author Garret Wilson
 */
-public class AboutPanel extends BasicPanel implements CharacterConstants
+public class AboutPanel extends BasicPanel
 {
 
 	/**The action for showing the properties.*/
