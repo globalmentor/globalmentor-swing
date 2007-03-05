@@ -164,7 +164,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 		final StringBuffer stringBuffer=new StringBuffer(); //create a new string buffer
 		if(property!=null)  //if we are the object of a property
 		{
-			stringBuffer.append(getXMLifier().getLabel(property)); //append "property"
+			stringBuffer.append(getXMLifier().getLabel(property.getReferenceURI())); //append "property"
 		}
 		if(userObject instanceof RDFResource) //if we're representing a resource
 		{
@@ -178,7 +178,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 					stringBuffer.append(':'); //append a colon to separate the property from the rest
 				if(hasPredicateToken) //if we had something to represent the predicate
 					stringBuffer.append(' '); //append a space to separate the rest
-				stringBuffer.append('(').append(getXMLifier().getLabel(type)).append(')'); //append "(type)"
+				stringBuffer.append('(').append(getXMLifier().getLabel(type.getReferenceURI())).append(')'); //append "(type)"
 				hasPredicateToken=true;	//show that we have something to represent the predicate
 			}
 			if(label!=null)	//if there is a label
@@ -196,7 +196,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 					stringBuffer.append(':'); //append a colon to separate the property from the rest
 				if(hasPredicateToken) //if we had something to represent the predicate
 					stringBuffer.append(' '); //append a space to separate the rest
-				stringBuffer.append('[').append(getXMLifier().getLabel(resource)).append(']');  //append "[referenceURI]" label
+				stringBuffer.append('[').append(getXMLifier().getLabel(resource.getReferenceURI())).append(']');  //append "[referenceURI]" label
 				hasPredicateToken=true;	//show that we have something to represent the predicate
 			}
 			final RDFLiteral literalValue=RDFUtilities.getValue(resource);	//get the literal rdf:value property value, if there is one
