@@ -13,12 +13,12 @@ import org.w3c.dom.*;
 */
 public class RDFTree extends JTree	//TODO eventually delete this class and just allow the model to be set
 {
-	private RDFXMLifier rdfXMLifier=new RDFXMLifier();  //create an object for serializing RDF G***maybe allow this to be specified externally
+	private RDFXMLGenerator rdfXMLifier=new RDFXMLGenerator();  //create an object for serializing RDF G***maybe allow this to be specified externally
 
 	  /**@return The RDF XML-ifier currently being used to generate labels; this
 		  object may be replaced at any time.
 		*/
-		public RDFXMLifier getRDFXMLifier() {return rdfXMLifier;}
+		public RDFXMLGenerator getRDFXMLifier() {return rdfXMLifier;}
 
 	RDFResourceTreeCellRenderer rdfResourceTreeCellRenderer=new RDFResourceTreeCellRenderer();
 
@@ -110,7 +110,7 @@ public class RDFTree extends JTree	//TODO eventually delete this class and just 
 	{
 		rdf=rdfModel; //save the RDF
 		rdfResource=resource; //save the resource
-		rdfXMLifier=new RDFXMLifier();  //switch to a new RDF XMLifier, so that new namespace prefixes can be created
+		rdfXMLifier=new RDFXMLGenerator();  //switch to a new RDF XMLifier, so that new namespace prefixes can be created
 		setRootVisible(resource!=null);	//only show the root if we're showing a single resource
 		final TreeNode treeNode; //we'll create a resource tree node for either a specific resource for the entire RDF data model
 		if(resource!=null)  //if we were given a resource

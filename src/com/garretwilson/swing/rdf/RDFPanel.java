@@ -118,7 +118,7 @@ public class RDFPanel<R extends RDFResource, M extends ResourceModel<R>> extends
 				if(model.getResource()!=null)	//if we have an RDF resource
 				{
 						//G***maybe use a common RDFXMLifier
-					final TreeNode treeNode=new RDFObjectTreeNode(model.getResource(), new RDFXMLifier()); //create a tree node for the resource
+					final TreeNode treeNode=new RDFObjectTreeNode(model.getResource(), new RDFXMLGenerator()); //create a tree node for the resource
 					getRDFTree().setModel(new DefaultTreeModel(treeNode));  //create a new tree model and set the model for the tree
 				}
 				else	//if we don't have any RDF resource
@@ -131,7 +131,7 @@ public class RDFPanel<R extends RDFResource, M extends ResourceModel<R>> extends
 				if(model.getResource()!=null)	//if we have an RDF resource
 				{
 						//create an XML document containing the RDF information TODO see about using a commong RDFXMLifier
-					final Document document=new RDFXMLifier().createDocument(model.getResource(), domImplementation);
+					final Document document=new RDFXMLGenerator().createDocument(model.getResource(), domImplementation);
 					final XMLSerializer xmlSerializer=new XMLSerializer(true);  //create a formatted serializer
 					final String source=xmlSerializer.serialize(document);	//serialize the XML to a string
 					getSourceTextPane().setText(source);	//show the XML source in the source text pane

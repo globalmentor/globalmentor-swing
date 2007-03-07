@@ -38,10 +38,10 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 //TODO make a boolean property setListCollapsed() or something to allow the display of lists to be special-cased or not
 
 	/**The RDF XML-ifier to use for creating labels.*/
-	private final RDFXMLifier xmlifier;
+	private final RDFXMLGenerator xmlifier;
 
 	  /**@return The RDF XML-ifier to use for creating labels.*/
-		public RDFXMLifier getXMLifier() {return xmlifier;}
+		public RDFXMLGenerator getXMLifier() {return xmlifier;}
 
 	/**The RDF property of which this resource is an object, or <code>null</code>
 		if this object should not be considered the object of any property.
@@ -78,7 +78,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 	@param rdfObject The resource to represent in the tree.
 	@param rdfXMLifier The RDF XML-ifier to use for creating labels.
 	*/
-	public RDFObjectTreeNode(/*G***del final RDF rdfModel, */final RDFObject rdfObject, final RDFXMLifier rdfXMLifier)
+	public RDFObjectTreeNode(/*G***del final RDF rdfModel, */final RDFObject rdfObject, final RDFXMLGenerator rdfXMLifier)
 	{
 		this(null, rdfObject, rdfXMLifier);  //construct the tree node without any property resource
 	}
@@ -91,7 +91,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 	@param rdfObject The resource to represent in the tree.
 	@param rdfXMLifier The RDF XML-ifier to use for creating labels.
 	*/
-	public RDFObjectTreeNode(/*G***del final RDF rdfModel, */final RDFResource rdfProperty, final RDFObject rdfObject, final RDFXMLifier rdfXMLifier)
+	public RDFObjectTreeNode(/*G***del final RDF rdfModel, */final RDFResource rdfProperty, final RDFObject rdfObject, final RDFXMLGenerator rdfXMLifier)
 	{
 		super(rdfObject); //store the RDF object as the user object
 //G***del 		rdf=rdfModel; //save the RDF data model
