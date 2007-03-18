@@ -4,6 +4,7 @@ import java.util.*;
 import javax.swing.tree.*;
 
 import com.garretwilson.model.*;
+import com.garretwilson.net.Resource;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.xpackage.FileOntologyUtilities;
 import com.garretwilson.rdf.xpackage.XPackageUtilities;

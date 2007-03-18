@@ -17,7 +17,8 @@ import javax.swing.event.InternalFrameListener;
 
 import com.garretwilson.awt.DefaultFocusable;
 import static com.garretwilson.lang.BooleanUtilities.*;
-import com.garretwilson.model.Resource;
+
+import com.garretwilson.net.Resource;
 import com.garretwilson.util.Debug;
 import com.garretwilson.util.Modifiable;
 

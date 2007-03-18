@@ -7,7 +7,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.garretwilson.awt.DefaultFocusable;
-import com.garretwilson.model.Resource;
+import com.garretwilson.net.Resource;
 
 /**Class that manages resource components in a tabbed pane.
 @param <R> The type of resource the components of which are being managed.

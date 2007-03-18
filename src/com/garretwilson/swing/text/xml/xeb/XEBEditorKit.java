@@ -6,12 +6,11 @@ import java.util.*;
 
 import javax.mail.internet.ContentType;
 import javax.swing.text.*;
-import javax.swing.text.Document;
 
 
 import com.garretwilson.io.*;
-import com.garretwilson.model.Resource;
 import com.garretwilson.model.ResourceModel;
+import com.garretwilson.net.Resource;
 import com.garretwilson.net.URIUtilities;
 import com.garretwilson.rdf.*;
 
