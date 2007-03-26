@@ -191,7 +191,7 @@ public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable
 		final VCard vcard=getModel();	//get the data model
 		getIdentificationPanel().setVCardName(vcard.getName());
 		getIdentificationPanel().setFormattedName(vcard.getFormattedName());
-		getIdentificationPanel().setNicknames(LocaleText.toLocaleTextArray(vcard.getNicknameList()));
+		getIdentificationPanel().setNicknames(vcard.getNicknameList().toArray(new LocaleText[vcard.getNicknameList().size()]));
 		getAddressesPanel().setAddresses(vcard.getAddresses(), vcard.getLabels());
 		getOrganizationPanel().setOrganizationName(vcard.getOrganizationName());
 		getOrganizationPanel().setUnits(vcard.getOrganizationUnits());
@@ -201,7 +201,7 @@ public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable
 		final Telephone[] telephones=(Telephone[])vcard.getTelephoneList().toArray(new Telephone[vcard.getTelephoneList().size()]);
 		final Email[] emails=(Email[])vcard.getEmailList().toArray(new Email[vcard.getEmailList().size()]);
 		getTelecommunicationsPanel().setTelecommunications(telephones, emails);
-		getExplanatoryPanel().setCategories(LocaleText.toLocaleTextArray(vcard.getCategoryList()));
+		getExplanatoryPanel().setCategories(vcard.getCategoryList().toArray(new LocaleText[vcard.getCategoryList().size()]));
 		getExplanatoryPanel().setNote(vcard.getNote());
 		getExplanatoryPanel().setURL(vcard.getURL());
 	}
