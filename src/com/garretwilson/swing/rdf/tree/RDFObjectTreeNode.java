@@ -199,14 +199,14 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 				stringBuffer.append('[').append(getXMLifier().getLabel(resource.getReferenceURI())).append(']');  //append "[referenceURI]" label
 				hasPredicateToken=true;	//show that we have something to represent the predicate
 			}
-			final RDFLiteral literalValue=RDFUtilities.getValue(resource);	//get the literal rdf:value property value, if there is one
-			if(literalValue!=null)	//if this resource has a literal value
+			final RDFObject literalValue=RDFUtilities.getValue(resource);	//get the rdf:value property value, if there is one
+			if(literalValue instanceof RDFLiteral)	//if this resource has a literal value
 			{
 				if(property!=null && !hasPredicateToken) //if we had a property but no predicate representation
 					stringBuffer.append(':'); //append a colon to separate the property from the rest
 				if(hasPredicateToken) //if we had something to represent the predicate
 					stringBuffer.append(' '); //append a space to separate the rest
-				stringBuffer.append('{').append(literalValue.getLexicalForm()).append('}');  //append "{lexicalForm}" label
+				stringBuffer.append('{').append(((RDFLiteral)literalValue).getLexicalForm()).append('}');  //append "{lexicalForm}" label
 				hasPredicateToken=true;	//show that we have something to represent the predicate				
 			}
 			return stringBuffer.toString(); //return the resource string we constructed
