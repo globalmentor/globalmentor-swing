@@ -38,10 +38,10 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 //TODO make a boolean property setListCollapsed() or something to allow the display of lists to be special-cased or not
 
 	/**The RDF XML-ifier to use for creating labels.*/
-	private final RDFXMLGenerator xmlifier;
+	private final RDFXMLGenerator xmlGenerator;
 
 	  /**@return The RDF XML-ifier to use for creating labels.*/
-		public RDFXMLGenerator getXMLifier() {return xmlifier;}
+		public RDFXMLGenerator getXMLGenerator() {return xmlGenerator;}
 
 	/**The RDF property of which this resource is an object, or <code>null</code>
 		if this object should not be considered the object of any property.
@@ -96,7 +96,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 		super(rdfObject); //store the RDF object as the user object
 //G***del 		rdf=rdfModel; //save the RDF data model
 		property=rdfProperty; //save the property of which this resource is the object
-		xmlifier=rdfXMLifier; //save the XMLifier we'll use for generating labels
+		xmlGenerator=rdfXMLifier; //save the XMLifier we'll use for generating labels
 	}
 
   /**@return <code>true</code> if this is a literal or a resource with no
@@ -152,7 +152,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 	protected void loadChildNode(final RDFResource rdfProperty, final RDFObject rdfObject)
 	{
 			//create a new tree node to represent the property and value
-		final RDFObjectTreeNode rdfPropertyNode=new RDFObjectTreeNode(rdfProperty, rdfObject, getXMLifier());
+		final RDFObjectTreeNode rdfPropertyNode=new RDFObjectTreeNode(rdfProperty, rdfObject, getXMLGenerator());
 		add(rdfPropertyNode); //add the property node to this resource node		
 	}
 
@@ -164,7 +164,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 		final StringBuffer stringBuffer=new StringBuffer(); //create a new string buffer
 		if(property!=null)  //if we are the object of a property
 		{
-			stringBuffer.append(getXMLifier().getLabel(property.getReferenceURI())); //append "property"
+			stringBuffer.append(getXMLGenerator().getLabel(property.getReferenceURI())); //append "property"
 		}
 		if(userObject instanceof RDFResource) //if we're representing a resource
 		{
@@ -178,7 +178,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 					stringBuffer.append(':'); //append a colon to separate the property from the rest
 				if(hasPredicateToken) //if we had something to represent the predicate
 					stringBuffer.append(' '); //append a space to separate the rest
-				stringBuffer.append('(').append(getXMLifier().getLabel(type.getReferenceURI())).append(')'); //append "(type)"
+				stringBuffer.append('(').append(getXMLGenerator().getLabel(type.getReferenceURI())).append(')'); //append "(type)"
 				hasPredicateToken=true;	//show that we have something to represent the predicate
 			}
 			if(label!=null)	//if there is a label
@@ -196,7 +196,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 					stringBuffer.append(':'); //append a colon to separate the property from the rest
 				if(hasPredicateToken) //if we had something to represent the predicate
 					stringBuffer.append(' '); //append a space to separate the rest
-				stringBuffer.append('[').append(getXMLifier().getLabel(resource.getReferenceURI())).append(']');  //append "[referenceURI]" label
+				stringBuffer.append('[').append(getXMLGenerator().getLabel(resource.getReferenceURI())).append(']');  //append "[referenceURI]" label
 				hasPredicateToken=true;	//show that we have something to represent the predicate
 			}
 			final RDFObject literalValue=RDFUtilities.getValue(resource);	//get the rdf:value property value, if there is one
