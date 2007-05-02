@@ -167,11 +167,18 @@ Debug.trace("Applet size before start() width: "+d3.getWidth()+" height: "+d3.ge
 	*/
 	protected void finalize() throws Throwable
 	{
-		stop(); //stop the applet, if we have one
-		final Applet applet=getApplet();  //get our applet
-		if(applet!=null) //if we have an applet
+		try
 		{
-			applet.destroy();  //tell the applet it's being destroyed
+			stop(); //stop the applet, if we have one
+			final Applet applet=getApplet();  //get our applet
+			if(applet!=null) //if we have an applet
+			{
+				applet.destroy();  //tell the applet it's being destroyed
+			}
+		}
+		finally
+		{
+			super.finalize();	//always call the parent version
 		}
 	}
 
