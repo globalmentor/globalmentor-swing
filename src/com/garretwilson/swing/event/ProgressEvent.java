@@ -98,7 +98,7 @@ public class ProgressEvent extends EventObject
 	/**Creates a progress event with a task and status. If <code>finished</code>
 		is <code>true</code>, the progress event will indicate finished by setting
 		both the value and the maximum to <code>1</code>.
-	@param The source of the event (typically <code>this</code>).
+	@param source The source of the event (typically <code>this</code>).
 	@param task The task being performed.
 	@param status The status message.
 	@param finished Whether the progress is finished.
@@ -118,7 +118,7 @@ public class ProgressEvent extends EventObject
 	}
 
 	/**Creates a progress event with a task, status, and progress.
-	@param The source of the event (typically <code>this</code>).
+	@param source The source of the event (typically <code>this</code>).
 	@param task The task being performed.
 	@param status The status message.
 	@param value The progress, in relation to the goal.
