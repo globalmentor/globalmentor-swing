@@ -11,6 +11,7 @@ import java.security.SecureClassLoader;
 import java.security.PrivilegedExceptionAction;
 import com.garretwilson.io.InputStreamUtilities;
 import com.garretwilson.lang.JavaConstants;
+import static com.garretwilson.net.URIConstants.*;
 import com.garretwilson.net.URIUtilities;
 import com.garretwilson.util.Debug;
 
