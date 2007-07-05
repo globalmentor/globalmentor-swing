@@ -32,12 +32,10 @@ import com.garretwilson.text.xml.stylesheets.css.AbstractXMLCSSStylesheetApplier
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities; //G***maybe move
 import com.garretwilson.sound.sampled.SampledSoundUtilities;
-import com.garretwilson.swing.text.rdf.RDFStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
 import com.garretwilson.util.Debug;
 import com.garretwilson.util.NameValuePair;
-import com.garretwilson.util.WeakValueHashMap;
 //G***del when works import com.garretwilson.swing.text.xml.css.XMLCSSSimpleAttributeSet;
 
 /**A document that models XML.

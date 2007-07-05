@@ -2,7 +2,8 @@ package com.garretwilson.resources.icon;
 
 import java.util.*;
 import javax.swing.ImageIcon;
-import com.garretwilson.util.WeakValueHashMap;
+
+import com.garretwilson.util.*;
 
 /**Manages icon resources bundled with an application. This class keeps weak
 	references to the icons it loads so that they may be reused if they have not
@@ -12,8 +13,8 @@ import com.garretwilson.util.WeakValueHashMap;
 public class IconResources implements IconResourceConstants
 {
 
-	/**The map of icons that will be released when no longer is use.*/
-	protected static final Map<String, ImageIcon> iconMap=new WeakValueHashMap<String, ImageIcon>();
+	/**The thread-safe map of icons that will be released when no longer is use.*/
+	protected static final Map<String, ImageIcon> iconMap=new DecoratorReadWriteLockMap<String, ImageIcon>(new PurgeOnWriteWeakValueHashMap<String, ImageIcon>());
 
 	/**This class cannot be publicly instantiated.*/
 	private IconResources() {}
