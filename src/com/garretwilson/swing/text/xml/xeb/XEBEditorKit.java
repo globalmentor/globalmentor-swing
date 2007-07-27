@@ -232,13 +232,14 @@ Debug.trace(RDFUtilities.toString(rdf));
 			final RDFListResource manifest=XPackageUtilities.getManifest(publication); //get the publication's manifest
 			if(manifest!=null)  //if there is a manifest
 			{
-				for(final RDFResource item:manifest)	//for each item in the manifest
+				for(final RDFObject item:manifest)	//for each item in the manifest
 				{
-					final ContentType mediaType=MIMEOntologyUtilities.getMediaType(item); //get the item's media type
+					final RDFResource resource=(RDFResource)item;	//assume the item is a resource TODO improve
+					final ContentType mediaType=MIMEOntologyUtilities.getMediaType(resource); //get the item's media type
 					//if this is an OEB document that is not in the spine
-					if(OEB_DOCUMENT_MEDIA_TYPE.match(mediaType) && !itemList.contains(item))
+					if(OEB_DOCUMENT_MEDIA_TYPE.match(mediaType) && !itemList.contains(resource))
 					{
-						itemList.add(item);  //add the item to our local spine
+						itemList.add(resource);  //add the item to our local spine
 					}
 				}
 			}
@@ -368,15 +369,15 @@ Debug.trace(RDFUtilities.toString(rdf));
 	  final RDFListResource spine=binding.getSpine(); //get the binding's spine
 		if(spine!=null)  //if there is a spine
 		{
-			for(final RDFResource item:spine)	//for each item in the spine
+			for(final RDFObject item:spine)	//for each item in the spine
 			{
 				if(item instanceof Binding)	//if this item is a sub-binding
 				{
 					gatherSpineItems((Binding)item, itemList);	//gather the sub-binding's spine
 				}
-				else	//if this is a normal item
+				else if(item instanceof RDFResource)	//if this is a normal item
 				{
-					itemList.add(item);	//add this item to the item list
+					itemList.add((RDFResource)item);	//add this item to the item list
 				}
 			}
 		}
