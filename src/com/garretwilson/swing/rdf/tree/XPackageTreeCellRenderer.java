@@ -6,6 +6,7 @@ import static com.garretwilson.io.ContentTypeUtilities.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.xpackage.*;
 import com.garretwilson.util.Debug;
+import com.globalmentor.marmot.Marmot;
 
 /**A tree cell renderer that can render different icons and strings for user
 	objects that are XPackage RDF resources.
@@ -76,7 +77,7 @@ public class XPackageTreeCellRenderer extends RDFResourceTreeCellRenderer
 		{
 			final RDFResource rdfResource=(RDFResource)userObject;  //cast the object to an RDF resource
 Debug.trace("getting user object key for user object", RDFUtilities.toString(rdfResource));
-			final ContentType mediaType=MIMEOntologyUtilities.getMediaType(rdfResource);  //see if there is a media type for the resource
+			final ContentType mediaType=Marmot.getMediaType(rdfResource);  //see if there is a media type for the resource
 		  if(mediaType!=null) //if there is a media type
 			{
 				return mediaType.getBaseType(); //use the base content type of the media type as the key

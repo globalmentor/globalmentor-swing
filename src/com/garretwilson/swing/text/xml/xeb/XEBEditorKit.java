@@ -39,6 +39,7 @@ import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
 import com.garretwilson.util.Debug;
 import com.garretwilson.util.NameValuePair;
+import com.globalmentor.marmot.Marmot;
 
 /**An editor kit for an XEB publication.
 @see XMLEditorKit
@@ -235,7 +236,7 @@ Debug.trace(RDFUtilities.toString(rdf));
 				for(final RDFObject item:manifest)	//for each item in the manifest
 				{
 					final RDFResource resource=(RDFResource)item;	//assume the item is a resource TODO improve
-					final ContentType mediaType=MIMEOntologyUtilities.getMediaType(resource); //get the item's media type
+					final ContentType mediaType=Marmot.getMediaType(resource); //get the item's media type
 					//if this is an OEB document that is not in the spine
 					if(OEB_DOCUMENT_MEDIA_TYPE.match(mediaType) && !itemList.contains(resource))
 					{
@@ -258,7 +259,7 @@ Debug.trace(RDFUtilities.toString(rdf));
 					try
 					{
 						final URI itemURI=swingXMLDocument.getResourceURI(itemHRef); //get the item's URI
-						final ContentType contentType=MIMEOntologyUtilities.getMediaType(item);	//get the item's content type
+						final ContentType contentType=Marmot.getMediaType(item);	//get the item's content type
 						if(MAQRO_MEDIA_TYPE.match(contentType))	//if this is a MAQRO activity
 						{
 							final InputStream itemInputStream=swingXMLDocument.getInputStream(itemURI); //get an input stream to the object

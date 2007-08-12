@@ -13,8 +13,6 @@ import javax.mail.internet.ContentType;
 import javax.sound.sampled.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
 
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
@@ -22,7 +20,6 @@ import org.w3c.dom.css.CSSStyleSheet;
 import com.garretwilson.io.*;
 import com.garretwilson.lang.*;
 import com.garretwilson.rdf.*;
-import com.garretwilson.rdf.xpackage.MIMEOntologyUtilities;
 import com.garretwilson.rdf.xpackage.XPackageUtilities;
 import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.text.BasicStyledDocument;
@@ -37,6 +34,7 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
 import com.garretwilson.util.Debug;
 import com.garretwilson.util.NameValuePair;
 //G***del when works import com.garretwilson.swing.text.xml.css.XMLCSSSimpleAttributeSet;
+import com.globalmentor.marmot.Marmot;
 
 /**A document that models XML.
 @see com.garretwilson.text.xml.XMLProcessor
@@ -337,7 +335,7 @@ G***comment
 			final RDFResource resource=XPackageUtilities.getManifestItemByLocationHRef(publication, getBaseURI(), href);
 		  if(resource!=null) //if the item is listed in the manifest
 			{
-				mediaType=MIMEOntologyUtilities.getMediaType(resource);  //get the resource's media type
+				mediaType=Marmot.getMediaType(resource);  //get the resource's media type
 			}
 		}
 		if(mediaType==null)	//if we couldn't find a media type from the publication description
