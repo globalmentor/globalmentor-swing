@@ -230,7 +230,7 @@ Debug.trace(RDFUtilities.toString(rdf));
 			gatherSpineItems(publication, itemList);	//gather the items in the spine
 				//make sure all documents in the manifest are in our list
 				// (we'll add out-of-spine documents to our local spine in this implementation)
-			final RDFListResource manifest=XPackageUtilities.getManifest(publication); //get the publication's manifest
+			final RDFListResource<?> manifest=XPackageUtilities.getManifest(publication); //get the publication's manifest
 			if(manifest!=null)  //if there is a manifest
 			{
 				for(final RDFObject item:manifest)	//for each item in the manifest
@@ -367,7 +367,7 @@ Debug.trace(RDFUtilities.toString(rdf));
 	*/
 	protected void gatherSpineItems(final Binding binding, final List<RDFResource> itemList)
 	{
-	  final RDFListResource spine=binding.getSpine(); //get the binding's spine
+	  final RDFListResource<?> spine=binding.getSpine(); //get the binding's spine
 		if(spine!=null)  //if there is a spine
 		{
 			for(final RDFObject item:spine)	//for each item in the spine
