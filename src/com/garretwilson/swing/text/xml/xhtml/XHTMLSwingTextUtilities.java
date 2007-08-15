@@ -295,7 +295,7 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 				//see if there is a data attribute, since there is no type specified
 			final String data=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_DATA);
 			if(data!=null)  //if the object has a data attribute
-				return FileUtilities.getMediaType(new File(data)); //try to get a media type from the file and return it
+				return FileUtilities.getContentType(new File(data)); //try to get a media type from the file and return it
 		}
 		return null; //we could not determine a media type for this object
 	}

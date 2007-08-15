@@ -943,7 +943,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		public String getLabel()
 		{
 			final URI uri=getResource().getReferenceURI();	//get the resource reference URI
-			return uri!=null ? getFileName(uri) : "Resource "+getNumber();	//return the URI filename if there is a URI; otherwise, generate a unique label TODO i18n
+			return uri!=null ? getName(uri) : "Resource "+getNumber();	//return the URI filename if there is a URI; otherwise, generate a unique label TODO i18n
 		}		
 	}
 

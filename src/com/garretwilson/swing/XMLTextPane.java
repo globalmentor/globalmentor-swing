@@ -845,7 +845,7 @@ try {
 		setURIInputStreamable(uriInputStreamable);  //use whatever input stream locator they specify
 //G***make sure we set all the properties like the subclass uses
 //G***note that the underlying class calls this.read(), which performs similar but not identical functionality as code here -- it would be good to use that, if possible
-		ContentType contentType=URIUtilities.getMediaType(uri);  //get the media type of the URI
+		ContentType contentType=URIUtilities.getContentType(uri);  //get the media type of the URI
 		Debug.trace("content type is first: ", contentType);  //G***del
 		InputStream inputStream=null;	//we'll attempt to get an input stream based upon the content type
 			//if this appears to be an XEB book zip file, an OEB publication zip file or an application/zip file, change our input stream locator and switch to a URI inside the file
@@ -1072,7 +1072,7 @@ Debug.trace("reading from stream"); //G***del
 		{
 			final URI uri=page.toURI();	//create a URI from the page URL
 			final InputStream inputStream=getInputStream(page.toURI());	//get the stream from the URI
-			final ContentType mediaType=URIUtilities.getMediaType(uri);  //get the media type of the target
+			final ContentType mediaType=URIUtilities.getContentType(uri);  //get the media type of the target
 			if(mediaType!=null) //if we know the media type of the URL
 			{
 	  		setContentType(mediaType.toString());  //set the content type based upon our best guess
