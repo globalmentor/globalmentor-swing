@@ -6,7 +6,6 @@ import javax.swing.tree.*;
 import com.garretwilson.model.*;
 import com.garretwilson.net.Resource;
 import com.garretwilson.rdf.*;
-import com.garretwilson.rdf.xpackage.XPackageUtilities;
 import com.garretwilson.util.*;
 import com.globalmentor.marmot.Marmot;
 
@@ -60,7 +59,7 @@ public class RDFTreeUtilities
 
 
 //TODO move this whole class to RDFTree and give that class options for showing properties and/or manifest items 
-			final RDFListResource manifest=XPackageUtilities.getManifest(rdfResource); //get the resource manifest
+			final RDFListResource manifest=Marmot.getContents(rdfResource); //get the resource manifest
 			if(manifest!=null)  //if the resource has a manifest
 			{
 					//get the resources in this folder
