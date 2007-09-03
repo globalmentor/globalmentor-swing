@@ -47,7 +47,7 @@ import com.garretwilson.text.xml.oeb.OEBConstants;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
 import com.garretwilson.text.xml.xhtml.XHTMLUtilities;
 import com.garretwilson.util.Debug;
-import com.garretwilson.util.EmptyIterator;
+import static com.garretwilson.util.IteratorUtilities.*;
 import com.garretwilson.util.zip.*;
 
 import static com.garretwilson.io.ContentTypeConstants.*;
@@ -434,7 +434,7 @@ Debug.trace("Current installed editor kit: ", getEditorKit().getClass().getName(
 		*/
 		public Iterator<String> getViewFactoryNamespaceIterator()
 		{
-			return namespaceViewFactoryMap!=null ? namespaceViewFactoryMap.keySet().iterator() : new EmptyIterator<String>(); //return an iterator to the keys, which are namespaces
+			return namespaceViewFactoryMap!=null ? namespaceViewFactoryMap.keySet().iterator() : (Iterator<String>)EMPTY_ITERATOR; //return an iterator to the keys, which are namespaces
 		}
 
 	/**A map of link controllers, each keyed to a namespace URI string.*/
@@ -475,7 +475,7 @@ Debug.trace("Current installed editor kit: ", getEditorKit().getClass().getName(
 		*/
 		public Iterator<String> getLinkControllerNamespaceIterator()
 		{
-			return namespaceLinkControllerMap!=null ? namespaceLinkControllerMap.keySet().iterator() : new EmptyIterator<String>(); //return an iterator to the keys, which are namespaces G***fix
+			return namespaceLinkControllerMap!=null ? namespaceLinkControllerMap.keySet().iterator() : (Iterator<String>)EMPTY_ITERATOR; //return an iterator to the keys, which are namespaces G***fix
 		}
 
 	/**The default keymap created by the parent constructor.*/

@@ -4,11 +4,11 @@ import java.awt.Component;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+
 import com.garretwilson.lang.*;
 import static com.garretwilson.lang.ObjectUtilities.*;
 import com.garretwilson.util.DefaultOrderComparator;
-import com.garretwilson.util.EmptyIterator;
-import com.garretwilson.util.IteratorUtilities;
+import static com.garretwilson.util.IteratorUtilities.*;
 
 /**Manages a set of actions for an application or a component.
 The actions are categorized into groups, and action managers may merge or
@@ -225,7 +225,7 @@ public class ActionManager implements Cloneable
 		{
 			Collections.sort(sortedActionList, new ActionMenuOrderComparator(actionList));	//sort the actions by menu order, defaulting to the order they were in before sorting
 		}
-		return sortedActionList!=null ? Collections.unmodifiableList(sortedActionList).iterator() : new EmptyIterator<Action>();	//return a read-only iterator to the sorted actions, if there are any
+		return sortedActionList!=null ? Collections.unmodifiableList(sortedActionList).iterator() : (Iterator<Action>)EMPTY_ITERATOR;	//return a read-only iterator to the sorted actions, if there are any
 	}
 
 	/**Merges a given action manager with this one, creating a new, merged action
@@ -298,7 +298,7 @@ public class ActionManager implements Cloneable
 	/**@return A read-only iterator to actions representing tools.*/
 	public Iterator<Action> getToolActionIterator()
 	{
-		return toolActionList!=null ? Collections.unmodifiableList(toolActionList).iterator() : new EmptyIterator<Action>();	//return a read-only iterator to the tool actions, if there are any
+		return toolActionList!=null ? Collections.unmodifiableList(toolActionList).iterator() : (Iterator<Action>)EMPTY_ITERATOR;	//return a read-only iterator to the tool actions, if there are any
 	}
 
 	/**Returns a read-only sorted iterator to the given list of actions.
