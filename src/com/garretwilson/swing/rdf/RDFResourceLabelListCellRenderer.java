@@ -47,7 +47,7 @@ public class RDFResourceLabelListCellRenderer extends SimpleListCellRenderer
 	  	}
 	  	else	//if there is no dc:title
 	  	{
-	  		final URI referenceURI=resource.getReferenceURI();	//try to get the reference URI
+	  		final URI referenceURI=resource.getURI();	//try to get the reference URI
 		  	if(referenceURI!=null)	//if there is a reference URI
 		  	{
 		  		label=referenceURI.toString();	//use the string form of the reference URI

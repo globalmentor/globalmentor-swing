@@ -164,7 +164,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 		final StringBuffer stringBuffer=new StringBuffer(); //create a new string buffer
 		if(property!=null)  //if we are the object of a property
 		{
-			stringBuffer.append(getXMLGenerator().getLabel(property.getReferenceURI())); //append "property"
+			stringBuffer.append(getXMLGenerator().getLabel(property.getURI())); //append "property"
 		}
 		if(userObject instanceof RDFResource) //if we're representing a resource
 		{
@@ -178,7 +178,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 					stringBuffer.append(':'); //append a colon to separate the property from the rest
 				if(hasPredicateToken) //if we had something to represent the predicate
 					stringBuffer.append(' '); //append a space to separate the rest
-				stringBuffer.append('(').append(getXMLGenerator().getLabel(type.getReferenceURI())).append(')'); //append "(type)"
+				stringBuffer.append('(').append(getXMLGenerator().getLabel(type.getURI())).append(')'); //append "(type)"
 				hasPredicateToken=true;	//show that we have something to represent the predicate
 			}
 			if(label!=null)	//if there is a label
@@ -190,13 +190,13 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 				stringBuffer.append(label);		//append the text of the label
 				hasPredicateToken=true;	//show that we have something to represent the predicate
 			} 
-			if(resource.getReferenceURI()!=null) //if there is no label and this is not a blank node resource
+			if(resource.getURI()!=null) //if there is no label and this is not a blank node resource
 			{
 				if(property!=null && !hasPredicateToken) //if we had a property but no predicate representation
 					stringBuffer.append(':'); //append a colon to separate the property from the rest
 				if(hasPredicateToken) //if we had something to represent the predicate
 					stringBuffer.append(' '); //append a space to separate the rest
-				stringBuffer.append('[').append(getXMLGenerator().getLabel(resource.getReferenceURI())).append(']');  //append "[referenceURI]" label
+				stringBuffer.append('[').append(getXMLGenerator().getLabel(resource.getURI())).append(']');  //append "[referenceURI]" label
 				hasPredicateToken=true;	//show that we have something to represent the predicate
 			}
 			final RDFObject literalValue=RDFUtilities.getValue(resource);	//get the rdf:value property value, if there is one

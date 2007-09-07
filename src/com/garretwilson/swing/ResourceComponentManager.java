@@ -122,7 +122,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		{
 			for(final ResourceComponentState resourceComponentState:resourceComponentStateList)	//for each known resource component state; this is an expensive iterative search, but a simple map won't help because some resources may not yet have assigned URIs
 			{
-				if(uri.equals(resourceComponentState.getResource().getReferenceURI()))	//if this resource has the requested URI
+				if(uri.equals(resourceComponentState.getResource().getURI()))	//if this resource has the requested URI
 				{
 					return resourceComponentState;	//return this resource and its component
 				}
@@ -340,7 +340,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		{
 			setResourceComponentState(resourceComponentState);	//switch to this resource
 			final R resource=resourceComponentState.getResource();	//get the resource
-			final String resourceURIString=resource.getReferenceURI()!=null ? resource.getReferenceURI().toString() : "";	//get a string representing the resource URI, if there is one
+			final String resourceURIString=resource.getURI()!=null ? resource.getURI().toString() : "";	//get a string representing the resource URI, if there is one
 				//see if they want to save the changes
 			switch(BasicOptionPane.showConfirmDialog(component, "Save modified resource "+resourceURIString+ "?", "Resource Modified", BasicOptionPane.YES_NO_CANCEL_OPTION))	//G***i18n
 			{
@@ -490,8 +490,8 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 			}
 			if(resource!=null)  //if we now have a valid resource
 			{
-				assert resource.getReferenceURI()!=null : "Selected resource has no URI.";
-				final ResourceComponentState existingResourceComponentState=getResourceComponentState(resource.getReferenceURI());	//see if there is already a resource with that URI
+				assert resource.getURI()!=null : "Selected resource has no URI.";
+				final ResourceComponentState existingResourceComponentState=getResourceComponentState(resource.getURI());	//see if there is already a resource with that URI
 				if(existingResourceComponentState!=null)	//if we already know about that resource
 				{
 					setResourceComponentState(existingResourceComponentState);	//switch to the existing resource component state
@@ -533,7 +533,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		try
 		{
 				//get an input stream to the resource
-			final InputStream inputStream=getResourceSelector().getInputStream(resource.getReferenceURI());
+			final InputStream inputStream=getResourceSelector().getInputStream(resource.getURI());
 			try
 			{
 				final Component component=read(resource, inputStream);	//read the component from the input stream
@@ -594,7 +594,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		if(!(resourceComponentState.getComponent() instanceof Verifiable) || ((Verifiable)resourceComponentState.getComponent()).verify())
 		{
 			assert resourceComponentState.getResource()!=null : "Resource component state does not represent a valid resource.";
-			if(resourceComponentState.getResource().getReferenceURI()!=null) //if we have a URI
+			if(resourceComponentState.getResource().getURI()!=null) //if we have a URI
 			{
 				try
 				{
@@ -674,7 +674,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		final Cursor oldCursor=setCursor(getParentComponent(), Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));	//switch to the wait cursor on the parent component
 		try
 		{
-			final OutputStream outputStream=getResourceSelector().getOutputStream(resource.getReferenceURI());	//get an output stream to this resource's URI
+			final OutputStream outputStream=getResourceSelector().getOutputStream(resource.getURI());	//get an output stream to this resource's URI
 			try
 			{
 				write(resource, component, outputStream);	//write the component to the output stream
@@ -942,7 +942,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		/**@return A label representing this resource component.*/
 		public String getLabel()
 		{
-			final URI uri=getResource().getReferenceURI();	//get the resource reference URI
+			final URI uri=getResource().getURI();	//get the resource reference URI
 			return uri!=null ? getName(uri) : "Resource "+getNumber();	//return the URI filename if there is a URI; otherwise, generate a unique label TODO i18n
 		}		
 	}

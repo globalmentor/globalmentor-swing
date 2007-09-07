@@ -568,8 +568,8 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		if(description!=null) //if we have a description of the document
 		{
 //G**del Debug.trace("found document description");
-			if(description.getObject().getReferenceURI()!=null)  //if the file location is specified
-				return saveFile(description, description.getObject().getReferenceURI()); //save using the URI specified by the description
+			if(description.getObject().getURI()!=null)  //if the file location is specified
+				return saveFile(description, description.getObject().getURI()); //save using the URI specified by the description
 			else  //if we don't have a file
 				return saveFileAs(description); //call the save as function
 		}
@@ -604,7 +604,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 			result=saveFile(description, uri); //save the file
 			if(result)  //if the file was saved without being canceled
 			{
-				if(!ObjectUtilities.equals(description.getObject().getReferenceURI(), uri))	//if the URI wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)
+				if(!ObjectUtilities.equals(description.getObject().getURI(), uri))	//if the URI wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)
 				{
 					description.getObject().setReferenceURI(uri);	//update the resource description's URI
 /*G***del when works
@@ -629,7 +629,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	*/
 	protected boolean saveFile(final ObjectState<RDFResource> description, final URI uri)
 	{
-		if(!ObjectUtilities.equals(description.getObject().getReferenceURI(), uri))	//if the URI should be changed
+		if(!ObjectUtilities.equals(description.getObject().getURI(), uri))	//if the URI should be changed
 		{
 			description.getObject().setReferenceURI(uri);	//update the resource description's URI
 /*G***del when works

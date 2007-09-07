@@ -34,7 +34,7 @@ public class RDFTreeUtilities
 		while(topLevelResourceIterator.hasNext()) //while there are more top-level resources
 		{
 			final Resource topLevelResource=topLevelResourceIterator.next();  //get the next top-level resource
-			final RDFResource topLevelRDFResource=rdf.getResource(topLevelResource.getReferenceURI());  //get the RDF resource representing the top-level resource
+			final RDFResource topLevelRDFResource=rdf.getResource(topLevelResource.getURI());  //get the RDF resource representing the top-level resource
 			if(topLevelRDFResource!=null)  //if such an RDF resource exists G***fix error handling
 			{
 				final RDFResourceTreeNode topLevelTreeNode=createFileResourceTreeNode(topLevelRDFResource);  //create a tree node from the top-level resource

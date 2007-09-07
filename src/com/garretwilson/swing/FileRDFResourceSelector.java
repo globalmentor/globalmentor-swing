@@ -100,8 +100,8 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 	public RDFResource selectInputResource(final RDFResource oldResource) throws SecurityException, IOException
 	{
 			//if we were given a resource with a valid file URI, create a file from that URI and get the parent directory of that file
-		File currentDirectory=oldResource!=null && oldResource.getReferenceURI()!=null && FILE_SCHEME.equals(oldResource.getReferenceURI().getScheme())
-				? new File(oldResource.getReferenceURI()).getParentFile()	//get the parent file
+		File currentDirectory=oldResource!=null && oldResource.getURI()!=null && FILE_SCHEME.equals(oldResource.getURI().getScheme())
+				? new File(oldResource.getURI()).getParentFile()	//get the parent file
 				: null;	//if this was not a file URI, we can't get the current directory
 		if(currentDirectory==null)	//if we don't know the current directory, try to use the one from the preferences
 		{
