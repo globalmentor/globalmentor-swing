@@ -331,12 +331,14 @@ G***comment
 		final RDFResource publication=getPublication();	//get the publication description
 		if(publication!=null)	//if there is a description of the publication
 		{
+/*TODO fix with URF
 				//get the manifest resource which represents the requested resource
 			final RDFResource resource=XPackageUtilities.getManifestItemByLocationHRef(publication, getBaseURI(), href);
 		  if(resource!=null) //if the item is listed in the manifest
 			{
 				mediaType=Marmot.getMediaType(resource);  //get the resource's media type
 			}
+*/
 		}
 		if(mediaType==null)	//if we couldn't find a media type from the publication description
 		{

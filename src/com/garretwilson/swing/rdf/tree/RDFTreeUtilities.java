@@ -53,7 +53,8 @@ public class RDFTreeUtilities
 	public static RDFResourceTreeNode createFileResourceTreeNode(final RDFResource rdfResource)
 	{
 		final RDFResourceTreeNode rdfResourceTreeNode=new RDFResourceTreeNode(rdfResource); //create a new tree node to represent the RDF resource
-		  //if this is a folder TODO see if we should allow navigation of normal nodes with children 
+		  //if this is a folder TODO see if we should allow navigation of normal nodes with children
+/*TODO fix with URF
 		if(Marmot.isCollection(rdfResource))
 		{
 
@@ -74,6 +75,7 @@ Debug.trace("found item resource: ", itemResource);  //G***del
 				}
 			}
 		}
+*/
 		return rdfResourceTreeNode; //return the tree node for the resource
 	}
 

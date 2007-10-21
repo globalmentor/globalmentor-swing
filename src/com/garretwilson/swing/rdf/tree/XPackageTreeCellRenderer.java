@@ -77,11 +77,13 @@ public class XPackageTreeCellRenderer extends RDFResourceTreeCellRenderer
 		{
 			final RDFResource rdfResource=(RDFResource)userObject;  //cast the object to an RDF resource
 Debug.trace("getting user object key for user object", RDFUtilities.toString(rdfResource));
+/*TODO fix with URF
 			final ContentType mediaType=Marmot.getMediaType(rdfResource);  //see if there is a media type for the resource
 		  if(mediaType!=null) //if there is a media type
 			{
 				return mediaType.getBaseType(); //use the base content type of the media type as the key
 			}
+*/
 		}
 		return super.getUserObjectKey(userObject);  //if we can't find a media type, use the default key
 	}

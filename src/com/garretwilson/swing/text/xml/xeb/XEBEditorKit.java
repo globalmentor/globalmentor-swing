@@ -230,6 +230,7 @@ Debug.trace(RDFUtilities.toString(rdf));
 			gatherSpineItems(publication, itemList);	//gather the items in the spine
 				//make sure all documents in the manifest are in our list
 				// (we'll add out-of-spine documents to our local spine in this implementation)
+/*TODO fix
 			final RDFListResource<?> manifest=Marmot.getContents(publication); //get the publication's manifest
 			if(manifest!=null)  //if there is a manifest
 			{
@@ -244,6 +245,7 @@ Debug.trace(RDFUtilities.toString(rdf));
 					}
 				}
 			}
+*/
 			final XMLProcessor xmlProcessor=new XMLProcessor(swingXMLDocument.getURIInputStreamable());  //create an XML processor that will use the input stream locator of the document for loading other needed documents
 			final ActivityModelIOKit activityModelIOKit=new ActivityModelIOKit(swingXMLDocument.getURIInputStreamable());	//create an IO kit for reading MAQRO activities
 			final int spineItemCount=itemList.size(); //find out how many spine items there are
@@ -259,8 +261,10 @@ Debug.trace(RDFUtilities.toString(rdf));
 					try
 					{
 						final URI itemURI=swingXMLDocument.getResourceURI(itemHRef); //get the item's URI
-						final ContentType contentType=Marmot.getMediaType(item);	//get the item's content type
-						if(MAQRO_MEDIA_TYPE.match(contentType))	//if this is a MAQRO activity
+//TODO fix with URF						final ContentType contentType=Marmot.getMediaType(item);	//get the item's content type
+						final ContentType contentType=null;	//TODO fix with URF
+						if(false)	//TODO fix with URF
+//TODO fix with URF						if(MAQRO_MEDIA_TYPE.match(contentType))	//if this is a MAQRO activity
 						{
 							final InputStream itemInputStream=swingXMLDocument.getInputStream(itemURI); //get an input stream to the object
 							try
