@@ -862,7 +862,7 @@ Debug.trace("found zip file: ", uri);  //G***del
 				while(!foundZipEntry && zipEntryIterator.hasNext()) //while there are more zip entries and we haven't found one to use
 				{
 				  final ZipEntry zipEntry=(ZipEntry)zipEntryIterator.next();  //get the next zip entry
-				  final ContentType zipEntryContentType=FileUtilities.getMediaType(zipEntry.getName());	//see what content type this entry has TODO use XPackage if available
+				  final ContentType zipEntryContentType=Files.getMediaType(zipEntry.getName());	//see what content type this entry has TODO use XPackage if available
 				  if(zipEntryContentType!=null)	//if we know the content type of this zip entry
 				  {
 					  if((XEBOOK_MEDIA_TYPE.match(zipEntryContentType) && !OEB_ZIP_MEDIA_TYPE.match(contentType))	//if this is an XEbook that isn't in an OEB zip file

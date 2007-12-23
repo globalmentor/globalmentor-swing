@@ -35,7 +35,7 @@ public class XHTMLAppletView extends XMLAbstractAppletView implements XHTMLConst
 		final String javaPrefix="java:";  //the prefix the classid, as a URI, will probably have G***use a constant here
 //G***del when works		final String classPostfix=".class"; //the ending postfix the classid URI may have G***use a constant here
 		final String classID=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_CLASSID);	//get the classid of the applet
-		final String classHRef=StringUtilities.trimBeginning(classID, javaPrefix);  //remove the "java:" prefix if present
+		final String classHRef=Strings.trimBeginning(classID, javaPrefix);  //remove the "java:" prefix if present
 		setClassHRef(classHRef);  //set the href to the class
 /*G***del when not needed
 		className=StringUtilities.trimEnd(className, classPostfix);  //remove the ".class" postfix if present

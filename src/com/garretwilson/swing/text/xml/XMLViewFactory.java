@@ -25,7 +25,7 @@ import javax.swing.event.*;
 import java.util.*;
 import com.garretwilson.lang.ObjectUtilities;
 import com.garretwilson.lang.StringBufferUtilities;
-import com.garretwilson.lang.StringUtilities;
+import com.garretwilson.lang.Strings;
 import com.garretwilson.net.URLUtilities;
 import com.garretwilson.util.Debug;
 import com.garretwilson.util.NameValuePair;

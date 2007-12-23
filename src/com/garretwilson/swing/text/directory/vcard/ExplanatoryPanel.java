@@ -109,7 +109,7 @@ public class ExplanatoryPanel extends BasicVCardPanel
 	/**@return The edited supplemental information, or <code>null</code> for no information.*/
 	public LocaleText getNote()
 	{
-		final String note=StringUtilities.getNonEmptyString(noteTextPane.getText().trim());
+		final String note=Strings.getNonEmptyString(noteTextPane.getText().trim());
 		return note!=null ? new LocaleText(note, selectNoteLanguageAction.getLocale()) : null;
 	}
 

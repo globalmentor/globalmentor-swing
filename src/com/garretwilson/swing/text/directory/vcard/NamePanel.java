@@ -94,11 +94,11 @@ public class NamePanel extends BasicVCardPanel
 	{
 		if(name!=null)	//if there is a name
 		{
-			familyNameTextField.setText(StringUtilities.concat(name.getFamilyNames(), VALUE_SEPARATOR));
-			givenNameTextField.setText(StringUtilities.concat(name.getGivenNames(), VALUE_SEPARATOR));
-			additionalNameTextField.setText(StringUtilities.concat(name.getAdditionalNames(), VALUE_SEPARATOR));
-			honorificPrefixComboBox.setSelectedItem(StringUtilities.concat(name.getHonorificPrefixes(), VALUE_SEPARATOR));
-			honorificSuffixComboBox.setSelectedItem(StringUtilities.concat(name.getHonorificSuffixes(), VALUE_SEPARATOR));
+			familyNameTextField.setText(Strings.concat(name.getFamilyNames(), VALUE_SEPARATOR));
+			givenNameTextField.setText(Strings.concat(name.getGivenNames(), VALUE_SEPARATOR));
+			additionalNameTextField.setText(Strings.concat(name.getAdditionalNames(), VALUE_SEPARATOR));
+			honorificPrefixComboBox.setSelectedItem(Strings.concat(name.getHonorificPrefixes(), VALUE_SEPARATOR));
+			honorificSuffixComboBox.setSelectedItem(Strings.concat(name.getHonorificSuffixes(), VALUE_SEPARATOR));
 			selectLanguageAction.setLocale(name.getLocale());
 		}
 		else	//if there is no name, clear the fields

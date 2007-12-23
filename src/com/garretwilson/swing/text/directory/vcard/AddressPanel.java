@@ -139,7 +139,7 @@ public class AddressPanel extends BasicVCardPanel
 		{
 			postOfficeBoxTextField.setText(address.getPostOfficeBox()!=null ? address.getPostOfficeBox() : "");
 			extendedAddresses=address.getExtendedAddresses();	//save the extended addresses so we won't lose them
-			streetAddressTextPane.setText(StringUtilities.concat(address.getStreetAddresses(), '\n'));	//separate the street addresses with newlines and place them in the text pane
+			streetAddressTextPane.setText(Strings.concat(address.getStreetAddresses(), '\n'));	//separate the street addresses with newlines and place them in the text pane
 			localityTextField.setText(address.getLocality()!=null ? address.getLocality() : "");
 			regionTextField.setText(address.getRegion()!=null ? address.getRegion() : "");
 			postalCodeTextField.setText(address.getPostalCode()!=null ? address.getPostalCode() : "");
@@ -167,13 +167,13 @@ public class AddressPanel extends BasicVCardPanel
 	*/
 	public Address getAddress()
 	{
-		final String postOfficeBox=StringUtilities.getNonEmptyString(postOfficeBoxTextField.getText().trim());
+		final String postOfficeBox=Strings.getNonEmptyString(postOfficeBoxTextField.getText().trim());
 			//trim the string in the street address text field and tokenize the lines
 		final String[] streetAddresses=StringTokenizerUtilities.getTokens(new StringTokenizer(streetAddressTextPane.getText().trim(), "\r\n"));
-		final String locality=StringUtilities.getNonEmptyString(localityTextField.getText().trim());
-		final String region=StringUtilities.getNonEmptyString(regionTextField.getText().trim());
-		final String postalCode=StringUtilities.getNonEmptyString(postalCodeTextField.getText().trim());
-		final String countryName=StringUtilities.getNonEmptyString(countryNameComboBox.getSelectedItem().toString().trim());
+		final String locality=Strings.getNonEmptyString(localityTextField.getText().trim());
+		final String region=Strings.getNonEmptyString(regionTextField.getText().trim());
+		final String postalCode=Strings.getNonEmptyString(postalCodeTextField.getText().trim());
+		final String countryName=Strings.getNonEmptyString(countryNameComboBox.getSelectedItem().toString().trim());
 		final int addressType=getAddressType();
 		final Locale locale=selectLanguageAction.getLocale();
 			//if address information was entered

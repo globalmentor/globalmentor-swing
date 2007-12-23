@@ -342,7 +342,7 @@ G***comment
 		}
 		if(mediaType==null)	//if we couldn't find a media type from the publication description
 		{
-			mediaType=FileUtilities.getMediaType(href);  //get the media type from the extension of the href, if any
+			mediaType=Files.getMediaType(href);  //get the media type from the extension of the href, if any
 		}
 		return mediaType;	//return the media type we found, if any
 	}

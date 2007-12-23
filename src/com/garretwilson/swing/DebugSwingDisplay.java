@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import com.garretwilson.lang.StringUtilities;
+import com.garretwilson.lang.Strings;
 import com.garretwilson.util.DebugDisplay;
 
 /**Interface for displaying debug information using Swing.
@@ -91,7 +91,7 @@ public class DebugSwingDisplay implements DebugDisplay
 	*/
 	public void notify(final String message)
 	{
-		final String wrappedMessage=StringUtilities.wrap(message, 100);	//wrap the error message at 100 characters G***probably use a constant here
+		final String wrappedMessage=Strings.wrap(message, 100);	//wrap the error message at 100 characters G***probably use a constant here
 			//G***maybe later use a specified frame as the parent
 		JOptionPane.showMessageDialog(null, wrappedMessage, "Debug Message", JOptionPane.INFORMATION_MESSAGE);	//G***i18n; comment
 	}
@@ -104,7 +104,7 @@ public class DebugSwingDisplay implements DebugDisplay
 	*/
 	public void error(final String errorString)
 	{
-		final String wrappedErrorString=StringUtilities.wrap(errorString, 100);	//wrap the error message at 100 characters G***probably use a constant here
+		final String wrappedErrorString=Strings.wrap(errorString, 100);	//wrap the error message at 100 characters G***probably use a constant here
 			//G***maybe later use a specified frame as the parent
 			//G***maybe later allow the title to be changed
 		JOptionPane.showMessageDialog(null, wrappedErrorString, "Error", JOptionPane.ERROR_MESSAGE);	//G***i18n; comment

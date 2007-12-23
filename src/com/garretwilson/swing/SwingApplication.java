@@ -201,7 +201,7 @@ public abstract class SwingApplication<C> extends Application<C>
 	protected static void displayErrorDefault(final Component parentComponent, final String title, final String message)
 	{
 		System.err.println(message);	//display the error in the error output
-		final String wrappedMessage=StringUtilities.wrap(message, 100);	//wrap the error message at 100 characters G***probably use a constant here
+		final String wrappedMessage=Strings.wrap(message, 100);	//wrap the error message at 100 characters G***probably use a constant here
 			//show the error in a dialog box, using the default error title if we weren't given one
 		BasicOptionPane.showMessageDialog(parentComponent, wrappedMessage, title, BasicOptionPane.ERROR_MESSAGE);	
 	}

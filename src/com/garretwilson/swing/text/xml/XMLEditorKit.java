@@ -886,7 +886,7 @@ catch (BadLocationException e)
 				{
 					hasBlockChild=true;	//show that at least one child has block display
 					XMLUtilities.appendText(xmlElement, "\n");  //skip to the next line for a pretty formatted XML document
-					XMLUtilities.appendText(xmlElement, StringUtilities.createString('\t', level+1));	//indent to the correct level
+					XMLUtilities.appendText(xmlElement, Strings.createString('\t', level+1));	//indent to the correct level
 				}
 				xmlElement.appendChild(childXMLNode);  //append the XML node we created
 	/*G***del if not needed
@@ -898,7 +898,7 @@ catch (BadLocationException e)
 			if(hasBlockChild)  //if any of the children were not inline
 			{
 				XMLUtilities.appendText(xmlElement, "\n");  //skip to the next line for a pretty formatted XML document
-				XMLUtilities.appendText(xmlElement, StringUtilities.createString('\t', level));	//indent to the correct level
+				XMLUtilities.appendText(xmlElement, Strings.createString('\t', level));	//indent to the correct level
 			}
 		}
 

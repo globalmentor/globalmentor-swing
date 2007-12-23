@@ -7,7 +7,7 @@ import javax.mail.internet.ContentType;
 import javax.swing.text.*;
 import com.garretwilson.io.ContentTypeConstants;
 import com.garretwilson.io.ContentTypeUtilities;
-import com.garretwilson.io.FileUtilities;
+import com.garretwilson.io.Files;
 import com.garretwilson.swing.text.xml.XMLStyleUtilities;
 import com.garretwilson.text.xml.oeb.OEBConstants;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
@@ -295,7 +295,7 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 				//see if there is a data attribute, since there is no type specified
 			final String data=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_DATA);
 			if(data!=null)  //if the object has a data attribute
-				return FileUtilities.getContentType(new File(data)); //try to get a media type from the file and return it
+				return Files.getContentType(new File(data)); //try to get a media type from the file and return it
 		}
 		return null; //we could not determine a media type for this object
 	}

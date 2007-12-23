@@ -102,7 +102,7 @@ public class OrganizationPanel extends BasicVCardPanel
 	*/
 	public LocaleText getOrganizationName()
 	{
-		final String name=StringUtilities.getNonEmptyString(nameTextField.getText().trim());
+		final String name=Strings.getNonEmptyString(nameTextField.getText().trim());
 		return name!=null ? new LocaleText(name, selectOrganizationNameLanguageAction.getLocale()) : null;
 	}
 
@@ -111,7 +111,7 @@ public class OrganizationPanel extends BasicVCardPanel
 	*/
 	public void setUnits(final LocaleText[] units)
 	{
-		unitsTextField.setText(StringUtilities.concat(units, UNIT_SEPARATOR));
+		unitsTextField.setText(Strings.concat(units, UNIT_SEPARATOR));
 	}
 
 	/**@return The organizational units.*/
@@ -144,7 +144,7 @@ public class OrganizationPanel extends BasicVCardPanel
 	*/
 	public LocaleText getJobTitle()
 	{
-		final String title=StringUtilities.getNonEmptyString(titleTextField.getText().trim());
+		final String title=Strings.getNonEmptyString(titleTextField.getText().trim());
 		return title!=null ? new LocaleText(title, selectTitleLanguageAction.getLocale()) : null;
 	}
 
@@ -171,7 +171,7 @@ public class OrganizationPanel extends BasicVCardPanel
 	*/
 	public LocaleText getRole()
 	{
-		final String role=StringUtilities.getNonEmptyString(roleTextField.getText().trim());
+		final String role=Strings.getNonEmptyString(roleTextField.getText().trim());
 		return role!=null ? new LocaleText(role, selectRoleLanguageAction.getLocale()) : null;
 	}
 

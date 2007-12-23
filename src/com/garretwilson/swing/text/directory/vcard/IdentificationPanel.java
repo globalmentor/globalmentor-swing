@@ -104,7 +104,7 @@ public class IdentificationPanel extends BasicVCardPanel
 	*/
 	public LocaleText getFormattedName()
 	{
-		final String fn=StringUtilities.getNonEmptyString(formattedNameTextField.getText().trim());
+		final String fn=Strings.getNonEmptyString(formattedNameTextField.getText().trim());
 		return fn!=null ? new LocaleText(fn, selectFormattedNameLanguageAction.getLocale()) : null;
 	}
 
@@ -116,7 +116,7 @@ public class IdentificationPanel extends BasicVCardPanel
 	{
 		if(nicknames!=null)	//if there are nicknames
 		{
-			nicknameTextField.setText(StringUtilities.concat(nicknames, VALUE_SEPARATOR));
+			nicknameTextField.setText(Strings.concat(nicknames, VALUE_SEPARATOR));
 			if(nicknames.length>0)	//if there is at least one nickname
 			{
 				selectNicknameLanguageAction.setLocale(nicknames[0].getLocale());

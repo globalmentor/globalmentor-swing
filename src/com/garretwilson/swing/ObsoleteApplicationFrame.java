@@ -844,7 +844,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 			errorMessage=message!=null ? message : exception.getClass().getName();  //if the message is null, use the class name of the exception as the message
 		}
 //G***del Debug.trace("Ready to display error message: "+errorMessage);
-		final String displayMessage=StringUtilities.wrap(errorMessage, 100);	//wrap the error message at 100 characters G***probably use a constant here
+		final String displayMessage=Strings.wrap(errorMessage, 100);	//wrap the error message at 100 characters G***probably use a constant here
 		JOptionPane.showMessageDialog(this, displayMessage, title, JOptionPane.ERROR_MESSAGE);	//G***i18n; comment
 	}
 

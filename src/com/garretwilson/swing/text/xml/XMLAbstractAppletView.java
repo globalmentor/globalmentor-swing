@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 import javax.swing.text.*;
-import com.garretwilson.lang.StringUtilities;
+import com.garretwilson.lang.Strings;
 import com.garretwilson.net.URIUtilities;
 import com.garretwilson.util.Debug;
 
@@ -56,7 +56,7 @@ public abstract class XMLAbstractAppletView extends XMLAbstractComponentView imp
 		{
 		  classHRef=newClassHRef; //store the class href
 			final String classPostfix=".class"; //the ending postfix the classid URI may have G***use a constant here
-		  final String className=StringUtilities.trimEnd(classHRef, classPostfix);  //remove the ".class" postfix if present
+		  final String className=Strings.trimEnd(classHRef, classPostfix);  //remove the ".class" postfix if present
 		  setClassName(className);  //set the class name we constructed
 		}
 
