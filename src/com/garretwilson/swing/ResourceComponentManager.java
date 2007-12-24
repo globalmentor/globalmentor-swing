@@ -17,7 +17,7 @@ import javax.swing.event.EventListenerList;
 import com.garretwilson.model.*;
 import com.garretwilson.net.Resource;
 
-import static com.garretwilson.net.URIUtilities.*;
+import static com.garretwilson.net.URIs.*;
 import com.garretwilson.resources.icon.IconResources;
 import static com.garretwilson.swing.ComponentUtilities.*;
 import com.garretwilson.util.*;

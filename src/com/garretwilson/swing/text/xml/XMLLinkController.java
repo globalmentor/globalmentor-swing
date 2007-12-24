@@ -294,7 +294,7 @@ Debug.trace("URI: ", uri);	//G***del
 			if(baseURI==null) //if we couldn't found a base URI in the attributes
 				baseURI=xmlDocument.getBaseURI();	//get the base URI from the document
 						//G***make sure this works for fragments
-			return URIUtilities.createURI(baseURI, href);	//convert the href into a full URI, correctly processing URI fragments beginning with "#"
+			return URIs.createURI(baseURI, href);	//convert the href into a full URI, correctly processing URI fragments beginning with "#"
 		}
 		return null;  //show that we could not find an href for the element
 	}

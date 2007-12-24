@@ -25,7 +25,7 @@ import static com.garretwilson.io.ContentTypeUtilities.*;
 import static com.garretwilson.lang.ObjectUtilities.*;
 import com.garretwilson.net.BrowserLauncher;
 import com.garretwilson.net.URIConstants;
-import com.garretwilson.net.URIUtilities;
+import com.garretwilson.net.URIs;
 import com.garretwilson.net.URLUtilities;
 import com.garretwilson.rdf.maqro.MAQROConstants;
 import com.garretwilson.swing.event.PageEvent;
@@ -845,7 +845,7 @@ try {
 		setURIInputStreamable(uriInputStreamable);  //use whatever input stream locator they specify
 //G***make sure we set all the properties like the subclass uses
 //G***note that the underlying class calls this.read(), which performs similar but not identical functionality as code here -- it would be good to use that, if possible
-		ContentType contentType=URIUtilities.getContentType(uri);  //get the media type of the URI
+		ContentType contentType=URIs.getContentType(uri);  //get the media type of the URI
 		Debug.trace("content type is first: ", contentType);  //G***del
 		InputStream inputStream=null;	//we'll attempt to get an input stream based upon the content type
 			//if this appears to be an XEB book zip file, an OEB publication zip file or an application/zip file, change our input stream locator and switch to a URI inside the file
@@ -920,7 +920,7 @@ Debug.trace("found zip file: ", uri);  //G***del
 	{
 		final EditorKit editorKit=getEditorKit();	//get the current editor kit, and assume it's an XML editor kit G***we might want to check just to make sure
 		final Document document=editorKit.createDefaultDocument();	//create a default document
-		document.putProperty(Document.StreamDescriptionProperty, URIUtilities.toValidURL(baseURI));	//store a URL version of the URI in the document, as getPage() expects this to be a URL
+		document.putProperty(Document.StreamDescriptionProperty, URIs.toValidURL(baseURI));	//store a URL version of the URI in the document, as getPage() expects this to be a URL
 		DocumentUtilities.setBaseURI(document, baseURI);	//store the base URI in the document
 Debug.trace("reading from stream"); //G***del
 		final DocumentLoader documentLoader=new DocumentLoader(inputStream, document);	//create a thread for loading the document 
@@ -1072,7 +1072,7 @@ Debug.trace("reading from stream"); //G***del
 		{
 			final URI uri=page.toURI();	//create a URI from the page URL
 			final InputStream inputStream=getInputStream(page.toURI());	//get the stream from the URI
-			final ContentType mediaType=URIUtilities.getContentType(uri);  //get the media type of the target
+			final ContentType mediaType=URIs.getContentType(uri);  //get the media type of the target
 			if(mediaType!=null) //if we know the media type of the URL
 			{
 	  		setContentType(mediaType.toString());  //set the content type based upon our best guess

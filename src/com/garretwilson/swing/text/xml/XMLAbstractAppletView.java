@@ -9,7 +9,7 @@ import java.util.Map;
 import javax.swing.*;
 import javax.swing.text.*;
 import com.garretwilson.lang.Strings;
-import com.garretwilson.net.URIUtilities;
+import com.garretwilson.net.URIs;
 import com.garretwilson.util.Debug;
 
 /**A view that displays an applet. Implements <code>AppletStub</code> so
@@ -333,7 +333,7 @@ Debug.error(e);		  //G***fix; store errors in console of some sort, as well as i
 	{
 		try
 		{
-			final URI codebaseURI=URIUtilities.createURI(XMLStyleUtilities.getBaseURI(getAttributes()), getClassHRef());	//the codebase is the URL of the class relative to the document base
+			final URI codebaseURI=URIs.createURI(XMLStyleUtilities.getBaseURI(getAttributes()), getClassHRef());	//the codebase is the URL of the class relative to the document base
 			return codebaseURI.toURL();	//convert the URI to a URL			
 		}
 		catch(URISyntaxException uriSyntaxException)  //if the resulting URI is not syntactically correct

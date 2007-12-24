@@ -11,7 +11,7 @@ import javax.swing.text.*;
 import com.garretwilson.io.*;
 import com.garretwilson.model.ResourceModel;
 import com.garretwilson.net.Resource;
-import com.garretwilson.net.URIUtilities;
+import com.garretwilson.net.URIs;
 import com.garretwilson.rdf.*;
 
 import static com.garretwilson.rdf.RDFUtilities.*;

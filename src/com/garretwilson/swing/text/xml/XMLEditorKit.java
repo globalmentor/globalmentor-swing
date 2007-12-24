@@ -1391,7 +1391,7 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 						{
 							try
 							{
-								final URI targetURI=URIUtilities.resolveFragment(baseURI, targetID);	//create a full URI from the target ID used as a fragment
+								final URI targetURI=URIs.resolveFragment(baseURI, targetID);	//create a full URI from the target ID used as a fragment
 								XMLStyleUtilities.setTargetURI(attributeSet, targetURI);  //store the target URI for quick searching
 							}
 							catch(IllegalArgumentException illegalArgumentException) {} //ignore any errors and simply don't store the target URL

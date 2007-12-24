@@ -5,7 +5,7 @@ import java.net.URI;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.Element;
 
-import com.garretwilson.net.URIUtilities;
+import com.garretwilson.net.URIs;
 
 /**An event which represents a link within XML.
 Besides the normal <code>HyperlinkEvent</code> properties,
@@ -67,7 +67,7 @@ public class XMLLinkEvent extends HyperlinkEvent
 	*/
 	public XMLLinkEvent(final Object source, final EventType type, final URI uri, final String description, final Element sourceElement)
 	{
-		super(source, type, URIUtilities.toValidURL(uri), description, sourceElement);	//construct the parent class with a URL, if one can be constructed from the URI
+		super(source, type, URIs.toValidURL(uri), description, sourceElement);	//construct the parent class with a URL, if one can be constructed from the URI
 		this.uri=uri;	//save the URI
 	}
 }

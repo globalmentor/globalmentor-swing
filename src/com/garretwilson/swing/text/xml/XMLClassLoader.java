@@ -12,7 +12,7 @@ import java.security.PrivilegedExceptionAction;
 import com.garretwilson.io.InputStreamUtilities;
 import com.garretwilson.lang.JavaConstants;
 import static com.garretwilson.net.URIConstants.*;
-import com.garretwilson.net.URIUtilities;
+import com.garretwilson.net.URIs;
 import com.garretwilson.util.Debug;
 
 import static com.garretwilson.io.FileConstants.*;
@@ -84,7 +84,7 @@ public class XMLClassLoader extends SecureClassLoader
 				//replace '.' with '/' and append ".class"
 			String href=name.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR).concat(String.valueOf(EXTENSION_SEPARATOR)).concat(JavaConstants.CLASS_EXTENSION);
 			if(baseURI!=null) //if we have a base URI
-				href=URIUtilities.createURI(baseURI, href).toString(); //create an href relative to the base URI
+				href=URIs.createURI(baseURI, href).toString(); //create an href relative to the base URI
 			final String finalHRef=href;  //put the href in a variable we wont' modify
 //G***del Debug.trace("XMLClassLoader.findClass() name: "+name+" href: "+href); //G***del
 		  return (Class)AccessController.doPrivileged(new PrivilegedExceptionAction()
