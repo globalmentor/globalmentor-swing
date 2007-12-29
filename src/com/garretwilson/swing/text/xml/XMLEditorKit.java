@@ -702,7 +702,7 @@ catch (BadLocationException e)
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(pageBreakAttributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a page break element spec
 //G***fix		final SimpleAttributeSet contentAttributeSet=new SimpleAttributeSet();	//create a new attribute for this content
 			//add a dummy object replacment character so that this element will have some text to represent
-		elementSpecList.add(new DefaultStyledDocument.ElementSpec(null, DefaultStyledDocument.ElementSpec.ContentType, new char[]{CharacterConstants.OBJECT_REPLACEMENT_CHAR}, 0, 1));
+		elementSpecList.add(new DefaultStyledDocument.ElementSpec(null, DefaultStyledDocument.ElementSpec.ContentType, new char[]{Characters.OBJECT_REPLACEMENT_CHAR}, 0, 1));
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(pageBreakAttributeSet, DefaultStyledDocument.ElementSpec.EndTagType));	//finish the page break element spec
 	}
 
@@ -1205,7 +1205,7 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 				if(isEmptyElement(attributeSet))	//if this element should remain empty
 				{
 					XMLStyleUtilities.setXMLEmptyElement(attributeSet, true);	//show that this is an empty element G***see if this is the best way to do this and make sure this gets set for object added during editing
-					dummyChar=CharacterConstants.OBJECT_REPLACEMENT_CHAR;	//use the object replacement character as dummy text, because there can never be real text added
+					dummyChar=Characters.OBJECT_REPLACEMENT_CHAR;	//use the object replacement character as dummy text, because there can never be real text added
 				}
 				else	//if this element might have text at some point
 				{
@@ -1283,7 +1283,7 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 
 
 
-				StringBufferUtilities.collapse(textStringBuffer, CharacterConstants.WHITESPACE_CHARS, " ");	//G***testing
+				StringBufferUtilities.collapse(textStringBuffer, Characters.WHITESPACE_CHARS, " ");	//G***testing
 //	G***del Debug.trace("after collapsing whitespace: ", textStringBuffer);  //G***del
 //	G***del Debug.trace("Adding text with attributes: ", contentAttributeSet);	//G***del
 //	G***fix textStringBuffer.append(CharacterConstants.WORD_JOINER_CHAR);	//G***testing

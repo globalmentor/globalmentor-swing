@@ -24,7 +24,7 @@ import com.garretwilson.rdf.xpackage.XPackageUtilities;
 import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.text.BasicStyledDocument;
 import com.garretwilson.swing.text.SwingTextUtilities;
-import com.garretwilson.text.CharacterConstants;
+import com.garretwilson.text.Characters;
 import com.garretwilson.text.xml.stylesheets.css.AbstractXMLCSSStylesheetApplier;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities; //G***maybe move
@@ -56,7 +56,7 @@ public class XMLDocument extends BasicStyledDocument
 
 //G***fix final static char ELEMENT_END_CHAR='\n';	
 
-final static char ELEMENT_END_CHAR=CharacterConstants.ZERO_WIDTH_SPACE_CHAR;	
+final static char ELEMENT_END_CHAR=Characters.ZERO_WIDTH_SPACE_CHAR;	
 final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);	
 //G***fix final static char ELEMENT_END_CHAR=CharacterConstants.ZERO_WIDTH_NO_BREAK_SPACE_CHAR;	
 //G***fix	final static char ELEMENT_END_CHAR=CharacterConstants.PARAGRAPH_SIGN_CHAR;	
@@ -843,7 +843,7 @@ Debug.trace("ready to append text", text, "at offset", offset);
 //G***fix		stringBuilder.append(text);	//append text
 final StringBuilder stringBuilder=new StringBuilder(text);	//create a string builder with the text
 //G***fix final int newLength=StringBuilderUtilities.collapse(stringBuilder, CharacterConstants.WHITESPACE_CHARS, " ", begin, text.length());	//collapse all whitespace into spaces TODO fix across element boundaries
-		final int newLength=StringBuilderUtilities.collapse(stringBuilder, CharacterConstants.WHITESPACE_CHARS, " ");	//collapse all whitespace into spaces TODO fix across element boundaries
+		final int newLength=StringBuilderUtilities.collapse(stringBuilder, Characters.WHITESPACE_CHARS, " ");	//collapse all whitespace into spaces TODO fix across element boundaries
 Debug.trace("new length", newLength);
 		final int end=offset+newLength;	//see where the inserted, collapsed text ends
 Debug.trace("end", end);

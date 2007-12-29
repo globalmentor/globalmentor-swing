@@ -11,7 +11,7 @@ import com.garretwilson.swing.text.*;
 import static com.garretwilson.swing.text.SwingTextUtilities.*;
 import static com.garretwilson.swing.text.ViewUtilities.*;
 import com.garretwilson.swing.text.xml.css.*;
-import com.garretwilson.text.CharacterConstants;
+import com.garretwilson.text.Characters;
 import com.garretwilson.text.xml.stylesheets.css.*;
 import com.garretwilson.util.Debug;
 import org.w3c.dom.css.CSSStyleDeclaration;
@@ -104,7 +104,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 							final String text=document.getText(element.getStartOffset(), element.getEndOffset()-element.getStartOffset());
 							//TODO bring back for efficiency				  document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset(), segment);
 									//if there are no visible characters (or the end-of-element character mark), and this isn't really just an empty element
-							if(CharSequenceUtilities.notCharIndexOf(text, CharacterConstants.WHITESPACE_CHARS+CharacterConstants.CONTROL_CHARS+XMLDocument.ELEMENT_END_CHAR)<0	
+							if(CharSequenceUtilities.notCharIndexOf(text, Characters.WHITESPACE_CHARS+Characters.CONTROL_CHARS+XMLDocument.ELEMENT_END_CHAR)<0	
 									&& !XMLStyleUtilities.isXMLEmptyElement(attributeSet))
 							{
 		//G***del Debug.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElementName(attributeSet)); //G***del
