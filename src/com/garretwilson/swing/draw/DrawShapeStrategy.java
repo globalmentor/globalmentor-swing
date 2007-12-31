@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import com.garretwilson.lang.ObjectUtilities;
+import com.garretwilson.lang.Objects;
 import com.garretwilson.util.Debug;
 
 /**Strategy for drawing a shape on a component.
@@ -33,7 +33,7 @@ public class DrawShapeStrategy extends MouseInputAdapter
 		*/
 		public void setDrawShape(final DrawShape newDrawShape)
 		{
-			if(!ObjectUtilities.equals(drawShape, newDrawShape))  //if the drawing shape is actuallychanging
+			if(!Objects.equals(drawShape, newDrawShape))  //if the drawing shape is actuallychanging
 			{
 				if(drawShape!=null) //if we already had a shape
 				  draw(drawShape);  //undraw the shape

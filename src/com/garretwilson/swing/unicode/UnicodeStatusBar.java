@@ -7,7 +7,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
-import static com.garretwilson.lang.ObjectUtilities.*;
+import static com.garretwilson.lang.Objects.*;
 import com.garretwilson.swing.*;
 import static com.garretwilson.swing.text.TextComponentConstants.*;
 import com.garretwilson.text.unicode.*;

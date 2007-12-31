@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import com.garretwilson.awt.event.RolloverMouseAdapter;
-import com.garretwilson.lang.ObjectUtilities;
+import com.garretwilson.lang.Objects;
 import com.garretwilson.net.BrowserLauncher;
 import com.garretwilson.util.Debug;
 
@@ -31,7 +31,7 @@ public class LinkLabel extends JLabel
 		public void setRolloverColor(final Color newRolloverColor)
 		{
 			final Color oldRolloverColor=getRolloverColor();  //get the current rollover color
-		  if(!ObjectUtilities.equals(oldRolloverColor, newRolloverColor)) //if the color is really changing
+		  if(!Objects.equals(oldRolloverColor, newRolloverColor)) //if the color is really changing
 			{
 				rolloverMouseAdapter.setRolloverColor(newRolloverColor);  //update the value
 				  //show that the property has changed
@@ -56,7 +56,7 @@ public class LinkLabel extends JLabel
 		public void setTarget(final String newTarget)
 		{
 			final String oldTarget=target;  //get the current target
-		  if(!ObjectUtilities.equals(oldTarget, newTarget)) //if the target is really changing
+		  if(!Objects.equals(oldTarget, newTarget)) //if the target is really changing
 			{
 				target=newTarget; //update the value
 				firePropertyChange(TARGET_PROPERTY, oldTarget, newTarget);  //show that the property has changed

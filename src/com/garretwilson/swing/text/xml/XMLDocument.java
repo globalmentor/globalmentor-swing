@@ -427,7 +427,7 @@ G***comment
 			else	//if we don't recognize this image type
 				throw new IOException("Unrecognized image type: \""+mediaType.getSubType()+"\"; only \""+ContentTypeConstants.JPEG_SUBTYPE+"\", \""+ContentTypeConstants.PNG_SUBTYPE+"\", and \""+ContentTypeConstants.GIF_SUBTYPE+"\" are currently supported.");	//G***i18n G***fix for other image types
 		}
-		else if(ContentTypeUtilities.isAudio(mediaType))	//if this is an audio media type
+		else if(ContentTypes.isAudio(mediaType))	//if this is an audio media type
 		{
 			final InputStream inputStream=new BufferedInputStream(getResourceAsInputStream(resourceURI));	//get a buffered input stream to the audio
 //G***we should really close the input stream if something goes wrong

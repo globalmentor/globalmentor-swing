@@ -72,7 +72,7 @@ public class TextPanel extends ModelPanel<StringBuilder>
 	protected void initializeUI()
 	{
 		super.initializeUI(); //do the default UI initialization
-		textPane.setContentType(ContentTypeUtilities.toString(TEXT, PLAIN_SUBTYPE));	//set the content type to "text/plain" G***maybe allow this panel to support multiple MIME types, and put the setting of the type back into TextResourceKit
+		textPane.setContentType(ContentTypes.toString(TEXT, PLAIN_SUBTYPE));	//set the content type to "text/plain" G***maybe allow this panel to support multiple MIME types, and put the setting of the type back into TextResourceKit
 		textPane.getDocument().addDocumentListener(getModifyDocumentListener());	//show that we're modified whenever the text is edited (we never change the document, we just load and save text into the document)
 		add(scrollPane, BorderLayout.CENTER);	//place the text pane, in its scroll pane, in the center of the panel
 		add(unicodeStatusBar, BorderLayout.SOUTH);	//put the Unicode status bar in the south TODO make this an option

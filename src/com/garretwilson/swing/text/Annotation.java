@@ -6,7 +6,7 @@ import javax.swing.text.Document;
 import javax.swing.text.Position;
 import com.garretwilson.awt.ColorUtilities;
 import com.garretwilson.lang.JavaUtilities;
-import com.garretwilson.lang.ObjectUtilities;
+import com.garretwilson.lang.Objects;
 
 /**Represents a marked section with an optional length in a document that can
 	survive edits and can be stored. An annotation maintains a highlight color and
@@ -141,9 +141,9 @@ public class Annotation extends Bookmark
 			final Annotation annotation=(Annotation)object;  //cast the other object to an annotation
 			if(!super.equals(annotation)) //if the bookmark-related items are not equal
 				return false; //show the object do not match
-		  if(!ObjectUtilities.equals(getText(), annotation.getText())) //if the text isn't the same
+		  if(!Objects.equals(getText(), annotation.getText())) //if the text isn't the same
 				return false; //show the object do not match
-			return ObjectUtilities.equals(getColor(), annotation.getColor());  //compare the colors
+			return Objects.equals(getColor(), annotation.getColor());  //compare the colors
 		}
 		else	//if we're being compared with anything else
 			return super.equals(object);	//use the default compare

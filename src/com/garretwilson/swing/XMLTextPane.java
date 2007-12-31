@@ -21,8 +21,8 @@ import org.w3c.dom.DocumentFragment;
 import com.garretwilson.applet.*;
 import com.garretwilson.awt.EventQueueUtilities;
 import com.garretwilson.io.*;
-import static com.garretwilson.io.ContentTypeUtilities.*;
-import static com.garretwilson.lang.ObjectUtilities.*;
+import static com.garretwilson.io.ContentTypes.*;
+import static com.garretwilson.lang.Objects.*;
 import com.garretwilson.net.BrowserLauncher;
 import com.garretwilson.net.URIConstants;
 import com.garretwilson.net.URIs;
@@ -1266,7 +1266,7 @@ Debug.trace("reading from stream into document"); //G***del
 	public EditorKit getEditorKitForContentType(final String type)
 	{
 		EditorKit editorKit=null;	//we'll try to create an editor kit
-		final ContentType mediaType=ContentTypeUtilities.createContentType(type);  //create a new media type
+		final ContentType mediaType=ContentTypes.createContentType(type);  //create a new media type
 		if(XHTMLUtilities.isHTML(mediaType))	//if this is an XHTML media type
 		{
 			editorKit=new XHTMLEditorKit(mediaType, this);	//create a new XHTML editor kit for this media type
@@ -1295,7 +1295,7 @@ Debug.trace("reading from stream into document"); //G***del
 				}
 				else if(isXML(createContentType(type)))	//if this type was not recognized, but it's an XML content type
 				{
-					editorKit=createEditorKitForContentType(ContentTypeUtilities.toString(TEXT, XML_SUBTYPE));//create a general text/xml editor kit
+					editorKit=createEditorKitForContentType(ContentTypes.toString(TEXT, XML_SUBTYPE));//create a general text/xml editor kit
 				}
 			}
 		}

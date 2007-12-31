@@ -8,7 +8,7 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 
 import com.garretwilson.io.*;
-import static com.garretwilson.lang.ObjectUtilities.*;
+import static com.garretwilson.lang.Objects.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.event.ProgressListener;

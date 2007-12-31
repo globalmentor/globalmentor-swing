@@ -23,7 +23,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import java.util.*;
-import com.garretwilson.lang.ObjectUtilities;
+import com.garretwilson.lang.Objects;
 import com.garretwilson.lang.StringBufferUtilities;
 import com.garretwilson.lang.Strings;
 import com.garretwilson.net.URLUtilities;

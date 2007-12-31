@@ -6,7 +6,7 @@ import java.net.URI;
 import javax.mail.internet.ContentType;
 import javax.swing.text.*;
 import com.garretwilson.io.ContentTypeConstants;
-import com.garretwilson.io.ContentTypeUtilities;
+import com.garretwilson.io.ContentTypes;
 import com.garretwilson.io.Files;
 import com.garretwilson.swing.text.xml.XMLStyleUtilities;
 import com.garretwilson.text.xml.oeb.OEBConstants;
@@ -287,11 +287,11 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 				//see if there is a code type attribute
 			final String codeType=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_CODETYPE);
 			if(codeType!=null)  //if the object has a code type
-				return ContentTypeUtilities.createContentType(codeType); //create a media type from the given type
+				return ContentTypes.createContentType(codeType); //create a media type from the given type
 				//see if there is a type attribute, since there is no code type specified
 			final String type=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_TYPE);
 			if(type!=null)  //if the object has a code type
-				return ContentTypeUtilities.createContentType(type); //create a media type from the given type and return it
+				return ContentTypes.createContentType(type); //create a media type from the given type and return it
 				//see if there is a data attribute, since there is no type specified
 			final String data=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_DATA);
 			if(data!=null)  //if the object has a data attribute

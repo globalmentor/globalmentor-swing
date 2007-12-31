@@ -7,7 +7,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.rdf.tree.*;
-import com.garretwilson.text.CharacterEncodingConstants;
+import com.garretwilson.text.CharacterEncoding;
 import com.garretwilson.text.xml.XMLDOMImplementation;
 import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.text.xml.XMLSerializer;
@@ -172,7 +172,7 @@ public class RDFPanel<R extends RDFResource, M extends ResourceModel<R>> extends
 					if(sourceString.length()>0)	//if there is source text
 					{
 						final XMLProcessor xmlProcessor=new XMLProcessor(model);	//create an XML processor to read the source
-						final byte[] sourceBytes=sourceString.getBytes(CharacterEncodingConstants.UTF_8);	//convert the string to a series of UTF-8 bytes
+						final byte[] sourceBytes=sourceString.getBytes(CharacterEncoding.UTF_8);	//convert the string to a series of UTF-8 bytes
 						final InputStream inputStream=new BufferedInputStream(new ByteArrayInputStream(sourceBytes));	//create an input stream to the source as bytes
 						try
 						{

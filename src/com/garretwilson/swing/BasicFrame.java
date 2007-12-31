@@ -188,7 +188,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 	*/
 	public void setTitle(final String title)
 	{
-		if(!ObjectUtilities.equals(getTitle(), title))	//if the title is really changing
+		if(!Objects.equals(getTitle(), title))	//if the title is really changing
 			super.setTitle(title);	//actually update the title
 	}
 	

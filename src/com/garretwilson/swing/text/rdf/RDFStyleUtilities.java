@@ -2,7 +2,7 @@ package com.garretwilson.swing.text.rdf;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.MutableAttributeSet;
-import static com.garretwilson.lang.ObjectUtilities.*;
+import static com.garretwilson.lang.Objects.*;
 import static com.garretwilson.swing.text.StyleUtilities.*;
 import static com.garretwilson.swing.text.rdf.RDFStyleConstants.*;
 

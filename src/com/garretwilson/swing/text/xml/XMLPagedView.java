@@ -17,7 +17,7 @@ import javax.mail.internet.ContentType;
 
 import com.garretwilson.awt.EventQueueUtilities;
 import com.garretwilson.lang.JavaUtilities;
-import com.garretwilson.lang.ObjectUtilities;
+import com.garretwilson.lang.Objects;
 import com.garretwilson.swing.ComponentUtilities;
 import com.garretwilson.swing.SwingApplication;
 import com.garretwilson.swing.XMLTextPane;	//G***del when we can find a better place to set the paged view variable of XMLTextPane

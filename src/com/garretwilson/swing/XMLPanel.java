@@ -10,7 +10,7 @@ import static com.garretwilson.io.ContentTypeConstants.PLAIN_SUBTYPE;
 import static com.garretwilson.io.ContentTypeConstants.TEXT;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.unicode.UnicodeStatusBar;
-import com.garretwilson.text.CharacterEncodingConstants;
+import com.garretwilson.text.CharacterEncoding;
 import com.garretwilson.text.xml.XMLNodeModel;
 import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.text.xml.XMLSerializer;
@@ -154,7 +154,7 @@ public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeMo
 	/**Initialize the user interface.*/
 	protected void initializeUI()
 	{
-		getSourceTextPane().setContentType(ContentTypeUtilities.toString(TEXT, PLAIN_SUBTYPE));	//set the content type of the source view to "text/plain"
+		getSourceTextPane().setContentType(ContentTypes.toString(TEXT, PLAIN_SUBTYPE));	//set the content type of the source view to "text/plain"
 		addView(WYSIWYG_MODEL_VIEW, getXMLTextPane().getContentType(), getXMLScrollPane());	//add the XML text pane as the WYSIWYG view G***i18n
 		addView(SOURCE_MODEL_VIEW, "XML", getSourceScrollPane());	//add the source XML text pane as the source view G***i18n
 
@@ -204,7 +204,7 @@ updateStatus();	//testing; probably put a convenience method to create this list
 	/**@return The XML content type of the panel.*/
 	public ContentType getContentType()
 	{
-		return ContentTypeUtilities.createContentType(getXMLTextPane().getContentType());	//return the XML text pane content type
+		return ContentTypes.createContentType(getXMLTextPane().getContentType());	//return the XML text pane content type
 	}	
 
 	/**Sets the XML content type of the panel.
@@ -291,7 +291,7 @@ updateStatus();	//testing; probably put a convenience method to create this list
 					if(sourceText.length()>0)	//if we have source text
 					{
 						final XMLProcessor xmlProcessor=new XMLProcessor(model);	//create an XML processor to read the source
-						final byte[] sourceBytes=sourceText.getBytes(CharacterEncodingConstants.UTF_8);	//convert the string to a series of UTF-8 bytes
+						final byte[] sourceBytes=sourceText.getBytes(CharacterEncoding.UTF_8);	//convert the string to a series of UTF-8 bytes
 						final InputStream inputStream=new BufferedInputStream(new ByteArrayInputStream(sourceBytes));	//create an input stream to the source as bytes
 						try
 						{

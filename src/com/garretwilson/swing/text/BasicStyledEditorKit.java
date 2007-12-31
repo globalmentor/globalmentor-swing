@@ -13,7 +13,7 @@ import javax.swing.text.*;
 
 import com.garretwilson.io.*;
 import static com.garretwilson.lang.JavaConstants.*;
-import static com.garretwilson.lang.ObjectUtilities.*;
+import static com.garretwilson.lang.Objects.*;
 import com.garretwilson.sun.demo.jfc.notepad.ElementTreePanel;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.event.*;

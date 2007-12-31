@@ -7,11 +7,11 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
 
-import static com.garretwilson.lang.ObjectUtilities.*;
+import static com.garretwilson.lang.Objects.*;
 import static com.garretwilson.swing.text.StyleUtilities.*;
 import static com.garretwilson.swing.text.xml.XMLStyleConstants.*;
 
-import com.garretwilson.lang.ObjectUtilities;
+import com.garretwilson.lang.Objects;
 import com.garretwilson.rdf.RDFResource;
 import com.garretwilson.text.xml.XMLUtilities;
 import com.garretwilson.util.NameValuePair;
@@ -89,7 +89,7 @@ public class XMLStyleUtilities
 	public static boolean isXMLElement(final AttributeSet attributeSet, final String namespaceURI, final String localName)
 	{
 		final String elementNamespaceURI=getXMLElementNamespaceURI(attributeSet);	//get the namespace
-		if(ObjectUtilities.equals(namespaceURI, elementNamespaceURI))	//if the namespace URI matches (or they are both null)
+		if(Objects.equals(namespaceURI, elementNamespaceURI))	//if the namespace URI matches (or they are both null)
 		{
 			final String elementLocalName=getXMLElementLocalName(attributeSet); //get the local name of this element
 			if(localName.equals(elementLocalName))  //if this element has the correct local name

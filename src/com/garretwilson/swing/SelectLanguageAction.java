@@ -39,7 +39,7 @@ public class SelectLanguageAction extends AbstractAction
 		public void setLocale(final Locale newLocale)
 		{
 			final Locale oldLocale=locale; //get the old locale
-			if(!ObjectUtilities.equals(oldLocale, newLocale))  //if the value is really changing
+			if(!Objects.equals(oldLocale, newLocale))  //if the value is really changing
 			{
 				locale=newLocale; //update the value
 				firePropertyChange(LocaleConstants.LOCALE_PROPERTY_NAME, oldLocale, newLocale);	//show that the locale property has changed

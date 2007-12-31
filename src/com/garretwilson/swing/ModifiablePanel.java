@@ -390,7 +390,7 @@ public class ModifiablePanel extends BasicPanel implements Modifiable
 					public void propertyChange(final PropertyChangeEvent propertyChangeEvent)	//if a property is modified
 					{
 						if(propertyName.equals(propertyChangeEvent.getPropertyName())	//if the property we're concerned about changed
-								&& ObjectUtilities.equals(propertyValue, propertyChangeEvent.getNewValue()))
+								&& Objects.equals(propertyValue, propertyChangeEvent.getNewValue()))
 						{
 							setModified(true);	//show that we've been modified
 						}

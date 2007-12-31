@@ -282,7 +282,7 @@ public class ExplanatoryPanel extends BasicVCardPanel
 			{
 				final LocaleText localeText=(LocaleText)selectedValue;	//cast the selected object to locale text
 				final Locale oldLocale=localeText.getLocale(); //get the old locale
-				if(!ObjectUtilities.equals(oldLocale, newLocale))  //if the value is really changing
+				if(!Objects.equals(oldLocale, newLocale))  //if the value is really changing
 				{
 					localeText.setLocale(newLocale); //update the value
 					firePropertyChange(LocaleConstants.LOCALE_PROPERTY_NAME, oldLocale, newLocale);	//show that the locale property has changed

@@ -9,7 +9,7 @@ import java.lang.ref.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import static com.garretwilson.lang.ObjectUtilities.*;
+import static com.garretwilson.lang.Objects.*;
 import static com.garretwilson.swing.ComponentConstants.*;
 import com.garretwilson.util.Debug;
 

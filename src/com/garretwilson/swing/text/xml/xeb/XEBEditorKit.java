@@ -74,7 +74,7 @@ public class XEBEditorKit extends XHTMLEditorKit	//TODO eventually go back to de
 	/**Returns the MIME type of the data the XML editor kit supports, <code>application/x-xebook+rdf+xml</code>.
 	@return The MIME type this editor kit supports.
 	*/
-	public String getContentType() {return ContentTypeUtilities.toString(ContentTypeConstants.APPLICATION, ContentTypeConstants.X_XEBOOK_RDF_XML_SUBTYPE);}
+	public String getContentType() {return ContentTypes.toString(ContentTypeConstants.APPLICATION, ContentTypeConstants.X_XEBOOK_RDF_XML_SUBTYPE);}
 
 
 		/**

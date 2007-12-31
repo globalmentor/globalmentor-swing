@@ -3,9 +3,7 @@ package com.garretwilson.swing.text.xml;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
-import java.net.URI;
 import java.util.*;
-import java.util.List;
 import javax.mail.internet.ContentType;
 import javax.swing.*;
 import javax.swing.text.*;
@@ -14,7 +12,7 @@ import javax.swing.text.Element;
 
 import com.garretwilson.io.*;
 import com.garretwilson.lang.*;
-import static com.garretwilson.lang.ObjectUtilities.*;
+import static com.garretwilson.lang.Objects.*;
 import com.garretwilson.net.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.maqro.Activity;
@@ -348,7 +346,7 @@ G***fix
 	*/
 	public void write(final OutputStream outputStream, final Document document, final int pos, final int len) throws IOException, BadLocationException
 	{
-		write(outputStream, CharacterEncodingConstants.UTF_8, document, pos, len);	//write using UTF-8
+		write(outputStream, CharacterEncoding.UTF_8, document, pos, len);	//write using UTF-8
 	}
 
 	/**Writes content from a document to the given stream in a format appropriate

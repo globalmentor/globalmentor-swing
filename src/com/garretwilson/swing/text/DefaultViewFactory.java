@@ -4,7 +4,7 @@ import java.util.List;
 import javax.swing.text.Element;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
-import com.garretwilson.lang.ObjectUtilities;
+import com.garretwilson.lang.Objects;
 
 /**A default implementation of a view factory that allows a fallback view
 	factory to be invoked if this view factory doesn't know how to create a
@@ -106,7 +106,7 @@ public abstract class DefaultViewFactory implements ViewsFactory //G***maybe use
 		  	return getFallbackViewFactory().create(element);  //let the fallback view factory create the view normally
 		}
 		else  //if we have no fallback view factory
-		  throw new IllegalArgumentException(ObjectUtilities.toString(element));  //show that we don't know what to do with the element
+		  throw new IllegalArgumentException(Objects.toString(element));  //show that we don't know what to do with the element
 //G***del			return new XMLInlineView(element);	//everything we don't know what to do with gets to be an inline view G***should this be the default?
 	}
 

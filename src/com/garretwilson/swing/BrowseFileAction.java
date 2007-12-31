@@ -34,7 +34,7 @@ public class BrowseFileAction extends AbstractAction
 		public void setSelectedFile(final File newFile)
 		{
 			final File oldFile=getSelectedFile();	//get the current value
-			if(!ObjectUtilities.equals(oldFile, newFile))	//if the files are different
+			if(!Objects.equals(oldFile, newFile))	//if the files are different
 			{
 				selectedFile=newFile;	//change the file
 				firePropertyChange(SELECTED_FILE_PROPERTY, oldFile, newFile);	//show that the value changed

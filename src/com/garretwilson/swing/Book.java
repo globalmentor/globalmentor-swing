@@ -1617,7 +1617,7 @@ Debug.trace("Media type: ", mediaType);	//G***del
 			{
 					//TODO create convenience utility methods similar to MediaTypeUtilities.isAudio() for all of these checks
 				final String topLevelType=mediaType.getPrimaryType();  //get the top-level media type
-				if(ContentTypeUtilities.isAudio(mediaType))	//if this is an audio media type
+				if(ContentTypes.isAudio(mediaType))	//if this is an audio media type
 				{
 Debug.trace("found an audio file.");
 //G***del; fix				  mouseEvent.consume(); //consume the event so that the mouse click won't be interpreted elsewhere

@@ -7,7 +7,7 @@ import static java.util.Collections.*;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import javax.swing.text.*;
-import static com.garretwilson.lang.ObjectUtilities.*;
+import static com.garretwilson.lang.Objects.*;
 
 import com.garretwilson.awt.Inset;
 import com.garretwilson.util.Debug;

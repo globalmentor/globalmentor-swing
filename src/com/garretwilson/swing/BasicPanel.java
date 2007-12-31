@@ -167,12 +167,12 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 			if(border instanceof TitledBorder)	//if the border is a titled border
 			{
 				final TitledBorder titledBorder=(TitledBorder)border;	//cast the border to a titled border
-				if(!ObjectUtilities.equals(titledBorder.getTitle(), newTitle))	//if the new title is different than the one currently on the border
+				if(!Objects.equals(titledBorder.getTitle(), newTitle))	//if the new title is different than the one currently on the border
 				{
 					titledBorder.setTitle(newTitle);	//update the title on the border
 				}
 			}
-			if(!ObjectUtilities.equals(oldTitle, newTitle))  //if the value is really changing
+			if(!Objects.equals(oldTitle, newTitle))  //if the value is really changing
 			{
 				title=newTitle; //update the value					
 				firePropertyChange(TITLE_PROPERTY, oldTitle, newTitle);	//show that the property has changed

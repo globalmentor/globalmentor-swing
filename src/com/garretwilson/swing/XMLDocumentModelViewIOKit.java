@@ -9,7 +9,6 @@ import javax.swing.text.*;
 import com.garretwilson.io.*;
 import com.garretwilson.model.*;
 import com.garretwilson.text.CharacterEncoding;
-import com.garretwilson.text.CharacterEncodingConstants;
 import com.garretwilson.text.xml.XMLDocumentModelIOKit;
 import com.garretwilson.text.xml.XMLNodeModel;
 import com.garretwilson.text.xml.XMLProcessor;
@@ -114,7 +113,7 @@ public class XMLDocumentModelViewIOKit extends ModelViewIOKit<XMLNodeModel<org.w
 		{
 			case XMLPanel.SOURCE_MODEL_VIEW:	//if the source is being edited
 				{
-					final Writer writer=new OutputStreamWriter(outputStream, CharacterEncodingConstants.UTF_8);	//create a UTF-8 writer
+					final Writer writer=new OutputStreamWriter(outputStream, CharacterEncoding.UTF_8);	//create a UTF-8 writer
 					final JTextPane textPane=xmlPanel.getSourceTextPane();	//get a reference to the source text pane
 					final Document document=textPane.getDocument();	//get the document currently loaded into the text pane
 					try

@@ -125,7 +125,7 @@ Debug.trace("We've moved to a different element; currentURI: ", currentURI);	//G
 									final URI uri=linkController.getLinkElementURI(xmlDocument, element);	//get the URI for the element we're over (we don't know if this is a link element, so this may return null)
 Debug.trace("URI: ", uri);	//G***del
 //G***del when works									if(url!=currentURL)	//if we're over a different link
-									if(!ObjectUtilities.equals(uri, currentURI))	//if we're over a different link (comparing the URIs using the URI.equals() method, if possible)
+									if(!Objects.equals(uri, currentURI))	//if we're over a different link (comparing the URIs using the URI.equals() method, if possible)
 									{
 //G***del when works										final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element G***what if this is null?
 										fireEntryExitEvents(editorPane, xmlDocument, currentURI, uri, element);	//fire the appropriate events for exiting and entering a link

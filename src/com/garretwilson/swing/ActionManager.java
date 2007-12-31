@@ -6,7 +6,7 @@ import java.util.*;
 import javax.swing.*;
 
 import com.garretwilson.lang.*;
-import static com.garretwilson.lang.ObjectUtilities.*;
+import static com.garretwilson.lang.Objects.*;
 import com.garretwilson.util.DefaultOrderComparator;
 import static com.garretwilson.util.IteratorUtilities.*;
 
