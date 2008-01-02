@@ -18,7 +18,6 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
 
 import com.garretwilson.io.*;
-import com.garretwilson.lang.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.xpackage.XPackageUtilities;
 import com.garretwilson.swing.event.ProgressEvent;
@@ -34,6 +33,7 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
 import com.garretwilson.util.Debug;
 import com.garretwilson.util.NameValuePair;
 //G***del when works import com.garretwilson.swing.text.xml.css.XMLCSSSimpleAttributeSet;
+import com.globalmentor.java.*;
 import com.globalmentor.marmot.Marmot;
 
 /**A document that models XML.

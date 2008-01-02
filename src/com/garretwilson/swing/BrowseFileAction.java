@@ -4,8 +4,8 @@ import java.awt.Component;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
-import com.garretwilson.lang.*;
 import com.garretwilson.resources.icon.IconResources;
+import com.globalmentor.java.*;
 
 /**An action for browsing to choose a file.
 <p>Bound properties:</p>

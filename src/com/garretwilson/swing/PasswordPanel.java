@@ -5,7 +5,8 @@ import java.awt.Insets;
 import java.util.Arrays;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
-import static com.garretwilson.lang.Objects.*;
+
+import static com.globalmentor.java.Objects.*;
 
 /**Allows entry and optional verification of a password.
 @author Garret Wilson

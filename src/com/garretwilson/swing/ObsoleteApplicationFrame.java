@@ -5,11 +5,11 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
-import com.garretwilson.lang.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.dublincore.DCUtilities;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.*;
+import com.globalmentor.java.*;
 
 /**Main frame parent class for an application. This frame expects to contain
 	a <code>ToolStatusPanel</code>.

@@ -1,8 +1,8 @@
 package com.garretwilson.swing.unicode;
 
 import javax.swing.table.*;
-import com.garretwilson.lang.IntegerUtilities;
 import com.garretwilson.text.unicode.*;
+import com.globalmentor.java.IntegerUtilities;
 
 /**Table model for displaying Unicode code points.
 @author Garret Wilson

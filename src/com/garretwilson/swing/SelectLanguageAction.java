@@ -4,9 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
-import com.garretwilson.lang.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.*;
+import com.globalmentor.java.*;
 
 /**Action for selecting a language from a dialog.
 <p>Bound properties:</p>

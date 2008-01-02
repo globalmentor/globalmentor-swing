@@ -7,9 +7,10 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
-import static com.garretwilson.lang.Objects.*;
 import com.garretwilson.swing.*;
 import static com.garretwilson.swing.text.TextComponentConstants.*;
+import static com.globalmentor.java.Objects.*;
+
 import com.garretwilson.text.unicode.*;
 
 /**A status bar showing Unicode code point value, name, and category.

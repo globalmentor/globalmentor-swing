@@ -5,7 +5,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
 
-import com.garretwilson.lang.BooleanUtilities;
+import com.globalmentor.java.BooleanUtilities;
 
 /**Action that that represents a toggled binary selected state.
 A component factory may create a checkbox or, if the action indicates a group,

@@ -7,9 +7,10 @@ import java.util.*;
 import java.util.prefs.*;
 import javax.swing.*;
 import com.garretwilson.awt.*;
-import com.garretwilson.lang.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.util.*;
+import com.globalmentor.java.*;
+
 import static com.garretwilson.util.prefs.PreferencesUtilities.*;
 
 /**An extended frame that has extra features beyond those in <code>JFrame</code>.

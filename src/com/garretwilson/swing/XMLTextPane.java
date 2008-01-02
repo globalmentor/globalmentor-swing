@@ -22,7 +22,6 @@ import com.garretwilson.applet.*;
 import com.garretwilson.awt.EventQueueUtilities;
 import com.garretwilson.io.*;
 import static com.garretwilson.io.ContentTypes.*;
-import static com.garretwilson.lang.Objects.*;
 import com.garretwilson.net.BrowserLauncher;
 import com.garretwilson.net.URIConstants;
 import com.garretwilson.net.URIs;
@@ -52,6 +51,7 @@ import com.garretwilson.util.zip.*;
 
 import static com.garretwilson.io.ContentTypeConstants.*;
 import static com.garretwilson.text.xml.XMLUtilities.*;
+import static com.globalmentor.java.Objects.*;
 
 /**A text component that can be marked up with attributes that are represented
 	graphically. Most importantly, this class supports paged XML information.

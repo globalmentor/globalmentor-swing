@@ -4,20 +4,19 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
-import java.net.URI;
 
 import javax.mail.internet.ContentType;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import com.garretwilson.io.*;
-import com.garretwilson.lang.*;
 import com.garretwilson.net.*;
 import com.garretwilson.swing.event.XMLLinkEvent;
 import com.garretwilson.text.xml.oeb.*; //G***move someday
 import com.garretwilson.text.xml.xhtml.*; //G***move someday
 import com.garretwilson.text.xml.xlink.*;
 import com.garretwilson.util.*;
+import com.globalmentor.java.*;
 
 import static com.garretwilson.io.ContentTypeConstants.*;
 import static com.garretwilson.text.xml.xhtml.XHTMLUtilities.*;

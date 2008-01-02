@@ -1,10 +1,10 @@
 package com.garretwilson.swing.text.xml.xhtml;
 
 import javax.swing.text.*;
-import com.garretwilson.lang.*;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.text.xml.xhtml.*;
 import com.garretwilson.util.*;
+import com.globalmentor.java.*;
 
 //G***add fallback element initialization as we do for images, putting the init stuff in XMLObjectView
 

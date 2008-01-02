@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 import javax.swing.text.*;
-import com.garretwilson.lang.Strings;
 import com.garretwilson.net.URIs;
 import com.garretwilson.util.Debug;
+import com.globalmentor.java.Strings;
 
 /**A view that displays an applet. Implements <code>AppletStub</code> so
 	that it can manage requests to the environment made by the applet.

@@ -9,8 +9,9 @@ import java.lang.ref.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import static com.garretwilson.lang.Objects.*;
 import static com.garretwilson.swing.ComponentConstants.*;
+import static com.globalmentor.java.Objects.*;
+
 import com.garretwilson.util.Debug;
 
 /**An action represented by a combo box.

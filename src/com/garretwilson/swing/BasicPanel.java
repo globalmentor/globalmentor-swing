@@ -11,9 +11,10 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 
 import com.garretwilson.awt.*;
-import com.garretwilson.lang.*;
 import com.garretwilson.swing.event.*;
 import com.garretwilson.util.*;
+import com.globalmentor.java.*;
+
 import static com.garretwilson.util.ArrayUtilities.*;
 
 /**An extended panel that has extra features beyond those in <code>JPanel</code>.

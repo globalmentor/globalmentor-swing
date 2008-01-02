@@ -5,8 +5,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Position;
 import com.garretwilson.awt.ColorUtilities;
-import com.garretwilson.lang.JavaUtilities;
-import com.garretwilson.lang.Objects;
+import com.globalmentor.java.JavaUtilities;
+import com.globalmentor.java.Objects;
 
 /**Represents a marked section with an optional length in a document that can
 	survive edits and can be stored. An annotation maintains a highlight color and

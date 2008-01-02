@@ -3,10 +3,10 @@ package com.garretwilson.swing.text.directory.vcard;
 import java.awt.*;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
-import com.garretwilson.lang.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.text.directory.vcard.*;
+import com.globalmentor.java.*;
 
 /**A panel containing fields for the <code>EMAIL</code> type of a vCard
 	<code>text/directory</code>	profile as defined in

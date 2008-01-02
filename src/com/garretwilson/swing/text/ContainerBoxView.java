@@ -4,8 +4,8 @@ import java.awt.Insets;
 import java.util.*;
 
 import javax.swing.text.*;
-import static com.garretwilson.lang.Objects.*;
 import static com.garretwilson.swing.text.ViewUtilities.*;
+import static com.globalmentor.java.Objects.*;
 
 import com.garretwilson.awt.Inset;
 import com.garretwilson.util.Debug;

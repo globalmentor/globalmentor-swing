@@ -16,7 +16,8 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
 import com.garretwilson.awt.DefaultFocusable;
-import static com.garretwilson.lang.BooleanUtilities.*;
+
+import static com.globalmentor.java.BooleanUtilities.*;
 
 import com.garretwilson.net.Resource;
 import com.garretwilson.util.Debug;

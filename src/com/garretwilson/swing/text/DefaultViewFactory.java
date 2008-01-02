@@ -4,7 +4,8 @@ import java.util.List;
 import javax.swing.text.Element;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
-import com.garretwilson.lang.Objects;
+
+import com.globalmentor.java.Objects;
 
 /**A default implementation of a view factory that allows a fallback view
 	factory to be invoked if this view factory doesn't know how to create a

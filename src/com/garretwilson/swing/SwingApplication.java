@@ -4,9 +4,9 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.net.URI;
 import javax.swing.*;
-import com.garretwilson.lang.*;
 import com.garretwilson.net.SwingAuthenticator;
 import com.garretwilson.util.*;
+import com.globalmentor.java.*;
 
 /**An application that relies on Swing.
 This version creates a default authenticator for client authentication using Swing.

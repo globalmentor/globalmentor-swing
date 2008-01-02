@@ -3,8 +3,8 @@ package com.garretwilson.swing.text;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Position;
-import com.garretwilson.lang.JavaUtilities;
 import com.garretwilson.util.Debug;
+import com.globalmentor.java.JavaUtilities;
 
 /**Represents a bookmark in a document that can survive edits and can be stored.
 	<p>A bookmark may or may not be attached to a document. If the bookmark is

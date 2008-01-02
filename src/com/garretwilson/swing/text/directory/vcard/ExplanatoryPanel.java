@@ -8,10 +8,10 @@ import java.net.*;
 import java.util.*;
 import static java.util.Collections.*;
 import javax.swing.*;
-import com.garretwilson.lang.*;
 import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.swing.*;
 import com.garretwilson.util.*;
+import com.globalmentor.java.*;
 
 /**A panel allowing entry of the explanatory types of a vCard <code>text/directory</code>
 	profile as defined in <a href="http://www.ietf.org/rfc/rfc2426.txt">RFC 2426</a>,

@@ -6,10 +6,10 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.DocumentListener;
 
-import com.garretwilson.lang.*;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
 import com.garretwilson.util.*;
+import com.globalmentor.java.*;
 
 /**A panel allowing entry of the organization types of a vCard <code>text/directory</code>
 	profile as defined in <a href="http://www.ietf.org/rfc/rfc2426.txt">RFC 2426</a>,

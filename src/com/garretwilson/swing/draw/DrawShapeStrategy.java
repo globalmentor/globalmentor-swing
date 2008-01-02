@@ -4,8 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import com.garretwilson.lang.Objects;
 import com.garretwilson.util.Debug;
+import com.globalmentor.java.Objects;
 
 /**Strategy for drawing a shape on a component.
 	An instance of the strategy must be registered as both a

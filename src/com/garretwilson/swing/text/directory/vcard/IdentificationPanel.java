@@ -6,12 +6,12 @@ import java.beans.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import com.garretwilson.lang.*;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
 import com.garretwilson.swing.event.*;
 import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.util.*;
+import com.globalmentor.java.*;
 
 /**A panel containing fields for the identification types of a vCard
 	<code>text/directory</code>	profile as defined in

@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.List;
 import javax.swing.text.*;
 
-import com.garretwilson.lang.CharSequenceUtilities;
 import com.garretwilson.swing.text.*;
 import static com.garretwilson.swing.text.SwingTextUtilities.*;
 import static com.garretwilson.swing.text.ViewUtilities.*;
@@ -14,6 +13,8 @@ import com.garretwilson.swing.text.xml.css.*;
 import com.garretwilson.text.Characters;
 import com.garretwilson.text.xml.stylesheets.css.*;
 import com.garretwilson.util.Debug;
+import com.globalmentor.java.CharSequenceUtilities;
+
 import org.w3c.dom.css.CSSStyleDeclaration;
 
 /**A view that arranges its children into a box shape by tiling its children along an axis.

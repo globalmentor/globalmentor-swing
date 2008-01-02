@@ -10,13 +10,13 @@ import java.security.CodeSource;
 import java.security.SecureClassLoader;
 import java.security.PrivilegedExceptionAction;
 import com.garretwilson.io.InputStreamUtilities;
-import com.garretwilson.lang.JavaConstants;
 import static com.garretwilson.net.URIConstants.*;
 import com.garretwilson.net.URIs;
 import com.garretwilson.util.Debug;
+import com.globalmentor.java.JavaConstants;
 
 import static com.garretwilson.io.FileConstants.*;
-import static com.garretwilson.lang.JavaConstants.*;
+import static com.globalmentor.java.JavaConstants.*;
 
 /**Class loader for retrieving Java classes needed in an XML document. This
 	class loader can be used to retrieve not only classes, but other types of

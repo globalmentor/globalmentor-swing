@@ -6,10 +6,11 @@ import java.net.URI;
 import java.util.*;
 import javax.swing.*;
 import com.garretwilson.text.xml.XMLSerializer;
-import com.garretwilson.lang.BooleanUtilities;
 import com.garretwilson.model.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.util.*;
+import com.globalmentor.java.BooleanUtilities;
+
 import org.w3c.dom.*;
 
 /**An application panel that contains a document for multiple document interface

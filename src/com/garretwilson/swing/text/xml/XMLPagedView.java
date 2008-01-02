@@ -16,8 +16,6 @@ import javax.swing.SizeRequirements;
 import javax.mail.internet.ContentType;
 
 import com.garretwilson.awt.EventQueueUtilities;
-import com.garretwilson.lang.JavaUtilities;
-import com.garretwilson.lang.Objects;
 import com.garretwilson.swing.ComponentUtilities;
 import com.garretwilson.swing.SwingApplication;
 import com.garretwilson.swing.XMLTextPane;	//G***del when we can find a better place to set the paged view variable of XMLTextPane
@@ -37,6 +35,8 @@ import com.garretwilson.text.xml.oeb.OEBConstants;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
 //G***del; not used import com.garretwilson.util.ArrayUtilities;
 import com.garretwilson.util.Debug;
+import com.globalmentor.java.JavaUtilities;
+import com.globalmentor.java.Objects;
 
 /**View of several pages.
 	<p>Although this class overrides <code>FlowView</code>, much of the layout is

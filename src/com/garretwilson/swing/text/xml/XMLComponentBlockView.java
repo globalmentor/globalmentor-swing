@@ -4,7 +4,8 @@ import java.awt.*;
 
 import javax.swing.text.*;
 
-import static com.garretwilson.lang.MathUtilities.*;
+import static com.globalmentor.java.MathUtilities.*;
+
 import com.garretwilson.swing.text.*;
 
 /**Provides a block view with one or more components embedded. The children will
