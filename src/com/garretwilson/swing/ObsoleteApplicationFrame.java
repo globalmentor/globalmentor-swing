@@ -834,7 +834,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		{
 			errorMessage="File not found: "+exception.getMessage();	//G***comment; i18n
 		}
-		else if(exception instanceof sun.io.MalformedInputException)	//if there was an error converting characters; G***put this elsewhere, fix for non-Sun JVMs
+		else if(exception instanceof CharConversionException)	//if there was an error converting characters; G***put this elsewhere, fix for non-Sun JVMs
 		{
 			errorMessage="Invalid character encountered for file encoding.";	//G***comment; i18n
 		}
