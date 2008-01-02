@@ -64,11 +64,11 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 {
 
 	/**The name of the bound icon property.*/
-	public final static String ICON_PROPERTY=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"icon";
+	public final static String ICON_PROPERTY=BasicPanel.class.getName()+Java.PACKAGE_SEPARATOR+"icon";
 	/**The name of the bound title property.*/
-	public final static String TITLE_PROPERTY=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"title";	//G***maybe later move this to a titleable interface
+	public final static String TITLE_PROPERTY=BasicPanel.class.getName()+Java.PACKAGE_SEPARATOR+"title";	//G***maybe later move this to a titleable interface
 	/**The name of the bound user mode property.*/
-	public final static String USER_MODE_PROPERTY=BasicPanel.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"userMode";
+	public final static String USER_MODE_PROPERTY=BasicPanel.class.getName()+Java.PACKAGE_SEPARATOR+"userMode";
 
 	/**The preferences that should be used for this panel, or <code>null</code>
 		if the default preferences for this class should be used.

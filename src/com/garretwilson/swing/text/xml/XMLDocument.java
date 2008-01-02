@@ -843,7 +843,7 @@ Debug.trace("ready to append text", text, "at offset", offset);
 //G***fix		stringBuilder.append(text);	//append text
 final StringBuilder stringBuilder=new StringBuilder(text);	//create a string builder with the text
 //G***fix final int newLength=StringBuilderUtilities.collapse(stringBuilder, CharacterConstants.WHITESPACE_CHARS, " ", begin, text.length());	//collapse all whitespace into spaces TODO fix across element boundaries
-		final int newLength=StringBuilderUtilities.collapse(stringBuilder, Characters.WHITESPACE_CHARS, " ");	//collapse all whitespace into spaces TODO fix across element boundaries
+		final int newLength=StringBuilders.collapse(stringBuilder, Characters.WHITESPACE_CHARS, " ");	//collapse all whitespace into spaces TODO fix across element boundaries
 Debug.trace("new length", newLength);
 		final int end=offset+newLength;	//see where the inserted, collapsed text ends
 Debug.trace("end", end);
@@ -1204,7 +1204,7 @@ Debug.trace("this paragraph attribute set: ", com.garretwilson.swing.text.Attrib
 	*/
 	public boolean isLeftToRight(int p0, int p1)
 	{
-		if(!getProperty(JavaConstants.I18N_PROPERTY_NAME).equals(Boolean.TRUE))
+		if(!getProperty(Java.I18N_PROPERTY_NAME).equals(Boolean.TRUE))
 		{
 	    return true;
 		}

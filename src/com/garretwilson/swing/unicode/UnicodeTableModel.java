@@ -2,7 +2,7 @@ package com.garretwilson.swing.unicode;
 
 import javax.swing.table.*;
 import com.garretwilson.text.unicode.*;
-import com.globalmentor.java.IntegerUtilities;
+import com.globalmentor.java.Integers;
 
 /**Table model for displaying Unicode code points.
 @author Garret Wilson
@@ -82,7 +82,7 @@ public class UnicodeTableModel extends AbstractTableModel
 	public String getColumnName(int columnIndex)
 	{
 //G***fix		return Integer.toHexString(columnIndex%0x10).toUpperCase();  //show the hex values 0...F repeatedly
-		return IntegerUtilities.toHexString(ROW_COUNT*columnIndex, 4).toUpperCase(); //show the starting Unicode code point value of this row in hex
+		return Integers.toHexString(ROW_COUNT*columnIndex, 4).toUpperCase(); //show the starting Unicode code point value of this row in hex
 //G***del 		return Integer.toHexString(ROW_COUNT*columnIndex).toUpperCase();
 	}
 

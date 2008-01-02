@@ -13,7 +13,6 @@ import javax.swing.text.*;
 
 import com.garretwilson.io.*;
 
-import static com.globalmentor.java.JavaConstants.*;
 import static com.globalmentor.java.Objects.*;
 
 import com.garretwilson.sun.demo.jfc.notepad.ElementTreePanel;
@@ -248,7 +247,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 								final JTextComponent textComponent=getTextComponent();	//get the last-known text component
 								if(textComponent!=null && codePoint>=0)	//if we have a text component (we should always have one)
 								{
-									if(codePoint<=MAX_CHAR)	//if this code point isn't over the Java character limit TODO fix for extended Unicode code points
+									if(codePoint<=Character.MAX_VALUE)	//if this code point isn't over the Java character limit TODO fix for extended Unicode code points
 									{
 										textComponent.replaceSelection(String.valueOf((char)codePoint));	//insert the character value of the code point
 									}

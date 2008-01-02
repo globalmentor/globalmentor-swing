@@ -35,7 +35,7 @@ import com.garretwilson.text.xml.oeb.OEBConstants;
 import com.garretwilson.text.xml.xhtml.XHTMLConstants;
 //G***del; not used import com.garretwilson.util.ArrayUtilities;
 import com.garretwilson.util.Debug;
-import com.globalmentor.java.JavaUtilities;
+import com.globalmentor.java.Java;
 import com.globalmentor.java.Objects;
 
 /**View of several pages.

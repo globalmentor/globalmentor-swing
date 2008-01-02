@@ -4,7 +4,7 @@ import java.awt.*;
 
 import javax.swing.text.*;
 
-import static com.globalmentor.java.MathUtilities.*;
+import static com.globalmentor.java.Maths.*;
 
 import com.garretwilson.swing.text.*;
 

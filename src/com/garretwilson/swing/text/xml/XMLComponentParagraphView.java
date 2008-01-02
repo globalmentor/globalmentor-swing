@@ -1,6 +1,6 @@
 package com.garretwilson.swing.text.xml;
 
-import static com.globalmentor.java.MathUtilities.max;
+import static com.globalmentor.java.Maths.max;
 
 import java.awt.*;
 import javax.swing.text.*;

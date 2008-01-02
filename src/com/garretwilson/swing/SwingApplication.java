@@ -188,7 +188,7 @@ public abstract class SwingApplication<C> extends Application<C>
 	{
 		Debug.error(throwable);	//log the error
 			//display a message for the throwable, using the throwable local class name for the title if no title was given
-		displayErrorDefault(parentComponent, title!=null ? title : ClassUtilities.getLocalName(throwable.getClass()), getDisplayErrorMessage(throwable));
+		displayErrorDefault(parentComponent, title!=null ? title : Classes.getLocalName(throwable.getClass()), getDisplayErrorMessage(throwable));
 	}
 
 	/**Default method to display an error message to the user.
@@ -253,7 +253,7 @@ public abstract class SwingApplication<C> extends Application<C>
 			{
 				stringBuffer.append(' ');	//separate the title from the throwable class name
 			}
-			stringBuffer.append(ClassUtilities.getLocalName(throwable.getClass()));	//append the throwable local class name
+			stringBuffer.append(Classes.getLocalName(throwable.getClass()));	//append the throwable local class name
 		}
 		return stringBuffer.toString();	//return the default string we constructed
 	}

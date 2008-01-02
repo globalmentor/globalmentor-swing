@@ -845,7 +845,7 @@ catch (BadLocationException e)
 						//get the text this content Swing element represents
 					final StringBuffer stringBuffer=new StringBuffer(swingElement.getDocument().getText(swingElement.getStartOffset(), swingElement.getEndOffset()-swingElement.getStartOffset()));
 							//remove every instance of the artificial end-of-block-element character, as well as any hard return that the user might have entered during editing
-					StringBufferUtilities.removeEveryChar(stringBuffer, XMLDocument.ELEMENT_END_STRING+'\n');
+					StringBuffers.removeEveryChar(stringBuffer, XMLDocument.ELEMENT_END_STRING+'\n');
 					return xmlDocument.createTextNode(stringBuffer.toString()); //create a text node with the content and return the node
 				}
 				catch(BadLocationException badLocationException)  //in the unlikely event that we try to access a bad location
@@ -1283,7 +1283,7 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 
 
 
-				StringBufferUtilities.collapse(textStringBuffer, Characters.WHITESPACE_CHARS, " ");	//G***testing
+				StringBuffers.collapse(textStringBuffer, Characters.WHITESPACE_CHARS, " ");	//G***testing
 //	G***del Debug.trace("after collapsing whitespace: ", textStringBuffer);  //G***del
 //	G***del Debug.trace("Adding text with attributes: ", contentAttributeSet);	//G***del
 //	G***fix textStringBuffer.append(CharacterConstants.WORD_JOINER_CHAR);	//G***testing

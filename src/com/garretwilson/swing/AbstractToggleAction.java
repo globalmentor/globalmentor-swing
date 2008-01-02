@@ -5,7 +5,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
 
-import com.globalmentor.java.BooleanUtilities;
+import com.globalmentor.java.Booleans;
 
 /**Action that that represents a toggled binary selected state.
 A component factory may create a checkbox or, if the action indicates a group,
@@ -21,7 +21,7 @@ public abstract class AbstractToggleAction extends AbstractAction
 	/**@return <code>true</code> if the selected property value is <code>true</code>.
 	@see #SELECTED_KEY
 	*/
-	public boolean isSelected() {return BooleanUtilities.booleanValue(getValue(SELECTED_KEY));}
+	public boolean isSelected() {return Booleans.booleanValue(getValue(SELECTED_KEY));}
 
 	/**Sets the selected state of the action. Any component that represents this
 		action should automatically update its visual status in response to a

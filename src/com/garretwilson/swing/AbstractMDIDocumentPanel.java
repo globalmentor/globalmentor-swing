@@ -9,7 +9,7 @@ import com.garretwilson.text.xml.XMLSerializer;
 import com.garretwilson.model.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.util.*;
-import com.globalmentor.java.BooleanUtilities;
+import com.globalmentor.java.Booleans;
 
 import org.w3c.dom.*;
 

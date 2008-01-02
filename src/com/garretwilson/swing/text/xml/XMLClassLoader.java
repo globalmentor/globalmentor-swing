@@ -12,11 +12,9 @@ import java.security.PrivilegedExceptionAction;
 import com.garretwilson.io.InputStreamUtilities;
 import static com.garretwilson.net.URIConstants.*;
 import com.garretwilson.net.URIs;
-import com.garretwilson.util.Debug;
-import com.globalmentor.java.JavaConstants;
 
 import static com.garretwilson.io.FileConstants.*;
-import static com.globalmentor.java.JavaConstants.*;
+import static com.globalmentor.java.Java.*;
 
 /**Class loader for retrieving Java classes needed in an XML document. This
 	class loader can be used to retrieve not only classes, but other types of
@@ -82,7 +80,7 @@ public class XMLClassLoader extends SecureClassLoader
 		try
 		{
 				//replace '.' with '/' and append ".class"
-			String href=name.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR).concat(String.valueOf(EXTENSION_SEPARATOR)).concat(JavaConstants.CLASS_EXTENSION);
+			String href=name.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR).concat(String.valueOf(EXTENSION_SEPARATOR)).concat(CLASS_EXTENSION);
 			if(baseURI!=null) //if we have a base URI
 				href=URIs.createURI(baseURI, href).toString(); //create an href relative to the base URI
 			final String finalHRef=href;  //put the href in a variable we wont' modify

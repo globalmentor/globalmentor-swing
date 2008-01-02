@@ -32,7 +32,7 @@ public class ActionManager implements Cloneable
 {
 
 	/**The <code>Integer</code> property that specifies the order of a menu action when returned in an iterator.*/
-	public final static String MENU_ORDER_PROPERTY=ActionManager.class.getName()+JavaConstants.PACKAGE_SEPARATOR+"order";
+	public final static String MENU_ORDER_PROPERTY=ActionManager.class.getName()+Java.PACKAGE_SEPARATOR+"order";
 
 		//top-level menu order
 	public final static int FILE_MENU_ACTION_ORDER=100;

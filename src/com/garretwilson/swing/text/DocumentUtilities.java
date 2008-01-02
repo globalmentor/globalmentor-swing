@@ -7,7 +7,7 @@ import javax.swing.text.Document;
 import javax.swing.text.MutableAttributeSet;
 
 import com.garretwilson.rdf.RDF;
-import com.globalmentor.java.BooleanUtilities;
+import com.globalmentor.java.Booleans;
 
 /**A collection of utility methods for working with Swing text
 	<code>Document</code> and derived objects.
@@ -84,7 +84,7 @@ public class DocumentUtilities implements DocumentConstants
 	*/
 	public static boolean isAntialias(final Document document)
 	{
-		return BooleanUtilities.booleanValue(document.getProperty(ANTIALIAS_PROPERTY)); //get the property from the document as a boolean value
+		return Booleans.booleanValue(document.getProperty(ANTIALIAS_PROPERTY)); //get the property from the document as a boolean value
 	}
 
 	/**Sets the antialias property.

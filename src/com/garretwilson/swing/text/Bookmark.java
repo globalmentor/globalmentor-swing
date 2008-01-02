@@ -4,7 +4,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Position;
 import com.garretwilson.util.Debug;
-import com.globalmentor.java.JavaUtilities;
+import com.globalmentor.java.Java;
 
 /**Represents a bookmark in a document that can survive edits and can be stored.
 	<p>A bookmark may or may not be attached to a document. If the bookmark is
@@ -371,7 +371,7 @@ Debug.trace("Comparing bookmark "+this+" to object: ", object); //G***del
 				return endOffsetDifference; //return the difference in ending offsets
 			else  //if the ending offsets are the same, compare the names
 			{
-				return JavaUtilities.compareTo(getName(), bookmark.getName());  //compare the names
+				return Java.compareTo(getName(), bookmark.getName());  //compare the names
 /*G***del
 				if(getName()!=null && bookmark.getName()!=null) //if both bookmarks have names
 					return getName().compareTo(bookmark.getName()); //compare the names

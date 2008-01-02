@@ -5,7 +5,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Position;
 import com.garretwilson.awt.ColorUtilities;
-import com.globalmentor.java.JavaUtilities;
+import com.globalmentor.java.Java;
 import com.globalmentor.java.Objects;
 
 /**Represents a marked section with an optional length in a document that can
@@ -169,7 +169,7 @@ public class Annotation extends Bookmark
 		  result=ColorUtilities.compareTo(getColor(), annotation.getColor());  //compare the colors
 			if(result==0) //if the colors are equal
 			{
-			  result=JavaUtilities.compareTo(getText(), annotation.getText());  //compare the text
+			  result=Java.compareTo(getText(), annotation.getText());  //compare the text
 			}
 		}
 		return result;  //return the final comparison result

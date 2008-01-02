@@ -47,7 +47,7 @@ import com.garretwilson.swing.text.StyleUtilities;
 import com.garretwilson.swing.text.ViewsFactory;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.globalmentor.java.Objects;
-import com.globalmentor.java.StringBufferUtilities;
+import com.globalmentor.java.StringBuffers;
 import com.globalmentor.java.Strings;
 
 import org.w3c.dom.Attr;
