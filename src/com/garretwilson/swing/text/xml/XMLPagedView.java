@@ -32,7 +32,7 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants; //G***maybe make everything that comes in through the XMLCSSStyleConstants class be agnostic of CSS, and remove the CSS-specific style strings
 import com.garretwilson.text.xml.oeb.OEBConstants;
-import com.garretwilson.text.xml.xhtml.XHTMLConstants;
+import com.garretwilson.text.xml.xhtml.XHTML;
 //G***del; not used import com.garretwilson.util.ArrayUtilities;
 import com.garretwilson.util.Debug;
 import com.globalmentor.java.Java;

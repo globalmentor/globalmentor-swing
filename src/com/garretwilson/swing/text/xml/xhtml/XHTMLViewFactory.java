@@ -4,7 +4,7 @@ import javax.mail.internet.ContentType;
 import javax.swing.text.*;
 import com.garretwilson.io.ContentTypeConstants;
 import com.garretwilson.swing.text.xml.*;
-import static com.garretwilson.text.xml.xhtml.XHTMLConstants.*;
+import static com.garretwilson.text.xml.xhtml.XHTML.*;
 
 /**A factory to build views for elements from XHTML based upon the name and/or
 	attributes of each element.

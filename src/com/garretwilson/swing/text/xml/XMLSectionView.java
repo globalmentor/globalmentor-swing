@@ -11,7 +11,7 @@ import com.garretwilson.swing.text.*;
 import static com.garretwilson.swing.text.SwingTextUtilities.*;
 import static com.garretwilson.swing.text.rdf.RDFStyleUtilities.*;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
-import com.garretwilson.text.xml.xhtml.XHTMLConstants;
+import com.garretwilson.text.xml.xhtml.XHTML;
 import com.garretwilson.util.Debug;
 
 /**A view to represent an entire section. This view understands that its
@@ -116,7 +116,7 @@ public class XMLSectionView extends XMLBlockView
 							final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);  //get the child element local name
 		Debug.trace("Looking at child: ", childElementLocalName); //G***del
 								//if this element is an HTML <body> element 
-							if(XHTMLConstants.ELEMENT_BODY.equals(childElementLocalName) && XHTMLSwingTextUtilities.isHTMLElement(childAttributeSet, documentAttributeSet))  
+							if(XHTML.ELEMENT_BODY.equals(childElementLocalName) && XHTMLSwingTextUtilities.isHTMLElement(childAttributeSet, documentAttributeSet))  
 							{
 								final int bodyChildElementCount=childElement.getElementCount(); //find out how many children the body element has
 								for(int bodyChildIndex=0; bodyChildIndex<bodyChildElementCount; ++bodyChildIndex) //look at each of the body element's children

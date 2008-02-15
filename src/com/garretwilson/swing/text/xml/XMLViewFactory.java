@@ -35,7 +35,7 @@ import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.text.xml.XMLSerializer;
 import com.garretwilson.text.xml.XMLUtilities;
 import com.garretwilson.text.xml.oeb.*;	//G***del
-import com.garretwilson.text.xml.xhtml.XHTMLConstants;	//G***del
+import com.garretwilson.text.xml.xhtml.XHTML;	//G***del
 import com.garretwilson.text.xml.stylesheets.css.*;	//G***del if we don't need
 //G***del import com.garretwilson.text.xml.stylesheets.css.oeb.DefaultOEBCSSStyleSheet;	//G***del if we don't need
 import com.garretwilson.swing.XMLTextPane;

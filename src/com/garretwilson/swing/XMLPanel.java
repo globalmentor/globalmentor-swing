@@ -14,7 +14,7 @@ import com.garretwilson.text.CharacterEncoding;
 import com.garretwilson.text.xml.XMLNodeModel;
 import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.text.xml.XMLSerializer;
-import com.garretwilson.text.xml.xhtml.XHTMLConstants;
+import com.garretwilson.text.xml.xhtml.XHTML;
 import org.w3c.dom.*;
 
 /**Panel that displays XML and source code.
@@ -144,7 +144,7 @@ public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeMo
 		unicodeStatusBar=new UnicodeStatusBar();	//create a new Unicode status bar
 
 //G***fix		emphasisAction=new EmphasisAction();  //G***testing
-		emphasisAction=new InsertXMLElementAction("<em>emphasis</em>", XHTMLConstants.XHTML_NAMESPACE_URI, XHTMLConstants.ELEMENT_EM, getXMLTextPane());  //G***testing
+		emphasisAction=new InsertXMLElementAction("<em>emphasis</em>", XHTML.XHTML_NAMESPACE_URI, XHTML.ELEMENT_EM, getXMLTextPane());  //G***testing
 
 
 		if(initialize)  //if we should initialize

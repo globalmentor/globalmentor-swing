@@ -9,15 +9,14 @@ import com.garretwilson.io.ContentTypeConstants;
 import com.garretwilson.io.ContentTypes;
 import com.garretwilson.io.Files;
 import com.garretwilson.swing.text.xml.XMLStyleUtilities;
-import com.garretwilson.text.xml.oeb.OEBConstants;
-import com.garretwilson.text.xml.xhtml.XHTMLConstants;
-import com.garretwilson.text.xml.xhtml.XHTMLUtilities;
+import static com.garretwilson.text.xml.xhtml.XHTML.*;
+
 import com.garretwilson.util.Debug;
 
 /**Provides utility functions to manipulate Swing text classes representing XHTML.
 @author Garret Wilson
 */
-public class XHTMLSwingTextUtilities implements XHTMLConstants
+public class XHTMLSwingTextUtilities
 {
 
 	/**This class cannot be publicly instantiated.*/
@@ -181,13 +180,13 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 		or OEB element, or <code>false</code> if otherwise or the specified
 		attribute set was <code>null</code>.
 	@see XHTMLUtilities#isHTML(MediaType)
-	@see XHTMLUtilities#isHTMLNamespaceURI(URI)
+	@see XHTML#isHTMLNamespaceURI(URI)
 	*/
 	public static boolean isHTMLDocumentElement(final AttributeSet documentAttributeSet)
 	{
 		final ContentType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet);  //get the media type of the document
 			//if the document media type is an HTML media type
-		if(XHTMLUtilities.isHTML(documentMediaType)) 
+		if(isHTML(documentMediaType)) 
 		{
 			return true;  //this is an HTML media type
 		}
@@ -197,8 +196,8 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 			final String documentElementNamespaceURIString=XMLStyleUtilities.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element namespace URI
 			final URI documentElementNamespaceURI=documentElementNamespaceURIString!=null ? URI.create(documentElementNamespaceURIString) : null;
 				//TODO change all the XMLStyleUtilities.getXMLElementNamespaceURI() calls to return URIs
-			if(XHTMLConstants.ELEMENT_HTML.equals(documentElementLocalName)  //if the document element is an XHTML or OEB <html> element
-					&& XHTMLUtilities.isHTMLNamespaceURI(documentElementNamespaceURI))	//if the document namespace URI represents an XHTML namespace 
+			if(ELEMENT_HTML.equals(documentElementLocalName)  //if the document element is an XHTML or OEB <html> element
+					&& isHTMLNamespaceURI(documentElementNamespaceURI))	//if the document namespace URI represents an XHTML namespace 
 			{
 				return true;  //the document element is <html> in the HTML namespace
 			}
@@ -222,7 +221,7 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 		or OEB element, or <code>false</code> if otherwise or the specified
 		attribute set was <code>null</code>.
 	@see XHTMLUtilities#isHTML(MediaType)
-	@see XHTMLUtilities#isHTMLNamespaceURI(URI)
+	@see XHTML#isHTMLNamespaceURI(URI)
 	@see #isHTMLDocumentElement(AttributeSet)
 	*/
 	public static boolean isHTMLElement(final AttributeSet attributeSet, final AttributeSet documentAttributeSet)
@@ -231,7 +230,7 @@ public class XHTMLSwingTextUtilities implements XHTMLConstants
 		if(elementNamespaceURI!=null)  //if the element has a namespace
 		{
 				//TODO change all the XMLStyleUtilities.getXMLElementNamespaceURI() calls to return URIs
-			if(XHTMLUtilities.isHTMLNamespaceURI(URI.create(elementNamespaceURI)))	//if the URI represents an XHTML namespace 
+			if(isHTMLNamespaceURI(URI.create(elementNamespaceURI)))	//if the URI represents an XHTML namespace 
 				return true;  //show that this is an XHTML element
 		}
 		else if(isHTMLDocumentElement(documentAttributeSet))	//if the element has no namespace but the document is an HTML document

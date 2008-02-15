@@ -2,8 +2,7 @@ package com.garretwilson.swing.text.xml.xhtml;
 
 import javax.swing.text.*;
 import com.garretwilson.swing.text.xml.*;
-import com.garretwilson.text.xml.xhtml.*;
-import com.garretwilson.util.*;
+import static com.garretwilson.text.xml.xhtml.XHTML.*;
 import com.globalmentor.java.*;
 
 //G***add fallback element initialization as we do for images, putting the init stuff in XMLObjectView
@@ -12,7 +11,7 @@ import com.globalmentor.java.*;
 	<code>&lt;object&gt;</code> element.
 @author Garret Wilson
 */
-public class XHTMLAppletView extends XMLAbstractAppletView implements XHTMLConstants
+public class XHTMLAppletView extends XMLAbstractAppletView
 {
 
 	/**Creates a new view that represents an XHTML applet.

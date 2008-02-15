@@ -9,17 +9,15 @@ import javax.mail.internet.ContentType;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
-import com.garretwilson.io.*;
 import com.garretwilson.net.*;
 import com.garretwilson.swing.event.XMLLinkEvent;
-import com.garretwilson.text.xml.oeb.*; //G***move someday
-import com.garretwilson.text.xml.xhtml.*; //G***move someday
+import com.garretwilson.text.xml.oeb.*; //TODO move someday
+import static com.garretwilson.text.xml.xhtml.XHTML.*; //TODO move someday
 import com.garretwilson.text.xml.xlink.*;
 import com.garretwilson.util.*;
 import com.globalmentor.java.*;
 
 import static com.garretwilson.io.ContentTypeConstants.*;
-import static com.garretwilson.text.xml.xhtml.XHTMLUtilities.*;
 
 /**Class to watch the associated component and fire hyperlink events on it
 	when appropriate. This class interprets links according to the XLink
@@ -472,7 +470,7 @@ protected void activateLink(int pos, JEditorPane editor) {
 					if(TEXT.equals(mediaType.getPrimaryType()) && X_OEB1_DOCUMENT_SUBTYPE.equals(mediaType.getSubType()))
 						elementNamespaceURI=OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(); //G***testing
 					else if(isHTML(mediaType))
-						elementNamespaceURI=XHTMLConstants.XHTML_NAMESPACE_URI.toString(); //G***testing
+						elementNamespaceURI=XHTML_NAMESPACE_URI.toString(); //G***testing
 				}
 			}
 //G***del Debug.trace("Decided namespace is really: ", elementNamespaceURI); //G***del

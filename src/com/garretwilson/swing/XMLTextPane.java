@@ -43,8 +43,7 @@ import com.garretwilson.text.xml.XMLDOMImplementation;
 import com.garretwilson.text.xml.XMLReader;
 import com.garretwilson.text.xml.XMLUtilities;
 import com.garretwilson.text.xml.oeb.OEBConstants;
-import com.garretwilson.text.xml.xhtml.XHTMLConstants;
-import com.garretwilson.text.xml.xhtml.XHTMLUtilities;
+import com.garretwilson.text.xml.xhtml.XHTML;
 import com.garretwilson.util.Debug;
 import static com.garretwilson.util.IteratorUtilities.*;
 import com.garretwilson.util.zip.*;
@@ -538,10 +537,10 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		loadKeymap(pagedKeymap, PAGED_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit is changed?
 		updateKeymap();	//update the keymap based upon our current settings
 		final ViewFactory xhtmlViewFactory=new XHTMLViewFactory();  //create a view factory fo XHTML
-		registerViewFactory(XHTMLConstants.XHTML_NAMESPACE_URI.toString(), xhtmlViewFactory);  //associate the XHTML view factory with XHTML elements
+		registerViewFactory(XHTML.XHTML_NAMESPACE_URI.toString(), xhtmlViewFactory);  //associate the XHTML view factory with XHTML elements
 		registerViewFactory(OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlViewFactory);  //associate the XHTML view factory with OEB elements
 		final XMLLinkController xhtmlLinkController=new XHTMLLinkController();  //create a link controller for XHTML
-		registerLinkController(XHTMLConstants.XHTML_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML view factory with XHTML elements
+		registerLinkController(XHTML.XHTML_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML view factory with XHTML elements
 		registerLinkController(OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML link controller with OEB elements
 		final ViewFactory maqroViewFactory=new MAQROViewFactory();  //create a view factory fo MAQRO
 		registerViewFactory(MAQROConstants.MAQRO_NAMESPACE_URI.toString(), maqroViewFactory);  //associate the MAQRO view factory with MAQRO elements
@@ -750,7 +749,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 				if(text.length()>0)	//if there is any text
 				{
 					if(text.charAt(0)!='<')	//if this text doesn't start with markup G***use a constant
-						text="<div xmlns=\""+XHTMLConstants.XHTML_NAMESPACE_URI+"\">"+text+"</div>";	//wrap the text with a <div> element G***this assumes a lot about HTML; make this more generic if we can---see the namespace code from XMLPanel
+						text="<div xmlns=\""+XHTML.XHTML_NAMESPACE_URI+"\">"+text+"</div>";	//wrap the text with a <div> element G***this assumes a lot about HTML; make this more generic if we can---see the namespace code from XMLPanel
 				}
 			}
 		}
@@ -1168,7 +1167,7 @@ Debug.trace("reading from stream into document"); //G***del
 	{
 		final DOMImplementation domImplementation=new XMLDOMImplementation();	//TODO get a DOMImplementation in an implementation-agnostic way
 			//create a document with an document element of <xhtml:div> TODO create something less XHTML-ish and more generic
-		final org.w3c.dom.Document xmlDocument=domImplementation.createDocument(XHTMLConstants.XHTML_NAMESPACE_URI.toString(), XMLUtilities.createQualifiedName(XHTMLConstants.XHTML_NAMESPACE_PREFIX, XHTMLConstants.ELEMENT_DIV), null);
+		final org.w3c.dom.Document xmlDocument=domImplementation.createDocument(XHTML.XHTML_NAMESPACE_URI.toString(), XMLUtilities.createQualifiedName(XHTML.XHTML_NAMESPACE_PREFIX, XHTML.ELEMENT_DIV), null);
 			//import the document fragment and append it to the root element of our document
 		xmlDocument.getDocumentElement().appendChild(xmlDocument.importNode(xmlDocumentFragment, true));
 		setXML(xmlDocument, baseURI, mediaType);	//set the XML using our created enclosing document
@@ -1267,7 +1266,7 @@ Debug.trace("reading from stream into document"); //G***del
 	{
 		EditorKit editorKit=null;	//we'll try to create an editor kit
 		final ContentType mediaType=ContentTypes.createContentType(type);  //create a new media type
-		if(XHTMLUtilities.isHTML(mediaType))	//if this is an XHTML media type
+		if(XHTML.isHTML(mediaType))	//if this is an XHTML media type
 		{
 			editorKit=new XHTMLEditorKit(mediaType, this);	//create a new XHTML editor kit for this media type
 		}

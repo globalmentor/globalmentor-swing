@@ -7,7 +7,7 @@ import java.net.URISyntaxException;
 import javax.swing.text.*;
 import com.garretwilson.awt.*;
 import com.garretwilson.swing.text.xml.*;
-import com.garretwilson.text.xml.xhtml.XHTMLConstants;
+import static com.garretwilson.text.xml.xhtml.XHTML.*;
 import com.garretwilson.util.*;
 
 /**A view that displays an image, intended to support the XHTML
@@ -18,7 +18,7 @@ by Jens Alfke version 1.40 02/02/00 and is based on code from that class.
 @author Garret Wilson
 @see javax.swing.text.html.ImageView
 */
-public class XHTMLImageView extends XMLImageView implements XHTMLConstants
+public class XHTMLImageView extends XMLImageView
 {
 
 	/**The element from which we are initialized.*/

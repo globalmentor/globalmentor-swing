@@ -2,14 +2,14 @@ package com.garretwilson.swing.text.xml.xhtml;
 
 import javax.swing.text.*;
 import com.garretwilson.swing.text.xml.*;
-import com.garretwilson.text.xml.xhtml.*;
+import static com.garretwilson.text.xml.xhtml.XHTML.*;
 
 /**Class to watch the associated component and fire hyperlink events on it
 	when appropriate.
 	<p>This class recognizes the XHTML anchor tag <code>&lt;a&gt;</code>, and
 		also allows the parent class to properly interpret XLink links.</p>
 */
-public class XHTMLLinkController extends XMLLinkController implements XHTMLConstants
+public class XHTMLLinkController extends XMLLinkController
 {
 
 	/**Default constructor.*/

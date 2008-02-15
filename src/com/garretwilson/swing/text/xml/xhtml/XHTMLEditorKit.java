@@ -12,7 +12,8 @@ import com.garretwilson.swing.text.StyleUtilities;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.text.xml.XMLDOMImplementation;
 import com.garretwilson.text.xml.xhtml.*;
-import static com.garretwilson.text.xml.xhtml.XHTMLConstants.*;
+
+import static com.garretwilson.text.xml.xhtml.XHTML.*;
 import org.w3c.dom.*;
 
 /**An editor kit for XHTML.
@@ -87,7 +88,7 @@ public class XHTMLEditorKit extends XMLEditorKit
 		final String elementNamespaceURIString=XMLStyleUtilities.getXMLElementNamespaceURI(attributeSet);	//get the namespace URI string G***eventually just store and retrieve URIs if possible
 		final URI elementNamespaceURI=elementNamespaceURIString!=null ? URI.create(elementNamespaceURIString) : null;	//create a URI from the string
 		final String elementLocalName=XMLStyleUtilities.getXMLElementLocalName(attributeSet);	//get the local name of the element
-		return XHTMLUtilities.isEmptyElement(elementNamespaceURI, elementLocalName);	//see if this is an XHTML empty element
+		return XHTML.isEmptyElement(elementNamespaceURI, elementLocalName);	//see if this is an XHTML empty element
 	}
 
 	/**Appends information from an XML child node into a list of element specs.
