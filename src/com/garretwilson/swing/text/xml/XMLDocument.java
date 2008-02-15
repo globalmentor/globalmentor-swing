@@ -23,7 +23,6 @@ import com.garretwilson.rdf.xpackage.XPackageUtilities;
 import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.text.BasicStyledDocument;
 import com.garretwilson.swing.text.SwingTextUtilities;
-import com.garretwilson.text.Characters;
 import com.garretwilson.text.xml.stylesheets.css.AbstractXMLCSSStylesheetApplier;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities; //G***maybe move

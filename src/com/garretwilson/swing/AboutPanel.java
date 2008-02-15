@@ -10,7 +10,8 @@ import com.garretwilson.rdf.dublincore.*;
 import com.garretwilson.rdf.version.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.rdf.RDFPanel;
-import static com.garretwilson.text.Characters.*;
+
+import static com.globalmentor.java.Characters.*;
 
 /**A generic panel for displaying information about, for example, an application.
 <p>This panel recognizes the following resource properties:</p>

@@ -10,10 +10,10 @@ import com.garretwilson.swing.text.*;
 import static com.garretwilson.swing.text.SwingTextUtilities.*;
 import static com.garretwilson.swing.text.ViewUtilities.*;
 import com.garretwilson.swing.text.xml.css.*;
-import com.garretwilson.text.Characters;
 import com.garretwilson.text.xml.stylesheets.css.*;
 import com.garretwilson.util.Debug;
 import com.globalmentor.java.CharSequences;
+import com.globalmentor.java.Characters;
 
 import org.w3c.dom.css.CSSStyleDeclaration;
 
