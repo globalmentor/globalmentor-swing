@@ -11,6 +11,7 @@ import javax.swing.text.Document;
 import javax.swing.text.Element;
 
 import com.garretwilson.io.*;
+
 import static com.garretwilson.io.Charsets.*;
 import com.garretwilson.net.*;
 import com.garretwilson.rdf.*;
@@ -38,7 +39,7 @@ public class XMLEditorKit extends BasicStyledEditorKit
 {
 
 	/**The default media type this editor kit supports, <code>text/xml</code>.*/
-	protected final static ContentType DEFAULT_MEDIA_TYPE=new ContentType(ContentTypeConstants.TEXT, ContentTypeConstants.XML_SUBTYPE, null);
+	protected final static ContentType DEFAULT_MEDIA_TYPE=new ContentType(ContentTypes.TEXT_PRIMARY_TYPE, ContentTypeConstants.XML_SUBTYPE, null);
 	
 	/**The map of XML element kits keyed to XML namespaces.*/
 	protected final Map<String, XMLElementKit> namespaceXMLElementKitMap=new HashMap<String, XMLElementKit>();

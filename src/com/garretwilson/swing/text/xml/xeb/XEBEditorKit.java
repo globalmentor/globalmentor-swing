@@ -52,10 +52,10 @@ public class XEBEditorKit extends XHTMLEditorKit	//TODO eventually go back to de
 	public final static String READ_TASK="READ";
 
 	/**The "text/x-oeb1-document" content type.*/
-	protected final static ContentType OEB_DOCUMENT_MEDIA_TYPE=new ContentType(TEXT, X_OEB1_DOCUMENT_SUBTYPE, null);
+	protected final static ContentType OEB_DOCUMENT_MEDIA_TYPE=new ContentType(ContentTypes.TEXT_PRIMARY_TYPE, X_OEB1_DOCUMENT_SUBTYPE, null);
 
 	/**The "application/x-maqro+rdf+xml" content type.*/
-	protected final static ContentType MAQRO_MEDIA_TYPE=new ContentType(APPLICATION, X_MAQRO_RDF_XML_SUBTYPE, null);
+	protected final static ContentType MAQRO_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, X_MAQRO_RDF_XML_SUBTYPE, null);
 	
 	/**Constructor.
 	@param uriInputStreamable The source of input streams for resources.
@@ -74,7 +74,7 @@ public class XEBEditorKit extends XHTMLEditorKit	//TODO eventually go back to de
 	/**Returns the MIME type of the data the XML editor kit supports, <code>application/x-xebook+rdf+xml</code>.
 	@return The MIME type this editor kit supports.
 	*/
-	public String getContentType() {return ContentTypes.toString(ContentTypeConstants.APPLICATION, ContentTypeConstants.X_XEBOOK_RDF_XML_SUBTYPE);}
+	public String getContentType() {return ContentTypes.toString(ContentTypes.APPLICATION_PRIMARY_TYPE, ContentTypeConstants.X_XEBOOK_RDF_XML_SUBTYPE);}
 
 
 		/**

@@ -34,7 +34,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 {
 
 	/**The XML media type this editor kit supports, defaulting to <code>text/plain</code>.*/
-	private ContentType mediaType=new ContentType(ContentTypeConstants.TEXT, ContentTypeConstants.PLAIN_SUBTYPE, null);
+	private ContentType mediaType=new ContentType(ContentTypes.TEXT_PRIMARY_TYPE, ContentTypeConstants.PLAIN_SUBTYPE, null);
 
 		/**@return The XML media type this editor kit supports.*/
 		public ContentType getMediaType() {return mediaType;}

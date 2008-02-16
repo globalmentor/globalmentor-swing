@@ -5,7 +5,6 @@ import java.awt.event.*;  //G***fix for image mouse clicks
 import java.beans.*;
 import java.io.*;
 import java.net.*;
-import java.net.URI;
 import java.text.*;
 import java.util.*;
 import java.util.prefs.Preferences;
@@ -1626,7 +1625,7 @@ Debug.trace("ready to start clip.");
 					clip.start();	//start the clip playing G***do we need to close it later?
 					return;	//don't do any more processing
 				}
-				else if(topLevelType.equals(ContentTypeConstants.IMAGE))	//if this is an image media type G***does this work correctly relative to the document base URI?
+				else if(topLevelType.equals(ContentTypes.IMAGE_PRIMARY_TYPE))	//if this is an image media type G***does this work correctly relative to the document base URI?
 				{
 					viewImage(hyperlinkURI.toString()); //view the image at the given location
 					return;	//don't do any more processing

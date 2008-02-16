@@ -21,6 +21,7 @@ import org.w3c.dom.DocumentFragment;
 import com.garretwilson.applet.*;
 import com.garretwilson.awt.EventQueueUtilities;
 import com.garretwilson.io.*;
+
 import static com.garretwilson.io.ContentTypes.*;
 import com.garretwilson.net.BrowserLauncher;
 import com.garretwilson.net.URIConstants;
@@ -70,22 +71,22 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 	public final static String EDITOR_KIT_PROPERTY="editorKit";
 
 	/**The "application/zip" content type.*/
-	protected final static ContentType ZIP_MEDIA_TYPE=new ContentType(APPLICATION, ZIP_SUBTYPE, null);
+	protected final static ContentType ZIP_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, ZIP_SUBTYPE, null);
 
 	/**The "application/x-oeb1-package+xml" content type.*/
-	protected final static ContentType OEB_PACKAGE_MEDIA_TYPE=new ContentType(APPLICATION, X_OEB1_PACKAGE_XML_SUBTYPE, null);
+	protected final static ContentType OEB_PACKAGE_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, X_OEB1_PACKAGE_XML_SUBTYPE, null);
 
 	/**The "application/x-oeb-publication+zip" content type.*/
-	protected final static ContentType OEB_ZIP_MEDIA_TYPE=new ContentType(APPLICATION, X_OEB_PUBLICATION_ZIP_SUBTYPE, null);
+	protected final static ContentType OEB_ZIP_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, X_OEB_PUBLICATION_ZIP_SUBTYPE, null);
 
 	/**The "application/x-xebook+rdf+xml" content type.*/
-	protected final static ContentType XEBOOK_MEDIA_TYPE=new ContentType(APPLICATION, X_XEBOOK_RDF_XML_SUBTYPE, null);
+	protected final static ContentType XEBOOK_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, X_XEBOOK_RDF_XML_SUBTYPE, null);
 
 	/**The "application/x-xebook+rdf+xml+zip" content type.*/
-	protected final static ContentType XEB_ZIP_MEDIA_TYPE=new ContentType(APPLICATION, X_XEBOOK_RDF_XML_ZIP_SUBTYPE, null);
+	protected final static ContentType XEB_ZIP_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, X_XEBOOK_RDF_XML_ZIP_SUBTYPE, null);
 
 	/**The "text/plain" content type.*/
-	protected final static ContentType TEXT_PLAIN_MEDIA_TYPE=new ContentType(TEXT, PLAIN_SUBTYPE, null);
+	protected final static ContentType TEXT_PLAIN_MEDIA_TYPE=new ContentType(ContentTypes.TEXT_PRIMARY_TYPE, PLAIN_SUBTYPE, null);
 
 	//TODO fix asynchronous stop-gap kludge to correctly get the asynchronous setting from the document---if that's the best way to do it
 	protected boolean asynchronousLoad=false;
@@ -1294,7 +1295,7 @@ Debug.trace("reading from stream into document"); //G***del
 				}
 				else if(isXML(createContentType(type)))	//if this type was not recognized, but it's an XML content type
 				{
-					editorKit=createEditorKitForContentType(ContentTypes.toString(TEXT, XML_SUBTYPE));//create a general text/xml editor kit
+					editorKit=createEditorKitForContentType(ContentTypes.toString(ContentTypes.TEXT_PRIMARY_TYPE, XML_SUBTYPE));//create a general text/xml editor kit
 				}
 			}
 		}

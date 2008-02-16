@@ -9,6 +9,8 @@ import javax.mail.internet.ContentType;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
+
+import com.garretwilson.io.ContentTypes;
 import com.garretwilson.net.*;
 import com.garretwilson.swing.event.XMLLinkEvent;
 import com.garretwilson.text.xml.oeb.*; //TODO move someday
@@ -467,7 +469,7 @@ protected void activateLink(int pos, JEditorPane editor) {
 				final ContentType mediaType=XMLStyleUtilities.getMediaType(attributeSet); //see if this element's document has a media type defined
 				if(mediaType!=null) //if there is a media type defined for this element's document
 				{ //G***probably do all this differently later, like registering a view factory with a media type or something or, better yet, registering a namespace with a media type
-					if(TEXT.equals(mediaType.getPrimaryType()) && X_OEB1_DOCUMENT_SUBTYPE.equals(mediaType.getSubType()))
+					if(ContentTypes.TEXT_PRIMARY_TYPE.equals(mediaType.getPrimaryType()) && X_OEB1_DOCUMENT_SUBTYPE.equals(mediaType.getSubType()))
 						elementNamespaceURI=OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(); //G***testing
 					else if(isHTML(mediaType))
 						elementNamespaceURI=XHTML_NAMESPACE_URI.toString(); //G***testing

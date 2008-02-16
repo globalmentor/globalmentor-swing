@@ -6,8 +6,9 @@ import javax.mail.internet.ContentType;
 import javax.swing.*;
 import javax.swing.event.*;
 import com.garretwilson.io.*;
+import static com.garretwilson.io.ContentTypes.*;
+
 import static com.garretwilson.io.ContentTypeConstants.PLAIN_SUBTYPE;
-import static com.garretwilson.io.ContentTypeConstants.TEXT;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.unicode.UnicodeStatusBar;
 import com.garretwilson.text.CharacterEncoding;
@@ -111,7 +112,7 @@ public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeMo
 	*/
 	public XMLPanel(final XMLNodeModel<N> model, final boolean initialize)
 	{
-		this(model, new ContentType(ContentTypeConstants.TEXT, ContentTypeConstants.XML_SUBTYPE, null), initialize);	//construct the panel with a default text/xml media type
+		this(model, new ContentType(TEXT_PRIMARY_TYPE, ContentTypeConstants.XML_SUBTYPE, null), initialize);	//construct the panel with a default text/xml media type
 	}
 
 	/**Content type constructor.
@@ -154,7 +155,7 @@ public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeMo
 	/**Initialize the user interface.*/
 	protected void initializeUI()
 	{
-		getSourceTextPane().setContentType(ContentTypes.toString(TEXT, PLAIN_SUBTYPE));	//set the content type of the source view to "text/plain"
+		getSourceTextPane().setContentType(ContentTypes.toString(TEXT_PRIMARY_TYPE, PLAIN_SUBTYPE));	//set the content type of the source view to "text/plain"
 		addView(WYSIWYG_MODEL_VIEW, getXMLTextPane().getContentType(), getXMLScrollPane());	//add the XML text pane as the WYSIWYG view G***i18n
 		addView(SOURCE_MODEL_VIEW, "XML", getSourceScrollPane());	//add the source XML text pane as the source view G***i18n
 
@@ -204,7 +205,7 @@ updateStatus();	//testing; probably put a convenience method to create this list
 	/**@return The XML content type of the panel.*/
 	public ContentType getContentType()
 	{
-		return ContentTypes.createContentType(getXMLTextPane().getContentType());	//return the XML text pane content type
+		return createContentType(getXMLTextPane().getContentType());	//return the XML text pane content type
 	}	
 
 	/**Sets the XML content type of the panel.

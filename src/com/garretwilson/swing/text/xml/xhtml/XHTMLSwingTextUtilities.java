@@ -65,7 +65,7 @@ public class XHTMLSwingTextUtilities
 				else if(elementName.equals(ELEMENT_OBJECT)) //if this is an <object> element
 				{
 					final ContentType mediaType=getObjectMediaType(attributeSet); //get the media type of the object
-					if(mediaType.getPrimaryType().equals(ContentTypeConstants.IMAGE)) //if this is an image
+					if(mediaType.getPrimaryType().equals(ContentTypes.IMAGE_PRIMARY_TYPE)) //if this is an image
 						return true;  //show that this is an image object
 				}
 			}
@@ -308,12 +308,12 @@ public class XHTMLSwingTextUtilities
 			//G***we should really probably just have a map or something -- or maybe not (this is probably more lightweight)
 		final String topLevelType=mediaType.getPrimaryType();  //get the top-level type
 		final String subType=mediaType.getSubType();  //get the subtype
-		if(ContentTypeConstants.APPLICATION.equals(topLevelType))  //application/*
+		if(ContentTypes.APPLICATION_PRIMARY_TYPE.equals(topLevelType))  //application/*
 		{
 			if(ContentTypeConstants.JAVA_SUBTYPE.equals(subType))  //application/java
 				return true;  //we support this media type
 		}
-		else if(ContentTypeConstants.IMAGE.equals(topLevelType))  //image/*
+		else if(ContentTypes.IMAGE_PRIMARY_TYPE.equals(topLevelType))  //image/*
 		{
 			if(ContentTypeConstants.GIF_SUBTYPE.equals(subType)  //image/gif
 				  || ContentTypeConstants.PNG_SUBTYPE.equals(subType)  //image/png

@@ -393,7 +393,7 @@ G***comment
 	protected Object loadResource(final URI resourceURI, final ContentType mediaType) throws IOException  //G***change this to loadImage, loadClip, etc.
 	{
 		Object resource;  //this will be assigned if we run into no errors
-		if(mediaType.getPrimaryType().equals(ContentTypeConstants.IMAGE))	//if this is an image
+		if(mediaType.getPrimaryType().equals(ContentTypes.IMAGE_PRIMARY_TYPE))	//if this is an image
 		{
 			final String mediaSubType=mediaType.getSubType(); //get the media sub-type
 				//if this is a GIF, JPEG, PNG G***fix, or X_BITMAP image
