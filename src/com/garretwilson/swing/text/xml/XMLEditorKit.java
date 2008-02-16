@@ -1,8 +1,8 @@
 package com.garretwilson.swing.text.xml;
 
-import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.nio.charset.Charset;
 import java.util.*;
 import javax.mail.internet.ContentType;
 import javax.swing.*;
@@ -11,20 +11,17 @@ import javax.swing.text.Document;
 import javax.swing.text.Element;
 
 import com.garretwilson.io.*;
+import static com.garretwilson.io.Charsets.*;
 import com.garretwilson.net.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.maqro.Activity;
 import static com.garretwilson.rdf.maqro.MAQROConstants.*;
 
-import static com.garretwilson.rdf.xpackage.XPackageUtilities.*;
 import static com.globalmentor.java.Objects.*;
 
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.text.BasicStyledEditorKit;
-import com.garretwilson.swing.text.SwingTextUtilities;
-import com.garretwilson.swing.text.rdf.RDFStyleUtilities;
 import com.garretwilson.swing.text.xml.css.*;
-import com.garretwilson.text.*;
 import com.garretwilson.text.xml.*;
 import com.garretwilson.text.xml.stylesheets.css.*;	//G***del if we don't need
 import com.garretwilson.util.*;
@@ -348,14 +345,14 @@ G***fix
 	*/
 	public void write(final OutputStream outputStream, final Document document, final int pos, final int len) throws IOException, BadLocationException
 	{
-		write(outputStream, CharacterEncoding.UTF_8, document, pos, len);	//write using UTF-8
+		write(outputStream, UTF_8_CHARSET, document, pos, len);	//write using UTF-8
 	}
 
 	/**Writes content from a document to the given stream in a format appropriate
 		for this kind of content handler. Currently the position and length are
 		ignored and the entire document is written.
 	@param outputStream The stream to write to.
-	@param encoding The encoding format to use when serializing.
+	@param charset The charset to use when serializing.
 	@param document The source of the data to write.
 	@param pos The location in the document to fetch the content (>=0).
 	@param len The amount to write out (>=0).
@@ -363,13 +360,13 @@ G***fix
 	@exception BadLocationException Thrown if the position represents an invalid
 		location within the document.
 	*/
-	public void write(final OutputStream outputStream, final String encoding, final Document document, final int pos, final int len) throws IOException, BadLocationException
+	public void write(final OutputStream outputStream, final Charset charset, final Document document, final int pos, final int len) throws IOException, BadLocationException
 	{
 		if(document instanceof XMLDocument) //if the document is an XML document
 		{
 			final org.w3c.dom.Document xmlDocument=getXML(((XMLDocument)document));  //create an XML document from given Swing document
 			final XMLSerializer xmlSerializer=new XMLSerializer();  //create an XML serializer G***fix the formatted argument
-			xmlSerializer.serialize(xmlDocument, outputStream, new CharacterEncoding(encoding));  //write the document to the output stream using the specified encoding
+			xmlSerializer.serialize(xmlDocument, outputStream, charset);  //write the document to the output stream using the specified encoding
 		}
 		else  //if the document is not an XML document
 			super.write(outputStream, document, pos, len);  //do the default writing
@@ -1272,7 +1269,7 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 			else	//if there are no attributes provided (artificial text is being manually inserted, for instance)
 			{
 				final SimpleAttributeSet simpleAttributeSet=new SimpleAttributeSet();	//create a new attribute for this content
-				XMLStyleUtilities.setXMLElementName(simpleAttributeSet, XMLConstants.TEXT_NODE_NAME);	//set the name of the content to ensure it will not get its name from its parent element (this would happen if there was no name explicitly set)
+				XMLStyleUtilities.setXMLElementName(simpleAttributeSet, XML.TEXT_NODE_NAME);	//set the name of the content to ensure it will not get its name from its parent element (this would happen if there was no name explicitly set)
 				textAttributeSet=simpleAttributeSet;	//use the default atribute set we created
 			}
 //	G***del Debug.trace("inserting text data: \""+node.getNodeValue()+"\"");  //G***del
