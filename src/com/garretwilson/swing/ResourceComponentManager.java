@@ -22,7 +22,7 @@ import com.garretwilson.resources.icon.IconResources;
 import static com.garretwilson.swing.ComponentUtilities.*;
 
 import com.globalmentor.util.*;
-import com.globalmentor.util.prefs.Preferenceable;
+import com.globalmentor.util.prefs.Preferencesable;
 import com.globalmentor.util.prefs.PreferencesUtilities;
 
 /**An abstract class that manages resources, their views, and their modified
@@ -33,7 +33,7 @@ import com.globalmentor.util.prefs.PreferencesUtilities;
 @see ResourceComponentManager#ResourceComponentState
 @author Garret Wilson
 */
-public abstract class ResourceComponentManager<R extends Resource> implements Preferenceable
+public abstract class ResourceComponentManager<R extends Resource> implements Preferencesable
 {
 
 	/**The list of event listeners.*/
