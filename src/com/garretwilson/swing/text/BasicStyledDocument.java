@@ -15,7 +15,7 @@ import com.garretwilson.rdf.*;
 import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.event.ProgressListener;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**A document that provised basic functionality including:
 <ul>

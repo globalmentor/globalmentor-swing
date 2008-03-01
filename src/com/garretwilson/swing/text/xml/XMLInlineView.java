@@ -16,7 +16,7 @@ import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 //G***del when works import com.garretwilson.swing.text.xml.css.XMLCSSSimpleAttributeSet;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.AttributeSetUtilities; //G***del when not needed
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**View class for all inline elements. Uses CSS attributes.
 Based on the Swing javax.swing.text.LabelView component.

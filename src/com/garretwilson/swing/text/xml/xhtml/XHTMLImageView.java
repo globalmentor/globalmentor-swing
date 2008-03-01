@@ -8,7 +8,8 @@ import javax.swing.text.*;
 import com.garretwilson.awt.*;
 import com.garretwilson.swing.text.xml.*;
 import static com.garretwilson.text.xml.xhtml.XHTML.*;
-import com.garretwilson.util.*;
+
+import com.globalmentor.util.*;
 
 /**A view that displays an image, intended to support the XHTML
 <code>&lt;img&gt;</code> element or the <code>&lt;object&gt;</code> element

@@ -4,7 +4,7 @@ import java.awt.FlowLayout;
 import java.awt.LayoutManager;
 import java.io.IOException;
 import com.garretwilson.model.*;
-import com.garretwilson.util.ArrayUtilities;
+import com.globalmentor.util.Arrays;
 
 /**Panel that allows multiple views of a data model to be displayed.
 <p>An implementing class may consider the data in each view to be loaded and
@@ -43,7 +43,7 @@ public abstract class ModelViewablePanel<M> extends ModelPanel<M> implements Mod
 		*/
 		public boolean isModelViewSupported(final int modelView)
 		{
-			return ArrayUtilities.indexOf(getSupportedModelViews(), modelView)>=0;	//see whether this model view is in our array of supported views
+			return Arrays.indexOf(getSupportedModelViews(), modelView)>=0;	//see whether this model view is in our array of supported views
 		}	
 
 		/**@return The supported model views.*/
@@ -64,7 +64,7 @@ public abstract class ModelViewablePanel<M> extends ModelPanel<M> implements Mod
 		{
 			if(!isModelViewSupported(modelView))	//if this model view isn't already supported
 			{
-				setSupportedModelViews(ArrayUtilities.append(getSupportedModelViews(), modelView));	//append the new model view to our supported model views
+				setSupportedModelViews(Arrays.append(getSupportedModelViews(), modelView));	//append the new model view to our supported model views
 			}
 		}
 
@@ -74,7 +74,7 @@ public abstract class ModelViewablePanel<M> extends ModelPanel<M> implements Mod
 		protected void addSupportedModelViews(final int[] modelViews)
 		{
 				//TODO make sure the given views aren't already supported
-			setSupportedModelViews(ArrayUtilities.append(getSupportedModelViews(), modelViews));	//append the new model views to our supported model views
+			setSupportedModelViews(Arrays.append(getSupportedModelViews(), modelViews));	//append the new model views to our supported model views
 		}
 
 	/**The default data view of this panel.*/

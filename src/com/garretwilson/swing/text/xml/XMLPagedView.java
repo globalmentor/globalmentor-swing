@@ -34,9 +34,9 @@ import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants; //G***maybe ma
 import com.garretwilson.text.xml.oeb.OEBConstants;
 import com.garretwilson.text.xml.xhtml.XHTML;
 //G***del; not used import com.garretwilson.util.ArrayUtilities;
-import com.garretwilson.util.Debug;
 import com.globalmentor.java.Java;
 import com.globalmentor.java.Objects;
+import com.globalmentor.util.Debug;
 
 /**View of several pages.
 	<p>Although this class overrides <code>FlowView</code>, much of the layout is

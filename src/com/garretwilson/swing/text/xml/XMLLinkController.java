@@ -16,8 +16,8 @@ import com.garretwilson.swing.event.XMLLinkEvent;
 import com.garretwilson.text.xml.oeb.*; //TODO move someday
 import static com.garretwilson.text.xml.xhtml.XHTML.*; //TODO move someday
 import com.garretwilson.text.xml.xlink.*;
-import com.garretwilson.util.*;
 import com.globalmentor.java.*;
+import com.globalmentor.util.*;
 
 import static com.garretwilson.io.ContentTypeConstants.*;
 

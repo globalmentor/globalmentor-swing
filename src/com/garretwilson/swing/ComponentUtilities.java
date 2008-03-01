@@ -4,7 +4,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**Convenience methods to be used for Swing components.
 Some of these methods apply to AWT components as well, but use the Swing utilities

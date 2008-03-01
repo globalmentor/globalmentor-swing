@@ -3,7 +3,8 @@ package com.garretwilson.swing.text;
 import java.awt.Rectangle;
 import javax.swing.SwingConstants;
 import javax.swing.text.*;
-import com.garretwilson.util.Debug;
+
+import com.globalmentor.util.Debug;
 
 /**Routines for working with Swing text classes.
 @author Garret Wilson

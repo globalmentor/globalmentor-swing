@@ -11,7 +11,7 @@ import java.net.URL;
 import javax.swing.*;
 import javax.swing.text.*;
 import com.garretwilson.net.URLUtilities;
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**View that displays an image. The image reference is kept using a soft pointer
 	so that when memory is low the JVM can reclaim the image memory. The image,

@@ -4,7 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.text.*;
 import com.garretwilson.swing.text.ViewComponentManager;
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**Represents a Java component based upon <code>java.awt.Component</code>.
 	A class must be derived from this abstract class with an appropriate

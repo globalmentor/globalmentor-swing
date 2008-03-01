@@ -11,7 +11,7 @@ import javax.swing.text.*;
 import static com.globalmentor.java.Objects.*;
 
 import com.garretwilson.awt.Inset;
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**Manages AWT/Swing components for a particular view.
 	Used with a view that contains AWT/Swing components.

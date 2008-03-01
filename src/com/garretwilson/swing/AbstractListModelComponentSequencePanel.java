@@ -3,8 +3,8 @@ package com.garretwilson.swing;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import com.garretwilson.util.Editable;
-import com.garretwilson.util.Modifiable;
+
+import com.globalmentor.util.Modifiable;
 
 /**A component sequence panel that produces its sequence components from items
 	in a list model. (The list items are not necessarily components.)

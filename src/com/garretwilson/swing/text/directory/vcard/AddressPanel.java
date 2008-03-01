@@ -7,12 +7,11 @@ import java.awt.event.*;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.event.DocumentListener;
 import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
-import com.garretwilson.util.*;
 import com.globalmentor.java.*;
+import com.globalmentor.util.*;
 
 /**A panel allowing entry of the "ADR" type of a vCard <code>text/directory</code>
 	profile as defined in <a href="http://www.ietf.org/rfc/rfc2426.txt">RFC 2426</a>,
@@ -169,7 +168,7 @@ public class AddressPanel extends BasicVCardPanel
 	{
 		final String postOfficeBox=Strings.getNonEmptyString(postOfficeBoxTextField.getText().trim());
 			//trim the string in the street address text field and tokenize the lines
-		final String[] streetAddresses=StringTokenizerUtilities.getTokens(new StringTokenizer(streetAddressTextPane.getText().trim(), "\r\n"));
+		final String[] streetAddresses=StringTokenizers.getTokens(new StringTokenizer(streetAddressTextPane.getText().trim(), "\r\n"));
 		final String locality=Strings.getNonEmptyString(localityTextField.getText().trim());
 		final String region=Strings.getNonEmptyString(regionTextField.getText().trim());
 		final String postalCode=Strings.getNonEmptyString(postalCodeTextField.getText().trim());
@@ -228,7 +227,7 @@ public class AddressPanel extends BasicVCardPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
+		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(SelectLanguageAction.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
 		postOfficeBoxLabel.setText("PO Box");	//G***i18n
 		postOfficeBoxTextField.setColumns(5);
 		postOfficeBoxTextField.getDocument().addDocumentListener(getModifyDocumentListener());
@@ -252,7 +251,7 @@ public class AddressPanel extends BasicVCardPanel
 		postalCodeTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		countryNameLabel.setText("Country");	//G***i18n
 		countryNameComboBox.setEditable(true);
-		countryNameComboBox.setModel(new DefaultComboBoxModel(LocaleUtilities.getAvailableDisplayCountries()));	//G***i18n
+		countryNameComboBox.setModel(new DefaultComboBoxModel(Locales.getAvailableDisplayCountries()));	//G***i18n
 		countryNameComboBox.addActionListener(getModifyActionListener());
 		final JScrollPane streetAddressScrollPane=new JScrollPane(streetAddressTextPane);
 			//TODO fix this with a derived text pane that is scrollable and allows tracksViewport... to be set

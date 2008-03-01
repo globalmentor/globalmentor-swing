@@ -25,8 +25,8 @@ import com.garretwilson.swing.text.BasicStyledEditorKit;
 import com.garretwilson.swing.text.xml.css.*;
 import com.garretwilson.text.xml.*;
 import com.garretwilson.text.xml.stylesheets.css.*;	//G***del if we don't need
-import com.garretwilson.util.*;
 import com.globalmentor.java.*;
+import com.globalmentor.util.*;
 
 import org.w3c.dom.*;
 import org.w3c.dom.css.*;

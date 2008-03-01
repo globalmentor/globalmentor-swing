@@ -7,7 +7,7 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.AttributeSet;
 
 import com.garretwilson.awt.FontUtilities;
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**A pool of styles and their associated resources, created to store and
 	retrieve CSS styles attribute sets.

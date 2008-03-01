@@ -25,7 +25,8 @@ import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants;
 //G***del import com.garretwilson.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;  //G***del if we can
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities;
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
+
 import javax.swing.text.html.HTML;  //G***del
 import org.w3c.dom.css.*;
 

@@ -8,7 +8,7 @@ import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.io.*;
 import com.garretwilson.swing.unicode.UnicodeStatusBar;
-import com.garretwilson.util.*;
+import com.globalmentor.util.*;
 
 import static com.garretwilson.io.ContentTypeConstants.*;
 

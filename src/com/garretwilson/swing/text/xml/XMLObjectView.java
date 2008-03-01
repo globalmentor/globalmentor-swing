@@ -4,7 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.text.*;
 import com.garretwilson.swing.text.ViewHidable;
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**Abstract base class to represent a resizable object, such as a component,
 	image, or applet. The object is automatically resized to be proportional to

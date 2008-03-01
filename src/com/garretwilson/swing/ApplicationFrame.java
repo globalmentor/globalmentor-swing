@@ -6,7 +6,7 @@ import javax.swing.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.dublincore.DCUtilities;
 import com.garretwilson.resources.icon.IconResources;
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**Main frame parent class for an application.
 <p>This class requires that the content pane be an instance of

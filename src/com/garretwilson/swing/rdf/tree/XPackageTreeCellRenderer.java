@@ -5,8 +5,8 @@ import javax.swing.*;
 import static com.garretwilson.io.ContentTypes.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.xpackage.*;
-import com.garretwilson.util.Debug;
 import com.globalmentor.marmot.Marmot;
+import com.globalmentor.util.Debug;
 
 /**A tree cell renderer that can render different icons and strings for user
 	objects that are XPackage RDF resources.

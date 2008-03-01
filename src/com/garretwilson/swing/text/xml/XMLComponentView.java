@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 import javax.swing.text.*;
-import com.garretwilson.util.Debug;
+
+import com.globalmentor.util.Debug;
 
 /**A view that displays a given component. The component must be created before
 	this view is created, and this view merely stores the component until time

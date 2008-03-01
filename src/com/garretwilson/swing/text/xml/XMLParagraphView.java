@@ -19,7 +19,7 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSView;
 import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants; //G***maybe make everything that comes in through the XMLCSSStyleConstants class be agnostic of CSS, and remove the CSS-specific style strings
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**A paragraph that understands CSS styles and knows how to be broken into fragments.
 @author Garret Wilson

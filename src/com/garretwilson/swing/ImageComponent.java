@@ -3,7 +3,7 @@ package com.garretwilson.swing;
 import java.awt.*;
 import javax.swing.*;
 import com.garretwilson.swing.draw.Drawable;
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**Component that displays an image.
 	The image can be zoomed using a bound property

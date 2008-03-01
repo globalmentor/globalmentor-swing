@@ -8,7 +8,7 @@ import static com.garretwilson.swing.text.ViewUtilities.*;
 import static com.globalmentor.java.Objects.*;
 
 import com.garretwilson.awt.Inset;
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**A view that contains other views, constrained in a box.
 No assumptions are made about the order, size, or offsets of the child views, unlike <code>BoxView</code>.

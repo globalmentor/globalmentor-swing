@@ -11,7 +11,7 @@ import com.garretwilson.io.Files;
 import com.garretwilson.swing.text.xml.XMLStyleUtilities;
 import static com.garretwilson.text.xml.xhtml.XHTML.*;
 
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**Provides utility functions to manipulate Swing text classes representing XHTML.
 @author Garret Wilson

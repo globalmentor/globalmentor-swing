@@ -21,7 +21,7 @@ import com.garretwilson.swing.event.*;
 import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.unicode.UnicodePanel;
 import com.garretwilson.swing.unicode.UnicodeTableModel;
-import com.garretwilson.util.*;
+import com.globalmentor.util.*;
 
 /**A styled editor kit with basic functionality, including:
 <ul>

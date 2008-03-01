@@ -2,8 +2,9 @@ package com.garretwilson.swing;
 
 import java.awt.*;
 import java.util.*;
+import static java.util.Collections.*;
 import com.garretwilson.swing.*;
-import com.garretwilson.util.*;
+import com.globalmentor.util.*;
 
 /**A sequence panel that determines the sequence based upon components that
 	implement the <code>Sequenceable</code> interface.
@@ -37,7 +38,7 @@ public class SequenceableSequencePanel extends AbstractComponentSequencePanel	//
 		protected LinkedList getSequenceHistoryList() {return sequenceHistoryList;}
 		
 		/**@return A read-only iterator to the visited components in the sequence.*/
-		public Iterator getSequenceHistoryIterator() {return Collections.unmodifiableList(sequenceHistoryList).iterator();}
+		public Iterator getSequenceHistoryIterator() {return unmodifiableList(sequenceHistoryList).iterator();}
 
 	/**Initial component initialization constructor.
 	@param firstComponent The first component in the sequence.

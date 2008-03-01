@@ -5,7 +5,8 @@ import java.util.*;
 import java.net.URL;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import com.garretwilson.util.ResourceManager;
+
+import com.globalmentor.util.ResourceManager;
 
 /**Manages icons bundled with an application.
 	Loads icons  from the class loader of a given class.

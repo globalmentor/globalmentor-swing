@@ -1,14 +1,14 @@
 package com.garretwilson.swing;
 
 import java.awt.*;
-import java.awt.Component;
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.swing.*;
 import javax.swing.event.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.resources.icon.IconResources;
-import com.garretwilson.util.*;
+import com.globalmentor.util.*;
 
 /**Panel that allows multiple views of data to be displayed in separate tabs.
 When the view value is changed, the appropriate tab is selected; when a new tab
@@ -209,7 +209,7 @@ public abstract class TabbedViewPanel<M> extends ModelViewablePanel<M>
 	{
 		super(new BasicGridBagLayout(), model, false);	//construct the parent class with a grid bag layout manager, but don't initialize the panel
 		tabbedPane=new JTabbedPane();	//create the center tabbed pane
-		viewComponentMap=new ReverseHashMap();	//create the reverse lookup map of components
+		viewComponentMap=new DecoratorReverseMap(new HashMap(), new HashMap());	//create the reverse lookup map of components
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel
 	}

@@ -1,7 +1,8 @@
 package com.garretwilson.swing.text.xml;
 
 import javax.swing.text.*;
-import com.garretwilson.util.Debug;
+
+import com.globalmentor.util.Debug;
 
 /**Represents a CSS1-like list item.
 @author Garret Wilson

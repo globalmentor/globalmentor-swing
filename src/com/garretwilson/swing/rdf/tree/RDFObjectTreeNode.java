@@ -3,9 +3,9 @@ package com.garretwilson.swing.rdf.tree;
 import java.io.IOException;
 import java.util.*;
 import com.garretwilson.swing.tree.*;
-import com.garretwilson.util.Debug;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.rdfs.*;
+import com.globalmentor.util.Debug;
 
 /**A tree node that represents an object described in RDF.
 <p>The object can be either a literal or a resource; if a resource, any

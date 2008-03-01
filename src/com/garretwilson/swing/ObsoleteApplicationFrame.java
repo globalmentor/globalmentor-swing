@@ -8,8 +8,8 @@ import javax.swing.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.dublincore.DCUtilities;
 import com.garretwilson.resources.icon.IconResources;
-import com.garretwilson.util.*;
 import com.globalmentor.java.*;
+import com.globalmentor.util.*;
 
 /**Main frame parent class for an application. This frame expects to contain
 	a <code>ToolStatusPanel</code>.

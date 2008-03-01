@@ -10,8 +10,8 @@ import javax.swing.event.*;
 
 import com.garretwilson.rdf.*;
 import com.garretwilson.resources.icon.IconResources;
-import com.garretwilson.util.Debug;
-import com.garretwilson.util.ObjectState;
+import com.globalmentor.util.Debug;
+import com.globalmentor.util.ObjectState;
 
 /**Main frame parent class for a multiple document interface (MDI) application.
 @author Garret Wilson

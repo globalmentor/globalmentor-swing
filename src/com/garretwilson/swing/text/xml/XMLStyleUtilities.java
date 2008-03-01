@@ -13,8 +13,8 @@ import static com.globalmentor.java.Objects.*;
 
 import com.garretwilson.rdf.RDFResource;
 import com.garretwilson.text.xml.XMLUtilities;
-import com.garretwilson.util.NameValuePair;
 import com.globalmentor.java.Objects;
+import com.globalmentor.util.NameValuePair;
 
 /**A collection of utilities for working with XML values used Swing style.
 <p>These routines store XML attributes in the Swing attributes as an

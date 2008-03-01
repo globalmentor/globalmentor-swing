@@ -5,7 +5,7 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 import javax.swing.plaf.UIResource;
 
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 import java.awt.*;
 import java.io.Serializable;

@@ -5,7 +5,8 @@ import java.beans.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import static com.garretwilson.swing.ComponentConstants.*;
-import com.garretwilson.util.Debug;
+
+import com.globalmentor.util.Debug;
 
 /**Action that stands as a proxy for another action. This action will change its
 	properties to reflect the proxied action, and will activate the proxied action

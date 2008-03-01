@@ -3,7 +3,6 @@ package com.garretwilson.swing;
 import java.awt.*;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
-import com.garretwilson.util.Editable;
 
 /**Panel that contains a list and buttons for selecting and unselecting all items.
 <p>In order to create and edit items, an edit strategy  must be set (besides

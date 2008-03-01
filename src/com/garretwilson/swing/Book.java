@@ -8,6 +8,7 @@ import java.net.*;
 import java.text.*;
 import java.util.*;
 import java.util.prefs.Preferences;
+import static java.util.Collections.*;
 import javax.mail.internet.ContentType;
 import javax.sound.sampled.*;
 import javax.swing.*;
@@ -26,8 +27,8 @@ import static com.garretwilson.swing.text.TextComponentConstants.*;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.garretwilson.text.xml.oeb.*;
-import com.garretwilson.util.*;
-import com.garretwilson.util.prefs.PreferencesUtilities;
+import com.globalmentor.util.*;
+import com.globalmentor.util.prefs.PreferencesUtilities;
 
 /**A component shows information in book form. Has an XMLTextPane as a child.
 <p>Bound properties:</p>
@@ -363,7 +364,7 @@ Debug.trace("ready to fire property change");
 		/**@return A read-only iterator of all available bookmarks in natural order.*/
 		public Iterator getBookmarkIterator()
 		{
-		  return Collections.unmodifiableSet(bookmarkHighlightTagMap.keySet()).iterator(); //return a read-only iterator to the bookmarks (the keys are already sorted because they are stored in a TreeMap)
+		  return unmodifiableSet(bookmarkHighlightTagMap.keySet()).iterator(); //return a read-only iterator to the bookmarks (the keys are already sorted because they are stored in a TreeMap)
 		}
 
 		/**Creates an action for navigating to a specific bookmark.
@@ -478,7 +479,7 @@ Debug.trace("ready to fire property change");
 		/**@return A read-only iterator of all available annotations in natural order.*/
 		public Iterator getAnnotationIterator()
 		{
-		  return Collections.unmodifiableSet(annotationHighlightTagMap.keySet()).iterator(); //return a read-only iterator to the annotations (the keys are already sorted because they are stored in a TreeMap)
+		  return unmodifiableSet(annotationHighlightTagMap.keySet()).iterator(); //return a read-only iterator to the annotations (the keys are already sorted because they are stored in a TreeMap)
 		}
 
 	/**@return The URI of the loaded publication or file, or <code>null</code> if

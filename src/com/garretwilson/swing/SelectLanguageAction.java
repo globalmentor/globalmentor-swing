@@ -5,8 +5,8 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import com.garretwilson.resources.icon.IconResources;
-import com.garretwilson.util.*;
 import com.globalmentor.java.*;
+import com.globalmentor.util.*;
 
 /**Action for selecting a language from a dialog.
 <p>Bound properties:</p>
@@ -15,11 +15,10 @@ import com.globalmentor.java.*;
 	<dd>Indicates that the boolean locale property has been changed.</dd>
 </dl>
 @author Garret Wilson
-@see LocaleConstants#LOCALE_PROPERTY_NAME
 @see LanguagePanel
 @see Locale
 */
-public class SelectLanguageAction extends AbstractAction
+public class SelectLanguageAction extends AbstractAction implements Localeable
 {
 
 	/**The locale that represents the language, or <code>null</code>
@@ -42,7 +41,7 @@ public class SelectLanguageAction extends AbstractAction
 			if(!Objects.equals(oldLocale, newLocale))  //if the value is really changing
 			{
 				locale=newLocale; //update the value
-				firePropertyChange(LocaleConstants.LOCALE_PROPERTY_NAME, oldLocale, newLocale);	//show that the locale property has changed
+				firePropertyChange(LOCALE_PROPERTY_NAME, oldLocale, newLocale);	//show that the locale property has changed
 			}
 		}
 

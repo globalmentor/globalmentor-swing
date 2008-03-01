@@ -6,8 +6,8 @@ import javax.swing.tree.*;
 import com.garretwilson.model.*;
 import com.garretwilson.net.Resource;
 import com.garretwilson.rdf.*;
-import com.garretwilson.util.*;
 import com.globalmentor.marmot.Marmot;
+import com.globalmentor.util.*;
 
 /**Utilities for manipulating trees of RDF resources.
 @author Garret Wilson

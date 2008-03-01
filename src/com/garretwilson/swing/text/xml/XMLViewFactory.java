@@ -24,8 +24,6 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import java.util.*;
 import com.garretwilson.net.URLUtilities;
-import com.garretwilson.util.Debug;
-import com.garretwilson.util.NameValuePair;
 //G***del when works import com.garretwilson.text.xml.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.text.xml.xlink.XLinkConstants;
@@ -49,6 +47,8 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.globalmentor.java.Objects;
 import com.globalmentor.java.StringBuffers;
 import com.globalmentor.java.Strings;
+import com.globalmentor.util.Debug;
+import com.globalmentor.util.NameValuePair;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.DocumentType;

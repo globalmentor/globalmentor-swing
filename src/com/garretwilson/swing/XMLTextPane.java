@@ -45,13 +45,13 @@ import com.garretwilson.text.xml.XMLReader;
 import com.garretwilson.text.xml.XMLUtilities;
 import com.garretwilson.text.xml.oeb.OEBConstants;
 import com.garretwilson.text.xml.xhtml.XHTML;
-import com.garretwilson.util.Debug;
-import static com.garretwilson.util.IteratorUtilities.*;
-import com.garretwilson.util.zip.*;
+import com.globalmentor.util.Debug;
+import com.globalmentor.util.zip.*;
 
 import static com.garretwilson.io.ContentTypeConstants.*;
 import static com.garretwilson.text.xml.XMLUtilities.*;
 import static com.globalmentor.java.Objects.*;
+import static com.globalmentor.util.Iterators.*;
 
 /**A text component that can be marked up with attributes that are represented
 	graphically. Most importantly, this class supports paged XML information.

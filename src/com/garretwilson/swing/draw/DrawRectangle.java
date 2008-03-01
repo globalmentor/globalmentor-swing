@@ -2,7 +2,8 @@ package com.garretwilson.swing.draw;
 
 import java.awt.*;
 import java.awt.geom.RectangularShape;
-import com.garretwilson.util.Debug;
+
+import com.globalmentor.util.Debug;
 
 /**A rectangle that can be dynamically drawn on the screen.
 @author Garret Wilson

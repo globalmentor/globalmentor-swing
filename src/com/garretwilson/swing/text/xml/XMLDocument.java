@@ -29,11 +29,11 @@ import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities; //G***maybe mo
 import com.garretwilson.sound.sampled.SampledSoundUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
-import com.garretwilson.util.Debug;
-import com.garretwilson.util.NameValuePair;
 //G***del when works import com.garretwilson.swing.text.xml.css.XMLCSSSimpleAttributeSet;
 import com.globalmentor.java.*;
 import com.globalmentor.marmot.Marmot;
+import com.globalmentor.util.Debug;
+import com.globalmentor.util.NameValuePair;
 
 /**A document that models XML.
 @see com.garretwilson.text.xml.XMLProcessor

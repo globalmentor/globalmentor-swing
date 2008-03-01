@@ -2,7 +2,7 @@ package com.garretwilson.swing;
 
 import java.awt.*;
 import com.garretwilson.awt.*;
-import com.garretwilson.util.*;
+import com.globalmentor.util.*;
 
 /**A generic panel that allows easy setup of a content component which defaults to the center.
 <p>This panel uses a <code>BasicGridBagLayout</code> as its layout manager,
@@ -21,7 +21,7 @@ import com.garretwilson.util.*;
 @author Garret Wilson
 @see BasicGridBagLayout
 @see DefaultFocusable
-@see com.garretwilson.util.Modifiable
+@see com.globalmentor.util.Modifiable
 */
 public class ContentPanel extends ModifiablePanel implements CanClosable
 {

@@ -13,7 +13,7 @@ import com.garretwilson.swing.text.xml.XMLListView;
 import com.garretwilson.swing.text.xml.XMLStyleUtilities;
 import static com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants.*;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities;
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**Class to paint XML CSS views.
 @author Garret Wilson

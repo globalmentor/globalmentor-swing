@@ -6,8 +6,8 @@ import java.beans.*;
 import javax.swing.event.*;
 import com.garretwilson.awt.*;
 import com.garretwilson.swing.event.*;
-import com.garretwilson.util.*;
 import com.globalmentor.java.*;
+import com.globalmentor.util.*;
 
 /**A panel that can be modified, and recognized when its contained components
 	have been modified.

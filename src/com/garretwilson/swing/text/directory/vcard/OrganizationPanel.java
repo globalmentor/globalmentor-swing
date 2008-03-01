@@ -8,8 +8,8 @@ import javax.swing.event.DocumentListener;
 
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
-import com.garretwilson.util.*;
 import com.globalmentor.java.*;
+import com.globalmentor.util.*;
 
 /**A panel allowing entry of the organization types of a vCard <code>text/directory</code>
 	profile as defined in <a href="http://www.ietf.org/rfc/rfc2426.txt">RFC 2426</a>,
@@ -84,7 +84,7 @@ public class OrganizationPanel extends BasicVCardPanel
 	/**Sets the organization name.
 	@param name The name of the organization, or <code>null</code> for no name.
 	*/
-	public void setOrganizationName(final LocaleText name)
+	public void setOrganizationName(final LocaledText name)
 	{
 		if(name!=null)	//if there is text
 		{
@@ -100,32 +100,32 @@ public class OrganizationPanel extends BasicVCardPanel
 
 	/**@return The organization name, or <code>null</code> for no name.
 	*/
-	public LocaleText getOrganizationName()
+	public LocaledText getOrganizationName()
 	{
 		final String name=Strings.getNonEmptyString(nameTextField.getText().trim());
-		return name!=null ? new LocaleText(name, selectOrganizationNameLanguageAction.getLocale()) : null;
+		return name!=null ? new LocaledText(name, selectOrganizationNameLanguageAction.getLocale()) : null;
 	}
 
 	/**Sets the organizational units. The locales are ignored.
 	@param units The organizational units.
 	*/
-	public void setUnits(final LocaleText[] units)
+	public void setUnits(final LocaledText[] units)
 	{
 		unitsTextField.setText(Strings.concat(units, UNIT_SEPARATOR));
 	}
 
 	/**@return The organizational units.*/
-	public LocaleText[] getUnits()
+	public LocaledText[] getUnits()
 	{
 			//get the units TODO make sure each nickname is trimmed
-		return LocaleText.toLocaleTextArray(StringTokenizerUtilities.getTokens(new StringTokenizer(unitsTextField.getText().trim(), UNIT_DELIMITERS)), selectOrganizationNameLanguageAction.getLocale());
+		return LocaledText.toLocaleTextArray(StringTokenizers.getTokens(new StringTokenizer(unitsTextField.getText().trim(), UNIT_DELIMITERS)), selectOrganizationNameLanguageAction.getLocale());
 	}
 
 	/**Sets the job title.
 	@param title The job title, functional position or function at the
 		organization, or <code>null</code> for no title.
 	*/
-	public void setJobTitle(final LocaleText title)
+	public void setJobTitle(final LocaledText title)
 	{
 		if(title!=null)	//if there is text
 		{
@@ -142,17 +142,17 @@ public class OrganizationPanel extends BasicVCardPanel
 	/**@return The job title, functional position or function at the,
 		organization or <code>null</code> for no title.
 	*/
-	public LocaleText getJobTitle()
+	public LocaledText getJobTitle()
 	{
 		final String title=Strings.getNonEmptyString(titleTextField.getText().trim());
-		return title!=null ? new LocaleText(title, selectTitleLanguageAction.getLocale()) : null;
+		return title!=null ? new LocaledText(title, selectTitleLanguageAction.getLocale()) : null;
 	}
 
 	/**Sets the role.
 	@param role The role, occupation, or business category at the organization,
 		or <code>null</code> for no role.
 	*/
-	public void setRole(final LocaleText role)
+	public void setRole(final LocaledText role)
 	{
 		if(role!=null)	//if there is text
 		{
@@ -169,16 +169,16 @@ public class OrganizationPanel extends BasicVCardPanel
 	/**@return The role, occupation, or business category at the
 		organization, or <code>null</code> for no role.
 	*/
-	public LocaleText getRole()
+	public LocaledText getRole()
 	{
 		final String role=Strings.getNonEmptyString(roleTextField.getText().trim());
-		return role!=null ? new LocaleText(role, selectRoleLanguageAction.getLocale()) : null;
+		return role!=null ? new LocaledText(role, selectRoleLanguageAction.getLocale()) : null;
 	}
 
 	/**Default constructor.*/
 	public OrganizationPanel()
 	{
-		this(null, new LocaleText[]{}, null, null);	//create a panel with no initial values
+		this(null, new LocaledText[]{}, null, null);	//create a panel with no initial values
 	}
 
 	/**Full organization constructor.
@@ -189,7 +189,7 @@ public class OrganizationPanel extends BasicVCardPanel
 	@param role The role, occupation, or business category at the organization,
 		or <code>null</code> for no role.
 	*/
-	public OrganizationPanel(final LocaleText name, final LocaleText[] units, final LocaleText title, final LocaleText role)
+	public OrganizationPanel(final LocaledText name, final LocaledText[] units, final LocaledText title, final LocaledText role)
 	{
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		nameLabel=new JLabel();
@@ -217,7 +217,7 @@ public class OrganizationPanel extends BasicVCardPanel
 		super.initializeUI();	//do the default user interface initialization
 		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
 		setTitle("Organization");	//G***i18n
-		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
+		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(SelectLanguageAction.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
 		nameLabel.setText("Organization Name");	//G***i18n
 		getSelectOrganizationNameLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectOrganizationNameLanguageButton=createSelectLanguageButton(getSelectOrganizationNameLanguageAction());

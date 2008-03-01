@@ -20,9 +20,10 @@ import com.garretwilson.net.Resource;
 import static com.garretwilson.net.URIs.*;
 import com.garretwilson.resources.icon.IconResources;
 import static com.garretwilson.swing.ComponentUtilities.*;
-import com.garretwilson.util.*;
-import com.garretwilson.util.prefs.Preferenceable;
-import com.garretwilson.util.prefs.PreferencesUtilities;
+
+import com.globalmentor.util.*;
+import com.globalmentor.util.prefs.Preferenceable;
+import com.globalmentor.util.prefs.PreferencesUtilities;
 
 /**An abstract class that manages resources, their views, and their modified
 	states. This class does not actually change the displayed component in any

@@ -37,9 +37,9 @@ import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSProcessor;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 import com.garretwilson.text.xml.xhtml.XHTML;
-import com.garretwilson.util.Debug;
-import com.garretwilson.util.NameValuePair;
 import com.globalmentor.marmot.Marmot;
+import com.globalmentor.util.Debug;
+import com.globalmentor.util.NameValuePair;
 
 /**An editor kit for an XEB publication.
 @see XMLEditorKit

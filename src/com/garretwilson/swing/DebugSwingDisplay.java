@@ -6,8 +6,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import com.garretwilson.util.DebugDisplay;
 import com.globalmentor.java.Strings;
+import com.globalmentor.util.DebugDisplay;
 
 /**Interface for displaying debug information using Swing.
 @author Garret Wilson

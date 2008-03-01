@@ -14,8 +14,8 @@ import com.garretwilson.net.http.HTTPClient;
 import com.garretwilson.rdf.DefaultRDFResource;
 import com.garretwilson.rdf.RDFFileProcessor;
 import com.garretwilson.rdf.RDFResource;
-import com.garretwilson.util.Debug;
-import com.garretwilson.util.prefs.PreferencesUtilities;
+import com.globalmentor.util.Debug;
+import com.globalmentor.util.prefs.PreferencesUtilities;
 
 /**An implementation of a resource selector that selects resources from a
 	file system and returns RDF resources as descriptions of selected files.

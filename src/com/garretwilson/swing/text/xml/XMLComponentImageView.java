@@ -7,7 +7,7 @@ import javax.swing.text.*;
 import com.garretwilson.awt.ImageUtilities;
 import com.garretwilson.swing.text.ViewComponentManageable;
 import com.garretwilson.swing.text.ViewComponentManager;
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**A view that maintains components that are displayed on the image.
 @author Garret Wilson

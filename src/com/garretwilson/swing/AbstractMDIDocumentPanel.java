@@ -8,8 +8,8 @@ import javax.swing.*;
 import com.garretwilson.text.xml.XMLSerializer;
 import com.garretwilson.model.*;
 import com.garretwilson.rdf.*;
-import com.garretwilson.util.*;
 import com.globalmentor.java.Booleans;
+import com.globalmentor.util.*;
 
 import org.w3c.dom.*;
 

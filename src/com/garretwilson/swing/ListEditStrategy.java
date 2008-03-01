@@ -5,7 +5,7 @@ import java.beans.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import com.garretwilson.resources.icon.IconResources;
-import com.garretwilson.util.Modifiable;
+import com.globalmentor.util.Modifiable;
 
 /**A plug-in strategy class for editing items from a list component.
 @param <E> The type of each element in the list.

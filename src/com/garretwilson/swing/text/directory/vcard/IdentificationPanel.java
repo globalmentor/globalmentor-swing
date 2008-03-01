@@ -10,8 +10,8 @@ import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
 import com.garretwilson.swing.event.*;
 import com.garretwilson.text.directory.vcard.*;
-import com.garretwilson.util.*;
 import com.globalmentor.java.*;
+import com.globalmentor.util.*;
 
 /**A panel containing fields for the identification types of a vCard
 	<code>text/directory</code>	profile as defined in
@@ -85,7 +85,7 @@ public class IdentificationPanel extends BasicVCardPanel
 	@param formattedName The name to place in the field, or <code>null</code> if
 		no information should be displayed.
 	*/
-	public void setFormattedName(final LocaleText formattedName)
+	public void setFormattedName(final LocaledText formattedName)
 	{
 		if(formattedName!=null)	//if there is text
 		{
@@ -102,17 +102,17 @@ public class IdentificationPanel extends BasicVCardPanel
 	/**@return The formatted name entered, or <code>null</code> if
 		no formatted name was entered.
 	*/
-	public LocaleText getFormattedName()
+	public LocaledText getFormattedName()
 	{
 		final String fn=Strings.getNonEmptyString(formattedNameTextField.getText().trim());
-		return fn!=null ? new LocaleText(fn, selectFormattedNameLanguageAction.getLocale()) : null;
+		return fn!=null ? new LocaledText(fn, selectFormattedNameLanguageAction.getLocale()) : null;
 	}
 
 	/**Places the nicknames into the field.
 	@param nicknames The nicknames to place in the field, or <code>null</code> if
 		no information should be displayed.
 	*/
-	public void setNicknames(final LocaleText[] nicknames)
+	public void setNicknames(final LocaledText[] nicknames)
 	{
 		if(nicknames!=null)	//if there are nicknames
 		{
@@ -135,10 +135,10 @@ public class IdentificationPanel extends BasicVCardPanel
 	
 	/**@return The nicknames entered.
 	*/
-	public LocaleText[] getNicknames()
+	public LocaledText[] getNicknames()
 	{
 			//get the nicknames TODO make sure each nickname is trimmed
-		return LocaleText.toLocaleTextArray(StringTokenizerUtilities.getTokens(new StringTokenizer(nicknameTextField.getText().trim(), VALUE_DELIMITERS)), selectNicknameLanguageAction.getLocale());
+		return LocaledText.toLocaleTextArray(StringTokenizers.getTokens(new StringTokenizer(nicknameTextField.getText().trim(), VALUE_DELIMITERS)), selectNicknameLanguageAction.getLocale());
 	}	
 
 	/**Default constructor.*/
@@ -163,7 +163,7 @@ public class IdentificationPanel extends BasicVCardPanel
 		super.initializeUI();	//do the default user interface initialization
 		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
 		setTitle("Identification");	//G***i18n
-		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
+		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(SelectLanguageAction.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
 			//add listeners to all the components of the name panel to update the status when modified
 		namePanel.getFamilyNameTextField().getDocument().addDocumentListener(createUpdateStatusDocumentListener()); 		
 		namePanel.getGivenNameTextField().getDocument().addDocumentListener(createUpdateStatusDocumentListener()); 		

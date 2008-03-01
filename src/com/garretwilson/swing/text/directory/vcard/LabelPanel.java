@@ -10,8 +10,8 @@ import javax.swing.event.DocumentListener;
 import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
-import com.garretwilson.util.*;
 import com.globalmentor.java.*;
+import com.globalmentor.util.*;
 
 /**A panel allowing entry of the "LABEL" type of a vCard <code>text/directory</code>
 	profile as defined in <a href="http://www.ietf.org/rfc/rfc2426.txt">RFC 2426</a>,
@@ -134,7 +134,7 @@ public class LabelPanel extends BasicVCardPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
+		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(SelectLanguageAction.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
 			//TODO turn off tab-handling for labelAddressTextPane
 		labelTextPane.getDocument().addDocumentListener(getModifyDocumentListener());
 		final JScrollPane labelScrollPane=new JScrollPane(labelTextPane);

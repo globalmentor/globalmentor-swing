@@ -3,7 +3,7 @@ package com.garretwilson.resources.icon;
 import java.util.*;
 import javax.swing.ImageIcon;
 
-import com.garretwilson.util.*;
+import com.globalmentor.util.*;
 
 /**Manages icon resources bundled with an application. This class keeps weak
 	references to the icons it loads so that they may be reused if they have not

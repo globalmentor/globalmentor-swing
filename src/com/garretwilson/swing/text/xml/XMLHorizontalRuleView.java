@@ -7,7 +7,7 @@ import javax.swing.border.*;
 import javax.swing.text.*;
 //G***del import java.util.Enumeration;
 //G***Del import java.lang.Integer;
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**Represents a horizontal rule. G***later move to xhtml package
 	This class was written referencing <code>javax.swing.text.html.HRuleView</code>

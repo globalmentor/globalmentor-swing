@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.swing.text.*;
 
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**Utilities for manipulating views and view hierarchies.
 @author Garret Wilson

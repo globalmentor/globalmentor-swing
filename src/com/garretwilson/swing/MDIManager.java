@@ -10,9 +10,9 @@ import javax.swing.event.*;
 
 import com.garretwilson.rdf.*;
 import com.garretwilson.resources.icon.IconResources;
-import com.garretwilson.util.Debug;
-import com.garretwilson.util.Modifiable;
-import com.garretwilson.util.ObjectState;
+import com.globalmentor.util.Debug;
+import com.globalmentor.util.Modifiable;
+import com.globalmentor.util.ObjectState;
 
 /**Class that manages multiple documents in a <code>JDesktopPane</code>.
 @author Garret Wilson

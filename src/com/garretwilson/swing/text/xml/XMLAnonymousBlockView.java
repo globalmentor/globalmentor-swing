@@ -1,7 +1,8 @@
 package com.garretwilson.swing.text.xml;
 
 import javax.swing.text.*;
-import com.garretwilson.util.Debug;
+
+import com.globalmentor.util.Debug;
 
 /**A block view that is used to contain several inline views within a block
 	view.

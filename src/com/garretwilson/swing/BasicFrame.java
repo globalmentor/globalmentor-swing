@@ -8,10 +8,10 @@ import java.util.prefs.*;
 import javax.swing.*;
 import com.garretwilson.awt.*;
 import com.garretwilson.resources.icon.IconResources;
-import com.garretwilson.util.*;
 import com.globalmentor.java.*;
+import com.globalmentor.util.*;
 
-import static com.garretwilson.util.prefs.PreferencesUtilities.*;
+import static com.globalmentor.util.prefs.PreferencesUtilities.*;
 
 /**An extended frame that has extra features beyond those in <code>JFrame</code>.
 <p>The default close operation in this class by default is

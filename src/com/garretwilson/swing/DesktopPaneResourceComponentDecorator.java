@@ -20,8 +20,8 @@ import com.garretwilson.awt.DefaultFocusable;
 import static com.globalmentor.java.Booleans.*;
 
 import com.garretwilson.net.Resource;
-import com.garretwilson.util.Debug;
-import com.garretwilson.util.Modifiable;
+import com.globalmentor.util.Debug;
+import com.globalmentor.util.Modifiable;
 
 /**Class that manages resource components in a desktop pane.
 @param <R> The type of resource the components of which are being managed.

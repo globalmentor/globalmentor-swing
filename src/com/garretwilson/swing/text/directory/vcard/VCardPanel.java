@@ -5,7 +5,7 @@ import java.io.IOException;
 import javax.swing.JTabbedPane;
 import com.garretwilson.swing.*;
 import com.garretwilson.text.directory.vcard.*;
-import com.garretwilson.util.*;
+import com.globalmentor.util.*;
 
 /**A panel containing panels to edit fields for a vCard <code>text/directory</code>
 	profile as defined in <a href="http://www.ietf.org/rfc/rfc2426.txt">RFC 2426</a>,
@@ -191,7 +191,7 @@ public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable
 		final VCard vcard=getModel();	//get the data model
 		getIdentificationPanel().setVCardName(vcard.getName());
 		getIdentificationPanel().setFormattedName(vcard.getFormattedName());
-		getIdentificationPanel().setNicknames(vcard.getNicknameList().toArray(new LocaleText[vcard.getNicknameList().size()]));
+		getIdentificationPanel().setNicknames(vcard.getNicknameList().toArray(new LocaledText[vcard.getNicknameList().size()]));
 		getAddressesPanel().setAddresses(vcard.getAddresses(), vcard.getLabels());
 		getOrganizationPanel().setOrganizationName(vcard.getOrganizationName());
 		getOrganizationPanel().setUnits(vcard.getOrganizationUnits());
@@ -201,7 +201,7 @@ public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable
 		final Telephone[] telephones=(Telephone[])vcard.getTelephoneList().toArray(new Telephone[vcard.getTelephoneList().size()]);
 		final Email[] emails=(Email[])vcard.getEmailList().toArray(new Email[vcard.getEmailList().size()]);
 		getTelecommunicationsPanel().setTelecommunications(telephones, emails);
-		getExplanatoryPanel().setCategories(vcard.getCategoryList().toArray(new LocaleText[vcard.getCategoryList().size()]));
+		getExplanatoryPanel().setCategories(vcard.getCategoryList().toArray(new LocaledText[vcard.getCategoryList().size()]));
 		getExplanatoryPanel().setNote(vcard.getNote());
 		getExplanatoryPanel().setURL(vcard.getURL());
 	}
@@ -213,7 +213,7 @@ public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable
 	{
 		super.saveModel();	//do the default saving
 		final VCard vcard=getModel();	//get the data model
-		final LocaleText displayName=getIdentificationPanel().getFormattedName()!=null
+		final LocaledText displayName=getIdentificationPanel().getFormattedName()!=null
 				? getIdentificationPanel().getFormattedName()		//use the formatted name as the display name
 				: getOrganizationPanel().getOrganizationName();		//use the company name if there is no formatted name
 			//TODO decide how to come up with a display name if there is neither formatted name nor organization name

@@ -14,7 +14,7 @@ import static com.garretwilson.swing.text.xml.css.XMLCSSStyleConstants.*;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSValueList;
 
-import com.garretwilson.util.Debug;
+import com.globalmentor.util.Debug;
 
 /**A collection of utilities used for rendering XML using CSS in Swing.
 @author Garret Wilson

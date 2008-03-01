@@ -12,10 +12,10 @@ import javax.swing.event.*;
 
 import com.garretwilson.awt.*;
 import com.garretwilson.swing.event.*;
-import com.garretwilson.util.*;
 import com.globalmentor.java.*;
+import com.globalmentor.util.*;
 
-import static com.garretwilson.util.ArrayUtilities.*;
+import static com.globalmentor.util.Arrays.*;
 
 /**An extended panel that has extra features beyond those in <code>JPanel</code>.
 <p>The panel stores properties and fires property change events when a

@@ -8,8 +8,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.swing.*;
-import com.garretwilson.util.*;
 import com.globalmentor.java.*;
+import com.globalmentor.util.*;
 
 /**A panel allowing entry of the "N" type of a vCard <code>text/directory</code>
 	profile as defined in <a href="http://www.ietf.org/rfc/rfc2426.txt">RFC 2426</a>,
@@ -118,11 +118,11 @@ public class NamePanel extends BasicVCardPanel
 	public Name getVCardName()
 	{
 			//get the values from the components
-		final String[] familyNames=StringTokenizerUtilities.getTokens(new StringTokenizer(familyNameTextField.getText().trim(), VALUE_DELIMITERS));
-		final String[] givenNames=StringTokenizerUtilities.getTokens(new StringTokenizer(givenNameTextField.getText().trim(), VALUE_DELIMITERS));
-		final String[] additionalNames=StringTokenizerUtilities.getTokens(new StringTokenizer(additionalNameTextField.getText().trim(), VALUE_DELIMITERS));
-		final String[] honorificPrefixes=StringTokenizerUtilities.getTokens(new StringTokenizer(honorificPrefixComboBox.getSelectedItem().toString().trim(), VALUE_DELIMITERS));
-		final String[] honorificSuffixes=StringTokenizerUtilities.getTokens(new StringTokenizer(honorificSuffixComboBox.getSelectedItem().toString().trim(), VALUE_DELIMITERS));
+		final String[] familyNames=StringTokenizers.getTokens(new StringTokenizer(familyNameTextField.getText().trim(), VALUE_DELIMITERS));
+		final String[] givenNames=StringTokenizers.getTokens(new StringTokenizer(givenNameTextField.getText().trim(), VALUE_DELIMITERS));
+		final String[] additionalNames=StringTokenizers.getTokens(new StringTokenizer(additionalNameTextField.getText().trim(), VALUE_DELIMITERS));
+		final String[] honorificPrefixes=StringTokenizers.getTokens(new StringTokenizer(honorificPrefixComboBox.getSelectedItem().toString().trim(), VALUE_DELIMITERS));
+		final String[] honorificSuffixes=StringTokenizers.getTokens(new StringTokenizer(honorificSuffixComboBox.getSelectedItem().toString().trim(), VALUE_DELIMITERS));
 		final Locale locale=selectLanguageAction.getLocale();
 			//if any part(s) of the name was given 
 		if(familyNames.length>0 || givenNames.length>0 || additionalNames.length>0 || honorificPrefixes.length>0 || honorificSuffixes.length>0)
@@ -169,7 +169,7 @@ public class NamePanel extends BasicVCardPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(LocaleConstants.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
+		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(SelectLanguageAction.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
 		familyNameLabel.setText("Family");	//G***i18n
 		familyNameTextField.setColumns(8);
 		familyNameTextField.getDocument().addDocumentListener(getModifyDocumentListener());

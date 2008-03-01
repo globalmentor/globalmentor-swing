@@ -10,12 +10,11 @@ import java.beans.PropertyChangeListener;
 import java.util.*;
 import javax.swing.*;
 import com.garretwilson.text.directory.vcard.*;
-import com.garretwilson.util.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
-import com.garretwilson.util.*;
+import com.globalmentor.util.*;
 
 /**A panel allowing entry of one or more telecommunication types
 	(e.g. <code>TEL</code> and <code>EMAIL</code>) of a vCard <code>text/directory</code>
