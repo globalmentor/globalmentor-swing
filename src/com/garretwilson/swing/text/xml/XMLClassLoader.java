@@ -9,11 +9,11 @@ import java.security.AccessController;
 import java.security.CodeSource;
 import java.security.SecureClassLoader;
 import java.security.PrivilegedExceptionAction;
-import com.garretwilson.io.InputStreamUtilities;
 import static com.garretwilson.net.URIConstants.*;
 import com.garretwilson.net.URIs;
+import com.globalmentor.io.InputStreamUtilities;
 
-import static com.garretwilson.io.FileConstants.*;
+import static com.globalmentor.io.FileConstants.*;
 import static com.globalmentor.java.Java.*;
 
 /**Class loader for retrieving Java classes needed in an XML document. This

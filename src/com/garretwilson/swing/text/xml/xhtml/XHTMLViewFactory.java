@@ -2,9 +2,10 @@ package com.garretwilson.swing.text.xml.xhtml;
 
 import javax.mail.internet.ContentType;
 import javax.swing.text.*;
-import com.garretwilson.io.ContentTypeConstants;
-import com.garretwilson.io.ContentTypes;
 import com.garretwilson.swing.text.xml.*;
+import com.globalmentor.io.ContentTypeConstants;
+import com.globalmentor.io.ContentTypes;
+
 import static com.garretwilson.text.xml.xhtml.XHTML.*;
 
 /**A factory to build views for elements from XHTML based upon the name and/or

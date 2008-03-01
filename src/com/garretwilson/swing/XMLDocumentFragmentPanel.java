@@ -2,10 +2,11 @@ package com.garretwilson.swing;
 
 import java.net.URI;
 import javax.mail.internet.ContentType;
-import com.garretwilson.io.*;
 import com.garretwilson.text.xml.XMLNamespaceProcessor;
 import com.garretwilson.text.xml.XMLNodeModel;
 import com.garretwilson.text.xml.XMLUtilities;
+import com.globalmentor.io.*;
+
 import org.w3c.dom.*;
 
 /**Panel that displays an XML document fragment and source code.

@@ -8,7 +8,6 @@ import javax.mail.internet.ContentType;
 import javax.swing.text.*;
 
 
-import com.garretwilson.io.*;
 import com.garretwilson.model.ResourceModel;
 import com.garretwilson.net.Resource;
 import com.garretwilson.net.URIs;
@@ -20,12 +19,13 @@ import static com.garretwilson.rdf.maqro.MAQROConstants.*;
 import com.garretwilson.rdf.xpackage.*;
 import com.garretwilson.rdf.xeb.*;
 
-import static com.garretwilson.io.ContentTypeConstants.*;
 import static com.garretwilson.rdf.xeb.XEBConstants.*;
 
 import com.garretwilson.swing.ListListModel;
 import com.garretwilson.swing.event.*;
 import static com.garretwilson.swing.text.rdf.RDFStyleUtilities.*;
+import static com.globalmentor.io.ContentTypeConstants.*;
+
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.XMLEditorKit.ContentData;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
@@ -37,6 +37,7 @@ import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSProcessor;
 import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 import com.garretwilson.text.xml.xhtml.XHTML;
+import com.globalmentor.io.*;
 import com.globalmentor.marmot.Marmot;
 import com.globalmentor.util.Debug;
 import com.globalmentor.util.NameValuePair;

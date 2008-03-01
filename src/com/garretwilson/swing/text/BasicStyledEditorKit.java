@@ -11,7 +11,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
-import com.garretwilson.io.*;
 
 import static com.globalmentor.java.Objects.*;
 
@@ -21,6 +20,7 @@ import com.garretwilson.swing.event.*;
 import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.unicode.UnicodePanel;
 import com.garretwilson.swing.unicode.UnicodeTableModel;
+import com.globalmentor.io.*;
 import com.globalmentor.util.*;
 
 /**A styled editor kit with basic functionality, including:

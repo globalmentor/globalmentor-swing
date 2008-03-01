@@ -2,7 +2,9 @@ package com.garretwilson.swing.rdf.tree;
 
 import javax.mail.internet.ContentType;
 import javax.swing.*;
-import static com.garretwilson.io.ContentTypes.*;
+
+import static com.globalmentor.io.ContentTypes.*;
+
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.xpackage.*;
 import com.globalmentor.marmot.Marmot;
@@ -69,7 +71,7 @@ public class XPackageTreeCellRenderer extends RDFResourceTreeCellRenderer
 	@return The key for looking up data for the user object, or <code>null</code>
 		if no key could be determined for the user object or if the user object
 		is <code>null</code>.
-	@see com.garretwilson.io.ContentTypes#getBaseContentType(ContentType)
+	@see com.globalmentor.io.ContentTypes#getBaseContentType(ContentType)
 	*/
 	protected Object getUserObjectKey(final Object userObject)
 	{

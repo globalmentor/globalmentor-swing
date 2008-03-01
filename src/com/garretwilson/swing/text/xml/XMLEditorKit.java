@@ -10,14 +10,13 @@ import javax.swing.text.*;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 
-import com.garretwilson.io.*;
 
-import static com.garretwilson.io.Charsets.*;
 import com.garretwilson.net.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.rdf.maqro.Activity;
 import static com.garretwilson.rdf.maqro.MAQROConstants.*;
 
+import static com.globalmentor.io.Charsets.*;
 import static com.globalmentor.java.Objects.*;
 
 import com.garretwilson.swing.*;
@@ -25,6 +24,7 @@ import com.garretwilson.swing.text.BasicStyledEditorKit;
 import com.garretwilson.swing.text.xml.css.*;
 import com.garretwilson.text.xml.*;
 import com.garretwilson.text.xml.stylesheets.css.*;	//G***del if we don't need
+import com.globalmentor.io.*;
 import com.globalmentor.java.*;
 import com.globalmentor.util.*;
 

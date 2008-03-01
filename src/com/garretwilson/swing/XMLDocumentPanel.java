@@ -1,8 +1,9 @@
 package com.garretwilson.swing;
 
 import javax.mail.internet.ContentType;
-import com.garretwilson.io.*;
 import com.garretwilson.text.xml.XMLNodeModel;
+import com.globalmentor.io.*;
+
 import org.w3c.dom.*;
 
 /**Panel that displays an XML document.

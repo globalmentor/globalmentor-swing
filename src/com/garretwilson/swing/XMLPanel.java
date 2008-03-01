@@ -5,10 +5,10 @@ import java.io.*;
 import javax.mail.internet.ContentType;
 import javax.swing.*;
 import javax.swing.event.*;
-import com.garretwilson.io.*;
-import static com.garretwilson.io.ContentTypes.*;
 
-import static com.garretwilson.io.ContentTypeConstants.PLAIN_SUBTYPE;
+import static com.globalmentor.io.ContentTypeConstants.PLAIN_SUBTYPE;
+import static com.globalmentor.io.ContentTypes.*;
+
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.unicode.UnicodeStatusBar;
 import com.garretwilson.text.CharacterEncoding;
@@ -16,6 +16,8 @@ import com.garretwilson.text.xml.XMLNodeModel;
 import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.text.xml.XMLSerializer;
 import com.garretwilson.text.xml.xhtml.XHTML;
+import com.globalmentor.io.*;
+
 import org.w3c.dom.*;
 
 /**Panel that displays XML and source code.

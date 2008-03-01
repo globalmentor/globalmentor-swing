@@ -7,11 +7,11 @@ import javax.mail.internet.ContentType;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Document;
 import javax.swing.text.MutableAttributeSet;
-import com.garretwilson.io.*;
 import com.garretwilson.swing.text.StyleUtilities;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.text.xml.XMLDOMImplementation;
 import com.garretwilson.text.xml.xhtml.*;
+import com.globalmentor.io.*;
 
 import static com.garretwilson.text.xml.xhtml.XHTML.*;
 import org.w3c.dom.*;

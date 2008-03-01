@@ -3,12 +3,12 @@ package com.garretwilson.swing.text.xml.oeb;
 import java.io.*;
 import javax.swing.text.*;
 
-import com.garretwilson.io.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.xeb.XEBEditorKit;
 import com.garretwilson.text.xml.XMLProcessor;
 import com.garretwilson.text.xml.oeb.*;
+import com.globalmentor.io.*;
 
 /**An editor kit for an OEB publication.
 @see XMLEditorKit

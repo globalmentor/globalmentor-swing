@@ -5,12 +5,12 @@ import java.net.URI;
 
 import javax.mail.internet.ContentType;
 import javax.swing.text.*;
-import com.garretwilson.io.ContentTypeConstants;
-import com.garretwilson.io.ContentTypes;
-import com.garretwilson.io.Files;
 import com.garretwilson.swing.text.xml.XMLStyleUtilities;
 import static com.garretwilson.text.xml.xhtml.XHTML.*;
 
+import com.globalmentor.io.ContentTypeConstants;
+import com.globalmentor.io.ContentTypes;
+import com.globalmentor.io.Files;
 import com.globalmentor.util.Debug;
 
 /**Provides utility functions to manipulate Swing text classes representing XHTML.

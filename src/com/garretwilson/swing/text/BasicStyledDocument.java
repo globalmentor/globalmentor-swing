@@ -7,7 +7,6 @@ import java.io.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
-import com.garretwilson.io.*;
 
 import static com.globalmentor.java.Objects.*;
 
@@ -15,6 +14,7 @@ import com.garretwilson.rdf.*;
 import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.event.ProgressListener;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
+import com.globalmentor.io.*;
 import com.globalmentor.util.Debug;
 
 /**A document that provised basic functionality including:
@@ -177,7 +177,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	/**Sets the location against which to resolve relative URIs. By default this
 		will be the document's URI.
 	@param baseURI The new location against which to resolve relative URIs.
-	@see #BASE_URI_PROPERTY
+	@see DocumentConstants#BASE_URI_PROPERTY
 	*/
 	public void setBaseURI(final URI baseURI)
 	{
@@ -188,7 +188,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	@return The location against which to resolve relative URIs, or <code>null</code>
 		if there is no base URI.
 	//G***del	@exception URISyntaxException Thrown if the a URI could not be created.
-	@see #BASE_URI_PROPERTY
+	@see DocumentConstants#BASE_URI_PROPERTY
 	*/
 	public URI getBaseURI()
 	{

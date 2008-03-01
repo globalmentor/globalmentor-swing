@@ -14,7 +14,6 @@ import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;  //G***del when image click code is moved elsewhere
-import com.garretwilson.io.*;
 import com.garretwilson.model.ResourceModel;
 import com.garretwilson.net.*;
 import com.garretwilson.rdf.*;
@@ -27,6 +26,7 @@ import static com.garretwilson.swing.text.TextComponentConstants.*;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.garretwilson.text.xml.oeb.*;
+import com.globalmentor.io.*;
 import com.globalmentor.util.*;
 import com.globalmentor.util.prefs.PreferencesUtilities;
 

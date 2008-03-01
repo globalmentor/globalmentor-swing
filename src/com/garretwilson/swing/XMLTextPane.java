@@ -20,9 +20,7 @@ import org.w3c.dom.DocumentFragment;
 
 import com.garretwilson.applet.*;
 import com.garretwilson.awt.EventQueueUtilities;
-import com.garretwilson.io.*;
 
-import static com.garretwilson.io.ContentTypes.*;
 import com.garretwilson.net.BrowserLauncher;
 import com.garretwilson.net.URIConstants;
 import com.garretwilson.net.URIs;
@@ -45,11 +43,13 @@ import com.garretwilson.text.xml.XMLReader;
 import com.garretwilson.text.xml.XMLUtilities;
 import com.garretwilson.text.xml.oeb.OEBConstants;
 import com.garretwilson.text.xml.xhtml.XHTML;
+import com.globalmentor.io.*;
 import com.globalmentor.util.Debug;
 import com.globalmentor.util.zip.*;
 
-import static com.garretwilson.io.ContentTypeConstants.*;
 import static com.garretwilson.text.xml.XMLUtilities.*;
+import static com.globalmentor.io.ContentTypeConstants.*;
+import static com.globalmentor.io.ContentTypes.*;
 import static com.globalmentor.java.Objects.*;
 import static com.globalmentor.util.Iterators.*;
 
@@ -674,7 +674,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 			will be the document's URI.
 		<p>The base URI is also updated in the currently loaded document.</p>
 		@param baseURI The new location against which to resolve relative URIs.
-		@see #BASE_URI_PROPERTY
+		@see DocumentConstants#BASE_URI_PROPERTY
 		*/
 		public void setBaseURI(final URI baseURI)
 		{

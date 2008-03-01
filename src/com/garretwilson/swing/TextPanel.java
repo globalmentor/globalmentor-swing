@@ -6,11 +6,11 @@ import java.awt.event.KeyEvent;
 import java.io.*;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
-import com.garretwilson.io.*;
 import com.garretwilson.swing.unicode.UnicodeStatusBar;
+import com.globalmentor.io.*;
 import com.globalmentor.util.*;
 
-import static com.garretwilson.io.ContentTypeConstants.*;
+import static com.globalmentor.io.ContentTypeConstants.*;
 
 /**A panel to edit plain text.
 @author Garret Wilson

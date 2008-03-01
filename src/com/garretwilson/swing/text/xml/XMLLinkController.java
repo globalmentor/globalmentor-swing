@@ -10,16 +10,16 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
-import com.garretwilson.io.ContentTypes;
 import com.garretwilson.net.*;
 import com.garretwilson.swing.event.XMLLinkEvent;
 import com.garretwilson.text.xml.oeb.*; //TODO move someday
 import static com.garretwilson.text.xml.xhtml.XHTML.*; //TODO move someday
 import com.garretwilson.text.xml.xlink.*;
+import com.globalmentor.io.ContentTypes;
 import com.globalmentor.java.*;
 import com.globalmentor.util.*;
 
-import static com.garretwilson.io.ContentTypeConstants.*;
+import static com.globalmentor.io.ContentTypeConstants.*;
 
 /**Class to watch the associated component and fire hyperlink events on it
 	when appropriate. This class interprets links according to the XLink
