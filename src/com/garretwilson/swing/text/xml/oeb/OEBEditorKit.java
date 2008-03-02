@@ -34,7 +34,7 @@ public class OEBEditorKit extends XEBEditorKit
 	/**Returns the MIME type of the data the XML editor kit supports, <code>application/x-oeb1-package+xml</code>.
 	@return The MIME type this editor kit supports.
 	*/
-	public String getContentType() {return OEBConstants.OEB10_PACKAGE_MEDIA_TYPE.toString();}
+	public String getContentType() {return OEB.OEB10_PACKAGE_MEDIA_TYPE.toString();}
 
 	/**Inserts content from the given stream which is expected to be in a format
 		appropriate for this kind of content handler.

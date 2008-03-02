@@ -33,7 +33,7 @@ import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 //G***del; not used import com.garretwilson.util.ArrayUtilities;
 import com.globalmentor.java.Java;
 import com.globalmentor.java.Objects;
-import com.globalmentor.text.xml.oeb.OEBConstants;
+import com.globalmentor.text.xml.oeb.OEB;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSConstants;
 import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.util.Debug;

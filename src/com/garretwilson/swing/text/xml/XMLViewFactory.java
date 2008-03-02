@@ -39,7 +39,6 @@ import com.globalmentor.java.Objects;
 import com.globalmentor.java.StringBuffers;
 import com.globalmentor.java.Strings;
 import com.globalmentor.text.xml.XMLDOMImplementation;
-import com.globalmentor.text.xml.XMLNamespaceProcessor;
 import com.globalmentor.text.xml.XMLProcessor;
 import com.globalmentor.text.xml.XMLSerializer;
 import com.globalmentor.text.xml.XMLUtilities;
@@ -207,7 +206,7 @@ public class XMLViewFactory implements ViewsFactory
 				final ContentType mediaType=XMLStyleUtilities.getMediaType(attributeSet); //see if this element's document has a media type defined
 				if(mediaType!=null) //if there is a media type defined for this element's document	//G***probably do all this differently later, like registering a view factory with a media type or something or, better yet, registering a namespace with a media type
 				{ 
-					final URI mediaTypeNamespaceURI=XMLNamespaceProcessor.getDefaultNamespaceURI(mediaType);	//see if we can find a default namespace for the media type
+					final URI mediaTypeNamespaceURI=XMLUtilities.getDefaultNamespaceURI(mediaType);	//see if we can find a default namespace for the media type
 					if(mediaTypeNamespaceURI!=null)	//if we found a namespace for the media type
 					{
 						elementNamespaceURI=mediaTypeNamespaceURI.toString();	//use the namespace for the media type

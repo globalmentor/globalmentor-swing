@@ -39,11 +39,11 @@ import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLLinkController;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLViewFactory;
 import com.globalmentor.io.*;
-import com.globalmentor.text.TextUtilities;
+import com.globalmentor.text.Text;
 import com.globalmentor.text.xml.XMLDOMImplementation;
 import com.globalmentor.text.xml.XMLReader;
 import com.globalmentor.text.xml.XMLUtilities;
-import com.globalmentor.text.xml.oeb.OEBConstants;
+import com.globalmentor.text.xml.oeb.OEB;
 import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.util.Debug;
 import com.globalmentor.util.zip.*;
@@ -75,10 +75,10 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 	protected final static ContentType ZIP_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, ZIP_SUBTYPE, null);
 
 	/**The "application/x-oeb1-package+xml" content type.*/
-	protected final static ContentType OEB_PACKAGE_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, X_OEB1_PACKAGE_XML_SUBTYPE, null);
+	protected final static ContentType OEB_PACKAGE_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, OEB.X_OEB1_PACKAGE_XML_SUBTYPE, null);
 
 	/**The "application/x-oeb-publication+zip" content type.*/
-	protected final static ContentType OEB_ZIP_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, X_OEB_PUBLICATION_ZIP_SUBTYPE, null);
+	protected final static ContentType OEB_ZIP_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, OEB.X_OEB_PUBLICATION_ZIP_SUBTYPE, null);
 
 	/**The "application/x-xebook+rdf+xml" content type.*/
 	protected final static ContentType XEBOOK_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, X_XEBOOK_RDF_XML_SUBTYPE, null);
@@ -87,7 +87,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 	protected final static ContentType XEB_ZIP_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, X_XEBOOK_RDF_XML_ZIP_SUBTYPE, null);
 
 	/**The "text/plain" content type.*/
-	protected final static ContentType TEXT_PLAIN_MEDIA_TYPE=new ContentType(ContentTypes.TEXT_PRIMARY_TYPE, TextUtilities.PLAIN_SUBTYPE, null);
+	protected final static ContentType TEXT_PLAIN_MEDIA_TYPE=new ContentType(ContentTypes.TEXT_PRIMARY_TYPE, Text.PLAIN_SUBTYPE, null);
 
 	//TODO fix asynchronous stop-gap kludge to correctly get the asynchronous setting from the document---if that's the best way to do it
 	protected boolean asynchronousLoad=false;
@@ -540,10 +540,10 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		updateKeymap();	//update the keymap based upon our current settings
 		final ViewFactory xhtmlViewFactory=new XHTMLViewFactory();  //create a view factory fo XHTML
 		registerViewFactory(XHTML.XHTML_NAMESPACE_URI.toString(), xhtmlViewFactory);  //associate the XHTML view factory with XHTML elements
-		registerViewFactory(OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlViewFactory);  //associate the XHTML view factory with OEB elements
+		registerViewFactory(OEB.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlViewFactory);  //associate the XHTML view factory with OEB elements
 		final XMLLinkController xhtmlLinkController=new XHTMLLinkController();  //create a link controller for XHTML
 		registerLinkController(XHTML.XHTML_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML view factory with XHTML elements
-		registerLinkController(OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML link controller with OEB elements
+		registerLinkController(OEB.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML link controller with OEB elements
 		final ViewFactory maqroViewFactory=new MAQROViewFactory();  //create a view factory fo MAQRO
 		registerViewFactory(MAQROConstants.MAQRO_NAMESPACE_URI.toString(), maqroViewFactory);  //associate the MAQRO view factory with MAQRO elements
 //G***del; doesn't work		setBackground(Color.white); //G***set to get the background color from the document itself

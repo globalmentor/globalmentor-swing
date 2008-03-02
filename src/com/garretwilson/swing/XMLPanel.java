@@ -12,7 +12,7 @@ import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.unicode.UnicodeStatusBar;
 import com.globalmentor.io.*;
 import com.globalmentor.text.CharacterEncoding;
-import static com.globalmentor.text.TextUtilities.*;
+import static com.globalmentor.text.Text.*;
 import com.globalmentor.text.xml.XMLNodeModel;
 import com.globalmentor.text.xml.XMLProcessor;
 import com.globalmentor.text.xml.XMLSerializer;

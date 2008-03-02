@@ -35,6 +35,7 @@ import com.globalmentor.marmot.Marmot;
 import com.globalmentor.text.xml.XMLDOMImplementation;
 import com.globalmentor.text.xml.XMLProcessor;
 import com.globalmentor.text.xml.XMLUtilities;
+import com.globalmentor.text.xml.oeb.OEB;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSConstants;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSProcessor;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
@@ -53,7 +54,7 @@ public class XEBEditorKit extends XHTMLEditorKit	//TODO eventually go back to de
 	public final static String READ_TASK="READ";
 
 	/**The "text/x-oeb1-document" content type.*/
-	protected final static ContentType OEB_DOCUMENT_MEDIA_TYPE=new ContentType(ContentTypes.TEXT_PRIMARY_TYPE, X_OEB1_DOCUMENT_SUBTYPE, null);
+	protected final static ContentType OEB_DOCUMENT_MEDIA_TYPE=new ContentType(ContentTypes.TEXT_PRIMARY_TYPE, OEB.X_OEB1_DOCUMENT_SUBTYPE, null);
 
 	/**The "application/x-maqro+rdf+xml" content type.*/
 	protected final static ContentType MAQRO_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, X_MAQRO_RDF_XML_SUBTYPE, null);
