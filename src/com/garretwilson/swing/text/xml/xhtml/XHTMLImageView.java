@@ -7,7 +7,8 @@ import java.net.URISyntaxException;
 import javax.swing.text.*;
 import com.garretwilson.awt.*;
 import com.garretwilson.swing.text.xml.*;
-import static com.garretwilson.text.xml.xhtml.XHTML.*;
+
+import static com.globalmentor.text.xml.xhtml.XHTML.*;
 
 import com.globalmentor.util.*;
 

@@ -7,12 +7,13 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.rdf.tree.*;
-import com.garretwilson.text.CharacterEncoding;
-import com.garretwilson.text.xml.XMLDOMImplementation;
-import com.garretwilson.text.xml.XMLProcessor;
-import com.garretwilson.text.xml.XMLSerializer;
 import com.garretwilson.model.ResourceModel;
 import com.garretwilson.rdf.*;
+import com.globalmentor.text.CharacterEncoding;
+import com.globalmentor.text.xml.XMLDOMImplementation;
+import com.globalmentor.text.xml.XMLProcessor;
+import com.globalmentor.text.xml.XMLSerializer;
+
 import org.w3c.dom.*;
 
 /**Panel that displays RDF and allows it to be explored. A tab is

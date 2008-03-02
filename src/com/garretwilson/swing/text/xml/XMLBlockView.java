@@ -10,9 +10,9 @@ import com.garretwilson.swing.text.*;
 import static com.garretwilson.swing.text.SwingTextUtilities.*;
 import static com.garretwilson.swing.text.ViewUtilities.*;
 import com.garretwilson.swing.text.xml.css.*;
-import com.garretwilson.text.xml.stylesheets.css.*;
 import com.globalmentor.java.CharSequences;
 import com.globalmentor.java.Characters;
+import com.globalmentor.text.xml.stylesheets.css.*;
 import com.globalmentor.util.Debug;
 
 import org.w3c.dom.css.CSSStyleDeclaration;

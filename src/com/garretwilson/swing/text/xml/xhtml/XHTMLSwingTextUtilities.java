@@ -6,7 +6,8 @@ import java.net.URI;
 import javax.mail.internet.ContentType;
 import javax.swing.text.*;
 import com.garretwilson.swing.text.xml.XMLStyleUtilities;
-import static com.garretwilson.text.xml.xhtml.XHTML.*;
+
+import static com.globalmentor.text.xml.xhtml.XHTML.*;
 
 import com.globalmentor.io.ContentTypeConstants;
 import com.globalmentor.io.ContentTypes;

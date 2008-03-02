@@ -38,19 +38,20 @@ import com.garretwilson.swing.text.xml.xeb.XEBEditorKit;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLLinkController;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLViewFactory;
-import com.garretwilson.text.xml.XMLDOMImplementation;
-import com.garretwilson.text.xml.XMLReader;
-import com.garretwilson.text.xml.XMLUtilities;
-import com.garretwilson.text.xml.oeb.OEBConstants;
-import com.garretwilson.text.xml.xhtml.XHTML;
 import com.globalmentor.io.*;
+import com.globalmentor.text.TextUtilities;
+import com.globalmentor.text.xml.XMLDOMImplementation;
+import com.globalmentor.text.xml.XMLReader;
+import com.globalmentor.text.xml.XMLUtilities;
+import com.globalmentor.text.xml.oeb.OEBConstants;
+import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.util.Debug;
 import com.globalmentor.util.zip.*;
 
-import static com.garretwilson.text.xml.XMLUtilities.*;
 import static com.globalmentor.io.ContentTypeConstants.*;
 import static com.globalmentor.io.ContentTypes.*;
 import static com.globalmentor.java.Objects.*;
+import static com.globalmentor.text.xml.XMLUtilities.*;
 import static com.globalmentor.util.Iterators.*;
 
 /**A text component that can be marked up with attributes that are represented
@@ -86,7 +87,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 	protected final static ContentType XEB_ZIP_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, X_XEBOOK_RDF_XML_ZIP_SUBTYPE, null);
 
 	/**The "text/plain" content type.*/
-	protected final static ContentType TEXT_PLAIN_MEDIA_TYPE=new ContentType(ContentTypes.TEXT_PRIMARY_TYPE, PLAIN_SUBTYPE, null);
+	protected final static ContentType TEXT_PLAIN_MEDIA_TYPE=new ContentType(ContentTypes.TEXT_PRIMARY_TYPE, TextUtilities.PLAIN_SUBTYPE, null);
 
 	//TODO fix asynchronous stop-gap kludge to correctly get the asynchronous setting from the document---if that's the best way to do it
 	protected boolean asynchronousLoad=false;

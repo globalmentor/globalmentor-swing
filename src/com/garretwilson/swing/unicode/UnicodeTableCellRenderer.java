@@ -8,7 +8,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import com.garretwilson.awt.FontUtilities;
-import com.garretwilson.text.unicode.*;
+import com.globalmentor.text.unicode.*;
 
 /**A renderer that displays Unicode code points in a table.
 @author Garret Wilson

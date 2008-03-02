@@ -1,6 +1,6 @@
 package com.garretwilson.swing.text.xml;
 
-import com.garretwilson.text.xml.XMLNamedObject;
+import com.globalmentor.text.xml.XMLNamedObject;
 
 /**An XML attribute stored in a Swing attribute set. 
 @author Garret

@@ -11,8 +11,10 @@ import com.garretwilson.swing.text.FragmentView;
 import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.text.xml.XMLListView;
 import com.garretwilson.swing.text.xml.XMLStyleUtilities;
-import static com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants.*;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities;
+
+import static com.globalmentor.text.xml.stylesheets.css.XMLCSSConstants.*;
+
+import com.globalmentor.text.xml.stylesheets.css.XMLCSSUtilities;
 import com.globalmentor.util.Debug;
 
 /**Class to paint XML CSS views.

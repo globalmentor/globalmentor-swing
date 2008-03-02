@@ -7,10 +7,10 @@ import java.awt.event.*;
 import java.text.MessageFormat;
 import java.util.*;
 import javax.swing.*;
-import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
+import com.globalmentor.text.directory.vcard.*;
 
 /**A panel allowing entry of one or more addresses of a vCard <code>text/directory</code>
 	profile as defined in <a href="http://www.ietf.org/rfc/rfc2426.txt">RFC 2426</a>,

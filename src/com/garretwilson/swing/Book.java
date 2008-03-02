@@ -25,8 +25,8 @@ import com.garretwilson.swing.text.Annotation;
 import static com.garretwilson.swing.text.TextComponentConstants.*;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
-import com.garretwilson.text.xml.oeb.*;
 import com.globalmentor.io.*;
+import com.globalmentor.text.xml.oeb.*;
 import com.globalmentor.util.*;
 import com.globalmentor.util.prefs.PreferencesUtilities;
 

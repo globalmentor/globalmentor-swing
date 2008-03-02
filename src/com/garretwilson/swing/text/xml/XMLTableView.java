@@ -21,10 +21,10 @@ import static com.garretwilson.swing.text.SwingTextUtilities.*;
 import static com.garretwilson.swing.text.ViewUtilities.*;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants;
 //G***del import com.garretwilson.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;  //G***del if we can
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities;
+import com.globalmentor.text.xml.stylesheets.css.XMLCSSConstants;
+import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
+import com.globalmentor.text.xml.stylesheets.css.XMLCSSUtilities;
 import com.globalmentor.util.Debug;
 
 import javax.swing.text.html.HTML;  //G***del

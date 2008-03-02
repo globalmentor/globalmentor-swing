@@ -7,11 +7,11 @@ import javax.swing.*;
 import javax.swing.text.*;
 
 import com.garretwilson.model.*;
-import com.garretwilson.text.CharacterEncoding;
-import com.garretwilson.text.xml.XMLDocumentModelIOKit;
-import com.garretwilson.text.xml.XMLNodeModel;
-import com.garretwilson.text.xml.XMLProcessor;
 import com.globalmentor.io.*;
+import com.globalmentor.text.CharacterEncoding;
+import com.globalmentor.text.xml.XMLDocumentModelIOKit;
+import com.globalmentor.text.xml.XMLNodeModel;
+import com.globalmentor.text.xml.XMLProcessor;
 
 /**An implementation for loading information into a view or
 	saving information from an XML panel using a model's I/O kit.

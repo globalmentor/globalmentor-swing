@@ -6,17 +6,17 @@ import javax.mail.internet.ContentType;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import static com.globalmentor.io.ContentTypeConstants.PLAIN_SUBTYPE;
 import static com.globalmentor.io.ContentTypes.*;
 
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.unicode.UnicodeStatusBar;
-import com.garretwilson.text.CharacterEncoding;
-import com.garretwilson.text.xml.XMLNodeModel;
-import com.garretwilson.text.xml.XMLProcessor;
-import com.garretwilson.text.xml.XMLSerializer;
-import com.garretwilson.text.xml.xhtml.XHTML;
 import com.globalmentor.io.*;
+import com.globalmentor.text.CharacterEncoding;
+import static com.globalmentor.text.TextUtilities.*;
+import com.globalmentor.text.xml.XMLNodeModel;
+import com.globalmentor.text.xml.XMLProcessor;
+import com.globalmentor.text.xml.XMLSerializer;
+import com.globalmentor.text.xml.xhtml.XHTML;
 
 import org.w3c.dom.*;
 

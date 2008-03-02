@@ -6,7 +6,7 @@ import java.util.*;
 import static java.util.Collections.*;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
-import com.garretwilson.text.*;
+import com.globalmentor.text.*;
 import com.globalmentor.util.*;
 
 /**A panel allowing selection of a language.

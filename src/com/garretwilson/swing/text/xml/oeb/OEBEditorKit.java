@@ -6,9 +6,9 @@ import javax.swing.text.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.xeb.XEBEditorKit;
-import com.garretwilson.text.xml.XMLProcessor;
-import com.garretwilson.text.xml.oeb.*;
 import com.globalmentor.io.*;
+import com.globalmentor.text.xml.XMLProcessor;
+import com.globalmentor.text.xml.oeb.*;
 
 /**An editor kit for an OEB publication.
 @see XMLEditorKit

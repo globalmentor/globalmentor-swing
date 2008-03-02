@@ -7,9 +7,9 @@ import com.garretwilson.itu.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.itu.*;
-import com.garretwilson.text.ArgumentSyntaxException;
-import com.garretwilson.text.SyntaxException;
-import com.garretwilson.text.directory.vcard.*;
+import com.globalmentor.text.ArgumentSyntaxException;
+import com.globalmentor.text.SyntaxException;
+import com.globalmentor.text.directory.vcard.*;
 
 /**A panel containing fields for the <code>TEL</code> type of a vCard
 	<code>text/directory</code>	profile as defined in

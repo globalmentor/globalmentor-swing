@@ -8,12 +8,12 @@ import org.w3c.dom.css.*;
 
 import static com.garretwilson.swing.text.StyleUtilities.*;
 import static com.garretwilson.swing.text.xml.XMLStyleConstants.*;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSPrimitiveValue;  //G***remove all these and use the DOM
-import static com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants.*;
 import static com.garretwilson.swing.text.xml.css.XMLCSSStyleConstants.*;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSValueList;
+import static com.globalmentor.text.xml.stylesheets.css.XMLCSSConstants.*;
 
+import com.globalmentor.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
+import com.globalmentor.text.xml.stylesheets.css.XMLCSSUtilities;
+import com.globalmentor.text.xml.stylesheets.css.XMLCSSValueList;
 import com.globalmentor.util.Debug;
 
 /**A collection of utilities used for rendering XML using CSS in Swing.

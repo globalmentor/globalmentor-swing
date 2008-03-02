@@ -25,7 +25,7 @@ import com.garretwilson.swing.*;
 
 import static com.garretwilson.swing.ComponentUtilities.*;
 import com.garretwilson.swing.event.ListDataAdapter;
-import com.garretwilson.text.unicode.*;
+import com.globalmentor.text.unicode.*;
 
 /**A panel that shows the set of Unicode code points and related information.
 This panel fires an action when a Unicode code point has been selected.

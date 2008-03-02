@@ -22,9 +22,6 @@ import com.garretwilson.rdf.xpackage.XPackageUtilities;
 import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.text.BasicStyledDocument;
 import com.garretwilson.swing.text.SwingTextUtilities;
-import com.garretwilson.text.xml.stylesheets.css.AbstractXMLCSSStylesheetApplier;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSUtilities; //G***maybe move
 import com.garretwilson.sound.sampled.SampledSoundUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
@@ -32,12 +29,15 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
 import com.globalmentor.io.*;
 import com.globalmentor.java.*;
 import com.globalmentor.marmot.Marmot;
+import com.globalmentor.text.xml.stylesheets.css.AbstractXMLCSSStylesheetApplier;
+import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
+import com.globalmentor.text.xml.stylesheets.css.XMLCSSUtilities;
 import com.globalmentor.util.Debug;
 import com.globalmentor.util.NameValuePair;
 
 /**A document that models XML.
-@see com.garretwilson.text.xml.XMLProcessor
-@see com.garretwilson.text.xml.XMLDocument
+@see com.globalmentor.text.xml.XMLProcessor
+@see com.globalmentor.text.xml.XMLDocument
 @author Garret Wilson
 */
 public class XMLDocument extends BasicStyledDocument

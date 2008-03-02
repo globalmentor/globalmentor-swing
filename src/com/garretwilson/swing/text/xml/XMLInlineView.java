@@ -11,11 +11,11 @@ import java.util.Arrays;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.*;
 import com.garretwilson.awt.FontUtilities;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 //G***del when works import com.garretwilson.swing.text.xml.css.XMLCSSSimpleAttributeSet;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.AttributeSetUtilities; //G***del when not needed
+import com.globalmentor.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
+import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 import com.globalmentor.util.Debug;
 
 /**View class for all inline elements. Uses CSS attributes.

@@ -2,9 +2,9 @@ package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
 import javax.swing.*;
-import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.swing.*;
+import com.globalmentor.text.directory.vcard.*;
 
 /**A panel allowing specification of the types of telephone of the <code>TEL</code>
 	type of a vCard <code>text/directory</code>

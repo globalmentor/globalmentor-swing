@@ -11,7 +11,7 @@ import com.garretwilson.swing.text.*;
 import static com.garretwilson.swing.text.SwingTextUtilities.*;
 import static com.garretwilson.swing.text.rdf.RDFStyleUtilities.*;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
-import com.garretwilson.text.xml.xhtml.XHTML;
+import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.util.Debug;
 
 /**A view to represent an entire section. This view understands that its

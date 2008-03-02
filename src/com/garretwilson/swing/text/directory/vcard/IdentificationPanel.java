@@ -9,8 +9,8 @@ import javax.swing.event.*;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
 import com.garretwilson.swing.event.*;
-import com.garretwilson.text.directory.vcard.*;
 import com.globalmentor.java.*;
+import com.globalmentor.text.directory.vcard.*;
 import com.globalmentor.util.*;
 
 /**A panel containing fields for the identification types of a vCard

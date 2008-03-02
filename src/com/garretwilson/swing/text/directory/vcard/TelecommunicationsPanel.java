@@ -9,11 +9,11 @@ import java.awt.event.*;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 import javax.swing.*;
-import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
+import com.globalmentor.text.directory.vcard.*;
 import com.globalmentor.util.*;
 
 /**A panel allowing entry of one or more telecommunication types

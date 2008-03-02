@@ -6,8 +6,8 @@ import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.itu.*;
 import com.garretwilson.swing.*;
-import com.garretwilson.text.ArgumentSyntaxException;
-import com.garretwilson.text.SyntaxException;
+import com.globalmentor.text.ArgumentSyntaxException;
+import com.globalmentor.text.SyntaxException;
 
 /**A panel allowing entry of an international public telecommunication number
 	for geographic areas as defined in ITU-T E.164,

@@ -4,7 +4,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.JTabbedPane;
 import com.garretwilson.swing.*;
-import com.garretwilson.text.directory.vcard.*;
+import com.globalmentor.text.directory.vcard.*;
 import com.globalmentor.util.*;
 
 /**A panel containing panels to edit fields for a vCard <code>text/directory</code>

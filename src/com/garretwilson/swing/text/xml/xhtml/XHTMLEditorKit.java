@@ -9,11 +9,12 @@ import javax.swing.text.Document;
 import javax.swing.text.MutableAttributeSet;
 import com.garretwilson.swing.text.StyleUtilities;
 import com.garretwilson.swing.text.xml.*;
-import com.garretwilson.text.xml.XMLDOMImplementation;
-import com.garretwilson.text.xml.xhtml.*;
 import com.globalmentor.io.*;
+import com.globalmentor.text.xml.XMLDOMImplementation;
+import com.globalmentor.text.xml.xhtml.*;
 
-import static com.garretwilson.text.xml.xhtml.XHTML.*;
+import static com.globalmentor.text.xml.xhtml.XHTML.*;
+
 import org.w3c.dom.*;
 
 /**An editor kit for XHTML.

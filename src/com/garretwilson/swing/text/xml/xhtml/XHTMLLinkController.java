@@ -2,7 +2,8 @@ package com.garretwilson.swing.text.xml.xhtml;
 
 import javax.swing.text.*;
 import com.garretwilson.swing.text.xml.*;
-import static com.garretwilson.text.xml.xhtml.XHTML.*;
+
+import static com.globalmentor.text.xml.xhtml.XHTML.*;
 
 /**Class to watch the associated component and fire hyperlink events on it
 	when appropriate.

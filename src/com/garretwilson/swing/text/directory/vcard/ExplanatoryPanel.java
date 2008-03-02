@@ -8,9 +8,9 @@ import java.net.*;
 import java.util.*;
 import static java.util.Collections.*;
 import javax.swing.*;
-import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.swing.*;
 import com.globalmentor.java.*;
+import com.globalmentor.text.directory.vcard.*;
 import com.globalmentor.util.*;
 
 /**A panel allowing entry of the explanatory types of a vCard <code>text/directory</code>

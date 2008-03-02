@@ -11,7 +11,7 @@ import com.garretwilson.swing.*;
 import static com.garretwilson.swing.text.TextComponentConstants.*;
 import static com.globalmentor.java.Objects.*;
 
-import com.garretwilson.text.unicode.*;
+import com.globalmentor.text.unicode.*;
 
 /**A status bar showing Unicode code point value, name, and category.
 @author Garret Wilson

@@ -30,12 +30,12 @@ import com.garretwilson.swing.text.ContainerView;
 import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSConstants; //G***maybe make everything that comes in through the XMLCSSStyleConstants class be agnostic of CSS, and remove the CSS-specific style strings
-import com.garretwilson.text.xml.oeb.OEBConstants;
-import com.garretwilson.text.xml.xhtml.XHTML;
 //G***del; not used import com.garretwilson.util.ArrayUtilities;
 import com.globalmentor.java.Java;
 import com.globalmentor.java.Objects;
+import com.globalmentor.text.xml.oeb.OEBConstants;
+import com.globalmentor.text.xml.stylesheets.css.XMLCSSConstants;
+import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.util.Debug;
 
 /**View of several pages.

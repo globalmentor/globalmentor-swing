@@ -5,10 +5,10 @@ import java.io.*;
 import java.net.URI;
 import java.util.*;
 import javax.swing.*;
-import com.garretwilson.text.xml.XMLSerializer;
 import com.garretwilson.model.*;
 import com.garretwilson.rdf.*;
 import com.globalmentor.java.Booleans;
+import com.globalmentor.text.xml.XMLSerializer;
 import com.globalmentor.util.*;
 
 import org.w3c.dom.*;

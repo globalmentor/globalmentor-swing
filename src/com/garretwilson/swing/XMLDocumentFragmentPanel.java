@@ -2,10 +2,10 @@ package com.garretwilson.swing;
 
 import java.net.URI;
 import javax.mail.internet.ContentType;
-import com.garretwilson.text.xml.XMLNamespaceProcessor;
-import com.garretwilson.text.xml.XMLNodeModel;
-import com.garretwilson.text.xml.XMLUtilities;
 import com.globalmentor.io.*;
+import com.globalmentor.text.xml.XMLNamespaceProcessor;
+import com.globalmentor.text.xml.XMLNodeModel;
+import com.globalmentor.text.xml.XMLUtilities;
 
 import org.w3c.dom.*;
 

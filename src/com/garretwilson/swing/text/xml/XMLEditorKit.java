@@ -22,10 +22,10 @@ import static com.globalmentor.java.Objects.*;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.text.BasicStyledEditorKit;
 import com.garretwilson.swing.text.xml.css.*;
-import com.garretwilson.text.xml.*;
-import com.garretwilson.text.xml.stylesheets.css.*;	//G***del if we don't need
 import com.globalmentor.io.*;
 import com.globalmentor.java.*;
+import com.globalmentor.text.xml.*;
+import com.globalmentor.text.xml.stylesheets.css.*;
 import com.globalmentor.util.*;
 
 import org.w3c.dom.*;
@@ -33,7 +33,7 @@ import org.w3c.dom.css.*;
 
 /**An editor kit for XML.
 @author Garret Wilson
-@see com.garretwilson.text.xml.XMLProcessor
+@see com.globalmentor.text.xml.XMLProcessor
 */
 public class XMLEditorKit extends BasicStyledEditorKit
 {

@@ -7,10 +7,10 @@ import java.beans.PropertyChangeListener;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.DocumentListener;
-import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.globalmentor.java.*;
+import com.globalmentor.text.directory.vcard.*;
 import com.globalmentor.util.*;
 
 /**A panel allowing entry of the "LABEL" type of a vCard <code>text/directory</code>

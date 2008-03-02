@@ -4,8 +4,9 @@ import java.net.URI;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.tree.*;
-import com.garretwilson.text.xml.XMLDOMImplementation;
 import com.garretwilson.rdf.*;
+import com.globalmentor.text.xml.XMLDOMImplementation;
+
 import org.w3c.dom.*;
 
 /**Class that displays RDF in a tree and allows it to be explored.

@@ -26,15 +26,6 @@ import java.util.*;
 import com.garretwilson.net.URLUtilities;
 //G***del when works import com.garretwilson.text.xml.*;
 import com.garretwilson.rdf.*;
-import com.garretwilson.text.xml.xlink.XLinkConstants;
-import com.garretwilson.text.xml.XMLDOMImplementation;
-import com.garretwilson.text.xml.XMLNamespaceProcessor;
-import com.garretwilson.text.xml.XMLProcessor;
-import com.garretwilson.text.xml.XMLSerializer;
-import com.garretwilson.text.xml.XMLUtilities;
-import com.garretwilson.text.xml.oeb.*;	//G***del
-import com.garretwilson.text.xml.xhtml.XHTML;	//G***del
-import com.garretwilson.text.xml.stylesheets.css.*;	//G***del if we don't need
 //G***del import com.garretwilson.text.xml.stylesheets.css.oeb.DefaultOEBCSSStyleSheet;	//G***del if we don't need
 import com.garretwilson.swing.XMLTextPane;
 import com.garretwilson.swing.event.ProgressEvent;
@@ -47,6 +38,15 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.globalmentor.java.Objects;
 import com.globalmentor.java.StringBuffers;
 import com.globalmentor.java.Strings;
+import com.globalmentor.text.xml.XMLDOMImplementation;
+import com.globalmentor.text.xml.XMLNamespaceProcessor;
+import com.globalmentor.text.xml.XMLProcessor;
+import com.globalmentor.text.xml.XMLSerializer;
+import com.globalmentor.text.xml.XMLUtilities;
+import com.globalmentor.text.xml.oeb.*;
+import com.globalmentor.text.xml.stylesheets.css.*;
+import com.globalmentor.text.xml.xhtml.XHTML;
+import com.globalmentor.text.xml.xlink.XLinkConstants;
 import com.globalmentor.util.Debug;
 import com.globalmentor.util.NameValuePair;
 

@@ -6,9 +6,9 @@ import java.beans.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import com.garretwilson.text.directory.vcard.*;
 import com.garretwilson.swing.*;
 import com.globalmentor.java.*;
+import com.globalmentor.text.directory.vcard.*;
 import com.globalmentor.util.*;
 
 /**A panel allowing entry of the "N" type of a vCard <code>text/directory</code>
