@@ -11,7 +11,7 @@ import java.security.SecureClassLoader;
 import java.security.PrivilegedExceptionAction;
 import static com.garretwilson.net.URIConstants.*;
 import com.garretwilson.net.URIs;
-import com.globalmentor.io.InputStreamUtilities;
+import com.globalmentor.io.InputStreams;
 
 import static com.globalmentor.io.FileConstants.*;
 import static com.globalmentor.java.Java.*;
@@ -100,7 +100,7 @@ public class XMLClassLoader extends SecureClassLoader
 									try
 									{
 											//read the class bytes from the input stream
-										final byte[] classBytes=InputStreamUtilities.getBytes(inputStream);
+										final byte[] classBytes=InputStreams.getBytes(inputStream);
 //G***del Debug.trace("XMLClassLoader read class bytes, byte count: "+classBytes.length); //G***del
 											//create a class from the bytes and return the class
 										return defineClass(name, classBytes, 0, classBytes.length, (CodeSource)null); //G***check about using a CodeSource

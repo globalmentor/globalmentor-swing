@@ -411,7 +411,7 @@ G***comment
 				final InputStream resourceInputStream=getResourceAsInputStream(resourceURI);  //get an input stream to the resource
 				try
 				{
-					final byte[] imageBytes=InputStreamUtilities.getBytes(resourceInputStream);  //read the bytes from the input stream
+					final byte[] imageBytes=InputStreams.getBytes(resourceInputStream);  //read the bytes from the input stream
 					final Toolkit toolkit=Toolkit.getDefaultToolkit();	//get the default toolkit
 					final Image image=toolkit.createImage(imageBytes);  //create an image from the bytes
 					resource=image; //G***testing
