@@ -52,11 +52,11 @@ public class AboutPanel extends BasicPanel
 				resource=newResource;	//save the resource
 				if(resource!=null)	//if there is a new resource
 				{
-					final RDFObject titleObject=DCUtilities.getTitle(resource);	//get the title object
+					final RDFObject titleObject=RDFDublinCore.getTitle(resource);	//get the title object
 					setTitle(titleObject!=null ? titleObject.toString() : null);	//set the title
-					final RDFObject versionObject=VersionUtilities.getVersion(resource);	//get the version object
+					final RDFObject versionObject=RDFVersion.getVersion(resource);	//get the version object
 					setVersion(versionObject!=null ? versionObject.toString() : null);	//set the version
-					final RDFObject rightsObject=DCUtilities.getRights(resource);	//get the rights
+					final RDFObject rightsObject=RDFDublinCore.getRights(resource);	//get the rights
 					setCopyright(rightsObject!=null ? rightsObject.toString() : null);	//set the copyright
 				}
 				updateStatus();	//update our status based upon whether we now have a resource

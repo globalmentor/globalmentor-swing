@@ -7,18 +7,15 @@ import java.util.*;
 import javax.mail.internet.ContentType;
 import javax.swing.text.*;
 
-
 import com.garretwilson.model.ResourceModel;
-
-
 
 import com.garretwilson.swing.ListListModel;
 import com.garretwilson.swing.event.*;
 import static com.garretwilson.swing.text.rdf.RDFStyleUtilities.*;
 import static com.globalmentor.io.ContentTypeConstants.*;
-import static com.globalmentor.rdf.RDFUtilities.*;
-import static com.globalmentor.rdf.maqro.MAQROConstants.*;
-import static com.globalmentor.rdf.xeb.XEBConstants.*;
+import static com.globalmentor.rdf.RDFResources.*;
+import static com.globalmentor.rdf.maqro.MAQRO.*;
+import static com.globalmentor.rdf.xeb.RDFXEB.*;
 
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.XMLEditorKit.ContentData;
@@ -194,7 +191,7 @@ System.out.println("Finished with file.");	//G***del
 			final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(inputStream, swingXMLDocument.getBaseURI());	//parse the public description document
 			xmlDocument.normalize(); //normalize the package description document
 			final RDF rdf=new RDF();  //create a new RDF data model
-			rdf.registerResourceFactory(XEB_NAMESPACE_URI, new XEBUtilities());  //register an XEbook factory TODO use a common instance
+			rdf.registerResourceFactory(XEB_NAMESPACE_URI, new RDFXEB());  //register an XEbook factory TODO use a common instance
 			final RDFXMLProcessor rdfProcessor=new RDFXMLProcessor(rdf);	//create a new RDF processor using the RDF data model we already created
 			try
 			{
@@ -221,10 +218,10 @@ System.out.println("Finished with file.");	//G***del
 	*/
 	protected void read(final RDF rdf, final XMLDocument swingXMLDocument, int pos) throws IOException, BadLocationException
 	{
-Debug.trace(RDFUtilities.toString(rdf));
+Debug.trace(RDFResources.toString(rdf));
 //G***del if not needed			final URL publicationURL=oebDocument.getBaseURL();  //get the base URL from the document G***what if we don't get a URL back?
 //TODO del if not needed		swingXMLDocument.setRDF(rdf); //set the RDF used to describe the resources
-	  final Publication publication=(Publication)RDFUtilities.getResourceByType(rdf, XEB_NAMESPACE_URI, BOOK_CLASS_NAME);	//get the publication from the data model
+	  final Publication publication=(Publication)RDFResources.getResourceByType(rdf, XEB_NAMESPACE_URI, BOOK_CLASS_NAME);	//get the publication from the data model
 	  if(publication!=null)	//if there is a book
 	  {
 			swingXMLDocument.setPublication(publication);	//show the XML document which publication it's associated with
@@ -256,7 +253,7 @@ Debug.trace(RDFUtilities.toString(rdf));
 			{
 //G***del Debug.trace("OEBEditorKit.read() Getting item: "+i+" of "+publication.getSpineList().size());
 				final RDFResource item=itemList.get(i);	//get a reference to this item
-				final String itemHRef=XPackageUtilities.getLocationHRef(item);  //get the item's href
+				final String itemHRef=XPackage.getLocationHRef(item);  //get the item's href
 				if(itemHRef!=null)	//if this item has an href
 				{
 					fireMadeProgress(new ProgressEvent(this, READ_TASK, "Loading item: "+itemHRef, i, spineItemCount));	//G***testing i18n

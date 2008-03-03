@@ -169,8 +169,8 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 		if(userObject instanceof RDFResource) //if we're representing a resource
 		{
 			final RDFResource resource=(RDFResource)userObject; //cast the user object to a resource
-			final RDFResource type=RDFUtilities.getType(resource);  //get the type of the resource
-			final RDFLiteral label=RDFSUtilities.getLabel(resource);	//get the label of the resource
+			final RDFResource type=RDFResources.getType(resource);  //get the type of the resource
+			final RDFLiteral label=RDFS.getLabel(resource);	//get the label of the resource
 			boolean hasPredicateToken=false;	//we'll note whether we ever have something to represent the predicate of the statement
 			if(type!=null) //if we have a type
 			{
@@ -199,7 +199,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 				stringBuffer.append('[').append(getXMLGenerator().getLabel(resource.getURI())).append(']');  //append "[referenceURI]" label
 				hasPredicateToken=true;	//show that we have something to represent the predicate
 			}
-			final RDFObject literalValue=RDFUtilities.getValue(resource);	//get the rdf:value property value, if there is one
+			final RDFObject literalValue=RDFResources.getValue(resource);	//get the rdf:value property value, if there is one
 			if(literalValue instanceof RDFLiteral)	//if this resource has a literal value
 			{
 				if(property!=null && !hasPredicateToken) //if we had a property but no predicate representation

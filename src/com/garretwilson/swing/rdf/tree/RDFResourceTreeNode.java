@@ -2,7 +2,7 @@ package com.garretwilson.swing.rdf.tree;
 
 import javax.swing.tree.*;
 
-import static com.globalmentor.rdf.RDFUtilities.*;
+import static com.globalmentor.rdf.RDFResources.*;
 
 import com.globalmentor.rdf.*;
 import com.globalmentor.rdf.rdfs.*;

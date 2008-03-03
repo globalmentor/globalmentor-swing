@@ -84,7 +84,7 @@ public class RDFResourceTreeCellRenderer extends UserObjectTreeCellRenderer
 		if(userObject instanceof RDFResource) //if this is an RDF resource
 		{
 //G***del			final RDFResource rdfResource=(RDFResource)userObject;  //cast the user object to an RDF resource
-			return RDFUtilities.getType((RDFResource)userObject); //return the resource's type
+			return RDFResources.getType((RDFResource)userObject); //return the resource's type
 		}
 		else if(userObject instanceof RDFLiteral)  //if this is an RDF literal
 		{

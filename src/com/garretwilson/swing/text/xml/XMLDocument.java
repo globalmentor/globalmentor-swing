@@ -27,7 +27,7 @@ import com.globalmentor.io.*;
 import com.globalmentor.java.*;
 import com.globalmentor.marmot.Marmot;
 import com.globalmentor.rdf.*;
-import com.globalmentor.rdf.xpackage.XPackageUtilities;
+import com.globalmentor.rdf.xpackage.XPackage;
 import com.globalmentor.sound.sampled.SampledSounds;
 import com.globalmentor.text.xml.stylesheets.css.AbstractXMLCSSStylesheetApplier;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSS;

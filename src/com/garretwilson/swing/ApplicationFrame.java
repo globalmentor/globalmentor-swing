@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.globalmentor.rdf.*;
-import com.globalmentor.rdf.dublincore.DCUtilities;
+import com.globalmentor.rdf.dublincore.RDFDublinCore;
 import com.globalmentor.util.Debug;
 
 /**Main frame parent class for an application.
@@ -77,7 +77,7 @@ public class ApplicationFrame extends BasicFrame
 		final String title;
 		if(getApplication()!=null)	//if we have an application
 		{
-			final RDFObject titleObject=DCUtilities.getTitle(getApplication());	//get the application's title object
+			final RDFObject titleObject=RDFDublinCore.getTitle(getApplication());	//get the application's title object
 			title=titleObject!=null ? titleObject.toString() : null;	//use the title
 		}
 		else	//if we have no application

@@ -5,10 +5,10 @@ import java.net.URI;
 import com.garretwilson.swing.SimpleListCellRenderer;
 import com.globalmentor.rdf.RDFLiteral;
 import com.globalmentor.rdf.RDFResource;
-import com.globalmentor.rdf.RDFUtilities;
-import com.globalmentor.rdf.dublincore.DCUtilities;
-import com.globalmentor.rdf.rdfs.RDFSUtilities;
-import com.globalmentor.rdf.xpackage.XPackageUtilities;
+import com.globalmentor.rdf.RDFResources;
+import com.globalmentor.rdf.dublincore.RDFDublinCore;
+import com.globalmentor.rdf.rdfs.RDFS;
+import com.globalmentor.rdf.xpackage.XPackage;
 
 /**A list cell renderer which shows the resource label.
 The resource label is determined in the following order:
@@ -33,14 +33,14 @@ public class RDFResourceLabelListCellRenderer extends SimpleListCellRenderer
 	{
   	final RDFResource resource=(RDFResource)value;	//cast the value to an RDF resource
   	String label=null;	//we'll try to find a label
-  	final RDFLiteral rdfsLabel=RDFSUtilities.getLabel(resource);	//try to get an rdfs:label
+  	final RDFLiteral rdfsLabel=RDFS.getLabel(resource);	//try to get an rdfs:label
   	if(rdfsLabel!=null)	//if there is an rdfs:label
   	{
   		label=rdfsLabel.getLexicalForm();	//get the lexical form of the label
   	}
   	else	//if there is no rdfs:label
   	{
-  		final RDFLiteral dcTitle=RDFUtilities.asLiteral(DCUtilities.getTitle(resource));	//try to get a dc:title
+  		final RDFLiteral dcTitle=RDFResources.asLiteral(RDFDublinCore.getTitle(resource));	//try to get a dc:title
 	  	if(dcTitle!=null)	//if there is a dc:title
 	  	{
 	  		label=dcTitle.getLexicalForm();	//get the lexical form of the title
@@ -54,7 +54,7 @@ public class RDFResourceLabelListCellRenderer extends SimpleListCellRenderer
 		  	}
 	  		else	//if there is no reference URI
 		  	{
-		  		label=XPackageUtilities.getLocationHRef(resource);	//try to get an xpackage:location xlink:href
+		  		label=XPackage.getLocationHRef(resource);	//try to get an xpackage:location xlink:href
 			  	if(label==null) //if there is no XPackage location href
 			  	{
 			  		label=resource.toString();	//settle for the string version of the resource

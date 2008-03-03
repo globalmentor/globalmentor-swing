@@ -14,7 +14,7 @@ import javax.swing.text.Element;
 
 import static com.globalmentor.io.Charsets.*;
 import static com.globalmentor.java.Objects.*;
-import static com.globalmentor.rdf.maqro.MAQROConstants.*;
+import static com.globalmentor.rdf.maqro.MAQRO.*;
 
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.text.BasicStyledEditorKit;
