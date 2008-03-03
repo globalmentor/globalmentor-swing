@@ -15,7 +15,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;  //G***del when image click code is moved elsewhere
 import com.garretwilson.model.ResourceModel;
-import com.garretwilson.net.*;
 import com.garretwilson.rdf.*;
 import com.garretwilson.resources.icon.*;
 import com.garretwilson.swing.event.*;
@@ -26,6 +25,7 @@ import static com.garretwilson.swing.text.TextComponentConstants.*;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.globalmentor.io.*;
+import com.globalmentor.net.*;
 import com.globalmentor.text.xml.oeb.*;
 import com.globalmentor.util.*;
 import com.globalmentor.util.prefs.PreferencesUtilities;
@@ -539,7 +539,7 @@ Debug.trace("ready to fire property change");
 	{
 		final URI uri=getURI(); //get our current URI
 				//if the URI specifies a file, we can have a user data file
-		if(uri!=null && URIConstants.FILE_SCHEME.equals(uri.getScheme()))
+		if(uri!=null && URIs.FILE_SCHEME.equals(uri.getScheme()))
 		{
 		  final File file=new File(uri);  //create a file from the URI
 				//create a userdata filename with ".userdata.xml" appended

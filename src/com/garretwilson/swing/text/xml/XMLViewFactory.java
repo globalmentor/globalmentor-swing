@@ -23,7 +23,6 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import java.util.*;
-import com.garretwilson.net.URLUtilities;
 //G***del when works import com.garretwilson.text.xml.*;
 import com.garretwilson.rdf.*;
 //G***del import com.garretwilson.text.xml.stylesheets.css.oeb.DefaultOEBCSSStyleSheet;	//G***del if we don't need
@@ -38,6 +37,7 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.globalmentor.java.Objects;
 import com.globalmentor.java.StringBuffers;
 import com.globalmentor.java.Strings;
+import com.globalmentor.net.URLUtilities;
 import com.globalmentor.text.xml.XMLDOMImplementation;
 import com.globalmentor.text.xml.XMLProcessor;
 import com.globalmentor.text.xml.XMLSerializer;

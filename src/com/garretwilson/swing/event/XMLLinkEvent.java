@@ -5,7 +5,7 @@ import java.net.URI;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.Element;
 
-import com.garretwilson.net.URIs;
+import com.globalmentor.net.URIs;
 
 /**An event which represents a link within XML.
 Besides the normal <code>HyperlinkEvent</code> properties,

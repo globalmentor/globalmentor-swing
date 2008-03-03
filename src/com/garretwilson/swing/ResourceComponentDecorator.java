@@ -1,6 +1,6 @@
 package com.garretwilson.swing;
 
-import com.garretwilson.net.Resource;
+import com.globalmentor.net.Resource;
 
 /**Abstract class that can decorate a user interface from component changes
 	of a resource component manager.

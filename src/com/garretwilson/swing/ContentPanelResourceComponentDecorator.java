@@ -2,7 +2,7 @@ package com.garretwilson.swing;
 
 import java.awt.Component;
 
-import com.garretwilson.net.Resource;
+import com.globalmentor.net.Resource;
 
 /**Class that manages resource components in a content panel.
 <p>The content panel's content component is updated whenever the delegate

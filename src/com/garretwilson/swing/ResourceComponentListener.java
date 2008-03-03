@@ -2,7 +2,7 @@ package com.garretwilson.swing;
 
 import java.util.EventListener;
 
-import com.garretwilson.net.Resource;
+import com.globalmentor.net.Resource;
 
 /**Indicates the implementing class can listen for resource component changes.
 @param <R> The type of resource the components of which are being managed.

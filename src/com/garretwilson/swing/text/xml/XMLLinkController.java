@@ -10,10 +10,10 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
-import com.garretwilson.net.*;
 import com.garretwilson.swing.event.XMLLinkEvent;
 import com.globalmentor.io.ContentTypes;
 import com.globalmentor.java.*;
+import com.globalmentor.net.*;
 import com.globalmentor.text.xml.oeb.*;
 import com.globalmentor.text.xml.xlink.*;
 import com.globalmentor.util.*;

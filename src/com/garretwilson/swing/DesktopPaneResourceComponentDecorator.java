@@ -19,7 +19,7 @@ import com.garretwilson.awt.DefaultFocusable;
 
 import static com.globalmentor.java.Booleans.*;
 
-import com.garretwilson.net.Resource;
+import com.globalmentor.net.Resource;
 import com.globalmentor.util.Debug;
 import com.globalmentor.util.Modifiable;
 

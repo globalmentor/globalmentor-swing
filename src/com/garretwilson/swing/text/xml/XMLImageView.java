@@ -10,7 +10,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import javax.swing.*;
 import javax.swing.text.*;
-import com.garretwilson.net.URLUtilities;
+
+import com.globalmentor.net.URLUtilities;
 import com.globalmentor.util.Debug;
 
 /**View that displays an image. The image reference is kept using a soft pointer

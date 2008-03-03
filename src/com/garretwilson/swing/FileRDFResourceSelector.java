@@ -1,19 +1,20 @@
 package com.garretwilson.swing;
 
 import java.awt.Component;
-import java.awt.Rectangle;
 import java.io.*;
 import java.net.URI;
 import java.util.prefs.Preferences;
 
 import javax.swing.*;
 import com.garretwilson.model.*;
-import static com.garretwilson.net.URIConstants.*;
-import com.garretwilson.net.http.HTTPClient;
+
 import com.garretwilson.rdf.DefaultRDFResource;
 import com.garretwilson.rdf.RDFFileProcessor;
 import com.garretwilson.rdf.RDFResource;
+
 import com.globalmentor.io.*;
+import static com.globalmentor.net.URIs.*;
+import com.globalmentor.net.http.HTTPClient;
 import com.globalmentor.util.Debug;
 import com.globalmentor.util.prefs.PreferencesUtilities;
 

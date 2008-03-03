@@ -21,10 +21,6 @@ import org.w3c.dom.DocumentFragment;
 import com.garretwilson.applet.*;
 import com.garretwilson.awt.EventQueueUtilities;
 
-import com.garretwilson.net.BrowserLauncher;
-import com.garretwilson.net.URIConstants;
-import com.garretwilson.net.URIs;
-import com.garretwilson.net.URLUtilities;
 import com.garretwilson.rdf.maqro.MAQROConstants;
 import com.garretwilson.swing.event.PageEvent;
 import com.garretwilson.swing.event.PageListener;
@@ -39,6 +35,9 @@ import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLLinkController;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLViewFactory;
 import com.globalmentor.io.*;
+import com.globalmentor.net.BrowserLauncher;
+import com.globalmentor.net.URIs;
+import com.globalmentor.net.URLUtilities;
 import com.globalmentor.text.Text;
 import com.globalmentor.text.xml.XMLDOMImplementation;
 import com.globalmentor.text.xml.XMLReader;
@@ -853,7 +852,7 @@ try {
 		if(OEB_ZIP_MEDIA_TYPE.match(contentType) || XEB_ZIP_MEDIA_TYPE.match(contentType) || ZIP_MEDIA_TYPE.match(contentType))
 		{
 Debug.trace("found zip file: ", uri);  //G***del
-			if(URIConstants.FILE_SCHEME.equals(uri.getScheme()))  //if this is the file scheme
+			if(URIs.FILE_SCHEME.equals(uri.getScheme()))  //if this is the file scheme
 			{
 			  final File zipFile=new File(uri);  //create a file for accessing the zip file
 			  final ZipManager zipManager=new ZipManager(zipFile, uri);  //create a zip manager for accessing the file

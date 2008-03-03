@@ -1,4 +1,4 @@
-package com.garretwilson.net;
+package com.globalmentor.net;
 
 import java.net.*;
 

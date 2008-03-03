@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 import javax.swing.text.*;
-import com.garretwilson.net.URIs;
 import com.globalmentor.java.Strings;
+import com.globalmentor.net.URIs;
 import com.globalmentor.util.Debug;
 
 /**A view that displays an applet. Implements <code>AppletStub</code> so

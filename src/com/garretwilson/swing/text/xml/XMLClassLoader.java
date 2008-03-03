@@ -1,20 +1,14 @@
 package com.garretwilson.swing.text.xml;
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.security.AccessControlContext;
-import java.security.AccessController;
-import java.security.CodeSource;
-import java.security.SecureClassLoader;
-import java.security.PrivilegedExceptionAction;
-import static com.garretwilson.net.URIConstants.*;
-import com.garretwilson.net.URIs;
+import java.io.*;
+import java.net.*;
+import java.security.*;
+
 import com.globalmentor.io.InputStreams;
 
 import static com.globalmentor.io.FileConstants.*;
 import static com.globalmentor.java.Java.*;
+import static com.globalmentor.net.URIs.*;
 
 /**Class loader for retrieving Java classes needed in an XML document. This
 	class loader can be used to retrieve not only classes, but other types of
@@ -82,7 +76,7 @@ public class XMLClassLoader extends SecureClassLoader
 				//replace '.' with '/' and append ".class"
 			String href=name.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR).concat(String.valueOf(EXTENSION_SEPARATOR)).concat(CLASS_EXTENSION);
 			if(baseURI!=null) //if we have a base URI
-				href=URIs.createURI(baseURI, href).toString(); //create an href relative to the base URI
+				href=createURI(baseURI, href).toString(); //create an href relative to the base URI
 			final String finalHRef=href;  //put the href in a variable we wont' modify
 //G***del Debug.trace("XMLClassLoader.findClass() name: "+name+" href: "+href); //G***del
 		  return (Class)AccessController.doPrivileged(new PrivilegedExceptionAction()

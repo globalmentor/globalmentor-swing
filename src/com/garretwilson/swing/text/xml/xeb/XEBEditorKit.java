@@ -9,8 +9,6 @@ import javax.swing.text.*;
 
 
 import com.garretwilson.model.ResourceModel;
-import com.garretwilson.net.Resource;
-import com.garretwilson.net.URIs;
 import com.garretwilson.rdf.*;
 
 import static com.garretwilson.rdf.RDFUtilities.*;
@@ -32,6 +30,8 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
 import com.globalmentor.io.*;
 import com.globalmentor.marmot.Marmot;
+import com.globalmentor.net.Resource;
+import com.globalmentor.net.URIs;
 import com.globalmentor.text.xml.XMLDOMImplementation;
 import com.globalmentor.text.xml.XMLProcessor;
 import com.globalmentor.text.xml.XML;
