@@ -1,20 +1,21 @@
-package com.globalmentor.net;
+package com.garretwilson.swing;
 
 import java.net.*;
 
 import static com.garretwilson.swing.BasicOptionPane.*;
-import com.garretwilson.swing.UserPasswordPanel;
+
+import com.globalmentor.net.AbstractAuthenticable;
 
 /**Authenticator class which uses Swing to authenticate users.
 @author Garret Wilson
 */
-public class SwingAuthenticator extends AbstractAuthenticable	//TODO move to a Swing package
+public class SwingAuthenticator extends AbstractAuthenticable
 {
 
 	/**Determines user and password information.
 	@return The password authentication collected from the user, or <code>null</code> if none is provided.
 	*/
-/*G***fix
+/*TODO fix
 	public PasswordAuthentication getPasswordAuthentication()
 	{
 		return getPasswordAuthentication(null);	//get password authentication, allowing any user to be specified
@@ -26,7 +27,7 @@ public class SwingAuthenticator extends AbstractAuthenticable	//TODO move to a S
 	@param username The user for which password information should be gathered, or <code>null</code> if the username is not restricted.
 	@return The password authentication collected from the user, or <code>null</code> if none is provided.
 	*/
-/*G***fix
+/*TODO fix
 	public PasswordAuthentication getPasswordAuthentication(final String username)
 	{
 		final URI uri=new URI(getRquestingScheme(), getRequestingHost(), )

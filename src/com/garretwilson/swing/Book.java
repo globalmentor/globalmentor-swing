@@ -1964,7 +1964,7 @@ Debug.trace("ready to start clip.");
 		*/
 		public void actionPerformed(ActionEvent e)
 		{
-			try
+/*TODO bring back after BrowserLauncher is linked externally
 			{
 					//create a string for looking up the text; the BrowserLauncher.openURL() method should automatically URLEncode the text
 				final String definitionURLString="http://www.dictionary.com/cgi-bin/dict.pl?term="+text;
@@ -1974,6 +1974,7 @@ Debug.trace("ready to start clip.");
 			{
 				Debug.error(ioException); //we don't expect to see this exception
 			}
+*/
 		}
 	}
 

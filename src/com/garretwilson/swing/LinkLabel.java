@@ -5,7 +5,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import com.garretwilson.awt.event.RolloverMouseAdapter;
 import com.globalmentor.java.Objects;
-import com.globalmentor.net.BrowserLauncher;
 import com.globalmentor.util.Debug;
 
 /**A label that serves as a link to an Internet destination.
@@ -87,6 +86,7 @@ public class LinkLabel extends JLabel
 		  */
 		  public void mouseClicked(final MouseEvent mouseEvent)
 			{
+/*TODO bring back after BrowserLauncher is linked externally
 				try
 				{
 					BrowserLauncher.openURL(getTarget());	//attempt to browse to the location designated by the target
@@ -95,6 +95,7 @@ public class LinkLabel extends JLabel
 				{
 					Debug.warn(exception);  //only warn about any errors that occur
 				}
+*/
 			}
 		};
 		  //add the rollover adapter as a listener;

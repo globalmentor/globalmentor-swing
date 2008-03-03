@@ -5,7 +5,6 @@ import java.awt.Frame;
 import java.net.URI;
 import javax.swing.*;
 import com.globalmentor.java.*;
-import com.globalmentor.net.SwingAuthenticator;
 import com.globalmentor.util.*;
 
 /**An application that relies on Swing.

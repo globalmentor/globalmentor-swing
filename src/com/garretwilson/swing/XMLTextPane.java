@@ -35,9 +35,8 @@ import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLLinkController;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLViewFactory;
 import com.globalmentor.io.*;
-import com.globalmentor.net.BrowserLauncher;
 import com.globalmentor.net.URIs;
-import com.globalmentor.net.URLUtilities;
+import com.globalmentor.net.URLs;
 import com.globalmentor.text.Text;
 import com.globalmentor.text.xml.XMLDOMImplementation;
 import com.globalmentor.text.xml.XMLReader;
@@ -1580,6 +1579,8 @@ Debug.trace("Inside XMLTextPane.goURI()");	//G***del
 			}
 			else  //if there is no matching element in the document
 			{
+/*TODO bring back after BrowserLauncher is linked externally
+
 				try
 				{
 					BrowserLauncher.openURL(uri.toString());	//G***testing; comment; decide if we want this done here or by the caller
@@ -1588,6 +1589,7 @@ Debug.trace("Inside XMLTextPane.goURI()");	//G***del
 				{
 					Debug.error(e); //we don't expect to see this exception
 				}
+*/
 			}
 		}
 	}
