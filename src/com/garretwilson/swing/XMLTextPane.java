@@ -18,7 +18,6 @@ import javax.swing.event.*;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.DocumentFragment;
 
-import com.garretwilson.applet.*;
 import com.garretwilson.awt.EventQueueUtilities;
 
 import com.garretwilson.rdf.maqro.MAQROConstants;
@@ -34,6 +33,7 @@ import com.garretwilson.swing.text.xml.xeb.XEBEditorKit;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLLinkController;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLViewFactory;
+import com.globalmentor.applet.*;
 import com.globalmentor.io.*;
 import com.globalmentor.net.URIs;
 import com.globalmentor.net.URLs;
