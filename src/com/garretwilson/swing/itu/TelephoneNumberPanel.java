@@ -4,8 +4,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
-import com.garretwilson.itu.*;
 import com.garretwilson.swing.*;
+import com.globalmentor.itu.*;
 import com.globalmentor.text.ArgumentSyntaxException;
 import com.globalmentor.text.SyntaxException;
 
