@@ -42,7 +42,7 @@ import com.globalmentor.io.*;
 import com.globalmentor.text.Text;
 import com.globalmentor.text.xml.XMLDOMImplementation;
 import com.globalmentor.text.xml.XMLReader;
-import com.globalmentor.text.xml.XMLUtilities;
+import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.oeb.OEB;
 import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.util.Debug;
@@ -51,7 +51,7 @@ import com.globalmentor.util.zip.*;
 import static com.globalmentor.io.ContentTypeConstants.*;
 import static com.globalmentor.io.ContentTypes.*;
 import static com.globalmentor.java.Objects.*;
-import static com.globalmentor.text.xml.XMLUtilities.*;
+import static com.globalmentor.text.xml.XML.*;
 import static com.globalmentor.util.Iterators.*;
 
 /**A text component that can be marked up with attributes that are represented
@@ -1169,7 +1169,7 @@ Debug.trace("reading from stream into document"); //G***del
 	{
 		final DOMImplementation domImplementation=new XMLDOMImplementation();	//TODO get a DOMImplementation in an implementation-agnostic way
 			//create a document with an document element of <xhtml:div> TODO create something less XHTML-ish and more generic
-		final org.w3c.dom.Document xmlDocument=domImplementation.createDocument(XHTML.XHTML_NAMESPACE_URI.toString(), XMLUtilities.createQualifiedName(XHTML.XHTML_NAMESPACE_PREFIX, XHTML.ELEMENT_DIV), null);
+		final org.w3c.dom.Document xmlDocument=domImplementation.createDocument(XHTML.XHTML_NAMESPACE_URI.toString(), XML.createQualifiedName(XHTML.XHTML_NAMESPACE_PREFIX, XHTML.ELEMENT_DIV), null);
 			//import the document fragment and append it to the root element of our document
 		xmlDocument.getDocumentElement().appendChild(xmlDocument.importNode(xmlDocumentFragment, true));
 		setXML(xmlDocument, baseURI, mediaType);	//set the XML using our created enclosing document

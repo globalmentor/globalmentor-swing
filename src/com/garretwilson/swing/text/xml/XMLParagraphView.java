@@ -18,7 +18,7 @@ import com.garretwilson.swing.text.ViewBreakStrategy;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSView;
 import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSSConstants;
+import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
 import com.globalmentor.util.Debug;
 
 /**A paragraph that understands CSS styles and knows how to be broken into fragments.
@@ -148,7 +148,7 @@ Debug.trace(); //G***testing
 //G***fix			setLineSpacing(2);	//G***fix; testing
 //G***del			setLineSpacing(1.5f);	//G***fix; testing
 			setLineSpacing(XMLCSSStyleUtilities.getLineHeight(attributeSet));	//set the line height amount from our CSS attributes G***fix this to correctly use the number
-		  setVisible(!XMLCSSConstants.CSS_DISPLAY_NONE.equals(XMLCSSStyleUtilities.getDisplay(attributeSet))); //the paragraph is visible only if it doesn't have a display of "none"
+		  setVisible(!XMLCSS.CSS_DISPLAY_NONE.equals(XMLCSSStyleUtilities.getDisplay(attributeSet))); //the paragraph is visible only if it doesn't have a display of "none"
 //G***del			LineSpacing=3;	//G***fix; testing
 
 			final Document document=getDocument();	//get our document
@@ -334,7 +334,7 @@ Debug.trace(); //G***testing
 			}
 			final View parentView=getParent();  //get our parent view
 			final String parentDisplay=XMLCSSStyleUtilities.getDisplay(parentView.getAttributes()); //see what kind of parent we have
-			final boolean isInTableCell=XMLCSSConstants.CSS_DISPLAY_TABLE_CELL.equals(parentDisplay);  //see if we're inside a table cell
+			final boolean isInTableCell=XMLCSS.CSS_DISPLAY_TABLE_CELL.equals(parentDisplay);  //see if we're inside a table cell
 			setFirstLineIndented(!onlyObjectsPresent && (inlineViewCount>1 || !isInTableCell)); //if there are only objects present in this paragraph, or if there's only one inline view in a table cell, we won't indent
 		}
 		else  //if there is no content
@@ -368,7 +368,7 @@ Debug.trace(); //G***testing
 		{		  	
 			final String pageBreakAfter=XMLCSSStyleUtilities.getPageBreakAfter(getAttributes());	//see how the view considers breaking after it
 				//if we should avoid breaking after this view, and the provided length is more than we need (i.e. we aren't being asked to break in our middle)
-			if(XMLCSSConstants.CSS_PAGE_BREAK_AFTER_AVOID.equals(pageBreakAfter) && len>getPreferredSpan(axis))
+			if(XMLCSS.CSS_PAGE_BREAK_AFTER_AVOID.equals(pageBreakAfter) && len>getPreferredSpan(axis))
 			{
 				return BadBreakWeight;	//don't allow breaking
 			}
@@ -551,11 +551,11 @@ Debug.trace(); //G***testing
 				  //G***this currently doesn't work for subscripts of subscripts or superscripts of superscripts or a superscript followed by a subscript, etc.
 				final int relativeOffset=offsets[relativeIndex];  //get the span to which we're relative
 				final int relativeSpan=spans[relativeIndex];  //get the span to which we're relative
-				if(XMLCSSConstants.CSS_VERTICAL_ALIGN_SUPER.equals(verticalAlign))  //if this is superscript
+				if(XMLCSS.CSS_VERTICAL_ALIGN_SUPER.equals(verticalAlign))  //if this is superscript
 				{
 				  offsets[i]=relativeOffset-Math.round(relativeSpan*.20f); //move the box 20% above the relative box of the relative box's height
 				}
-				else if(XMLCSSConstants.CSS_VERTICAL_ALIGN_SUB.equals(verticalAlign))  //if this is subscript
+				else if(XMLCSS.CSS_VERTICAL_ALIGN_SUB.equals(verticalAlign))  //if this is subscript
 				{
 						//G***fix; right now, it doesn't compensate for the linespacing
 				  offsets[i]=relativeOffset+Math.round(relativeSpan*.60f); //move the box 20% below the relative box of the relative box's height

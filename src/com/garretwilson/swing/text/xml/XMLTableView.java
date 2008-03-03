@@ -22,9 +22,8 @@ import static com.garretwilson.swing.text.ViewUtilities.*;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
 //G***del import com.garretwilson.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSSConstants;
+import static com.globalmentor.text.xml.stylesheets.css.XMLCSS.*;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSSUtilities;
 import com.globalmentor.util.Debug;
 
 import javax.swing.text.html.HTML;  //G***del
@@ -1901,13 +1900,13 @@ Debug.traceStack(); //G***del
 //G***del Debug.trace("Attribute set: "+attributeSet);	//G***del
 			if(attributeSet!=null)	//if this element has attributes
 			{
-				final CSSPrimitiveValue cssDisplayProperty=(CSSPrimitiveValue)XMLCSSStyleUtilities.getCSSPropertyCSSValue(attributeSet, XMLCSSConstants.CSS_PROP_DISPLAY, false);	//get the display property for this element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
-//G***del when works				final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)attributeSet.getAttribute(XMLCSSConstants.CSS_PROP_DISPLAY);	//get the display property G***can we be sure this will be a primitive value?
+				final CSSPrimitiveValue cssDisplayProperty=(CSSPrimitiveValue)XMLCSSStyleUtilities.getCSSPropertyCSSValue(attributeSet, CSS_PROP_DISPLAY, false);	//get the display property for this element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
+//G***del when works				final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)attributeSet.getAttribute(CSS_PROP_DISPLAY);	//get the display property G***can we be sure this will be a primitive value?
 				if(cssDisplayProperty!=null)	//if this element has a CSS display property
 				{
 					final String cssDisplayString=cssDisplayProperty.getStringValue();	//get the display value
 //G***del Debug.trace("Has CSS display attribute: "+cssDisplayString);	//G***del
-					if(cssDisplayString.equals(XMLCSSConstants.CSS_DISPLAY_TABLE_ROW))	//if this should be table row
+					if(cssDisplayString.equals(CSS_DISPLAY_TABLE_ROW))	//if this should be table row
 						return new XMLTableRowView(element);	//create a table row view
 				}
 			}
@@ -1938,13 +1937,13 @@ Debug.trace("Table factory constructing view for a table element with name: ", e
 //G***del Debug.trace("Attribute set: "+attributeSet);	//G***del
 			if(attributeSet!=null)	//if this element has attributes
 			{
-				final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)XMLCSSStyleConstants.getCSSPropertyCSSValue(attributeSet, XMLCSSConstants.CSS_PROP_DISPLAY, false);	//get the display property for this element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
-//G***del when works				final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)attributeSet.getAttribute(XMLCSSConstants.CSS_PROP_DISPLAY);	//get the display property G***can we be sure this will be a primitive value?
+				final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)XMLCSSStyleConstants.getCSSPropertyCSSValue(attributeSet, CSS_PROP_DISPLAY, false);	//get the display property for this element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
+//G***del when works				final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)attributeSet.getAttribute(CSS_PROP_DISPLAY);	//get the display property G***can we be sure this will be a primitive value?
 				if(cssDisplayProperty!=null)	//if this element has a CSS display property
 				{
 					final String cssDisplayString=cssDisplayProperty.getStringValue();	//get the display value
 //G***del Debug.trace("Has CSS display attribute: "+cssDisplayString);	//G***del
-					if(cssDisplayString.equals(XMLCSSConstants.CSS_DISPLAY_TABLE_ROW))	//if this should be table row
+					if(cssDisplayString.equals(CSS_DISPLAY_TABLE_ROW))	//if this should be table row
 						return new XMLTableRowView(element);	//create a table row view
 				}
 			}

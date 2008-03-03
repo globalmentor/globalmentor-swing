@@ -145,7 +145,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 				final AttributeSet attributeSet=element.getAttributes();	//get the attributes of the element
 				final CSSStyleDeclaration cssStyle=XMLCSSStyleUtilities.getXMLCSSStyle(attributeSet); //get the CSS style of the element (this method make sure the attributes are present)
 					//see if this element is inline (text is always inline, regardless of what the display property says)
-				final boolean isInline=XMLCSSUtilities.isDisplayInline(cssStyle) || AbstractDocument.ContentElementName.equals(element.getName());
+				final boolean isInline=XMLCSS.isDisplayInline(cssStyle) || AbstractDocument.ContentElementName.equals(element.getName());
 				if(isInline) //if this is an inline child element
 				{
 					inlineElementList.add(element);  //add the element to the inline element list
@@ -202,7 +202,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 		final MutableAttributeSet anonymousAttributeSet=new SimpleAttributeSet();	//create an anonymous attribute set for this anonymous box
 		XMLStyleUtilities.setAnonymous(anonymousAttributeSet);	//set the XML name of the attribute set to the anonymous name
 		final XMLCSSStyleDeclaration anonymousCSSStyle=new XMLCSSStyleDeclaration(); //create a new style declaration
-		anonymousCSSStyle.setDisplay(XMLCSSConstants.CSS_DISPLAY_BLOCK);	//show that the anonymous element should be a block element
+		anonymousCSSStyle.setDisplay(XMLCSS.CSS_DISPLAY_BLOCK);	//show that the anonymous element should be a block element
 		XMLCSSStyleUtilities.setXMLCSSStyle(anonymousAttributeSet, anonymousCSSStyle);	//store the constructed CSS style in the attribute set
 				//put the child elements into an array
 		final Element[] childElements=childElementCollection.toArray(new Element[childElementCollection.size()]);
@@ -212,7 +212,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 			final Element childElement=childElements[i];	//get a reference to this child element
 			final AttributeSet childAttributeSet=childElement.getAttributes();	//get the child element attributes
 				//if this child element doesn't have a CSS display of "none", it's visible unless something else (the editor kit, for instance) specified it to be hidden 
-			if(!XMLCSSConstants.CSS_DISPLAY_NONE.equals(XMLCSSStyleUtilities.getDisplay(childAttributeSet)))
+			if(!XMLCSS.CSS_DISPLAY_NONE.equals(XMLCSSStyleUtilities.getDisplay(childAttributeSet)))
 			{
 				if(StyleUtilities.isVisible(childAttributeSet))	//if we haven't for some reason we've explicitly set this view to be hidden
 				{
@@ -263,7 +263,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 		{
 			final String pageBreakAfter=XMLCSSStyleUtilities.getPageBreakAfter(getAttributes());	//see how the view considers breaking after it
 				//if we should avoid breaking after this view, and the provided length is more than we need (i.e. we aren't being asked to break in our middle)
-			if(XMLCSSConstants.CSS_PAGE_BREAK_AFTER_AVOID.equals(pageBreakAfter) && len>getPreferredSpan(axis))
+			if(XMLCSS.CSS_PAGE_BREAK_AFTER_AVOID.equals(pageBreakAfter) && len>getPreferredSpan(axis))
 			{
 				return BadBreakWeight;	//don't allow breaking
 			}

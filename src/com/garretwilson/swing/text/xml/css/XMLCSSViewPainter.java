@@ -12,9 +12,9 @@ import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.text.xml.XMLListView;
 import com.garretwilson.swing.text.xml.XMLStyleUtilities;
 
-import static com.globalmentor.text.xml.stylesheets.css.XMLCSSConstants.*;
+import static com.globalmentor.text.xml.stylesheets.css.XMLCSS.*;
 
-import com.globalmentor.text.xml.stylesheets.css.XMLCSSUtilities;
+import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
 import com.globalmentor.util.Debug;
 
 /**Class to paint XML CSS views.
@@ -159,7 +159,7 @@ Debug.trace("View painter parent view's class: ", view.getClass().getName());  /
 									break;  //we now know our list index
 							}
 							//G***we assume we found ourselves -- is there any instance in which we wouldn't, and how would we know?
-						  final String markerString=XMLCSSUtilities.getMarkerString(listStyleType, listItemIndex);  //get a string representing the marker for us to render
+						  final String markerString=XMLCSS.getMarkerString(listStyleType, listItemIndex);  //get a string representing the marker for us to render
 						  if(markerString!=null)  //if we found a valid marker string
 							{
 							  graphics.setFont(font); //switch to the same font as the one being used by the list item

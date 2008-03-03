@@ -9,10 +9,10 @@ import org.w3c.dom.css.*;
 import static com.garretwilson.swing.text.StyleUtilities.*;
 import static com.garretwilson.swing.text.xml.XMLStyleConstants.*;
 import static com.garretwilson.swing.text.xml.css.XMLCSSStyleConstants.*;
-import static com.globalmentor.text.xml.stylesheets.css.XMLCSSConstants.*;
+import static com.globalmentor.text.xml.stylesheets.css.XMLCSS.*;
 
+import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSSUtilities;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSValueList;
 import com.globalmentor.util.Debug;
 
@@ -79,7 +79,7 @@ public class XMLCSSStyleUtilities
 	protected static Color getColorValue(final AttributeSet attributeSet, final String cssProperty, final boolean resolve)
 	{
 		final XMLCSSPrimitiveValue colorValue=(XMLCSSPrimitiveValue)getCSSPropertyCSSValue(attributeSet, cssProperty, resolve);	//get the value, specifying whether we should resolve up the hierarchy
-		return XMLCSSUtilities.getColor(colorValue);  //find the color of the value
+		return XMLCSS.getColor(colorValue);  //find the color of the value
 	}
 
 	/**Gets a particular value from the attribute set that should be a length,

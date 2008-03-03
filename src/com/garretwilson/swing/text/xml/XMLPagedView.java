@@ -34,7 +34,7 @@ import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.globalmentor.java.Java;
 import com.globalmentor.java.Objects;
 import com.globalmentor.text.xml.oeb.OEB;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSSConstants;
+import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
 import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.util.Debug;
 

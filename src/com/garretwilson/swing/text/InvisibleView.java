@@ -4,7 +4,7 @@ import java.awt.*;
 import javax.swing.text.*;
 
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSSConstants;
+import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
 
 /**A view that is not visible and is breakable only as a last resort.
 @author Garret Wilson

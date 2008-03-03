@@ -41,11 +41,11 @@ import com.globalmentor.java.Strings;
 import com.globalmentor.text.xml.XMLDOMImplementation;
 import com.globalmentor.text.xml.XMLProcessor;
 import com.globalmentor.text.xml.XMLSerializer;
-import com.globalmentor.text.xml.XMLUtilities;
+import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.oeb.*;
 import com.globalmentor.text.xml.stylesheets.css.*;
 import com.globalmentor.text.xml.xhtml.XHTML;
-import com.globalmentor.text.xml.xlink.XLinkConstants;
+import com.globalmentor.text.xml.xlink.XLink;
 import com.globalmentor.util.Debug;
 import com.globalmentor.util.NameValuePair;
 
@@ -206,7 +206,7 @@ public class XMLViewFactory implements ViewsFactory
 				final ContentType mediaType=XMLStyleUtilities.getMediaType(attributeSet); //see if this element's document has a media type defined
 				if(mediaType!=null) //if there is a media type defined for this element's document	//G***probably do all this differently later, like registering a view factory with a media type or something or, better yet, registering a namespace with a media type
 				{ 
-					final URI mediaTypeNamespaceURI=XMLUtilities.getDefaultNamespaceURI(mediaType);	//see if we can find a default namespace for the media type
+					final URI mediaTypeNamespaceURI=XML.getDefaultNamespaceURI(mediaType);	//see if we can find a default namespace for the media type
 					if(mediaTypeNamespaceURI!=null)	//if we found a namespace for the media type
 					{
 						elementNamespaceURI=mediaTypeNamespaceURI.toString();	//use the namespace for the media type
@@ -254,12 +254,12 @@ public class XMLViewFactory implements ViewsFactory
 //G***del Debug.trace("Child "+childIndex+" attributes: ", com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(childElement.getAttributes()));
 //G***del Debug.trace("Child "+childIndex+" style: ", childCSSStyle);
 					//if this element is inline (text is always inline, regardless of what the display property says)
-				if(XMLCSSUtilities.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName()))
+				if(XMLCSS.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName()))
 					hasInlineChildren=true;	//show that there are inline children
 				else	//if this isn't inline, we'll assume it's some sort of block element
 					hasBlockChildren=true;	//show that there are block children
 			}
-			final boolean isBlockElement=!XMLCSSUtilities.isDisplayInline(cssStyle);	//see if this is a block-level element
+			final boolean isBlockElement=!XMLCSS.isDisplayInline(cssStyle);	//see if this is a block-level element
 			final boolean isTableRow; //we'll see if this element has table row display
 			if(cssStyle!=null)  //if this element has style
 			{
@@ -271,7 +271,7 @@ public class XMLViewFactory implements ViewsFactory
 				final CSS2Properties cssProperties=(CSS2Properties)cssStyle;  //get the CSS2Properties interface, which is expected to be implemented by the DOM CSSStyleDeclaration
 	*/
 				final XMLCSSStyleDeclaration cssProperties=(XMLCSSStyleDeclaration)cssStyle;  //get the CSS2Properties interface, which is expected to be implemented by the DOM CSSStyleDeclaration G***fix
-				isTableRow=XMLCSSConstants.CSS_DISPLAY_TABLE_ROW.equals(cssProperties.getDisplay());  //G***testing tableflow
+				isTableRow=XMLCSS.CSS_DISPLAY_TABLE_ROW.equals(cssProperties.getDisplay());  //G***testing tableflow
 			}
 			else  //if this element has no style, it can't be a table row
 				isTableRow=false; //this element is not a table row
@@ -363,22 +363,22 @@ Debug.trace("Ready to create children for: ", element.getNodeName());  //G***del
 Debug.trace("3"); //G***del
 //G***del				final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)attributeSet.getAttribute(XMLCSSConstants.CSS_PROP_DISPLAY);	//get the display property G***can we be sure this will be a primitive value?
 			//G***use the style constants to get the display property, maybe
-			final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)XMLCSSStyleUtilities.getCSSPropertyCSSValue(attributeSet, XMLCSSConstants.CSS_PROP_DISPLAY, false);	//get the display property for this element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
+			final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)XMLCSSStyleUtilities.getCSSPropertyCSSValue(attributeSet, XMLCSS.CSS_PROP_DISPLAY, false);	//get the display property for this element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
 Debug.trace("4"); //G***del
 			if(cssDisplayProperty!=null)	//if this element has a CSS display property
 			{
 Debug.trace("Found display property: ", cssDisplayProperty);
 				final String cssDisplayString=cssDisplayProperty.getStringValue();	//get the display value
 //G***del System.out.println("XML view factory found element with display: "+cssDisplayString);	//G***del
-				if(cssDisplayString.equals(XMLCSSConstants.CSS_DISPLAY_BLOCK))	//if this should be block display
+				if(cssDisplayString.equals(XMLCSS.CSS_DISPLAY_BLOCK))	//if this should be block display
 					return new XMLBlockView(element, View.Y_AXIS);	//create a block view
-				else if(cssDisplayString.equals(XMLCSSConstants.CSS_DISPLAY_LIST_ITEM))	//if this should be a list item
+				else if(cssDisplayString.equals(XMLCSS.CSS_DISPLAY_LIST_ITEM))	//if this should be a list item
 					return new XMLListItemView(element, View.Y_AXIS);	//create a list item view G***change this to an XMLListItem(element)
-				else if(cssDisplayString.equals(XMLCSSConstants.CSS_DISPLAY_TABLE))	//if this should be a table
+				else if(cssDisplayString.equals(XMLCSS.CSS_DISPLAY_TABLE))	//if this should be a table
 					return new XMLTableView(element);	//create a table view
-				else if(cssDisplayString.equals(XMLCSSConstants.CSS_DISPLAY_TABLE_CELL))	//if this should be table cell
+				else if(cssDisplayString.equals(XMLCSS.CSS_DISPLAY_TABLE_CELL))	//if this should be table cell
 					return new XMLBlockView(element, View.Y_AXIS);	//create a table cell view G***change to the correct table cell view class
-				else if(XMLCSSConstants.CSS_DISPLAY_NONE.equals(cssDisplayString))	//if this element should have no display
+				else if(XMLCSS.CSS_DISPLAY_NONE.equals(cssDisplayString))	//if this element should have no display
 					return new InvisibleView(element);	//create a hidden view
 /*G***important; fix
 

@@ -24,7 +24,7 @@ public class XHTMLEditorKit extends XMLEditorKit
 {
 
 	/**The XHTML media type this editor kit supports, defaulting to <code>application/xhtml+xml</code>.*/
-	private ContentType mediaType=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, ContentTypeConstants.XHTML_XML_SUBTYPE, null);
+	private ContentType mediaType=XHTML_CONTENT_TYPE;
 
 		/**@return The XHTML media type this editor kit supports.*/
 		public ContentType getMediaType() {return mediaType;}

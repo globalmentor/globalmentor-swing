@@ -4,7 +4,7 @@ import java.net.URI;
 import javax.mail.internet.ContentType;
 import com.globalmentor.io.*;
 import com.globalmentor.text.xml.XMLNodeModel;
-import com.globalmentor.text.xml.XMLUtilities;
+import com.globalmentor.text.xml.XML;
 
 import org.w3c.dom.*;
 
@@ -57,7 +57,7 @@ public class XMLDocumentFragmentPanel extends XMLPanel<DocumentFragment>
 			final StringBuilder sourceStringBuilder=new StringBuilder();	//create a string builder for building the fragment
 			sourceStringBuilder.append("<?xml version=\"1.0\"?>\n");	//append the XML prolog TODO use a constant
 			sourceStringBuilder.append("<div");	//append a root element start tag TODO use something HTML-agnostic
-			final URI defaultNamespaceURI=XMLUtilities.getDefaultNamespaceURI(getContentType());	//see if we have a default namespace for the media type we're using
+			final URI defaultNamespaceURI=XML.getDefaultNamespaceURI(getContentType());	//see if we have a default namespace for the media type we're using
 			if(defaultNamespaceURI!=null)	//if we know the default namespace
 			{
 				sourceStringBuilder.append(" xmlns=\"").append(defaultNamespaceURI).append("\"");	//add a default XML namespace declaration attribute
@@ -81,7 +81,7 @@ public class XMLDocumentFragmentPanel extends XMLPanel<DocumentFragment>
 	protected void saveModel(final XMLNodeModel<DocumentFragment> model, final Document document)
 	{
 			//extract the child elements into a document fragment and set that in the model
-		model.setXML(XMLUtilities.extractChildren(document.getDocumentElement()));
+		model.setXML(XML.extractChildren(document.getDocumentElement()));
 	}
 
 }

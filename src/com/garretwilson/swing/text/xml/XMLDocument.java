@@ -30,8 +30,8 @@ import com.globalmentor.io.*;
 import com.globalmentor.java.*;
 import com.globalmentor.marmot.Marmot;
 import com.globalmentor.text.xml.stylesheets.css.AbstractXMLCSSStylesheetApplier;
+import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSSUtilities;
 import com.globalmentor.util.Debug;
 import com.globalmentor.util.NameValuePair;
 
@@ -892,7 +892,7 @@ Debug.trace("end", end);
 			final AttributeSet childAttributeSet=childElement.getAttributes();	//get the attributes of the child
 			final CSSStyleDeclaration childCSSStyle=XMLCSSStyleUtilities.getXMLCSSStyle(childElement.getAttributes()); //get the CSS style of the element (this method makes sure the attributes are present)
 			//see if this element is inline (text is always inline, regardless of what the display property says) G***probably make some convenience method for this, and update XMLViewFactory
-			final boolean isInline=XMLCSSUtilities.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName());
+			final boolean isInline=XMLCSS.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName());
 			if(!isInline)	//if this element is not inline, add an element end character
 			{
 				try
@@ -1179,7 +1179,7 @@ Debug.trace("pos: ", pos);  //G***del
 			assert paragraphAttributeSet!=null : "Paragraph has no attributes.";
 Debug.trace("this paragraph attribute set: ", com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(paragraphAttributeSet));  //G***del; use relative class name
 		  final CSSStyleDeclaration paragraphCSSStyle=XMLCSSStyleUtilities.getXMLCSSStyle(paragraphAttributeSet); //get the CSS style of the element (this method makes sure the attributes are present)
-		  if(!XMLCSSUtilities.isDisplayInline(paragraphCSSStyle))  //if this element is marked as a paragraph
+		  if(!XMLCSS.isDisplayInline(paragraphCSSStyle))  //if this element is marked as a paragraph
 //G***del whenw orks			if(XMLStyleConstants.isParagraphView(paragraphAttributeSet))  //if this element is not marked as a paragraph
 			{
 				Debug.trace("paragraph is paragraph");  //G***del

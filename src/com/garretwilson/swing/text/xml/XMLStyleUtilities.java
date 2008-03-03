@@ -13,7 +13,7 @@ import static com.globalmentor.java.Objects.*;
 
 import com.garretwilson.rdf.RDFResource;
 import com.globalmentor.java.Objects;
-import com.globalmentor.text.xml.XMLUtilities;
+import com.globalmentor.text.xml.XML;
 import com.globalmentor.util.NameValuePair;
 
 /**A collection of utilities for working with XML values used Swing style.
@@ -185,7 +185,7 @@ public class XMLStyleUtilities
 			//create an object to represent this XML attribute and value
 		final XMLAttribute xmlAttribute=new XMLAttribute(attributeNamespaceURI, attributeQualifiedName, attributeValue);
 			//add attribute object to the attribute set using the appropriate URI+localName Swing key
-		attributeSet.addAttribute(getSwingXMLAttributeName(attributeNamespaceURI, XMLUtilities.getLocalName(attributeQualifiedName)), xmlAttribute);	
+		attributeSet.addAttribute(getSwingXMLAttributeName(attributeNamespaceURI, XML.getLocalName(attributeQualifiedName)), xmlAttribute);	
 	}
 
 	/**Gets the namespace of an attribute (encoded in another attribute)

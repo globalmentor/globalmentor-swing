@@ -629,7 +629,7 @@ catch (BadLocationException e)
 				XMLStyleUtilities.setXMLDocTypeSystemID(documentAttributeSet, documentType.getSystemId());  //store the system ID
 		}
 			//store the processing instructions
-		final List processingInstructionList=XMLUtilities.getNodesByName(xmlDocument, Node.PROCESSING_INSTRUCTION_NODE, "*", false);  //get a list of all the processing instructions in the document G***use a constant here
+		final List processingInstructionList=XML.getNodesByName(xmlDocument, Node.PROCESSING_INSTRUCTION_NODE, "*", false);  //get a list of all the processing instructions in the document G***use a constant here
 		if(processingInstructionList.size()>0) //if there are processing instructions
 		{
 			final NameValuePair[] processingInstructions=new NameValuePair[processingInstructionList.size()];  //create enough name/value pairs for processing instructions
@@ -695,7 +695,7 @@ catch (BadLocationException e)
 //G***del if we can get away with it		XMLStyleConstants.setXMLElementName(pageBreakAttributeSet, XMLCSSStyleConstants.AnonymousAttributeValue); //show by its name that this is an anonymous box G***maybe change this to setAnonymous
 		XMLStyleUtilities.setPageBreakView(pageBreakAttributeSet, true);	//show that this element should be a page break view
 		final XMLCSSStyleDeclaration cssStyle=new XMLCSSStyleDeclaration(); //create a new style declaration
-		cssStyle.setDisplay(XMLCSSConstants.CSS_DISPLAY_BLOCK);	//show that the page break element should be a block element, so no anonymous blocks will be created around it
+		cssStyle.setDisplay(XMLCSS.CSS_DISPLAY_BLOCK);	//show that the page break element should be a block element, so no anonymous blocks will be created around it
 		XMLCSSStyleUtilities.setXMLCSSStyle(pageBreakAttributeSet, cssStyle);	//store the constructed CSS style in the attribute set
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(pageBreakAttributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a page break element spec
 //G***fix		final SimpleAttributeSet contentAttributeSet=new SimpleAttributeSet();	//create a new attribute for this content
@@ -871,9 +871,9 @@ catch (BadLocationException e)
 				if(childXMLNode.getNodeType()==Node.ELEMENT_NODE) //if this is an element
 				{
 						//get the display CSS property for the child element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
-					final CSSPrimitiveValue cssDisplayProperty=(CSSPrimitiveValue)XMLCSSStyleUtilities.getCSSPropertyCSSValue(childSwingElement.getAttributes(), XMLCSSConstants.CSS_PROP_DISPLAY, false);
+					final CSSPrimitiveValue cssDisplayProperty=(CSSPrimitiveValue)XMLCSSStyleUtilities.getCSSPropertyCSSValue(childSwingElement.getAttributes(), XMLCSS.CSS_PROP_DISPLAY, false);
 					isInlineChild=cssDisplayProperty!=null ? //if the child element knows its CSS display
-						XMLCSSConstants.CSS_DISPLAY_INLINE.equals(cssDisplayProperty.getStringValue()) :  //see if the display is "inline"
+						XMLCSS.CSS_DISPLAY_INLINE.equals(cssDisplayProperty.getStringValue()) :  //see if the display is "inline"
 						true;  //if there is no display, assume it is inline
 				}
 /*G***del when works
@@ -883,8 +883,8 @@ catch (BadLocationException e)
 				if(!isInlineChild)  //if the child element is not inline
 				{
 					hasBlockChild=true;	//show that at least one child has block display
-					XMLUtilities.appendText(xmlElement, "\n");  //skip to the next line for a pretty formatted XML document
-					XMLUtilities.appendText(xmlElement, Strings.createString('\t', level+1));	//indent to the correct level
+					XML.appendText(xmlElement, "\n");  //skip to the next line for a pretty formatted XML document
+					XML.appendText(xmlElement, Strings.createString('\t', level+1));	//indent to the correct level
 				}
 				xmlElement.appendChild(childXMLNode);  //append the XML node we created
 	/*G***del if not needed
@@ -895,8 +895,8 @@ catch (BadLocationException e)
 //*G**del when works			if(!isInlineChild)  //if the last child element was not inline
 			if(hasBlockChild)  //if any of the children were not inline
 			{
-				XMLUtilities.appendText(xmlElement, "\n");  //skip to the next line for a pretty formatted XML document
-				XMLUtilities.appendText(xmlElement, Strings.createString('\t', level));	//indent to the correct level
+				XML.appendText(xmlElement, "\n");  //skip to the next line for a pretty formatted XML document
+				XML.appendText(xmlElement, Strings.createString('\t', level));	//indent to the correct level
 			}
 		}
 
@@ -1270,7 +1270,7 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 			else	//if there are no attributes provided (artificial text is being manually inserted, for instance)
 			{
 				final SimpleAttributeSet simpleAttributeSet=new SimpleAttributeSet();	//create a new attribute for this content
-				XMLStyleUtilities.setXMLElementName(simpleAttributeSet, XMLUtilities.TEXT_NODE_NAME);	//set the name of the content to ensure it will not get its name from its parent element (this would happen if there was no name explicitly set)
+				XMLStyleUtilities.setXMLElementName(simpleAttributeSet, XML.TEXT_NODE_NAME);	//set the name of the content to ensure it will not get its name from its parent element (this would happen if there was no name explicitly set)
 				textAttributeSet=simpleAttributeSet;	//use the default atribute set we created
 			}
 //	G***del Debug.trace("inserting text data: \""+node.getNodeValue()+"\"");  //G***del
@@ -1304,7 +1304,7 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 		{
 				final CSSStyleDeclaration cssStyle=getXMLStylesheetApplier().getStyle(parentElement);
 					//see if the element is inline (text is always inline
-				final boolean isInline=XMLCSSUtilities.isDisplayInline(cssStyle);
+				final boolean isInline=XMLCSS.isDisplayInline(cssStyle);
 				if(!isInline)
 				{
 					textStringBuffer.append('\n');	//G***testing
@@ -1341,7 +1341,7 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 			XMLStyleUtilities.setXMLElementName(attributeSet, elementQName);	//store the element's name in the attribute set
 			if(elementNamespaceURI!=null)  //if the element has a namespace URI specified
 				XMLStyleUtilities.setXMLElementNamespaceURI(attributeSet, elementNamespaceURI.toString());	//store the element's namespace URI in the attribute set
-			final String localName=XMLUtilities.getLocalName(elementQName);  //get the element's local name from the qualified name
+			final String localName=XML.getLocalName(elementQName);  //get the element's local name from the qualified name
 			XMLStyleUtilities.setXMLElementLocalName(attributeSet, localName);	//store the element's local name in the attribute set
 			if(style!=null) //if style was given G***should we instead do this unconditionally?
 				XMLCSSStyleUtilities.setXMLCSSStyle(attributeSet, style);	//store the CSS style in the attribute set
