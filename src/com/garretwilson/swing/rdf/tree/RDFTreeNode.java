@@ -3,7 +3,7 @@ package com.garretwilson.swing.rdf.tree;
 import java.io.IOException;
 import java.util.*;
 import com.garretwilson.swing.tree.*;
-import com.garretwilson.rdf.*;
+import com.globalmentor.rdf.*;
 
 /**A tree node that represents an RDF data model.
 	All resources in the RDF data model will be dynamically loaded.

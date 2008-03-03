@@ -5,9 +5,9 @@ import javax.swing.*;
 
 import static com.globalmentor.io.ContentTypes.*;
 
-import com.garretwilson.rdf.*;
-import com.garretwilson.rdf.xpackage.*;
 import com.globalmentor.marmot.Marmot;
+import com.globalmentor.rdf.*;
+import com.globalmentor.rdf.xpackage.*;
 import com.globalmentor.util.Debug;
 
 /**A tree cell renderer that can render different icons and strings for user

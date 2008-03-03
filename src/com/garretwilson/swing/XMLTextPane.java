@@ -20,7 +20,6 @@ import org.w3c.dom.DocumentFragment;
 
 import com.garretwilson.awt.EventQueueUtilities;
 
-import com.garretwilson.rdf.maqro.MAQROConstants;
 import com.garretwilson.swing.event.PageEvent;
 import com.garretwilson.swing.event.PageListener;
 import com.garretwilson.swing.event.ProgressEvent;
@@ -37,6 +36,7 @@ import com.globalmentor.applet.*;
 import com.globalmentor.io.*;
 import com.globalmentor.net.URIs;
 import com.globalmentor.net.URLs;
+import com.globalmentor.rdf.maqro.MAQROConstants;
 import com.globalmentor.text.Text;
 import com.globalmentor.text.xml.XMLDOMImplementation;
 import com.globalmentor.text.xml.XMLReader;

@@ -8,8 +8,8 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import com.garretwilson.rdf.*;
 import com.garretwilson.resources.icon.IconResources;
+import com.globalmentor.rdf.*;
 import com.globalmentor.util.Debug;
 import com.globalmentor.util.ObjectState;
 

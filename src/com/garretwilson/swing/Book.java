@@ -15,7 +15,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;  //G***del when image click code is moved elsewhere
 import com.garretwilson.model.ResourceModel;
-import com.garretwilson.rdf.*;
 import com.garretwilson.resources.icon.*;
 import com.garretwilson.swing.event.*;
 import com.garretwilson.swing.rdf.*;
@@ -26,6 +25,7 @@ import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.globalmentor.io.*;
 import com.globalmentor.net.*;
+import com.globalmentor.rdf.*;
 import com.globalmentor.text.xml.oeb.*;
 import com.globalmentor.util.*;
 import com.globalmentor.util.prefs.PreferencesUtilities;

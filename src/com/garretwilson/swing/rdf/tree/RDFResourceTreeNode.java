@@ -1,9 +1,11 @@
 package com.garretwilson.swing.rdf.tree;
 
 import javax.swing.tree.*;
-import com.garretwilson.rdf.*;
-import static com.garretwilson.rdf.RDFUtilities.*;
-import com.garretwilson.rdf.rdfs.*;
+
+import static com.globalmentor.rdf.RDFUtilities.*;
+
+import com.globalmentor.rdf.*;
+import com.globalmentor.rdf.rdfs.*;
 
 /**A tree node that represents a resource described in RDF.
 	The resource is stored as the user object of the tree node.

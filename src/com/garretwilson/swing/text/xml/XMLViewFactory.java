@@ -24,7 +24,6 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import java.util.*;
 //G***del when works import com.garretwilson.text.xml.*;
-import com.garretwilson.rdf.*;
 //G***del import com.garretwilson.text.xml.stylesheets.css.oeb.DefaultOEBCSSStyleSheet;	//G***del if we don't need
 import com.garretwilson.swing.XMLTextPane;
 import com.garretwilson.swing.event.ProgressEvent;
@@ -38,6 +37,7 @@ import com.globalmentor.java.Objects;
 import com.globalmentor.java.StringBuffers;
 import com.globalmentor.java.Strings;
 import com.globalmentor.net.URLs;
+import com.globalmentor.rdf.*;
 import com.globalmentor.text.xml.XMLDOMImplementation;
 import com.globalmentor.text.xml.XMLProcessor;
 import com.globalmentor.text.xml.XMLSerializer;

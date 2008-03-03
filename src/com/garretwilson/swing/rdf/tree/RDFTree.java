@@ -4,7 +4,8 @@ import java.net.URI;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.tree.*;
-import com.garretwilson.rdf.*;
+
+import com.globalmentor.rdf.*;
 import com.globalmentor.text.xml.XMLDOMImplementation;
 
 import org.w3c.dom.*;

@@ -11,8 +11,8 @@ import static com.garretwilson.swing.text.StyleUtilities.*;
 import static com.garretwilson.swing.text.xml.XMLStyleConstants.*;
 import static com.globalmentor.java.Objects.*;
 
-import com.garretwilson.rdf.RDFResource;
 import com.globalmentor.java.Objects;
+import com.globalmentor.rdf.RDFResource;
 import com.globalmentor.text.xml.XML;
 import com.globalmentor.util.NameValuePair;
 

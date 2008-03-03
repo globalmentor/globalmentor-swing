@@ -5,11 +5,11 @@ import java.awt.event.*;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.model.ResourceModel;
-import com.garretwilson.rdf.*;
-import com.garretwilson.rdf.dublincore.*;
-import com.garretwilson.rdf.version.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.rdf.RDFPanel;
+import com.globalmentor.rdf.*;
+import com.globalmentor.rdf.dublincore.*;
+import com.globalmentor.rdf.version.*;
 
 import static com.globalmentor.java.Characters.*;
 

@@ -8,13 +8,11 @@ import java.util.prefs.Preferences;
 import javax.swing.*;
 import com.garretwilson.model.*;
 
-import com.garretwilson.rdf.DefaultRDFResource;
-import com.garretwilson.rdf.RDFFileProcessor;
-import com.garretwilson.rdf.RDFResource;
 
 import com.globalmentor.io.*;
 import static com.globalmentor.net.URIs.*;
 import com.globalmentor.net.http.HTTPClient;
+import com.globalmentor.rdf.*;
 import com.globalmentor.util.Debug;
 import com.globalmentor.util.prefs.PreferencesUtilities;
 
@@ -79,6 +77,8 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 	*/
 	public RDFResource getResource(final URI referenceURI) throws IOException
 	{
+		return new DefaultRDFResource(referenceURI);	//create a default resource from the reference URI
+/*TODO convert to Marmot
 		if(FILE_SCHEME.equals(referenceURI.getScheme()))	//if this is a file:// URI
 		{ 
 			final File file=new File(referenceURI);	//create a new file from the reference URI
@@ -88,6 +88,7 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 		{
 			return new DefaultRDFResource(referenceURI);	//create a default resource from the reference URI
 		}
+*/
 	}
 
 	/**Selects a resource for input.

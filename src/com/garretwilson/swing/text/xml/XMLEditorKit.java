@@ -11,12 +11,10 @@ import javax.swing.text.Document;
 import javax.swing.text.Element;
 
 
-import com.garretwilson.rdf.*;
-import com.garretwilson.rdf.maqro.Activity;
-import static com.garretwilson.rdf.maqro.MAQROConstants.*;
 
 import static com.globalmentor.io.Charsets.*;
 import static com.globalmentor.java.Objects.*;
+import static com.globalmentor.rdf.maqro.MAQROConstants.*;
 
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.text.BasicStyledEditorKit;
@@ -24,6 +22,8 @@ import com.garretwilson.swing.text.xml.css.*;
 import com.globalmentor.io.*;
 import com.globalmentor.java.*;
 import com.globalmentor.net.*;
+import com.globalmentor.rdf.*;
+import com.globalmentor.rdf.maqro.Activity;
 import com.globalmentor.text.xml.*;
 import com.globalmentor.text.xml.stylesheets.css.*;
 import com.globalmentor.util.*;

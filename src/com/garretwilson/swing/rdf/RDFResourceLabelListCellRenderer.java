@@ -2,13 +2,13 @@ package com.garretwilson.swing.rdf;
 
 import java.net.URI;
 
-import com.garretwilson.rdf.RDFLiteral;
-import com.garretwilson.rdf.RDFResource;
-import com.garretwilson.rdf.RDFUtilities;
-import com.garretwilson.rdf.dublincore.DCUtilities;
-import com.garretwilson.rdf.rdfs.RDFSUtilities;
-import com.garretwilson.rdf.xpackage.XPackageUtilities;
 import com.garretwilson.swing.SimpleListCellRenderer;
+import com.globalmentor.rdf.RDFLiteral;
+import com.globalmentor.rdf.RDFResource;
+import com.globalmentor.rdf.RDFUtilities;
+import com.globalmentor.rdf.dublincore.DCUtilities;
+import com.globalmentor.rdf.rdfs.RDFSUtilities;
+import com.globalmentor.rdf.xpackage.XPackageUtilities;
 
 /**A list cell renderer which shows the resource label.
 The resource label is determined in the following order:

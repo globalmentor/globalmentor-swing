@@ -9,20 +9,16 @@ import javax.swing.text.*;
 
 
 import com.garretwilson.model.ResourceModel;
-import com.garretwilson.rdf.*;
 
-import static com.garretwilson.rdf.RDFUtilities.*;
-import com.garretwilson.rdf.maqro.*;
-import static com.garretwilson.rdf.maqro.MAQROConstants.*;
-import com.garretwilson.rdf.xpackage.*;
-import com.garretwilson.rdf.xeb.*;
 
-import static com.garretwilson.rdf.xeb.XEBConstants.*;
 
 import com.garretwilson.swing.ListListModel;
 import com.garretwilson.swing.event.*;
 import static com.garretwilson.swing.text.rdf.RDFStyleUtilities.*;
 import static com.globalmentor.io.ContentTypeConstants.*;
+import static com.globalmentor.rdf.RDFUtilities.*;
+import static com.globalmentor.rdf.maqro.MAQROConstants.*;
+import static com.globalmentor.rdf.xeb.XEBConstants.*;
 
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.XMLEditorKit.ContentData;
@@ -32,6 +28,10 @@ import com.globalmentor.io.*;
 import com.globalmentor.marmot.Marmot;
 import com.globalmentor.net.Resource;
 import com.globalmentor.net.URIs;
+import com.globalmentor.rdf.*;
+import com.globalmentor.rdf.maqro.*;
+import com.globalmentor.rdf.xeb.*;
+import com.globalmentor.rdf.xpackage.*;
 import com.globalmentor.text.xml.XMLDOMImplementation;
 import com.globalmentor.text.xml.XMLProcessor;
 import com.globalmentor.text.xml.XML;

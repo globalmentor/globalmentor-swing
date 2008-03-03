@@ -6,8 +6,8 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.Document;
 import javax.swing.text.MutableAttributeSet;
 
-import com.garretwilson.rdf.RDF;
 import com.globalmentor.java.Booleans;
+import com.globalmentor.rdf.RDF;
 
 /**A collection of utility methods for working with Swing text
 	<code>Document</code> and derived objects.

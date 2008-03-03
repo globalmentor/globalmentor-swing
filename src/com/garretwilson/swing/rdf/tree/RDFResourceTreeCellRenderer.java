@@ -1,9 +1,9 @@
 package com.garretwilson.swing.rdf.tree;
 
 import javax.swing.*;
-import com.garretwilson.rdf.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.tree.*;
+import com.globalmentor.rdf.*;
 
 /**A tree cell renderer that can render different icons and strings for user
 	objects that are RDF resources. The class defaults to using a special icon

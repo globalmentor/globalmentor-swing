@@ -17,8 +17,6 @@ import javax.swing.text.*;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
 
-import com.garretwilson.rdf.*;
-import com.garretwilson.rdf.xpackage.XPackageUtilities;
 import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.text.BasicStyledDocument;
 import com.garretwilson.swing.text.SwingTextUtilities;
@@ -28,7 +26,9 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
 import com.globalmentor.io.*;
 import com.globalmentor.java.*;
 import com.globalmentor.marmot.Marmot;
-import com.globalmentor.sound.sampled.SampledSoundUtilities;
+import com.globalmentor.rdf.*;
+import com.globalmentor.rdf.xpackage.XPackageUtilities;
+import com.globalmentor.sound.sampled.SampledSounds;
 import com.globalmentor.text.xml.stylesheets.css.AbstractXMLCSSStylesheetApplier;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
@@ -432,7 +432,7 @@ G***comment
 //G***we should really close the input stream if something goes wrong
 			try
 			{
-				final Clip clip=(Clip)SampledSoundUtilities.getDataLine(inputStream, Clip.class);	//get a clip from the input stream
+				final Clip clip=(Clip)SampledSounds.getDataLine(inputStream, Clip.class);	//get a clip from the input stream
 				resource=clip;	//return the clip
 //G***del				return clip;	//return the clip without caching it, because caching a clip doesn't allow it to be played again
 			}

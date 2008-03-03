@@ -8,7 +8,7 @@ import javax.swing.tree.TreeNode;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.rdf.tree.*;
 import com.garretwilson.model.ResourceModel;
-import com.garretwilson.rdf.*;
+import com.globalmentor.rdf.*;
 import com.globalmentor.text.CharacterEncoding;
 import com.globalmentor.text.xml.XMLDOMImplementation;
 import com.globalmentor.text.xml.XMLProcessor;
