@@ -1,7 +1,9 @@
 package com.garretwilson.swing;
 
 import javax.mail.internet.ContentType;
+
 import com.globalmentor.io.*;
+import static com.globalmentor.io.ContentTypes.*;
 import com.globalmentor.text.xml.XMLNodeModel;
 
 import org.w3c.dom.*;
@@ -27,7 +29,7 @@ public class XMLDocumentPanel extends XMLPanel<Document>	//TODO make the toolbar
 	*/
 	public XMLDocumentPanel(final XMLNodeModel<Document> model, final boolean initialize)
 	{
-		this(model, new ContentType(ContentTypes.TEXT_PRIMARY_TYPE, ContentTypeConstants.XML_SUBTYPE, null), initialize);	//construct the panel with a default text/xml media type
+		this(model, getContentTypeInstance(TEXT_PRIMARY_TYPE, ContentTypeConstants.XML_SUBTYPE), initialize);	//construct the panel with a default text/xml media type
 	}
 
 	/**Content type constructor.

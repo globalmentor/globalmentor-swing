@@ -3,8 +3,9 @@ package com.garretwilson.swing.text.xml.xhtml;
 import javax.mail.internet.ContentType;
 import javax.swing.text.*;
 import com.garretwilson.swing.text.xml.*;
+
 import com.globalmentor.io.ContentTypeConstants;
-import com.globalmentor.io.ContentTypes;
+import static com.globalmentor.io.ContentTypes.*;
 
 import static com.globalmentor.text.xml.xhtml.XHTML.*;
 
@@ -16,7 +17,7 @@ public class XHTMLViewFactory extends XMLViewFactory
 {
 
 	/**A static application/java media type for quick reference in the view factory.*/
-	protected final static ContentType APPLICATION_JAVA_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, ContentTypeConstants.JAVA_SUBTYPE, null);
+	protected final static ContentType APPLICATION_JAVA_MEDIA_TYPE=getContentTypeInstance(APPLICATION_PRIMARY_TYPE, ContentTypeConstants.JAVA_SUBTYPE);
 
 	/**Creates a view for the given element. If the element specifies a
 		namespace and a view factory has been registered for the given namespace,
@@ -68,7 +69,7 @@ public class XHTMLViewFactory extends XMLViewFactory
 							{
 								return new XHTMLAppletView(element);	//return an applet view for this object element
 							}
-							else if(mediaType.getPrimaryType().equals(ContentTypes.IMAGE_PRIMARY_TYPE)) //if this is an image
+							else if(mediaType.getPrimaryType().equals(IMAGE_PRIMARY_TYPE)) //if this is an image
 							{
 								return new XHTMLImageView(element, recognizedObjectElement);	//return an image view for the object element, using the recognized object for initialization G***should we only pass an initialization attribute set?
 							}

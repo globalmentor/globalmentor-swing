@@ -20,7 +20,9 @@ import com.garretwilson.swing.event.*;
 import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.unicode.UnicodePanel;
 import com.garretwilson.swing.unicode.UnicodeTableModel;
+
 import com.globalmentor.io.*;
+import static com.globalmentor.io.ContentTypes.*;
 import com.globalmentor.text.Text;
 import com.globalmentor.util.*;
 
@@ -35,7 +37,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 {
 
 	/**The XML media type this editor kit supports, defaulting to <code>text/plain</code>.*/
-	private ContentType mediaType=new ContentType(ContentTypes.TEXT_PRIMARY_TYPE, Text.PLAIN_SUBTYPE, null);
+	private ContentType mediaType=getContentTypeInstance(TEXT_PRIMARY_TYPE, Text.PLAIN_SUBTYPE);
 
 		/**@return The XML media type this editor kit supports.*/
 		public ContentType getMediaType() {return mediaType;}

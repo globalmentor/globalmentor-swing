@@ -37,6 +37,7 @@ import com.globalmentor.io.*;
 import com.globalmentor.net.URIs;
 import com.globalmentor.net.URLs;
 import com.globalmentor.rdf.maqro.MAQRO;
+import com.globalmentor.text.ArgumentSyntaxException;
 import com.globalmentor.text.Text;
 import com.globalmentor.text.xml.XMLDOMImplementation;
 import com.globalmentor.text.xml.XMLReader;
@@ -70,22 +71,22 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 	public final static String EDITOR_KIT_PROPERTY="editorKit";
 
 	/**The "application/zip" content type.*/
-	protected final static ContentType ZIP_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, ZIP_SUBTYPE, null);
+	protected final static ContentType ZIP_MEDIA_TYPE=getContentTypeInstance(APPLICATION_PRIMARY_TYPE, ZIP_SUBTYPE);
 
 	/**The "application/x-oeb1-package+xml" content type.*/
-	protected final static ContentType OEB_PACKAGE_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, OEB.X_OEB1_PACKAGE_XML_SUBTYPE, null);
+	protected final static ContentType OEB_PACKAGE_MEDIA_TYPE=getContentTypeInstance(APPLICATION_PRIMARY_TYPE, OEB.X_OEB1_PACKAGE_XML_SUBTYPE);
 
 	/**The "application/x-oeb-publication+zip" content type.*/
-	protected final static ContentType OEB_ZIP_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, OEB.X_OEB_PUBLICATION_ZIP_SUBTYPE, null);
+	protected final static ContentType OEB_ZIP_MEDIA_TYPE=getContentTypeInstance(APPLICATION_PRIMARY_TYPE, OEB.X_OEB_PUBLICATION_ZIP_SUBTYPE);
 
 	/**The "application/x-xebook+rdf+xml" content type.*/
-	protected final static ContentType XEBOOK_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, X_XEBOOK_RDF_XML_SUBTYPE, null);
+	protected final static ContentType XEBOOK_MEDIA_TYPE=getContentTypeInstance(APPLICATION_PRIMARY_TYPE, X_XEBOOK_RDF_XML_SUBTYPE);
 
 	/**The "application/x-xebook+rdf+xml+zip" content type.*/
-	protected final static ContentType XEB_ZIP_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, X_XEBOOK_RDF_XML_ZIP_SUBTYPE, null);
+	protected final static ContentType XEB_ZIP_MEDIA_TYPE=getContentTypeInstance(APPLICATION_PRIMARY_TYPE, X_XEBOOK_RDF_XML_ZIP_SUBTYPE);
 
 	/**The "text/plain" content type.*/
-	protected final static ContentType TEXT_PLAIN_MEDIA_TYPE=new ContentType(ContentTypes.TEXT_PRIMARY_TYPE, Text.PLAIN_SUBTYPE, null);
+	protected final static ContentType TEXT_PLAIN_MEDIA_TYPE=getContentTypeInstance(TEXT_PRIMARY_TYPE, Text.PLAIN_SUBTYPE);
 
 	//TODO fix asynchronous stop-gap kludge to correctly get the asynchronous setting from the document---if that's the best way to do it
 	protected boolean asynchronousLoad=false;
@@ -743,7 +744,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	{
 		try
 		{
-			final ContentType contentType=new ContentType(getContentType());	//find out the content type
+			final ContentType contentType=getContentTypeInstance(getContentType());	//find out the content type TODO check for null
 			if(isXML(contentType))	//if this is XML TODO all this special handling needs to go in the editor kit; really, this should go in the code using the text pane, complementary to the decoding
 			{
 				if(text.length()>0)	//if there is any text
@@ -753,7 +754,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 				}
 			}
 		}
-		catch(final ParseException parseException) {}	//if we don't recognize the content type, just set the text normally
+		catch(final ArgumentSyntaxException argumentSyntaxException) {}	//if we don't recognize the content type, just set the text normally
 		super.setText(text);	//set the text normally
 	}
 
@@ -1265,7 +1266,7 @@ Debug.trace("reading from stream into document"); //G***del
 	public EditorKit getEditorKitForContentType(final String type)
 	{
 		EditorKit editorKit=null;	//we'll try to create an editor kit
-		final ContentType mediaType=ContentTypes.createContentType(type);  //create a new media type
+		final ContentType mediaType=ContentTypes.getContentTypeInstance(type);  //create a new media type
 		if(XHTML.isHTML(mediaType))	//if this is an XHTML media type
 		{
 			editorKit=new XHTMLEditorKit(mediaType, this);	//create a new XHTML editor kit for this media type
@@ -1292,7 +1293,7 @@ Debug.trace("reading from stream into document"); //G***del
 				{
 					setEditorKitForContentType(type, editorKit);	//cache this editor kit
 				}
-				else if(isXML(createContentType(type)))	//if this type was not recognized, but it's an XML content type
+				else if(isXML(getContentTypeInstance(type)))	//if this type was not recognized, but it's an XML content type
 				{
 					editorKit=createEditorKitForContentType(ContentTypes.toString(ContentTypes.TEXT_PRIMARY_TYPE, XML_SUBTYPE));//create a general text/xml editor kit
 				}

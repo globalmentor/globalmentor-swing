@@ -11,6 +11,7 @@ import static com.globalmentor.io.ContentTypes.*;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.unicode.UnicodeStatusBar;
 import com.globalmentor.io.*;
+import static com.globalmentor.io.ContentTypes.*;
 import com.globalmentor.text.CharacterEncoding;
 import static com.globalmentor.text.Text.*;
 import com.globalmentor.text.xml.XMLNodeModel;
@@ -114,7 +115,7 @@ public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeMo
 	*/
 	public XMLPanel(final XMLNodeModel<N> model, final boolean initialize)
 	{
-		this(model, new ContentType(TEXT_PRIMARY_TYPE, ContentTypeConstants.XML_SUBTYPE, null), initialize);	//construct the panel with a default text/xml media type
+		this(model, getContentTypeInstance(TEXT_PRIMARY_TYPE, ContentTypeConstants.XML_SUBTYPE), initialize);	//construct the panel with a default text/xml media type
 	}
 
 	/**Content type constructor.
@@ -207,7 +208,7 @@ updateStatus();	//testing; probably put a convenience method to create this list
 	/**@return The XML content type of the panel.*/
 	public ContentType getContentType()
 	{
-		return createContentType(getXMLTextPane().getContentType());	//return the XML text pane content type
+		return getContentTypeInstance(getXMLTextPane().getContentType());	//return the XML text pane content type
 	}	
 
 	/**Sets the XML content type of the panel.

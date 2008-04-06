@@ -21,7 +21,9 @@ import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.XMLEditorKit.ContentData;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
+
 import com.globalmentor.io.*;
+import static com.globalmentor.io.ContentTypes.*;
 import com.globalmentor.marmot.Marmot;
 import com.globalmentor.net.Resource;
 import com.globalmentor.net.URIs;
@@ -51,10 +53,10 @@ public class XEBEditorKit extends XHTMLEditorKit	//TODO eventually go back to de
 	public final static String READ_TASK="READ";
 
 	/**The "text/x-oeb1-document" content type.*/
-	protected final static ContentType OEB_DOCUMENT_MEDIA_TYPE=new ContentType(ContentTypes.TEXT_PRIMARY_TYPE, OEB.X_OEB1_DOCUMENT_SUBTYPE, null);
+	protected final static ContentType OEB_DOCUMENT_MEDIA_TYPE=getContentTypeInstance(ContentTypes.TEXT_PRIMARY_TYPE, OEB.X_OEB1_DOCUMENT_SUBTYPE);
 
 	/**The "application/x-maqro+rdf+xml" content type.*/
-	protected final static ContentType MAQRO_MEDIA_TYPE=new ContentType(ContentTypes.APPLICATION_PRIMARY_TYPE, X_MAQRO_RDF_XML_SUBTYPE, null);
+	protected final static ContentType MAQRO_MEDIA_TYPE=getContentTypeInstance(ContentTypes.APPLICATION_PRIMARY_TYPE, X_MAQRO_RDF_XML_SUBTYPE);
 	
 	/**Constructor.
 	@param uriInputStreamable The source of input streams for resources.
