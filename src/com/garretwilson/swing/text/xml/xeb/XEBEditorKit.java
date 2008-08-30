@@ -14,8 +14,8 @@ import com.garretwilson.swing.event.*;
 import static com.garretwilson.swing.text.rdf.RDFStyleUtilities.*;
 import static com.globalmentor.io.ContentTypeConstants.*;
 import static com.globalmentor.rdf.RDFResources.*;
-import static com.globalmentor.rdf.maqro.MAQRO.*;
 import static com.globalmentor.rdf.xeb.RDFXEB.*;
+import static com.globalmentor.urf.maqro.MAQRO.*;
 
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.XMLEditorKit.ContentData;
@@ -28,7 +28,6 @@ import com.globalmentor.marmot.Marmot;
 import com.globalmentor.net.Resource;
 import com.globalmentor.net.URIs;
 import com.globalmentor.rdf.*;
-import com.globalmentor.rdf.maqro.*;
 import com.globalmentor.rdf.xeb.*;
 import com.globalmentor.rdf.xpackage.*;
 import com.globalmentor.text.xml.XMLDOMImplementation;
@@ -39,6 +38,7 @@ import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSProcessor;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 import com.globalmentor.text.xml.xhtml.XHTML;
+import com.globalmentor.urf.maqro.*;
 import com.globalmentor.util.Debug;
 import com.globalmentor.util.NameValuePair;
 

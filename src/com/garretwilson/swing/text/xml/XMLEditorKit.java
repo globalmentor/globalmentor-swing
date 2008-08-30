@@ -13,7 +13,7 @@ import javax.swing.text.Element;
 import static com.globalmentor.io.Charsets.*;
 import static com.globalmentor.io.ContentTypes.*;
 import static com.globalmentor.java.Objects.*;
-import static com.globalmentor.rdf.maqro.MAQRO.*;
+import static com.globalmentor.urf.maqro.MAQRO.*;
 
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.text.BasicStyledEditorKit;
@@ -22,9 +22,9 @@ import com.globalmentor.io.*;
 import com.globalmentor.java.*;
 import com.globalmentor.net.*;
 import com.globalmentor.rdf.*;
-import com.globalmentor.rdf.maqro.Activity;
 import com.globalmentor.text.xml.*;
 import com.globalmentor.text.xml.stylesheets.css.*;
+import com.globalmentor.urf.maqro.Activity;
 import com.globalmentor.util.*;
 
 import org.w3c.dom.*;

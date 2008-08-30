@@ -36,7 +36,6 @@ import com.globalmentor.applet.*;
 import com.globalmentor.io.*;
 import com.globalmentor.net.URIs;
 import com.globalmentor.net.URLs;
-import com.globalmentor.rdf.maqro.MAQRO;
 import com.globalmentor.text.ArgumentSyntaxException;
 import com.globalmentor.text.Text;
 import com.globalmentor.text.xml.XMLDOMImplementation;
@@ -44,6 +43,7 @@ import com.globalmentor.text.xml.XMLReader;
 import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.oeb.OEB;
 import com.globalmentor.text.xml.xhtml.XHTML;
+import com.globalmentor.urf.maqro.MAQRO;
 import com.globalmentor.util.Debug;
 import com.globalmentor.util.zip.*;
 
@@ -544,7 +544,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		registerLinkController(XHTML.XHTML_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML view factory with XHTML elements
 		registerLinkController(OEB.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML link controller with OEB elements
 		final ViewFactory maqroViewFactory=new MAQROViewFactory();  //create a view factory fo MAQRO
-		registerViewFactory(MAQRO.MAQRO_NAMESPACE_URI.toString(), maqroViewFactory);  //associate the MAQRO view factory with MAQRO elements
+//TODO convert to URF		registerViewFactory(MAQRO.MAQRO_NAMESPACE_URI.toString(), maqroViewFactory);  //associate the MAQRO view factory with MAQRO elements
 //G***del; doesn't work		setBackground(Color.white); //G***set to get the background color from the document itself
 //G***del; maybe delete class		setCaret(new XMLCaret(getCaret()));	//G***testing
 	}
