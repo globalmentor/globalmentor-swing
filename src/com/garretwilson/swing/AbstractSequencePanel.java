@@ -161,7 +161,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		public boolean isConfirmNavigation() {return confirmNavigation;}
 	
 		/**Sets whether each navigation must be confirmed.
-		@param confirmNavigation<code>true</code> if each navigation must be confirmed.
+		@param confirmNavigation <code>true</code> if each navigation must be confirmed.
 		*/
 		public void setConfirmNavigation(final boolean confirmNavigation) {this.confirmNavigation=confirmNavigation;}
 
