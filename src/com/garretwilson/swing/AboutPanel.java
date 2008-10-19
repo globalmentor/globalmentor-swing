@@ -4,12 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
-import com.garretwilson.model.ResourceModel;
 import com.garretwilson.resources.icon.IconResources;
-import com.garretwilson.swing.rdf.RDFPanel;
-import com.globalmentor.rdf.*;
-import com.globalmentor.rdf.dublincore.*;
-import com.globalmentor.rdf.version.*;
+import com.globalmentor.urf.URFResource;
+import com.globalmentor.urf.dcmi.DCMI;
 
 import static com.globalmentor.java.Characters.*;
 
@@ -34,30 +31,30 @@ public class AboutPanel extends BasicPanel
 	/**The resource the panel represents, or <code>null</code> if there is no
 		resource represented.
 	*/
-	private RDFResource resource=null;
+	private URFResource resource=null;
 
 		/**@return The resource the panel represents, or <code>null</code> if there
 			is no resource represented.
 		*/
-		public RDFResource getResource() {return resource;}
+		public URFResource getResource() {return resource;}
 
 		/**Sets the represented resource and updates the displayed information.
 		@param newResource The new resource represented, or <code>null</code> if 
 			there is no resource to represent.
 		*/
-		public void setResource(final RDFResource newResource)
+		public void setResource(final URFResource newResource)
 		{
 			if(resource!=newResource)	//if the resource is actually changing
 			{
 				resource=newResource;	//save the resource
 				if(resource!=null)	//if there is a new resource
 				{
-					final RDFObject titleObject=RDFDublinCore.getTitle(resource);	//get the title object
-					setTitle(titleObject!=null ? titleObject.toString() : null);	//set the title
+					setTitle(DCMI.getTitle(resource));	//set the title
+/*TODO convert to URF
 					final RDFObject versionObject=RDFVersion.getVersion(resource);	//get the version object
 					setVersion(versionObject!=null ? versionObject.toString() : null);	//set the version
-					final RDFObject rightsObject=RDFDublinCore.getRights(resource);	//get the rights
-					setCopyright(rightsObject!=null ? rightsObject.toString() : null);	//set the copyright
+*/
+					setCopyright(DCMI.getRights(resource));	//set the copyright
 				}
 				updateStatus();	//update our status based upon whether we now have a resource
 			}
@@ -134,7 +131,7 @@ public class AboutPanel extends BasicPanel
 	@param resource The resource about which information should be displayed, or
 		<code>null</code> if information will be supplied via class methods.
 	*/
-	public AboutPanel(final RDFResource resource)
+	public AboutPanel(final URFResource resource)
 	{
 		super(new BasicGridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		propertiesAction=new PropertiesAction();
@@ -222,13 +219,15 @@ public class AboutPanel extends BasicPanel
 		*/
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
-			final RDFResource resource=getResource();	//get our resource
+			final URFResource resource=getResource();	//get our resource
 			if(resource!=null)	//if we have a resource
 			{
+/*TODO convert to URF
 				final RDFPanel<RDFResource, ResourceModel<RDFResource>> rdfPanel=new RDFPanel<RDFResource, ResourceModel<RDFResource>>(new ResourceModel<RDFResource>(resource));  //create a new panel in which to show the resource
 				rdfPanel.setEditable(false);	//don't allow this RDF to be edited
 					//show the properties in an information dialog
 				BasicOptionPane.showMessageDialog(AboutPanel.this, rdfPanel, (getTitle()!=null ? getTitle()+' ' : "")+"Properties", BasicOptionPane.INFORMATION_MESSAGE);	//G***i18n
+*/
 			}
 		}
 	}

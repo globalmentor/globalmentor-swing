@@ -8,7 +8,6 @@ import javax.swing.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.globalmentor.java.*;
 import com.globalmentor.rdf.*;
-import com.globalmentor.rdf.dublincore.RDFDublinCore;
 import com.globalmentor.util.*;
 
 /**Main frame parent class for an application. This frame expects to contain
@@ -234,8 +233,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		final String title;
 		if(getApplication()!=null)	//if we have an application
 		{
-			final RDFObject titleObject=RDFDublinCore.getTitle(getApplication());	//get the application's title object
-			title=titleObject!=null ? titleObject.toString() : null;	//use the title
+			return getApplication().getTitle();	//get the application's title
 		}
 		else	//if we have no application
 		{

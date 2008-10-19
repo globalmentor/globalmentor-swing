@@ -239,21 +239,21 @@ public abstract class SwingApplication extends Application
 	*/
 	protected String getDefaultErrorTitle(final Throwable throwable)
 	{
-		final Object titleObject=getTitle();	//get the application title
-		final StringBuffer stringBuffer=new StringBuffer();	//construct the default title
-		if(titleObject!=null)	//if we have a title
+		final String title=getTitle();	//get the application title
+		final StringBuilder stringBuilder=new StringBuilder();	//construct the default title
+		if(title!=null)	//if we have a title
 		{
-			stringBuffer.append(titleObject);	//append the string version of the title
+			stringBuilder.append(title);	//append the string version of the title
 		}
 		if(throwable!=null)	//if we were given a throwable
 		{
-			if(titleObject!=null)	//if there was a title object
+			if(title!=null)	//if there was a title object
 			{
-				stringBuffer.append(' ');	//separate the title from the throwable class name
+				stringBuilder.append(' ');	//separate the title from the throwable class name
 			}
-			stringBuffer.append(Classes.getLocalName(throwable.getClass()));	//append the throwable local class name
+			stringBuilder.append(Classes.getLocalName(throwable.getClass()));	//append the throwable local class name
 		}
-		return stringBuffer.toString();	//return the default string we constructed
+		return stringBuilder.toString();	//return the default string we constructed
 	}
 
 	/**Starts an application.

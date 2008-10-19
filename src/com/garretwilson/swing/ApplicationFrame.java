@@ -77,8 +77,7 @@ public class ApplicationFrame extends BasicFrame
 		final String title;
 		if(getApplication()!=null)	//if we have an application
 		{
-			final RDFObject titleObject=RDFDublinCore.getTitle(getApplication());	//get the application's title object
-			title=titleObject!=null ? titleObject.toString() : null;	//use the title
+			return getApplication().getTitle();	//get the application's title
 		}
 		else	//if we have no application
 		{

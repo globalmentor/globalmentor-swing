@@ -248,7 +248,7 @@ public abstract class ConfiguredFramedSwingApplication<C> extends FramedSwingApp
 		{
 			modified=newModified; //update the value
 				//show that the modified property has changed
-			firePropertyChange(MODIFIED_PROPERTY, Boolean.valueOf(oldModified), Boolean.valueOf(newModified));
+//TODO fix			firePropertyChange(MODIFIED_PROPERTY, Boolean.valueOf(oldModified), Boolean.valueOf(newModified));
 		}
 	}
 
