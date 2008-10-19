@@ -8,10 +8,9 @@ import java.net.URI;
 import com.garretwilson.awt.EventQueueUtilities;
 
 /**A Swing application uses one main application frame.
-@param <C> The type of configuration object.
 @author Garret Wilson
 */
-public abstract class FramedSwingApplication<C> extends SwingApplication<C>
+public abstract class FramedSwingApplication extends SwingApplication
 {
 
 	/**The main application frame, or <code>null</code> if the application frame

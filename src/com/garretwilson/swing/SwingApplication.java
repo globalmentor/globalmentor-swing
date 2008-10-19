@@ -9,10 +9,9 @@ import com.globalmentor.util.*;
 
 /**An application that relies on Swing.
 This version creates a default authenticator for client authentication using Swing.
-@param <C> The type of configuration object.
 @author Garret Wilson
 */
-public abstract class SwingApplication<C> extends Application<C>
+public abstract class SwingApplication extends Application
 {
 
 	/**Reference URI constructor.
@@ -263,7 +262,7 @@ public abstract class SwingApplication<C> extends Application<C>
 	@param args The command line arguments.
 	@return The application status.
 	*/
-	public static <C> int run(final Application<C> application, final String[] args)
+	public static int run(final Application application, final String[] args)
 	{
 		int result=0;	//start out assuming a neutral result TODO use a constant and a unique value
 		try
