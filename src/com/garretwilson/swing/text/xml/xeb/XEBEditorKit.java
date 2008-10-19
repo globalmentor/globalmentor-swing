@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import javax.mail.internet.ContentType;
 import javax.swing.text.*;
 
 import com.garretwilson.model.ResourceModel;
@@ -12,7 +11,7 @@ import com.garretwilson.model.ResourceModel;
 import com.garretwilson.swing.ListListModel;
 import com.garretwilson.swing.event.*;
 import static com.garretwilson.swing.text.rdf.RDFStyleUtilities.*;
-import static com.globalmentor.io.ContentTypeConstants.*;
+import static com.globalmentor.net.ContentTypeConstants.*;
 import static com.globalmentor.rdf.RDFResources.*;
 import static com.globalmentor.rdf.xeb.RDFXEB.*;
 import static com.globalmentor.urf.maqro.MAQRO.*;
@@ -23,8 +22,9 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
 
 import com.globalmentor.io.*;
-import static com.globalmentor.io.ContentTypes.*;
 import com.globalmentor.marmot.Marmot;
+import com.globalmentor.net.ContentType;
+import com.globalmentor.net.ContentTypeConstants;
 import com.globalmentor.net.Resource;
 import com.globalmentor.net.URIs;
 import com.globalmentor.rdf.*;
@@ -53,10 +53,10 @@ public class XEBEditorKit extends XHTMLEditorKit	//TODO eventually go back to de
 	public final static String READ_TASK="READ";
 
 	/**The "text/x-oeb1-document" content type.*/
-	protected final static ContentType OEB_DOCUMENT_MEDIA_TYPE=getContentTypeInstance(ContentTypes.TEXT_PRIMARY_TYPE, OEB.X_OEB1_DOCUMENT_SUBTYPE);
+	protected final static ContentType OEB_DOCUMENT_MEDIA_TYPE=ContentType.getInstance(ContentType.TEXT_PRIMARY_TYPE, OEB.X_OEB1_DOCUMENT_SUBTYPE);
 
 	/**The "application/x-maqro+rdf+xml" content type.*/
-	protected final static ContentType MAQRO_MEDIA_TYPE=getContentTypeInstance(ContentTypes.APPLICATION_PRIMARY_TYPE, X_MAQRO_RDF_XML_SUBTYPE);
+	protected final static ContentType MAQRO_MEDIA_TYPE=ContentType.getInstance(ContentType.APPLICATION_PRIMARY_TYPE, X_MAQRO_RDF_XML_SUBTYPE);
 	
 	/**Constructor.
 	@param uriInputStreamable The source of input streams for resources.
@@ -75,7 +75,7 @@ public class XEBEditorKit extends XHTMLEditorKit	//TODO eventually go back to de
 	/**Returns the MIME type of the data the XML editor kit supports, <code>application/x-xebook+rdf+xml</code>.
 	@return The MIME type this editor kit supports.
 	*/
-	public String getContentType() {return ContentTypes.toString(ContentTypes.APPLICATION_PRIMARY_TYPE, ContentTypeConstants.X_XEBOOK_RDF_XML_SUBTYPE);}
+	public String getContentType() {return ContentType.toString(ContentType.APPLICATION_PRIMARY_TYPE, ContentTypeConstants.X_XEBOOK_RDF_XML_SUBTYPE);}
 
 
 		/**

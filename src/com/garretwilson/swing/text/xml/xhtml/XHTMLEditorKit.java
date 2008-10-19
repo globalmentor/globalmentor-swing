@@ -3,13 +3,13 @@ package com.garretwilson.swing.text.xml.xhtml;
 import java.net.URI;
 import java.util.List;
 
-import javax.mail.internet.ContentType;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Document;
 import javax.swing.text.MutableAttributeSet;
 import com.garretwilson.swing.text.StyleUtilities;
 import com.garretwilson.swing.text.xml.*;
 import com.globalmentor.io.*;
+import com.globalmentor.net.ContentType;
 import com.globalmentor.text.xml.XMLDOMImplementation;
 import com.globalmentor.text.xml.xhtml.*;
 

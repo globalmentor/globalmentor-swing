@@ -5,20 +5,19 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 
-import javax.mail.internet.ContentType;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
 import com.garretwilson.swing.event.XMLLinkEvent;
-import com.globalmentor.io.ContentTypes;
+import com.globalmentor.io.*;
 import com.globalmentor.java.*;
 import com.globalmentor.net.*;
 import com.globalmentor.text.xml.oeb.*;
 import com.globalmentor.text.xml.xlink.*;
 import com.globalmentor.util.*;
 
-import static com.globalmentor.io.ContentTypeConstants.*;
+import static com.globalmentor.net.ContentTypeConstants.*;
 import static com.globalmentor.text.xml.xhtml.XHTML.*;
 
 /**Class to watch the associated component and fire hyperlink events on it
@@ -469,7 +468,7 @@ protected void activateLink(int pos, JEditorPane editor) {
 				final ContentType mediaType=XMLStyleUtilities.getMediaType(attributeSet); //see if this element's document has a media type defined
 				if(mediaType!=null) //if there is a media type defined for this element's document
 				{ //G***probably do all this differently later, like registering a view factory with a media type or something or, better yet, registering a namespace with a media type
-					if(ContentTypes.TEXT_PRIMARY_TYPE.equals(mediaType.getPrimaryType()) && OEB.X_OEB1_DOCUMENT_SUBTYPE.equals(mediaType.getSubType()))
+					if(ContentType.TEXT_PRIMARY_TYPE.equals(mediaType.getPrimaryType()) && OEB.X_OEB1_DOCUMENT_SUBTYPE.equals(mediaType.getSubType()))
 						elementNamespaceURI=OEB.OEB1_DOCUMENT_NAMESPACE_URI.toString(); //G***testing
 					else if(isHTML(mediaType))
 						elementNamespaceURI=XHTML_NAMESPACE_URI.toString(); //G***testing

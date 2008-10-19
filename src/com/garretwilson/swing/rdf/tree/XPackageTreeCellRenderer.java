@@ -1,11 +1,8 @@
 package com.garretwilson.swing.rdf.tree;
 
-import javax.mail.internet.ContentType;
 import javax.swing.*;
 
-import static com.globalmentor.io.ContentTypes.*;
-
-import com.globalmentor.marmot.Marmot;
+import com.globalmentor.net.ContentType;
 import com.globalmentor.rdf.*;
 import com.globalmentor.rdf.xpackage.*;
 import com.globalmentor.util.Debug;

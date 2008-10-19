@@ -9,7 +9,6 @@ import java.util.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.io.*;
-import javax.mail.internet.ContentType;
 import javax.sound.sampled.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
@@ -26,6 +25,9 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
 import com.globalmentor.io.*;
 import com.globalmentor.java.*;
 import com.globalmentor.marmot.Marmot;
+import com.globalmentor.net.Audio;
+import com.globalmentor.net.ContentType;
+import com.globalmentor.net.ContentTypeConstants;
 import com.globalmentor.rdf.*;
 import com.globalmentor.rdf.xpackage.XPackage;
 import com.globalmentor.sound.sampled.SampledSounds;
@@ -393,7 +395,7 @@ G***comment
 	protected Object loadResource(final URI resourceURI, final ContentType mediaType) throws IOException  //G***change this to loadImage, loadClip, etc.
 	{
 		Object resource;  //this will be assigned if we run into no errors
-		if(mediaType.getPrimaryType().equals(ContentTypes.IMAGE_PRIMARY_TYPE))	//if this is an image
+		if(mediaType.getPrimaryType().equals(ContentType.IMAGE_PRIMARY_TYPE))	//if this is an image
 		{
 			final String mediaSubType=mediaType.getSubType(); //get the media sub-type
 				//if this is a GIF, JPEG, PNG G***fix, or X_BITMAP image
@@ -426,7 +428,7 @@ G***comment
 			else	//if we don't recognize this image type
 				throw new IOException("Unrecognized image type: \""+mediaType.getSubType()+"\"; only \""+ContentTypeConstants.JPEG_SUBTYPE+"\", \""+ContentTypeConstants.PNG_SUBTYPE+"\", and \""+ContentTypeConstants.GIF_SUBTYPE+"\" are currently supported.");	//G***i18n G***fix for other image types
 		}
-		else if(ContentTypes.isAudio(mediaType))	//if this is an audio media type
+		else if(Audio.isAudio(mediaType))	//if this is an audio media type
 		{
 			final InputStream inputStream=new BufferedInputStream(getResourceAsInputStream(resourceURI));	//get a buffered input stream to the audio
 //G***we should really close the input stream if something goes wrong

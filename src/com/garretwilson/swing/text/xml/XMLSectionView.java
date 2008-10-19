@@ -2,7 +2,6 @@ package com.garretwilson.swing.text.xml;
 
 import java.awt.Shape;
 import java.util.*;
-import javax.mail.internet.ContentType;
 import javax.swing.event.*;
 import javax.swing.text.*;
 

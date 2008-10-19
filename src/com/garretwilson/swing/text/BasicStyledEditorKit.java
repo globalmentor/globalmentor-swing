@@ -6,7 +6,6 @@ import java.io.*;
 import java.net.URI;
 import java.util.prefs.Preferences;
 
-import javax.mail.internet.ContentType;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
@@ -22,7 +21,8 @@ import com.garretwilson.swing.unicode.UnicodePanel;
 import com.garretwilson.swing.unicode.UnicodeTableModel;
 
 import com.globalmentor.io.*;
-import static com.globalmentor.io.ContentTypes.*;
+import com.globalmentor.net.ContentType;
+
 import com.globalmentor.text.Text;
 import com.globalmentor.util.*;
 
@@ -37,7 +37,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 {
 
 	/**The XML media type this editor kit supports, defaulting to <code>text/plain</code>.*/
-	private ContentType mediaType=getContentTypeInstance(TEXT_PRIMARY_TYPE, Text.PLAIN_SUBTYPE);
+	private ContentType mediaType=ContentType.getInstance(ContentType.TEXT_PRIMARY_TYPE, Text.PLAIN_SUBTYPE);
 
 		/**@return The XML media type this editor kit supports.*/
 		public ContentType getMediaType() {return mediaType;}

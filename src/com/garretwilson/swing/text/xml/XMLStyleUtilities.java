@@ -2,16 +2,16 @@ package com.garretwilson.swing.text.xml;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import javax.mail.internet.ContentType;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
 
 import static com.garretwilson.swing.text.StyleUtilities.*;
 import static com.garretwilson.swing.text.xml.XMLStyleConstants.*;
-import static com.globalmentor.java.Objects.*;
 
+import static com.globalmentor.java.Objects.*;
 import com.globalmentor.java.Objects;
+import com.globalmentor.net.ContentType;
 import com.globalmentor.rdf.RDFResource;
 import com.globalmentor.text.xml.XML;
 import com.globalmentor.util.NameValuePair;

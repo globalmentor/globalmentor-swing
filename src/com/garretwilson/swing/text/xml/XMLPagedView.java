@@ -13,7 +13,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.SizeRequirements;
-import javax.mail.internet.ContentType;
 
 import com.garretwilson.awt.EventQueueUtilities;
 import com.garretwilson.swing.ComponentUtilities;

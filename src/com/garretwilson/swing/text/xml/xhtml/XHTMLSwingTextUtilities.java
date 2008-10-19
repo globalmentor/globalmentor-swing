@@ -3,15 +3,14 @@ package com.garretwilson.swing.text.xml.xhtml;
 import java.io.File;
 import java.net.URI;
 
-import javax.mail.internet.ContentType;
 import javax.swing.text.*;
 import com.garretwilson.swing.text.xml.XMLStyleUtilities;
 
 import static com.globalmentor.text.xml.xhtml.XHTML.*;
 
-import com.globalmentor.io.ContentTypeConstants;
-import com.globalmentor.io.ContentTypes;
-import com.globalmentor.io.Files;
+import com.globalmentor.io.*;
+import com.globalmentor.net.ContentType;
+import com.globalmentor.net.ContentTypeConstants;
 import com.globalmentor.util.Debug;
 
 /**Provides utility functions to manipulate Swing text classes representing XHTML.
@@ -66,7 +65,7 @@ public class XHTMLSwingTextUtilities
 				else if(elementName.equals(ELEMENT_OBJECT)) //if this is an <object> element
 				{
 					final ContentType mediaType=getObjectMediaType(attributeSet); //get the media type of the object
-					if(mediaType.getPrimaryType().equals(ContentTypes.IMAGE_PRIMARY_TYPE)) //if this is an image
+					if(mediaType.getPrimaryType().equals(ContentType.IMAGE_PRIMARY_TYPE)) //if this is an image
 						return true;  //show that this is an image object
 				}
 			}
@@ -287,11 +286,11 @@ public class XHTMLSwingTextUtilities
 				//see if there is a code type attribute
 			final String codeType=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_CODETYPE);
 			if(codeType!=null)  //if the object has a code type
-				return ContentTypes.getContentTypeInstance(codeType); //create a media type from the given type
+				return ContentType.getInstance(codeType); //create a media type from the given type
 				//see if there is a type attribute, since there is no code type specified
 			final String type=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_TYPE);
 			if(type!=null)  //if the object has a code type
-				return ContentTypes.getContentTypeInstance(type); //create a media type from the given type and return it
+				return ContentType.getInstance(type); //create a media type from the given type and return it
 				//see if there is a data attribute, since there is no type specified
 			final String data=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_DATA);
 			if(data!=null)  //if the object has a data attribute
@@ -309,12 +308,12 @@ public class XHTMLSwingTextUtilities
 			//G***we should really probably just have a map or something -- or maybe not (this is probably more lightweight)
 		final String topLevelType=mediaType.getPrimaryType();  //get the top-level type
 		final String subType=mediaType.getSubType();  //get the subtype
-		if(ContentTypes.APPLICATION_PRIMARY_TYPE.equals(topLevelType))  //application/*
+		if(ContentType.APPLICATION_PRIMARY_TYPE.equals(topLevelType))  //application/*
 		{
 			if(ContentTypeConstants.JAVA_SUBTYPE.equals(subType))  //application/java
 				return true;  //we support this media type
 		}
-		else if(ContentTypes.IMAGE_PRIMARY_TYPE.equals(topLevelType))  //image/*
+		else if(ContentType.IMAGE_PRIMARY_TYPE.equals(topLevelType))  //image/*
 		{
 			if(ContentTypeConstants.GIF_SUBTYPE.equals(subType)  //image/gif
 				  || ContentTypeConstants.PNG_SUBTYPE.equals(subType)  //image/png

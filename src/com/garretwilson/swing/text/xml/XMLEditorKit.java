@@ -4,14 +4,12 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.Charset;
 import java.util.*;
-import javax.mail.internet.ContentType;
 import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 
 import static com.globalmentor.io.Charsets.*;
-import static com.globalmentor.io.ContentTypes.*;
 import static com.globalmentor.java.Objects.*;
 import static com.globalmentor.urf.maqro.MAQRO.*;
 
@@ -38,7 +36,7 @@ public class XMLEditorKit extends BasicStyledEditorKit
 {
 
 	/**The default media type this editor kit supports, <code>text/xml</code>.*/
-	protected final static ContentType DEFAULT_MEDIA_TYPE=getContentTypeInstance(TEXT_PRIMARY_TYPE, ContentTypeConstants.XML_SUBTYPE);
+	protected final static ContentType DEFAULT_MEDIA_TYPE=ContentType.getInstance(ContentType.TEXT_PRIMARY_TYPE, ContentTypeConstants.XML_SUBTYPE);
 	
 	/**The map of XML element kits keyed to XML namespaces.*/
 	protected final Map<String, XMLElementKit> namespaceXMLElementKitMap=new HashMap<String, XMLElementKit>();

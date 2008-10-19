@@ -9,7 +9,6 @@ import java.text.*;
 import java.util.*;
 import java.util.prefs.Preferences;
 import static java.util.Collections.*;
-import javax.mail.internet.ContentType;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -1617,7 +1616,7 @@ Debug.trace("Media type: ", mediaType);	//G***del
 			{
 					//TODO create convenience utility methods similar to MediaTypeUtilities.isAudio() for all of these checks
 				final String topLevelType=mediaType.getPrimaryType();  //get the top-level media type
-				if(ContentTypes.isAudio(mediaType))	//if this is an audio media type
+				if(Audio.isAudio(mediaType))	//if this is an audio media type
 				{
 Debug.trace("found an audio file.");
 //G***del; fix				  mouseEvent.consume(); //consume the event so that the mouse click won't be interpreted elsewhere
@@ -1626,7 +1625,7 @@ Debug.trace("ready to start clip.");
 					clip.start();	//start the clip playing G***do we need to close it later?
 					return;	//don't do any more processing
 				}
-				else if(topLevelType.equals(ContentTypes.IMAGE_PRIMARY_TYPE))	//if this is an image media type G***does this work correctly relative to the document base URI?
+				else if(topLevelType.equals(ContentType.IMAGE_PRIMARY_TYPE))	//if this is an image media type G***does this work correctly relative to the document base URI?
 				{
 					viewImage(hyperlinkURI.toString()); //view the image at the given location
 					return;	//don't do any more processing
