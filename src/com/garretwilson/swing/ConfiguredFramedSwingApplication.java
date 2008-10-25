@@ -157,7 +157,7 @@ public abstract class ConfiguredFramedSwingApplication<C> extends FramedSwingApp
 				final File configurationFile=getConfigurationFile();	//get the configuration file
 				if(Files.checkExists(configurationFile))	//if there is a configuration file (or a backup configuration file)
 				{
-					configuration=configurationIOKit.load(configurationFile.toURI());	//ask the I/O kit to load the configuration file
+					configuration=configurationIOKit.load(Files.toURI(configurationFile));	//ask the I/O kit to load the configuration file
 				}
 			}
 			catch(SecurityException securityException)	//if we can't access the configuration file
@@ -189,7 +189,7 @@ public abstract class ConfiguredFramedSwingApplication<C> extends FramedSwingApp
 				final File tempFile=Files.getTempFile(configurationFile);  //get a temporary file to write to
 
 				final File backupFile=Files.getBackupFile(configurationFile);  //get a backup file
-				configurationIOKit.save(configuration, tempFile.toURI());	//ask the I/O kit to save the configuration to the temporary file
+				configurationIOKit.save(configuration, Files.toURI(tempFile));	//ask the I/O kit to save the configuration to the temporary file
 				Files.moveFile(tempFile, configurationFile, backupFile); //move the temp file to the normal file, creating a backup if necessary
 				setModified(false);	//the application has not been modified, as its configuration has just been saved
 			}

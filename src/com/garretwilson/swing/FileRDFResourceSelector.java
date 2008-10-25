@@ -10,6 +10,7 @@ import com.garretwilson.model.*;
 
 
 import com.globalmentor.io.*;
+
 import static com.globalmentor.net.URIs.*;
 import com.globalmentor.net.http.HTTPClient;
 import com.globalmentor.rdf.*;
@@ -137,7 +138,7 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 			final File selectedFile=fileChooser.getSelectedFile();	//get the file they chose
 			if(selectedFile!=null)	//if they chose a file
 			{
-				return getResource(selectedFile.toURI());	//convert the file into a URI and create a resource to describe it
+				return getResource(Files.toURI(selectedFile));	//convert the file into a URI and create a resource to describe it
 			}
 		}
 		return null;	//show that we couldn't select a file	
