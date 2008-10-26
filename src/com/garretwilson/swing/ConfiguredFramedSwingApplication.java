@@ -42,7 +42,7 @@ public abstract class ConfiguredFramedSwingApplication<C> extends FramedSwingApp
 		{
 			return configurationDirectoryName!=null	//if a configuration directory name has been assigned
 					? configurationDirectoryName	//return the configuration directory name
-					: String.valueOf(FileConstants.EXTENSION_SEPARATOR)+Classes.getLocalName(getClass()).toLowerCase();	//otherwise, return ".applicationname"
+					: String.valueOf(Files.FILENAME_EXTENSION_SEPARATOR)+Classes.getLocalName(getClass()).toLowerCase();	//otherwise, return ".applicationname"
 		}
 		
 		/**Sets the name of the configuration directory.

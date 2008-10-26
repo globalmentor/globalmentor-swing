@@ -542,7 +542,7 @@ Debug.trace("ready to fire property change");
 		{
 		  final File file=new File(uri);  //create a file from the URI
 				//create a userdata filename with ".userdata.xml" appended
-		  final File userDataFile=new File(file.getParent(), file.getName()+FileConstants.EXTENSION_SEPARATOR+"bookuserdata"+FileConstants.EXTENSION_SEPARATOR+"xml");
+		  final File userDataFile=new File(file.getParent(), file.getName()+Files.FILENAME_EXTENSION_SEPARATOR+"bookuserdata"+Files.FILENAME_EXTENSION_SEPARATOR+"xml");
 		  return userDataFile;	//return the user data file
 		}
 		else	//if there is no URI

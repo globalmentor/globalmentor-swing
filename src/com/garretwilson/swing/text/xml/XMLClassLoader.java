@@ -4,9 +4,10 @@ import java.io.*;
 import java.net.*;
 import java.security.*;
 
+import com.globalmentor.io.Files;
 import com.globalmentor.io.InputStreams;
+import com.globalmentor.java.Classes;
 
-import static com.globalmentor.io.FileConstants.*;
 import static com.globalmentor.java.Java.*;
 import static com.globalmentor.net.URIs.*;
 
@@ -74,7 +75,7 @@ public class XMLClassLoader extends SecureClassLoader
 		try
 		{
 				//replace '.' with '/' and append ".class"
-			String href=name.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR).concat(String.valueOf(EXTENSION_SEPARATOR)).concat(CLASS_EXTENSION);
+			String href=name.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR).concat(String.valueOf(Files.FILENAME_EXTENSION_SEPARATOR)).concat(Classes.CLASS_NAME_EXTENSION);
 			if(baseURI!=null) //if we have a base URI
 				href=createURI(baseURI, href).toString(); //create an href relative to the base URI
 			final String finalHRef=href;  //put the href in a variable we wont' modify
