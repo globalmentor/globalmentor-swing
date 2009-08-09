@@ -5,7 +5,7 @@ import java.net.URI;
 import java.util.*;
 import java.util.prefs.Preferences;
 
-import static com.globalmentor.java.SystemUtilities.*;
+import static com.globalmentor.java.OperatingSystem.*;
 
 import com.globalmentor.io.*;
 import com.globalmentor.java.*;
@@ -54,7 +54,7 @@ public abstract class ConfiguredFramedSwingApplication<C> extends FramedSwingApp
 	/**@return The configuration directory for the application.
 	@exception SecurityException if a security manager exists and its <code>checkPropertyAccess</code> method doesn't allow
 		access to the user home system property.
-	@see SystemUtilities#getUserHomeDirectory()
+	@see OperatingSystem#getUserHomeDirectory()
 	@see #getConfigurationDirectoryName()
 	*/
 	public File getConfigurationDirectory() throws SecurityException
