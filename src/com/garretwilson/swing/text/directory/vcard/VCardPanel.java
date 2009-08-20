@@ -4,6 +4,8 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.JTabbedPane;
 import com.garretwilson.swing.*;
+import com.globalmentor.model.LocaledText;
+import com.globalmentor.model.Verifiable;
 import com.globalmentor.text.directory.vcard.*;
 import com.globalmentor.util.*;
 

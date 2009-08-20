@@ -4,7 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import com.globalmentor.util.Modifiable;
+import com.globalmentor.model.Modifiable;
 
 /**A component sequence panel that produces its sequence components from items
 	in a list model. (The list items are not necessarily components.)

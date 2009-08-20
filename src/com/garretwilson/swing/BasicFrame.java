@@ -9,6 +9,7 @@ import javax.swing.*;
 import com.garretwilson.awt.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.globalmentor.java.*;
+import com.globalmentor.model.Modifiable;
 import com.globalmentor.util.*;
 
 import static com.globalmentor.util.prefs.PreferencesUtilities.*;

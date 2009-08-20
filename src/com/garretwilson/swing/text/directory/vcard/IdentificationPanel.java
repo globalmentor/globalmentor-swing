@@ -10,6 +10,7 @@ import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
 import com.garretwilson.swing.event.*;
 import com.globalmentor.java.*;
+import com.globalmentor.model.LocaledText;
 import com.globalmentor.text.directory.vcard.*;
 import com.globalmentor.util.*;
 

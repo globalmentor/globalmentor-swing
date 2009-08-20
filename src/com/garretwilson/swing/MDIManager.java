@@ -9,10 +9,10 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import com.garretwilson.resources.icon.IconResources;
+import com.globalmentor.model.Modifiable;
+import com.globalmentor.model.ObjectState;
 import com.globalmentor.rdf.*;
 import com.globalmentor.util.Debug;
-import com.globalmentor.util.Modifiable;
-import com.globalmentor.util.ObjectState;
 
 /**Class that manages multiple documents in a <code>JDesktopPane</code>.
 @author Garret Wilson

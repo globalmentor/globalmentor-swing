@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import com.garretwilson.resources.icon.IconResources;
+import com.globalmentor.model.Verifiable;
 import com.globalmentor.util.*;
 
 /**Base class for a panel that allows progression in a sequence.

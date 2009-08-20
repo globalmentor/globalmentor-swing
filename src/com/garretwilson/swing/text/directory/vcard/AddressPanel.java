@@ -10,6 +10,7 @@ import javax.swing.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.globalmentor.java.*;
+import com.globalmentor.model.Locales;
 import com.globalmentor.text.directory.vcard.*;
 import com.globalmentor.util.*;
 

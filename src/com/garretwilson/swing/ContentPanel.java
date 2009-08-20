@@ -21,7 +21,7 @@ import com.globalmentor.util.*;
 @author Garret Wilson
 @see BasicGridBagLayout
 @see DefaultFocusable
-@see com.globalmentor.util.Modifiable
+@see com.globalmentor.model.Modifiable
 */
 public class ContentPanel extends ModifiablePanel implements CanClosable
 {

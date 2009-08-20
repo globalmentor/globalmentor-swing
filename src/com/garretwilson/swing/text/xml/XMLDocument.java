@@ -25,6 +25,7 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
 import com.globalmentor.io.*;
 import com.globalmentor.java.*;
 import com.globalmentor.marmot.Marmot;
+import com.globalmentor.model.NameValuePair;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.net.ContentTypeConstants;
 import com.globalmentor.rdf.*;
@@ -34,7 +35,6 @@ import com.globalmentor.text.xml.stylesheets.css.AbstractXMLCSSStylesheetApplier
 import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 import com.globalmentor.util.Debug;
-import com.globalmentor.util.NameValuePair;
 
 /**A document that models XML.
 @see com.globalmentor.text.xml.XMLProcessor

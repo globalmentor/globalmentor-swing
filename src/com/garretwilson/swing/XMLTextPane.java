@@ -46,10 +46,10 @@ import com.globalmentor.urf.maqro.MAQRO;
 import com.globalmentor.util.Debug;
 import com.globalmentor.util.zip.*;
 
+import static com.globalmentor.collections.iterators.Iterators.*;
 import static com.globalmentor.java.Objects.*;
 import static com.globalmentor.net.ContentTypeConstants.*;
 import static com.globalmentor.text.xml.XML.*;
-import static com.globalmentor.util.Iterators.*;
 
 /**A text component that can be marked up with attributes that are represented
 	graphically. Most importantly, this class supports paged XML information.

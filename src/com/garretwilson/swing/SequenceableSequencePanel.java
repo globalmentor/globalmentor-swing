@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.*;
 import static java.util.Collections.*;
 import com.garretwilson.swing.*;
+import com.globalmentor.model.Sequenceable;
 import com.globalmentor.util.*;
 
 /**A sequence panel that determines the sequence based upon components that

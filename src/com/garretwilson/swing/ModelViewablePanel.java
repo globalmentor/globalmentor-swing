@@ -4,7 +4,7 @@ import java.awt.FlowLayout;
 import java.awt.LayoutManager;
 import java.io.IOException;
 import com.garretwilson.model.*;
-import com.globalmentor.util.Arrays;
+import com.globalmentor.collections.Arrays;
 
 /**Panel that allows multiple views of a data model to be displayed.
 <p>An implementing class may consider the data in each view to be loaded and

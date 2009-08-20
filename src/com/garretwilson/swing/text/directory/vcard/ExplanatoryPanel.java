@@ -9,7 +9,9 @@ import java.util.*;
 import static java.util.Collections.*;
 import javax.swing.*;
 import com.garretwilson.swing.*;
+import com.globalmentor.collections.ModifiableSet;
 import com.globalmentor.java.*;
+import com.globalmentor.model.LocaledText;
 import com.globalmentor.text.directory.vcard.*;
 import com.globalmentor.util.*;
 

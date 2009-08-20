@@ -9,9 +9,9 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import com.garretwilson.resources.icon.IconResources;
+import com.globalmentor.model.ObjectState;
 import com.globalmentor.rdf.*;
 import com.globalmentor.util.Debug;
-import com.globalmentor.util.ObjectState;
 
 /**Main frame parent class for a multiple document interface (MDI) application.
 @author Garret Wilson

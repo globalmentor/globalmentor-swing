@@ -23,6 +23,7 @@ import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
 
 import com.globalmentor.io.*;
 import com.globalmentor.marmot.Marmot;
+import com.globalmentor.model.NameValuePair;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.net.ContentTypeConstants;
 import com.globalmentor.net.Resource;
@@ -40,7 +41,6 @@ import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.urf.maqro.*;
 import com.globalmentor.util.Debug;
-import com.globalmentor.util.NameValuePair;
 
 /**An editor kit for an XEB publication.
 @see XMLEditorKit

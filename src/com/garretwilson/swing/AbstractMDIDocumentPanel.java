@@ -7,6 +7,7 @@ import java.util.*;
 import javax.swing.*;
 import com.garretwilson.model.*;
 import com.globalmentor.java.Booleans;
+import com.globalmentor.model.ObjectState;
 import com.globalmentor.rdf.*;
 import com.globalmentor.text.xml.XMLSerializer;
 import com.globalmentor.util.*;

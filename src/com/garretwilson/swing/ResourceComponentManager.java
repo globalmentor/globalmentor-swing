@@ -20,6 +20,9 @@ import com.garretwilson.resources.icon.IconResources;
 import static com.garretwilson.swing.ComponentUtilities.*;
 import static com.globalmentor.net.URIs.*;
 
+import com.globalmentor.model.DefaultObjectState;
+import com.globalmentor.model.Modifiable;
+import com.globalmentor.model.Verifiable;
 import com.globalmentor.net.Resource;
 import com.globalmentor.util.*;
 import com.globalmentor.util.prefs.Preferencesable;

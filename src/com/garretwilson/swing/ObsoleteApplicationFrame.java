@@ -7,6 +7,7 @@ import java.net.*;
 import javax.swing.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.globalmentor.java.*;
+import com.globalmentor.model.ObjectState;
 import com.globalmentor.rdf.*;
 import com.globalmentor.util.*;
 

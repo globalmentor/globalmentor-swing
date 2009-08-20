@@ -7,6 +7,7 @@ import javax.swing.event.*;
 import com.garretwilson.awt.*;
 import com.garretwilson.swing.event.*;
 import com.globalmentor.java.*;
+import com.globalmentor.model.Modifiable;
 import com.globalmentor.util.*;
 
 /**A panel that can be modified, and recognized when its contained components

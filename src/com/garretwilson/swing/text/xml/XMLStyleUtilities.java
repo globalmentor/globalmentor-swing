@@ -11,10 +11,10 @@ import static com.garretwilson.swing.text.xml.XMLStyleConstants.*;
 
 import static com.globalmentor.java.Objects.*;
 import com.globalmentor.java.Objects;
+import com.globalmentor.model.NameValuePair;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.rdf.RDFResource;
 import com.globalmentor.text.xml.XML;
-import com.globalmentor.util.NameValuePair;
 
 /**A collection of utilities for working with XML values used Swing style.
 <p>These routines store XML attributes in the Swing attributes as an

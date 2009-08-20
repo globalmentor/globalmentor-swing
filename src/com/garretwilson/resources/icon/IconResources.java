@@ -3,6 +3,8 @@ package com.garretwilson.resources.icon;
 import java.util.*;
 import javax.swing.ImageIcon;
 
+import com.globalmentor.collections.DecoratorReadWriteLockMap;
+import com.globalmentor.collections.PurgeOnWriteWeakValueHashMap;
 import com.globalmentor.util.*;
 
 /**Manages icon resources bundled with an application. This class keeps weak

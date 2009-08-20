@@ -8,6 +8,9 @@ import javax.swing.*;
 import javax.swing.event.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.resources.icon.IconResources;
+import com.globalmentor.collections.DecoratorReverseMap;
+import com.globalmentor.collections.ReverseMap;
+import com.globalmentor.model.Verifiable;
 import com.globalmentor.util.*;
 
 /**Panel that allows multiple views of data to be displayed in separate tabs.

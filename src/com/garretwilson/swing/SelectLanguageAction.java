@@ -6,6 +6,7 @@ import java.util.*;
 import javax.swing.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.globalmentor.java.*;
+import com.globalmentor.model.Localeable;
 import com.globalmentor.util.*;
 
 /**Action for selecting a language from a dialog.

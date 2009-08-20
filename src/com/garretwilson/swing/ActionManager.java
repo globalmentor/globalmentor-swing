@@ -5,11 +5,11 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
+import com.globalmentor.collections.comparators.DefaultOrderComparator;
 import com.globalmentor.java.*;
-import com.globalmentor.util.DefaultOrderComparator;
 
+import static com.globalmentor.collections.iterators.Iterators.*;
 import static com.globalmentor.java.Objects.*;
-import static com.globalmentor.util.Iterators.*;
 
 /**Manages a set of actions for an application or a component.
 The actions are categorized into groups, and action managers may merge or

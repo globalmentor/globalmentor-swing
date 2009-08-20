@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.beans.*;
 import javax.swing.*;
 import com.garretwilson.awt.*;
+import com.globalmentor.model.Verifiable;
 import com.globalmentor.util.*;
 
 /**An option pane that knows how to verify its contents before closing the

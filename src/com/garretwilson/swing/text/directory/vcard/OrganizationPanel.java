@@ -9,6 +9,7 @@ import javax.swing.event.DocumentListener;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
 import com.globalmentor.java.*;
+import com.globalmentor.model.LocaledText;
 import com.globalmentor.util.*;
 
 /**A panel allowing entry of the organization types of a vCard <code>text/directory</code>

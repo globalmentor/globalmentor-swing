@@ -19,9 +19,9 @@ import com.garretwilson.awt.DefaultFocusable;
 
 import static com.globalmentor.java.Booleans.*;
 
+import com.globalmentor.model.Modifiable;
 import com.globalmentor.net.Resource;
 import com.globalmentor.util.Debug;
-import com.globalmentor.util.Modifiable;
 
 /**Class that manages resource components in a desktop pane.
 @param <R> The type of resource the components of which are being managed.

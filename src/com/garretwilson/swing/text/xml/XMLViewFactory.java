@@ -35,6 +35,7 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.globalmentor.java.Objects;
 import com.globalmentor.java.StringBuffers;
 import com.globalmentor.java.Strings;
+import com.globalmentor.model.NameValuePair;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.net.URLs;
 import com.globalmentor.rdf.*;
@@ -47,7 +48,6 @@ import com.globalmentor.text.xml.stylesheets.css.*;
 import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.text.xml.xlink.XLink;
 import com.globalmentor.util.Debug;
-import com.globalmentor.util.NameValuePair;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.DocumentType;

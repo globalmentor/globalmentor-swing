@@ -9,12 +9,12 @@ import static com.globalmentor.java.OperatingSystem.*;
 
 import com.globalmentor.io.*;
 import com.globalmentor.java.*;
+import com.globalmentor.model.Modifiable;
 import com.globalmentor.net.Authenticable;
 import com.globalmentor.net.http.HTTPClient;
 import com.globalmentor.rdf.*;
 import com.globalmentor.rdf.dublincore.RDFDublinCore;
 import com.globalmentor.util.Debug;
-import com.globalmentor.util.Modifiable;
 
 /**A framed Swing application that maintains configuration information.
 <p>If a configuration is provided via <code>setConfiguration()</code>, that
