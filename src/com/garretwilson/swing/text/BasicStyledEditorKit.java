@@ -10,7 +10,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
-
 import static com.globalmentor.java.Objects.*;
 
 import com.garretwilson.sun.demo.jfc.notepad.ElementTreePanel;
@@ -21,6 +20,7 @@ import com.garretwilson.swing.unicode.UnicodePanel;
 import com.garretwilson.swing.unicode.UnicodeTableModel;
 
 import com.globalmentor.io.*;
+import com.globalmentor.log.Log;
 import com.globalmentor.net.ContentType;
 
 import com.globalmentor.text.Text;
@@ -202,10 +202,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 		{
 //G***del Debug.notify("XMLEditorKit.PreviousPageAction.actionPerformed()");
 			final JTextComponent textComponent=getTextComponent(actionEvent);	//get the text component
-			if(Debug.isDebug())	//if debugging is turned on
-			{
-				Debug.log(ViewUtilities.toString(textComponent));	//log the views to the debug output
-			}
+			Log.debug(ViewUtilities.toString(textComponent));	//log the views to the debug output
 			new BasicFrame("Elements", new ElementTreePanel(textComponent)).setVisible(true);	//show a new frame showing elements G***i18n
 		}
 	}
@@ -266,7 +263,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 				}
 				catch(final SecurityException securityException)	//if we can't get preferences
 				{
-					Debug.warn(securityException);	//don't do anything drastic
+					Log.warn(securityException);	//don't do anything drastic
 				}
 */
 				frame.setAlwaysOnTop(true);	//make the frame appear always on top

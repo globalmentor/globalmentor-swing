@@ -12,7 +12,7 @@ import javax.swing.*;
 import javax.swing.text.*;
 
 import com.globalmentor.net.URLs;
-import com.globalmentor.util.Debug;
+import com.globalmentor.log.Log;
 
 /**View that displays an image. The image reference is kept using a soft pointer
 	so that when memory is low the JVM can reclaim the image memory. The image,
@@ -103,7 +103,7 @@ public abstract class XMLImageView extends XMLObjectView implements ImageObserve
 	*/
 	public void setShowing(final boolean newShowing)
 	{
-Debug.trace();  //G***del
+Log.trace();  //G***del
 		super.setShowing(newShowing); //do the default functionality
 		if(!newShowing) //if we're being hidden
 		{
@@ -126,7 +126,7 @@ Debug.trace();  //G***del
 	*/
 	protected Image getImage() throws URISyntaxException, IOException
 	{
-Debug.trace("XMLImageView.getImage(): ", getHRef()); //G***del
+Log.trace("XMLImageView.getImage(): ", getHRef()); //G***del
 		if(shownImage!=null)  //G***testing; comment
 			return shownImage;  //G***comment
 		else
@@ -135,10 +135,10 @@ Debug.trace("XMLImageView.getImage(): ", getHRef()); //G***del
 			Image image=imageReference!=null ? (Image)imageReference.get() : null;  //get the image to which the soft reference refers
 			if(image==null) //if we have not loaded the image yet, or the image memory has been reclaimed
 			{ //G***put all this into a separate function
-				Debug.trace("loading image"); //G***del
+				Log.trace("loading image"); //G***del
 				if(imageReference!=null)  //if we used to have a reference to an image, but memory was running low and it was reclaimed
 				{
-					Debug.trace("Image memory reclaimed, reloading."); //G***del
+					Log.trace("Image memory reclaimed, reloading."); //G***del
 					System.gc();  //indicate that garbage collection should occur to attempt to give us more memory G***testing memory
 				}
 				startedLoading=false; //show that the image hasn't started loading, yet
@@ -294,18 +294,18 @@ if(DEBUG) System.out.println("OEBImageView: changedUpdate begin...");
 	*/
 	public void paint(Graphics graphics, Shape allocation)
 	{
-Debug.trace("(before super) paint() {0}, isShowing: {1} startedLoading: {2} finishedLoading: {3}", new Object[]{getHRef(), new Boolean(isShowing()), new Boolean(startedLoading), new Boolean(finishedLoading)});
+Log.trace("(before super) paint() {0}, isShowing: {1} startedLoading: {2} finishedLoading: {3}", new Object[]{getHRef(), new Boolean(isShowing()), new Boolean(startedLoading), new Boolean(finishedLoading)});
 		super.paint(graphics, allocation);  //do the default painting
 		final Graphics2D graphics2D=(Graphics2D)graphics;  //cast to the 2D version of graphics
 		  //set pixel interpolation to its highest quality G***probably do this conditionally, based on some sort of flag
 		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-Debug.trace("(after super) paint() {0}, isShowing: {1} startedLoading: {2} finishedLoading: {3}", new Object[]{getHRef(), new Boolean(isShowing()), new Boolean(startedLoading), new Boolean(finishedLoading)});
-//G***del Debug.trace("imageView.paint() currentWidth: "+currentWidth+" currentHeight: "+currentHeight);
+Log.trace("(after super) paint() {0}, isShowing: {1} startedLoading: {2} finishedLoading: {3}", new Object[]{getHRef(), new Boolean(isShowing()), new Boolean(startedLoading), new Boolean(finishedLoading)});
+//G***del Log.trace("imageView.paint() currentWidth: "+currentWidth+" currentHeight: "+currentHeight);
 //G***del when works		paintingVisible=true;	//show that calls to getComponent().repaint() are actually causes this image view to get repainted
 //G***fix	Color oldColor = g.getColor();
 		  //G***switch to using getBounds()
 		final Rectangle rectangle=(allocation instanceof Rectangle) ? (Rectangle)allocation : allocation.getBounds();  //get the bounding rectangle of the painting area
-//G***del Debug.trace("Inside OEBImageView.paint(), width: "+currentWidth+" height: "+currentHeight+" alloc width: "+alloc.width+" alloc height: "+alloc.height);	//G***del; testing image
+//G***del Log.trace("Inside OEBImageView.paint(), width: "+currentWidth+" height: "+currentHeight+" alloc width: "+alloc.width+" alloc height: "+alloc.height);	//G***del; testing image
 /*G***fix
 	fBounds.setBounds(alloc);
         int border = getBorder();
@@ -356,19 +356,19 @@ Debug.trace("(after super) paint() {0}, isShowing: {1} startedLoading: {2} finis
 		shownImage=getImage(); //get the image, which may include relading it; this will for now set a hard reference to the image so that the image memory will not be reclaimed while it it showing
 		if(shownImage!=null )
 		{
-Debug.trace("got the image");
+Log.trace("got the image");
 	//G***fix		fImageIcon.paintIcon((Component)getContainer(), g, x, y);	//G***testing
 
 			if(finishedLoading || !startedLoading)	//if we've finished loading the image, or we haven't even started loading it, yet
 			{
-Debug.trace("ready to draw image with current width {0} and current height {1}", new Object[]{new Integer(getCurrentWidth()), new Integer(getCurrentHeight())});
+Log.trace("ready to draw image with current width {0} and current height {1}", new Object[]{new Integer(getCurrentWidth()), new Integer(getCurrentHeight())});
 				//draw the image, which will start loading the image if it isn't loaded yet
 				//note that many small images apparently never call imageUpdate(), meaning
 				//  this function will return with the image already loaded without
 				//  imageUpdate() being called, so we have to manipulate the
 				//  finishedLoading and startedLoading variables here as well
 //G***bring back; testing				finishedLoading=g.drawImage(image, x, y, alloc.width, alloc.height, this);
-Debug.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" height "+getCurrentHeight()); //G***del
+Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" height "+getCurrentHeight()); //G***del
 				finishedLoading=graphics.drawImage(shownImage, x, y, getCurrentWidth(), getCurrentHeight(), this);
 	//G***fix or del			final boolean isImageDrawn=g.drawImage(fImage, x, y, alloc.width, alloc.height, this);
 	//G***del when works			final boolean isImageDrawn=g.drawImage(fImage, x, y, width/2, height/2, this);
@@ -394,7 +394,7 @@ Debug.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+"
 				//G***should we update startedLoading for consistency, since finishedLoading might be set without startedLoading being set?
 			}
 
-	//G***del Debug.trace("image drawn: "+isImageDrawn);	//G***del
+	//G***del Log.trace("image drawn: "+isImageDrawn);	//G***del
 
 //G***fix		g.drawImage(fImage,x, y,width,height,this);
 
@@ -417,14 +417,14 @@ Debug.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+"
 	}
 	catch(URISyntaxException uriSyntaxException)  //if there was an error getting the image G***probably set some sort of flag so that we won't try to load it again next time
 	{
-		Debug.error(uriSyntaxException); //report the error
+		Log.error(uriSyntaxException); //report the error
 		((Graphics2D)graphics).setPaint(Color.black);  //G***fix all this
 		graphics.setFont(new Font("Arial", Font.PLAIN, 14));
 		graphics.drawString("Error loading image.", x, y+20);	//G***testing; i18n
 	}
 	catch(IOException ioException)  //if there was an error getting the image G***probably set some sort of flag so that we won't try to load it again next time
 	{
-		Debug.error(ioException); //report the error
+		Log.error(ioException); //report the error
 		((Graphics2D)graphics).setPaint(Color.black);  //G***fix all this
 		graphics.setFont(new Font("Arial", Font.PLAIN, 14));
 		graphics.drawString("Error loading image.", x, y+20);	//G***testing; i18n
@@ -850,9 +850,9 @@ Debug.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+"
 	*/
 	public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height)	//G***testing
 	{
-//G***del Debug.trace(getHRef());  //G***del
+//G***del Log.trace(getHRef());  //G***del
 /*G***del
-Debug.trace("imageUpdate() {0}, infoflags: {1}"+
+Log.trace("imageUpdate() {0}, infoflags: {1}"+
 		" isShowing: {2} finishedLoading: {3}\n parent: {4}\n parent parent: {5}"+
 		"\n parent parent parent: {6}\n container: {7}", new Object[]
 			{
@@ -875,27 +875,27 @@ Debug.trace("imageUpdate() {0}, infoflags: {1}"+
 
 		if(!infoflags & ALLBITS)!=0)	//if all bits have been loaded
 */
-//G***fix Debug.trace("imageUpdate() visible: "+paintingVisible+" Started loading: "+startedLoading+" Finished loading: "+finishedLoading);
+//G***fix Log.trace("imageUpdate() visible: "+paintingVisible+" Started loading: "+startedLoading+" Finished loading: "+finishedLoading);
 /*G***del
-Debug.trace("Parent: "+getParent());  //G***del; testing
+Log.trace("Parent: "+getParent());  //G***del; testing
 if(getParent()!=null) //G***del
 {
-	Debug.trace("Parent's parent: "+getParent().getParent());  //G***del; testing
+	Log.trace("Parent's parent: "+getParent().getParent());  //G***del; testing
 	if(getParent().getParent()!=null) //G***del
-		Debug.trace("Parent's parent's parent: "+getParent().getParent().getParent());  //G***del; testing
+		Log.trace("Parent's parent's parent: "+getParent().getParent().getParent());  //G***del; testing
 }
-Debug.trace("Container: "+getContainer());  //G***del; testing
+Log.trace("Container: "+getContainer());  //G***del; testing
 */
-//G***del Debug.trace(getHRef()+" allbits: ", infoflags & ALLBITS);
-//G***del Debug.trace(getHRef()+" framebits: ", infoflags & FRAMEBITS);
+//G***del Log.trace(getHRef()+" allbits: ", infoflags & ALLBITS);
+//G***del Log.trace(getHRef()+" framebits: ", infoflags & FRAMEBITS);
 		startedLoading=true;	//if imageUpdate() is ever called, we've at least started loading the image
 		if((infoflags & (ALLBITS|FRAMEBITS))!=0)	//if we at any time receive all the bits, or if we're suddenly receiving frames from a multiple frame image, we've finished loading the image
 			finishedLoading=true;	//show that we've finished loading the image
 		if(finishedLoading) //only repaint the image if it has finished loading
 		{
-Debug.trace("Finished loading ", getHRef());
+Log.trace("Finished loading ", getHRef());
 /*G***del
-Debug.trace("image finished loading, ready to repaint\n{0}, infoflags: {1}"+
+Log.trace("image finished loading, ready to repaint\n{0}, infoflags: {1}"+
 		" isShowing: {2} finishedLoading: {3}\n parent: {4}\n parent parent: {5}"+
 		"\n parent parent parent: {6}\n container: {7}", new Object[]
 			{
@@ -913,10 +913,10 @@ Debug.trace("image finished loading, ready to repaint\n{0}, infoflags: {1}"+
 //G***del when works			if(paintingVisible)	//if calls to getComponent().repaint() are actually causes this image view to get repainted
 			if(isShowing())	//if this view is showing
 			{
-Debug.trace("Is showing ", getHRef());
-//G***del Debug.trace("*********OEBImageView.imageUpdate(), SOMEBITS: "+(infoflags & SOMEBITS)+" ALLBITS: "+(infoflags & ALLBITS)+" FRAMEBITS: "+(infoflags & FRAMEBITS));	//G***del
+Log.trace("Is showing ", getHRef());
+//G***del Log.trace("*********OEBImageView.imageUpdate(), SOMEBITS: "+(infoflags & SOMEBITS)+" ALLBITS: "+(infoflags & ALLBITS)+" FRAMEBITS: "+(infoflags & FRAMEBITS));	//G***del
 /*G***del; Debug no longer has a format trace method
-Debug.trace("image finished loading, ready to repaint\n{0}, infoflags: {1}"+
+Log.trace("image finished loading, ready to repaint\n{0}, infoflags: {1}"+
 		" isShowing: {2} finishedLoading: {3}\n parent: {4}\n parent parent: {5}"+
 		"\n parent parent parent: {6}"+
 		"\n parent parent parent parent: {7}"+
@@ -937,21 +937,21 @@ Debug.trace("image finished loading, ready to repaint\n{0}, infoflags: {1}"+
 */
 				if(getContainer()!=null)  //G***testing
 				{
-Debug.trace("Have container ", getHRef());
+Log.trace("Have container ", getHRef());
 //G***del when works					paintingVisible=false;	//for our next repaint force paint() to prove once more that it is still getting called
 				  final Rectangle bounds=getBounds(); //get our painting bounds
-Debug.trace(getHRef()+" painting bounds: ", bounds);
+Log.trace(getHRef()+" painting bounds: ", bounds);
 /*G***del; gives wrong coordinates
 					bounds.x=x; //G***testing image repaint
 					bounds.y=y;
 */
-//G***del Debug.trace("Found container, ready to call repaint with bounds: "+bounds);
+//G***del Log.trace("Found container, ready to call repaint with bounds: "+bounds);
 				  if(bounds.width==0 || bounds.height==0) //G***testing; kludge to compensate for table layout errors
 					{
 						bounds.width=getCurrentWidth();  //get the current image width
 						bounds.height=getCurrentHeight();  //get the current image height
 					}
-Debug.trace("Repainting image "+href+" with bounds: ", bounds); //G***del
+Log.trace("Repainting image "+href+" with bounds: ", bounds); //G***del
 						//since the image is still visible (and imageUpdate() is still being called), repaint the image -- but only the areas within our bounds
 					getContainer().repaint(bounds.x, bounds.y, bounds.width, bounds.height);  //repaint only the areas within our bounds
 				}

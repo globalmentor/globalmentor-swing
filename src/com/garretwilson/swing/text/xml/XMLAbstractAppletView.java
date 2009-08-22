@@ -9,8 +9,8 @@ import java.util.Map;
 import javax.swing.*;
 import javax.swing.text.*;
 import com.globalmentor.java.Strings;
+import com.globalmentor.log.Log;
 import com.globalmentor.net.URIs;
-import com.globalmentor.util.Debug;
 
 /**A view that displays an applet. Implements <code>AppletStub</code> so
 	that it can manage requests to the environment made by the applet.
@@ -131,7 +131,7 @@ public abstract class XMLAbstractAppletView extends XMLAbstractComponentView imp
 				active=true;  //show that the applet is active
 /*G***del
 final Dimension d3=fApplet.getSize();  //G***del; testing
-Debug.trace("Applet size before start() width: "+d3.getWidth()+" height: "+d3.getHeight());
+Log.trace("Applet size before start() width: "+d3.getWidth()+" height: "+d3.getHeight());
 */
 //G***del System.out.println("Applet size before start() width: "+applet.getSize().getWidth()+" height: "+applet.getSize().getHeight());  //G***del
 				applet.start(); //inform the applet that we're starting it
@@ -236,15 +236,15 @@ Debug.trace("Applet size before start() width: "+d3.getWidth()+" height: "+d3.ge
 		  assert object instanceof Applet : object.getClass().getName()+" is not an applet.";  //G***fix
 		  final Applet applet=(Applet)object; //cast the object to an applet
 		  applet.setStub(this); //tell the applet that it can use this view as the applet stub
-//G***del Debug.trace("applet setting size: currentWidth: "+currentWidth+" currentHeight: "+currentHeight);
+//G***del Log.trace("applet setting size: currentWidth: "+currentWidth+" currentHeight: "+currentHeight);
 		  applet.setSize(getCurrentWidth(), getCurrentHeight());  //set the applet's current width and height to the best we know so far G***testing; this is probably not correct -- who know what the size will be at this point
 //G***del System.out.println("current bounds when creating applet: "+getBounds()); //G***del
 //G***del		  applet.setBounds(getBounds());  //G***testing
 //G***del		  applet.doLayout(); //tell the applet to lay itself out
 /*G***del
 final Dimension d=fApplet.getSize();  //G***del; testing
-Debug.trace("Applet size after setting size width: "+d.getWidth()+" height: "+d.getHeight());
-Debug.trace("applet: initializing");
+Log.trace("Applet size after setting size width: "+d.getWidth()+" height: "+d.getHeight());
+Log.trace("applet: initializing");
 */
 //G***del System.out.println("applet size after applet.setSize(): "+applet.getSize().getWidth()+" height: "+applet.getSize().getHeight());  //G***del
 //G***del		  applet.validate(); //tell the component to validate itself, laying out its child components if needed G***testing
@@ -258,26 +258,26 @@ Debug.trace("applet: initializing");
 		  }
 			catch(Throwable throwable)  //if any errors are thrown during applet initialization
 			{
-Debug.error(throwable);		  //G***fix; store errors in console of some sort
+Log.error(throwable);		  //G***fix; store errors in console of some sort
 			}
 /*G***del
 final Dimension d2=fApplet.getSize();  //G***del; testing
-Debug.trace("Applet size after init() width: "+d2.getWidth()+" height: "+d2.getHeight());
+Log.trace("Applet size after init() width: "+d2.getWidth()+" height: "+d2.getHeight());
 */
 //G***del		  applet.setVisible(false); //don't show
 		  return applet; //return the applet we created
 		}
 		catch (ClassNotFoundException e)  //if the applet class could not be loaded
 		{
-Debug.error(e);		  //G***fix; store errors in console of some sort, as well as in text for the JTextComponent
+Log.error(e);		  //G***fix; store errors in console of some sort, as well as in text for the JTextComponent
 	  }
 	  catch(IllegalAccessException e) //if we're not allowed to load the applet class
 		{
-Debug.error(e);		  //G***fix; store errors in console of some sort, as well as in text for the JTextComponent
+Log.error(e);		  //G***fix; store errors in console of some sort, as well as in text for the JTextComponent
 		}
 		catch(InstantiationException e) //if we couldn't create the applet
 		{
-Debug.error(e);		  //G***fix; store errors in console of some sort, as well as in text for the JTextComponent
+Log.error(e);		  //G***fix; store errors in console of some sort, as well as in text for the JTextComponent
 		}
 //G***fix	return getUnloadableRepresentation();
 		return new JLabel("Missing applet");  //G***fix
@@ -321,7 +321,7 @@ Debug.error(e);		  //G***fix; store errors in console of some sort, as well as i
 		}
 		catch(MalformedURLException malformedURLException)  //if the resulting URL is malformed
 		{
-			Debug.warn(malformedURLException);  //G***fix to log to a Java console
+			Log.warn(malformedURLException);  //G***fix to log to a Java console
 			return null;  //show that we can't determine the codebase
 		}
 	}
@@ -338,12 +338,12 @@ Debug.error(e);		  //G***fix; store errors in console of some sort, as well as i
 		}
 		catch(URISyntaxException uriSyntaxException)  //if the resulting URI is not syntactically correct
 		{
-			Debug.warn(uriSyntaxException);  //G***fix to log to a Java console
+			Log.warn(uriSyntaxException);  //G***fix to log to a Java console
 			return null;  //show that we can't determine the codebase
 		}
 		catch(MalformedURLException malformedURLException)  //if the resulting URL is malformed
 		{
-			Debug.warn(malformedURLException);  //G***fix to log to a Java console
+			Log.warn(malformedURLException);  //G***fix to log to a Java console
 			return null;  //show that we can't determine the codebase
 		}
 	}
@@ -356,13 +356,13 @@ Debug.error(e);		  //G***fix; store errors in console of some sort, as well as i
 	public String getParameter(String name)
 	{
 /*G***del
-Debug.trace("getParameter(): "+name);
-Debug.trace("Current size width: "+currentWidth+" height: "+currentHeight);
+Log.trace("getParameter(): "+name);
+Log.trace("Current size width: "+currentWidth+" height: "+currentHeight);
 final Dimension d=fApplet.getSize();  //G***del; testing
-Debug.trace("Applet size width: "+d.getWidth()+" height: "+d.getHeight());
+Log.trace("Applet size width: "+d.getWidth()+" height: "+d.getHeight());
 */
 		final Parameter parameter=getParameterObject(name); //try to get the requested parameter object
-//G***del Debug.trace("Found param: "+parameter); //G***del
+//G***del Log.trace("Found param: "+parameter); //G***del
 		return parameter!=null ? parameter.getValue() : null; //if we found a parameter, return the value, else return null
 	}
 
@@ -371,7 +371,7 @@ Debug.trace("Applet size width: "+d.getWidth()+" height: "+d.getHeight());
 	*/
 	public AppletContext getAppletContext()
 	{
-//G***del Debug.trace("getting applet context");  //G***del
+//G***del Log.trace("getting applet context");  //G***del
 		final Container container=getContainer(); //get the container in which this view is embedded
 		if(container instanceof AppletContext)  //if the container is an applet context (XMLTextView is an AppletContext, and that should be what we're embedded in)
 		{
@@ -387,7 +387,7 @@ Debug.trace("Applet size width: "+d.getWidth()+" height: "+d.getHeight());
 	*/
 	public void appletResize(int width, int height)
 	{
-//G***del Debug.trace("appletResize() width: "+width+" height: "+height);  //G***del
+//G***del Log.trace("appletResize() width: "+width+" height: "+height);  //G***del
 		//G***fix
 	}
 

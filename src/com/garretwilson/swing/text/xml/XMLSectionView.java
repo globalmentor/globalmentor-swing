@@ -10,8 +10,9 @@ import com.garretwilson.swing.text.*;
 import static com.garretwilson.swing.text.SwingTextUtilities.*;
 import static com.garretwilson.swing.text.rdf.RDFStyleUtilities.*;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
+
+import com.globalmentor.log.Log;
 import com.globalmentor.text.xml.xhtml.XHTML;
-import com.globalmentor.util.Debug;
 
 /**A view to represent an entire section. This view understands that its
 	child elements represent XML document trees.
@@ -113,14 +114,14 @@ public class XMLSectionView extends XMLBlockView
 						{
 							final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child element's attributes
 							final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);  //get the child element local name
-		Debug.trace("Looking at child: ", childElementLocalName); //G***del
+		Log.trace("Looking at child: ", childElementLocalName); //G***del
 								//if this element is an HTML <body> element 
 							if(XHTML.ELEMENT_BODY.equals(childElementLocalName) && XHTMLSwingTextUtilities.isHTMLElement(childAttributeSet, documentAttributeSet))  
 							{
 								final int bodyChildElementCount=childElement.getElementCount(); //find out how many children the body element has
 								for(int bodyChildIndex=0; bodyChildIndex<bodyChildElementCount; ++bodyChildIndex) //look at each of the body element's children
 								{
-		Debug.trace("Adding body child element: ", bodyChildIndex);
+		Log.trace("Adding body child element: ", bodyChildIndex);
 									final Element bodyChildElement=childElement.getElement(bodyChildIndex); //get this child element of the body element
 									if(bodyChildElement.getStartOffset()>=startOffset && bodyChildElement.getEndOffset()<endOffset) //if this child element falls within our range (we can't check for simply an overlap, because we have no way of breaking)
 									{
@@ -189,20 +190,20 @@ public class XMLSectionView extends XMLBlockView
 		 */
 		protected boolean updateChildren(DocumentEvent.ElementChange ec, DocumentEvent e, ViewFactory f)
 		{
-Debug.trace("Section updating children"); //G***fix
+Log.trace("Section updating children"); //G***fix
 //G***fix ((XMLDocument)getElement().getDocument()).applyxStyles();  //G***testing
 
 
 //G***testing; brought up from View
 	Element[] removedElems = ec.getChildrenRemoved();
-Debug.trace("children removed: ", removedElems.length);
+Log.trace("children removed: ", removedElems.length);
 	Element[] addedElems = ec.getChildrenAdded();
-Debug.trace("children added: ", addedElems.length);
+Log.trace("children added: ", addedElems.length);
 	View[] added = null;
 	if (addedElems != null) {
 			added = new View[addedElems.length];
 			for (int i = 0; i < addedElems.length; i++) {
-Debug.trace("Creating added element: ", addedElems[i].getClass().getName());  //G***del
+Log.trace("Creating added element: ", addedElems[i].getClass().getName());  //G***del
 		added[i] = f.create(addedElems[i]);
 			}
 	}
@@ -273,7 +274,7 @@ Debug.trace("Creating added element: ", addedElems[i].getClass().getName());  //
 
 //TODO combine and tidy all this section-specific calculation---probably best to even make an XHTMLSectionView that rides on top of this and is created in a view factory
 
-Debug.trace("section view insert update");  //G***del; testing
+Log.trace("section view insert update");  //G***del; testing
 if(ec==null)  //G***testing; fix; comment; G***we don't need this test; the test is in the for loop
 {
 	for(int i=elem.getElementCount()-1; ec==null && i>=0; --i)
@@ -283,7 +284,7 @@ if(ec==null)  //G***testing; fix; comment; G***we don't need this test; the test
 		{
 			final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childElement.getAttributes());  //G***testing
 
-Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; testing
+Log.trace("child "+i+" local name: ", childElementLocalName);  //G***del; testing
 
 			if("html".equals(childElementLocalName))  //G***testing
 			{
@@ -295,7 +296,7 @@ Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; test
 					{
 						final String grandchildElementLocalName=XMLStyleUtilities.getXMLElementLocalName(grandchildElement.getAttributes());  //G***testing
 
-			Debug.trace("grandchild "+i+" local name: ", grandchildElementLocalName);  //G***del; testing
+			Log.trace("grandchild "+i+" local name: ", grandchildElementLocalName);  //G***del; testing
 
 						if("body".equals(grandchildElementLocalName))  //G***testing
 						{
@@ -350,7 +351,7 @@ Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; test
 			Element elem = getElement();
 			DocumentEvent.ElementChange ec = e.getChange(elem);
 
-		Debug.trace("section view remove update");  //G***del; testing
+		Log.trace("section view remove update");  //G***del; testing
 		if(ec==null)  //G***testing; fix; comment; G***we don't need this test; the test is in the for loop
 		{
 			for(int i=elem.getElementCount()-1; ec==null && i>=0; --i)
@@ -360,7 +361,7 @@ Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; test
 				{
 					final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childElement.getAttributes());  //G***testing
 
-		Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; testing
+		Log.trace("child "+i+" local name: ", childElementLocalName);  //G***del; testing
 
 					if("html".equals(childElementLocalName))  //G***testing
 					{
@@ -372,7 +373,7 @@ Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; test
 							{
 								final String grandchildElementLocalName=XMLStyleUtilities.getXMLElementLocalName(grandchildElement.getAttributes());  //G***testing
 
-					Debug.trace("grandchild "+i+" local name: ", grandchildElementLocalName);  //G***del; testing
+					Log.trace("grandchild "+i+" local name: ", grandchildElementLocalName);  //G***del; testing
 
 								if("body".equals(grandchildElementLocalName))  //G***testing
 								{
@@ -429,7 +430,7 @@ Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; test
 			Element elem = getElement();
 			DocumentEvent.ElementChange ec = e.getChange(elem);
 
-		Debug.trace("section view changed update");  //G***del; testing
+		Log.trace("section view changed update");  //G***del; testing
 		if(ec==null)  //G***testing; fix; comment; G***we don't need this test; the test is in the for loop
 		{
 			for(int i=elem.getElementCount()-1; ec==null && i>=0; --i)
@@ -439,7 +440,7 @@ Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; test
 				{
 					final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childElement.getAttributes());  //G***testing
 
-		Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; testing
+		Log.trace("child "+i+" local name: ", childElementLocalName);  //G***del; testing
 
 					if("html".equals(childElementLocalName))  //G***testing
 					{
@@ -451,7 +452,7 @@ Debug.trace("child "+i+" local name: ", childElementLocalName);  //G***del; test
 							{
 								final String grandchildElementLocalName=XMLStyleUtilities.getXMLElementLocalName(grandchildElement.getAttributes());  //G***testing
 
-					Debug.trace("grandchild "+i+" local name: ", grandchildElementLocalName);  //G***del; testing
+					Log.trace("grandchild "+i+" local name: ", grandchildElementLocalName);  //G***del; testing
 
 								if("body".equals(grandchildElementLocalName))  //G***testing
 								{

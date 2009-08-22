@@ -259,7 +259,7 @@ public class BasicOptionPane extends JOptionPane
     public static int showConfirmDialog(Component parentComponent, Object message,
                                         String title, int optionType) {
 
-//G***del Debug.trace("show confirm dialog 1"); //G***del
+//G***del Log.trace("show confirm dialog 1"); //G***del
         return showConfirmDialog(parentComponent, message, title, optionType,
                                  QUESTION_MESSAGE);
     }
@@ -292,7 +292,7 @@ public class BasicOptionPane extends JOptionPane
     public static int showConfirmDialog(Component parentComponent, Object message,
                                         String title, int optionType,
                                         int messageType) {
-//G***del Debug.trace("show confirm dialog 2"); //G***del
+//G***del Log.trace("show confirm dialog 2"); //G***del
         return showConfirmDialog(parentComponent, message, title, optionType,
                                 messageType, null);
     }
@@ -322,7 +322,7 @@ public class BasicOptionPane extends JOptionPane
     public static int showConfirmDialog(Component parentComponent, Object message,
                                         String title, int optionType,
                                         int messageType, Icon icon) {
-//G***del Debug.trace("show confirm dialog 3"); //G***del
+//G***del Log.trace("show confirm dialog 3"); //G***del
         return showOptionDialog(parentComponent, message, title, optionType,
                                 messageType, icon, null, null);
     }
@@ -375,7 +375,7 @@ public class BasicOptionPane extends JOptionPane
                                        String title, int optionType,
                                        int messageType, Icon icon,
                                        Object[] options, Object initialValue) {
-//G***del  Debug.trace("inside custom showOptionDialog()"); //G***del
+//G***del  Log.trace("inside custom showOptionDialog()"); //G***del
         JOptionPane             pane = new OptionPane(message, messageType,
                                                        optionType, icon,
                                                        options, initialValue);

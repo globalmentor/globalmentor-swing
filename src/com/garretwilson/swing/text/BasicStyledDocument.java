@@ -7,15 +7,14 @@ import java.io.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
-
 import static com.globalmentor.java.Objects.*;
 
 import com.garretwilson.swing.event.ProgressEvent;
 import com.garretwilson.swing.event.ProgressListener;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
 import com.globalmentor.io.*;
+import com.globalmentor.log.Log;
 import com.globalmentor.rdf.*;
-import com.globalmentor.util.Debug;
 
 /**A document that provised basic functionality including:
 <ul>
@@ -87,7 +86,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 		this.uriInputStreamable=checkInstance(uriInputStreamable, "Missing URIInputStreamable");	//store the URIInputStreamable
 		//G***fix		setProperty(AbstractDocument.I18NProperty);  //G***testing i18n
 		//G***fix		putProperty("i18n", Boolean.TRUE);  //G***testing i18n
-		Debug.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n		
+		Log.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n		
 	}
 
 	/**Gets the font from an attribute set

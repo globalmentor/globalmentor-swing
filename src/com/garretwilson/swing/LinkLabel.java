@@ -5,7 +5,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import com.garretwilson.awt.event.RolloverMouseAdapter;
 import com.globalmentor.java.Objects;
-import com.globalmentor.util.Debug;
 
 /**A label that serves as a link to an Internet destination.
 @author Garret Wilson
@@ -93,7 +92,7 @@ public class LinkLabel extends JLabel
 				}
 				catch(final Exception exception)
 				{
-					Debug.warn(exception);  //only warn about any errors that occur
+					Log.warn(exception);  //only warn about any errors that occur
 				}
 */
 			}

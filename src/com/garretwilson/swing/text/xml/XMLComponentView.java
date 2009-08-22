@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.swing.*;
 import javax.swing.text.*;
 
-import com.globalmentor.util.Debug;
+import com.globalmentor.log.Log;
 
 /**A view that displays a given component. The component must be created before
 	this view is created, and this view merely stores the component until time
@@ -27,10 +27,10 @@ public class XMLComponentView extends XMLAbstractComponentView
   public XMLComponentView(final Element element, final Component component)
 	{
    	super(element);	//do the default constructing
-Debug.trace("Component width: ", component.getWidth()); //G***del
-Debug.trace("Component height: ", component.getHeight()); //G***del
-Debug.trace("Component preferred width: ", new Double(component.getPreferredSize().getWidth())); //G***del
-Debug.trace("Component preferred height: ", new Double(component.getPreferredSize().getHeight())); //G***del
+Log.trace("Component width: ", component.getWidth()); //G***del
+Log.trace("Component height: ", component.getHeight()); //G***del
+Log.trace("Component preferred width: ", new Double(component.getPreferredSize().getWidth())); //G***del
+Log.trace("Component preferred height: ", new Double(component.getPreferredSize().getHeight())); //G***del
 		setHeight(component.getPreferredSize().height);  //update the standard and current heights G***testing
 		setWidth(component.getPreferredSize().width);  //update the standard and current widths
 		precreatedComponent=component;  //store the precreated component

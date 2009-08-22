@@ -19,7 +19,8 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSView;
 import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
-import com.globalmentor.util.Debug;
+
+import com.globalmentor.log.Log;
 
 /**A paragraph that understands CSS styles and knows how to be broken into fragments.
 @author Garret Wilson
@@ -109,8 +110,8 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 	public XMLParagraphView(final Element element)
 	{
 		super(element);	//construct the parent class
-//G***del Debug.trace("Creating XMLParagraphView, i18n property: ", getDocument().getProperty("i18n")); //G***testing
-Debug.trace(); //G***testing
+//G***del Log.trace("Creating XMLParagraphView, i18n property: ", getDocument().getProperty("i18n")); //G***testing
+Log.trace(); //G***testing
 //TODO fix antialias and fonts		  strategy=new com.garretwilson.swing.text.TextLayoutStrategy();  //G***fix; testing i18n
 	}
 
@@ -547,7 +548,7 @@ Debug.trace(); //G***testing
 				else  //if the view is another type
 					verticalAlign=XMLCSSStyleUtilities.getVerticalAlign(childView.getAttributes()); //get the vertical alignment specified by the inline view
 				final int relativeIndex=i>0 ? i-1 : (offsets.length>1 ? i+1 : i);  //we'll move the offset relative to the offset before us or, if this is the first offset, the one after us; if there is only one offset, use ourselves
-//G***del Debug.trace("Relative index: ", relativeIndex); //G***del
+//G***del Log.trace("Relative index: ", relativeIndex); //G***del
 				  //G***this currently doesn't work for subscripts of subscripts or superscripts of superscripts or a superscript followed by a subscript, etc.
 				final int relativeOffset=offsets[relativeIndex];  //get the span to which we're relative
 				final int relativeSpan=spans[relativeIndex];  //get the span to which we're relative

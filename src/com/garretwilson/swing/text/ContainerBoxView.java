@@ -6,9 +6,9 @@ import java.util.*;
 import javax.swing.text.*;
 import static com.garretwilson.swing.text.ViewUtilities.*;
 import static com.globalmentor.java.Objects.*;
+import com.globalmentor.log.Log;
 
 import com.garretwilson.awt.Inset;
-import com.globalmentor.util.Debug;
 
 /**A view that contains other views, constrained in a box.
 No assumptions are made about the order, size, or offsets of the child views, unlike <code>BoxView</code>.
@@ -192,7 +192,7 @@ public class ContainerBoxView extends BoxView implements Inset
 		*/
 		public View breakView(final BoxView view, final int axis, final int offset, final float pos, final float length, final FragmentViewFactory fragmentViewFactory)
 		{
-	//G***del Debug.trace("Inside XMLBlockView.breakView axis: ", axis, "p0:", p0, "pos:", pos, "len:", len, "name:", XMLStyleUtilities.getXMLElementName(getAttributes()));	//G***del
+	//G***del Log.trace("Inside XMLBlockView.breakView axis: ", axis, "p0:", p0, "pos:", pos, "len:", len, "name:", XMLStyleUtilities.getXMLElementName(getAttributes()));	//G***del
 			if(axis==view.getAxis() && length<view.getPreferredSpan(axis))	//if they want to break along our tiling axis and they want less of us than we prefer, we'll try to break
 			{
 			  final int childViewCount=view.getViewCount();  //get the number of child views we have
@@ -212,8 +212,8 @@ public class ContainerBoxView extends BoxView implements Inset
 					{
 						final View childView=view.getView(childIndex);	//get a reference to this child view; we may change this variable if we have to break one of the child views
 						final float childPreferredSpan=childView.getPreferredSpan(axis);	//get the child's preferred span along the axis
-	Debug.trace("looking to include child view: ", childView.getClass().getName()); //G***del
-	Debug.trace("child view preferred span: ", childPreferredSpan); //G***del
+	Log.trace("looking to include child view: ", childView.getClass().getName()); //G***del
+	Log.trace("child view preferred span: ", childPreferredSpan); //G***del
 						final float remainingSpan=length-totalSpan;	//calculate the span we have left
 						final View newChildView;	//we'll determine which child to add
 						final float newChildPreferredSpan;	//we'll determine the size of the new child

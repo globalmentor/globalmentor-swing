@@ -9,12 +9,12 @@ import org.w3c.dom.css.*;
 import static com.garretwilson.swing.text.StyleUtilities.*;
 import static com.garretwilson.swing.text.xml.XMLStyleConstants.*;
 import static com.garretwilson.swing.text.xml.css.XMLCSSStyleConstants.*;
-import static com.globalmentor.text.xml.stylesheets.css.XMLCSS.*;
 
+import com.globalmentor.log.Log;
+import static com.globalmentor.text.xml.stylesheets.css.XMLCSS.*;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSValueList;
-import com.globalmentor.util.Debug;
 
 /**A collection of utilities used for rendering XML using CSS in Swing.
 @author Garret Wilson
@@ -575,23 +575,23 @@ public class XMLCSSStyleUtilities
 	public static float getTextIndent(final AttributeSet attributeSet, final Font font)	//G***we'll probably need to pass a length here or something
 	{
 //G***del System.out.println("Getting font size for attribute set of: "+attributeSet.getAttribute(StyleConstants.NameAttribute));	//G***del
-Debug.trace("Getting text indent for attribute set.");	//G***del
+Log.trace("Getting text indent for attribute set.");	//G***del
 //G***del		final XMLCSSPrimitiveValue textIndentValue=(XMLCSSPrimitiveValue)attributeSet.getAttribute(CSS_PROP_TEXT_INDENT);	//get the CSS value for this property
 		final XMLCSSPrimitiveValue textIndentValue=(XMLCSSPrimitiveValue)getCSSPropertyCSSValue(attributeSet, CSS_PROP_TEXT_INDENT, true);	//get CSS value for this property, resolving up the hierarchy if necessary
 		if(textIndentValue!=null)	//if we have a value
 		{
-Debug.trace("Fount text indent value.");	//G***del
+Log.trace("Fount text indent value.");	//G***del
 //G***del if not needed			if(textIndentValue.isAbsoluteLength())	//if this is an absolute length
 			{
 				switch(textIndentValue.getPrimitiveType())  //see which type of primitive type we have
 				{
-//G***del Debug.trace("It's an absolute length: "+textIndentValue.getFloatValue(XMLCSSPrimitiveValue.CSS_PX));	//G***del
+//G***del Log.trace("It's an absolute length: "+textIndentValue.getFloatValue(XMLCSSPrimitiveValue.CSS_PX));	//G***del
 //G***del				if(textIndentValue.getPrimitiveType()==textIndentValue.CSS_EMS) //if they are asking for a length in ems
 				  case XMLCSSPrimitiveValue.CSS_EMS: //G***testing
 						return font.getSize()*textIndentValue.getFloatValue(XMLCSSPrimitiveValue.CSS_EMS);  //G***fix; this probably isn't the same as the defined font size, which is what CSS calls for for EMS
 /*G***fix
 						{
-	Debug.trace("They want ems.");
+	Log.trace("They want ems.");
 									// As a practical matter, this FRC will almost always
 									// be the right one.
 									AffineTransform xf
@@ -600,7 +600,7 @@ Debug.trace("Fount text indent value.");	//G***del
 											.getDefaultTransform(); //G***testing
 							final FontRenderContext fontRenderContext=new FontRenderContext(xf, false, false);  //G***we should really get the font render context from somewhere else; for now, this should get close
 							final float emSize=(float)font.getStringBounds("m", fontRenderContext).getWidth(); //get the size of an em
-		Debug.trace("each em is: ", new Float(emSize)); //G***del
+		Log.trace("each em is: ", new Float(emSize)); //G***del
 							return emSize*textIndentValue.getFloatValue(XMLCSSPrimitiveValue.CSS_EMS);  //G***testing
 						}
 */

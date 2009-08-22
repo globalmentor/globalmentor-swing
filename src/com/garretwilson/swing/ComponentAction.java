@@ -12,8 +12,6 @@ import javax.swing.event.*;
 import static com.garretwilson.swing.ComponentConstants.*;
 import static com.globalmentor.java.Objects.*;
 
-import com.globalmentor.util.Debug;
-
 /**Action that knows how to create its own component.
 @author Garret Wilson
 */

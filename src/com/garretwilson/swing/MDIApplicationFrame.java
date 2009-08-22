@@ -9,9 +9,10 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import com.garretwilson.resources.icon.IconResources;
+
+import com.globalmentor.log.Log;
 import com.globalmentor.model.ObjectState;
 import com.globalmentor.rdf.*;
-import com.globalmentor.util.Debug;
 
 /**Main frame parent class for a multiple document interface (MDI) application.
 @author Garret Wilson
@@ -158,12 +159,12 @@ public abstract class MDIApplicationFrame extends ObsoleteApplicationFrame
 	*/
 	protected void setDocumentDescription(final ObjectState<RDFResource> description)
 	{
-Debug.trace("setting description: ", description); //G***del
+Log.trace("setting description: ", description); //G***del
 		final JInternalFrame internalFrame=getMDIManager().getSelectedFrame();  //get the currently selected internal frame
 		if(internalFrame!=null) //if there is an internal frame open
 		{
 		  setDocumentDescription(internalFrame, description);  //store the description, keyed to the internal frame
-Debug.trace("setting frame title: ", description.getObject().getURI()); //G***del
+Log.trace("setting frame title: ", description.getObject().getURI()); //G***del
 		  updateTitle(internalFrame);  //update the internal frame's title
 		}
 	}
@@ -235,7 +236,7 @@ Debug.trace("setting frame title: ", description.getObject().getURI()); //G***de
 /*G***del			
 			catch(IOException ioException)  //if an I/O exception occurss while trying to get the canonical path
 			{
-				Debug.warn(ioException);  //warn that an error occurred
+				Log.warn(ioException);  //warn that an error occurred
 				title=file.getPath(); //just use the file's normal path in the title
 			}
 */

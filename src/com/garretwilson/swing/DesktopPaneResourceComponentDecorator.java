@@ -21,7 +21,6 @@ import static com.globalmentor.java.Booleans.*;
 
 import com.globalmentor.model.Modifiable;
 import com.globalmentor.net.Resource;
-import com.globalmentor.util.Debug;
 
 /**Class that manages resource components in a desktop pane.
 @param <R> The type of resource the components of which are being managed.
@@ -266,7 +265,7 @@ public class DesktopPaneResourceComponentDecorator<R extends Resource> extends R
   public void internalFrameClosed(final InternalFrameEvent internalFrameEvent)
 	{
 /*TODO fix
-Debug.trace("internal frame closed"); //G***del
+Log.trace("internal frame closed"); //G***del
 		if(getDesktopPane().getAllFrames().length==0) //if this is the last frame closed
 ;//TODO fix		  getApplicationFrame().updateStatus();  //update our actions to reflect that all frames have been closed
 */

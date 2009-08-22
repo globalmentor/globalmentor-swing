@@ -12,8 +12,6 @@ import javax.swing.event.*;
 import static com.garretwilson.swing.ComponentConstants.*;
 import static com.globalmentor.java.Objects.*;
 
-import com.globalmentor.util.Debug;
-
 /**An action represented by a combo box.
 @author Garret Wilson
 */

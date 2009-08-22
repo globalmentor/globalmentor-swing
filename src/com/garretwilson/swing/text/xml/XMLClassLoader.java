@@ -79,7 +79,7 @@ public class XMLClassLoader extends SecureClassLoader
 			if(baseURI!=null) //if we have a base URI
 				href=createURI(baseURI, href).toString(); //create an href relative to the base URI
 			final String finalHRef=href;  //put the href in a variable we wont' modify
-//G***del Debug.trace("XMLClassLoader.findClass() name: "+name+" href: "+href); //G***del
+//G***del Log.trace("XMLClassLoader.findClass() name: "+name+" href: "+href); //G***del
 		  return (Class)AccessController.doPrivileged(new PrivilegedExceptionAction()
 				  {
 						public Object run() throws ClassNotFoundException
@@ -96,7 +96,7 @@ public class XMLClassLoader extends SecureClassLoader
 									{
 											//read the class bytes from the input stream
 										final byte[] classBytes=InputStreams.getBytes(inputStream);
-//G***del Debug.trace("XMLClassLoader read class bytes, byte count: "+classBytes.length); //G***del
+//G***del Log.trace("XMLClassLoader read class bytes, byte count: "+classBytes.length); //G***del
 											//create a class from the bytes and return the class
 										return defineClass(name, classBytes, 0, classBytes.length, (CodeSource)null); //G***check about using a CodeSource
 									}

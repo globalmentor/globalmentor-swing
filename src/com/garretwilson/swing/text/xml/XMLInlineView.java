@@ -11,12 +11,14 @@ import java.util.Arrays;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.*;
 import com.garretwilson.awt.FontUtilities;
+
 //G***del when works import com.garretwilson.swing.text.xml.css.XMLCSSSimpleAttributeSet;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.AttributeSetUtilities; //G***del when not needed
+
+import com.globalmentor.log.Log;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
-import com.globalmentor.util.Debug;
 
 /**View class for all inline elements. Uses CSS attributes.
 Based on the Swing javax.swing.text.LabelView component.
@@ -56,7 +58,7 @@ public class XMLInlineView extends GlyphView implements TabableView
 	{
 		super(element);	//construct the parent class
 
-//G***fix Debug.trace("glyphpainter: "+getGlyphPainter().getClass().getName()); //G***del
+//G***fix Log.trace("glyphpainter: "+getGlyphPainter().getClass().getName()); //G***del
 
 	}
 
@@ -80,7 +82,7 @@ public class XMLInlineView extends GlyphView implements TabableView
 	*/
 	public AttributeSet getAttributes()
 	{
-//G***del Debug.trace("getting inline attributes of element: ", AttributeSetUtilities.getAttributeSetString(getElement().getAttributes()));  //G***del
+//G***del Log.trace("getting inline attributes of element: ", AttributeSetUtilities.getAttributeSetString(getElement().getAttributes()));  //G***del
 		Element element=getElement(); //get the element we represent
 		if(AbstractDocument.ContentElementName.equals(element.getName()))  //if this is content
 			element=element.getParentElement(); //the XML text content never holds the attributes -- its containing element does
@@ -134,7 +136,7 @@ public class XMLInlineView extends GlyphView implements TabableView
 		final AttributeSet attributeSet=getAttributes();	//get our attributes
 		if(attributeSet!=null)	//if we have attributes
 		{
-//G***del Debug.trace("setting properties from inline attributes: ", AttributeSetUtilities.getAttributeSetString(getAttributes()));  //G***del
+//G***del Log.trace("setting properties from inline attributes: ", AttributeSetUtilities.getAttributeSetString(getAttributes()));  //G***del
 			final Document document=getDocument();	//get our document
 			if(document instanceof StyledDocument)		//if this is a styled document
 			{
@@ -145,7 +147,7 @@ public class XMLInlineView extends GlyphView implements TabableView
 /*G***del when works
 			  BackgroundColor=XMLCSSStyleConstants.getBackgroundColor(attributeSet);	//get the background color from the attributes
 */
-//G***del Debug.trace("Foreground color: ", ForegroundColor);  //G***del
+//G***del Log.trace("Foreground color: ", ForegroundColor);  //G***del
 /*G***fix
 				if(attributeSetattr.isDefined(StyleConstants.Background)) {
 				BackgroundColor = doc.getBackground(attr);
@@ -227,7 +229,7 @@ public class XMLInlineView extends GlyphView implements TabableView
 	protected FontMetrics getFontMetrics()
 	{
 		synchronize();	//make sure we have the correct cached property values.
-		Debug.warn("Java 2 should not use deprecated FontMetrics.");
+		Log.warn("Java 2 should not use deprecated FontMetrics.");
 		return Toolkit.getDefaultToolkit().getFontMetrics(GlyphFont);
 	}
 
@@ -238,8 +240,8 @@ public class XMLInlineView extends GlyphView implements TabableView
 	public Color getBackground()
 	{
 		synchronize();	//make sure we have the correct cached property values.
-//G***del Debug.trace("getting inline background for attributes: ", AttributeSetUtilities.getAttributeSetString(getAttributes()));  //G***del
-//G***del Debug.trace("found color: ", BackgroundColor);  //G***del
+//G***del Log.trace("getting inline background for attributes: ", AttributeSetUtilities.getAttributeSetString(getAttributes()));  //G***del
+//G***del Log.trace("found color: ", BackgroundColor);  //G***del
 
 		return BackgroundColor;	//return the background color
 	}
@@ -251,8 +253,8 @@ public class XMLInlineView extends GlyphView implements TabableView
 	public Color getForeground()
 	{
 		synchronize();	//make sure we have the correct cached property values.
-//G***del Debug.trace("getting inline foreground for attributes: ", AttributeSetUtilities.getAttributeSetString(getAttributes()));  //G***del
-//G***del Debug.trace("found color: ", ForegroundColor);  //G***del
+//G***del Log.trace("getting inline foreground for attributes: ", AttributeSetUtilities.getAttributeSetString(getAttributes()));  //G***del
+//G***del Log.trace("found color: ", ForegroundColor);  //G***del
 
 		return ForegroundColor;	//return the foreground color
 	}

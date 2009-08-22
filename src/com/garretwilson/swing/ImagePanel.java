@@ -5,7 +5,6 @@ import java.awt.event.*;
 import java.beans.*;
 import javax.swing.*;
 import com.garretwilson.resources.icon.IconResources;
-import com.globalmentor.util.Debug;
 
 /**A panel that displays an image along with an optional toolbar.
 @author Garret Wilson

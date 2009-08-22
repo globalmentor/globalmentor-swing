@@ -35,6 +35,7 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.globalmentor.java.Objects;
 import com.globalmentor.java.StringBuffers;
 import com.globalmentor.java.Strings;
+import com.globalmentor.log.Log;
 import com.globalmentor.model.NameValuePair;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.net.URLs;
@@ -47,7 +48,6 @@ import com.globalmentor.text.xml.oeb.*;
 import com.globalmentor.text.xml.stylesheets.css.*;
 import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.text.xml.xlink.XLink;
-import com.globalmentor.util.Debug;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.DocumentType;
@@ -94,7 +94,7 @@ public class XMLViewFactory implements ViewsFactory
 	*/
 	public View create(final Element element)
 	{
-//G***del Debug.traceStack("Creating XML view");  //G***del
+//G***del Log.traceStack("Creating XML view");  //G***del
 		return create(element, false);  //return a single view to represent the given view, giving no indication if multiple views are needed
 	}
 
@@ -130,7 +130,7 @@ public class XMLViewFactory implements ViewsFactory
 	*/
 	public void create(final Element element, final List<View> addViewList)
 	{
-//G***del Debug.trace();  //G***del
+//G***del Log.trace();  //G***del
 		final View view=create(element, true);  //create a view for the element, if we can, but get an indication of if there should be several views
 		if(view!=null)  //if there is only one view
 		{
@@ -138,7 +138,7 @@ public class XMLViewFactory implements ViewsFactory
 		}
 		else  //if there should be multiple views
 		{
-//G***del Debug.trace("creating things for each child element");  //G***del
+//G***del Log.trace("creating things for each child element");  //G***del
 			int childElementCount=element.getElementCount();  //see how many child elements there are
 			for(int i=0; i<childElementCount; ++i)  //look at each child element
 				create(element.getElement(i), addViewList); //create one or more views for this child element
@@ -159,7 +159,7 @@ public class XMLViewFactory implements ViewsFactory
 	*/
 	public View create(final Element element, final boolean indicateMultipleViews)
 	{
-//G***del Debug.trace("ready to create view for element: "+XMLStyleUtilities.getXMLElementLocalName(element.getAttributes())+" of class "+element.getClass().getName());  //G***
+//G***del Log.trace("ready to create view for element: "+XMLStyleUtilities.getXMLElementLocalName(element.getAttributes())+" of class "+element.getClass().getName());  //G***
 		final AttributeSet attributeSet=element.getAttributes();  //get the element's attribute set
 		final String elementKind=element.getName();	//get the kind of element this is (based on the name of the Swing element, not the Swing element's attribute which holds the name of its corresponding XML element)
 		if(elementKind!=null) //if the element has a kind
@@ -187,7 +187,7 @@ public class XMLViewFactory implements ViewsFactory
 */
 			else if(AbstractDocument.ContentElementName.equals(elementKind))	//if this is is content
 			{
-//G***del Debug.trace("XMLEditorKit always creates inline views for content."); //G***del
+//G***del Log.trace("XMLEditorKit always creates inline views for content."); //G***del
 				return new XMLInlineView(element);	//inline elements are *always* inline views; content (that is, text) elements always take precendence over everything
 			}
 		}
@@ -200,7 +200,7 @@ public class XMLViewFactory implements ViewsFactory
 			}
 				//delegate to the registered view factory if we can
 			/*G***fix final */String elementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(attributeSet); //get the namespace of this element, if it has one
-//G***del Debug.trace("Looking for view factory for namespace: ", elementNamespaceURI); //G***del
+//G***del Log.trace("Looking for view factory for namespace: ", elementNamespaceURI); //G***del
 			if(elementNamespaceURI==null) //if this element has no namespace
 			{
 				final ContentType mediaType=XMLStyleUtilities.getMediaType(attributeSet); //see if this element's document has a media type defined
@@ -213,14 +213,14 @@ public class XMLViewFactory implements ViewsFactory
 					}
 				}
 			}
-//G***del Debug.trace("Decided namespace is really: ", elementNamespaceURI); //G***del
+//G***del Log.trace("Decided namespace is really: ", elementNamespaceURI); //G***del
 			final ViewFactory namespaceViewFactory=getViewFactory(elementNamespaceURI); //see if a view factory has been registered for this namespace (which may be null)
 			if(namespaceViewFactory!=null && namespaceViewFactory!=this)  //if a view factory has been registered for this namespace, and it's a different view factory (if tried to call ourselves, this would result in infinite recursion)
 			{
-//G***del Debug.trace("Using view factory: ", namespaceViewFactory.getClass().getName()); //G***del
+//G***del Log.trace("Using view factory: ", namespaceViewFactory.getClass().getName()); //G***del
 				if(namespaceViewFactory instanceof ViewsFactory) //if this view factory knows how to create multiple views
 				{
-//G***del Debug.trace("Is a views factory");
+//G***del Log.trace("Is a views factory");
 					final ViewsFactory namespaceViewsFactory=(ViewsFactory)namespaceViewFactory;  //cast the view factory to a views factory
 						//let the views factory create the element, indicating if multiple views should be indicated
 				  return namespaceViewsFactory.create(element, indicateMultipleViews);
@@ -233,13 +233,13 @@ public class XMLViewFactory implements ViewsFactory
 				}
 			}
 			final String elementName=XMLStyleUtilities.getXMLElementName(attributeSet); //get the name of this element G***shouldn't we use getXMLLocalName()?
-//G***del Debug.trace("XMLViewFactory: Creating a view for element: "+elementName+" of kind: "+elementKind);  //G***replace with a better Debug trace
-//G***del Debug.trace("Indicate multiple views: "+indicateMultipleViews);	//G***del
-//G***del Debug.trace("1"); //G***del
+//G***del Log.trace("XMLViewFactory: Creating a view for element: "+elementName+" of kind: "+elementKind);  //G***replace with a better Debug trace
+//G***del Log.trace("Indicate multiple views: "+indicateMultipleViews);	//G***del
+//G***del Log.trace("1"); //G***del
 				//those elements marked to have page break views take precedence over paragraphs and their block/inline specification
 			if(XMLStyleUtilities.isPageBreakView(attributeSet))	//show that this element should have a page-break view
 				return new XMLPageBreakView(element);	//create a page break view
-//G***del Debug.trace("2"); //G***del
+//G***del Log.trace("2"); //G***del
 
 
 			final CSSStyleDeclaration cssStyle=XMLCSSStyleUtilities.getXMLCSSStyle(attributeSet); //get the CSS style of the element
@@ -251,8 +251,8 @@ public class XMLViewFactory implements ViewsFactory
 			{
 				final Element childElement=element.getElement(childIndex);  //get a reference to this child element
 				final CSSStyleDeclaration childCSSStyle=XMLCSSStyleUtilities.getXMLCSSStyle(childElement.getAttributes()); //get the CSS style of the element (this method makes sure the attributes are present)
-//G***del Debug.trace("Child "+childIndex+" attributes: ", com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(childElement.getAttributes()));
-//G***del Debug.trace("Child "+childIndex+" style: ", childCSSStyle);
+//G***del Log.trace("Child "+childIndex+" attributes: ", com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(childElement.getAttributes()));
+//G***del Log.trace("Child "+childIndex+" style: ", childCSSStyle);
 					//if this element is inline (text is always inline, regardless of what the display property says)
 				if(XMLCSS.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName()))
 					hasInlineChildren=true;	//show that there are inline children
@@ -263,8 +263,8 @@ public class XMLViewFactory implements ViewsFactory
 			final boolean isTableRow; //we'll see if this element has table row display
 			if(cssStyle!=null)  //if this element has style
 			{
-//G***del Debug.trace("Element has style"); //G***del
-//G***del Debug.trace("Element has style: ", com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(attributeSet));  //G***del
+//G***del Log.trace("Element has style"); //G***del
+//G***del Log.trace("Element has style: ", com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(attributeSet));  //G***del
 
 	/*G***fix when our XMLCSSStyleDeclaration implements CSS2Properties
 				Debug.assert(cssStyle instanceof CSS2Properties, "DOM implementation does not support CSS2Properties interface for CSSStyleDeclaration"); //G***do we want to take action if the style does not implement CSS2Properties?
@@ -275,10 +275,10 @@ public class XMLViewFactory implements ViewsFactory
 			}
 			else  //if this element has no style, it can't be a table row
 				isTableRow=false; //this element is not a table row
-//G***del Debug.trace("Element has block children: "+hasBlockChildren); //G***del
-//G***del Debug.trace("Element has inline children: "+hasInlineChildren); //G***del
+//G***del Log.trace("Element has block children: "+hasBlockChildren); //G***del
+//G***del Log.trace("Element has inline children: "+hasInlineChildren); //G***del
 
-//G***del Debug.trace("is Paragraph view:"+(!isTableRow && isBlockElement && hasInlineChildren && !hasBlockChildren));  //G***del
+//G***del Log.trace("is Paragraph view:"+(!isTableRow && isBlockElement && hasInlineChildren && !hasBlockChildren));  //G***del
 			//a block element that has only inline children and no block children will be a paragraph view
 			if(!isTableRow && isBlockElement && hasInlineChildren && !hasBlockChildren)
 			{
@@ -347,7 +347,7 @@ public class XMLViewFactory implements ViewsFactory
 	}
 	else	//if this object either has all block children or all inline children, the block and inline children get created normally
 	{
-Debug.trace("Ready to create children for: ", element.getNodeName());  //G***del
+Log.trace("Ready to create children for: ", element.getNodeName());  //G***del
 		for(int childIndex=0; childIndex<element.getChildNodes().getLength(); childIndex++)	//look at each child node
 		{
 			final XMLNode node=(XMLNode)element.getChildNodes().item(childIndex);	//look at this node
@@ -360,14 +360,14 @@ Debug.trace("Ready to create children for: ", element.getNodeName());  //G***del
 
 
 
-Debug.trace("3"); //G***del
+Log.trace("3"); //G***del
 //G***del				final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)attributeSet.getAttribute(XMLCSSConstants.CSS_PROP_DISPLAY);	//get the display property G***can we be sure this will be a primitive value?
 			//G***use the style constants to get the display property, maybe
 			final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)XMLCSSStyleUtilities.getCSSPropertyCSSValue(attributeSet, XMLCSS.CSS_PROP_DISPLAY, false);	//get the display property for this element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
-Debug.trace("4"); //G***del
+Log.trace("4"); //G***del
 			if(cssDisplayProperty!=null)	//if this element has a CSS display property
 			{
-Debug.trace("Found display property: ", cssDisplayProperty);
+Log.trace("Found display property: ", cssDisplayProperty);
 				final String cssDisplayString=cssDisplayProperty.getStringValue();	//get the display value
 //G***del System.out.println("XML view factory found element with display: "+cssDisplayString);	//G***del
 				if(cssDisplayString.equals(XMLCSS.CSS_DISPLAY_BLOCK))	//if this should be block display
@@ -397,11 +397,11 @@ Debug.trace("Found display property: ", cssDisplayProperty);
 //G***later make sure invisible (display: none) views are covered; right now they are made inline but not painted or given a size
 			}
 		}
-Debug.trace("5"); //G***del
-//G***del Debug.trace("XMLViewFactory creating inline view.");  //G***del
+Log.trace("5"); //G***del
+//G***del Log.trace("XMLViewFactory creating inline view.");  //G***del
 		if(indicateMultipleViews) //if we should indicate multiple views are needed
 		{
-			Debug.trace("returning null for element: ", XMLStyleUtilities.getXMLElementName(element.getAttributes()));  //G***del
+			Log.trace("returning null for element: ", XMLStyleUtilities.getXMLElementName(element.getAttributes()));  //G***del
 			return null;  //return null so that the XMLParagraphView.LayoutView can create views for the children of the inline view, eventually creating XMLInlineViews for the actual content
 		}
 		else  //if we're not allowed to indicate multiple views

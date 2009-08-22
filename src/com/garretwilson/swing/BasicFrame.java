@@ -9,6 +9,7 @@ import javax.swing.*;
 import com.garretwilson.awt.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.globalmentor.java.*;
+import com.globalmentor.log.Log;
 import com.globalmentor.model.Modifiable;
 import com.globalmentor.util.*;
 
@@ -688,7 +689,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 		}
 		catch(SecurityException securityException)	//if we can't access preferences
 		{
-			Debug.warn(securityException);	//warn of the security problem			
+			Log.warn(securityException);	//warn of the security problem			
 		}
 	}
 
@@ -715,7 +716,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 		}
 		catch(SecurityException securityException)	//if we can't access preferences
 		{
-			Debug.warn(securityException);	//warn of the security problem			
+			Log.warn(securityException);	//warn of the security problem			
 		}
 		if(useDefault)	//if no bounds are stored in preferences
 		{

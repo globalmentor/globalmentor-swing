@@ -52,12 +52,12 @@ public class XHTMLViewFactory extends XMLViewFactory
 				}
 				else if(elementLocalName.equals(ELEMENT_IMG))	//if this is the XHTML <img> element
 				{
-//G***del Debug.trace("found <img>, ready to create an XHTMLImageView");	//G***del
+//G***del Log.trace("found <img>, ready to create an XHTMLImageView");	//G***del
 					return new XHTMLImageView(element);	//create an XHTML image view
 				}
 				else if(elementLocalName.equals(ELEMENT_OBJECT))	//if this is the XHTML <object> element
 				{
-//G***del Debug.trace("found <object>");	//G***del
+//G***del Log.trace("found <object>");	//G***del
 					Element recognizedObjectElement=element;  //start out hoping that we recognize the media type of the object
 					while(recognizedObjectElement!=null)  //while we're still trying to find a recognized object
 					{

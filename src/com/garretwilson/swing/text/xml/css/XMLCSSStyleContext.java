@@ -7,7 +7,6 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.AttributeSet;
 
 import com.garretwilson.awt.FontUtilities;
-import com.globalmentor.util.Debug;
 
 /**A pool of styles and their associated resources, created to store and
 	retrieve CSS styles attribute sets.
@@ -127,7 +126,7 @@ public class XMLCSSStyleContext extends StyleContext
 		for(int i=0; i<fontFamilyNameArray.length; ++i) //look at each of the specified fonts
 		{
 		  final String fontFamilyName=fontFamilyNameArray[i]; //get this font family name
-	//G***del Debug.trace("Looking for font family name: ", fontFamilyName);
+	//G***del Log.trace("Looking for font family name: ", fontFamilyName);
 		  if(fontFamilyName.equals("monospace"))  //G***fix all this; tidy; comment
 			{
 				family="Monospaced";
@@ -169,7 +168,7 @@ public class XMLCSSStyleContext extends StyleContext
 				size-=2;	//reduce the font size by two
 		*/
 		size*=zoomFactor;	//increase the font size by the specified amout
-//TODO del Debug.trace("new size", size);
+//TODO del Log.trace("new size", size);
 		return getFont(family, style, Math.round(size));	//get the font based upon the specifications we just got from attribute set
 	}
 

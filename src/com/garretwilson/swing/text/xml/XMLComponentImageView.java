@@ -4,10 +4,10 @@ import java.awt.*;
 import java.util.*;
 import javax.swing.*; //G***del if not needed
 import javax.swing.text.*;
+
 import com.garretwilson.awt.ImageUtilities;
 import com.garretwilson.swing.text.ViewComponentManageable;
 import com.garretwilson.swing.text.ViewComponentManager;
-import com.globalmentor.util.Debug;
 
 /**A view that maintains components that are displayed on the image.
 @author Garret Wilson
@@ -39,10 +39,10 @@ public abstract class XMLComponentImageView extends XMLImageView implements View
 /*G***del; doesn't work; a deep view won't necessarily have its parent set to null
 	public void setParent(final View parent)
 	{
-Debug.trace("setting parent of component image view: ", parent!=null ? parent.getClass().getName() : null);
+Log.trace("setting parent of component image view: ", parent!=null ? parent.getClass().getName() : null);
 		if(parent==null)  //if the view is being removed from its parent
 		{
-Debug.trace("view being removed");
+Log.trace("view being removed");
 			setShowing(false);  //show that we're not showing anymore, so that the component manager will remove owned components from the container
     }
 		super.setParent(parent); //set the parent normally

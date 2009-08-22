@@ -8,13 +8,11 @@ import java.util.prefs.Preferences;
 import javax.swing.*;
 import com.garretwilson.model.*;
 
-
 import com.globalmentor.io.*;
-
+import com.globalmentor.log.Log;
 import static com.globalmentor.net.URIs.*;
 import com.globalmentor.net.http.HTTPClient;
 import com.globalmentor.rdf.*;
-import com.globalmentor.util.Debug;
 import com.globalmentor.util.prefs.PreferencesUtilities;
 
 /**An implementation of a resource selector that selects resources from a
@@ -119,7 +117,7 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 			}
 			catch(SecurityException securityException)	//if we can't access preferences
 			{
-				Debug.warn(securityException);	//warn of the security problem			
+				Log.warn(securityException);	//warn of the security problem			
 			}			
 		}
 		final JFileChooser fileChooser=new JFileChooser(currentDirectory);	//create a new dialog for listing files
@@ -133,7 +131,7 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 			}
 			catch(SecurityException securityException)	//if we can't access preferences
 			{
-				Debug.warn(securityException);	//warn of the security problem			
+				Log.warn(securityException);	//warn of the security problem			
 			}
 			final File selectedFile=fileChooser.getSelectedFile();	//get the file they chose
 			if(selectedFile!=null)	//if they chose a file

@@ -6,7 +6,9 @@ import java.io.*;
 import java.net.*;
 import javax.swing.*;
 import com.garretwilson.resources.icon.IconResources;
+
 import com.globalmentor.java.*;
+import com.globalmentor.log.Log;
 import com.globalmentor.model.ObjectState;
 import com.globalmentor.rdf.*;
 import com.globalmentor.util.*;
@@ -562,11 +564,11 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	*/
 	public boolean saveFile()
 	{
-//G***del Debug.trace("saving file");
+//G***del Log.trace("saving file");
 		final ObjectState<RDFResource> description=getDocumentDescription(); //get a description of the document
 		if(description!=null) //if we have a description of the document
 		{
-//G**del Debug.trace("found document description");
+//G**del Log.trace("found document description");
 			if(description.getObject().getURI()!=null)  //if the file location is specified
 				return saveFile(description, description.getObject().getURI()); //save using the URI specified by the description
 			else  //if we don't have a file
@@ -648,7 +650,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 /*G***del when works	
 	protected boolean isLocationSpecified(final DocumentDescribable description)
 	{
-//G***del Debug.trace("is location anonymous: ", new Boolean(description.getResource().isAnonymous()));
+//G***del Log.trace("is location anonymous: ", new Boolean(description.getResource().isAnonymous()));
 		return description.getFile()!=null; //see if there is a file specified
 	}
 */
@@ -810,10 +812,10 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	public void setStatus(final String status)
 	{
 /*G***fix		
-//G***del Debug.trace("told to change status"); //G***del
+//G***del Log.trace("told to change status"); //G***del
 		if(statusStatusLabel!=null) //if we have a status label
 		{
-//G***del Debug.trace("changing status to: ", status); //G***del
+//G***del Log.trace("changing status to: ", status); //G***del
 		  statusStatusLabel.setText(status);	//set the status
 //G***del 			statusStatusLabel.repaint();  //G***del; testing
 //G***del 			statusBar.repaint();  //G***del; testing
@@ -827,7 +829,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	*/
 	protected void displayError(final String title, final Exception exception)
 	{
-		Debug.trace(exception);	//log the error
+		Log.trace(exception);	//log the error
 		final String errorMessage;	//we'll store the error message in this variable
 		if(exception instanceof FileNotFoundException)	//if a file was not found
 		{
@@ -842,7 +844,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		  final String message=exception.getMessage();  //get the exception message
 			errorMessage=message!=null ? message : exception.getClass().getName();  //if the message is null, use the class name of the exception as the message
 		}
-//G***del Debug.trace("Ready to display error message: "+errorMessage);
+//G***del Log.trace("Ready to display error message: "+errorMessage);
 		final String displayMessage=Strings.wrap(errorMessage, 100);	//wrap the error message at 100 characters G***probably use a constant here
 		JOptionPane.showMessageDialog(this, displayMessage, title, JOptionPane.ERROR_MESSAGE);	//G***i18n; comment
 	}

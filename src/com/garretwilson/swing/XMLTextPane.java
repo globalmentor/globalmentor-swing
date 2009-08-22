@@ -32,6 +32,7 @@ import com.garretwilson.swing.text.xml.xhtml.XHTMLLinkController;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLViewFactory;
 import com.globalmentor.applet.*;
 import com.globalmentor.io.*;
+import com.globalmentor.log.Log;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.net.URIs;
 import com.globalmentor.net.URLs;
@@ -43,7 +44,6 @@ import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.oeb.OEB;
 import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.urf.maqro.MAQRO;
-import com.globalmentor.util.Debug;
 import com.globalmentor.util.zip.*;
 
 import static com.globalmentor.collections.iterators.Iterators.*;
@@ -239,7 +239,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		*/
 		public void setPagedView(final XMLPagedView pagedView)	//G***make this protected if we can
 		{
-//G***del			Debug.traceStack("Setting the paged view");  //G***del
+//G***del			Log.traceStack("Setting the paged view");  //G***del
 
 			//G***remove the listeners from any previous page view, if present
 			this.pagedView=pagedView;	//set our paged view
@@ -247,7 +247,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 			pagedView.addProgressListener(this);	//show that we want to be notified of any progress the paged view makes, so that we can forward those events
 			pagedView.setDisplayPageCount(DisplayPageCount);	//in case our display page count has previously been set, tell our page view about it now that we have one
 //G***del		  setAntialias(antialias);  //set the antialias value to the value we saved, so it will be reflected in the new document
-//G***del Debug.trace(this, "Getting paged view's attributes, attribute set is mutable: "+(pagedViewAttributeSet instanceof MutableAttributeSet));  //G***del; testing
+//G***del Log.trace(this, "Getting paged view's attributes, attribute set is mutable: "+(pagedViewAttributeSet instanceof MutableAttributeSet));  //G***del; testing
 		}
 
 	/**The factor by which text should be zoomed.*/
@@ -266,7 +266,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 //G***del			final float oldZoomFactor=getZoomFactor(); //get the current zoom factor
 			if(zoom!=newZoom)  //if the zoom factor is really changing
 			{
-//G***del Debug.trace("changing view factor from "+oldZoomFactor+" to "+newZoomFactor); //G***del
+//G***del Log.trace("changing view factor from "+oldZoomFactor+" to "+newZoomFactor); //G***del
 				zoom=newZoom; //set the new zoom factor
 				DocumentUtilities.setZoom(getDocument(), zoom);  //store the new zoom factor in the document
 //G***del				document.putProperty(XMLDocument.ZOOM_FACTOR_PROPERTY, new Float(zoomFactor)); //store the new zoom factor in the document
@@ -293,7 +293,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		/**@return Whether text in this component is antialiased.*/
 		public boolean isAntialias()
 		{
-//G***del Debug.trace("Inside isAntialias(), returning: "+antialias);
+//G***del Log.trace("Inside isAntialias(), returning: "+antialias);
 /*G***del
 		  final Document document=getDocument();  //get a reference to the associated document
 		  Object antialiasProperty=document.getProperty(DocumentConstants.ANTIALIAS_DOCUMENT_PROPERTY); //get the antialias property
@@ -396,16 +396,16 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		public void registerViewFactory(final String namespaceURI, final ViewFactory viewFactory)
 		{
 			namespaceViewFactoryMap.put(namespaceURI, viewFactory); //store the view factory in the map, keyed to the namespace URI
-Debug.trace("XMLTextPane installing view factory for namespace: ", namespaceURI); //G***del
-Debug.trace("Current installed editor kit: ", getEditorKit().getClass().getName()); //G***del
+Log.trace("XMLTextPane installing view factory for namespace: ", namespaceURI); //G***del
+Log.trace("Current installed editor kit: ", getEditorKit().getClass().getName()); //G***del
 		  if(getEditorKit() instanceof XMLEditorKit)  //if the currently installed editor kit is an XMLEditorKit
 			{
 				final XMLEditorKit xmlEditorKit=(XMLEditorKit)getEditorKit(); //get the editor kit already installed
 				xmlEditorKit.registerViewFactory(namespaceURI, viewFactory);  //duplicate the local registration in the current XML editor kit
 			}
 /*G***del when works
-Debug.trace("XMLTextPane installing view factory for namespace: ", namespaceURI); //G***del
-Debug.trace("Current installed editor kit: ", getEditorKit().getClass().getName()); //G***del
+Log.trace("XMLTextPane installing view factory for namespace: ", namespaceURI); //G***del
+Log.trace("Current installed editor kit: ", getEditorKit().getClass().getName()); //G***del
 		  if(getEditorKit() instanceof XMLEditorKit)  //if the currently installed editor kit is an XMLEditorKit
 			{
 				final XMLEditorKit xmlEditorKit=(XMLEditorKit)getEditorKit(); //get the editor kit already installed
@@ -844,12 +844,12 @@ try {
 //G***make sure we set all the properties like the subclass uses
 //G***note that the underlying class calls this.read(), which performs similar but not identical functionality as code here -- it would be good to use that, if possible
 		ContentType contentType=URIs.getContentType(uri);  //get the media type of the URI
-		Debug.trace("content type is first: ", contentType);  //G***del
+		Log.trace("content type is first: ", contentType);  //G***del
 		InputStream inputStream=null;	//we'll attempt to get an input stream based upon the content type
 			//if this appears to be an XEB book zip file, an OEB publication zip file or an application/zip file, change our input stream locator and switch to a URI inside the file
 		if(OEB_ZIP_MEDIA_TYPE.match(contentType) || XEB_ZIP_MEDIA_TYPE.match(contentType) || ZIP_MEDIA_TYPE.match(contentType))
 		{
-Debug.trace("found zip file: ", uri);  //G***del
+Log.trace("found zip file: ", uri);  //G***del
 			if(URIs.FILE_SCHEME.equals(uri.getScheme()))  //if this is the file scheme
 			{
 			  final File zipFile=new File(uri);  //create a file for accessing the zip file
@@ -885,7 +885,7 @@ Debug.trace("found zip file: ", uri);  //G***del
 				}
 			}
 			else  //if this is not a zip file, but some other sort of zip access, throw an exception
-				Debug.error("Zip file must use URI file protocol");  //G***fix
+				Log.error("Zip file must use URI file protocol");  //G***fix
 		}
 		inputStream=getInputStream(uri);	//get an input stream to the URI
 		setContentType(contentType.toString());	//set the content type, which will select the appropriate editor kit
@@ -920,7 +920,7 @@ Debug.trace("found zip file: ", uri);  //G***del
 		final Document document=editorKit.createDefaultDocument();	//create a default document
 		document.putProperty(Document.StreamDescriptionProperty, URIs.toValidURL(baseURI));	//store a URL version of the URI in the document, as getPage() expects this to be a URL
 		DocumentUtilities.setBaseURI(document, baseURI);	//store the base URI in the document
-Debug.trace("reading from stream"); //G***del
+Log.trace("reading from stream"); //G***del
 		final DocumentLoader documentLoader=new DocumentLoader(inputStream, document);	//create a thread for loading the document 
 		//TODO check for already loading asynchronously, as does JEditorPane
 		if(document instanceof AbstractDocument)	//if the document is an abstract document, which can give a load priority
@@ -1018,11 +1018,11 @@ Debug.trace("reading from stream"); //G***del
 				}
 				catch(InterruptedException interruptedException)
 				{
-					Debug.error(interruptedException);	//G***fix
+					Log.error(interruptedException);	//G***fix
 				}
 				catch(InvocationTargetException invocationTargetException)
 				{
-					Debug.error(invocationTargetException);	//G***fix
+					Log.error(invocationTargetException);	//G***fix
 				}
 				fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Finished constructing the document...", true));	//G***testing i18n
 			}
@@ -1096,7 +1096,7 @@ Debug.trace("reading from stream"); //G***del
 	*/
 	public void read(InputStream in, Object desc) throws IOException
 	{
-Debug.trace("inside read()"); //G***fix all this
+Log.trace("inside read()"); //G***fix all this
 //G***fix		else  //if this is not an XML document and an XML editor kit
 		{
 			final String charset=(String)getClientProperty("charset");  //get the character set being used G***use a constant here
@@ -1117,7 +1117,7 @@ Debug.trace("inside read()"); //G***fix all this
 	void read(InputStream inputStream, Document document) throws IOException
 	{
 //G***del		final XMLReader xmlReader=createReader(inputStream, getPage()); //create a reader from the input stream and the current URL
-Debug.trace("reading from stream into document"); //G***del
+Log.trace("reading from stream into document"); //G***del
 		try
 		{
 			getEditorKit().read(inputStream, document, 0);  //let the editor kit read the document from the input stream
@@ -1385,8 +1385,8 @@ System.out.println("Inside XMLTextPage.insertUpdate(), fetching new paged view."
 		{
 			final int displayPageCount=getDisplayPageCount();	//see how many pages we're displaying at a time
 			int pageIndex=getPageIndex();	//get the current page index
-	Debug.trace("page count: ", getPageCount());
-	Debug.trace("page index: ", pageIndex);
+	Log.trace("page count: ", getPageCount());
+	Log.trace("page index: ", pageIndex);
 			pageIndex=(pageIndex/displayPageCount)*displayPageCount;	//make sure the page index is on the first of any page sets
 			if(!isPaginating())	//if we're not paginating (otherwise, we wouldn't have an acccurate page count)
 			{
@@ -1394,7 +1394,7 @@ System.out.println("Inside XMLTextPage.insertUpdate(), fetching new paged view."
 				if(pageIndex>=pageCount)	//if we're not showing any valid pages
 					pageIndex=(pageCount-1/displayPageCount)*displayPageCount;	//go to the last set of displayed pages on the first page
 			}
-	Debug.trace("new page index: ", pageIndex);
+	Log.trace("new page index: ", pageIndex);
 			if(pageIndex!=getPageIndex())	//if we've decided to change the page index
 				setPageIndex(pageIndex);	//change the page index
 		}
@@ -1564,7 +1564,7 @@ System.out.println("XMLTextPane just changed the page index from: "+oldPageIndex
 	*/
 	public void go(final URI uri)
 	{
-Debug.trace("Inside XMLTextPane.goURI()");	//G***del
+Log.trace("Inside XMLTextPane.goURI()");	//G***del
 		final Document document=getDocument();  //get the document associated with the text pane
 		if(document instanceof XMLDocument) //if this is an XML document
 		{
@@ -1586,7 +1586,7 @@ Debug.trace("Inside XMLTextPane.goURI()");	//G***del
 				}
 				catch(IOException e)  //if there is an IO exception browsing to the URI
 				{
-					Debug.error(e); //we don't expect to see this exception
+					Log.error(e); //we don't expect to see this exception
 				}
 */
 			}
@@ -1791,17 +1791,17 @@ Debug.trace("Inside XMLTextPane.goURI()");	//G***del
 			{
 				final Clip clip=(Clip)xmlDocument.getResource(url.toString());	//get and open a clip to the audio
 					//G***we need to fix this better; right now, we get a ClassCastException if they give a URL to an image, for instance
-	//G***del Debug.trace("ready to start clip.");
+	//G***del Log.trace("ready to start clip.");
 				return new ClipAudioClip(clip); //create an audio clip from the clip and return it
 			}
 			catch(URISyntaxException uriSyntaxException)  //if there's a problem with the audio clip location
 			{
-				Debug.warn(uriSyntaxException);  //show that we can't load the clip G***fix better with Java console info
+				Log.warn(uriSyntaxException);  //show that we can't load the clip G***fix better with Java console info
 				return null;  //show that we couldn't load the audio clip
 			}
 			catch(IOException ioException)  //if there's a problem loading the audio clip
 			{
-				Debug.warn(ioException);  //show that we can't load the clip G***fix better with Java console info
+				Log.warn(ioException);  //show that we can't load the clip G***fix better with Java console info
 				return null;  //show that we couldn't load the audio clip
 			}
 		}

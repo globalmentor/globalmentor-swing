@@ -68,7 +68,7 @@ public class RDFTreeUtilities
 				while(itemResourceIterator.hasNext()) //while there are more resources
 				{
 					final RDFResource itemResource=(RDFResource)itemResourceIterator.next();  //get the next resource
-Debug.trace("found item resource: ", itemResource);  //G***del
+Log.trace("found item resource: ", itemResource);  //G***del
 						//create a new tree node to represent the resource, recursively discovering folders
 					final RDFResourceTreeNode itemResourceNode=createFileResourceTreeNode(itemResource);
 					rdfResourceTreeNode.add(itemResourceNode); //add the resource node to the folder node

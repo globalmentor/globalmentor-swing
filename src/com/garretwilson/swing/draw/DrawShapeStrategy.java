@@ -5,7 +5,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import com.globalmentor.java.Objects;
-import com.globalmentor.util.Debug;
 
 /**Strategy for drawing a shape on a component.
 	An instance of the strategy must be registered as both a
@@ -66,7 +65,7 @@ public class DrawShapeStrategy extends MouseInputAdapter
 	*/
 	public void mousePressed(final MouseEvent mouseEvent)
 	{
-//G***del Debug.trace("mouse pressed");  //G***del
+//G***del Log.trace("mouse pressed");  //G***del
 		if(SwingUtilities.isLeftMouseButton(mouseEvent)) //if the left button is pressed
 		{
 			final DrawShape drawShape=getDrawShape(); //get the shape being drawn
@@ -108,7 +107,7 @@ public class DrawShapeStrategy extends MouseInputAdapter
 			final DrawShape drawShape=getDrawShape(); //get the shape being drawn
 			if(drawShape!=null) //if we have a shape being drawn
 			{
-	//G***del Debug.trace("trying to move shape");  //G***del
+	//G***del Log.trace("trying to move shape");  //G***del
 				draw(drawShape);  //undraw the shape
 				drawShape.setEndLocation(mouseEvent.getX(), mouseEvent.getY()); //update the ending position
 				draw(drawShape);  //redraw the shape

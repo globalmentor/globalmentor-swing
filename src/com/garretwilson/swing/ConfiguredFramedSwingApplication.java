@@ -9,12 +9,12 @@ import static com.globalmentor.java.OperatingSystem.*;
 
 import com.globalmentor.io.*;
 import com.globalmentor.java.*;
+import com.globalmentor.log.Log;
 import com.globalmentor.model.Modifiable;
 import com.globalmentor.net.Authenticable;
 import com.globalmentor.net.http.HTTPClient;
 import com.globalmentor.rdf.*;
 import com.globalmentor.rdf.dublincore.RDFDublinCore;
-import com.globalmentor.util.Debug;
 
 /**A framed Swing application that maintains configuration information.
 <p>If a configuration is provided via <code>setConfiguration()</code>, that
@@ -162,7 +162,7 @@ public abstract class ConfiguredFramedSwingApplication<C> extends FramedSwingApp
 			}
 			catch(SecurityException securityException)	//if we can't access the configuration file
 			{
-				Debug.warn(securityException);	//warn of the security problem			
+				Log.warn(securityException);	//warn of the security problem			
 			}
 			setConfiguration(configuration);	//set the configuration to whatever we found
 			setModified(false);	//the application has not been modified, as its configuration has just been loaded
@@ -195,7 +195,7 @@ public abstract class ConfiguredFramedSwingApplication<C> extends FramedSwingApp
 			}
 			catch(SecurityException securityException)	//if we can't access the configuration file
 			{
-				Debug.warn(securityException);	//warn of the security problem			
+				Log.warn(securityException);	//warn of the security problem			
 			}
 		}
 	}

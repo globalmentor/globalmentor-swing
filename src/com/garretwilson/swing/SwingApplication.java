@@ -5,6 +5,7 @@ import java.awt.Frame;
 import java.net.URI;
 import javax.swing.*;
 import com.globalmentor.java.*;
+import com.globalmentor.log.Log;
 import com.globalmentor.util.*;
 
 /**An application that relies on Swing.
@@ -184,7 +185,7 @@ public abstract class SwingApplication extends Application
 	*/
 	public static void displayErrorDefault(final Component parentComponent, final String title, final Throwable throwable)
 	{
-		Debug.error(throwable);	//log the error
+		Log.error(throwable);	//log the error
 			//display a message for the throwable, using the throwable local class name for the title if no title was given
 		displayErrorDefault(parentComponent, title!=null ? title : Classes.getLocalName(throwable.getClass()), getDisplayErrorMessage(throwable));
 	}

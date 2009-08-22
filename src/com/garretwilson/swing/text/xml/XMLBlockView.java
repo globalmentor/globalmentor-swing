@@ -9,11 +9,12 @@ import javax.swing.text.*;
 import com.garretwilson.swing.text.*;
 import static com.garretwilson.swing.text.SwingTextUtilities.*;
 import static com.garretwilson.swing.text.ViewUtilities.*;
+
 import com.garretwilson.swing.text.xml.css.*;
 import com.globalmentor.java.CharSequences;
 import com.globalmentor.java.Characters;
+import com.globalmentor.log.Log;
 import com.globalmentor.text.xml.stylesheets.css.*;
-import com.globalmentor.util.Debug;
 
 import org.w3c.dom.css.CSSStyleDeclaration;
 
@@ -108,7 +109,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 							if(CharSequences.notCharIndexOf(text, Characters.WHITESPACE_CHAR_STRING+Characters.CONTROL_CHARS+XMLDocument.ELEMENT_END_CHAR)<0	
 									&& !XMLStyleUtilities.isXMLEmptyElement(attributeSet))
 							{
-		//G***del Debug.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElementName(attributeSet)); //G***del
+		//G***del Log.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElementName(attributeSet)); //G***del
 								viewList.add(new InvisibleView(element));  //create a hidden view for the whitespace inline elements and add it to our list of views
 								continue;	//skip further processing of this child and go to the next one								
 							}
@@ -346,19 +347,19 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 	protected void setPropertiesFromAttributes()
 	{
 /*G***del
-Debug.trace("*****Inside XMLBlockView.setPropertiesFromAttributes()");
-Debug.trace("element name is:", getElement().getName());	//G***del
-Debug.trace("element is:", getElement());	//G***del
-Debug.trace("XML element name is:", XMLStyleUtilities.getXMLElementName(getAttributes()));	//G***del
-Debug.trace("element attributes is: ", getElement()!=null ? getElement().getAttributes() : null);	//G***del
-Debug.trace("getAttributes() is: ", getAttributes());	//G***del
+Log.trace("*****Inside XMLBlockView.setPropertiesFromAttributes()");
+Log.trace("element name is:", getElement().getName());	//G***del
+Log.trace("element is:", getElement());	//G***del
+Log.trace("XML element name is:", XMLStyleUtilities.getXMLElementName(getAttributes()));	//G***del
+Log.trace("element attributes is: ", getElement()!=null ? getElement().getAttributes() : null);	//G***del
+Log.trace("getAttributes() is: ", getAttributes());	//G***del
 */
 		final AttributeSet attributeSet=getAttributes();	//get our attributes
 		if(attributeSet!=null)	//if we have attributes
 		{
-//G***del Debug.trace("*****Inside XMLBlockView.setPropertiesFromAttributes() for element: "+XMLStyleConstants.getXMLElementName(attributeSet));  //G***del
+//G***del Log.trace("*****Inside XMLBlockView.setPropertiesFromAttributes() for element: "+XMLStyleConstants.getXMLElementName(attributeSet));  //G***del
 			setBackgroundColor(XMLCSSStyleUtilities.getBackgroundColor(attributeSet));	//set the background color from the attributes
-//G***del Debug.trace("New background color: "+getBackgroundColor());
+//G***del Log.trace("New background color: "+getBackgroundColor());
 
 			final Document document=getDocument();	//get our document
 			if(document instanceof StyledDocument)		//if this is a styled document
@@ -373,7 +374,7 @@ Debug.trace("getAttributes() is: ", getAttributes());	//G***del
 			//G***probably have some other external helper class that sets the margins based upon the attributes
 			final short marginTop=(short)Math.round(XMLCSSStyleUtilities.getMarginTop(attributeSet)); //get the top margin from the attributes
 			final short marginLeft=(short)Math.round(XMLCSSStyleUtilities.getMarginLeft(attributeSet, font)); //get the left margin from the attributes
-Debug.trace("margin left:", marginLeft);
+Log.trace("margin left:", marginLeft);
 			final short marginBottom=(short)Math.round(XMLCSSStyleUtilities.getMarginBottom(attributeSet)); //get the bottom margin from the attributes
 			final short marginRight=(short)Math.round(XMLCSSStyleUtilities.getMarginRight(attributeSet, font)); //get the right margin from the attributes
 		  setInsets(marginTop, marginLeft, marginBottom, marginRight);	//G***fix; testing

@@ -4,9 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import com.garretwilson.resources.icon.IconResources;
+import com.globalmentor.log.Log;
 import com.globalmentor.rdf.*;
 import com.globalmentor.rdf.dublincore.RDFDublinCore;
-import com.globalmentor.util.Debug;
 
 /**Main frame parent class for an application.
 <p>This class requires that the content pane be an instance of
@@ -221,7 +221,7 @@ public class ApplicationFrame extends BasicFrame
 			}
 			catch(SecurityException securityException)	//if we can't access preferences
 			{
-				Debug.warn(securityException);	//warn of the security problem			
+				Log.warn(securityException);	//warn of the security problem			
 			}
 		}
 		exitAction=new ExitAction();  //create the exit action

@@ -19,13 +19,13 @@ import com.garretwilson.swing.text.xml.css.*;
 import com.globalmentor.collections.IdentityHashSet;
 import com.globalmentor.io.*;
 import com.globalmentor.java.*;
+import com.globalmentor.log.Log;
 import com.globalmentor.model.NameValuePair;
 import com.globalmentor.net.*;
 import com.globalmentor.rdf.*;
 import com.globalmentor.text.xml.*;
 import com.globalmentor.text.xml.stylesheets.css.*;
 import com.globalmentor.urf.maqro.Activity;
-import com.globalmentor.util.*;
 
 import org.w3c.dom.*;
 import org.w3c.dom.css.*;
@@ -379,7 +379,7 @@ G***fix
 	*/
 	public void install(JEditorPane editorPane)
 	{
-Debug.trace("installing XMLEditorKit"); //G***del
+Log.trace("installing XMLEditorKit"); //G***del
 		unregisterViewFactories();  //unregister all registered view factories
 		if(editorPane instanceof XMLTextPane) //if we're being installed into an XML text pane
 		{
@@ -389,7 +389,7 @@ Debug.trace("installing XMLEditorKit"); //G***del
 			while(viewFactoryNamespaceIterator.hasNext())  //while there are more namespaces
 			{
 				final String namespaceURI=viewFactoryNamespaceIterator.next(); //get the next namespace for which a view factory is installed
-//G***del Debug.trace("setting view factory registered for namespace: ", namespaceURI); //G***del
+//G***del Log.trace("setting view factory registered for namespace: ", namespaceURI); //G***del
 				final ViewFactory registeredViewFactory=xmlTextPane.getViewFactory(namespaceURI); //get the view factory associated with this namespace
 				registerViewFactory(namespaceURI, registeredViewFactory);  //register this view factory with the the namespace
 			}
@@ -466,32 +466,32 @@ Debug.trace("installing XMLEditorKit"); //G***del
 			swingXMLDocument.create(elementSpecList);	//create the document from the element specs
 		}
 
-Debug.trace("Finished creating document, length: "+swingXMLDocument.getLength());
+Log.trace("Finished creating document, length: "+swingXMLDocument.getLength());
 
 //G***del elementSpecList[elementSpecList.length-1].setDirection(DefaultStyledDocument.ElementSpec.JoinPreviousDirection);	//G***fix
 
 /*G***fix---this seems to work! make sure there is an ending '\n' before deleting the last character
 try
 {
-Debug.trace("*****************\n****************\n***********");
+Log.trace("*****************\n****************\n***********");
 	if(swingXMLDocument.getLength()>0)
-		Debug.trace("last character: \""+swingXMLDocument.getText(swingXMLDocument.getLength()-1, 1)+"\"");
+		Log.trace("last character: \""+swingXMLDocument.getText(swingXMLDocument.getLength()-1, 1)+"\"");
 	if(swingXMLDocument.getLength()>1)
-		Debug.trace("second to last character: \""+swingXMLDocument.getText(swingXMLDocument.getLength()-2, 1)+"\"");
+		Log.trace("second to last character: \""+swingXMLDocument.getText(swingXMLDocument.getLength()-2, 1)+"\"");
 
-Debug.trace("removing after-last character");
+Log.trace("removing after-last character");
 	if(swingXMLDocument.getLength()>0)
 		swingXMLDocument.remove(swingXMLDocument.getLength()-1, 1);
 
 	if(swingXMLDocument.getLength()>0)
-		Debug.trace("last character: \""+swingXMLDocument.getText(swingXMLDocument.getLength()-1, 1)+"\"");
+		Log.trace("last character: \""+swingXMLDocument.getText(swingXMLDocument.getLength()-1, 1)+"\"");
 	if(swingXMLDocument.getLength()>1)
-		Debug.trace("second to last character: \""+swingXMLDocument.getText(swingXMLDocument.getLength()-2, 1)+"\"");
+		Log.trace("second to last character: \""+swingXMLDocument.getText(swingXMLDocument.getLength()-2, 1)+"\"");
 
 }
 catch (BadLocationException e)
 {
-	Debug.error(e);	//G***del all this
+	Log.error(e);	//G***del all this
 }
 */
 
@@ -671,7 +671,7 @@ catch (BadLocationException e)
 		XMLElementKit xmlElementKit=namespaceXMLElementKitMap.get(namespaceURI);	//see if there is an XML element kit registered with this namespace
 		if(xmlElementKit!=null)	//TODO del; testing
 		{
-			Debug.trace("found element kit for", namespaceURI);
+			Log.trace("found element kit for", namespaceURI);
 		}
 		if(xmlElementKit==null)	//if there is no registered XML element kit
 		{
@@ -689,7 +689,7 @@ catch (BadLocationException e)
 	*/
 	protected void appendElementSpecListPageBreak(final List<DefaultStyledDocument.ElementSpec> elementSpecList)
 	{
-//G***del Debug.trace("XMLDocument.appendElementSpecListPageBreak()");	//G***del
+//G***del Log.trace("XMLDocument.appendElementSpecListPageBreak()");	//G***del
 		final SimpleAttributeSet pageBreakAttributeSet=new SimpleAttributeSet();	//create a page break attribute set G***create this and keep it in the constructor for optimization
 //G***del if we can get away with it		XMLStyleConstants.setXMLElementName(pageBreakAttributeSet, XMLCSSStyleConstants.AnonymousAttributeValue); //show by its name that this is an anonymous box G***maybe change this to setAnonymous
 		XMLStyleUtilities.setPageBreakView(pageBreakAttributeSet, true);	//show that this element should be a page break view
@@ -906,8 +906,8 @@ catch (BadLocationException e)
 		{
 			final Object attributeNameObject=attributeNameEnumeration.nextElement();  //get this attribute name object
 /*G***del; why is there a "resolver" attribute with a name of type StyleConstants? Why isn't that a value?
-Debug.trace("Current element: ", attributeNameObject); //G***del
-Debug.trace("Current element type: ", attributeNameObject.getClass().getName()); //G***del
+Log.trace("Current element: ", attributeNameObject); //G***del
+Log.trace("Current element type: ", attributeNameObject.getClass().getName()); //G***del
 */
 			final Object attributeValueObject=attributeSet.getAttribute(attributeNameObject);	//get the attribute value (don't worry that this searches the hierarchy---we already know this key exists at this level)
 			if(attributeValueObject instanceof XMLAttribute)	//if this Swing attribute is an XML attribute 
@@ -1151,9 +1151,9 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 					}
 				}
 			}
-//	G***del Debug.trace("XMLDocument.appendElementSpecList: element ", xmlElement.getNodeName());	//G***del
+//	G***del Log.trace("XMLDocument.appendElementSpecList: element ", xmlElement.getNodeName());	//G***del
 			final MutableAttributeSet attributeSet=createAttributeSet(xmlElement, baseURI);	//create and fill an attribute set based upon this element's CSS style
-//	G***del Debug.trace("Attribute set: ", attributeSet);  //G***del
+//	G***del Log.trace("Attribute set: ", attributeSet);  //G***del
 //	G***fix if(!"null".equals(xmlElement.getLocalName()))	//G***testing
 			elementSpecList.add(new DefaultStyledDocument.ElementSpec(attributeSet, DefaultStyledDocument.ElementSpec.StartTagType));	//create the beginning of a Swing element to model this XML element
 			appendElementSpecListContent(elementSpecList, xmlElement, attributeSet, baseURI);	//append the content of the element
@@ -1227,7 +1227,7 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 		*/
 		protected MutableAttributeSet appendElementSpecListNode(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final org.w3c.dom.Node node, final URI baseURI)
 		{
-//	G***del Debug.trace("appending element spec list node: ", node.getNodeName());  //G***del
+//	G***del Log.trace("appending element spec list node: ", node.getNodeName());  //G***del
 			switch(node.getNodeType())	//see which type of object this is
 			{
 				case Node.ELEMENT_NODE:	//if this is an element
@@ -1272,17 +1272,17 @@ Debug.trace("Current element type: ", attributeNameObject.getClass().getName());
 				XMLStyleUtilities.setXMLElementName(simpleAttributeSet, XML.TEXT_NODE_NAME);	//set the name of the content to ensure it will not get its name from its parent element (this would happen if there was no name explicitly set)
 				textAttributeSet=simpleAttributeSet;	//use the default atribute set we created
 			}
-//	G***del Debug.trace("inserting text data: \""+node.getNodeValue()+"\"");  //G***del
+//	G***del Log.trace("inserting text data: \""+node.getNodeValue()+"\"");  //G***del
 			final StringBuffer textStringBuffer=new StringBuffer(text);  //G***testing
 			if(textStringBuffer.length()>0) //if there is actually content (don't add empty text)
 			{
-//	G***del Debug.trace("before collapsing whitespace: ", textStringBuffer);  //G***del
+//	G***del Log.trace("before collapsing whitespace: ", textStringBuffer);  //G***del
 
 
 
 				StringBuffers.collapse(textStringBuffer, Characters.WHITESPACE_CHAR_STRING, " ");	//G***testing
-//	G***del Debug.trace("after collapsing whitespace: ", textStringBuffer);  //G***del
-//	G***del Debug.trace("Adding text with attributes: ", contentAttributeSet);	//G***del
+//	G***del Log.trace("after collapsing whitespace: ", textStringBuffer);  //G***del
+//	G***del Log.trace("Adding text with attributes: ", contentAttributeSet);	//G***del
 //	G***fix textStringBuffer.append(CharacterConstants.WORD_JOINER_CHAR);	//G***testing
 //	G***fix textStringBuffer.append(CharacterConstants.ZERO_WIDTH_NO_BREAK_SPACE_CHAR);	//G***testing
 //	G***fix textStringBuffer.append(ELEMENT_END_CHAR);	//put a dummy character at the end of the element so that caret positioning will work correctly at the end of block views

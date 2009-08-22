@@ -10,6 +10,7 @@ import com.garretwilson.swing.text.xml.*;
 
 import static com.globalmentor.text.xml.xhtml.XHTML.*;
 
+import com.globalmentor.log.Log;
 import com.globalmentor.util.*;
 
 /**A view that displays an image, intended to support the XHTML
@@ -52,7 +53,7 @@ public class XHTMLImageView extends XMLImageView
 			//G***we should probably save the initialization attribute set and return it for getAttributes()
 //G***fix	StyleSheet sheet = getStyleSheet();
 //G***fix	attr = sheet.getViewAttributes(this);
-Debug.trace("Finished constructing XHTMLImageView");	//G***del
+Log.trace("Finished constructing XHTMLImageView");	//G***del
 	}
 
 	/**Initializes the information needed to render the image.
@@ -60,14 +61,14 @@ Debug.trace("Finished constructing XHTMLImageView");	//G***del
 	*/
 	protected void initialize(Element element)
 	{
-Debug.trace("XHTMLImageView.initialize()");
+Log.trace("XHTMLImageView.initialize()");
 		final AttributeSet attributeSet=element.getAttributes();  //get the element's attributes
 		final String elementName=XMLStyleUtilities.getXMLElementName(attributeSet); //get the name of this element
 		final String href=XHTMLSwingTextUtilities.getImageHRef(element.getAttributes()); //get a reference to the image file represented by the element
 			setHRef(href);	//set the href to the value we found
 //G***del when works		final String src=(String)element.getAttributes().getAttribute("src");	//G***check about resolving parents (we don't want to resolve), use a constant, use namespaces, and comment
 //G***del when works		setHRef((String)attributeSet.getAttribute("src"));	//G***check about resolving parents (we don't want to resolve), use a constant, use namespaces, and comment
-Debug.trace("XHTMLImageView.initialize() src: ", getHRef());
+Log.trace("XHTMLImageView.initialize() src: ", getHRef());
 //G***del when works		final String src="D:/Projects/oeb/understandingoeb/oebobjects_classdiagram.jpg";	//G***fix
 				//G***in the future, get this from the XML document (which will, of course, use OEBDocument)
 //G***del when works		final OEBDocument document=(OEBDocument)getDocument();
@@ -102,17 +103,17 @@ Debug.trace("XHTMLImageView.initialize() src: ", getHRef());
 			}
 			catch(URISyntaxException e)	//G***do something better here
 			{
-				Debug.error(e);
+				Log.error(e);
 			}
 			catch(IOException e)	//G***do something better here
 			{
-				Debug.error(e);
+				Log.error(e);
 			}
 		}
 		setHeight(height);	//set the height of the image view to whatever we found
 		setWidth(width);	//set the width of the image view to whatever we found
 /*G***del
-Debug.trace("creating image view for {0}"+
+Log.trace("creating image view for {0}"+
 		"parent: {4}\n parent parent: {5}"+
 		"\n parent parent parent: {6}"+
 		"\n parent parent parent parent: {7}"+
@@ -128,7 +129,7 @@ Debug.trace("creating image view for {0}"+
 			}
 		);
 */
-//G***del Debug.trace("XHTMLImageView.initialize(), width: "+fWidth+", height: "+fHeight);	//G***del
+//G***del Log.trace("XHTMLImageView.initialize(), width: "+fWidth+", height: "+fHeight);	//G***del
 	}
 
 	/**Fetches the attributes to use when rendering.

@@ -11,7 +11,6 @@ import javax.swing.text.*;
 import static com.globalmentor.java.Objects.*;
 
 import com.garretwilson.awt.Inset;
-import com.globalmentor.util.Debug;
 
 /**Manages AWT/Swing components for a particular view.
 	Used with a view that contains AWT/Swing components.
@@ -493,10 +492,10 @@ public class ViewComponentManager //G***finish the class comments with examples 
 	public synchronized void setShowing(final boolean newShowing)
 	{
 /*G***del
-Debug.trace("****setShowing()");  //G***del
-Debug.trace("set showing, old: ", new Boolean(showing)); //G***del
-Debug.trace("set showing, new: ", new Boolean(newShowing)); //G***del
-Debug.traceStack(); //G***del
+Log.trace("****setShowing()");  //G***del
+Log.trace("set showing, old: ", new Boolean(showing)); //G***del
+Log.trace("set showing, new: ", new Boolean(newShowing)); //G***del
+Log.traceStack(); //G***del
 */
 		showing=newShowing; //update our showing status
 		for(final Component component:getComponents())  //for each component
@@ -516,15 +515,15 @@ Debug.traceStack(); //G***del
 	*/
 	protected void setShowing(final Component component, final boolean showing)
 	{
-//G***del Debug.trace("setting component showing: ", new Boolean(showing)); //G***del
+//G***del Log.trace("setting component showing: ", new Boolean(showing)); //G***del
 		component.setVisible(showing); //show or hide the component appropriately
 		final Container container=getView().getContainer();  //get the container the view is placed in
 		if(showing) //if we're now showing the component
 		{
-//G***del Debug.trace("showing component"); //G***del
+//G***del Log.trace("showing component"); //G***del
 			if(container!=null && component.getParent()!=container) //if we have a valid container, and the component isn't already in the container
 			{
-//G***del Debug.trace("component into container"); //G***del
+//G***del Log.trace("component into container"); //G***del
 //G***del System.out.println("component size before added to container: "+component.getSize().getWidth()+" height: "+component.getSize().getHeight());  //G***del
 				container.add(component); //add the component to the container
 //G***del System.out.println("component size after added to container: "+component.getSize().getWidth()+" height: "+component.getSize().getHeight());  //G***del
@@ -533,12 +532,12 @@ Debug.traceStack(); //G***del
 		}
 		else /*G***del if(!showing)*/  //if we're now being hidden (even if we were already hidden, container.remove(component) shouldn't hurt if the component was already removed)
 		{
-//G***del Debug.trace("hiding component"); //G***del
+//G***del Log.trace("hiding component"); //G***del
 		//G***testing a way to remove the component from the container
-//G***del Debug.trace("Container: ", container);  //G***del
+//G***del Log.trace("Container: ", container);  //G***del
 			if(container!=null && component.getParent()==container) //if we have a valid container, and the component is in the container
 			{
-//G***del Debug.trace("removing component from container"); //G***del
+//G***del Log.trace("removing component from container"); //G***del
 				container.remove(component); //remove the component from the container
 			}
 		}

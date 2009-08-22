@@ -12,6 +12,7 @@ import javax.swing.text.*;
 import com.garretwilson.swing.event.XMLLinkEvent;
 import com.globalmentor.io.*;
 import com.globalmentor.java.*;
+import com.globalmentor.log.Log;
 import com.globalmentor.net.*;
 import com.globalmentor.text.xml.oeb.*;
 import com.globalmentor.text.xml.xlink.*;
@@ -85,7 +86,7 @@ public class XMLLinkController extends MouseAdapter implements MouseMotionListen
 	*/
 	public void mouseMoved(final MouseEvent mouseEvent)
 	{
-//G***del Debug.trace("Inside XMLEditorKit.LinkController.mouseMoved()");	//G***del
+//G***del Log.trace("Inside XMLEditorKit.LinkController.mouseMoved()");	//G***del
 		final JEditorPane editorPane=(JEditorPane)mouseEvent.getSource();	//get the source of the event
 		final XMLEditorKit editorKit=(XMLEditorKit)editorPane.getEditorKit();	//get the editor kit for the editor pane
 		boolean adjustCursor=true;	//we'll assume we'll adjust the cursor unless we're still over the same element
@@ -110,7 +111,7 @@ public class XMLLinkController extends MouseAdapter implements MouseMotionListen
 					Element element=xmlDocument.getCharacterElement(pos);	//get the element for this position
 					if(currentElement!=element)		//if we've moved to a different element
 					{
-Debug.trace("We've moved to a different element; currentURI: ", currentURI);	//G***del
+Log.trace("We've moved to a different element; currentURI: ", currentURI);	//G***del
 						currentElement=element;	//show that we have a new current element
 						while(element!=null)  //we'll keep looking up the chain for a link element until we find one or run out of elements
 						{
@@ -121,7 +122,7 @@ Debug.trace("We've moved to a different element; currentURI: ", currentURI);	//G
 								try
 								{
 									final URI uri=linkController.getLinkElementURI(xmlDocument, element);	//get the URI for the element we're over (we don't know if this is a link element, so this may return null)
-Debug.trace("URI: ", uri);	//G***del
+Log.trace("URI: ", uri);	//G***del
 //G***del when works									if(url!=currentURL)	//if we're over a different link
 									if(!Objects.equals(uri, currentURI))	//if we're over a different link (comparing the URIs using the URI.equals() method, if possible)
 									{
@@ -138,7 +139,7 @@ Debug.trace("URI: ", uri);	//G***del
 								}
 								catch(URISyntaxException uriSyntaxException)  //if the URI could not be formed
 								{
-									Debug.warn(uriSyntaxException); //continue normally G***should this be something just under a warning, since this is a user-caused error?
+									Log.warn(uriSyntaxException); //continue normally G***should this be something just under a warning, since this is a user-caused error?
 								}
 								break;  //stop looking for links up the hierarchy; we just found one
 							}
@@ -181,16 +182,16 @@ Debug.trace("URI: ", uri);	//G***del
 	protected boolean activateLink(final int pos, final JEditorPane editorPane, final int x, final int y)
 	{
 //G***fix super.activateLink(pos, editorPane, x, y);	//G***testing
-//G***del Debug.trace("Inside OEBEditorKit.activateLink()");
+//G***del Log.trace("Inside OEBEditorKit.activateLink()");
 		final Document document=editorPane.getDocument();	//get the document in the editor pane
 		if(document instanceof XMLDocument)	//if this is an XML document
 		{
-//G***del Debug.trace("OEBEditorKit.activeLink() is an OEBDocument");
+//G***del Log.trace("OEBEditorKit.activeLink() is an OEBDocument");
 			XMLDocument xmlDocument=(XMLDocument)document;	//cast the document to an XML document
 			Element element=xmlDocument.getCharacterElement(pos);	//get the element this position represents
 //G***del when works				final String elementName=(String)attributeSet.getAttribute(StyleConstants.NameAttribute);	//get the name of this element
-//G***del Debug.trace("OEBEditorKit.activeLink() is on element: "+(elementName!=null ? elementName : "null"));
-//G***del Debug.trace("element: "+element.toString());	//G***testing
+//G***del Log.trace("OEBEditorKit.activeLink() is on element: "+(elementName!=null ? elementName : "null"));
+//G***del Log.trace("element: "+element.toString());	//G***testing
 
 			while(element!=null)  //we'll keep looking up the chain for a link element until we find one or run out of elements
 			{
@@ -326,7 +327,7 @@ protected void activateLink(int pos, JEditorPane editor) {
 /*G***del when not needed
 	protected void activateLink(int pos, JEditorPane editorPane, int x, int y)
 	{
-//G***del Debug.trace("Inside XMLEditorKit.activateLink()");
+//G***del Log.trace("Inside XMLEditorKit.activateLink()");
 		return;	//G***fix for XLink
 	}
 */
@@ -399,7 +400,7 @@ protected void activateLink(int pos, JEditorPane editor) {
 	*/
 	protected HyperlinkEvent createHyperlinkEvent(final JEditorPane editorPane, final XMLDocument xmlDocument, /*G***fix final EventType eventType,*/ /*G***del if not needed String href, */final Element element) //G***fix so that fireEntryExitEvents() can call this
 	{
-//G***del Debug.trace("Inside XMLEditorKit.createHyperlinkEvent() with href of: "+href);	//G***del
+//G***del Log.trace("Inside XMLEditorKit.createHyperlinkEvent() with href of: "+href);	//G***del
 		URI uri;	//we'll try get a full URI from the href
 		String description; //we'll store a description of the URI here, or the message we get if we fail to form a URI
 		try
@@ -431,12 +432,12 @@ protected void activateLink(int pos, JEditorPane editor) {
 	*/
 	protected void fireEntryExitEvents(final JEditorPane editorPane, final XMLDocument xmlDocument, final URI currentURI, final URI newURI, final Element element)
 	{
-//G***del Debug.trace("XMLEditorKit.fireEntryExitEvents() with href of: "+href);	//G***del
+//G***del Log.trace("XMLEditorKit.fireEntryExitEvents() with href of: "+href);	//G***del
 		if(currentURI!=null)	//if we were over a link before
 		{
 				//create a hyperlink event to represent exiting a hyperlink G***eventually use the common hyperlink event factory
 			final HyperlinkEvent exitEvent=new XMLLinkEvent(editorPane, HyperlinkEvent.EventType.EXITED, currentURI, currentURI.toString());
-//G***del Debug.trace("ready to fire exit event: "+exitEvent);  //G***del
+//G***del Log.trace("ready to fire exit event: "+exitEvent);  //G***del
 			editorPane.fireHyperlinkUpdate(exitEvent);	//fire the exit event
 		}
 		if(newURI!=null)	//if we're over a new link
@@ -462,7 +463,7 @@ protected void activateLink(int pos, JEditorPane editor) {
 		{
 				//final a registered XML link controller to which to delegate if we can
 			/*G***fix final */String elementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(attributeSet); //get the namespace of this element, if it has one
-//G***del Debug.trace("Looking for view factory for namespace: ", elementNamespaceURI); //G***del
+//G***del Log.trace("Looking for view factory for namespace: ", elementNamespaceURI); //G***del
 			if(elementNamespaceURI==null) //if this element has no namespace G***this code is duplicated from XMLViewFactory---combine somehow
 			{
 				final ContentType mediaType=XMLStyleUtilities.getMediaType(attributeSet); //see if this element's document has a media type defined
@@ -474,7 +475,7 @@ protected void activateLink(int pos, JEditorPane editor) {
 						elementNamespaceURI=XHTML_NAMESPACE_URI.toString(); //G***testing
 				}
 			}
-//G***del Debug.trace("Decided namespace is really: ", elementNamespaceURI); //G***del
+//G***del Log.trace("Decided namespace is really: ", elementNamespaceURI); //G***del
 			linkController=getLinkController(elementNamespaceURI); //see if a link controller has been registered for this namespace (which may be null)
 		}
 		if(linkController==null)  //if we couldn't find a link controller

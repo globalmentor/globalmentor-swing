@@ -23,7 +23,7 @@ public class XHTMLAppletView extends XMLAbstractAppletView
 	{
    	super(element);	//do the default constructing
 		initialize(element);	//do the necessary applet loading and other processing
-//G***del Debug.trace("Finished constructing XHTMLAppletView");	//G***del
+//G***del Log.trace("Finished constructing XHTMLAppletView");	//G***del
 	}
 
 	/**Initializes the information needed to render the applet.
@@ -31,7 +31,7 @@ public class XHTMLAppletView extends XMLAbstractAppletView
 	*/
 	protected void initialize(Element element)
 	{
-//G***del Debug.trace("XHTMLAppletView.initialize()");
+//G***del Log.trace("XHTMLAppletView.initialize()");
 		final AttributeSet attributeSet=element.getAttributes();  //get the element's attributes
 		final String javaPrefix="java:";  //the prefix the classid, as a URI, will probably have G***use a constant here
 //G***del when works		final String classPostfix=".class"; //the ending postfix the classid URI may have G***use a constant here
@@ -42,13 +42,13 @@ public class XHTMLAppletView extends XMLAbstractAppletView
 		className=StringUtilities.trimEnd(className, classPostfix);  //remove the ".class" postfix if present
 		setClassName(className);  //set the class name we constructed
 */
-//G***del Debug.trace("Set class name: ", className);  //G***del
+//G***del Log.trace("Set class name: ", className);  //G***del
 		//check for errors here
 		final int height=Integer.parseInt(XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_HEIGHT));	//get the requested height of the applet
 		final int width=Integer.parseInt(XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_WIDTH));	//get the requested width of the applet
 		setHeight(height);  //update the standard and current heights
 		setWidth(width);  //update the standard and current widths
-//G***del Debug.trace("OEBAppletView.initialize(), width: "+fWidth+", height: "+fHeight);	//G***del
+//G***del Log.trace("OEBAppletView.initialize(), width: "+fWidth+", height: "+fHeight);	//G***del
 	}
 
 	/**Unconditionally loads all parameters from child elements. Called by the
@@ -73,7 +73,7 @@ public class XHTMLAppletView extends XMLAbstractAppletView
 				assert parameterName!=null : "<param> name is null";  //G***fix
 				final String parameterValue=XMLStyleUtilities.getXMLAttributeValue(childAttributeSet, null, ELEMENT_PARAM_ATTRIBUTE_VALUE);	//get the param value attribute
 				assert parameterValue!=null : "<param> value is null";  //G***fix
-//G***del Debug.trace("Param name: "+parameterName+" value: "+parameterValue); //G***del
+//G***del Log.trace("Param name: "+parameterName+" value: "+parameterValue); //G***del
 				final Parameter parameter=new Parameter(parameterName, parameterValue); //create a new parameter
 				setParameter(parameter);  //set the parameter
 			}

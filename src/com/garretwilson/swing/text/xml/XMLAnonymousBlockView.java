@@ -2,8 +2,6 @@ package com.garretwilson.swing.text.xml;
 
 import javax.swing.text.*;
 
-import com.globalmentor.util.Debug;
-
 /**A block view that is used to contain several inline views within a block
 	view.
 @author Garret Wilson
@@ -73,10 +71,10 @@ public class XMLAnonymousBlockView extends XMLBlockView //G***do we even need th
 		if(ownedElements.length>0)  //if we have elements we own (we always should)
 		{
 		  final View[] addedViews=new View[ownedElements.length]; //create an array in which to store the views we create
-//G***del Debug.trace(getClass().getName());  //G***del
+//G***del Log.trace(getClass().getName());  //G***del
 		  for(int i=0; i<ownedElements.length; ++i) //look at each of the elements we own
 			{
-//G***del Debug.trace("Element "+i+" attribute set: "+com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(e.getElement(i).getAttributes()));  //G***del
+//G***del Log.trace("Element "+i+" attribute set: "+com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(e.getElement(i).getAttributes()));  //G***del
 				addedViews[i]=viewFactory.create(ownedElements[i]); //create a view for this element
 	    }
 	    replace(0, 0, addedViews);  //load our created views as children

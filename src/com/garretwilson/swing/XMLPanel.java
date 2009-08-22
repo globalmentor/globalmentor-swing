@@ -299,7 +299,7 @@ updateStatus();	//testing; probably put a convenience method to create this list
 						try
 						{
 							final Document document=xmlProcessor.parseDocument(inputStream, model.getBaseURI());	//parse the XML document
-//G***del Debug.trace("document tree from source");
+//G***del Log.trace("document tree from source");
 //G***del XMLUtilities.printTree(document, System.out);
 							saveModel(model, document);	//store the document in the model
 						}
@@ -322,7 +322,7 @@ updateStatus();	//testing; probably put a convenience method to create this list
 					{
 						final XMLDocument swingDocument=(XMLDocument)getXMLTextPane().getDocument();	//get the Swing document
 						final Document document=xmlEditorKit.getXML(swingDocument);	//get the XML DOM document from the Swing document
-//G***del						Debug.trace("document tree from WYSIWYG");
+//G***del						Log.trace("document tree from WYSIWYG");
 //G***del						XMLUtilities.printTree(document, System.out);
 						saveModel(model, document);	//store the document in the model
 					}

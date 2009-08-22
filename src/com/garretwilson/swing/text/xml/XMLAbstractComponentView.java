@@ -4,7 +4,6 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.text.*;
 import com.garretwilson.swing.text.ViewComponentManager;
-import com.globalmentor.util.Debug;
 
 /**Represents a Java component based upon <code>java.awt.Component</code>.
 	A class must be derived from this abstract class with an appropriate
@@ -58,7 +57,7 @@ public abstract class XMLAbstractComponentView extends XMLObjectView
 		  component=newComponent; //set the component we're assigned to
 /*G***del if not needed
 		  final Container container=getContainer();  //get the container we're place in G***this used to be parent.getContainer() inside setParent(); this probably won't make a difference
-Debug.trace("Container: ", container);
+Log.trace("Container: ", container);
 		  if(container!=null) //if we have a valid container
 				container.add(component); //add the component to the container
 */
@@ -89,7 +88,7 @@ Debug.trace("Container: ", container);
 		if(parent!=null && getComponent()==null) //if we've been given a parent, and we haven't yet created a component
 		{
 //G***del System.out.println("XMLAbstractComponentView creating component"); //G***del
-//G***del Debug.trace("XMLComponentView.setParent() creating component; component before: "+component);
+//G***del Log.trace("XMLComponentView.setParent() creating component; component before: "+component);
 		  final Component component=createComponent();  //create the component
 //G***fix		  component.setVisible(false); //don't show the component initially; it will be shown at the appropriate time using show() when called from paint()
 		  setComponent(component);  //set the component, which will add the component to our container
@@ -122,7 +121,7 @@ System.out.println("Setting showing, current height: "+getCurrentHeight());  //G
 			if(getComponent()==null) //if we haven't yet created a component  //G***testing
 			{
 	//G***del System.out.println("XMLAbstractComponentView creating component"); //G***del
-	//G***del Debug.trace("XMLComponentView.setParent() creating component; component before: "+component);
+	//G***del Log.trace("XMLComponentView.setParent() creating component; component before: "+component);
 				final Component component=createComponent();  //create the component
 //G***del System.out.println("component size after createComponent(): "+component.getSize().getWidth()+" height: "+component.getSize().getHeight());  //G***del
 	//G***fix		  component.setVisible(false); //don't show the component initially; it will be shown at the appropriate time using show() when called from paint()
@@ -143,7 +142,7 @@ System.out.println("Setting showing, current height: "+getCurrentHeight());  //G
 		  if(isShowing() && !showing)  //if we're already showing and we're now being hidden
 			{
 				final Container container=getContainer();  //get the container we're place in G***this used to be parent.getContainer() inside setParent(); this probably won't make a difference
-Debug.trace("Container: ", container);  //G***del
+Log.trace("Container: ", container);  //G***del
 				if(container!=null) //if we have a valid container
 					container.remove(component); //remove the component from the container
 			}
@@ -164,9 +163,9 @@ Debug.trace("Container: ", container);  //G***del
 	public void paint(final Graphics graphics, final Shape allocation)
 	{
 /*G***del
-Debug.trace("appletView.paint() currentWidth: "+currentWidth+" currentHeight: "+currentHeight);
+Log.trace("appletView.paint() currentWidth: "+currentWidth+" currentHeight: "+currentHeight);
 Rectangle bounds=allocation.getBounds();  //G***testing
-Debug.trace("appletView.paint() bounds: "+bounds);
+Log.trace("appletView.paint() bounds: "+bounds);
 */
 		super.paint(graphics, allocation);  //do the default painting, which will update our dimensions if needed
 		componentManager.setLocation(allocation); //tell the component manager our new location
@@ -195,8 +194,8 @@ Debug.trace("appletView.paint() bounds: "+bounds);
 
 */
 /*G***del
-Debug.trace("Just set bounds: "+bounds.x+" "+bounds.y+" "+currentWidth+" "+currentHeight);  //G***fix
-Debug.trace("Bounds results: "+component.getBounds()); //G***testing
+Log.trace("Just set bounds: "+bounds.x+" "+bounds.y+" "+currentWidth+" "+currentHeight);  //G***fix
+Log.trace("Bounds results: "+component.getBounds()); //G***testing
 //G***fix component.invalidate(); //G***testing
 */
 //G***del component.doLayout(); //G***testing

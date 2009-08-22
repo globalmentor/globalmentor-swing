@@ -4,7 +4,6 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.text.*;
 import com.garretwilson.swing.text.ViewHidable;
-import com.globalmentor.util.Debug;
 
 /**Abstract base class to represent a resizable object, such as a component,
 	image, or applet. The object is automatically resized to be proportional to
@@ -377,7 +376,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //G***sh
 //G***size of the iamge to fill the table; the image tries to stay in proportion, tells the table
 //G***of that fact, and the table tries to resize again, starting the whole process over
 
-//G***del Debug.trace("XMLObjectView.setSize(), width: "+width+" height: "+height);
+//G***del Log.trace("XMLObjectView.setSize(), width: "+width+" height: "+height);
 		if(width!=0 && height!=0) //if valid sizes are passed (this might be set to zero from our getPreferredSize(), and checking that here keeps the object from being scaled away to nothing)
 		{
 		  final int oldCurrentWidth=getCurrentWidth();  //get the current current width
@@ -387,11 +386,11 @@ public abstract class XMLObjectView extends View implements ViewHidable //G***sh
 			//  we'll only change the size if the size is being changed significantly.
 			//  This is not the best way to do this; we should instead modify the
 			//  resizing logic in the table. This is a short-term fix. G***
-//G***del Debug.trace("old currents, width: "+oldCurrentWidth+" height: "+oldCurrentHeight);
-//G***del Debug.trace("absolute width difference: "+Math.abs(width-oldCurrentWidth)+" absolute heigh difference: "+Math.abs(height-oldCurrentHeight));
+//G***del Log.trace("old currents, width: "+oldCurrentWidth+" height: "+oldCurrentHeight);
+//G***del Log.trace("absolute width difference: "+Math.abs(width-oldCurrentWidth)+" absolute heigh difference: "+Math.abs(height-oldCurrentHeight));
 //G***fix		  if(Math.abs(width-oldCurrentWidth)>MINIMUM_SIZE_CHANGE || Math.abs(height-oldCurrentHeight)>MINIMUM_SIZE_CHANGE)
 		  {
-	//G***del Debug.trace("old currents, width: "+currentWidth+" height: "+currentHeight);
+	//G***del Log.trace("old currents, width: "+currentWidth+" height: "+currentHeight);
 				final int newCurrentWidth=(int)width; //set the current width to the new value
 				int newCurrentHeight;  //we'll put the new current height here
 				if(newCurrentWidth==getWidth()) //if the width is the same as our standard width
@@ -401,9 +400,9 @@ public abstract class XMLObjectView extends View implements ViewHidable //G***sh
 //G***fix					if(newCurrentWidth!=oldCurrentWidth)  //G***testing
 					{
 
-	//G***del Debug.trace("Object is being scaled.");
+	//G***del Log.trace("Object is being scaled.");
 					final float ratio=(float)getWidth()/(float)getHeight(); //find the ratio of the object G***optimize perhaps keep this updated automatically when the size is set
-	//G***del Debug.trace("making proportional with ratio: "+ratio);
+	//G***del Log.trace("making proportional with ratio: "+ratio);
 					newCurrentHeight=(int)((float)newCurrentWidth/ratio); //set the height to be proportional to the width
 					}
 //G***fix					else
@@ -417,13 +416,13 @@ public abstract class XMLObjectView extends View implements ViewHidable //G***sh
 
 				setCurrentWidth(newCurrentWidth); //set the new current width
 				setCurrentHeight(newCurrentHeight); //set the new current height
-	//G***del Debug.trace("old currents, width: "+oldCurrentWidth+" height: "+oldCurrentHeight);
-	//G***del Debug.trace("new currents, width: "+newCurrentWidth+" height: "+newCurrentHeight);
+	//G***del Log.trace("old currents, width: "+oldCurrentWidth+" height: "+oldCurrentHeight);
+	//G***del Log.trace("new currents, width: "+newCurrentWidth+" height: "+newCurrentHeight);
 				if(newCurrentWidth!=oldCurrentWidth || newCurrentHeight!=oldCurrentHeight)  //if the size has changed
 				{
-//G***del 	Debug.trace("old currents, width: "+oldCurrentWidth+" height: "+oldCurrentHeight);
-//G***del 	Debug.trace("new currents, width: "+newCurrentWidth+" height: "+newCurrentHeight);
-//G***del 	Debug.trace("Notifying parent that preferences have changed.");
+//G***del 	Log.trace("old currents, width: "+oldCurrentWidth+" height: "+oldCurrentHeight);
+//G***del 	Log.trace("new currents, width: "+newCurrentWidth+" height: "+newCurrentHeight);
+//G***del 	Log.trace("Notifying parent that preferences have changed.");
 					final View parent=getParent();  //get the parent view
 					if(parent!=null)  //if there is a parent view
 						parent.preferenceChanged(this, newCurrentWidth!=oldCurrentWidth, newCurrentHeight!=oldCurrentHeight); //report to the parent view that this view's preferences have changed

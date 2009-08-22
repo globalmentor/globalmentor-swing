@@ -24,6 +24,7 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleContext;
 //G***del when works import com.garretwilson.swing.text.xml.css.XMLCSSSimpleAttributeSet;
 import com.globalmentor.io.*;
 import com.globalmentor.java.*;
+import com.globalmentor.log.Log;
 import com.globalmentor.marmot.Marmot;
 import com.globalmentor.model.NameValuePair;
 import com.globalmentor.net.ContentType;
@@ -34,7 +35,6 @@ import com.globalmentor.sound.sampled.SampledSounds;
 import com.globalmentor.text.xml.stylesheets.css.AbstractXMLCSSStylesheetApplier;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
-import com.globalmentor.util.Debug;
 
 /**A document that models XML.
 @see com.globalmentor.text.xml.XMLProcessor
@@ -477,15 +477,15 @@ G***comment
 		 */
 		protected void insertUpdate(DefaultDocumentEvent chng, AttributeSet attr)
 		{
-Debug.trace("inside XMLDocument insertupdate");
+Log.trace("inside XMLDocument insertupdate");
 /*G***del; testing bidiarray
-Debug.trace("XMLDocument.insertUpdate()");
+Log.trace("XMLDocument.insertUpdate()");
         final int chngStart = chng.getOffset();
         final int chngEnd =  chngStart + chng.getLength();
-Debug.trace("change start: "+chngStart+" change end: "+chngEnd);
+Log.trace("change start: "+chngStart+" change end: "+chngEnd);
         final int firstPStart = getParagraphElement(chngStart).getStartOffset();
         final int lastPEnd = getParagraphElement(chngEnd).getEndOffset();
-Debug.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEnd);
+Log.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEnd);
 
 */
 
@@ -571,14 +571,14 @@ Debug.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEn
 /*TODO decide if we want this
 	public void create(final org.w3c.dom.Document[] xmlDocumentArray, final URI[] baseURIArray, final ContentType[] mediaTypeArray)
 	{
-Debug.trace("creating document with XML documents", xmlDocumentArray.length);
+Log.trace("creating document with XML documents", xmlDocumentArray.length);
 		try
 		{
-Debug.trace("ready to create, old length is:", getLength());
+Log.trace("ready to create, old length is:", getLength());
 	    if(getLength()!=0)	//if there is any content
 	    {
 	    	remove(0, getLength());	//remove the content
-Debug.trace("tried to remove everything, new length is:", getLength());
+Log.trace("tried to remove everything, new length is:", getLength());
 	    }
 	    writeLock();	//get a write lock on the document
 	    try
@@ -591,7 +591,7 @@ Debug.trace("tried to remove everything, new length is:", getLength());
 					final StringBuilder stringBuilder=new StringBuilder();	//G***testing
 					for(int xmlDocumentIndex=0; xmlDocumentIndex<xmlDocumentArray.length; ++xmlDocumentIndex)	//look at each of the documents they passed to us
 					{
-		//	G***del Debug.trace("Looking at XML document: ", xmlDocumentIndex); //G***del
+		//	G***del Log.trace("Looking at XML document: ", xmlDocumentIndex); //G***del
 						final org.w3c.dom.Document xmlDocument=xmlDocumentArray[xmlDocumentIndex];	//get a reference to this document
 			xmlDocument.normalize();	//G***do we want to do this here? probably not---or maybe so. Maybe we can normalize on the fly in the Swing document, not in the source
 						if(xmlDocumentIndex>0)	//if this is not the first document to insert
@@ -607,7 +607,7 @@ Debug.trace("tried to remove everything, new length is:", getLength());
 	    	int offset=0;
 				for(int xmlDocumentIndex=0; xmlDocumentIndex<xmlDocumentArray.length; ++xmlDocumentIndex)	//look at each of the documents they passed to us
 				{
-	//	G***del Debug.trace("Looking at XML document: ", xmlDocumentIndex); //G***del
+	//	G***del Log.trace("Looking at XML document: ", xmlDocumentIndex); //G***del
 					final org.w3c.dom.Document xmlDocument=xmlDocumentArray[xmlDocumentIndex];	//get a reference to this document
 //G***del		xmlDocument.normalize();	//G***do we want to do this here? probably not---or maybe so. Maybe we can normalize on the fly in the Swing document, not in the source
 					final URI baseURI=baseURIArray[xmlDocumentIndex]; //get a reference to the base URI
@@ -672,8 +672,8 @@ Debug.trace("tried to remove everything, new length is:", getLength());
 //G***fix				}
 				sectionElement.replace(0, sectionElement.getChildCount(), childElements);	//add the document children to the section
 
-//G***del				Debug.trace("before creating document, content has length", content.length());
-//G***del Debug.trace("ready to insert", stringBuilder.length());
+//G***del				Log.trace("before creating document, content has length", content.length());
+//G***del Log.trace("ready to insert", stringBuilder.length());
 
 //G***fix				content.insertString(0, stringBuilder.toString());	//TODO find a better way to replace the content
 				
@@ -685,7 +685,7 @@ Debug.trace("tried to remove everything, new length is:", getLength());
 				
 				
 				final int length=sectionElement.getEndOffset();
-Debug.trace("we think the amount of content we added is", length);
+Log.trace("we think the amount of content we added is", length);
 		    DefaultDocumentEvent event=new DefaultDocumentEvent(0, length, DocumentEvent.EventType.INSERT);
 //G***fix		    event.addEdit(cEdit);
 //G***fix buffer.create(length, data, evnt);
@@ -701,7 +701,7 @@ Debug.trace("we think the amount of content we added is", length);
 	    finally
 	    {
 	    	writeUnlock();	//always release our write lock
-Debug.trace("after unlock, content is", getContent().length());
+Log.trace("after unlock, content is", getContent().length());
 	    }
 		}
     catch(final BadLocationException badLocationException)
@@ -801,7 +801,7 @@ Debug.trace("after unlock, content is", getContent().length());
 							final MutableAttributeSet textAttributeSet=createAttributeSet(node, baseURI);	//create and fill an attribute set for the text node
 							final Element textElement=createElement(branchElement, offset, node.getNodeValue(), textAttributeSet);	//create and add an element for text
 							offset=textElement.getEndOffset();	//G***testing
-Debug.trace("we created a text element, we now think the offset is", offset);
+Log.trace("we created a text element, we now think the offset is", offset);
 							childElementList.add(textElement);	//create and add an element for text
 						}
 						break;
@@ -833,20 +833,20 @@ Debug.trace("we created a text element, we now think the offset is", offset);
 //TODO decide if we want this
 	protected Element createElement(final Element parentElement, final int offset, final String text, final AttributeSet attributeSet)
 	{
-Debug.trace("ready to append text", text, "at offset", offset);
+Log.trace("ready to append text", text, "at offset", offset);
 		if(text.length()==0)
 		{
 			throw new IllegalArgumentException("No text with which to create an element.");
 		}
 //G***fix		final int begin=stringBuilder.length();	//get the insertion point TODO later add an offset parameter so that we can allow the leaf elements to point to non-zero-based offsets
-//G***fix Debug.trace("begin", begin, "old length", text.length());
+//G***fix Log.trace("begin", begin, "old length", text.length());
 //G***fix		stringBuilder.append(text);	//append text
 final StringBuilder stringBuilder=new StringBuilder(text);	//create a string builder with the text
 //G***fix final int newLength=StringBuilderUtilities.collapse(stringBuilder, CharacterConstants.WHITESPACE_CHARS, " ", begin, text.length());	//collapse all whitespace into spaces TODO fix across element boundaries
 		final int newLength=StringBuilders.collapse(stringBuilder, Characters.WHITESPACE_CHAR_STRING, " ");	//collapse all whitespace into spaces TODO fix across element boundaries
-Debug.trace("new length", newLength);
+Log.trace("new length", newLength);
 		final int end=offset+newLength;	//see where the inserted, collapsed text ends
-Debug.trace("end", end);
+Log.trace("end", end);
 
 /*G***del if not needed
 		try
@@ -867,7 +867,7 @@ Debug.trace("end", end);
 /*TODO decide if we want this
 	protected Element createPageBreakElement(final Element parentElement, final int offset)
 	{
-//G***del Debug.trace("XMLDocument.appendElementSpecListPageBreak()");	//G***del
+//G***del Log.trace("XMLDocument.appendElementSpecListPageBreak()");	//G***del
 		final SimpleAttributeSet pageBreakAttributeSet=new SimpleAttributeSet();	//create a page break attribute set G***create this and keep it in the constructor for optimization
 //G***del if we can get away with it		XMLStyleConstants.setXMLElementName(pageBreakAttributeSet, XMLCSSStyleConstants.AnonymousAttributeValue); //show by its name that this is an anonymous box G***maybe change this to setAnonymous
 		XMLStyleUtilities.setPageBreakView(pageBreakAttributeSet, true);	//show that this element should be a page break view
@@ -964,7 +964,7 @@ Debug.trace("end", end);
 		direction = (Boolean) d;
 	    }
 
-Debug.trace("updateBidi: paragraph start = " + pStart + " paragraph end = " + pEnd);
+Log.trace("updateBidi: paragraph start = " + pStart + " paragraph end = " + pEnd);
 
             // Create a Bidi over this paragraph then get the level
             // array.
@@ -984,7 +984,7 @@ Debug.trace("updateBidi: paragraph start = " + pStart + " paragraph end = " + pE
 	    }
             byte[] pLevels = bidiAnalyzer.getLevels();
 
-Debug.trace("Ready to do Bidi arraycopy with pLevels of length: "+pLevels.length+" levels of length: "+levels.length+" levelsEnd: "+levelsEnd);
+Log.trace("Ready to do Bidi arraycopy with pLevels of length: "+pLevels.length+" levels of length: "+levels.length+" levelsEnd: "+levelsEnd);
 
 
             System.arraycopy( pLevels, 0, levels, levelsEnd, pLevels.length );
@@ -1079,11 +1079,11 @@ Debug.trace("Ready to do Bidi arraycopy with pLevels of length: "+pLevels.length
 	*/
 	protected Element getElement(Element element, Object attribute, Object value/*G***del if not needed, boolean searchLeafAttributes*/)
 	{
-Debug.trace("XMLDocument.getElement() comparing value: ", value);
+Log.trace("XMLDocument.getElement() comparing value: ", value);
 		final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
 		if(attributeSet!=null && attributeSet.isDefined(attribute))	//if there are attributes and this attribute is defined
 		{
-Debug.trace("comparing to: ", attributeSet.getAttribute(attribute));	//G***del
+Log.trace("comparing to: ", attributeSet.getAttribute(attribute));	//G***del
 	    if(value.equals(attributeSet.getAttribute(attribute)))	//if the value matches
 				return element;	//return this element
 /*G***del when works; recheck exactly what this kludge was doing
@@ -1093,11 +1093,11 @@ Debug.trace("comparing to: ", attributeSet.getAttribute(attribute));	//G***del
 				//	the '#' matches (the first element, for now, should have at least the
 				//	full path for the target ID
 			{
-Debug.trace("element doesn't match: ", attributeSet.getAttribute(attribute));
+Log.trace("element doesn't match: ", attributeSet.getAttribute(attribute));
 				if(attribute.equals(XMLStyleConstants.TARGET_ID_PATH_ATTRIBUTE_NAME))	//if they are looking for the target ID
 				{
 					final String compareValue=(String)value;	//cast to a string the attribute that we're comparing
-Debug.trace("comparing with: ", compareValue);
+Log.trace("comparing with: ", compareValue);
 					if(compareValue.indexOf('#')==-1)	//if we're looking for an absolute target ID (not a fragment)
 					{
 						String thisValue=(String)attributeSet.getAttribute(attribute);	//get the attribute we're comparing with
@@ -1170,7 +1170,7 @@ Debug.trace("comparing with: ", compareValue);
 	*/
 	public Element getParagraphElement(int pos)
 	{
-Debug.trace("pos: ", pos);  //G***del
+Log.trace("pos: ", pos);  //G***del
 		final Element defaultParagraphElement=super.getParagraphElement(pos); //get the default paragraph element
 		final Element rootElement=getDefaultRootElement();  //get the default root element so we'll know when to stop looking up the chain
 		Element paragraphElement=defaultParagraphElement; //we'll check the default paragraph element -- perhaps it really is a paragraph element
@@ -1178,12 +1178,12 @@ Debug.trace("pos: ", pos);  //G***del
 		{
 			final AttributeSet paragraphAttributeSet=paragraphElement.getAttributes();  //get the paragraph's attributes
 			assert paragraphAttributeSet!=null : "Paragraph has no attributes.";
-Debug.trace("this paragraph attribute set: ", com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(paragraphAttributeSet));  //G***del; use relative class name
+Log.trace("this paragraph attribute set: ", com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(paragraphAttributeSet));  //G***del; use relative class name
 		  final CSSStyleDeclaration paragraphCSSStyle=XMLCSSStyleUtilities.getXMLCSSStyle(paragraphAttributeSet); //get the CSS style of the element (this method makes sure the attributes are present)
 		  if(!XMLCSS.isDisplayInline(paragraphCSSStyle))  //if this element is marked as a paragraph
 //G***del whenw orks			if(XMLStyleConstants.isParagraphView(paragraphAttributeSet))  //if this element is not marked as a paragraph
 			{
-				Debug.trace("paragraph is paragraph");  //G***del
+				Log.trace("paragraph is paragraph");  //G***del
 				return paragraphElement;  //return the paragraph element
 			}
 			paragraphElement=paragraphElement.getParentElement(); //since this element wasn't a paragraph element, try the one above it
@@ -1225,11 +1225,11 @@ Debug.trace("this paragraph attribute set: ", com.garretwilson.swing.text.Attrib
 	*/
 	public void applyStyles()
 	{
-Debug.trace("Ready to applystyles");  //G***fix
+Log.trace("Ready to applystyles");  //G***fix
 		writeLock();  //get a lock on the document
 		try
 		{
-Debug.trace("looking at first root element");  //G***fix
+Log.trace("looking at first root element");  //G***fix
 			final Element rootSwingElement=getRootElements()[0]; //get the first root element of the document -- this contains an element tree for each document loaded
 		  final int swingDocumentElementCount=rootSwingElement.getElementCount(); //find out how many root elements there are
 		  for(int swingDocumentElementIndex=0; swingDocumentElementIndex<swingDocumentElementCount; ++swingDocumentElementIndex) //look at each root element, each of which represents an XML document
@@ -1249,13 +1249,13 @@ Debug.trace("looking at first root element");  //G***fix
 				{
 				  	//prepare a progress message: "Applying stylesheet X to XXXXX.html"
 					final String progressMessage=format("Applying stylesheet {0} to {1}", Integer.valueOf(i+1), documentBaseURI!=null ? documentBaseURI.toString() : "unknown"); //G***i18n; fix documentURI if null
-Debug.trace(progressMessage); //G***del
+Log.trace(progressMessage); //G***del
 					fireMadeProgress(new ProgressEvent(this, APPLY_STYLESHEET_TASK, progressMessage, swingDocumentElementIndex, swingDocumentElementCount));	//fire a progress message saying that we're applying a stylesheet
 //G***del System.out.println("applying stylesheet: "+i+" of "+styleSheetList.getLength());  //G***del
 					final CSSStyleSheet cssStyleSheet=styleSheets[i];  //get a reference to this stylesheet, assuming that it's a CSS stylesheet (that's all that's currently supported)
 					stylesheetApplier.applyStyleSheet(cssStyleSheet, swingDocumentElement);  //apply the stylesheet to the document
 				}
-Debug.trace("applying local styles"); //G***del
+Log.trace("applying local styles"); //G***del
 				fireMadeProgress(new ProgressEvent(this, APPLY_STYLESHEET_TASK, "Applying local styles", swingDocumentElementIndex, swingDocumentElementCount));	//fire a progress message saying that we're applying local styles G***i18n
 				stylesheetApplier.applyLocalStyles(swingDocumentElement);	//apply local styles to the document TODO why don't we create one routine to do all of this?
 			}
@@ -1301,7 +1301,7 @@ DefaultDocumentEvent evnt =	new DefaultDocumentEvent(60, 4, DocumentEvent.EventT
 	}
 	catch (BadLocationException e)
 	{
-		Debug.error(e);
+		Log.error(e);
 	}
 */
 /*G***fix
@@ -1535,7 +1535,7 @@ fireUndoableEditUpdate(new UndoableEditEvent(this, evnt));
 				assert attributeSet instanceof MutableAttributeSet : "Attribute set not mutable";
 				XMLCSSStyleUtilities.setXMLCSSStyle((MutableAttributeSet)attributeSet, elementStyle);	//put the style in the attributes
 			}
-//G***del					Debug.trace("style rule is of type: ", cssStyleRule.getClass().getName());  //G***del
+//G***del					Log.trace("style rule is of type: ", cssStyleRule.getClass().getName());  //G***del
 			importStyle(elementStyle, cssStyle);	//import the style
 		}
 	}

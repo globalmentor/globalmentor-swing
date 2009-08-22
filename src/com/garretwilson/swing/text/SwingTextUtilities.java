@@ -4,8 +4,6 @@ import java.awt.Rectangle;
 import javax.swing.SwingConstants;
 import javax.swing.text.*;
 
-import com.globalmentor.util.Debug;
-
 /**Routines for working with Swing text classes.
 @author Garret Wilson
 */
@@ -89,9 +87,9 @@ public class SwingTextUtilities
 	public static View getLeafView(final View view, final int pos, final Position.Bias bias)
 	{
 /*G***del
-Debug.trace("looking for leaf view at view: ", view);
-Debug.trace("view starts at: ", view.getStartOffset());
-Debug.trace("view ends at: ", view.getEndOffset());
+Log.trace("looking for leaf view at view: ", view);
+Log.trace("view starts at: ", view.getStartOffset());
+Log.trace("view ends at: ", view.getEndOffset());
 */
 		if(view.getViewCount()>0) //if this view has children
 		{
@@ -219,7 +217,7 @@ return offs;
 						final Element[] swingElementBuffer=new Element[1]; //create an element buffer for this one element
 						swingElementBuffer[0]=swingLeafElement; //place the leaf element in the buffer
 						final int siblingCount=swingParentElement.getChildCount(); //find out how many children the parent already has
-Debug.trace("text sibling count: ", siblingCount);  //G***del
+Log.trace("text sibling count: ", siblingCount);  //G***del
 						swingParentElement.replace(siblingCount, 0, swingElementBuffer); //place the leaf element in the parent
 
 */

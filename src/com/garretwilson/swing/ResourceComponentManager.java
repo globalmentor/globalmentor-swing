@@ -18,12 +18,12 @@ import com.garretwilson.model.*;
 
 import com.garretwilson.resources.icon.IconResources;
 import static com.garretwilson.swing.ComponentUtilities.*;
-import static com.globalmentor.net.URIs.*;
-
+import com.globalmentor.log.Log;
 import com.globalmentor.model.DefaultObjectState;
 import com.globalmentor.model.Modifiable;
 import com.globalmentor.model.Verifiable;
 import com.globalmentor.net.Resource;
+import static com.globalmentor.net.URIs.*;
 import com.globalmentor.util.*;
 import com.globalmentor.util.prefs.Preferencesable;
 import com.globalmentor.util.prefs.PreferencesUtilities;
@@ -256,7 +256,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		}
 		catch(final SecurityException securityException)	//if we can't get preferences
 		{
-			Debug.warn(securityException);	//don't do anything drastic
+			Log.warn(securityException);	//don't do anything drastic
 		}		
 	}
 

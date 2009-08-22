@@ -11,7 +11,6 @@ import static com.globalmentor.text.xml.xhtml.XHTML.*;
 import com.globalmentor.io.*;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.net.ContentTypeConstants;
-import com.globalmentor.util.Debug;
 
 /**Provides utility functions to manipulate Swing text classes representing XHTML.
 @author Garret Wilson
@@ -98,7 +97,7 @@ public class XHTMLSwingTextUtilities
 				final AttributeSet documentAttributeSet=documentElement.getAttributes();  //get the attributes of the document element
 				if(XMLStyleUtilities.isPageBreakView(documentAttributeSet)) //if this is a page break element
 				{
-	Debug.trace("found page break view"); //G***del
+	Log.trace("found page break view"); //G***del
 					viewChildElementList.add(documentElement);  //add this element to our list of elements; it's not a top-level document like the others G***this is a terrible hack; fix
 				}
 				else
@@ -115,7 +114,7 @@ public class XHTMLSwingTextUtilities
 						{
 							final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child element's attributes
 							final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);  //get the child element local name
-		Debug.trace("Looking at child: ", childElementLocalName); //G***del
+		Log.trace("Looking at child: ", childElementLocalName); //G***del
 							boolean isHTMLBody=false; //we'll determine if this element is a <body> element of XHTML
 							if(XHTMLConstants.ELEMENT_BODY.equals(childElementLocalName))  //if this element is "body"
 							{
@@ -147,7 +146,7 @@ public class XHTMLSwingTextUtilities
 								final int bodyChildElementCount=childElement.getElementCount(); //find out how many children the body element has
 								for(int bodyChildIndex=0; bodyChildIndex<bodyChildElementCount; ++bodyChildIndex) //look at each of the body element's children
 								{
-		Debug.trace("Adding body child element: ", bodyChildIndex);
+		Log.trace("Adding body child element: ", bodyChildIndex);
 									final Element bodyChildElement=childElement.getElement(bodyChildIndex); //get this child element of the body element
 									if(bodyChildElement.getStartOffset()>=startOffset && bodyChildElement.getStartOffset()<endOffset) //if this child element starts within our range
 										viewChildElementList.add(bodyChildElement);  //add this body child element to our list of elements
@@ -155,7 +154,7 @@ public class XHTMLSwingTextUtilities
 							}
 							else  //if this element is not an XHTML <body> element
 							{
-		Debug.trace("Adding child element: ", childIndex);
+		Log.trace("Adding child element: ", childIndex);
 								viewChildElementList.add(childElement);  //add this child element to our list of elements
 							}
 						}

@@ -22,9 +22,10 @@ import static com.garretwilson.swing.text.ViewUtilities.*;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
 //G***del import com.garretwilson.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
+
+import com.globalmentor.log.Log;
 import static com.globalmentor.text.xml.stylesheets.css.XMLCSS.*;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
-import com.globalmentor.util.Debug;
 
 import javax.swing.text.html.HTML;  //G***del
 import org.w3c.dom.css.*;
@@ -83,10 +84,10 @@ System.out.println("XMLTableView.setSize(), width: "+width+" height: "+height);	
 			//if there are children, indicate preference changes and notify children for correct flowing (newswing)
 		if ((parent!=null) && (getViewCount()!=0))	//if there is a parent view and there are children (newswing)
 		{
-//G***del Debug.trace("Changing the table view preferences.");	//G***del
+//G***del Log.trace("Changing the table view preferences.");	//G***del
 
 		  preferenceChanged(null, true, true);	//show that our preferences have changed
-//G***del Debug.trace("This table has "+getViewCount()+" children; now setting their parents.");	//G***del
+//G***del Log.trace("This table has "+getViewCount()+" children; now setting their parents.");	//G***del
 			for(int i=0; i<getViewCount(); ++i)	//look at each child view
 			{
 				getView(i).setParent(this);	//tell it which parent it has (this function will also notify that its preferences have changed)
@@ -196,7 +197,7 @@ System.out.println("XMLTableView.setSize(), width: "+width+" height: "+height);	
 
 /*G***fix
     public float getPreferredSpan(int axis) {
-Debug.trace("XMLTableView.getPreferredSpan axis: "+axis+" ="+super.getPreferredSpan(axis)); //G***del
+Log.trace("XMLTableView.getPreferredSpan axis: "+axis+" ="+super.getPreferredSpan(axis)); //G***del
 		return super.getPreferredSpan(axis);	//return the preferred span
 
     }
@@ -205,7 +206,7 @@ Debug.trace("XMLTableView.getPreferredSpan axis: "+axis+" ="+super.getPreferredS
 //G***important all these span methods really need to be fixed; why are the calculated spans getting changed?
 
     public float getPreferredSpan(int axis) { //G***del; testing
-//G***del Debug.trace("XMLTableView.getPreferredSpan axis: "+axis+" ="+super.getPreferredSpan(axis)); //G***del
+//G***del Log.trace("XMLTableView.getPreferredSpan axis: "+axis+" ="+super.getPreferredSpan(axis)); //G***del
 
 
 
@@ -229,7 +230,7 @@ return pref;
 
     public float getMinimumSpan(int axis) {
 
-//G***del Debug.trace("XMLTableView.getMinimum axis: "+axis+" ="+super.getMinimumSpan(axis)); //G***del
+//G***del Log.trace("XMLTableView.getMinimum axis: "+axis+" ="+super.getMinimumSpan(axis)); //G***del
 
 		final float span=super.getMinimumSpan(axis);	//G***del
 /*G***fix
@@ -257,7 +258,7 @@ return min;
 	*/
 	public float getMaximumSpan(int axis)
 	{
-//G***del Debug.trace("XMLTableView.getMaximumSpan axis: "+axis+" ="+super.getMaximumSpan(axis)); //G***del
+//G***del Log.trace("XMLTableView.getMaximumSpan axis: "+axis+" ="+super.getMaximumSpan(axis)); //G***del
 		final float span=super.getMaximumSpan(axis);	//G***del
 /*G***fix
 	long min = 0; //G***testing
@@ -313,7 +314,7 @@ return max;
 	*/
 	public void paint(final Graphics graphics, final Shape allocation)
 	{
-//G***delDebug.trace("Inside XMLBlockView.paint()");
+//G***delLog.trace("Inside XMLBlockView.paint()");
 		XMLCSSViewPainter.paint(graphics, allocation, this, getAttributes());	//paint our CSS-specific parts (newswing)
 		super.paint(graphics, allocation);  //do the default painting
 	}
@@ -729,7 +730,7 @@ return BadBreakWeight;  //G***testing
     }
 
     /*protected*/ void invalidateGrid() {
-Debug.traceStack(); //G***del
+Log.traceStack(); //G***del
 	gridValid = false;
     }
 
@@ -878,10 +879,10 @@ Debug.traceStack(); //G***del
      *  offsets and spans parameters.
      */
     protected void layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans) {
-Debug.trace("G***search");
+Log.trace("G***search");
 	// make grid is properly represented
 	updateGrid();
-Debug.trace();
+Log.trace();
 
 	// all of the row layouts are invalid, so mark them that way
 	int n = getRowCount();
@@ -890,10 +891,10 @@ Debug.trace();
 	    row.layoutChanged(axis);
 	}
 
-Debug.trace();
+Log.trace();
 	// calculate column spans
 	layoutColumns(targetSpan, columnOffsets, columnSpans, columnRequirements);
-Debug.trace();
+Log.trace();
 
 	// continue normal layout
 	super.layoutMinorAxis(targetSpan, axis, offsets, spans);
@@ -1197,7 +1198,7 @@ System.out.println("XMLTableRowView.setSize(), width: "+width+" height: "+height
 
     public void preferenceChanged(View child, boolean width, boolean height)
 		{
-//G***del Debug.trace("XMLTableView.XMLTableRowView.preferenceChanged width: "+width+" height: "+height);
+//G***del Log.trace("XMLTableView.XMLTableRowView.preferenceChanged width: "+width+" height: "+height);
 		  super.preferenceChanged(child, width, height);//G***testing
     }
 
@@ -1205,21 +1206,21 @@ System.out.println("XMLTableRowView.setSize(), width: "+width+" height: "+height
 
 
     public float getPreferredSpan(int axis) { //G***del; testing
-//G***del Debug.trace("XMLTableRowView.getPreferredSpan axis: "+axis+" ="+super.getPreferredSpan(axis)); //G***del
+//G***del Log.trace("XMLTableRowView.getPreferredSpan axis: "+axis+" ="+super.getPreferredSpan(axis)); //G***del
 		final float span=super.getPreferredSpan(axis);	//G***del
 		return super.getPreferredSpan(axis);	//return the preferred span
 
     }
 
     public float getMinimumSpan(int axis) { //G***del; testing
-//G***del Debug.trace("XMLTableRowView.getMinimum axis: "+axis+" ="+super.getMinimumSpan(axis)); //G***del
+//G***del Log.trace("XMLTableRowView.getMinimum axis: "+axis+" ="+super.getMinimumSpan(axis)); //G***del
 		final float span=super.getMinimumSpan(axis);	//G***del
 		return super.getMinimumSpan(axis);	//return the preferred span
     }
 
 	public float getMaximumSpan(int axis) //G***del; testing
 	{
-//G***del Debug.trace("XMLTableRowView.getMaximumSpan axis: "+axis+" ="+super.getMaximumSpan(axis)); //G***del
+//G***del Log.trace("XMLTableRowView.getMaximumSpan axis: "+axis+" ="+super.getMaximumSpan(axis)); //G***del
 		final float span=super.getMaximumSpan(axis);	//G***del
 		return super.getMaximumSpan(axis);	//return the preferred span
 //G***fix return 1000;  //G***fix G***why did we have this earlier?
@@ -1573,7 +1574,7 @@ System.out.println("XMLTableRowView.setSize(), width: "+width+" height: "+height
 	 *  offsets and spans parameters.
 	 */
         protected void layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans) {
-Debug.trace("G***search");
+Log.trace("G***search");
 	    super.layoutMinorAxis(targetSpan, axis, offsets, spans);
 	    int col = 0;
 	    int ncells = getViewCount();
@@ -1893,11 +1894,11 @@ Debug.trace("G***search");
 		public View create(final Element element, final boolean indicateMultipleViews)
 		{
 			final String elementName=XMLStyleUtilities.getXMLElementName(element.getAttributes()); //G***del
-Debug.trace("Table factory constructing view for a table element with name: ", elementName);	//G***del
-Debug.trace("Indicate multiple views: "+indicateMultipleViews);	//G***del
-Debug.traceStack(); //G***del
+Log.trace("Table factory constructing view for a table element with name: ", elementName);	//G***del
+Log.trace("Indicate multiple views: "+indicateMultipleViews);	//G***del
+Log.traceStack(); //G***del
 			final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-//G***del Debug.trace("Attribute set: "+attributeSet);	//G***del
+//G***del Log.trace("Attribute set: "+attributeSet);	//G***del
 			if(attributeSet!=null)	//if this element has attributes
 			{
 				final CSSPrimitiveValue cssDisplayProperty=(CSSPrimitiveValue)XMLCSSStyleUtilities.getCSSPropertyCSSValue(attributeSet, CSS_PROP_DISPLAY, false);	//get the display property for this element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
@@ -1905,19 +1906,19 @@ Debug.traceStack(); //G***del
 				if(cssDisplayProperty!=null)	//if this element has a CSS display property
 				{
 					final String cssDisplayString=cssDisplayProperty.getStringValue();	//get the display value
-//G***del Debug.trace("Has CSS display attribute: "+cssDisplayString);	//G***del
+//G***del Log.trace("Has CSS display attribute: "+cssDisplayString);	//G***del
 					if(cssDisplayString.equals(CSS_DISPLAY_TABLE_ROW))	//if this should be table row
 						return new XMLTableRowView(element);	//create a table row view
 				}
 			}
 			final View view=super.create(element, indicateMultipleViews);  //let the parent class create the view, which will automatically call the fallback view factory
-Debug.trace("Created view: ", view!=null ? view.getClass().getName() : "null"); //G***del
+Log.trace("Created view: ", view!=null ? view.getClass().getName() : "null"); //G***del
 //G***bring back when works			return super.create(element, indicateMultipleViews);  //let the parent class create the view, which will automatically call the fallback view factory
 			return view;  //G***testing
 /*G***del
-Debug.trace("XMLTableView default view factory: ", getDefaultViewFactory().getClass().getName()); //G***del
+Log.trace("XMLTableView default view factory: ", getDefaultViewFactory().getClass().getName()); //G***del
 			final View view=getDefaultViewFactory().create(element);	//if we don't recognize the element, let the default view factory create a view normally
-Debug.trace("Created view: ", view.getClass().getName()); //G***del
+Log.trace("Created view: ", view.getClass().getName()); //G***del
 			return view;  //G***testing
 */
 //G***del			return getDefaultViewFactory().create(element);	//if we don't recognize the element, let the default view factory create a view normally
@@ -1932,9 +1933,9 @@ Debug.trace("Created view: ", view.getClass().getName()); //G***del
 		{
 //G***fix			final String elementName=XMLCSSStyleConstants.getXMLElementName(element.getAttributes());	//G***del
 			final String elementName=XMLStyleConstants.getXMLElementName(element.getAttributes()); //G***del
-Debug.trace("Table factory constructing view for a table element with name: ", elementName);	//G***del
+Log.trace("Table factory constructing view for a table element with name: ", elementName);	//G***del
 			final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-//G***del Debug.trace("Attribute set: "+attributeSet);	//G***del
+//G***del Log.trace("Attribute set: "+attributeSet);	//G***del
 			if(attributeSet!=null)	//if this element has attributes
 			{
 				final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)XMLCSSStyleConstants.getCSSPropertyCSSValue(attributeSet, CSS_PROP_DISPLAY, false);	//get the display property for this element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
@@ -1942,14 +1943,14 @@ Debug.trace("Table factory constructing view for a table element with name: ", e
 				if(cssDisplayProperty!=null)	//if this element has a CSS display property
 				{
 					final String cssDisplayString=cssDisplayProperty.getStringValue();	//get the display value
-//G***del Debug.trace("Has CSS display attribute: "+cssDisplayString);	//G***del
+//G***del Log.trace("Has CSS display attribute: "+cssDisplayString);	//G***del
 					if(cssDisplayString.equals(CSS_DISPLAY_TABLE_ROW))	//if this should be table row
 						return new XMLTableRowView(element);	//create a table row view
 				}
 			}
-Debug.trace("XMLTableView default view factory: ", getDefaultViewFactory().getClass().getName()); //G***del
+Log.trace("XMLTableView default view factory: ", getDefaultViewFactory().getClass().getName()); //G***del
 			final View view=getDefaultViewFactory().create(element);	//if we don't recognize the element, let the default view factory create a view normally
-Debug.trace("Created view: ", view.getClass().getName()); //G***del
+Log.trace("Created view: ", view.getClass().getName()); //G***del
 			return view;  //G***testing
 //G***del			return getDefaultViewFactory().create(element);	//if we don't recognize the element, let the default view factory create a view normally
 		}

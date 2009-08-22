@@ -6,7 +6,6 @@ import javax.swing.tree.*;
 
 import com.garretwilson.swing.SwingApplication;
 import com.globalmentor.apps.marmot.swing.tree.BurrowTreeNode;
-import com.globalmentor.util.Debug;
 
 /**A tree node that can dynamically load its children when needed.
 Child classes should override <code>loadChildNodes()</code>.

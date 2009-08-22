@@ -2,10 +2,10 @@ package com.garretwilson.swing.rdf.tree;
 
 import javax.swing.*;
 
+import com.globalmentor.log.Log;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.rdf.*;
 import com.globalmentor.rdf.xpackage.*;
-import com.globalmentor.util.Debug;
 
 /**A tree cell renderer that can render different icons and strings for user
 	objects that are XPackage RDF resources.
@@ -75,7 +75,7 @@ public class XPackageTreeCellRenderer extends RDFResourceTreeCellRenderer
 		if(userObject instanceof RDFResource) //if this is an RDF resource
 		{
 			final RDFResource rdfResource=(RDFResource)userObject;  //cast the object to an RDF resource
-Debug.trace("getting user object key for user object", RDFResources.toString(rdfResource));
+Log.trace("getting user object key for user object", RDFResources.toString(rdfResource));
 /*TODO fix with URF
 			final ContentType mediaType=Marmot.getMediaType(rdfResource);  //see if there is a media type for the resource
 		  if(mediaType!=null) //if there is a media type

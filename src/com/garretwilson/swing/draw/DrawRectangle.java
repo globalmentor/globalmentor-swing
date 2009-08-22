@@ -3,8 +3,6 @@ package com.garretwilson.swing.draw;
 import java.awt.*;
 import java.awt.geom.RectangularShape;
 
-import com.globalmentor.util.Debug;
-
 /**A rectangle that can be dynamically drawn on the screen.
 @author Garret Wilson
 */
@@ -68,10 +66,10 @@ public class DrawRectangle extends DrawShape
 	public void draw(final Graphics graphics)
 	{
 /*G***del
-Debug.trace("ready to draw rectangle from point: ", getLocation()); //G***del
-Debug.trace("ready to draw rectangle to point: ", getEndLocation()); //G***del
-Debug.trace("width: ", getWidth()); //G***del
-Debug.trace("height: ", getHeight()); //G***del
+Log.trace("ready to draw rectangle from point: ", getLocation()); //G***del
+Log.trace("ready to draw rectangle to point: ", getEndLocation()); //G***del
+Log.trace("width: ", getWidth()); //G***del
+Log.trace("height: ", getHeight()); //G***del
 */
 	  graphics.setColor(getColor());  //set the graphics to the correct color
 		if(isPermanent()) //if the shape and location has been accepted
@@ -85,7 +83,7 @@ Debug.trace("height: ", getHeight()); //G***del
 		}
 		else  //if the shape is still being modified
 		{
-//G***del Debug.trace("not permanent"); //G***del
+//G***del Log.trace("not permanent"); //G***del
 		  graphics.setXORMode(Color.white); //G***testing; comment
 			graphics.drawRect(
 					Math.min(getLocation().x, getEndLocation().x),

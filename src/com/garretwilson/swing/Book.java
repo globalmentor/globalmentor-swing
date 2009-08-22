@@ -23,6 +23,7 @@ import static com.garretwilson.swing.text.TextComponentConstants.*;
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
 import com.globalmentor.io.*;
+import com.globalmentor.log.Log;
 import com.globalmentor.net.*;
 import com.globalmentor.rdf.*;
 import com.globalmentor.text.xml.oeb.*;
@@ -239,7 +240,7 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 		*/
 		public void addBookmark(final String name)
 		{
-Debug.trace();  //G***del
+Log.trace();  //G***del
 			int offset=-1; //we'll store the offset here at which the bookmark should be inserted
 				//see if there is a selection
 			final boolean isSelection=getXMLTextPane().getSelectionEnd()>getXMLTextPane().getSelectionStart();
@@ -297,15 +298,15 @@ Debug.trace();  //G***del
 					bookmark.attach(getXMLTextPane().getDocument());  //attach the bookmark to the document
 				//add a bookmark highlighter to the text pane to show the bookmark at the correct location
 				final Object bookmarkHighlight=getXMLTextPane().getHighlighter().addHighlight(bookmark.getOffset(), bookmark.getOffset()+1, bookmarkHighlightPainter);
-Debug.trace("bookmark highlight returned is: ", bookmarkHighlight); //G***del
+Log.trace("bookmark highlight returned is: ", bookmarkHighlight); //G***del
 				bookmarkHighlightTagMap.put(bookmark, bookmarkHighlight); //add the bookmark highlight to the map, keyed to the bookmark
-Debug.trace("key set: ", bookmarkHighlightTagMap.keySet());
-Debug.trace("values: ", bookmarkHighlightTagMap.values());
+Log.trace("key set: ", bookmarkHighlightTagMap.keySet());
+Log.trace("values: ", bookmarkHighlightTagMap.values());
 
-Debug.trace("after putting bookmark, found tag: ", bookmarkHighlightTagMap.get(bookmark));
-Debug.trace("contains bookmark key: ", new Boolean(bookmarkHighlightTagMap.containsKey(bookmark)));
-//G***del Debug.trace("contains value key: ", new Boolean(bookmarkHighlightTagMap.containsKey(bookmarkHighlight)));
-Debug.trace("contains value: ", new Boolean(bookmarkHighlightTagMap.containsValue(bookmarkHighlight)));
+Log.trace("after putting bookmark, found tag: ", bookmarkHighlightTagMap.get(bookmark));
+Log.trace("contains bookmark key: ", new Boolean(bookmarkHighlightTagMap.containsKey(bookmark)));
+//G***del Log.trace("contains value key: ", new Boolean(bookmarkHighlightTagMap.containsKey(bookmarkHighlight)));
+Log.trace("contains value: ", new Boolean(bookmarkHighlightTagMap.containsValue(bookmarkHighlight)));
 				userDataModified=true;	//show that the user data has been modified
 				firePropertyChange(BOOKMARKS_PROPERTY, null, null); //fire an event showing that the bookmarks have changed
 			}
@@ -316,16 +317,16 @@ Debug.trace("contains value: ", new Boolean(bookmarkHighlightTagMap.containsValu
 		*/
 		public void removeBookmark(final Bookmark bookmark)
 		{
-Debug.trace("removing bookmark: ", bookmark);
+Log.trace("removing bookmark: ", bookmark);
 			final Object bookmarkHighlightTag=bookmarkHighlightTagMap.get(bookmark);  //get the highlight for this bookmark
-Debug.trace("found highlight tag: ", bookmarkHighlightTag);
+Log.trace("found highlight tag: ", bookmarkHighlightTag);
 			if(bookmarkHighlightTag!=null) //if we have a highlight for this bookmark
 			{
-Debug.trace("ready to remove tag from map");
+Log.trace("ready to remove tag from map");
 				bookmarkHighlightTagMap.remove(bookmark);  //remove the bookmark and highlight tag from the map
 				getXMLTextPane().getHighlighter().removeHighlight(bookmarkHighlightTag);  //remove the highlight itself
 				userDataModified=true;	//show that the user data has been modified
-Debug.trace("ready to fire property change");
+Log.trace("ready to fire property change");
 				firePropertyChange(BOOKMARKS_PROPERTY, null, null); //fire an event showing that the bookmarks have changed
 			}
 		}
@@ -711,24 +712,24 @@ Debug.trace("ready to fire property change");
 	/**Stores the current position in the history list.*/
 	protected void storePositionHistory()
 	{
-Debug.trace();  //G***del
+Log.trace();  //G***del
 		final int pageIndex=getPageIndex(); //get our current page index
 		if(pageIndex!=-1) //if we have a valid page index
 		{
-//G***del Debug.trace("pageIndex: "+pageIndex);
+//G***del Log.trace("pageIndex: "+pageIndex);
 			final int offset=getXMLTextPane().getPageStartOffset(pageIndex);  //get the starting offset of our page
-//G***del Debug.trace("offset: "+offset);
-//G***del 		  Debug.trace(""+getXMLTextPane().getDocument().getStartPosition());  //G***testing
+//G***del Log.trace("offset: "+offset);
+//G***del 		  Log.trace(""+getXMLTextPane().getDocument().getStartPosition());  //G***testing
 		  try
 			{
-//G***del Debug.trace("Before creating position from offset: "+offset+" document length: "+getXMLTextPane().getDocument().getLength());
+//G***del Log.trace("Before creating position from offset: "+offset+" document length: "+getXMLTextPane().getDocument().getLength());
 				final Position position=getXMLTextPane().getDocument().createPosition(offset);  //create a position from our offset
-//G***del Debug.trace("After creating position from offset: "+offset);
+//G***del Log.trace("After creating position from offset: "+offset);
 				addHistory(position); //add this position to our history list
 			}
 			catch(BadLocationException e) //we should never have a bad location
 			{
-				Debug.error(e); //report the error
+				Log.error(e); //report the error
 			}
 		}
 	}
@@ -896,10 +897,10 @@ Debug.trace();  //G***del
 	public void madeProgress(final ProgressEvent progressEvent)
 	{
 		final StatusBar statusBar=getStatusBar();	//get our status bar
-//G***del Debug.trace("made progress: ", progressEvent.getTask());  //G**del
+//G***del Log.trace("made progress: ", progressEvent.getTask());  //G**del
 		if(progressEvent.isFinished())  //if the progress is finished (whatever the progress is)
 		{
-//G***del Debug.trace("is finished: ", progressEvent.getTask());  //G**del
+//G***del Log.trace("is finished: ", progressEvent.getTask());  //G**del
 		  if(progressEvent.getTask().equals(XMLTextPane.CONSTRUCT_TASK))  //if the document is finished being constructed, we'll treat this as a "finished loading" notification G***probably add some specific document setting event later, or something; actually, that's already there with the document property changing
 			{
 //TODO fix				refreshGoGuidesMenu();  //G***testing; comment; G***fix for multithreaded loading
@@ -909,7 +910,7 @@ Debug.trace();  //G***del
 				firePropertyChange(BOOKMARKS_PROPERTY, null, null); //fire an event showing that the bookmarks have changed, because pagination changes the pages they point to
 			}
 //G***del when works			setStatus("");	//clear the status
-//G***del Debug.trace("setting status progress to zero"); //G***del
+//G***del Log.trace("setting status progress to zero"); //G***del
 		  statusBar.setProgress("", 0);  //set the value of the progress bar to zero
 		}
 		else  //if the progress is still ongoing
@@ -963,14 +964,14 @@ Debug.trace();  //G***del
 	//G***change the page event to pageChange()
 	public void pageChanged(PageEvent pageEvent)  //G***change the page event to a bound property
 	{
-//G***del Debug.trace("page changed event, new page index: {0} count: {1}", new Object[]{pageEvent.getPageIndex(), pageEvent.getPageCount()});  //G***fix
-//G***del Debug.traceStack();
+//G***del Log.trace("page changed event, new page index: {0} count: {1}", new Object[]{pageEvent.getPageIndex(), pageEvent.getPageCount()});  //G***fix
+//G***del Log.traceStack();
 		final int pageIndex=pageEvent.getPageIndex(); //get the new page index
 		final int pageCount=pageEvent.getPageCount(); //get the page count
 		final int displayPageCount=getDisplayPageCount(); //find out how many pages at a time are being displayed
-Debug.trace("page index: ", pageIndex);		  //G***del
-Debug.trace("page count: ", pageCount);		  //G***del
-Debug.trace("display page count: ", displayPageCount);		  //G***del
+Log.trace("page index: ", pageIndex);		  //G***del
+Log.trace("page count: ", pageCount);		  //G***del
+Log.trace("display page count: ", displayPageCount);		  //G***del
 		final JScrollBar scrollBar=getScrollBar();  //get our scrollbar, if we have one
 		if(scrollBar!=null) //if we have a scrollbar
 		{
@@ -981,11 +982,11 @@ Debug.trace("display page count: ", displayPageCount);		  //G***del
 */
 			//find out how many partially-filled sets of pages there are by finding the absolute page index of the last available page
 			final int setCount=(textPane.getAbsolutePageIndex(pageCount-1)/displayPageCount)+1;
-Debug.trace("set count", setCount);
+Log.trace("set count", setCount);
 			final int maximum=setCount*displayPageCount;	//the maximum page index is the base of the last set---one set less than all available (we already ignored the first set)
-Debug.trace("maximum", maximum);
+Log.trace("maximum", maximum);
 			final int newValue=pageIndex==0 ? pageIndex : textPane.getAbsolutePageIndex(pageIndex);	//other than the first page, the other pages will be offset by the extra space in the first set
-Debug.trace("new value", newValue);
+Log.trace("new value", newValue);
 			scrollBar.setValues(newValue, displayPageCount, 0, maximum);	//update the scrollbar, pretending all the page sets are full of pages
 /*G***del when works
 			scrollBar.setMinimum(0); //show that we start with page one G***maybe put this somewhere else
@@ -1022,10 +1023,10 @@ Debug.trace("new value", newValue);
 		{
 			final int displayPageCount=getDisplayPageCount(); //find out how many pages at a time are being displayed
 			final int newValue=adjustmentEvent.getValue();  //get the new slider value
-Debug.trace("new adjustment value", newValue);
+Log.trace("new adjustment value", newValue);
 				//besides the first page, the other pages will be offset by the number of empty pages in the first set
 			final int newPageIndex=newValue==0 ? newValue : getXMLTextPane().getLogicalPageIndex(newValue);
-Debug.trace("new page index", newPageIndex);
+Log.trace("new page index", newPageIndex);
 			setPageIndex(newPageIndex); //change to the specified page in the book
 		}
 	}
@@ -1049,7 +1050,7 @@ Debug.trace("new page index", newPageIndex);
 	*/
 	public void mouseClicked(MouseEvent mouseEvent)
 	{
-//G***del Debug.trace("Mouse clicked...");
+//G***del Log.trace("Mouse clicked...");
 		if(mouseEvent.isPopupTrigger()) //if this is a trigger to popup a context menu
 		{
 			popupTriggered(mouseEvent); //show that a popup was triggered
@@ -1073,7 +1074,7 @@ Debug.trace("new page index", newPageIndex);
 				  final AttributeSet attributeSet=view.getAttributes(); //get the view's attributes
 						if(XHTMLSwingTextUtilities.isImage(attributeSet)) //if this is an image
 						{
-	Debug.trace("Is image element.");
+	Log.trace("Is image element.");
 	//G***del						final String src=(String)attributeSet.getAttribute("src");	//G***fix; use a constant
 							final String href=XHTMLSwingTextUtilities.getImageHRef(attributeSet); //get a reference to the image file represented by the element
 	//G***del Debug.notify("image from: "+src);	//G***fix
@@ -1083,12 +1084,12 @@ Debug.trace("new page index", newPageIndex);
 								try
 								{
 									final String baseRelativeHRef=XMLStyleUtilities.getBaseRelativeHRef(attributeSet, href);
-		Debug.trace("Image href: ", href);
+		Log.trace("Image href: ", href);
 									viewImage(baseRelativeHRef);  //show the image
 								}
 								catch(URISyntaxException uriSyntaxException)  //we should never get this error
 								{
-									Debug.error(uriSyntaxException); //report the error
+									Log.error(uriSyntaxException); //report the error
 								}
 							}
 						}
@@ -1108,25 +1109,25 @@ Debug.trace("new page index", newPageIndex);
 					final Document document=editorPane.getDocument();	//get the document in the editor pane
 					if(document instanceof XMLDocument)	//if this is an XML document
 					{
-	//G***del Debug.trace("OEBBook mouse clicked in an OEBDocument");
+	//G***del Log.trace("OEBBook mouse clicked in an OEBDocument");
 						XMLDocument xmlDocument=(XMLDocument)document;	//cast the document to an XML document
 						Element element=xmlDocument.getCharacterElement(pos);	//get the element this position represents
 
 						element=element!=null ? element.getParentElement() : null; //if the element has a parent, get that parent; this is because, right now, the images have dummy text beneath them G***fix eventually
-	Debug.trace("Checking mouse click element.");
+	Log.trace("Checking mouse click element.");
 	//G***del 					final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
 	//G***del					final String elementName=XMLStyleConstants.getXMLElementName(attributeSet); //get the name of this element
-	//G***del Debug.trace("mouse clicked on element: "+elementName);  //G***del
+	//G***del Log.trace("mouse clicked on element: "+elementName);  //G***del
 	//G***del when works					final String elementName=(String)attributeSet.getAttribute(StyleConstants.NameAttribute);	//get the name of this element
 						if(OEBSwingTextUtilities.isImageElement(element)) //if this is an image element
 						{
-	Debug.trace("Is image element.");
+	Log.trace("Is image element.");
 	//G***del						final String src=(String)attributeSet.getAttribute("src");	//G***fix; use a constant
 							final String href=OEBSwingTextUtilities.getImageElementHRef(element); //get a reference to the image file represented by the element
 	//G***del Debug.notify("image from: "+src);	//G***fix
 							if(href!=null)  //if we found a reference to the image
 							{
-	Debug.trace("Image href: ", href);
+	Log.trace("Image href: ", href);
 								viewImage(href);  //show the image
 							}
 
@@ -1146,7 +1147,7 @@ Debug.trace("new page index", newPageIndex);
 	*/
   public void mousePressed(MouseEvent mouseEvent)
 	{
-//G***del Debug.trace("mousePressed is trigger: ", new Boolean(mouseEvent.isPopupTrigger()));  //G***del
+//G***del Log.trace("mousePressed is trigger: ", new Boolean(mouseEvent.isPopupTrigger()));  //G***del
 		if(mouseEvent.isPopupTrigger()) //if this is a trigger to popup a context menu
 		{
 			mousePressReleasePopupTrigger=true; //show that a mouse press or release triggered a popup
@@ -1161,7 +1162,7 @@ Debug.trace("new page index", newPageIndex);
 	*/
   public void mouseReleased(MouseEvent mouseEvent)
 	{
-//G***del Debug.trace("mouseReleased is trigger: ", new Boolean(mouseEvent.isPopupTrigger()));  //G***del
+//G***del Log.trace("mouseReleased is trigger: ", new Boolean(mouseEvent.isPopupTrigger()));  //G***del
 		if(mouseEvent.isPopupTrigger()) //if this is a trigger to popup a context menu
 		{
 			mousePressReleasePopupTrigger=true; //show that a mouse press or release triggered a popup
@@ -1214,7 +1215,7 @@ Debug.trace("new page index", newPageIndex);
 						}
 						catch(URISyntaxException uriSyntaxException)  //we should never get this error
 						{
-							Debug.error(uriSyntaxException); //report the error
+							Log.error(uriSyntaxException); //report the error
 						}
 					}
 				}
@@ -1254,10 +1255,10 @@ Debug.trace("new page index", newPageIndex);
 					final int textLength=Math.min(document.getLength()-textOffset, 128); //find out how much text to retrieve; make sure we don't go past the end of the document G***use a constant here
 					final int relativeOffset=Math.min(pos-textOffset, textLength-1);  //find out where the position will be in the text we retrieve, makeing sure it isn't past the end of the text
 /*G***del
-Debug.trace("position: ", pos);
-Debug.trace("Text offset: ", textOffset);
-Debug.trace("Text length: ", textLength);
-Debug.trace("Relative offset: ", relativeOffset);
+Log.trace("position: ", pos);
+Log.trace("Text offset: ", textOffset);
+Log.trace("Text length: ", textLength);
+Log.trace("Relative offset: ", relativeOffset);
 */
 						//G***this ignores different elements, so <h1>Title</h1><p>text</p> give "Titletext"; fix so that only the element text is returned
 					final String text=document.getText(textOffset, textLength); //get the text surrounding the position
@@ -1278,7 +1279,7 @@ Debug.trace("Relative offset: ", relativeOffset);
 			}
 			catch(BadLocationException e) //we should never get a bad location, since we test the offsets and lengths
 			{
-				Debug.error(e);
+				Log.error(e);
 			}
 				//"Insert Bookmark..."
 			JMenuItem insertBookmarkMenuItem=popupMenu.add(new InsertBookmarkAction(pos)); //add an action to insert a bookmark at this position
@@ -1406,7 +1407,7 @@ Debug.trace("Relative offset: ", relativeOffset);
 			}
 			catch(BadLocationException e) //if this bookmark represents a bad location
 			{
-				Debug.warn(e); //ignore the error
+				Log.warn(e); //ignore the error
 			}
 		}
 			//set the annotations
@@ -1420,7 +1421,7 @@ Debug.trace("Relative offset: ", relativeOffset);
 			}
 			catch(BadLocationException e) //if this annotation represents a bad location
 			{
-				Debug.warn(e); //ignore the error
+				Log.warn(e); //ignore the error
 			}
 		}
 		userDataModified=false;	//show that the user data not has been modified
@@ -1435,7 +1436,7 @@ Debug.trace("Relative offset: ", relativeOffset);
 	protected void onDocumentChange()
 	{
 		final URI uri=getURI(); //get our current URI
-Debug.trace("document change, URI: ", uri);
+Log.trace("document change, URI: ", uri);
 			//update the actions
 		closeAction.setEnabled(uri!=null);  //only enable the close button if there is a book open
 		searchAction.setEnabled(uri!=null);  //only enable searching if there is a file open
@@ -1534,9 +1535,9 @@ Debug.trace("document change, URI: ", uri);
 /*G***fix or del	
 	public void go(final URL url)	//G***fix all this -- this is just a quick kludge to see if it will work
 	{
-Debug.trace("Inside OEBBook.goURL()");	//G***del
+Log.trace("Inside OEBBook.goURL()");	//G***del
 		storePositionHistory(); //store our position in the history list
-Debug.trace("ready to call XMLTextPane.go(URL)");
+Log.trace("ready to call XMLTextPane.go(URL)");
 		getXMLTextPane().go(url);  //tell the text pane to go to the URL
 	}
 */
@@ -1548,9 +1549,9 @@ Debug.trace("ready to call XMLTextPane.go(URL)");
 	*/
 	public void go(final URI uri)
 	{
-Debug.trace("Inside OEBBook.goURI()");	//G***del
+Log.trace("Inside OEBBook.goURI()");	//G***del
 	  storePositionHistory(); //store our position in the history list
-Debug.trace("ready to call XMLTextPane.go(URI)");
+Log.trace("ready to call XMLTextPane.go(URI)");
 		getXMLTextPane().go(uri);  //tell the text pane to go to the URI
 	}
 
@@ -1590,7 +1591,7 @@ Debug.trace("ready to call XMLTextPane.go(URI)");
 	*/  //G***add checking for out-of-spine content here
 	public void activateLink(final HyperlinkEvent hyperlinkEvent)
 	{
-Debug.trace("Inside OEBBook.activateLink().");
+Log.trace("Inside OEBBook.activateLink().");
 		final URI hyperlinkURI;	//we'll get the hyperlink event's URI
 		if(hyperlinkEvent instanceof XMLLinkEvent)	//if this is an XML link event
 		{
@@ -1611,17 +1612,17 @@ Debug.trace("Inside OEBBook.activateLink().");
 		{
 			final XMLDocument xmlDocument=(XMLDocument)getXMLTextPane().getDocument();	//get the loaded document G***should we assume this is an XML document?
 			final ContentType mediaType=xmlDocument.getResourceMediaType(hyperlinkURI.toString());	//get the media type of the resource specified by this hyperlink event
-Debug.trace("Media type: ", mediaType);	//G***del
+Log.trace("Media type: ", mediaType);	//G***del
 			if(mediaType!=null)	//if we think we know the media type of the file involved
 			{
 					//TODO create convenience utility methods similar to MediaTypeUtilities.isAudio() for all of these checks
 				final String topLevelType=mediaType.getPrimaryType();  //get the top-level media type
 				if(Audio.isAudio(mediaType))	//if this is an audio media type
 				{
-Debug.trace("found an audio file.");
+Log.trace("found an audio file.");
 //G***del; fix				  mouseEvent.consume(); //consume the event so that the mouse click won't be interpreted elsewhere
 					final Clip clip=(Clip)xmlDocument.getResource(hyperlinkURI.toString());	//get and open a clip to the audio
-Debug.trace("ready to start clip.");
+Log.trace("ready to start clip.");
 					clip.start();	//start the clip playing G***do we need to close it later?
 					return;	//don't do any more processing
 				}
@@ -1640,8 +1641,8 @@ Debug.trace("ready to start clip.");
 		}
 		catch(Exception exception)	//if anything goes wrong with any of this G***is this too broad?
 		{
-			Debug.traceStack(exception);  //G***fix
-			Debug.error("Error activating hyperlink "+hyperlinkURI+": "+exception);	//G***fix; this is an important error which should be reported back to the user in a consistent way
+			Log.traceStack(exception);  //G***fix
+			Log.error("Error activating hyperlink "+hyperlinkURI+": "+exception);	//G***fix; this is an important error which should be reported back to the user in a consistent way
 		}
 	}
 
@@ -1674,7 +1675,7 @@ Debug.trace("ready to start clip.");
 			}
 			catch(SecurityException securityException)	//if we can't access preferences
 			{
-				Debug.warn(securityException);	//warn of the security problem			
+				Log.warn(securityException);	//warn of the security problem			
 			}
 		}
 		final String newSearchText=(String)JOptionPane.showInputDialog(this, "Enter search word or phrase:", "Search", JOptionPane.QUESTION_MESSAGE, null, null, defaultSearchText);	//G***i18n
@@ -1688,7 +1689,7 @@ Debug.trace("ready to start clip.");
 			}
 			catch(SecurityException securityException)	//if we can't access preferences
 			{
-				Debug.warn(securityException);	//warn of the security problem			
+				Log.warn(securityException);	//warn of the security problem			
 			}
 			search(searchText, searchOffset); //search for the text
 		}
@@ -1744,7 +1745,7 @@ Debug.trace("ready to start clip.");
 		final Document document=getXMLTextPane().getDocument();	//get the document in the editor pane
 		if(document instanceof XMLDocument)	//if this is an XML document
 		{
-//G***del Debug.trace("OEBBook mouse clicked in an OEBDocument");
+//G***del Log.trace("OEBBook mouse clicked in an OEBDocument");
 			XMLDocument xmlDocument=(XMLDocument)document;	//cast the document to an XML document
 		  try
 			{
@@ -1753,11 +1754,11 @@ Debug.trace("ready to start clip.");
 			}
 			catch(URISyntaxException ex)  //G***fix
 			{
-				Debug.error(ex);
+				Log.error(ex);
 			}
 		  catch(IOException ex)  //G***fix
 			{
-				Debug.error(ex);
+		  	Log.error(ex);
 			}
 		}
 	}
@@ -1971,7 +1972,7 @@ Debug.trace("ready to start clip.");
 			}
 			catch(IOException ioException)  //if there is an IO exception browsing to the URL
 			{
-				Debug.error(ioException); //we don't expect to see this exception
+				Log.error(ioException); //we don't expect to see this exception
 			}
 */
 		}
@@ -2027,7 +2028,7 @@ Debug.trace("ready to start clip.");
 		public void actionPerformed(ActionEvent e)
 		{
 //G***ask for verification
-Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());  //G***del
+Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());  //G***del
 		  removeBookmark(deleteBookmark); //remove the bookmark
 		}
 	}
@@ -2153,7 +2154,7 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 				}
 				catch(BadLocationException badLocationException) //we should never have a bad location
 				{
-					Debug.error(badLocationException); //report the error
+					Log.error(badLocationException); //report the error
 				}
 //G***del			}
 		}
@@ -2448,12 +2449,12 @@ Debug.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset()
 		*/
 		public GoBookmarkAction(final Bookmark bookmark)
 		{
-Debug.trace("ReaderFrame.GoBookmarkAction constructor, offset:", bookmark.getOffset());
+Log.trace("ReaderFrame.GoBookmarkAction constructor, offset:", bookmark.getOffset());
 			this.bookmark=bookmark;	//save the bookmark
 //G***del when works			setBookmark(bookmark);	//save the bookmark
 		  final int pageIndex=getPageIndex(bookmark.getOffset()); //get the page index of the bookmark
 			final Document document=getXMLTextPane().getDocument(); //get a reference to the document
-Debug.trace("document length", document.getLength());
+Log.trace("document length", document.getLength());
 			final int bookmarkedTextLength=Math.min(document.getLength()-bookmark.getOffset(), 16); //find out how much text to show; make sure we don't go past the document G***use a constant here
 			final String bookmarkNameString=bookmark.getName()!=null ? bookmark.getName()+": " : "";  //if there is a bookmark name, include it
 			try

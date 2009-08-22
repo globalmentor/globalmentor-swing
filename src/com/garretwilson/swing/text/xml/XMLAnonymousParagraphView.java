@@ -58,7 +58,7 @@ public class XMLAnonymousParagraphView  //G***del this class if we don't need
 	{
 		if(layoutPool==null)  //if there is no layout pool
 		{
-//G***del Debug.trace("XMLParagraphView.loadChildren() creating new logical view");
+//G***del Log.trace("XMLParagraphView.loadChildren() creating new logical view");
 		  layoutPool=new LogicalView(getElement()); //create our own brand of logical view that will correctly create paragraph child views
 		}
 		//we only need to load views if we previously had no views in the pool;
@@ -66,11 +66,11 @@ public class XMLAnonymousParagraphView  //G***del this class if we don't need
 		//when there are no child views, even if there are views in the pool
 		final boolean needsLoading=layoutPool.getViewCount()==0;
 		layoutPool.setParent(this); //tell the layout pool that we're its parent, so that it can begin creating its child views
-//G***del Debug.trace("layout pool has "+layoutPool.getViewCount()+" children.");
-//G***del Debug.trace("layout child is of type: "+layoutPool.getView(0).getClass().getName());
+//G***del Log.trace("layout pool has "+layoutPool.getViewCount()+" children.");
+//G***del Log.trace("layout child is of type: "+layoutPool.getView(0).getClass().getName());
 		if(needsLoading)  //if we really need to load things
 		{
-//G***del Debug.trace("Updating the strategy and stuff");
+//G***del Log.trace("Updating the strategy and stuff");
 		  final int poolViewCount=layoutPool.getViewCount();  //find out how many views are in the pool
 				//see if there are only object views present, how many inline views there are, etc.
 		  boolean onlyObjectsPresent=true; //assume there are only objects present in this paragraph
@@ -89,7 +89,7 @@ public class XMLAnonymousParagraphView  //G***del this class if we don't need
 			final View parentView=getParent();  //get our parent view
 			final String parentDisplay=XMLCSSStyleConstants.getDisplay(parentView.getAttributes()); //see what kind of parent we have
 			final boolean isInTableCell=XMLCSSConstants.CSS_DISPLAY_TABLE_CELL.equals(parentDisplay);  //see if we're inside a table cell
-	//G***del Debug.trace("only objects present: "+onlyObjectPresent);
+	//G***del Log.trace("only objects present: "+onlyObjectPresent);
 //G***del when works			setFirstLineIndented(!onlyObjectPresent); //if there are only objects present in this paragraph, we won't indent
 			setFirstLineIndented(!onlyObjectsPresent && (inlineViewCount>1 || !isInTableCell)); //if there are only objects present in this paragraph, or if there's only one inline view in a table cell, we won't indent
 			//This synthetic insertUpdate call gives the strategy a chance to initialize.

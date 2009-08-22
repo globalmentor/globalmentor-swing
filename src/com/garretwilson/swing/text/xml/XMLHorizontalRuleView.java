@@ -1,13 +1,12 @@
 package com.garretwilson.swing.text.xml;
 
 import java.awt.*;
+
 import javax.swing.BorderFactory;
 import javax.swing.border.*;
-//G***del import javax.swing.event.DocumentEvent;
 import javax.swing.text.*;
-//G***del import java.util.Enumeration;
-//G***Del import java.lang.Integer;
-import com.globalmentor.util.Debug;
+
+import com.globalmentor.log.Log;
 
 /**Represents a horizontal rule. G***later move to xhtml package
 	This class was written referencing <code>javax.swing.text.html.HRuleView</code>
@@ -30,7 +29,7 @@ public class XMLHorizontalRuleView extends View
 	public XMLHorizontalRuleView(final Element element)
 	{
 		super(element); //construct the parent
-Debug.trace("created horizontal rule view");
+Log.trace("created horizontal rule view");
 //G***del	setPropertiesFromAttributes();
 	}
 

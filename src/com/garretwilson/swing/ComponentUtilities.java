@@ -4,7 +4,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
-import com.globalmentor.util.Debug;
+import com.globalmentor.log.Log;
 
 /**Convenience methods to be used for Swing components.
 Some of these methods apply to AWT components as well, but use the Swing utilities
@@ -65,7 +65,7 @@ public class ComponentUtilities
 		{
 			public void run()
 			{
-Debug.trace("Ready to set cursor: ", cursor.getName());  //G***del
+Log.trace("Ready to set cursor: ", cursor.getName());  //G***del
 				component.setCursor(cursor);	//set the new cursor
 			}
 		});

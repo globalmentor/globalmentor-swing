@@ -2,8 +2,6 @@ package com.garretwilson.swing.text.xml;
 
 import javax.swing.text.*;
 
-import com.globalmentor.util.Debug;
-
 /**Represents a CSS1-like list item.
 @author Garret Wilson
 */
@@ -18,7 +16,7 @@ public class XMLListItemView extends XMLBlockView
 	public XMLListItemView(Element element, int axis)
 	{
 		super(element, axis); //do the default construction
-//G***del Debug.trace("Creating a list view object.");
+//G***del Log.trace("Creating a list view object.");
 //G***del		setInsets((short)50, (short)50, (short)50, (short)50);	//G***fix; testing
 //G***del		setInsets((short)0, (short)25, (short)0, (short)0);	//G***fix; testing
 	}

@@ -6,8 +6,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import static com.garretwilson.swing.ComponentConstants.*;
 
-import com.globalmentor.util.Debug;
-
 /**Action that stands as a proxy for another action. This action will change its
 	properties to reflect the proxied action, and will activate the proxied action
 	when activated.
@@ -94,7 +92,7 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 	*/
 	protected void configurePropertiesFromAction(final Action action)
 	{
-//G***Del Debug.trace("configuring properties from actions: ", action); //G***del
+//G***Del Log.trace("configuring properties from actions: ", action); //G***del
 		if(action!=null)  //if there is an action
 		{
 			if(action instanceof AbstractAction)	//if the action is an abstract action, we can iterate its properties
@@ -133,7 +131,7 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 		}
 		else  //if there is no action
 		{
-//G***del Debug.trace("no action; disabling"); //G***del
+//G***del Log.trace("no action; disabling"); //G***del
 			//G***fix the properties appropriately
 			setEnabled(false);  //disable this action
 		}
@@ -203,8 +201,8 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 	public void propertyChange(final PropertyChangeEvent propertyChangeEvent)
 	{
 		final String propertyName=propertyChangeEvent.getPropertyName();  //get the property name being changed
-//G***del Debug.trace("proxied property changed: ", propertyName);  //G***del when fixed enabled/disabled
-//G***del Debug.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del when fixed enabled/disabled
+//G***del Log.trace("proxied property changed: ", propertyName);  //G***del when fixed enabled/disabled
+//G***del Log.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del when fixed enabled/disabled
 /*G***fix for when/if we have a weak reference to the proxied action
 		if(proxyAction==null) //if we no longer have a proxy action (its weak reference has been garbage collected)
 		{
@@ -214,7 +212,7 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 		else  //if we still have a proxy action
 		{
 */
-//G***del Debug.trace("property being changed: ", propertyName);  //G***del
+//G***del Log.trace("property being changed: ", propertyName);  //G***del
 /*G***del; not needed; "enabled" property changes apparently property propogate
 		if("enabled".equals(propertyName)) //if the enabled property is changing, we'll have to call the method manually, apparently
 		{

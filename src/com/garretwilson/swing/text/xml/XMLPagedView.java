@@ -29,13 +29,13 @@ import com.garretwilson.swing.text.ContainerView;
 import com.garretwilson.swing.text.ViewUtilities;
 import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
-//G***del; not used import com.garretwilson.util.ArrayUtilities;
+
 import com.globalmentor.java.Java;
 import com.globalmentor.java.Objects;
+import com.globalmentor.log.Log;
 import com.globalmentor.text.xml.oeb.OEB;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
 import com.globalmentor.text.xml.xhtml.XHTML;
-import com.globalmentor.util.Debug;
 
 /**View of several pages.
 	<p>Although this class overrides <code>FlowView</code>, much of the layout is
@@ -138,7 +138,7 @@ A copy of our...
 	{
 		return getViewCount();  //return the number of child views we have
 //G***fix		return getViewCount();  //return the number of child views we have
-//G***del Debug.trace("getPageCount(): ", flowLayoutInfo!=null ? flowLayoutInfo.getLength() : -50);
+//G***del Log.trace("getPageCount(): ", flowLayoutInfo!=null ? flowLayoutInfo.getLength() : -50);
 		  //return the number of pages we've paginated or, if we have no layout info, return zero
 //TODO fix		return flowLayoutInfo!=null ? flowLayoutInfo.getLength() : 0;
 	}
@@ -160,11 +160,11 @@ A copy of our...
 	*/
 	public void setPageIndex(int newPageIndex)
 	{
-//G***del Debug.trace("requesting page", newPageIndex);
+//G***del Log.trace("requesting page", newPageIndex);
 		newPageIndex=getCanonicalPageIndex(newPageIndex);	//make sure the page passed is the canonical one
 		if(pageIndex!=newPageIndex)	//if we're really changing the page number
 		{
-//G***del Debug.trace("Changing from page: "+PageIndex+" to page "+newPageIndex+" pageCount: "+getPageCount()); //G***del
+//G***del Log.trace("Changing from page: "+PageIndex+" to page "+newPageIndex+" pageCount: "+getPageCount()); //G***del
 				//first, tell all the views on the current pages they are about to be hidden
 			if(pageIndex!=-1 && getPageCount()>0) //if there is a page already being displayed, and we have at least one page
 			{
@@ -180,7 +180,7 @@ A copy of our...
 				}
 			}
 			pageIndex=newPageIndex;	//actually change the page number, so firing the page event won't cause infinite loop backs when any sliders are updated, for instance
-			Debug.trace("ready to fire page event for new page index", newPageIndex, "out of page count", getPageCount());
+			Log.trace("ready to fire page event for new page index", newPageIndex, "out of page count", getPageCount());
 			firePageEvent(new PageEvent(this, newPageIndex, getPageCount())); //fire a page event with our new page number
 			final Container container=getContainer();	//get a reference to our container
 			if(container!=null)	//if we're in a container
@@ -532,7 +532,7 @@ super.changedUpdate(changes, a, f);
 				final int pageBottomInset=getPageBottomInset();  //get the page's right inset
 				final String pageNumberString=String.valueOf(pageIndex+1);  //create a string with the page number to paint G***use a getPageNumber() method instead
 				final Rectangle2D pageNumberBounds=graphics2D.getFont().getStringBounds(pageNumberString, fontRenderContext); //get the bounds of the string
-	//G***del Debug.trace("page number left inset: "+getLeftInset()+" right inset: "+getRightInset());  //G***del
+	//G***del Log.trace("page number left inset: "+getLeftInset()+" right inset: "+getRightInset());  //G***del
 				int pageNumberX;  //we'll determine which side of the page the number goes on
 				if(pageIndex==pageEndIndex-1)  //if we're on the last page
 					pageNumberX=tempRectangle.x+tempRectangle.width-pageRightInset+(int)((float)(pageRightInset-pageNumberBounds.getWidth())/2);	//G***fix; comment; use local variable
@@ -798,7 +798,7 @@ super.changedUpdate(changes, a, f);
 	 					isLayingOut=true;	//show that layout has started
 	 					try
 	 					{
-	 						Debug.trace("ready to lay out");
+	 						Log.trace("ready to lay out");
 	 						layoutImmediately(dimension.width, dimension.height);	//do the layout
 	 					}
 	 					finally
@@ -845,7 +845,7 @@ super.changedUpdate(changes, a, f);
 		for(int i=getViewCount()-1; i>=0; --i)	//for each view
 		{
 			offsets[i]=pageWidth*((i+delta)%displayPageCount);	//find out the index of the page out of displayPageCount total and multiply that by the page width
-Debug.trace("laying out major axis, page", i, "gets offset", offsets[i]);
+Log.trace("laying out major axis, page", i, "gets offset", offsets[i]);
 			spans[i]=pageWidth;	//every page is the same width
 		}
 	}
@@ -965,10 +965,10 @@ Debug.trace("laying out major axis, page", i, "gets offset", offsets[i]);
 	public int viewToModel(float x, float y, Shape a, Position.Bias[] bias)
 	{
 //G***what if we're in the middle of paginating?
-//G***del Debug.trace("Inside XMLPagedView.viewToModel() for x: "+x+" y: "+y);
+//G***del Log.trace("Inside XMLPagedView.viewToModel() for x: "+x+" y: "+y);
 		if(!isAllocationValid())	//if our allocation isn't value
 		{
-//G***del Debug.trace("Inside XMLPagedView.viewToModel(), allocation isn't valid; changing size");
+//G***del Log.trace("Inside XMLPagedView.viewToModel(), allocation isn't valid; changing size");
 			final Rectangle allocationRect=a.getBounds();	//get the bounds of the area into which the caller thinks we've been rendered G***this probably isn't the best thing to do under a threaded scenario
 			setSize(allocationRect.width, allocationRect.height);	//update our size
 		}
@@ -976,7 +976,7 @@ Debug.trace("laying out major axis, page", i, "gets offset", offsets[i]);
 		final Rectangle insideAlloc=getInsideAllocation(a);	//get the inside allocation, with insets removed
 		if(isBefore((int)x, (int)y, insideAlloc))	//if the point is before the information that is showing
 		{
-//G***del Debug.trace("XMLPagedView.viewToModel() is before");
+//G***del Log.trace("XMLPagedView.viewToModel() is before");
 	    int returnValue=-1;	//we'll default to a -1 if we can't find a correct position
 			try
 			{
@@ -993,7 +993,7 @@ Debug.trace("laying out major axis, page", i, "gets offset", offsets[i]);
 		}
 		else if(isAfter((int)x, (int)y, insideAlloc))	//if the point is after the information that is showing
 		{
-//G***del Debug.trace("XMLPagedView.viewToModel() is after");
+//G***del Log.trace("XMLPagedView.viewToModel() is after");
 	    int returnValue=-1;	//we'll default to a -1 if we can't find a correct position
 	    try
 			{
@@ -1010,9 +1010,9 @@ Debug.trace("laying out major axis, page", i, "gets offset", offsets[i]);
 		}
 		else	//if the location is within our displayed content area
 		{
-//G***del Debug.trace("XMLPagedView.viewToModel() is within our displayed content; ready to call getViewAtPoint()");
+//G***del Log.trace("XMLPagedView.viewToModel() is within our displayed content; ready to call getViewAtPoint()");
 			final View view=getViewAtPoint((int)x, (int) y, insideAlloc);	//locate the appropriate child
-//G***del Debug.trace("XMLPagedView.viewToModel() found view: "+Debug.getNullStatus(view));
+//G***del Log.trace("XMLPagedView.viewToModel() found view: "+Debug.getNullStatus(view));
 	    if(view!=null)	//if we found a view at the specified point
 	      return view.viewToModel(x, y, insideAlloc, bias);	//ask that view to find the model location at the specified point
 		}
@@ -1616,7 +1616,7 @@ return v;
 		{
 			if(viewFactory==null) //if there is no view factory, we can't load the children
 				return; //we can't do anything
-	//G***del Debug.trace("loading children for page pool, offsets "+startOffset+" to "+endOffset);
+	//G***del Log.trace("loading children for page pool, offsets "+startOffset+" to "+endOffset);
 			final Element parentElement=getElement();	//get the parent element 
 			final Element[] childElements=XMLSectionView.getSectionChildElements(parentElement, getStartOffset(), getEndOffset()); //get the child elements that fall within our range
 			final View[] views=XMLBlockView.createBlockViews(parentElement, childElements, viewFactory);  //create the child views, ensuring they are block elements

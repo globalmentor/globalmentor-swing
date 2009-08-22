@@ -9,10 +9,10 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import com.garretwilson.resources.icon.IconResources;
+import com.globalmentor.log.Log;
 import com.globalmentor.model.Modifiable;
 import com.globalmentor.model.ObjectState;
 import com.globalmentor.rdf.*;
-import com.globalmentor.util.Debug;
 
 /**Class that manages multiple documents in a <code>JDesktopPane</code>.
 @author Garret Wilson
@@ -57,10 +57,10 @@ public class MDIManager implements InternalFrameListener	//TODO replace this cla
       public void vetoableChange(final PropertyChangeEvent propertyChangeEvent) throws PropertyVetoException
       {
 /*G***del
-Debug.trace("Vetoable change: ", propertyChangeEvent);  //G***del
-Debug.trace("property name: ", propertyChangeEvent.getPropertyName());  //G***del
-Debug.trace("old value: ", propertyChangeEvent.getOldValue());  //G***del
-Debug.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
+Log.trace("Vetoable change: ", propertyChangeEvent);  //G***del
+Log.trace("property name: ", propertyChangeEvent.getPropertyName());  //G***del
+Log.trace("old value: ", propertyChangeEvent.getOldValue());  //G***del
+Log.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
 */
 					//if the internal frame is trying to close
 				if(JInternalFrame.IS_CLOSED_PROPERTY.equals(propertyChangeEvent.getPropertyName())
@@ -193,7 +193,7 @@ Debug.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
 	*/
   public void internalFrameClosed(final InternalFrameEvent internalFrameEvent)
 	{
-Debug.trace("internal frame closed"); //G***del
+Log.trace("internal frame closed"); //G***del
 		if(getDesktopPane().getAllFrames().length==0) //if this is the last frame closed
 ;//TODO fix		  getApplicationFrame().updateStatus();  //update our actions to reflect that all frames have been closed
 	}

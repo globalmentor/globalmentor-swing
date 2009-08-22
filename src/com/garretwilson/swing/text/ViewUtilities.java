@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.swing.text.*;
 
-import com.globalmentor.util.Debug;
+import com.globalmentor.log.Log;
 
 /**Utilities for manipulating views and view hierarchies.
 @author Garret Wilson
@@ -96,12 +96,12 @@ public class ViewUtilities
 	*/
 	public static void hideView(final View view)
 	{
-//G***del Debug.trace("Hiding view: ", view); //G***del
+//G***del Log.trace("Hiding view: ", view); //G***del
 		if(view!=null)  //if we have a valid view
 		{
 			if(view instanceof ViewHidable) //if this is a hidable view
 			{
-//G***del Debug.trace("Inside hideview(), found hidable: "+view);  //G**del
+//G***del Log.trace("Inside hideview(), found hidable: "+view);  //G**del
 				((ViewHidable)view).setShowing(false); //tell the view to hide itself
 			}
 			final int viewCount=view.getViewCount();  //get the number of child views
@@ -198,7 +198,7 @@ public class ViewUtilities
 		int end=view.getEndOffset();
 //G***del		float preferredSpanX=view.getPreferredSpan(View.X_AXIS);
 //G***del		float preferredSpanY=view.getPreferredSpan(View.Y_AXIS);
-//G***del		Debug.trace(indentString+name+"; offsets ["+start+", "+end+"] preferred spans ["+preferredSpanX+", "+preferredSpanY+"] parent: "+view.getParent());
+//G***del		Log.trace(indentString+name+"; offsets ["+start+", "+end+"] preferred spans ["+preferredSpanX+", "+preferredSpanY+"] parent: "+view.getParent());
 		printStream.println(indentString+name+"; offsets ["+start+", "+end+"] parent: "+(view.getParent()!=null ? view.getParent().getClass().getName() : "null"));
 //G***del		printStream.println(indentString+"  attributes: "+AttributeSetUtilities.getAttributeSetString(view.getAttributes()));  //G***del
 //G***del		printStream.println(name+"; offsets ["+start+", "+end+"] preferred spans ["+preferredSpanX+", "+preferredSpanY+"]");
@@ -218,7 +218,7 @@ public class ViewUtilities
 			}
 			catch(BadLocationException e)
 			{
-				Debug.error(e);
+				Log.error(e);
 		  }
 		}
 		else
@@ -252,7 +252,7 @@ public class ViewUtilities
 		int end=view.getEndOffset();
 //G***del		float preferredSpanX=view.getPreferredSpan(View.X_AXIS);
 //G***del		float preferredSpanY=view.getPreferredSpan(View.Y_AXIS);
-//G***del		Debug.trace(indentString+name+"; offsets ["+start+", "+end+"] preferred spans ["+preferredSpanX+", "+preferredSpanY+"] parent: "+view.getParent());
+//G***del		Log.trace(indentString+name+"; offsets ["+start+", "+end+"] preferred spans ["+preferredSpanX+", "+preferredSpanY+"] parent: "+view.getParent());
 		stringBuilder.append(name).append("; offsets [").append(start).append(", ").append(end).append("] parent: ");
 		stringBuilder.append(view.getParent()!=null ? view.getParent().getClass().getName() : "null");
 		stringBuilder.append('\n');
@@ -275,7 +275,7 @@ public class ViewUtilities
 			}
 			catch(BadLocationException e)
 			{
-				Debug.error(e);
+				Log.error(e);
 		  }
 		}
 		else

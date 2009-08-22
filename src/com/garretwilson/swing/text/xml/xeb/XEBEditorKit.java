@@ -22,6 +22,7 @@ import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
 
 import com.globalmentor.io.*;
+import com.globalmentor.log.Log;
 import com.globalmentor.marmot.Marmot;
 import com.globalmentor.model.NameValuePair;
 import com.globalmentor.net.ContentType;
@@ -40,7 +41,6 @@ import com.globalmentor.text.xml.stylesheets.css.XMLCSSProcessor;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.urf.maqro.*;
-import com.globalmentor.util.Debug;
 
 /**An editor kit for an XEB publication.
 @see XMLEditorKit
@@ -220,7 +220,7 @@ System.out.println("Finished with file.");	//G***del
 	*/
 	protected void read(final RDF rdf, final XMLDocument swingXMLDocument, int pos) throws IOException, BadLocationException
 	{
-Debug.trace(RDFResources.toString(rdf));
+Log.trace(RDFResources.toString(rdf));
 //G***del if not needed			final URL publicationURL=oebDocument.getBaseURL();  //get the base URL from the document G***what if we don't get a URL back?
 //TODO del if not needed		swingXMLDocument.setRDF(rdf); //set the RDF used to describe the resources
 	  final Publication publication=(Publication)RDFResources.getResourceByType(rdf, XEB_NAMESPACE_URI, BOOK_CLASS_NAME);	//get the publication from the data model
@@ -253,7 +253,7 @@ Debug.trace(RDFResources.toString(rdf));
 			final ContentData<?>[] contentDataArray=new ContentData[spineItemCount];	//create an array to hold each content data
 			for(int i=0; i<spineItemCount; ++i)	//look at each item in the spine
 			{
-//G***del Debug.trace("OEBEditorKit.read() Getting item: "+i+" of "+publication.getSpineList().size());
+//G***del Log.trace("OEBEditorKit.read() Getting item: "+i+" of "+publication.getSpineList().size());
 				final RDFResource item=itemList.get(i);	//get a reference to this item
 				final String itemHRef=XPackage.getLocationHRef(item);  //get the item's href
 				if(itemHRef!=null)	//if this item has an href
@@ -324,7 +324,7 @@ Debug.trace(RDFResources.toString(rdf));
 			final int spineItemCount=spine.size(); //find out how many spine items there are
 			for(int i=0; i<spineItemCount; ++i)	//look at each item in the spine
 			{
-//G***del Debug.trace("OEBEditorKit.read() Getting item: "+i+" of "+publication.getSpineList().size());
+//G***del Log.trace("OEBEditorKit.read() Getting item: "+i+" of "+publication.getSpineList().size());
 				final RDFResource item=spine.get(i);	//get a reference to this item
 				if(item instanceof Binding)	//if this item is a sub-binding
 				{

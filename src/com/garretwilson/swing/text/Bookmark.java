@@ -3,8 +3,9 @@ package com.garretwilson.swing.text;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Position;
+
 import com.globalmentor.java.Java;
-import com.globalmentor.util.Debug;
+import com.globalmentor.log.Log;
 
 /**Represents a bookmark in a document that can survive edits and can be stored.
 	<p>A bookmark may or may not be attached to a document. If the bookmark is
@@ -328,7 +329,7 @@ public class Bookmark implements Comparable, Position
 	*/
 	public boolean equals(Object object)
 	{
-Debug.trace("Comparing bookmark "+this+" to object: ", object); //G***del
+Log.trace("Comparing bookmark "+this+" to object: ", object); //G***del
 		if(object instanceof Bookmark)	//if we're being compared with another bookmark
 		{
 			final Bookmark otherBookmark=(Bookmark)object;  //cast the other object to a bookmark
