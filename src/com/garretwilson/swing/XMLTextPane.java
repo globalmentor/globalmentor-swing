@@ -488,7 +488,6 @@ Log.trace("Current installed editor kit: ", getEditorKit().getClass().getName())
 	public XMLTextPane(XMLDocument doc)
 	{
 		this();	//do the default constructing
-
 		//G***testing hint
 /*G***del
         Graphics2D graphics2D=(Graphics2D)getGraphics();
@@ -1283,6 +1282,8 @@ Log.trace("reading from stream into document"); //G***del
 		}
 		if(editorKit==null)	//if the editor kit is not for one of our recognized types
 		{
+			editorKit=super.getEditorKitForContentType(type);	//TODO testing
+/*TODO integrate
 			editorKit=editorKitMap.get(type);	//see if an editor kit is registered with this type
 			if(editorKit==null)	//if there is no registered editor kit
 			{
@@ -1296,11 +1297,14 @@ Log.trace("reading from stream into document"); //G***del
 					editorKit=createEditorKitForContentType(ContentType.toString(ContentType.TEXT_PRIMARY_TYPE, XML_SUBTYPE));//create a general text/xml editor kit
 				}
 			}
+*/
 		}
+/*TODO del when works
 		if(editorKit==null)	//if we couldn't find a cached editor kit or create a new one based upon the content type
 		{
 			editorKit=createDefaultEditorKit();	//create a default editor kit
 		}
+*/
 		return editorKit;	//return the editor kit we found or created
 	}
 
@@ -1308,10 +1312,12 @@ Log.trace("reading from stream into document"); //G***del
 	@param type The non-<code>null</code> content type.
 	@param editorKit The editor kit to be set.
 	*/
+/*TODO del
 	public void setEditorKitForContentType(final String type, final EditorKit editorKit)
 	{
 		editorKitMap.put(type, editorKit);	//cache this editor based upon content type  
   }
+*/
 	
 	/**Updates the installed keymap based upon the current settings, such as
 		whether the text pane is currently paged.

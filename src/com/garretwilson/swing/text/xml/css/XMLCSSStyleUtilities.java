@@ -312,6 +312,7 @@ public class XMLCSSStyleUtilities
 	*/
 	public static boolean isUnderline(AttributeSet attributeSet)
 	{
+/*TODO fix; throws an exception because an XMLCSSPrimitiveValue is returned
 		final XMLCSSValueList textDecorationValueList=(XMLCSSValueList)getCSSPropertyCSSValue(attributeSet, CSS_PROP_TEXT_DECORATION, true);	//get the text decoration value, resolving up the hierarchy if necessary G***text-decoration shouldn' resolve up the chain exactly like this
 			//G***what if the value sent back isn't really an XMLCSSValueList? Perhaps we should do an assert
 		if(textDecorationValueList!=null)	//if we have a list of text decoration value
@@ -324,6 +325,7 @@ public class XMLCSSStyleUtilities
 					return true;	//show that we should use underline
 			}
 		}
+*/
 		return false;	//default to not underlining
 	}
 

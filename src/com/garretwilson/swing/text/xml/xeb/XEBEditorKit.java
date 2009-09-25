@@ -263,9 +263,9 @@ Log.trace(RDFResources.toString(rdf));
 					{
 						final URI itemURI=swingXMLDocument.getResourceURI(itemHRef); //get the item's URI
 //TODO fix with URF						final ContentType contentType=Marmot.getMediaType(item);	//get the item's content type
-						final ContentType contentType=null;	//TODO fix with URF
-						if(false)	//TODO fix with URF
-//TODO fix with URF						if(MAQRO_MEDIA_TYPE.match(contentType))	//if this is a MAQRO activity
+						final ContentType contentType=URIs.getContentType(itemURI);	//get the item's content type
+//TODO fix						final ContentType contentType=null;	//TODO fix with URF
+						if(MAQRO_MEDIA_TYPE.match(contentType))	//if this is a MAQRO activity
 						{
 							final InputStream itemInputStream=swingXMLDocument.getInputStream(itemURI); //get an input stream to the object
 							try

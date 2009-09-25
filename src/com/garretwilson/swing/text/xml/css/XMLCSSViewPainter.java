@@ -70,11 +70,11 @@ public class XMLCSSViewPainter
 		if(CSS_DISPLAY_LIST_ITEM.equals(display) && isFirstFragment)
 		{
 
-Log.trace("View painter view's class: ", view.getClass().getName());  //G***del
+//Log.trace("View painter view's class: ", view.getClass().getName());  //G***del
 			final View parentView=view.getParent(); //get the parent view of this one
 			if(parentView!=null)  //list items must have parents to be rendered
 			{
-Log.trace("View painter parent view's class: ", view.getClass().getName());  //G***del
+//Log.trace("View painter parent view's class: ", view.getClass().getName());  //G***del
 
 				final Document document=view.getDocument(); //get the view's document
 				if(document instanceof StyledDocument)		//if the document is a styled document

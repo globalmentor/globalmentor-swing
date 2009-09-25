@@ -48,7 +48,7 @@ System.out.println("XMLTableView.setSize(), width: "+width+" height: "+height);	
 */
 
 
-	public int testGetViewCount() {return getViewCount();}  //G***del; testnig
+	public int testGetViewCount() {return getViewCount();}  //G***del; testing
 
 	public int testGetSpan(int axis, int row) {return getSpan(axis, row);}
 
@@ -730,7 +730,6 @@ return BadBreakWeight;  //G***testing
     }
 
     /*protected*/ void invalidateGrid() {
-Log.traceStack(); //G***del
 	gridValid = false;
     }
 
@@ -1896,7 +1895,6 @@ Log.trace("G***search");
 			final String elementName=XMLStyleUtilities.getXMLElementName(element.getAttributes()); //G***del
 Log.trace("Table factory constructing view for a table element with name: ", elementName);	//G***del
 Log.trace("Indicate multiple views: "+indicateMultipleViews);	//G***del
-Log.traceStack(); //G***del
 			final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
 //G***del Log.trace("Attribute set: "+attributeSet);	//G***del
 			if(attributeSet!=null)	//if this element has attributes
