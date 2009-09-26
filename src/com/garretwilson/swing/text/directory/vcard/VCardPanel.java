@@ -1,13 +1,29 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.directory.vcard;
 
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.JTabbedPane;
+
 import com.garretwilson.swing.*;
 import com.globalmentor.model.LocaledText;
 import com.globalmentor.model.Verifiable;
 import com.globalmentor.text.directory.vcard.*;
-import com.globalmentor.util.*;
 
 /**A panel containing panels to edit fields for a vCard <code>text/directory</code>
 	profile as defined in <a href="http://www.ietf.org/rfc/rfc2426.txt">RFC 2426</a>,
@@ -55,79 +71,6 @@ public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable
 		/**The panel containing the explanatory information.*/
 		public ExplanatoryPanel getExplanatoryPanel() {return explanatoryPanel;}
 
-	/**Sets whether the object has been modified.
-	This version sets the modified status of all contained panels to
-		<code>false</code> if the new modified status is <code>false</code>.
-	@param newModified The new modification status.
-	*/
-/*G***del when ModifiablePanel works
-	public void setModified(final boolean newModified)	//TODO see why we can't just remove this and use the BasicPanel version (for some reason, name changes no longer will update the status without this)
-	{
-		super.setModified(newModified);	//set the modified status
-		if(newModified==false)	//if we are no longer modified
-		{
-			identificationPanel.setModified(newModified);	//tell the identification panel it is no longer modified
-			addressesPanel.setModified(newModified);	//tell the addresses panel it is no longer modified
-			organizationPanel.setModified(newModified);	//tell the organization panel it is no longer modified
-			telecommunicationsPanel.setModified(newModified);	//tell the telecommunications panel it is no longer modified
-			explanatoryPanel.setModified(newModified);	//tell the explanatory panel it is no longer modified
-		}
-	}
-*/
-
-	/**Sets the vCard information that appears in the component.
-	@param vcard The vCard information to display, or <code>null</code> if
-		default information should be displayed.
-	*/
-/*G***del when works
-	public void setVCard(final VCard vcard)
-	{
-		getIdentificationPanel().setVCardName(vcard.getName());
-		getIdentificationPanel().setFormattedName(vcard.getFormattedName());
-		getIdentificationPanel().setNicknames(LocaleText.toLocaleTextArray(vcard.getNicknameList()));
-		getAddressesPanel().setAddresses(vcard.getAddresses(), vcard.getLabels());
-		getOrganizationPanel().setOrganizationName(vcard.getOrganizationName());
-		getOrganizationPanel().setUnits(vcard.getOrganizationUnits());
-		getOrganizationPanel().setJobTitle(vcard.getTitle());
-		getOrganizationPanel().setRole(vcard.getRole());
-			//TODO create getTelephones() and getEmails() that return arrays
-		final Telephone[] telephones=(Telephone[])vcard.getTelephoneList().toArray(new Telephone[vcard.getTelephoneList().size()]);
-		final Email[] emails=(Email[])vcard.getEmailList().toArray(new Email[vcard.getEmailList().size()]);
-		getTelecommunicationsPanel().setTelecommunications(telephones, emails);
-		getExplanatoryPanel().setCategories(LocaleText.toLocaleTextArray(vcard.getCategoryList()));
-		getExplanatoryPanel().setNote(vcard.getNote());
-		getExplanatoryPanel().setURL(vcard.getURL());
-	}
-*/
-
-	/**@return A vCard object representing the information being edited.*/
-/*G***del when works
-	public VCard getVCard()
-	{
-		final VCard vcard=new VCard();	//create a new vCard
-		final LocaleText displayName=getIdentificationPanel().getFormattedName()!=null
-				? getIdentificationPanel().getFormattedName()		//use the formatted name as the display name
-				: getOrganizationPanel().getOrganizationName();		//use the company name if there is no formatted name
-			//TODO decide how to come up with a display name if there is neither formatted name nor organization name
-		vcard.setDisplayName(displayName);
-		vcard.setName(getIdentificationPanel().getVCardName());
-		vcard.setFormattedName(getIdentificationPanel().getFormattedName());
-		vcard.setNicknames(getIdentificationPanel().getNicknames());
-		vcard.setAddresses(getAddressesPanel().getAddresses());
-		vcard.setLabels(getAddressesPanel().getLabels());
-		vcard.setOrganizationName(getOrganizationPanel().getOrganizationName());
-		vcard.setOrganizationUnits(getOrganizationPanel().getUnits());
-		vcard.setTitle(getOrganizationPanel().getJobTitle());
-		vcard.setRole(getOrganizationPanel().getRole());
-		vcard.setTelephones(getTelecommunicationsPanel().getTelephones());
-		vcard.setEmails(getTelecommunicationsPanel().getEmails());
-		vcard.setCategories(getExplanatoryPanel().getCategories());
-		vcard.setNote(getExplanatoryPanel().getNote());
-		vcard.setURL(getExplanatoryPanel().getURL());
-		return vcard;	//return the vcard we constructed
-	}
-*/
-
 	/**Default constructor.*/
 	public VCardPanel()
 	{
@@ -162,27 +105,6 @@ public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable
 	}
 
 //TODO---make the new ContainerUtilities.verifyDescendants() method select the tab if it desn't verify
-
-	/**Verifies the component.
-	@return <code>true</code> if the component contents are valid, <code>false</code>
-		if not.
-	*/
-/*G***del when works---the new BasicPanel functionality should automatically verify all descendant components, even those on tabs
-	public boolean verify()
-	{
-		if(!nameAddressPanel.verify())	//if the name/address panel doesn't verify
-		{
-			getTabbedPane().setSelectedComponent(nameAddressPanel);	//select the name/address panel
-			return false;	//show that verification failed
-		}
-		if(!explanatoryPanel.verify())	//if the explanatory panel doesn't verify
-		{
-			getTabbedPane().setSelectedComponent(explanatoryPanel);	//select the explanatory panel
-			return false;	//show that verification failed
-		}
-		return super.verify();  //if we couldn't find any problems, verify the parent class TODO we duplicate this functionality here to check and change the tabs if necessary---can we put something like this in BasicPanel, too?
-	}
-*/
 
 	/**Loads the data from the model to the view, if necessary.
 	@exception IOException Thrown if there was an error loading the model.

@@ -1,20 +1,36 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 /**A paragraph view for wrapping around a subset of child elements because other
 	block child elements exist.
 @author Garret Wilson
 */
-public class XMLAnonymousParagraphView  //G***del this class if we don't need
+public class XMLAnonymousParagraphView  //TODO del this class if we don't need
 {
 	/**The attributes of the anonymous block view.*/
-//G***del if not needed	protected final AttributeSet attributeSet;
+//TODO del if not needed	protected final AttributeSet attributeSet;
 
 	/**Fetches the attributes to use when rendering.
 		This view uses its own anonymous attributes instead of the attributes of
 		the element it represents.
 	@return The attributes of the anonymous block view.
 	*/
-/*G***del if not needed
+/*TODO del if not needed
 	public AttributeSet getAttributes()
 	{
 		return attributeSet;  //return our attributes
@@ -22,7 +38,7 @@ public class XMLAnonymousParagraphView  //G***del this class if we don't need
 */
 
 	/**The child elements for which this anonymous view is responsible.*/
-//G***del if not needed	protected final Element[] ownedElements;
+//TODO del if not needed	protected final Element[] ownedElements;
 
 	/**Constructs an anonymous paragraph view for the given element.
 	@param element The element this view is responsible for, although in most
@@ -31,7 +47,7 @@ public class XMLAnonymousParagraphView  //G***del this class if we don't need
 	@param childElements The children of <code>element</code> for which this
 		anonymous view is responsible.
 	*/
-/*G***del if not needed
+/*TODO del if not needed
 	public XMLAnonymousParagraphView(final Element element, final AttributeSet attributes, final Element[] childElements)
 	{
 		super(element); //construct the parent view
@@ -53,12 +69,12 @@ public class XMLAnonymousParagraphView  //G***del this class if we don't need
 		can implement its own special version of child view construction.
 	@param viewFactory The view factory to use for child view creation.
 	*/
-/*G***del if not needed
+/*TODO del if not needed
 	protected void loadChildren(ViewFactory f)
 	{
 		if(layoutPool==null)  //if there is no layout pool
 		{
-//G***del Log.trace("XMLParagraphView.loadChildren() creating new logical view");
+//TODO del Log.trace("XMLParagraphView.loadChildren() creating new logical view");
 		  layoutPool=new LogicalView(getElement()); //create our own brand of logical view that will correctly create paragraph child views
 		}
 		//we only need to load views if we previously had no views in the pool;
@@ -66,16 +82,16 @@ public class XMLAnonymousParagraphView  //G***del this class if we don't need
 		//when there are no child views, even if there are views in the pool
 		final boolean needsLoading=layoutPool.getViewCount()==0;
 		layoutPool.setParent(this); //tell the layout pool that we're its parent, so that it can begin creating its child views
-//G***del Log.trace("layout pool has "+layoutPool.getViewCount()+" children.");
-//G***del Log.trace("layout child is of type: "+layoutPool.getView(0).getClass().getName());
+//TODO del Log.trace("layout pool has "+layoutPool.getViewCount()+" children.");
+//TODO del Log.trace("layout child is of type: "+layoutPool.getView(0).getClass().getName());
 		if(needsLoading)  //if we really need to load things
 		{
-//G***del Log.trace("Updating the strategy and stuff");
+//TODO del Log.trace("Updating the strategy and stuff");
 		  final int poolViewCount=layoutPool.getViewCount();  //find out how many views are in the pool
 				//see if there are only object views present, how many inline views there are, etc.
 		  boolean onlyObjectsPresent=true; //assume there are only objects present in this paragraph
 			int inlineViewCount=0;  //we'll keep a record of how many inline views there are
-//G***fix			boolean firstInlineViewHasMultipleWords=false;  //assume the first inline view has multiple words
+//TODO fix			boolean firstInlineViewHasMultipleWords=false;  //assume the first inline view has multiple words
 		  for(int i=0; i<poolViewCount; ++i)  //look at each view in the pool
 			{
 				final View pooledView=layoutPool.getView(i);  //get a reference to this pooled view
@@ -89,8 +105,8 @@ public class XMLAnonymousParagraphView  //G***del this class if we don't need
 			final View parentView=getParent();  //get our parent view
 			final String parentDisplay=XMLCSSStyleConstants.getDisplay(parentView.getAttributes()); //see what kind of parent we have
 			final boolean isInTableCell=XMLCSSConstants.CSS_DISPLAY_TABLE_CELL.equals(parentDisplay);  //see if we're inside a table cell
-	//G***del Log.trace("only objects present: "+onlyObjectPresent);
-//G***del when works			setFirstLineIndented(!onlyObjectPresent); //if there are only objects present in this paragraph, we won't indent
+	//TODO del Log.trace("only objects present: "+onlyObjectPresent);
+//TODO del when works			setFirstLineIndented(!onlyObjectPresent); //if there are only objects present in this paragraph, we won't indent
 			setFirstLineIndented(!onlyObjectsPresent && (inlineViewCount>1 || !isInTableCell)); //if there are only objects present in this paragraph, or if there's only one inline view in a table cell, we won't indent
 			//This synthetic insertUpdate call gives the strategy a chance to initialize.
 			strategy.insertUpdate( this, null, null );

@@ -1,10 +1,25 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.URI;
-import java.util.prefs.Preferences;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -15,16 +30,14 @@ import static com.globalmentor.java.Objects.*;
 import com.garretwilson.sun.demo.jfc.notepad.ElementTreePanel;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.event.*;
-import com.garretwilson.swing.text.ViewUtilities;
+import com.garretwilson.swing.text.Views;
 import com.garretwilson.swing.unicode.UnicodePanel;
-import com.garretwilson.swing.unicode.UnicodeTableModel;
 
 import com.globalmentor.io.*;
 import com.globalmentor.log.Log;
 import com.globalmentor.net.ContentType;
 
 import com.globalmentor.text.Text;
-import com.globalmentor.util.*;
 
 /**A styled editor kit with basic functionality, including:
 <ul>
@@ -145,7 +158,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 	/**Creates a copy of the editor kit.
 	@return A copy of the XML editor kit.
 	*/
-	public Object clone() {return new BasicStyledEditorKit(getMediaType(), getURIInputStreamable());}  //G***why do we need this?; make a real clone, or make sure XHTMLEditorKit overrides this
+	public Object clone() {return new BasicStyledEditorKit(getMediaType(), getURIInputStreamable());}  //TODO why do we need this?; make a real clone, or make sure XHTMLEditorKit overrides this
 
 	/**Returns the MIME type of the data the XML editor kit supports, such as
 		<code>text/plain</code>.
@@ -200,10 +213,10 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 		*/
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
-//G***del Debug.notify("XMLEditorKit.PreviousPageAction.actionPerformed()");
+//TODO del Debug.notify("XMLEditorKit.PreviousPageAction.actionPerformed()");
 			final JTextComponent textComponent=getTextComponent(actionEvent);	//get the text component
-			Log.debug(ViewUtilities.toString(textComponent));	//log the views to the debug output
-			new BasicFrame("Elements", new ElementTreePanel(textComponent)).setVisible(true);	//show a new frame showing elements G***i18n
+			Log.debug(Views.toString(textComponent));	//log the views to the debug output
+			new BasicFrame("Elements", new ElementTreePanel(textComponent)).setVisible(true);	//show a new frame showing elements TODO i18n
 		}
 	}
 
@@ -255,7 +268,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 //TODO del when works					JOptionPane.showMessageDialog(UnicodePanel.this, e.getActionCommand());
 							}
 						});
-				frame=new BasicFrame("Unicode", unicodePanel);	//create a new frame showing Unicode G***i18n
+				frame=new BasicFrame("Unicode", unicodePanel);	//create a new frame showing Unicode TODO i18n
 /*TODO fix; we need to either create a new Unicode panel class, or make a way to change the base preferences name
 				try
 				{
@@ -270,7 +283,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 			}
 			frame.setVisible(true);	//show the frame
 			frame.pack();	//pack the contents of the frame
-//TODO del when works			BasicOptionPane.showMessageDialog(null, new JScrollPane(new UnicodePanel()), "Unicode", BasicOptionPane.INFORMATION_MESSAGE);	//G***i18n
+//TODO del when works			BasicOptionPane.showMessageDialog(null, new JScrollPane(new UnicodePanel()), "Unicode", BasicOptionPane.INFORMATION_MESSAGE);	//TODO i18n
 		}
 	}
 
@@ -352,7 +365,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 			{
 				try
 				{
-					final int beginOffset=SwingTextUtilities.getBegin(target);	//get the beginning offset; if this is an invalid position, don't worry---the corresponding exception will be caught below  
+					final int beginOffset=SwingText.getBegin(target);	//get the beginning offset; if this is an invalid position, don't worry---the corresponding exception will be caught below  
 					if(select)
 					{
 						target.moveCaretPosition(beginOffset);
@@ -391,7 +404,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 			{
 				try
 				{
-					final int endOffset=SwingTextUtilities.getEnd(target);	//get the ending offset; if this is an invalid position, don't worry---the corresponding exception will be caught below  
+					final int endOffset=SwingText.getEnd(target);	//get the ending offset; if this is an invalid position, don't worry---the corresponding exception will be caught below  
 					if(select)
 					{
 						target.moveCaretPosition(endOffset);
@@ -432,7 +445,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 	*/
 	protected void fireMadeProgress(final ProgressEvent progressEvent)
 	{
-//G***del if not needed		final ProgressEvent progressEvent=new ProgressEvent(this, status);	//create a new progress event
+//TODO del if not needed		final ProgressEvent progressEvent=new ProgressEvent(this, status);	//create a new progress event
 		final Object[] listeners=progressListenerList.getListenerList();	//get the non-null array of listeners
 		for(int i=listeners.length-2; i>=0; i-=2)	//look at each listener, from last to first
 		{
@@ -444,10 +457,10 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 	/**Invoked when progress has been made by, for example, the document.
 	@param e The event object representing the progress made.
 	*/
-/*G***del if no needed
+/*TODO del if no needed
 	public void madeProgress(final ProgressEvent e)
 	{
-		fireMadeProgress(e);	//refire that event to our listeners G***perhaps do some manipulation here
+		fireMadeProgress(e);	//refire that event to our listeners TODO perhaps do some manipulation here
 	}
 */
 

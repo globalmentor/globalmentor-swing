@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml.xhtml;
 
 import javax.swing.text.*;
@@ -27,7 +43,7 @@ public class XHTMLLinkController extends XMLLinkController
 	protected boolean isLinkElement(final Element element)
 	{
 		final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-		final String elementLocalName=XMLStyleUtilities.getXMLElementLocalName(attributeSet); //get the local name of this element
+		final String elementLocalName=XMLStyles.getXMLElementLocalName(attributeSet); //get the local name of this element
 		if(ELEMENT_A.equals(elementLocalName)) //if this is the XHTML <a> element
 			return true;	//show that this is a link element
 		else	//if this is another element
@@ -45,9 +61,9 @@ public class XHTMLLinkController extends XMLLinkController
 	protected String getLinkElementHRef(final Element element)
 	{
 		final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-		final String elementLocalName=XMLStyleUtilities.getXMLElementLocalName(attributeSet); //get the local name of this element
+		final String elementLocalName=XMLStyles.getXMLElementLocalName(attributeSet); //get the local name of this element
 		if(ELEMENT_A.equals(elementLocalName))	//if this is an XHTML <a> element
-			return XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_A_ATTRIBUTE_HREF);	//get the href value
+			return XMLStyles.getXMLAttributeValue(attributeSet, null, ELEMENT_A_ATTRIBUTE_HREF);	//get the href value
 		else	//if this is another element
 			return super.getLinkElementHRef(element);	//let the parent class try to find an href
 	}

@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
@@ -44,13 +60,13 @@ public class EmailPanel extends ModifiablePanel
 	*/
 	public void setLabelsVisible(final boolean visible)
 	{
-//G***fix		telephoneNumberPanel.setLabelsVisible(visible);	//pass the request on to the telephone number panel
+//TODO fix		telephoneNumberPanel.setLabelsVisible(visible);	//pass the request on to the telephone number panel
 	}
 	
 	/**@return Whether all the telephone number labels are visible. 
 	@see TelephoneNumberPanel#isLabelsVisible
 	*/
-/*G***fix
+/*TODO fix
 	public boolean isLabelsVisible()
 	{
 		return telephoneNumberPanel.isLabelsVisible();	//return the answer of the telephone number panel
@@ -126,7 +142,7 @@ public class EmailPanel extends ModifiablePanel
 	public EmailPanel(final String emailAddress, final int emailType)
 	{
 		super(new BasicGridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
-//G***del		editTelephoneTypeAction=new EditTelephoneTypeAction();
+//TODO del		editTelephoneTypeAction=new EditTelephoneTypeAction();
 		addressTextField=new JTextField();
 		setDefaultFocusComponent(addressTextField);	//set the default focus component
 		initialize();	//initialize the panel

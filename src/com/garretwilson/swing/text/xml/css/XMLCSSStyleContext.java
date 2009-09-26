@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml.css;
 
 import java.awt.*;
@@ -11,7 +27,7 @@ import com.garretwilson.awt.FontUtilities;
 /**A pool of styles and their associated resources, created to store and
 	retrieve CSS styles attribute sets.
 	Notably, this class overrides the font caching algorithm in
-	<code>StyleContext</code> to allow for soft references so that the memory
+	{@link StyleContext} to allow for soft references so that the memory
 	allocated to the fonts may be reclaimed if necessary.
 	This class is not currently thread safe.
 @see com.garretwilson.awt.FontUtilities
@@ -27,18 +43,18 @@ public class XMLCSSStyleContext extends StyleContext
 	/**Map of font family names, keyed to either a Unicode block or a
 		<code>character</code>.
 	*/
-//G***del	protected final static Map characterFontFamilyNameMap=new HashMap();
+//TODO del	protected final static Map characterFontFamilyNameMap=new HashMap();
 
 	/**The sorted list of available font family names.*/
-//G***del	private static String[] sortedAvailableFontFamilyNameArray=null;
+//TODO del	private static String[] sortedAvailableFontFamilyNameArray=null;
 
 	/**Returns a sorted array of names of available fonts. The returned array is
 		shared by other objects in the system, and should not be modified.
-//G***del		 The first
-//G***del		call to this method will create and cache the array.
+//TODO del		 The first
+//TODO del		call to this method will create and cache the array.
 	@return A sorted array of names of available fonts.
 	*/
-/*G***del
+/*TODO del
 	protected String[] getAvailableFontFamilyNames()
 	{
 		return sortedAvailableFontFamilyNameArray;  //return the array of font family names
@@ -46,15 +62,15 @@ public class XMLCSSStyleContext extends StyleContext
 */
 
 	/**The shared precreated key used for searching for fonts in the cache.*/
-//G***del	private transient FontKey searchFontKey=new FontKey(null, 0, 0);
+//TODO del	private transient FontKey searchFontKey=new FontKey(null, 0, 0);
 
 	/**A synchronized map of references to fonts that have been loaded.*/
-//G***del	protected transient Map fontReferenceMap=new HashMap();
+//TODO del	protected transient Map fontReferenceMap=new HashMap();
 
 	/**Default constructor which queries available fonts.*/
 	public XMLCSSStyleContext()
 	{
-/*G***del; recomment
+/*TODO del; recomment
 		if(sortedAvailableFontFamilyNameArray==null)  //if the array of font family names has not been created
 		{
 			//get the list of available font family names
@@ -117,38 +133,38 @@ public class XMLCSSStyleContext extends StyleContext
 	public Font getFont(final AttributeSet attributeSet, final float zoomFactor)
 	{
 		int style=Font.PLAIN;	//start out assuming we'll have a plain font
-		if(XMLCSSStyleUtilities.isBold(attributeSet))	//if the attributes specify bold (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
+		if(XMLCSSStyles.isBold(attributeSet))	//if the attributes specify bold (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
 			style|=Font.BOLD;	//add bold to our font style
-		if(XMLCSSStyleUtilities.isItalic(attributeSet))	//if the font attributes specify italics (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
+		if(XMLCSSStyles.isItalic(attributeSet))	//if the font attributes specify italics (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
 			style|=Font.ITALIC;	//add italics to our font style
 		String family=null; //show that we haven't found a font family
-		final String[] fontFamilyNameArray=XMLCSSStyleUtilities.getFontFamilyNames(attributeSet); //get the array of font family names
+		final String[] fontFamilyNameArray=XMLCSSStyles.getFontFamilyNames(attributeSet); //get the array of font family names
 		for(int i=0; i<fontFamilyNameArray.length; ++i) //look at each of the specified fonts
 		{
 		  final String fontFamilyName=fontFamilyNameArray[i]; //get this font family name
-	//G***del Log.trace("Looking for font family name: ", fontFamilyName);
-		  if(fontFamilyName.equals("monospace"))  //G***fix all this; tidy; comment
+	//TODO del Log.trace("Looking for font family name: ", fontFamilyName);
+		  if(fontFamilyName.equals("monospace"))  //TODO fix all this; tidy; comment
 			{
 				family="Monospaced";
 				break;
 			}
-		  else if(fontFamilyName.equals("serif"))  //G***fix all this; tidy; comment
+		  else if(fontFamilyName.equals("serif"))  //TODO fix all this; tidy; comment
 			{
 				family="Serif";
 				break;
 			}
-		  else if(fontFamilyName.equals("sans-serif"))  //G***fix all this; tidy; comment
+		  else if(fontFamilyName.equals("sans-serif"))  //TODO fix all this; tidy; comment
 			{
-	//G***fix				family="Lucinda Sans Regular";
+	//TODO fix				family="Lucinda Sans Regular";
 				family="SansSerif";
 				break;
 			}
-		  else if(fontFamilyName.equals("symbol"))  //G***fix all this; tidy; comment
+		  else if(fontFamilyName.equals("symbol"))  //TODO fix all this; tidy; comment
 			{
 				family="Symbol";
 				break;
 			}
-			//G***maybe fix for "Symbol"
+			//TODO maybe fix for "Symbol"
 				//see if we have the specified font
 			final int fontFamilyNameIndex=Arrays.binarySearch(SORTED_AVAILABLE_FONT_FAMILY_NAMES, fontFamilyName);
 			if(fontFamilyNameIndex>=0)  //if we have the specified font
@@ -158,13 +174,13 @@ public class XMLCSSStyleContext extends StyleContext
 			}
 		}
 		if(family==null)  //if we didn't find a font family
-	//G***del			family="Code2000";   //G***testing
-	//G***fix			family="Baraha Devanagari Unicode";   //G***testing
-			family="Serif";   //use the default G***use a constant; maybe use a different default
-		float size=XMLCSSStyleUtilities.getFontSize(attributeSet);	//get the font size from the attributes (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)		
-		/*G***put this in the style instead
+	//TODO del			family="Code2000";   //TODO testing
+	//TODO fix			family="Baraha Devanagari Unicode";   //TODO testing
+			family="Serif";   //use the default TODO use a constant; maybe use a different default
+		float size=XMLCSSStyles.getFontSize(attributeSet);	//get the font size from the attributes (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)		
+		/*TODO put this in the style instead
 			//if the attributes specify either superscript or subscript (use XMLCSSStyleConstants so we'll recognize CSS values in the attribute set)
-			if(StyleConstants.isSuperscript(attributeSet) || StyleConstants.isSubscript(attributeSet))	//G***change to use CSS attributes
+			if(StyleConstants.isSuperscript(attributeSet) || StyleConstants.isSubscript(attributeSet))	//TODO change to use CSS attributes
 				size-=2;	//reduce the font size by two
 		*/
 		size*=zoomFactor;	//increase the font size by the specified amout
@@ -178,7 +194,7 @@ public class XMLCSSStyleContext extends StyleContext
 	*/
 	public Color getForeground(final AttributeSet attributeSet)
 	{
-		return XMLCSSStyleUtilities.getForeground(attributeSet);	//let the CSS style constants get the foreground for us
+		return XMLCSSStyles.getForeground(attributeSet);	//let the CSS style constants get the foreground for us
 	}
 
 	/**Takes a set of attributes and turn it into a background color specification.
@@ -187,18 +203,18 @@ public class XMLCSSStyleContext extends StyleContext
 	*/
 	public Color getBackground(final AttributeSet attributeSet)
 	{
-		return XMLCSSStyleUtilities.getBackgroundColor(attributeSet);	//let the CSS style constants get the background for us G***resolve inconsistency between getForeground() and getBackgroundColor()
+		return XMLCSSStyles.getBackgroundColor(attributeSet);	//let the CSS style constants get the background for us TODO resolve inconsistency between getForeground() and getBackgroundColor()
 	}
 
-	//G***create the transient fontReferenceMap in a readObject
+	//TODO create the transient fontReferenceMap in a readObject
 
 	/**Constructs transient variables before the object is read from a stream.
 	@param objectInputStream The stream from which the object is being read.
 	*/
 	private void readObject(ObjectInputStream objectInputStream) throws ClassNotFoundException, IOException
 	{
-//G***del		searchFontKey=new FontKey(null, 0, 0);  //create a new font key for searching
-//G***del		fontReferenceMap=new HashMap(); //create a new map of references to fonts
+//TODO del		searchFontKey=new FontKey(null, 0, 0);  //create a new font key for searching
+//TODO del		fontReferenceMap=new HashMap(); //create a new map of references to fonts
 		objectInputStream.defaultReadObject();  //read the object normally
 	}
 

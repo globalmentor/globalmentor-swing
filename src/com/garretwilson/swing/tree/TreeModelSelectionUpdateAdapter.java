@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.tree;
 
 import javax.swing.*;
@@ -39,7 +55,7 @@ public class TreeModelSelectionUpdateAdapter extends TreeModelAdapter
 	 * returns the index(es) of the new node(s)
 	 * in ascending order.</p>
 	 */
-//G***fix	public void treeNodesInserted(final TreeModelEvent treeModelEvent) {}
+//TODO fix	public void treeNodesInserted(final TreeModelEvent treeModelEvent) {}
 
 	/**Invoked after nodes have been removed from the tree.
 		If one of the nodes was previously selected, the selection will be moved to
@@ -61,7 +77,7 @@ public class TreeModelSelectionUpdateAdapter extends TreeModelAdapter
 			final TreePath childPath=parentPath.pathByAddingChild(children[i]);	//get the path to this deleted child
 			if(tree.isPathSelected(childPath))	//if this path was selected
 			{
-				final TreePath remainingPath=TreeUtilities.getRemainingPath(parentPath, treeModelEvent.getChildIndices()[i]);	//find the path remaining after the child at this index was deleted
+				final TreePath remainingPath=Trees.getRemainingPath(parentPath, treeModelEvent.getChildIndices()[i]);	//find the path remaining after the child at this index was deleted
 				SwingUtilities.invokeLater(new Runnable()	//select the remaining path, but do it later, so that any other listeners that might be listening for the event that caused the deletion may finish processing using the current selection state
 					{
 						public void run() {tree.setSelectionPath(remainingPath);}
@@ -82,6 +98,6 @@ public class TreeModelSelectionUpdateAdapter extends TreeModelAdapter
 	 * <code>e.getChildIndices()</code>
 	 * returns null.</p>
 	 */
-//G***fix	public void treeStructureChanged(final TreeModelEvent treeModelEvent) {}
+//TODO fix	public void treeStructureChanged(final TreeModelEvent treeModelEvent) {}
 
 }

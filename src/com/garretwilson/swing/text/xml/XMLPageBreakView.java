@@ -1,15 +1,21 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
-/*G***bring back as needed
-import java.awt.Shape;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.text.BreakIterator;
-import javax.swing.event.DocumentEvent;
-import javax.swing.text.*; 
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
-import com.garretwilson.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
-*/
 import javax.swing.text.Element;
 
 import com.garretwilson.swing.text.InvisibleView;
@@ -18,7 +24,7 @@ import com.garretwilson.swing.text.InvisibleView;
 @see XMLBlockView
 @author Garret Wilson
 */
-public class XMLPageBreakView extends InvisibleView	//G***maybe go back to XMLParagraphView, if that class knows how to be hidden, but what are the consequences of either? XMLParagraphView
+public class XMLPageBreakView extends InvisibleView	//TODO maybe go back to XMLParagraphView, if that class knows how to be hidden, but what are the consequences of either? XMLParagraphView
 {
 
 	/**Constructor which specifies an element.
@@ -27,12 +33,12 @@ public class XMLPageBreakView extends InvisibleView	//G***maybe go back to XMLPa
 	public XMLPageBreakView(Element element)
 	{
 		super(element);	//construct the parent class
-//G***del System.out.println("Creating view for element: "+element.getAttributes().getAttribute(StyleConstants.NameAttribute));	//G***del
-//G***del		StyleSheet sheet = getStyleSheet();
-//G***del	attr = sheet.getViewAttributes(this);
-//G***del		AttributeSet=new SimpleAttributeSet(element.getAttributes());	//G***testing
+//TODO del Log.trace("Creating view for element: ", element.getAttributes().getAttribute(StyleConstants.NameAttribute));	//TODO del
+//TODO del		StyleSheet sheet = getStyleSheet();
+//TODO del	attr = sheet.getViewAttributes(this);
+//TODO del		AttributeSet=new SimpleAttributeSet(element.getAttributes());	//TODO testing
 
-//G***del		changedUpdate(null, null, null);	//G***testing
+//TODO del		changedUpdate(null, null, null);	//TODO testing
 	}
 
 	/**Forces a line break on the vertical axis.
@@ -46,7 +52,7 @@ public class XMLPageBreakView extends InvisibleView	//G***maybe go back to XMLPa
 	{
 		if(axis==Y_AXIS)	//if they want the break weight for the Y axis
 		{
-//G***del System.out.println("<page-break> view is trying to force a page break.");	//G***del
+//TODO del System.out.println("<page-break> view is trying to force a page break.");	//TODO del
 			return ForcedBreakWeight;	//show that we're forcing a break on this axis
 		}
 		else	//if they want the break weight on the X axis

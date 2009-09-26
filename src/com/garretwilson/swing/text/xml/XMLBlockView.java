@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import java.awt.*;
@@ -7,8 +23,8 @@ import java.util.List;
 import javax.swing.text.*;
 
 import com.garretwilson.swing.text.*;
-import static com.garretwilson.swing.text.SwingTextUtilities.*;
-import static com.garretwilson.swing.text.ViewUtilities.*;
+import static com.garretwilson.swing.text.SwingText.*;
+import static com.garretwilson.swing.text.Views.*;
 
 import com.garretwilson.swing.text.xml.css.*;
 import com.globalmentor.java.CharSequences;
@@ -21,7 +37,7 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 /**A view that arranges its children into a box shape by tiling its children along an axis.
 Any non-block child views are wrapped in anonymous block views.
 @author Garret Wilson
-@see javax.swing.text.BoxView
+@see BoxView
 */
 public class XMLBlockView extends ContainerBoxView implements XMLCSSView, FragmentViewFactory
 {
@@ -99,7 +115,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 				{
 					final Element element=elements[i];	//get a reference to this element
 					final AttributeSet attributeSet=element.getAttributes();	//get the attribute set of this element
-					if(elementCount>1 && XMLStyleUtilities.isAnonymous(attributeSet))	//if this is an anonymous element, but it's not the only element
+					if(elementCount>1 && XMLStyles.isAnonymous(attributeSet))	//if this is an anonymous element, but it's not the only element
 					{
 						try
 						{
@@ -107,9 +123,9 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 							//TODO bring back for efficiency				  document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset(), segment);
 									//if there are no visible characters (or the end-of-element character mark), and this isn't really just an empty element
 							if(CharSequences.notCharIndexOf(text, Characters.WHITESPACE_CHAR_STRING+Characters.CONTROL_CHARS+XMLDocument.ELEMENT_END_CHAR)<0	
-									&& !XMLStyleUtilities.isXMLEmptyElement(attributeSet))
+									&& !XMLStyles.isXMLEmptyElement(attributeSet))
 							{
-		//G***del Log.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElementName(attributeSet)); //G***del
+		//TODO del Log.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElementName(attributeSet)); //TODO del
 								viewList.add(new InvisibleView(element));  //create a hidden view for the whitespace inline elements and add it to our list of views
 								continue;	//skip further processing of this child and go to the next one								
 							}
@@ -144,7 +160,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 			{
 				final Element element=elements[i];  //get a reference to this element	
 				final AttributeSet attributeSet=element.getAttributes();	//get the attributes of the element
-				final CSSStyleDeclaration cssStyle=XMLCSSStyleUtilities.getXMLCSSStyle(attributeSet); //get the CSS style of the element (this method make sure the attributes are present)
+				final CSSStyleDeclaration cssStyle=XMLCSSStyles.getXMLCSSStyle(attributeSet); //get the CSS style of the element (this method make sure the attributes are present)
 					//see if this element is inline (text is always inline, regardless of what the display property says)
 				final boolean isInline=XMLCSS.isDisplayInline(cssStyle) || AbstractDocument.ContentElementName.equals(element.getName());
 				if(isInline) //if this is an inline child element
@@ -201,10 +217,10 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 	protected static Element createAnonymousBlockElement(final Element parentElement, final Collection<Element> childElementCollection)
 	{
 		final MutableAttributeSet anonymousAttributeSet=new SimpleAttributeSet();	//create an anonymous attribute set for this anonymous box
-		XMLStyleUtilities.setAnonymous(anonymousAttributeSet);	//set the XML name of the attribute set to the anonymous name
+		XMLStyles.setAnonymous(anonymousAttributeSet);	//set the XML name of the attribute set to the anonymous name
 		final XMLCSSStyleDeclaration anonymousCSSStyle=new XMLCSSStyleDeclaration(); //create a new style declaration
 		anonymousCSSStyle.setDisplay(XMLCSS.CSS_DISPLAY_BLOCK);	//show that the anonymous element should be a block element
-		XMLCSSStyleUtilities.setXMLCSSStyle(anonymousAttributeSet, anonymousCSSStyle);	//store the constructed CSS style in the attribute set
+		XMLCSSStyles.setXMLCSSStyle(anonymousAttributeSet, anonymousCSSStyle);	//store the constructed CSS style in the attribute set
 				//put the child elements into an array
 		final Element[] childElements=childElementCollection.toArray(new Element[childElementCollection.size()]);
 		boolean isHidden=true;	//this anonymous view should be hidden unless we find at least one visible view
@@ -213,9 +229,9 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 			final Element childElement=childElements[i];	//get a reference to this child element
 			final AttributeSet childAttributeSet=childElement.getAttributes();	//get the child element attributes
 				//if this child element doesn't have a CSS display of "none", it's visible unless something else (the editor kit, for instance) specified it to be hidden 
-			if(!XMLCSS.CSS_DISPLAY_NONE.equals(XMLCSSStyleUtilities.getDisplay(childAttributeSet)))
+			if(!XMLCSS.CSS_DISPLAY_NONE.equals(XMLCSSStyles.getDisplay(childAttributeSet)))
 			{
-				if(StyleUtilities.isVisible(childAttributeSet))	//if we haven't for some reason we've explicitly set this view to be hidden
+				if(Styles.isVisible(childAttributeSet))	//if we haven't for some reason we've explicitly set this view to be hidden
 				{
 					isHidden=false;	//we've found a visible child, so we can't make the anonymous element hidden
 				} 
@@ -223,7 +239,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 		}
 		if(isHidden)	//if no child elements are visible
 		{
-			StyleUtilities.setVisible(anonymousAttributeSet, false);	//hide the anonymous element
+			Styles.setVisible(anonymousAttributeSet, false);	//hide the anonymous element
 		}
 			//create an anonymous element with the elements we've collected
 		final Element anonymousElement=new AnonymousElement(parentElement, anonymousAttributeSet, childElementCollection);
@@ -241,7 +257,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
   public void paint(final Graphics graphics, Shape allocation)
   {
 		synchronize();	//make sure we have the correct cached property values
-		XMLCSSViewPainter.paint(graphics, allocation, this, getAttributes());	//paint our CSS-specific parts (newswing) G***decide whether we want to pass the attributes or not
+		XMLCSSViewPainter.paint(graphics, allocation, this, getAttributes());	//paint our CSS-specific parts (newswing) TODO decide whether we want to pass the attributes or not
 		super.paint(graphics, allocation);	//do the default painting
   }
 
@@ -262,7 +278,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 	{
 		if(axis==getAxis())	//if they want to break along our tiling axis
 		{
-			final String pageBreakAfter=XMLCSSStyleUtilities.getPageBreakAfter(getAttributes());	//see how the view considers breaking after it
+			final String pageBreakAfter=XMLCSSStyles.getPageBreakAfter(getAttributes());	//see how the view considers breaking after it
 				//if we should avoid breaking after this view, and the provided length is more than we need (i.e. we aren't being asked to break in our middle)
 			if(XMLCSS.CSS_PAGE_BREAK_AFTER_AVOID.equals(pageBreakAfter) && len>getPreferredSpan(axis))
 			{
@@ -332,7 +348,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 	}
 
 	/**Whether or not the cached values have been synchronized.*/
-	protected boolean cacheSynchronized=false;  //G***see if we should make this private with an accessor method
+	protected boolean cacheSynchronized=false;  //TODO see if we should make this private with an accessor method
 
 	/**Synchronizes the view's cached valiues with the model. This causes the
 		font, metrics, color, etc to be recached if the cache has been invalidated.
@@ -346,38 +362,30 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 	/**Sets the cached properties from the attributes.*/
 	protected void setPropertiesFromAttributes()
 	{
-/*G***del
-Log.trace("*****Inside XMLBlockView.setPropertiesFromAttributes()");
-Log.trace("element name is:", getElement().getName());	//G***del
-Log.trace("element is:", getElement());	//G***del
-Log.trace("XML element name is:", XMLStyleUtilities.getXMLElementName(getAttributes()));	//G***del
-Log.trace("element attributes is: ", getElement()!=null ? getElement().getAttributes() : null);	//G***del
-Log.trace("getAttributes() is: ", getAttributes());	//G***del
-*/
 		final AttributeSet attributeSet=getAttributes();	//get our attributes
 		if(attributeSet!=null)	//if we have attributes
 		{
-//G***del Log.trace("*****Inside XMLBlockView.setPropertiesFromAttributes() for element: "+XMLStyleConstants.getXMLElementName(attributeSet));  //G***del
-			setBackgroundColor(XMLCSSStyleUtilities.getBackgroundColor(attributeSet));	//set the background color from the attributes
-//G***del Log.trace("New background color: "+getBackgroundColor());
+//TODO del Log.trace("*****Inside XMLBlockView.setPropertiesFromAttributes() for element: "+XMLStyleConstants.getXMLElementName(attributeSet));  //TODO del
+			setBackgroundColor(XMLCSSStyles.getBackgroundColor(attributeSet));	//set the background color from the attributes
+//TODO del Log.trace("New background color: "+getBackgroundColor());
 
 			final Document document=getDocument();	//get our document
 			if(document instanceof StyledDocument)		//if this is a styled document
 			{
 				final StyledDocument styledDocument=(StyledDocument)document;	//cast the document to a styled document
 				final Font font=styledDocument.getFont(attributeSet);	//let the document get the font from the attributes
-//G***find some way to cache the font in the attributes
+//TODO find some way to cache the font in the attributes
 
-		  //G***we may want to set the insets in setPropertiesFromAttributes(); for
+		  //TODO we may want to set the insets in setPropertiesFromAttributes(); for
 			//percentages, getPreferredeSpan(), etc. will have to look at the preferred
 			//span and make calculations based upon the percentages
-			//G***probably have some other external helper class that sets the margins based upon the attributes
-			final short marginTop=(short)Math.round(XMLCSSStyleUtilities.getMarginTop(attributeSet)); //get the top margin from the attributes
-			final short marginLeft=(short)Math.round(XMLCSSStyleUtilities.getMarginLeft(attributeSet, font)); //get the left margin from the attributes
+			//TODO probably have some other external helper class that sets the margins based upon the attributes
+			final short marginTop=(short)Math.round(XMLCSSStyles.getMarginTop(attributeSet)); //get the top margin from the attributes
+			final short marginLeft=(short)Math.round(XMLCSSStyles.getMarginLeft(attributeSet, font)); //get the left margin from the attributes
 Log.trace("margin left:", marginLeft);
-			final short marginBottom=(short)Math.round(XMLCSSStyleUtilities.getMarginBottom(attributeSet)); //get the bottom margin from the attributes
-			final short marginRight=(short)Math.round(XMLCSSStyleUtilities.getMarginRight(attributeSet, font)); //get the right margin from the attributes
-		  setInsets(marginTop, marginLeft, marginBottom, marginRight);	//G***fix; testing
+			final short marginBottom=(short)Math.round(XMLCSSStyles.getMarginBottom(attributeSet)); //get the bottom margin from the attributes
+			final short marginRight=(short)Math.round(XMLCSSStyles.getMarginRight(attributeSet, font)); //get the right margin from the attributes
+		  setInsets(marginTop, marginLeft, marginBottom, marginRight);	//TODO fix; testing
 			}
 		}
 		cacheSynchronized=true;	//show that we now have the most up-to-date information in the cache

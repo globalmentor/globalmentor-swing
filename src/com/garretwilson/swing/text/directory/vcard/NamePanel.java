@@ -1,11 +1,25 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.beans.*;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.event.*;
 import com.garretwilson.swing.*;
 import com.globalmentor.java.*;
 import com.globalmentor.text.directory.vcard.*;
@@ -29,11 +43,11 @@ public class NamePanel extends BasicVCardPanel
 	
 	/**Example honorific prefixes for populating the combo box.*/
 	protected final static String[] HONORIFIC_PREFIX_EXAMPLES=new String[]
-			{"Dr.", "Miss.", "Mr.", "Mrs.", "Ms.", "Prof."};	//G***i18n
+			{"Dr.", "Miss.", "Mr.", "Mrs.", "Ms.", "Prof."};	//TODO i18n
 
 	/**Example honorific suffixes for populating the combo box.*/
 	protected final static String[] HONORIFIC_SUFFIX_EXAMPLES=new String[]
-			{"I", "II", "III", "Jr.", "Sr."};	//G***i18n
+			{"I", "II", "III", "Jr.", "Sr."};	//TODO i18n
 
 	/**The label of the family name text field.*/
 	private final JLabel familyNameLabel;
@@ -170,39 +184,27 @@ public class NamePanel extends BasicVCardPanel
 	{
 		super.initializeUI();	//do the default user interface initialization
 		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(SelectLanguageAction.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
-		familyNameLabel.setText("Family");	//G***i18n
+		familyNameLabel.setText("Family");	//TODO i18n
 		familyNameTextField.setColumns(8);
 		familyNameTextField.getDocument().addDocumentListener(getModifyDocumentListener());
-		givenNameLabel.setText("Given Name");	//G***i18n
+		givenNameLabel.setText("Given Name");	//TODO i18n
 		givenNameTextField.setColumns(8);
 		givenNameTextField.getDocument().addDocumentListener(getModifyDocumentListener());
-		additionalNameLabel.setText("Additional");	//G***i18n
+		additionalNameLabel.setText("Additional");	//TODO i18n
 		additionalNameTextField.setColumns(8);
 		additionalNameTextField.getDocument().addDocumentListener(getModifyDocumentListener());
-		honorificPrefixLabel.setText("Prefix");	//G***i18n
+		honorificPrefixLabel.setText("Prefix");	//TODO i18n
 		honorificPrefixComboBox.setEditable(true);
 		honorificPrefixComboBox.setModel(new DefaultComboBoxModel(HONORIFIC_PREFIX_EXAMPLES));	//set up the example honorific prefixes
 		honorificPrefixComboBox.setPrototypeDisplayValue("Prof.");
 		honorificPrefixComboBox.addActionListener(getModifyActionListener());
-		honorificSuffixLabel.setText("Suffix");	//G***i18n
+		honorificSuffixLabel.setText("Suffix");	//TODO i18n
 		honorificSuffixComboBox.setEditable(true);
 		honorificSuffixComboBox.setModel(new DefaultComboBoxModel(HONORIFIC_SUFFIX_EXAMPLES));	//set up the example honorific suffixes
 		honorificSuffixComboBox.setPrototypeDisplayValue("Sr.");
 		honorificSuffixComboBox.addActionListener(getModifyActionListener());
 		getSelectLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectLanguageButton=createSelectLanguageButton(getSelectLanguageAction());
-/*G***del when works
-		add(honorificPrefixLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(honorificPrefixComboBox, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(givenNameLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(givenNameTextField, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(additionalNameLabel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(additionalNameTextField, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(familyNameLabel, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(familyNameTextField, new GridBagConstraints(2, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(honorificSuffixLabel, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(honorificSuffixComboBox, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-*/
 		add(honorificPrefixLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(honorificPrefixComboBox, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(givenNameLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));

@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import java.applet.*;
@@ -12,7 +28,7 @@ import com.globalmentor.java.Strings;
 import com.globalmentor.log.Log;
 import com.globalmentor.net.URIs;
 
-/**A view that displays an applet. Implements <code>AppletStub</code> so
+/**A view that displays an applet. Implements {@link AppletStub} so
 	that it can manage requests to the environment made by the applet.
 	A class must be derived from this abstract class that correctly sets the
 	class name, as well as correctly sets the correct width and height.
@@ -20,9 +36,9 @@ import com.globalmentor.net.URIs;
 	loadParameters() to correctly set the applet parameters, although it is
 	conceivable that a particular implementation will not need parameters for the
 	associated applet to function correctly.
-@see #setClassName
-@see #setWidth
-@see #setWidth
+@see #setClassName(String)
+@see #setWidth(int)
+@see #setWidth(int)
 @author Garret Wilson
 */
 public abstract class XMLAbstractAppletView extends XMLAbstractComponentView implements AppletStub
@@ -55,7 +71,7 @@ public abstract class XMLAbstractAppletView extends XMLAbstractComponentView imp
 		protected void setClassHRef(final String newClassHRef)
 		{
 		  classHRef=newClassHRef; //store the class href
-			final String classPostfix=".class"; //the ending postfix the classid URI may have G***use a constant here
+			final String classPostfix=".class"; //the ending postfix the classid URI may have TODO use a constant here
 		  final String className=Strings.trimEnd(classHRef, classPostfix);  //remove the ".class" postfix if present
 		  setClassName(className);  //set the class name we constructed
 		}
@@ -121,7 +137,7 @@ public abstract class XMLAbstractAppletView extends XMLAbstractComponentView imp
 	/**Starts the applet, if the applet is not yet started.
 	@see #isActive
 	*/
-	protected synchronized void start() //G***maybe change this to setActive()
+	protected synchronized void start() //TODO maybe change this to setActive()
 	{
 		if(!isActive()) //if the applet isn't started
 		{
@@ -129,11 +145,11 @@ public abstract class XMLAbstractAppletView extends XMLAbstractComponentView imp
 			if(applet!=null) //if we have an applet
 			{
 				active=true;  //show that the applet is active
-/*G***del
-final Dimension d3=fApplet.getSize();  //G***del; testing
+/*TODO del
+final Dimension d3=fApplet.getSize();  //TODO del; testing
 Log.trace("Applet size before start() width: "+d3.getWidth()+" height: "+d3.getHeight());
 */
-//G***del System.out.println("Applet size before start() width: "+applet.getSize().getWidth()+" height: "+applet.getSize().getHeight());  //G***del
+//TODO del System.out.println("Applet size before start() width: "+applet.getSize().getWidth()+" height: "+applet.getSize().getHeight());  //TODO del
 				applet.start(); //inform the applet that we're starting it
 			}
 		}
@@ -193,9 +209,9 @@ Log.trace("Applet size before start() width: "+d3.getWidth()+" height: "+d3.getH
 	{
 		super.setShowing(showing);  //update showing in the parent class to actually show or hide the parent class
 		if(showing) //if we should be showing the applet
-			start(); //start the applet if needed G***probably change to setActive()
+			start(); //start the applet if needed TODO probably change to setActive()
 		else  //if we shouldn't be showing the applet
-			stop(); //stop the applet if needed G***probably change to setActive()
+			stop(); //stop the applet if needed TODO probably change to setActive()
 	}
 
 	/**Sets the parent of the view.
@@ -209,7 +225,7 @@ Log.trace("Applet size before start() width: "+d3.getWidth()+" height: "+d3.getH
 	public void setParent(View parent)
 	{
 		if((parent!=null) && !isParametersLoaded()) //if we've been given a parent, and we haven't loaded the parameters, yet
-		  loadParameters(); //load parameters; do this *before* we let the super class set the parent, because that will create an applet which might try to get the parameters G***we might even want to load the parameters upon creation of the view
+		  loadParameters(); //load parameters; do this *before* we let the super class set the parent, because that will create an applet which might try to get the parameters TODO we might even want to load the parameters upon creation of the view
 		super.setParent(parent);  //let the super class set the parent
 	}
 
@@ -223,64 +239,64 @@ Log.trace("Applet size before start() width: "+d3.getWidth()+" height: "+d3.getH
 		has been set.
 	@return An applet meant for displaying, or if an error occurs loading the
 		applet, a component indicatin the error.
-///G***fix	@exception ClassCastException Thrown if the class returned by
+///TODO fix	@exception ClassCastException Thrown if the class returned by
 	@see #getClass
 	@see #getClassName
 	*/
-	protected Component createComponent()//G***fix throws ClassCastException
+	protected Component createComponent()//TODO fix throws ClassCastException
 	{
 		try
 		{
 		  final Class appletClass=getClass(getClassName());  //get the applet class name, and load that class
 		  final Object object=appletClass.newInstance();  //create a new instance of the applet class
-		  assert object instanceof Applet : object.getClass().getName()+" is not an applet.";  //G***fix
+		  assert object instanceof Applet : object.getClass().getName()+" is not an applet.";  //TODO fix
 		  final Applet applet=(Applet)object; //cast the object to an applet
 		  applet.setStub(this); //tell the applet that it can use this view as the applet stub
-//G***del Log.trace("applet setting size: currentWidth: "+currentWidth+" currentHeight: "+currentHeight);
-		  applet.setSize(getCurrentWidth(), getCurrentHeight());  //set the applet's current width and height to the best we know so far G***testing; this is probably not correct -- who know what the size will be at this point
-//G***del System.out.println("current bounds when creating applet: "+getBounds()); //G***del
-//G***del		  applet.setBounds(getBounds());  //G***testing
-//G***del		  applet.doLayout(); //tell the applet to lay itself out
-/*G***del
-final Dimension d=fApplet.getSize();  //G***del; testing
+//TODO del Log.trace("applet setting size: currentWidth: "+currentWidth+" currentHeight: "+currentHeight);
+		  applet.setSize(getCurrentWidth(), getCurrentHeight());  //set the applet's current width and height to the best we know so far TODO testing; this is probably not correct -- who know what the size will be at this point
+//TODO del System.out.println("current bounds when creating applet: "+getBounds()); //TODO del
+//TODO del		  applet.setBounds(getBounds());  //TODO testing
+//TODO del		  applet.doLayout(); //tell the applet to lay itself out
+/*TODO del
+final Dimension d=fApplet.getSize();  //TODO del; testing
 Log.trace("Applet size after setting size width: "+d.getWidth()+" height: "+d.getHeight());
 Log.trace("applet: initializing");
 */
-//G***del System.out.println("applet size after applet.setSize(): "+applet.getSize().getWidth()+" height: "+applet.getSize().getHeight());  //G***del
-//G***del		  applet.validate(); //tell the component to validate itself, laying out its child components if needed G***testing
-//G***del			applet.doLayout();  //G***testing
+//TODO del System.out.println("applet size after applet.setSize(): "+applet.getSize().getWidth()+" height: "+applet.getSize().getHeight());  //TODO del
+//TODO del		  applet.validate(); //tell the component to validate itself, laying out its child components if needed TODO testing
+//TODO del			applet.doLayout();  //TODO testing
 		  try
 		  {
-//G***del System.out.println("applet size before applet.init(): "+applet.getSize().getWidth()+" height: "+applet.getSize().getHeight());  //G***del
+//TODO del System.out.println("applet size before applet.init(): "+applet.getSize().getWidth()+" height: "+applet.getSize().getHeight());  //TODO del
 				applet.init();  //initialize the applet
-//G***del System.out.println("applet size after applet.init(): "+applet.getSize().getWidth()+" height: "+applet.getSize().getHeight());  //G***del
+//TODO del System.out.println("applet size after applet.init(): "+applet.getSize().getWidth()+" height: "+applet.getSize().getHeight());  //TODO del
 				applet.doLayout();  //layout the applet after initialization
 		  }
 			catch(Throwable throwable)  //if any errors are thrown during applet initialization
 			{
-Log.error(throwable);		  //G***fix; store errors in console of some sort
+Log.error(throwable);		  //TODO fix; store errors in console of some sort
 			}
-/*G***del
-final Dimension d2=fApplet.getSize();  //G***del; testing
+/*TODO del
+final Dimension d2=fApplet.getSize();  //TODO del; testing
 Log.trace("Applet size after init() width: "+d2.getWidth()+" height: "+d2.getHeight());
 */
-//G***del		  applet.setVisible(false); //don't show
+//TODO del		  applet.setVisible(false); //don't show
 		  return applet; //return the applet we created
 		}
 		catch (ClassNotFoundException e)  //if the applet class could not be loaded
 		{
-Log.error(e);		  //G***fix; store errors in console of some sort, as well as in text for the JTextComponent
+Log.error(e);		  //TODO fix; store errors in console of some sort, as well as in text for the JTextComponent
 	  }
 	  catch(IllegalAccessException e) //if we're not allowed to load the applet class
 		{
-Log.error(e);		  //G***fix; store errors in console of some sort, as well as in text for the JTextComponent
+Log.error(e);		  //TODO fix; store errors in console of some sort, as well as in text for the JTextComponent
 		}
 		catch(InstantiationException e) //if we couldn't create the applet
 		{
-Log.error(e);		  //G***fix; store errors in console of some sort, as well as in text for the JTextComponent
+Log.error(e);		  //TODO fix; store errors in console of some sort, as well as in text for the JTextComponent
 		}
-//G***fix	return getUnloadableRepresentation();
-		return new JLabel("Missing applet");  //G***fix
+//TODO fix	return getUnloadableRepresentation();
+		return new JLabel("Missing applet");  //TODO fix
 	}
 
 	/**Get a <code>Class</code> object to use for loading the applet.
@@ -292,7 +308,7 @@ Log.error(e);		  //G***fix; store errors in console of some sort, as well as in 
 	*/
 	protected Class getClass(final String className) throws ClassNotFoundException
 	{
-		final URI baseURI=XMLStyleUtilities.getBaseURI(getAttributes());  //get the defined base URI, if any
+		final URI baseURI=XMLStyles.getBaseURI(getAttributes());  //get the defined base URI, if any
 		//create a class loader to load the class from our document, with our document's class loaders as a parent class loader
 		final XMLClassLoader xmlClassLoader=new XMLClassLoader((XMLDocument)getDocument(), getDocument().getClass().getClassLoader(), baseURI);
 		return xmlClassLoader.loadClass(className);  //ask the class loader to load the class
@@ -317,11 +333,11 @@ Log.error(e);		  //G***fix; store errors in console of some sort, as well as in 
 	{
 		try
 		{ 
-			return XMLStyleUtilities.getBaseURI(getAttributes()).toURL();  //get the defined base URL, if any
+			return XMLStyles.getBaseURI(getAttributes()).toURL();  //get the defined base URL, if any
 		}
 		catch(MalformedURLException malformedURLException)  //if the resulting URL is malformed
 		{
-			Log.warn(malformedURLException);  //G***fix to log to a Java console
+			Log.warn(malformedURLException);  //TODO fix to log to a Java console
 			return null;  //show that we can't determine the codebase
 		}
 	}
@@ -333,17 +349,17 @@ Log.error(e);		  //G***fix; store errors in console of some sort, as well as in 
 	{
 		try
 		{
-			final URI codebaseURI=URIs.createURI(XMLStyleUtilities.getBaseURI(getAttributes()), getClassHRef());	//the codebase is the URL of the class relative to the document base
+			final URI codebaseURI=URIs.createURI(XMLStyles.getBaseURI(getAttributes()), getClassHRef());	//the codebase is the URL of the class relative to the document base
 			return codebaseURI.toURL();	//convert the URI to a URL			
 		}
 		catch(URISyntaxException uriSyntaxException)  //if the resulting URI is not syntactically correct
 		{
-			Log.warn(uriSyntaxException);  //G***fix to log to a Java console
+			Log.warn(uriSyntaxException);  //TODO fix to log to a Java console
 			return null;  //show that we can't determine the codebase
 		}
 		catch(MalformedURLException malformedURLException)  //if the resulting URL is malformed
 		{
-			Log.warn(malformedURLException);  //G***fix to log to a Java console
+			Log.warn(malformedURLException);  //TODO fix to log to a Java console
 			return null;  //show that we can't determine the codebase
 		}
 	}
@@ -355,14 +371,14 @@ Log.error(e);		  //G***fix; store errors in console of some sort, as well as in 
 	*/
 	public String getParameter(String name)
 	{
-/*G***del
+/*TODO del
 Log.trace("getParameter(): "+name);
 Log.trace("Current size width: "+currentWidth+" height: "+currentHeight);
-final Dimension d=fApplet.getSize();  //G***del; testing
+final Dimension d=fApplet.getSize();  //TODO del; testing
 Log.trace("Applet size width: "+d.getWidth()+" height: "+d.getHeight());
 */
 		final Parameter parameter=getParameterObject(name); //try to get the requested parameter object
-//G***del Log.trace("Found param: "+parameter); //G***del
+//TODO del Log.trace("Found param: "+parameter); //TODO del
 		return parameter!=null ? parameter.getValue() : null; //if we found a parameter, return the value, else return null
 	}
 
@@ -371,7 +387,7 @@ Log.trace("Applet size width: "+d.getWidth()+" height: "+d.getHeight());
 	*/
 	public AppletContext getAppletContext()
 	{
-//G***del Log.trace("getting applet context");  //G***del
+//TODO del Log.trace("getting applet context");  //TODO del
 		final Container container=getContainer(); //get the container in which this view is embedded
 		if(container instanceof AppletContext)  //if the container is an applet context (XMLTextView is an AppletContext, and that should be what we're embedded in)
 		{
@@ -387,8 +403,8 @@ Log.trace("Applet size width: "+d.getWidth()+" height: "+d.getHeight());
 	*/
 	public void appletResize(int width, int height)
 	{
-//G***del Log.trace("appletResize() width: "+width+" height: "+height);  //G***del
-		//G***fix
+//TODO del Log.trace("appletResize() width: "+width+" height: "+height);  //TODO del
+		//TODO fix
 	}
 
 	/**Internal class to manage parameters for this applet.*/

@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml.xeb;
 
 import java.io.*;
@@ -11,27 +27,16 @@ import org.xml.sax.SAXException;
 
 import com.garretwilson.model.ResourceModel;
 
-import com.garretwilson.swing.ListListModel;
 import com.garretwilson.swing.event.*;
-import static com.garretwilson.swing.text.rdf.RDFStyleUtilities.*;
 import static com.globalmentor.net.ContentTypeConstants.*;
-import static com.globalmentor.rdf.RDFResources.*;
 import static com.globalmentor.rdf.xeb.RDFXEB.*;
-import static com.globalmentor.urf.maqro.MAQRO.*;
 
 import com.garretwilson.swing.text.xml.*;
-import com.garretwilson.swing.text.xml.XMLEditorKit.ContentData;
-import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
 import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
 
 import com.globalmentor.io.*;
 import com.globalmentor.log.Log;
-import com.globalmentor.marmot.Marmot;
-import com.globalmentor.model.NameValuePair;
-import com.globalmentor.net.ContentType;
-import com.globalmentor.net.ContentTypeConstants;
-import com.globalmentor.net.Resource;
-import com.globalmentor.net.URIs;
+import com.globalmentor.net.*;
 import com.globalmentor.rdf.*;
 import com.globalmentor.rdf.xeb.*;
 import com.globalmentor.rdf.xpackage.*;
@@ -96,60 +101,60 @@ public class XEBEditorKit extends XHTMLEditorKit	//TODO eventually go back to de
 		 */
 	public void read(Reader in, Document doc, int pos) throws IOException, BadLocationException
 	{
-/*G***del
+/*TODO del
 		if(doc instanceof com.garretwilson.swing.text.xml.oeb.OEBDocument)	//make sure this is a document we know how to work with
 		{
-//G***fix			final XMLProcessor xmlProcessor=new XMLProcessor(in);	//create an XML processor
+//TODO fix			final XMLProcessor xmlProcessor=new XMLProcessor(in);	//create an XML processor
 			try
 			{
 				final OEBPublication publication=new OEBPublication();
-				publication.load(in);	//G****testing
+				publication.load(in);	//TODO *testing
 					//create an array of OEB XML documents
 				final com.garretwilson.text.xml.XMLDocument[] xmlDocumentArray=new com.garretwilson.text.xml.XMLDocument[publication.getSpineList().size()];
 				for(int i=0; i<publication.getSpineList().size(); ++i)	//look at each item in the spine
 				{
 					final OEBItem item=(OEBItem)publication.getSpineList().get(i);	//get a reference to this item
-System.out.println("Loading OEB Item: "+item.getHRef());	//G***del
+System.out.println("Loading OEB Item: "+item.getHRef());	//TODO del
 					item.load();	//make sure this item is loaded
-					tidyOEBXMLDocument((com.garretwilson.text.xml.XMLDocument)item.getData());	//tidy up the document (an important step if the document has text directly in the body and such) G***test, comment
-					xmlDocumentArray[i]=(com.garretwilson.text.xml.XMLDocument)item.getData();	//G***store this in a variable to speed things up, comment
+					tidyOEBXMLDocument((com.garretwilson.text.xml.XMLDocument)item.getData());	//tidy up the document (an important step if the document has text directly in the body and such) TODO test, comment
+					xmlDocumentArray[i]=(com.garretwilson.text.xml.XMLDocument)item.getData();	//TODO store this in a variable to speed things up, comment
 				}
 
-							//G***testing
-				((com.garretwilson.swing.text.xml.oeb.OEBDocument)doc).insert(0, xmlDocumentArray);	//G***testing
+							//TODO testing
+				((com.garretwilson.swing.text.xml.oeb.OEBDocument)doc).insert(0, xmlDocumentArray);	//TODO testing
 */
-/*G***fix
+/*TODO fix
 				for(int i=0; i<publication.getSpineList().size(); ++i)	//look at each item in the spine
 				{
 					final OEBItem item=(OEBItem)publication.getSpineList().get(i);	//get a reference to this item
-					((com.garretwilson.swing.text.xml.XMLDocument)doc).insert(doc.getLength(), (com.garretwilson.text.xml.XMLDocument)item.getData());	//G***testing; comment
+					((com.garretwilson.swing.text.xml.XMLDocument)doc).insert(doc.getLength(), (com.garretwilson.text.xml.XMLDocument)item.getData());	//TODO testing; comment
 				}
 */
 
 
 
-/*G***fix
+/*TODO fix
 				final com.garretwilson.text.xml.XMLDocument xmlDocument=xmlProcessor.parseDocument();	//parse the document
 				xmlDocument.getStyleSheetList().add(new DefaultOEBCSSStyleSheet());	//add the default stylesheet for OEB
-						//G***do a normalize() somewhere here
+						//TODO do a normalize() somewhere here
 				tidyOEBXMLDocument(xmlDocument);	//tidy up the document (an important step if the document has text directly in the body and such)
 				final XMLCSSProcessor cssProcessor=new XMLCSSProcessor();	//create a new CSS processor
 				cssProcessor.parseStyles(xmlDocument);	//parse this document's styles
-						//G***check to make sure the styles are valid OEB styles somewhere here
+						//TODO check to make sure the styles are valid OEB styles somewhere here
 				cssProcessor.applyxStyles(xmlDocument);	//apply the styles
-//G***del			xmlRoot.dump();	//G***check, comment
-System.out.println("Finished with file.");	//G***del
-				((com.garretwilson.swing.text.xml.XMLDocument)doc).create(xmlDocument);	//create a new document with this OEB XML document tree G***probably change to insert
+//TODO del			xmlRoot.dump();	//TODO check, comment
+System.out.println("Finished with file.");	//TODO del
+				((com.garretwilson.swing.text.xml.XMLDocument)doc).create(xmlDocument);	//create a new document with this OEB XML document tree TODO probably change to insert
 */
-/*G***del
+/*TODO del
 			}
 			catch(Exception ex)
 			{
 				System.out.println(ex.getMessage());
-			}	//G***fix
+			}	//TODO fix
 */
 
-/*G***fix
+/*TODO fix
 			HTMLDocument hdoc = (HTMLDocument) doc;
 			Parser p = getParser();
 			if (p == null) {
@@ -164,13 +169,13 @@ System.out.println("Finished with file.");	//G***del
 			p.parse(in, receiver, (ignoreCharset == null) ? false : ignoreCharset.booleanValue());
 			receiver.flush();
 */
-/*G***del
+/*TODO del
 		}
 		else	//if this isn't an XML document
 		{
 */
 			super.read(in, doc, pos);	//let our parent read the document
-//G***del		}
+//TODO del		}
 	}
 
 	/**Inserts content from the given stream which is expected to be in a format
@@ -218,7 +223,7 @@ System.out.println("Finished with file.");	//G***del
 	protected void read(final RDF rdf, final XMLDocument swingXMLDocument, int pos) throws IOException, BadLocationException
 	{
 Log.trace(RDFResources.toString(rdf));
-//G***del if not needed			final URL publicationURL=oebDocument.getBaseURL();  //get the base URL from the document G***what if we don't get a URL back?
+//TODO del if not needed			final URL publicationURL=oebDocument.getBaseURL();  //get the base URL from the document TODO what if we don't get a URL back?
 //TODO del if not needed		swingXMLDocument.setRDF(rdf); //set the RDF used to describe the resources
 	  final Publication publication=(Publication)RDFResources.getResourceByType(rdf, XEB_NAMESPACE_URI, BOOK_CLASS_NAME);	//get the publication from the data model
 	  if(publication!=null)	//if there is a book
@@ -250,12 +255,12 @@ Log.trace(RDFResources.toString(rdf));
 			final ContentData<?>[] contentDataArray=new ContentData[spineItemCount];	//create an array to hold each content data
 			for(int i=0; i<spineItemCount; ++i)	//look at each item in the spine
 			{
-//G***del Log.trace("OEBEditorKit.read() Getting item: "+i+" of "+publication.getSpineList().size());
+//TODO del Log.trace("OEBEditorKit.read() Getting item: "+i+" of "+publication.getSpineList().size());
 				final RDFResource item=itemList.get(i);	//get a reference to this item
 				final String itemHRef=XPackage.getLocationHRef(item);  //get the item's href
 				if(itemHRef!=null)	//if this item has an href
 				{
-					fireMadeProgress(new ProgressEvent(this, READ_TASK, "Loading item: "+itemHRef, i, spineItemCount));	//G***testing i18n
+					fireMadeProgress(new ProgressEvent(this, READ_TASK, "Loading item: "+itemHRef, i, spineItemCount));	//TODO testing i18n
 					try
 					{
 						final URI itemURI=swingXMLDocument.getResourceURI(itemHRef); //get the item's URI
@@ -325,7 +330,7 @@ Log.trace(RDFResources.toString(rdf));
 			final int spineItemCount=spine.size(); //find out how many spine items there are
 			for(int i=0; i<spineItemCount; ++i)	//look at each item in the spine
 			{
-//G***del Log.trace("OEBEditorKit.read() Getting item: "+i+" of "+publication.getSpineList().size());
+//TODO del Log.trace("OEBEditorKit.read() Getting item: "+i+" of "+publication.getSpineList().size());
 				final RDFResource item=spine.get(i);	//get a reference to this item
 				if(item instanceof Binding)	//if this item is a sub-binding
 				{
@@ -336,7 +341,7 @@ Log.trace(RDFResources.toString(rdf));
 					final String itemHRef=XPackageUtilities.getLocationHRef(item);  //get the item's href
 					if(itemHRef!=null)	//if this item has an href
 					{
-						fireMadeProgress(new ProgressEvent(this, READ_TASK, "Loading item: "+itemHRef, i, spineItemCount));	//G***testing i18n
+						fireMadeProgress(new ProgressEvent(this, READ_TASK, "Loading item: "+itemHRef, i, spineItemCount));	//TODO testing i18n
 						try
 						{
 							final URI itemURI=swingXMLDocument.getResourceURI(itemHRef); //get the item's URI

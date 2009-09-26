@@ -1,37 +1,38 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import java.awt.*;
 import javax.swing.SizeRequirements;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.*;
-/*G***del
-import javax.swing.text.Element;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.Element;
-import javax.swing.text.TableView;
-import javax.swing.text.View;
-import javax.swing.text.ViewFactory;
-*/
-import java.util.*; //G***del if not needed
-//G***del import com.garretwilson.swing.text.TestTableView; //G***del maybe
-import com.garretwilson.swing.text.AnonymousElement;
+import java.util.*;
 import com.garretwilson.swing.text.DefaultViewFactory;
-import static com.garretwilson.swing.text.SwingTextUtilities.*;
-import static com.garretwilson.swing.text.ViewUtilities.*;
-import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
+import static com.garretwilson.swing.text.SwingText.*;
+import com.garretwilson.swing.text.xml.css.XMLCSSStyles;
 import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
-//G***del import com.garretwilson.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
-
 import com.globalmentor.log.Log;
 import static com.globalmentor.text.xml.stylesheets.css.XMLCSS.*;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 
-import javax.swing.text.html.HTML;  //G***del
+import javax.swing.text.html.HTML;
 import org.w3c.dom.css.*;
 
 /**Table view for elements with the CSS display attribute "table".
-Modified from javax.swing.text.html.TableView.
+Modified from {@link javax.swing.text.html.TableView} Copyright 2006 Sun Microsystems, Inc.
 @author Garret Wilson
 @see javax.swing.text.TableView
 @see javax.swing.text.html.TableView
@@ -39,16 +40,7 @@ Modified from javax.swing.text.html.TableView.
 class XMLTableView extends TableView implements Cloneable
 {
 
-/*G***del
-  public void setSize(float width, float height)	//G***del; testing tableflow
-	{
-System.out.println("XMLTableView.setSize(), width: "+width+" height: "+height);	//G***del
-		super.setSize(width, height);
-	}
-*/
-
-
-	public int testGetViewCount() {return getViewCount();}  //G***del; testing
+	public int testGetViewCount() {return getViewCount();}  //TODO del; testing
 
 	public int testGetSpan(int axis, int row) {return getSpan(axis, row);}
 
@@ -60,7 +52,7 @@ System.out.println("XMLTableView.setSize(), width: "+width+" height: "+height);	
 	{
 		super(element);	//construct the parent class
 
-//G***del	super(element, View.Y_AXIS);
+//TODO del	super(element, View.Y_AXIS);
 	rows = new Vector();
 	gridValid = false;
 
@@ -80,14 +72,14 @@ System.out.println("XMLTableView.setSize(), width: "+width+" height: "+height);	
 	public void setParent(View parent)
 	{
 		super.setParent(parent);	//set the parent normally
-/*G***fix or del
+/*TODO fix or del
 			//if there are children, indicate preference changes and notify children for correct flowing (newswing)
 		if ((parent!=null) && (getViewCount()!=0))	//if there is a parent view and there are children (newswing)
 		{
-//G***del Log.trace("Changing the table view preferences.");	//G***del
+//TODO del Log.trace("Changing the table view preferences.");	//TODO del
 
 		  preferenceChanged(null, true, true);	//show that our preferences have changed
-//G***del Log.trace("This table has "+getViewCount()+" children; now setting their parents.");	//G***del
+//TODO del Log.trace("This table has "+getViewCount()+" children; now setting their parents.");	//TODO del
 			for(int i=0; i<getViewCount(); ++i)	//look at each child view
 			{
 				getView(i).setParent(this);	//tell it which parent it has (this function will also notify that its preferences have changed)
@@ -98,32 +90,8 @@ System.out.println("XMLTableView.setSize(), width: "+width+" height: "+height);	
 	}
 
 
-//G***del	public static XMLTableRowView createXMLTableRowView(Element elem) {return new XMLTableRowView(elem);}	//G***testing; comment
+//TODO del	public static XMLTableRowView createXMLTableRowView(Element elem) {return new XMLTableRowView(elem);}	//TODO testing; comment
 
-
-		/**
-		 * Creates a new table row.
-		 *
-		 * @param elem an element
-		 * @return the row
-		 */
-/*G***del if not needed
-	protected TableRow createTableRow(Element elem) {
-	// PENDING(prinz) need to add support for some of the other
-	// elements, but for now just ignore anything that is not
-	// a TR.
-	Object o = elem.getAttributes().getAttribute(StyleConstants.NameAttribute );
-	if (o == HTML.Tag.TR) {
-			return new RowView(elem);
-	}
-	return null;
-		}
-
-		protected StyleSheet getStyleSheet() {
-	HTMLDocument doc = (HTMLDocument) getDocument();
-	return doc.getStyleSheet();
-		}
-*/
 
 		/**
 		 * Update any cached values that come from attributes.
@@ -131,17 +99,7 @@ System.out.println("XMLTableView.setSize(), width: "+width+" height: "+height);	
 	/**Updates our cached CSS property values from the attributes.*/
 	protected void setPropertiesFromAttributes()
 	{
-/*G***fix
-	StyleSheet sheet = getStyleSheet();
-	attr = sheet.getViewAttributes(this);
-	painter = sheet.getBoxPainter(attr);
-	if (attr != null) {
-			setInsets((short) painter.getInset(TOP, this),
-					(short) painter.getInset(LEFT, this),
-				(short) painter.getInset(BOTTOM, this),
-					(short) painter.getInset(RIGHT, this));
-	}
-*/
+//TODO fix
 	}
 
 	/**Calculates the requirements of the table along the minor axis (i.e. the major
@@ -151,32 +109,14 @@ System.out.println("XMLTableView.setSize(), width: "+width+" height: "+height);	
 	@param axis The axis for calculating requirements.
 	@param r The requirements.
 	*/
-/*G***fix
+/*TODO fix
 	protected SizeRequirements calculateMinorAxisRequirements(int axis, SizeRequirements r)
 	{
-		final SizeRequirements superRequirements=super.calculateMinorAxisRequirements(axis, r);	//get the parent class requirements
-//G***fix	adjustSizeForCSS(axis, rr);
-		return superRequirements;	//return our requirements
 	}
 */
 
-/*G***fix
+/*TODO fix
 		void adjustSizeForCSS(int axis, SizeRequirements r) {
-	if (axis == X_AXIS) {
-			Object widthValue = attr.getAttribute(CSS.Attribute.WIDTH);
-			if (widthValue != null) {
-		int width = (int) ((CSS.LengthValue)widthValue).getValue();
-		r.minimum = r.preferred = width;
-		r.maximum = Math.max(r.maximum, width);
-			}
-	} else {
-			Object heightValue = attr.getAttribute(CSS.Attribute.HEIGHT);
-			if (heightValue != null) {
-		int height = (int) ((CSS.LengthValue)heightValue).getValue();
-		r.minimum = r.preferred = height;
-		r.maximum = Math.max(r.maximum, height);
-			}
-	}
 		}
 */
 
@@ -189,30 +129,30 @@ System.out.println("XMLTableView.setSize(), width: "+width+" height: "+height);	
 	*/
 	ViewFactory createViewFactory(ViewFactory defaultViewFactory)
 	{
-		return new XMLTableFactory(defaultViewFactory);	//create our own view factory to create table-related views G***don't create this on the fly
+		return new XMLTableFactory(defaultViewFactory);	//create our own view factory to create table-related views TODO don't create this on the fly
 	}
 
 	/* ***View method*** */
 
 
-/*G***fix
+/*TODO fix
     public float getPreferredSpan(int axis) {
-Log.trace("XMLTableView.getPreferredSpan axis: "+axis+" ="+super.getPreferredSpan(axis)); //G***del
+Log.trace("XMLTableView.getPreferredSpan axis: "+axis+" ="+super.getPreferredSpan(axis)); //TODO del
 		return super.getPreferredSpan(axis);	//return the preferred span
 
     }
 */
 
-//G***important all these span methods really need to be fixed; why are the calculated spans getting changed?
+//TODO important all these span methods really need to be fixed; why are the calculated spans getting changed?
 
-    public float getPreferredSpan(int axis) { //G***del; testing
-//G***del Log.trace("XMLTableView.getPreferredSpan axis: "+axis+" ="+super.getPreferredSpan(axis)); //G***del
+    public float getPreferredSpan(int axis) { //TODO del; testing
+//TODO del Log.trace("XMLTableView.getPreferredSpan axis: "+axis+" ="+super.getPreferredSpan(axis)); //TODO del
 
 
 
-		final float span=super.getPreferredSpan(axis);	//G***del
-/*G***fix
-	long min = 0; //G***testing
+		final float span=super.getPreferredSpan(axis);	//TODO del
+/*TODO fix
+	long min = 0; //TODO testing
 	long pref = 0;
 	long max = 0;
 	for (int i = 0; i < columnRequirements.length; i++) {
@@ -224,17 +164,17 @@ Log.trace("XMLTableView.getPreferredSpan axis: "+axis+" ="+super.getPreferredSpa
 return pref;
 */
 
-//G***bring back		return super.getPreferredSpan(axis);	//return the preferred span
+//TODO bring back		return super.getPreferredSpan(axis);	//return the preferred span
 		  return span;
     }
 
     public float getMinimumSpan(int axis) {
 
-//G***del Log.trace("XMLTableView.getMinimum axis: "+axis+" ="+super.getMinimumSpan(axis)); //G***del
+//TODO del Log.trace("XMLTableView.getMinimum axis: "+axis+" ="+super.getMinimumSpan(axis)); //TODO del
 
-		final float span=super.getMinimumSpan(axis);	//G***del
-/*G***fix
-	long min = 0; //G***testing
+		final float span=super.getMinimumSpan(axis);	//TODO del
+/*TODO fix
+	long min = 0; //TODO testing
 	long pref = 0;
 	long max = 0;
 
@@ -246,7 +186,7 @@ return pref;
 	}
 return min;
 */
-//G***bring back		return super.getMinimumSpan(axis);	//return the preferred span
+//TODO bring back		return super.getMinimumSpan(axis);	//return the preferred span
 		  return span;
     }
 
@@ -258,10 +198,10 @@ return min;
 	*/
 	public float getMaximumSpan(int axis)
 	{
-//G***del Log.trace("XMLTableView.getMaximumSpan axis: "+axis+" ="+super.getMaximumSpan(axis)); //G***del
-		final float span=super.getMaximumSpan(axis);	//G***del
-/*G***fix
-	long min = 0; //G***testing
+//TODO del Log.trace("XMLTableView.getMaximumSpan axis: "+axis+" ="+super.getMaximumSpan(axis)); //TODO del
+		final float span=super.getMaximumSpan(axis);	//TODO del
+/*TODO fix
+	long min = 0; //TODO testing
 	long pref = 0;
 	long max = 0;
 	for (int i = 0; i < columnRequirements.length; i++) {
@@ -270,8 +210,8 @@ return min;
 	    pref += req.preferred;
 	    max += req.maximum;
 	}
-//G***bring back		return super.getMaximumSpan(axis);	//return the preferred span
-//G***fix		return getPreferredSpan(axis);	//return the preferred span
+//TODO bring back		return super.getMaximumSpan(axis);	//return the preferred span
+//TODO fix		return getPreferredSpan(axis);	//return the preferred span
 return max;
 */
 		return span;
@@ -282,7 +222,7 @@ return max;
 		 * implemented to multiplex the attributes specified in the
 		 * model with a StyleSheet.
 		 */
-/*G***fix
+/*TODO fix
 		public AttributeSet getAttributes() {
 	return attr;
 		}
@@ -298,7 +238,7 @@ return max;
 		 * @param allocation the allocated region to render into
 		 * @see View#paint
 		 */
-/*G***fix
+/*TODO fix
 		public void paint(Graphics g, Shape allocation) {
 	Rectangle a = (Rectangle) allocation;
 	painter.paint(g, a.x, a.y, a.width, a.height, this);
@@ -314,7 +254,7 @@ return max;
 	*/
 	public void paint(final Graphics graphics, final Shape allocation)
 	{
-//G***delLog.trace("Inside XMLBlockView.paint()");
+//TODO delLog.trace("Inside XMLBlockView.paint()");
 		XMLCSSViewPainter.paint(graphics, allocation, this, getAttributes());	//paint our CSS-specific parts (newswing)
 		super.paint(graphics, allocation);  //do the default painting
 	}
@@ -343,7 +283,7 @@ return max;
 		 * @param f the factory to use to rebuild if the view has children
 		 * @see View#insertUpdate
 		 */
-	//G***comment
+	//TODO comment
 	public void insertUpdate(DocumentEvent e, Shape a, ViewFactory f)
 	{
 		super.insertUpdate(e, a, createViewFactory(f));
@@ -363,7 +303,7 @@ return max;
 		 * @param f the factory to use to rebuild if the view has children
 		 * @see View#removeUpdate
 		 */
-	//G***comment
+	//TODO comment
 	public void removeUpdate(DocumentEvent e, Shape a, ViewFactory f)
 	{
 		super.removeUpdate(e, a, createViewFactory(f));
@@ -383,7 +323,7 @@ return max;
 		 * @param f the factory to use to rebuild if the view has children
 		 * @see View#changedUpdate
 		 */
-	//G***comment
+	//TODO comment
 	public void changedUpdate(DocumentEvent e, Shape a, ViewFactory f)
 	{
 		super.changedUpdate(e, a, createViewFactory(f));
@@ -457,8 +397,8 @@ return max;
 	*/
 	public int getBreakWeight(int axis, float pos, float len)
 	{
-return BadBreakWeight;  //G***testing
-/*G***fix
+return BadBreakWeight;  //TODO testing
+/*TODO fix
 		if(axis==Y_AXIS)	//if they want to break along the Y axis
 			return GoodBreakWeight;	//show that this break spot will work
 		else	//if they want to break along another axis besides the one we know about
@@ -489,11 +429,11 @@ return BadBreakWeight;  //G***testing
 				return this;	//just return ourselves; there's no need to try to break anything
 			else if(getViewCount()>0)	//if we have child views
 			{
-//G***bring back if needed				final XMLBlockView fragmentView=(XMLBlockView)clone();	//create a clone of this view
+//TODO bring back if needed				final XMLBlockView fragmentView=(XMLBlockView)clone();	//create a clone of this view
 				try
 				{
 					final View fragmentView=(View)clone();	//create a clone of this view
-//G***del					((XMLTableView)fragmentView).setSize(getWidth(), getHeight());	//G***testing tableflow
+//TODO del					((XMLTableView)fragmentView).setSize(getWidth(), getHeight());	//TODO testing tableflow
 					float totalSpan=0;	//we'll use this to accumulate the size of each view to be included
 					int startOffset=p0;	//we'll continually update this as we create new child view fragments
 					int childIndex;	//start looking at the first child to find one that can be included in our break
@@ -502,9 +442,9 @@ return BadBreakWeight;  //G***testing
 					{
 						View childView=getView(childIndex);	//get a reference to this child view; we may change this variable if we have to break one of the child views
 
-/*G***del if not needed tableflow
-						childView.preferenceChanged(null, true, true);	//G***del; testing tableflow
-						childView.setSize(getWidth(), getHeight());	//G***testing tableflow
+/*TODO del if not needed tableflow
+						childView.preferenceChanged(null, true, true);	//TODO del; testing tableflow
+						childView.setSize(getWidth(), getHeight());	//TODO testing tableflow
 */
 
 						if(totalSpan+childView.getPreferredSpan(axis)>len)	//if this view is too big to fit into our space
@@ -524,8 +464,8 @@ return BadBreakWeight;  //G***testing
 						{
 							fragmentView.append(childView);	//add this child view, which could have been chopped up into a fragment itself
 
-					fragmentView.preferenceChanged(null, true, true);	//G***del; testing tableflow
-					fragmentView.setSize(getWidth(), getHeight());	//G***testing tableflow
+					fragmentView.preferenceChanged(null, true, true);	//TODO del; testing tableflow
+					fragmentView.setSize(getWidth(), getHeight());	//TODO testing tableflow
 
 
 							totalSpan+=childView.getPreferredSpan(axis);	//show that we've used up more space
@@ -534,8 +474,8 @@ return BadBreakWeight;  //G***testing
 							break;	//stop trying to fit things
 					}
 					fragmentView.setParent(getParent());  //make sure the fragment has the correct parent
-//G***del					((XMLTableView)fragmentView).invalidateGrid();	//G***testing tableflow
-//G***del					fragmentView.preferenceChanged(null, true, true);	//G***testing tableflow
+//TODO del					((XMLTableView)fragmentView).invalidateGrid();	//TODO testing tableflow
+//TODO del					fragmentView.preferenceChanged(null, true, true);	//TODO testing tableflow
 					return fragmentView;	//return the new view that's a fragment of ourselves
 				}
 				catch(CloneNotSupportedException e)	//if cloning isn't supported by this node
@@ -571,14 +511,14 @@ return BadBreakWeight;  //G***testing
 			try
 			{
 				final View fragmentView=(View)clone();	//create a clone of this view
-//G***del				((XMLTableView)fragmentView).setSize(getWidth(), getHeight());	//G***testing tableflow
+//TODO del				((XMLTableView)fragmentView).setSize(getWidth(), getHeight());	//TODO testing tableflow
 				for(int i=0; i<getViewCount(); ++i)	//look at each child view
 				{
 					final View childView=getView(i);	//get a reference to this child view
 
-/*G***del if not needed tableflow
-					childView.preferenceChanged(null, true, true);	//G***del; testing tableflow
-					childView.setSize(getWidth(), getHeight());	//G***testing tableflow
+/*TODO del if not needed tableflow
+					childView.preferenceChanged(null, true, true);	//TODO del; testing tableflow
+					childView.setSize(getWidth(), getHeight());	//TODO testing tableflow
 */
 
 					if(childView.getStartOffset()<p1 && childView.getEndOffset()>p0)	//if this view is within our range
@@ -588,14 +528,14 @@ return BadBreakWeight;  //G***testing
 						fragmentView.append(childView.createFragment(startPos, endPos));	//add a portion (or all) of this child to our fragment
 
 
-					fragmentView.preferenceChanged(null, true, true);	//G***del; testing tableflow
-					fragmentView.setSize(getWidth(), getHeight());	//G***testing tableflow
+					fragmentView.preferenceChanged(null, true, true);	//TODO del; testing tableflow
+					fragmentView.setSize(getWidth(), getHeight());	//TODO testing tableflow
 
 
 					}
 				}
 				fragmentView.setParent(getParent());  //make sure the fragment has the correct parent
-//G***del				fragmentView.preferenceChanged(null, true, true);	//G***testing tableflow
+//TODO del				fragmentView.preferenceChanged(null, true, true);	//TODO testing tableflow
 				return fragmentView;	//return the fragment view we constructed
 			}
 			catch(CloneNotSupportedException e)	//if cloning isn't supported by this node
@@ -624,7 +564,7 @@ return BadBreakWeight;  //G***testing
 	}
 
 
-//G***TableView copies for debugging
+//TODO TableView copies for debugging
 
     /**
      * Creates a new table row.
@@ -878,7 +818,7 @@ return BadBreakWeight;  //G***testing
      *  offsets and spans parameters.
      */
     protected void layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans) {
-Log.trace("G***search");
+Log.trace("TODO search");
 	// make grid is properly represented
 	updateGrid();
 Log.trace();
@@ -929,7 +869,7 @@ Log.trace();
 	}
 	r.minimum = (int) min;
 	r.preferred = (int) pref;
-	if(max<Integer.MAX_VALUE) //G***testing; comment
+	if(max<Integer.MAX_VALUE) //TODO testing; comment
 		r.maximum = (int) max;
 	else
 		r.maximum = Integer.MAX_VALUE;
@@ -1144,22 +1084,6 @@ Log.trace();
 
 
 
-
-
-
-
-
-
-
-
-
-/*G***del when works
-		// --- variables ---------------------------------------
-
-		private AttributeSet attr;
-		private StyleSheet.BoxPainter painter;
-*/
-
 		/**
 		 * An html row.  This adds storage of the appropriate
 		 * css attributes to the superclass behavior.
@@ -1172,23 +1096,13 @@ Log.trace();
 	class XMLTableRowView extends TableView.TableRow
 	{
 
-
-/*G***del
-  public void setSize(float width, float height)	//G***del; testing tableflow
-	{
-System.out.println("XMLTableRowView.setSize(), width: "+width+" height: "+height);	//G***del
-		super.setSize(width, height);
-	}
-*/
-
-
 		/**Constructs an <code>XMLRowView</code> for the given element.
 		@param element The element this view is responsible for.
 		*/
 		public XMLTableRowView(final Element element)
 		{
 		  super(element);	//construct the parent class
-//G***fix			XMLRowView.this.setPropertiesFromAttributes();
+//TODO fix			XMLRowView.this.setPropertiesFromAttributes();
 	    fillColumns = new BitSet();
 		}
 
@@ -1197,34 +1111,34 @@ System.out.println("XMLTableRowView.setSize(), width: "+width+" height: "+height
 
     public void preferenceChanged(View child, boolean width, boolean height)
 		{
-//G***del Log.trace("XMLTableView.XMLTableRowView.preferenceChanged width: "+width+" height: "+height);
-		  super.preferenceChanged(child, width, height);//G***testing
+//TODO del Log.trace("XMLTableView.XMLTableRowView.preferenceChanged width: "+width+" height: "+height);
+		  super.preferenceChanged(child, width, height);//TODO testing
     }
 
 
 
 
-    public float getPreferredSpan(int axis) { //G***del; testing
-//G***del Log.trace("XMLTableRowView.getPreferredSpan axis: "+axis+" ="+super.getPreferredSpan(axis)); //G***del
-		final float span=super.getPreferredSpan(axis);	//G***del
+    public float getPreferredSpan(int axis) { //TODO del; testing
+//TODO del Log.trace("XMLTableRowView.getPreferredSpan axis: "+axis+" ="+super.getPreferredSpan(axis)); //TODO del
+		final float span=super.getPreferredSpan(axis);	//TODO del
 		return super.getPreferredSpan(axis);	//return the preferred span
 
     }
 
-    public float getMinimumSpan(int axis) { //G***del; testing
-//G***del Log.trace("XMLTableRowView.getMinimum axis: "+axis+" ="+super.getMinimumSpan(axis)); //G***del
-		final float span=super.getMinimumSpan(axis);	//G***del
+    public float getMinimumSpan(int axis) { //TODO del; testing
+//TODO del Log.trace("XMLTableRowView.getMinimum axis: "+axis+" ="+super.getMinimumSpan(axis)); //TODO del
+		final float span=super.getMinimumSpan(axis);	//TODO del
 		return super.getMinimumSpan(axis);	//return the preferred span
     }
 
-	public float getMaximumSpan(int axis) //G***del; testing
+	public float getMaximumSpan(int axis) //TODO del; testing
 	{
-//G***del Log.trace("XMLTableRowView.getMaximumSpan axis: "+axis+" ="+super.getMaximumSpan(axis)); //G***del
-		final float span=super.getMaximumSpan(axis);	//G***del
+//TODO del Log.trace("XMLTableRowView.getMaximumSpan axis: "+axis+" ="+super.getMaximumSpan(axis)); //TODO del
+		final float span=super.getMaximumSpan(axis);	//TODO del
 		return super.getMaximumSpan(axis);	//return the preferred span
-//G***fix return 1000;  //G***fix G***why did we have this earlier?
-//G***fix		return super.getMaximumSpan(axis);	//return the preferred span
-//G***fix		return getPreferredSpan(axis);	//return the preferred span
+//TODO fix return 1000;  //TODO fix TODO why did we have this earlier?
+//TODO fix		return super.getMaximumSpan(axis);	//return the preferred span
+//TODO fix		return getPreferredSpan(axis);	//return the preferred span
 	}
 
 
@@ -1244,7 +1158,7 @@ System.out.println("XMLTableRowView.setSize(), width: "+width+" height: "+height
 			<code>createFragment()</code> and <code>breakView()</code> methods.
 		@return The copy of this view.
 		*/
-/*G***del
+/*TODO del
 		protected final Object clone() throws CloneNotSupportedException
 		{
 			return new XMLTableRowView(getElement());	//create a view based on the same element
@@ -1310,12 +1224,12 @@ System.out.println("XMLTableRowView.setSize(), width: "+width+" height: "+height
 		*/
 		public int getBreakWeight(int axis, float pos, float len)
 		{
-//G***fix return BadBreakWeight;  //G***testing
+//TODO fix return BadBreakWeight;  //TODO testing
 			if(axis==Y_AXIS)	//if they want to break along the Y axis
 			{
 				//currently breaking only works for single-column tables
 				return getColumnCount()==1 ? GoodBreakWeight : BadBreakWeight;
-//G***fix				return GoodBreakWeight;	//show that this break spot will work
+//TODO fix				return GoodBreakWeight;	//show that this break spot will work
 			}
 			else	//if they want to break along another axis besides the one we know about
 				return super.getBreakWeight(axis, pos, len);	//return the default break weight
@@ -1345,12 +1259,12 @@ System.out.println("XMLTableRowView.setSize(), width: "+width+" height: "+height
 					return this;	//just return ourselves; there's no need to try to break anything
 				else if(childViewCount>0)	//if we have child views
 				{
-	//G***bring back if needed				final XMLBlockView fragmentView=(XMLBlockView)clone();	//create a clone of this view
+	//TODO bring back if needed				final XMLBlockView fragmentView=(XMLBlockView)clone();	//create a clone of this view
 					final boolean isFirstFragment=p0<=getView(0).getStartOffset();  //see if we'll include the first child in any form; if so, we're the first fragment
-					final boolean isLastFragment=false;  //G***fix; can we ever create the last fragment here?
-//G***fix				final boolean isLastFragment=p1>=getView(childViewCount-1).getEndOffset();  //see if we'll include the last child in any form; if so, we're the last fragment
+					final boolean isLastFragment=false;  //TODO fix; can we ever create the last fragment here?
+//TODO fix				final boolean isLastFragment=p1>=getView(childViewCount-1).getEndOffset();  //see if we'll include the last child in any form; if so, we're the last fragment
 					final XMLTableRowFragmentView fragmentView=new XMLTableRowFragmentView(getElement(), isFirstFragment, isLastFragment);	//create a fragment view
-//G***del when works						final View fragmentView=(View)clone();	//create a clone of this view
+//TODO del when works						final View fragmentView=(View)clone();	//create a clone of this view
 					float totalSpan=0;	//we'll use this to accumulate the size of each view to be included
 					int startOffset=p0;	//we'll continually update this as we create new child view fragments
 					int childIndex;	//start looking at the first child to find one that can be included in our break
@@ -1384,7 +1298,7 @@ System.out.println("XMLTableRowView.setSize(), width: "+width+" height: "+height
 							break;	//stop trying to fit things
 					}
 					fragmentView.setParent(getParent());  //make sure the fragment has the correct parent
-//G***del; doesn't fix tableflow				  fragmentView.setSize(getPreferredSpan(X_AXIS), getPreferredSpan(Y_AXIS)); //G***testing
+//TODO del; doesn't fix tableflow				  fragmentView.setSize(getPreferredSpan(X_AXIS), getPreferredSpan(Y_AXIS)); //TODO testing
 					return fragmentView;	//return the new view that's a fragment of ourselves
 				}
 			}
@@ -1418,7 +1332,7 @@ System.out.println("XMLTableRowView.setSize(), width: "+width+" height: "+height
 					//see if we'll include the last child in any form; if so, we're the first fragment
 				final boolean isLastFragment=childViewCount>0 && p1>=getView(childViewCount-1).getEndOffset();
 				final XMLTableRowFragmentView fragmentView=new XMLTableRowFragmentView(getElement(), isFirstFragment, isLastFragment);	//create a fragment of the view
-//G***del				final View fragmentView=(View)clone();	//create a clone of this view
+//TODO del				final View fragmentView=(View)clone();	//create a clone of this view
 				for(int i=0; i<childViewCount; ++i)	//look at each child view
 				{
 					final View childView=getView(i);	//get a reference to this child view
@@ -1432,7 +1346,7 @@ System.out.println("XMLTableRowView.setSize(), width: "+width+" height: "+height
 					}
 				}
 				fragmentView.setParent(getParent());  //make sure the fragment has the correct parent
-//G***del; doesn't fix tableflow			  fragmentView.setSize(getPreferredSpan(X_AXIS), getPreferredSpan(Y_AXIS)); //G***testing
+//TODO del; doesn't fix tableflow			  fragmentView.setSize(getPreferredSpan(X_AXIS), getPreferredSpan(Y_AXIS)); //TODO testing
 				return fragmentView;	//return the fragment view we constructed
 			}
 		}
@@ -1454,7 +1368,7 @@ System.out.println("XMLTableRowView.setSize(), width: "+width+" height: "+height
 		replace(0, getViewCount(), views);  //load our created views as children
 	}
 
-//G***TableView.TableRow methods for debugging
+//TODO TableView.TableRow methods for debugging
 
 	public void clearFilledColumns() {
 	    fillColumns.and(EMPTY);
@@ -1573,7 +1487,7 @@ System.out.println("XMLTableRowView.setSize(), width: "+width+" height: "+height
 	 *  offsets and spans parameters.
 	 */
         protected void layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans) {
-Log.trace("G***search");
+Log.trace("TODO search");
 	    super.layoutMinorAxis(targetSpan, axis, offsets, spans);
 	    int col = 0;
 	    int ncells = getViewCount();
@@ -1674,186 +1588,7 @@ Log.trace("G***search");
 			}
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	/**
-	 * Fetches the attributes to use when rendering.  This is
-	 * implemented to multiplex the attributes specified in the
-	 * model with a StyleSheet.
-	 */
-/*G***del
-				public AttributeSet getAttributes() {
-			return attr;
 	}
-
-				protected StyleSheet getStyleSheet() {
-			HTMLDocument doc = (HTMLDocument) getDocument();
-			return doc.getStyleSheet();
-	}
-
-	public void changedUpdate(DocumentEvent e, Shape a, ViewFactory f) {
-			super.changedUpdate(e, a, createViewFactory(f));
-			int pos = e.getOffset();
-			if (pos <= getStartOffset() && (pos + e.getLength()) >=
-		getEndOffset()) {
-		RowView.this.setPropertiesFromAttributes();
-			}
-	}
-*/
-	/**
-	 * Renders using the given rendering surface and area on that
-	 * surface.  This is implemented to delegate to the css box
-	 * painter to paint the border and background prior to the
-	 * interior.
-	 *
-	 * @param g the rendering surface to use
-	 * @param allocation the allocated region to render into
-	 * @see View#paint
-	 */
-/*G***del
-	public void paint(Graphics g, Shape allocation) {
-			Rectangle a = (Rectangle) allocation;
-			painter.paint(g, a.x, a.y, a.width, a.height, this);
-			super.paint(g, a);
-	}
-*/
-	/**
-	 * Update any cached values that come from attributes.
-	 */
-/*G***del
-	void setPropertiesFromAttributes() {
-			StyleSheet sheet = getStyleSheet();
-			attr = sheet.getViewAttributes(this);
-			painter = sheet.getBoxPainter(attr);
-	}
-
-	private StyleSheet.BoxPainter painter;
-				private AttributeSet attr;
-*/
-	}
-
-		/**
-		 * Default view of an html table cell.  This needs to be moved
-		 * somewhere else.
-		 */
-//G***del    static class CellView extends BlockView {
-
-	/**
-	 * Constructs a TableCell for the given element.
-	 *
-	 * @param elem the element that this view is responsible for
-	 */
-/*G***del
-				public CellView(Element elem) {
-			super(elem, Y_AXIS);
-	}
-*/
-	/**
-	 * Perform layout for the major axis of the box (i.e. the
-	 * axis that it represents).  The results of the layout should
-	 * be placed in the given arrays which represent the allocations
-	 * to the children along the major axis.  This is called by the
-	 * superclass to recalculate the positions of the child views
-	 * when the layout might have changed.
-	 * <p>
-	 * This is implemented to delegate to the superclass to
-	 * tile the children.  If the target span is greater than
-	 * was needed, the offsets are adjusted to align the children
-	 * (i.e. position according to the html valign attribute).
-	 *
-	 * @param targetSpan the total span given to the view, which
-	 *  whould be used to layout the children.
-	 * @param axis the axis being layed out.
-	 * @param offsets the offsets from the origin of the view for
-	 *  each of the child views.  This is a return value and is
-	 *  filled in by the implementation of this method.
-	 * @param spans the span of each child view.  This is a return
-	 *  value and is filled in by the implementation of this method.
-	 * @returns the offset and span for each child view in the
-	 *  offsets and spans parameters.
-	 */
-/*G***del
-				protected void layoutMajorAxis(int targetSpan, int axis, int[] offsets, int[] spans) {
-			super.layoutMajorAxis(targetSpan, axis, offsets, spans);
-
-	    // calculate usage
-	    int used = 0;
-	    int n = spans.length;
-	    for (int i = 0; i < n; i++) {
-		used += spans[i];
-	    }
-
-	    // calculate adjustments
-	    int adjust = 0;
-	    if (used < targetSpan) {
-		// PENDING(prinz) change to use the css alignment.
-		String valign = (String) getElement().getAttributes().getAttribute(
-				HTML.Attribute.VALIGN);
-		if (valign == null) {
-		    AttributeSet rowAttr = getElement().getParentElement().getAttributes();
-		    valign = (String) rowAttr.getAttribute(HTML.Attribute.VALIGN);
-		}
-		if ((valign == null) || valign.equals("middle")) {
-				adjust = (targetSpan - used) / 2;
-		} else if (valign.equals("bottom")) {
-		    adjust = targetSpan - used;
-		}
-	    }
-
-	    // make adjustments.
-	    if (adjust != 0) {
-		for (int i = 0; i < n; i++) {
-		    offsets[i] += adjust;
-		}
-	    }
-	}
-*/
-	/**
-	 * Calculate the requirements needed along the major axis.
-	 * This is called by the superclass whenever the requirements
-	 * need to be updated (i.e. a preferenceChanged was messaged
-	 * through this view).
-	 * <p>
-	 * This is implemented to delegate to the superclass, but
-	 * indicate the maximum size is very large (i.e. the cell
-	 * is willing to expend to occupy the full height of the row).
-	 *
-	 * @param axis the axis being layed out.
-	 * @param r the requirements to fill in.  If null, a new one
-	 *  should be allocated.
-	 */
-/*G***del
-				protected SizeRequirements calculateMajorAxisRequirements(int axis,
-									SizeRequirements r) {
-			SizeRequirements req = super.calculateMajorAxisRequirements(axis, r);
-			req.maximum = Integer.MAX_VALUE;
-			return req;
-	}
-		}
-*/
-
 
 	/**This is a custom view factory meant to create views for elements inside
 		a table. Its constructor take a reference to the <code>ViewFactory</code>
@@ -1867,19 +1602,12 @@ Log.trace("G***search");
 	class XMLTableFactory extends DefaultViewFactory
 	{
 
-		/**A reference to the view factory already in use to be used for normal elements.*/
-//G***del when works		private ViewFactory DefaultViewFactory;
-
-			/**@return A reference to the view factory already in use to be used for normal elements.*/
-//G***del 			protected ViewFactory getDefaultViewFactory() {return DefaultViewFactory;}
-
-		/*Constructor specifying the view factory already in use.
+		/**Constructor specifying the view factory already in use.
 		@param fallbackViewFactory The view factory already in use.
 		*/
 		XMLTableFactory(final ViewFactory fallbackViewFactory)
 		{
 			super(fallbackViewFactory); //do the default construction
-//G***del			this.DefaultViewFactory=defaultViewFactory;	//set the default view factory
 		}
 
 		/**Creates a view for the table rows. If the element does not represent a
@@ -1892,67 +1620,31 @@ Log.trace("G***search");
 		*/
 		public View create(final Element element, final boolean indicateMultipleViews)
 		{
-			final String elementName=XMLStyleUtilities.getXMLElementName(element.getAttributes()); //G***del
-Log.trace("Table factory constructing view for a table element with name: ", elementName);	//G***del
-Log.trace("Indicate multiple views: "+indicateMultipleViews);	//G***del
+			final String elementName=XMLStyles.getXMLElementName(element.getAttributes()); //TODO del
+Log.trace("Table factory constructing view for a table element with name: ", elementName);	//TODO del
+Log.trace("Indicate multiple views: "+indicateMultipleViews);	//TODO del
 			final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-//G***del Log.trace("Attribute set: "+attributeSet);	//G***del
+//TODO del Log.trace("Attribute set: "+attributeSet);	//TODO del
 			if(attributeSet!=null)	//if this element has attributes
 			{
-				final CSSPrimitiveValue cssDisplayProperty=(CSSPrimitiveValue)XMLCSSStyleUtilities.getCSSPropertyCSSValue(attributeSet, CSS_PROP_DISPLAY, false);	//get the display property for this element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
-//G***del when works				final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)attributeSet.getAttribute(CSS_PROP_DISPLAY);	//get the display property G***can we be sure this will be a primitive value?
+				final CSSPrimitiveValue cssDisplayProperty=(CSSPrimitiveValue)XMLCSSStyles.getCSSPropertyCSSValue(attributeSet, CSS_PROP_DISPLAY, false);	//get the display property for this element, but don't resolve up the attribute set parent hierarchy TODO can we be sure this will be a primitive value?
+//TODO del when works				final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)attributeSet.getAttribute(CSS_PROP_DISPLAY);	//get the display property TODO can we be sure this will be a primitive value?
 				if(cssDisplayProperty!=null)	//if this element has a CSS display property
 				{
 					final String cssDisplayString=cssDisplayProperty.getStringValue();	//get the display value
-//G***del Log.trace("Has CSS display attribute: "+cssDisplayString);	//G***del
+//TODO del Log.trace("Has CSS display attribute: "+cssDisplayString);	//TODO del
 					if(cssDisplayString.equals(CSS_DISPLAY_TABLE_ROW))	//if this should be table row
 						return new XMLTableRowView(element);	//create a table row view
 				}
 			}
 			final View view=super.create(element, indicateMultipleViews);  //let the parent class create the view, which will automatically call the fallback view factory
-Log.trace("Created view: ", view!=null ? view.getClass().getName() : "null"); //G***del
-//G***bring back when works			return super.create(element, indicateMultipleViews);  //let the parent class create the view, which will automatically call the fallback view factory
-			return view;  //G***testing
-/*G***del
-Log.trace("XMLTableView default view factory: ", getDefaultViewFactory().getClass().getName()); //G***del
-			final View view=getDefaultViewFactory().create(element);	//if we don't recognize the element, let the default view factory create a view normally
-Log.trace("Created view: ", view.getClass().getName()); //G***del
-			return view;  //G***testing
-*/
-//G***del			return getDefaultViewFactory().create(element);	//if we don't recognize the element, let the default view factory create a view normally
+Log.trace("Created view: ", view!=null ? view.getClass().getName() : "null"); //TODO del
+//TODO bring back when works			return super.create(element, indicateMultipleViews);  //let the parent class create the view, which will automatically call the fallback view factory
+			return view;  //TODO testing
+//TODO del			return getDefaultViewFactory().create(element);	//if we don't recognize the element, let the default view factory create a view normally
 		}
 
 
-		/**Overrides <code>ViewFactory.create()</code> to create table rows.
-		@param element The element for which a view will be created.
-		*/
-/*G***del when works
-		public View create(Element element)
-		{
-//G***fix			final String elementName=XMLCSSStyleConstants.getXMLElementName(element.getAttributes());	//G***del
-			final String elementName=XMLStyleConstants.getXMLElementName(element.getAttributes()); //G***del
-Log.trace("Table factory constructing view for a table element with name: ", elementName);	//G***del
-			final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-//G***del Log.trace("Attribute set: "+attributeSet);	//G***del
-			if(attributeSet!=null)	//if this element has attributes
-			{
-				final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)XMLCSSStyleConstants.getCSSPropertyCSSValue(attributeSet, CSS_PROP_DISPLAY, false);	//get the display property for this element, but don't resolve up the attribute set parent hierarchy G***can we be sure this will be a primitive value?
-//G***del when works				final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)attributeSet.getAttribute(CSS_PROP_DISPLAY);	//get the display property G***can we be sure this will be a primitive value?
-				if(cssDisplayProperty!=null)	//if this element has a CSS display property
-				{
-					final String cssDisplayString=cssDisplayProperty.getStringValue();	//get the display value
-//G***del Log.trace("Has CSS display attribute: "+cssDisplayString);	//G***del
-					if(cssDisplayString.equals(CSS_DISPLAY_TABLE_ROW))	//if this should be table row
-						return new XMLTableRowView(element);	//create a table row view
-				}
-			}
-Log.trace("XMLTableView default view factory: ", getDefaultViewFactory().getClass().getName()); //G***del
-			final View view=getDefaultViewFactory().create(element);	//if we don't recognize the element, let the default view factory create a view normally
-Log.trace("Created view: ", view.getClass().getName()); //G***del
-			return view;  //G***testing
-//G***del			return getDefaultViewFactory().create(element);	//if we don't recognize the element, let the default view factory create a view normally
-		}
-*/
 	}
 
 }

@@ -1,9 +1,27 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text;
+
+import com.garretwilson.swing.text.xml.XMLPagedView;
 
 /**Indicates that this view can be hidden. Although all views can be "hidden"
 	by their being covered by another window, implementing this interface means
 	that the view expects it might be a child of a view that shows only a portion
-	of its views at a time, such as an <code>XMLPagedView</code>. In such an
+	of its views at a time, such as an {@link XMLPagedView}. In such an
 	example, <em>all</em> views would be hidden at times, but only those that
 	implement this interface will be informed that they are about to be hidden.
 	The implementation, therefore, functions much like an even listener that is
@@ -15,7 +33,7 @@ package com.garretwilson.swing.text;
 	views need to take no action (and therefore do not need to implement this
 	interface) when being hidden; they simply will not be painted.</p>
 @author Garret Wilson
-@see com.garretwilson.swing.text.xml.XMLPagedView
+@see XMLPagedView
 */
 public interface ViewHidable
 {
@@ -31,5 +49,5 @@ public interface ViewHidable
 	/**Called when the view is being hidden by a parent that hides views, such
 		as a paged view.
 	*/
-//G***del	void hide();
+//TODO del	void hide();
 }

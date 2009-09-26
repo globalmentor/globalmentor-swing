@@ -1,6 +1,21 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text;
 
-import java.awt.Container;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +27,11 @@ import com.globalmentor.log.Log;
 /**Utilities for manipulating views and view hierarchies.
 @author Garret Wilson
 */
-public class ViewUtilities
+public class Views
 {
 
 	/**Default constructor.*/
-	private ViewUtilities() {}
+	private Views() {}
 
 	/**Creates views for the given elements.
 	<p>If the given view factory implements <code>ViewsFactory</code>, this
@@ -96,12 +111,12 @@ public class ViewUtilities
 	*/
 	public static void hideView(final View view)
 	{
-//G***del Log.trace("Hiding view: ", view); //G***del
+//TODO del Log.trace("Hiding view: ", view); //TODO del
 		if(view!=null)  //if we have a valid view
 		{
 			if(view instanceof ViewHidable) //if this is a hidable view
 			{
-//G***del Log.trace("Inside hideview(), found hidable: "+view);  //G**del
+//TODO del Log.trace("Inside hideview(), found hidable: "+view);  //G**del
 				((ViewHidable)view).setShowing(false); //tell the view to hide itself
 			}
 			final int viewCount=view.getViewCount();  //get the number of child views
@@ -174,7 +189,7 @@ public class ViewUtilities
 		}
 	}
 
-	//G***testing; code modified from _Core Swing Advanced Programming_ by Kim Topley; comment
+	//TODO testing; code modified from _Core Swing Advanced Programming_ by Kim Topley; comment
 	public static void printViews(final JTextComponent component, final PrintStream printStream)
 	{
 		View rootView=component.getUI().getRootView(component);
@@ -193,15 +208,15 @@ public class ViewUtilities
 		String indentString="";
 		for(int i=0; i<indent; ++i)
 			indentString+="\t";
-//G***del			printStream.print("\t");
+//TODO del			printStream.print("\t");
 		int start=view.getStartOffset();
 		int end=view.getEndOffset();
-//G***del		float preferredSpanX=view.getPreferredSpan(View.X_AXIS);
-//G***del		float preferredSpanY=view.getPreferredSpan(View.Y_AXIS);
-//G***del		Log.trace(indentString+name+"; offsets ["+start+", "+end+"] preferred spans ["+preferredSpanX+", "+preferredSpanY+"] parent: "+view.getParent());
+//TODO del		float preferredSpanX=view.getPreferredSpan(View.X_AXIS);
+//TODO del		float preferredSpanY=view.getPreferredSpan(View.Y_AXIS);
+//TODO del		Log.trace(indentString+name+"; offsets ["+start+", "+end+"] preferred spans ["+preferredSpanX+", "+preferredSpanY+"] parent: "+view.getParent());
 		printStream.println(indentString+name+"; offsets ["+start+", "+end+"] parent: "+(view.getParent()!=null ? view.getParent().getClass().getName() : "null"));
-//G***del		printStream.println(indentString+"  attributes: "+AttributeSetUtilities.getAttributeSetString(view.getAttributes()));  //G***del
-//G***del		printStream.println(name+"; offsets ["+start+", "+end+"] preferred spans ["+preferredSpanX+", "+preferredSpanY+"]");
+//TODO del		printStream.println(indentString+"  attributes: "+AttributeSetUtilities.getAttributeSetString(view.getAttributes()));  //TODO del
+//TODO del		printStream.println(name+"; offsets ["+start+", "+end+"] preferred spans ["+preferredSpanX+", "+preferredSpanY+"]");
 		int viewCount=view.getViewCount();
 		if(viewCount==0)
 		{
@@ -209,12 +224,12 @@ public class ViewUtilities
 			try
 			{
 				String text=document.getText(start, length);
-/*G***fix
+/*TODO fix
 				for(int i=0; i<indent+1; ++i)
 					printStream.print("\t");
 */
 				printStream.println(indentString+"["+text+"]");
-//G***del				printStream.println("["+text+"]");
+//TODO del				printStream.println("["+text+"]");
 			}
 			catch(BadLocationException e)
 			{
@@ -228,7 +243,7 @@ public class ViewUtilities
 		}
 	}
 
-	//G***testing; code modified from _Core Swing Advanced Programming_ by Kim Topley; comment
+	//TODO testing; code modified from _Core Swing Advanced Programming_ by Kim Topley; comment
 	public static String toString(final JTextComponent component)
 	{
 		return toString(component.getUI().getRootView(component));
@@ -247,17 +262,17 @@ public class ViewUtilities
 		{
 			stringBuilder.append('\t');
 		}
-//G***del			printStream.print("\t");
+//TODO del			printStream.print("\t");
 		int start=view.getStartOffset();
 		int end=view.getEndOffset();
-//G***del		float preferredSpanX=view.getPreferredSpan(View.X_AXIS);
-//G***del		float preferredSpanY=view.getPreferredSpan(View.Y_AXIS);
-//G***del		Log.trace(indentString+name+"; offsets ["+start+", "+end+"] preferred spans ["+preferredSpanX+", "+preferredSpanY+"] parent: "+view.getParent());
+//TODO del		float preferredSpanX=view.getPreferredSpan(View.X_AXIS);
+//TODO del		float preferredSpanY=view.getPreferredSpan(View.Y_AXIS);
+//TODO del		Log.trace(indentString+name+"; offsets ["+start+", "+end+"] preferred spans ["+preferredSpanX+", "+preferredSpanY+"] parent: "+view.getParent());
 		stringBuilder.append(name).append("; offsets [").append(start).append(", ").append(end).append("] parent: ");
 		stringBuilder.append(view.getParent()!=null ? view.getParent().getClass().getName() : "null");
 		stringBuilder.append('\n');
-//G***del		printStream.println(indentString+"  attributes: "+AttributeSetUtilities.getAttributeSetString(view.getAttributes()));  //G***del
-//G***del		printStream.println(name+"; offsets ["+start+", "+end+"] preferred spans ["+preferredSpanX+", "+preferredSpanY+"]");
+//TODO del		printStream.println(indentString+"  attributes: "+AttributeSetUtilities.getAttributeSetString(view.getAttributes()));  //TODO del
+//TODO del		printStream.println(name+"; offsets ["+start+", "+end+"] preferred spans ["+preferredSpanX+", "+preferredSpanY+"]");
 		int viewCount=view.getViewCount();
 		if(viewCount==0)
 		{
@@ -271,7 +286,7 @@ public class ViewUtilities
 				}
 				stringBuilder.append('[').append(text).append(']');
 				stringBuilder.append('\n');
-//G***del				printStream.println("["+text+"]");
+//TODO del				printStream.println("["+text+"]");
 			}
 			catch(BadLocationException e)
 			{

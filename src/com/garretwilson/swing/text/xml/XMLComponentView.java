@@ -1,9 +1,22 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import java.awt.Component;
-import java.util.HashMap;
-import java.util.Map;
-import javax.swing.*;
 import javax.swing.text.*;
 
 import com.globalmentor.log.Log;
@@ -16,8 +29,7 @@ import com.globalmentor.log.Log;
 public class XMLComponentView extends XMLAbstractComponentView
 {
 
-	/**The already created component, which will be returned by the
-		<code>createComponent()</code> method.*/
+	/**The already created component, which will be returned by the {@link #createComponent()} method.*/
 	private final Component precreatedComponent;
 
 	/**Creates a new view that represents a component, supplying the component
@@ -27,11 +39,11 @@ public class XMLComponentView extends XMLAbstractComponentView
   public XMLComponentView(final Element element, final Component component)
 	{
    	super(element);	//do the default constructing
-Log.trace("Component width: ", component.getWidth()); //G***del
-Log.trace("Component height: ", component.getHeight()); //G***del
-Log.trace("Component preferred width: ", new Double(component.getPreferredSize().getWidth())); //G***del
-Log.trace("Component preferred height: ", new Double(component.getPreferredSize().getHeight())); //G***del
-		setHeight(component.getPreferredSize().height);  //update the standard and current heights G***testing
+Log.trace("Component width: ", component.getWidth()); //TODO del
+Log.trace("Component height: ", component.getHeight()); //TODO del
+Log.trace("Component preferred width: ", new Double(component.getPreferredSize().getWidth())); //TODO del
+Log.trace("Component preferred height: ", new Double(component.getPreferredSize().getHeight())); //TODO del
+		setHeight(component.getPreferredSize().height);  //update the standard and current heights TODO testing
 		setWidth(component.getPreferredSize().width);  //update the standard and current widths
 		precreatedComponent=component;  //store the precreated component
 	}
@@ -43,7 +55,7 @@ Log.trace("Component preferred height: ", new Double(component.getPreferredSize(
 	*/
 	protected Component createComponent()
 	{
-//G***del when works		  precreatedComponent.setSize(100, 50);  //G***testing
+//TODO del when works		  precreatedComponent.setSize(100, 50);  //TODO testing
 
 		return precreatedComponent; //return the component we already created
 	}
@@ -60,9 +72,9 @@ Log.trace("Component preferred height: ", new Double(component.getPreferredSize(
 	@see #getHeight
 	@see #getWidth
 	*/
-	public float getMinimumSpan(int axis) //G***testing
+	public float getMinimumSpan(int axis) //TODO testing
 	{
-		//G***fix all this with the ability to fix certain axes in the parent class
+		//TODO fix all this with the ability to fix certain axes in the parent class
 		switch(axis)  //see which axis we're looking at
 		{
 		  case View.X_AXIS: //if the x-axis is requested

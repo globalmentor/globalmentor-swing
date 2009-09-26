@@ -1,13 +1,25 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import java.awt.*;
-import java.util.*;
-import javax.swing.*; //G***del if not needed
 import javax.swing.text.*;
 
-import com.garretwilson.awt.ImageUtilities;
-import com.garretwilson.swing.text.ViewComponentManageable;
-import com.garretwilson.swing.text.ViewComponentManager;
+import com.garretwilson.swing.text.*;
 
 /**A view that maintains components that are displayed on the image.
 @author Garret Wilson
@@ -36,7 +48,7 @@ public abstract class XMLComponentImageView extends XMLImageView implements View
 	@param parent The new parent, or <code>null</code> if the view is being
 		removed from a parent to which it was previously added.
 	*/
-/*G***del; doesn't work; a deep view won't necessarily have its parent set to null
+/*TODO del; doesn't work; a deep view won't necessarily have its parent set to null
 	public void setParent(final View parent)
 	{
 Log.trace("setting parent of component image view: ", parent!=null ? parent.getClass().getName() : null);

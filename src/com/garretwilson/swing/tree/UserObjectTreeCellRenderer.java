@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.tree;
 
 import java.awt.Component;
@@ -7,11 +23,11 @@ import javax.swing.tree.*;
 
 /**A tree cell renderer that can render different icons and strings for various
 	types of user objects.
-	If the a tree node is a <code>IconTreeNode</code> that has an icon, its icon
+	If the a tree node is an {@link IconTreeNode} that has an icon, its icon
 	is used. If not, specified icons are used for the specified types of
-	user objects if a tree node is a <code>DefaultMutableTreeCell</code>;
+	user objects if a tree node is a {@link DefaultMutableTreeNode};
 	otherwise, the default icons are used from the parent class.
-	//G***fix to get strings just like we get icons: Specified strings are constructed from
+	//TODO fix to get strings just like we get icons: Specified strings are constructed from
 @author Garret Wilson
 */
 public class UserObjectTreeCellRenderer extends DefaultTreeCellRenderer
@@ -125,12 +141,12 @@ public class UserObjectTreeCellRenderer extends DefaultTreeCellRenderer
 	/**Configures the renderer based on the passed in components.
 		The component is configured using the defaults of the parent class, except
 		for the icon.
-		If the value is a <code>DefaultMutableTreeNode</code>, the user object is
+		If the value is a {@link DefaultMutableTreeNode}, the user object is
 		examined and any icon registered for the user item's class is used.
 		Otherwise, the default icon (that configured by the parent class) is used.
 		Note that this version only works properly with implementations of
-		<code>DefaultTreeCellRenderer</code> that return an instance of
-		<code>JLabel</code>.
+		{@link DefaultTreeCellRenderer} that return an instance of
+		{@link JLabel}.
 	@param tree The tree component.
 	@param value The value for which a renderer should be returned.
 	@param isSelected Whether the value is selected.

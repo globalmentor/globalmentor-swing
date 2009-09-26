@@ -1,9 +1,24 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml.xhtml;
 
 import javax.swing.text.*;
 import com.garretwilson.swing.text.xml.*;
 
-import com.globalmentor.io.*;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.net.ContentTypeConstants;
 
@@ -33,37 +48,37 @@ public class XHTMLViewFactory extends XMLViewFactory
 	*/
 	public View create(final Element element, final boolean indicateMultipleViews)
 	{
-//G***del			final String elementName=(String)element.getAttributes().getAttribute(StyleConstants.NameAttribute);	//get the name of this element
+//TODO del			final String elementName=(String)element.getAttributes().getAttribute(StyleConstants.NameAttribute);	//get the name of this element
 		final AttributeSet attributeSet=element.getAttributes();  //get the element's attribute set
 		if(attributeSet!=null)  //if we have an attribute set
 		{
-			final String elementLocalName=XMLStyleUtilities.getXMLElementLocalName(attributeSet); //get the local name of this element
+			final String elementLocalName=XMLStyles.getXMLElementLocalName(attributeSet); //get the local name of this element
 			//if this element has a name, and it's not a paragraph or a page break (we let the XMLEditorKit create paragraphs and page breaks)
-			if(elementLocalName!=null && /*G***del !XMLStyleConstants.isParagraphView(attributeSet) && */!XMLStyleUtilities.isPageBreakView(attributeSet))  //G***we may not need this line at all when this code gets even more elegant
+			if(elementLocalName!=null && /*TODO del !XMLStyleConstants.isParagraphView(attributeSet) && */!XMLStyles.isPageBreakView(attributeSet))  //TODO we may not need this line at all when this code gets even more elegant
 			{
 				if(elementLocalName.equals(ELEMENT_BR))	//if this is the XHTML <br> element
 				{
-//G***del System.out.println("Adding a <br> view.");	//G***del
+//TODO del System.out.println("Adding a <br> view.");	//TODO del
 					return new XMLLineBreakView(element);	//create a line break view to represent the <br> element
 				}
 				else if(elementLocalName.equals(ELEMENT_HR))	//if this is the XHTML <hr> element
 				{
-					return new XMLHorizontalRuleView(element);	//G***testing hr
+					return new XMLHorizontalRuleView(element);	//TODO testing hr
 				}
 				else if(elementLocalName.equals(ELEMENT_IMG))	//if this is the XHTML <img> element
 				{
-//G***del Log.trace("found <img>, ready to create an XHTMLImageView");	//G***del
+//TODO del Log.trace("found <img>, ready to create an XHTMLImageView");	//TODO del
 					return new XHTMLImageView(element);	//create an XHTML image view
 				}
 				else if(elementLocalName.equals(ELEMENT_OBJECT))	//if this is the XHTML <object> element
 				{
-//G***del Log.trace("found <object>");	//G***del
+//TODO del Log.trace("found <object>");	//TODO del
 					Element recognizedObjectElement=element;  //start out hoping that we recognize the media type of the object
 					while(recognizedObjectElement!=null)  //while we're still trying to find a recognized object
 					{
 								//get the media type of this object
-						final ContentType mediaType=XHTMLSwingTextUtilities.getObjectMediaType(recognizedObjectElement.getAttributes());
-						if(XHTMLSwingTextUtilities.isMediaTypeSupported(mediaType)) //if we support this media type
+						final ContentType mediaType=XHTMLSwingText.getObjectMediaType(recognizedObjectElement.getAttributes());
+						if(XHTMLSwingText.isMediaTypeSupported(mediaType)) //if we support this media type
 						{
 							if(mediaType.match(APPLICATION_JAVA_MEDIA_TYPE))  //if this is a Java applet
 							{
@@ -71,7 +86,7 @@ public class XHTMLViewFactory extends XMLViewFactory
 							}
 							else if(mediaType.getPrimaryType().equals(ContentType.IMAGE_PRIMARY_TYPE)) //if this is an image
 							{
-								return new XHTMLImageView(element, recognizedObjectElement);	//return an image view for the object element, using the recognized object for initialization G***should we only pass an initialization attribute set?
+								return new XHTMLImageView(element, recognizedObjectElement);	//return an image view for the object element, using the recognized object for initialization TODO should we only pass an initialization attribute set?
 							}
 						}
 						else  //since we don't support this media type, try to find a sub-object with a recognized media type
@@ -83,16 +98,16 @@ public class XHTMLViewFactory extends XMLViewFactory
 							{
 								final Element childElement=currentElement.getElement(i); //get a reference to this child element
 									//get the child element's name
-								final String childElementName=XMLStyleUtilities.getXMLElementName(childElement.getAttributes());
+								final String childElementName=XMLStyles.getXMLElementName(childElement.getAttributes());
 								if(ELEMENT_OBJECT.equals(childElementName))  //if this child is an object
 								{
 									recognizedObjectElement=childElement; //we'll start over and see if we recognize this child object's media type
-									break;  //stop looking for a child element G***what about multiple first-level child objects? cuurrently we take the first one
+									break;  //stop looking for a child element TODO what about multiple first-level child objects? cuurrently we take the first one
 								}
 							}
 						}
 					}
-					return new XMLParagraphView(element); //if we don't recognize any of the objects, just show them as a paragraph G***this is close but not quite the correct way to do things
+					return new XMLParagraphView(element); //if we don't recognize any of the objects, just show them as a paragraph TODO this is close but not quite the correct way to do things
 				}
 				else if(elementLocalName.equals(ELEMENT_OL))	//if this is the XHTML <ol> element
 				{

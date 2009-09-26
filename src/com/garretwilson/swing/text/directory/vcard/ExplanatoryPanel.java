@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.GridBagConstraints;
@@ -13,7 +29,6 @@ import com.globalmentor.collections.ModifiableSet;
 import com.globalmentor.java.*;
 import com.globalmentor.model.LocaledText;
 import com.globalmentor.text.directory.vcard.*;
-import com.globalmentor.util.*;
 
 /**A panel allowing entry of the explanatory types of a vCard <code>text/directory</code>
 	profile as defined in <a href="http://www.ietf.org/rfc/rfc2426.txt">RFC 2426</a>,
@@ -207,19 +222,19 @@ public class ExplanatoryPanel extends BasicVCardPanel
 	{
 		super.initializeUI();	//do the default user interface initialization
 		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(SelectLanguageAction.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes		
-		categoryLabel.setText("Categories");	//G***i18n
+		categoryLabel.setText("Categories");	//TODO i18n
 		getSelectCategoryLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectCategoryLanguageButton=createSelectLanguageButton(getSelectCategoryLanguageAction());
 		categorySwingList.setUI(new ToggleListUI()); //allow the answers to be toggled on and off
 		categorySwingList.setCellRenderer(new CheckBoxListCellRenderer());  //display the answers with checkboxes
 		categorySwingList.addListSelectionListener(getModifyListSelectionListener());
 		final JScrollPane categoryScrollPane=new JScrollPane(categorySwingList);
-		noteLabel.setText("Note");	//G***i18n
+		noteLabel.setText("Note");	//TODO i18n
 		noteTextPane.getDocument().addDocumentListener(getModifyDocumentListener());
 		getSelectNoteLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectNoteLanguageButton=createSelectLanguageButton(getSelectNoteLanguageAction());
 		final JScrollPane noteScrollPane=new JScrollPane(noteTextPane);
-		urlLabel.setText("Web Site URL");	//G***i18n
+		urlLabel.setText("Web Site URL");	//TODO i18n
 		urlTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		add(categoryLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(selectCategoryLanguageButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
@@ -246,7 +261,7 @@ public class ExplanatoryPanel extends BasicVCardPanel
 			}
 			catch(URISyntaxException uriSyntaxException)	//if the information isn't a valid URI
 			{
-				JOptionPane.showMessageDialog(this, "The URL you entered is inavlid: "+uriSyntaxException.getMessage(), "Invalid URL", JOptionPane.ERROR_MESSAGE);	//G***i18n
+				JOptionPane.showMessageDialog(this, "The URL you entered is inavlid: "+uriSyntaxException.getMessage(), "Invalid URL", JOptionPane.ERROR_MESSAGE);	//TODO i18n
 				urlTextField.requestFocusInWindow(); //focus on the URL text field
 				return false; //show that verification failed
 			}
@@ -279,7 +294,7 @@ public class ExplanatoryPanel extends BasicVCardPanel
 		{
 			final int leadSelectionIndex=categorySwingList.getLeadSelectionIndex();	//get the last selected category index
 			final Object selectedValue=leadSelectionIndex>=0 ? categorySwingList.getModel().getElementAt(leadSelectionIndex) : null;	//get the last selected value
-//G***del			final Object selectedValue=categoryList.getSelectedValue();	//get the selected value
+//TODO del			final Object selectedValue=categoryList.getSelectedValue();	//get the selected value
 			if(selectedValue instanceof LocaledText)	//if locale text is selected
 			{
 				final LocaledText localeText=(LocaledText)selectedValue;	//cast the selected object to locale text

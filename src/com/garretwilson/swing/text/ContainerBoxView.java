@@ -1,10 +1,26 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text;
 
 import java.awt.Insets;
 import java.util.*;
 
 import javax.swing.text.*;
-import static com.garretwilson.swing.text.ViewUtilities.*;
+import static com.garretwilson.swing.text.Views.*;
 import static com.globalmentor.java.Objects.*;
 import com.globalmentor.log.Log;
 
@@ -192,7 +208,7 @@ public class ContainerBoxView extends BoxView implements Inset
 		*/
 		public View breakView(final BoxView view, final int axis, final int offset, final float pos, final float length, final FragmentViewFactory fragmentViewFactory)
 		{
-	//G***del Log.trace("Inside XMLBlockView.breakView axis: ", axis, "p0:", p0, "pos:", pos, "len:", len, "name:", XMLStyleUtilities.getXMLElementName(getAttributes()));	//G***del
+	//TODO del Log.trace("Inside XMLBlockView.breakView axis: ", axis, "p0:", p0, "pos:", pos, "len:", len, "name:", XMLStyleUtilities.getXMLElementName(getAttributes()));	//TODO del
 			if(axis==view.getAxis() && length<view.getPreferredSpan(axis))	//if they want to break along our tiling axis and they want less of us than we prefer, we'll try to break
 			{
 			  final int childViewCount=view.getViewCount();  //get the number of child views we have
@@ -212,14 +228,14 @@ public class ContainerBoxView extends BoxView implements Inset
 					{
 						final View childView=view.getView(childIndex);	//get a reference to this child view; we may change this variable if we have to break one of the child views
 						final float childPreferredSpan=childView.getPreferredSpan(axis);	//get the child's preferred span along the axis
-	Log.trace("looking to include child view: ", childView.getClass().getName()); //G***del
-	Log.trace("child view preferred span: ", childPreferredSpan); //G***del
+	Log.trace("looking to include child view: ", childView.getClass().getName()); //TODO del
+	Log.trace("child view preferred span: ", childPreferredSpan); //TODO del
 						final float remainingSpan=length-totalSpan;	//calculate the span we have left
 						final View newChildView;	//we'll determine which child to add
 						final float newChildPreferredSpan;	//we'll determine the size of the new child
 						if(childPreferredSpan>remainingSpan)	//if this view is too big to fit into our space
 						{
-	//G***old comment: we really only need to add something if this is the root XMLBlockView -- but how do we know that?
+	//TODO old comment: we really only need to add something if this is the root XMLBlockView -- but how do we know that?
 							final boolean mustBreak=childViewList.size()==0;	//if we haven't fit any views into our fragment, we must have at least one, even if it doesn't fit
 							final boolean canBreak=mustBreak || childView.getBreakWeight(axis, pos, remainingSpan)>BadBreakWeight;	//see if this view can be broken to be made to fit
 							if(canBreak)	//if we can break

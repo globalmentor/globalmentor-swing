@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import java.awt.Shape;
@@ -7,9 +23,8 @@ import javax.swing.text.*;
 
 import com.garretwilson.swing.text.*;
 
-import static com.garretwilson.swing.text.SwingTextUtilities.*;
-import static com.garretwilson.swing.text.rdf.RDFStyleUtilities.*;
-import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
+import static com.garretwilson.swing.text.rdf.RDFStyles.*;
+import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingText;
 
 import com.globalmentor.log.Log;
 import com.globalmentor.text.xml.xhtml.XHTML;
@@ -29,7 +44,7 @@ public class XMLSectionView extends XMLBlockView
 	*/
 	public XMLSectionView(final Element element)
 	{
-		super(element, Y_AXIS); //default to tiling on the Y axis G***do we want to allow this to be specifie?
+		super(element, Y_AXIS); //default to tiling on the Y axis TODO do we want to allow this to be specifie?
 	}
 
   /**Sets the parent of the view.
@@ -37,14 +52,14 @@ public class XMLSectionView extends XMLBlockView
   	meaning that the view hierchy is being unloaded. (This assumes this view is the direct
   	parent of the UI root view.
   @param parent The parent of the view, <code>null</code> if none.
-  @see ViewUtilities#hideView(View)
+  @see Views#hideView(View)
 	*/
 	public void setParent(final View parent)	//TODO maybe put this in some more primitive parent class
 	{
 		super.setParent(parent);	//set the parent normally
 		if(parent==null)	//if this view is being uninstalled
 		{
-			ViewUtilities.hideView(this); //hide this entire view hierarchy (this is important for component views, for instance)			
+			Views.hideView(this); //hide this entire view hierarchy (this is important for component views, for instance)			
 		}
   }
 
@@ -93,7 +108,7 @@ public class XMLSectionView extends XMLBlockView
 			if(documentElement.getStartOffset()<endOffset && documentElement.getEndOffset()>startOffset)
 			{
 				final AttributeSet documentAttributeSet=documentElement.getAttributes();  //get the attributes of the document element
-				if(XMLStyleUtilities.isPageBreakView(documentAttributeSet)) //if this is a page break element
+				if(XMLStyles.isPageBreakView(documentAttributeSet)) //if this is a page break element
 				{
 					elementList.add(documentElement);  //add this element to our list of elements; it's not a top-level document like the others TODO this is a terrible hack; fix
 				}
@@ -103,9 +118,9 @@ public class XMLSectionView extends XMLBlockView
 				}					
 				else
 				{
-//G***del if not needed					else if(XHTMLSwingTextUtilities.isHTMLDocumentElement(documentAttributeSet))	//if this is an HTML document G***this would probably go better in some XHTML-specific location
-//G***del if not needed final boolean isHTMLDocument=XHTMLSwingTextUtilities.isHTMLDocumentElement(documentAttributeSet);	//see if this is an HTML document
-	//G***del if not needed				Element baseElement=documentElement;  //we'll find out which element to use as the parent; in most documents, that will be the document element; in HTML elements, it will be the <body> element
+//TODO del if not needed					else if(XHTMLSwingTextUtilities.isHTMLDocumentElement(documentAttributeSet))	//if this is an HTML document TODO this would probably go better in some XHTML-specific location
+//TODO del if not needed final boolean isHTMLDocument=XHTMLSwingTextUtilities.isHTMLDocumentElement(documentAttributeSet);	//see if this is an HTML document
+	//TODO del if not needed				Element baseElement=documentElement;  //we'll find out which element to use as the parent; in most documents, that will be the document element; in HTML elements, it will be the <body> element
 					final int childElementCount=documentElement.getElementCount();  //find out how many children are in the document
 					for(int childIndex=0; childIndex<childElementCount; ++childIndex)  //look at the children of the document element
 					{
@@ -113,10 +128,10 @@ public class XMLSectionView extends XMLBlockView
 						if(childElement.getStartOffset()<endOffset && childElement.getEndOffset()>startOffset)	//if this child element's range overlaps with our range
 						{
 							final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child element's attributes
-							final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);  //get the child element local name
-		Log.trace("Looking at child: ", childElementLocalName); //G***del
+							final String childElementLocalName=XMLStyles.getXMLElementLocalName(childAttributeSet);  //get the child element local name
+		Log.trace("Looking at child: ", childElementLocalName); //TODO del
 								//if this element is an HTML <body> element 
-							if(XHTML.ELEMENT_BODY.equals(childElementLocalName) && XHTMLSwingTextUtilities.isHTMLElement(childAttributeSet, documentAttributeSet))  
+							if(XHTML.ELEMENT_BODY.equals(childElementLocalName) && XHTMLSwingText.isHTMLElement(childAttributeSet, documentAttributeSet))  
 							{
 								final int bodyChildElementCount=childElement.getElementCount(); //find out how many children the body element has
 								for(int bodyChildIndex=0; bodyChildIndex<bodyChildElementCount; ++bodyChildIndex) //look at each of the body element's children
@@ -190,11 +205,11 @@ public class XMLSectionView extends XMLBlockView
 		 */
 		protected boolean updateChildren(DocumentEvent.ElementChange ec, DocumentEvent e, ViewFactory f)
 		{
-Log.trace("Section updating children"); //G***fix
-//G***fix ((XMLDocument)getElement().getDocument()).applyxStyles();  //G***testing
+Log.trace("Section updating children"); //TODO fix
+//TODO fix ((XMLDocument)getElement().getDocument()).applyxStyles();  //TODO testing
 
 
-//G***testing; brought up from View
+//TODO testing; brought up from View
 	Element[] removedElems = ec.getChildrenRemoved();
 Log.trace("children removed: ", removedElems.length);
 	Element[] addedElems = ec.getChildrenAdded();
@@ -203,7 +218,7 @@ Log.trace("children added: ", addedElems.length);
 	if (addedElems != null) {
 			added = new View[addedElems.length];
 			for (int i = 0; i < addedElems.length; i++) {
-Log.trace("Creating added element: ", addedElems[i].getClass().getName());  //G***del
+Log.trace("Creating added element: ", addedElems[i].getClass().getName());  //TODO del
 		added[i] = f.create(addedElems[i]);
 			}
 	}
@@ -211,20 +226,20 @@ Log.trace("Creating added element: ", addedElems[i].getClass().getName());  //G*
 	int index = ec.getIndex();
 
 
-	//G***del
-	final String ourLocalName=XMLStyleUtilities.getXMLElementLocalName(getElement().getAttributes());  //G***testing
+	//TODO del
+	final String ourLocalName=XMLStyles.getXMLElementLocalName(getElement().getAttributes());  //TODO testing
 
-	//G***del
-	final String elementLocalName=XMLStyleUtilities.getXMLElementLocalName(ec.getElement().getAttributes());  //G***testing
+	//TODO del
+	final String elementLocalName=XMLStyles.getXMLElementLocalName(ec.getElement().getAttributes());  //TODO testing
 
-				//G***testing
+				//TODO testing
 		//as the section view can conflate the structure and place XHTML elements before the body, update our index accordingly
-//G***del	final Element parentElement=ec.getElement().getParentElement();	//get the parent element
-//G***del	final String parentElementLocalName=XMLStyleConstants.getXMLElementLocalName(parentElement.getAttributes());  //G***testing
+//TODO del	final Element parentElement=ec.getElement().getParentElement();	//get the parent element
+//TODO del	final String parentElementLocalName=XMLStyleConstants.getXMLElementLocalName(parentElement.getAttributes());  //TODO testing
 	if("body".equals(elementLocalName))
 	{
 		final Element parentElement=ec.getElement().getParentElement();	//get the parent element
-//G***del		final Element grandparentElement=parentElement.getParentElement();	//get the grandparent element
+//TODO del		final Element grandparentElement=parentElement.getParentElement();	//get the grandparent element
 		final int extraElementCount=parentElement.getElementIndex(ec.getElement().getStartOffset());	//find out how many elements were added that are outside the body
 		index+=extraElementCount;	//update the index to reflect the views before the body  
 	}
@@ -236,7 +251,7 @@ Log.trace("Creating added element: ", addedElems[i].getClass().getName());  //G*
 	return true;
 
 
-//G***fix		  return super.updateChildren(ec, e, f); //G***fix
+//TODO fix		  return super.updateChildren(ec, e, f); //TODO fix
 		}
 
 
@@ -274,33 +289,33 @@ Log.trace("Creating added element: ", addedElems[i].getClass().getName());  //G*
 
 //TODO combine and tidy all this section-specific calculation---probably best to even make an XHTMLSectionView that rides on top of this and is created in a view factory
 
-Log.trace("section view insert update");  //G***del; testing
-if(ec==null)  //G***testing; fix; comment; G***we don't need this test; the test is in the for loop
+Log.trace("section view insert update");  //TODO del; testing
+if(ec==null)  //TODO testing; fix; comment; TODO we don't need this test; the test is in the for loop
 {
 	for(int i=elem.getElementCount()-1; ec==null && i>=0; --i)
 	{
-		final Element childElement=elem.getElement(i);  //G***testing
-		if(childElement.getAttributes()!=null)  //G***del; we probably don't need this test
+		final Element childElement=elem.getElement(i);  //TODO testing
+		if(childElement.getAttributes()!=null)  //TODO del; we probably don't need this test
 		{
-			final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childElement.getAttributes());  //G***testing
+			final String childElementLocalName=XMLStyles.getXMLElementLocalName(childElement.getAttributes());  //TODO testing
 
-Log.trace("child "+i+" local name: ", childElementLocalName);  //G***del; testing
+Log.trace("child "+i+" local name: ", childElementLocalName);  //TODO del; testing
 
-			if("html".equals(childElementLocalName))  //G***testing
+			if("html".equals(childElementLocalName))  //TODO testing
 			{
 
 				for(int j=childElement.getElementCount()-1; ec==null && j>=0; --j)
 				{
-					final Element grandchildElement=childElement.getElement(j);  //G***testing
-					if(grandchildElement.getAttributes()!=null)  //G***del; we probably don't need this test
+					final Element grandchildElement=childElement.getElement(j);  //TODO testing
+					if(grandchildElement.getAttributes()!=null)  //TODO del; we probably don't need this test
 					{
-						final String grandchildElementLocalName=XMLStyleUtilities.getXMLElementLocalName(grandchildElement.getAttributes());  //G***testing
+						final String grandchildElementLocalName=XMLStyles.getXMLElementLocalName(grandchildElement.getAttributes());  //TODO testing
 
-			Log.trace("grandchild "+i+" local name: ", grandchildElementLocalName);  //G***del; testing
+			Log.trace("grandchild "+i+" local name: ", grandchildElementLocalName);  //TODO del; testing
 
-						if("body".equals(grandchildElementLocalName))  //G***testing
+						if("body".equals(grandchildElementLocalName))  //TODO testing
 						{
-							ec=e.getChange(grandchildElement); //G***testing
+							ec=e.getChange(grandchildElement); //TODO testing
 						}
 					}
 				}
@@ -351,33 +366,33 @@ Log.trace("child "+i+" local name: ", childElementLocalName);  //G***del; testin
 			Element elem = getElement();
 			DocumentEvent.ElementChange ec = e.getChange(elem);
 
-		Log.trace("section view remove update");  //G***del; testing
-		if(ec==null)  //G***testing; fix; comment; G***we don't need this test; the test is in the for loop
+		Log.trace("section view remove update");  //TODO del; testing
+		if(ec==null)  //TODO testing; fix; comment; TODO we don't need this test; the test is in the for loop
 		{
 			for(int i=elem.getElementCount()-1; ec==null && i>=0; --i)
 			{
-				final Element childElement=elem.getElement(i);  //G***testing
-				if(childElement.getAttributes()!=null)  //G***del; we probably don't need this test
+				final Element childElement=elem.getElement(i);  //TODO testing
+				if(childElement.getAttributes()!=null)  //TODO del; we probably don't need this test
 				{
-					final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childElement.getAttributes());  //G***testing
+					final String childElementLocalName=XMLStyles.getXMLElementLocalName(childElement.getAttributes());  //TODO testing
 
-		Log.trace("child "+i+" local name: ", childElementLocalName);  //G***del; testing
+		Log.trace("child "+i+" local name: ", childElementLocalName);  //TODO del; testing
 
-					if("html".equals(childElementLocalName))  //G***testing
+					if("html".equals(childElementLocalName))  //TODO testing
 					{
 
 						for(int j=childElement.getElementCount()-1; ec==null && j>=0; --j)
 						{
-							final Element grandchildElement=childElement.getElement(j);  //G***testing
-							if(grandchildElement.getAttributes()!=null)  //G***del; we probably don't need this test
+							final Element grandchildElement=childElement.getElement(j);  //TODO testing
+							if(grandchildElement.getAttributes()!=null)  //TODO del; we probably don't need this test
 							{
-								final String grandchildElementLocalName=XMLStyleUtilities.getXMLElementLocalName(grandchildElement.getAttributes());  //G***testing
+								final String grandchildElementLocalName=XMLStyles.getXMLElementLocalName(grandchildElement.getAttributes());  //TODO testing
 
-					Log.trace("grandchild "+i+" local name: ", grandchildElementLocalName);  //G***del; testing
+					Log.trace("grandchild "+i+" local name: ", grandchildElementLocalName);  //TODO del; testing
 
-								if("body".equals(grandchildElementLocalName))  //G***testing
+								if("body".equals(grandchildElementLocalName))  //TODO testing
 								{
-									ec=e.getChange(grandchildElement); //G***testing
+									ec=e.getChange(grandchildElement); //TODO testing
 								}
 							}
 						}
@@ -430,33 +445,33 @@ Log.trace("child "+i+" local name: ", childElementLocalName);  //G***del; testin
 			Element elem = getElement();
 			DocumentEvent.ElementChange ec = e.getChange(elem);
 
-		Log.trace("section view changed update");  //G***del; testing
-		if(ec==null)  //G***testing; fix; comment; G***we don't need this test; the test is in the for loop
+		Log.trace("section view changed update");  //TODO del; testing
+		if(ec==null)  //TODO testing; fix; comment; TODO we don't need this test; the test is in the for loop
 		{
 			for(int i=elem.getElementCount()-1; ec==null && i>=0; --i)
 			{
-				final Element childElement=elem.getElement(i);  //G***testing
-				if(childElement.getAttributes()!=null)  //G***del; we probably don't need this test
+				final Element childElement=elem.getElement(i);  //TODO testing
+				if(childElement.getAttributes()!=null)  //TODO del; we probably don't need this test
 				{
-					final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childElement.getAttributes());  //G***testing
+					final String childElementLocalName=XMLStyles.getXMLElementLocalName(childElement.getAttributes());  //TODO testing
 
-		Log.trace("child "+i+" local name: ", childElementLocalName);  //G***del; testing
+		Log.trace("child "+i+" local name: ", childElementLocalName);  //TODO del; testing
 
-					if("html".equals(childElementLocalName))  //G***testing
+					if("html".equals(childElementLocalName))  //TODO testing
 					{
 
 						for(int j=childElement.getElementCount()-1; ec==null && j>=0; --j)
 						{
-							final Element grandchildElement=childElement.getElement(j);  //G***testing
-							if(grandchildElement.getAttributes()!=null)  //G***del; we probably don't need this test
+							final Element grandchildElement=childElement.getElement(j);  //TODO testing
+							if(grandchildElement.getAttributes()!=null)  //TODO del; we probably don't need this test
 							{
-								final String grandchildElementLocalName=XMLStyleUtilities.getXMLElementLocalName(grandchildElement.getAttributes());  //G***testing
+								final String grandchildElementLocalName=XMLStyles.getXMLElementLocalName(grandchildElement.getAttributes());  //TODO testing
 
-					Log.trace("grandchild "+i+" local name: ", grandchildElementLocalName);  //G***del; testing
+					Log.trace("grandchild "+i+" local name: ", grandchildElementLocalName);  //TODO del; testing
 
-								if("body".equals(grandchildElementLocalName))  //G***testing
+								if("body".equals(grandchildElementLocalName))  //TODO testing
 								{
-									ec=e.getChange(grandchildElement); //G***testing
+									ec=e.getChange(grandchildElement); //TODO testing
 								}
 							}
 						}

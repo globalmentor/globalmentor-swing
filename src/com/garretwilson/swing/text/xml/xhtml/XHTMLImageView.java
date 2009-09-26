@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml.xhtml;
 
 import java.awt.*;
@@ -11,7 +27,6 @@ import com.garretwilson.swing.text.xml.*;
 import static com.globalmentor.text.xml.xhtml.XHTML.*;
 
 import com.globalmentor.log.Log;
-import com.globalmentor.util.*;
 
 /**A view that displays an image, intended to support the XHTML
 <code>&lt;img&gt;</code> element or the <code>&lt;object&gt;</code> element
@@ -25,7 +40,7 @@ public class XHTMLImageView extends XMLImageView
 {
 
 	/**The element from which we are initialized.*/
-	protected final Element initElement;  //G***probably promote this to XMLObjectView
+	protected final Element initElement;  //TODO probably promote this to XMLObjectView
 
 	/**Creates a new view that represents an XHTML image element.
 	@param element The element for which to create the view.
@@ -49,11 +64,11 @@ public class XHTMLImageView extends XMLImageView
 	{
    	super(element);	//do the default constructing
 		initElement=initializeElement;  //save the element from which we're being initialized
-   	initialize(initializeElement);	//do the necessary image value setting G***perhaps promote this to XMLImageView or higher
-			//G***we should probably save the initialization attribute set and return it for getAttributes()
-//G***fix	StyleSheet sheet = getStyleSheet();
-//G***fix	attr = sheet.getViewAttributes(this);
-Log.trace("Finished constructing XHTMLImageView");	//G***del
+   	initialize(initializeElement);	//do the necessary image value setting TODO perhaps promote this to XMLImageView or higher
+			//TODO we should probably save the initialization attribute set and return it for getAttributes()
+//TODO fix	StyleSheet sheet = getStyleSheet();
+//TODO fix	attr = sheet.getViewAttributes(this);
+Log.trace("Finished constructing XHTMLImageView");	//TODO del
 	}
 
 	/**Initializes the information needed to render the image.
@@ -63,29 +78,22 @@ Log.trace("Finished constructing XHTMLImageView");	//G***del
 	{
 Log.trace("XHTMLImageView.initialize()");
 		final AttributeSet attributeSet=element.getAttributes();  //get the element's attributes
-		final String elementName=XMLStyleUtilities.getXMLElementName(attributeSet); //get the name of this element
-		final String href=XHTMLSwingTextUtilities.getImageHRef(element.getAttributes()); //get a reference to the image file represented by the element
+		final String elementName=XMLStyles.getXMLElementName(attributeSet); //get the name of this element
+		final String href=XHTMLSwingText.getImageHRef(element.getAttributes()); //get a reference to the image file represented by the element
 			setHRef(href);	//set the href to the value we found
-//G***del when works		final String src=(String)element.getAttributes().getAttribute("src");	//G***check about resolving parents (we don't want to resolve), use a constant, use namespaces, and comment
-//G***del when works		setHRef((String)attributeSet.getAttribute("src"));	//G***check about resolving parents (we don't want to resolve), use a constant, use namespaces, and comment
 Log.trace("XHTMLImageView.initialize() src: ", getHRef());
-//G***del when works		final String src="D:/Projects/oeb/understandingoeb/oebobjects_classdiagram.jpg";	//G***fix
-				//G***in the future, get this from the XML document (which will, of course, use OEBDocument)
-//G***del when works		final OEBDocument document=(OEBDocument)getDocument();
-//G***fix			fImage=(Image)document.getResource(src);	//get the image resource G***check to make sure what is returned is really an image
-
-//G***del when works			fImageIcon=(ImageIcon)document.getResource(src);	//get the image resource G***check to make sure what is returned is really an image
-//G***del when works Debug.assert(fImageIcon!=null, "fImageIcon is null");
+				//TODO in the future, get this from the XML document (which will, of course, use OEBDocument)
+//TODO fix			fImage=(Image)document.getResource(src);	//get the image resource TODO check to make sure what is returned is really an image
 		int height=-1; //assume for now that the image dimensions are not defined in the attributes
 		int width=-1;  //
 		try //try to get the width and the height from the attributes; if we can, we won't have to load the image, now
 		{
-			//get the height if it is defined G***check about namespaces
-			final String heightString=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_IMG_ATTRIBUTE_HEIGHT);
+			//get the height if it is defined TODO check about namespaces
+			final String heightString=XMLStyles.getXMLAttributeValue(attributeSet, null, ELEMENT_IMG_ATTRIBUTE_HEIGHT);
 			if(heightString!=null)  //if there is a height defined
 				height=Integer.parseInt(heightString);  //turn the height of the image into an integer
-			//get the width if it is defined G***check about namespaces
-			final String widthString=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_IMG_ATTRIBUTE_WIDTH);
+			//get the width if it is defined TODO check about namespaces
+			final String widthString=XMLStyles.getXMLAttributeValue(attributeSet, null, ELEMENT_IMG_ATTRIBUTE_WIDTH);
 			if(widthString!=null)  //if there is a height defined
 				width=Integer.parseInt(widthString);  //turn the width of the image into an integer
 		}
@@ -95,41 +103,23 @@ Log.trace("XHTMLImageView.initialize() src: ", getHRef());
 			try
 			{
 				final Image image=getImage(); //get the image, loading it if needed (in initialize() it will usually have to be loaded)
-				assert image!=null : "fImage is null";  //G***fix
-  			ImageUtilities.loadImage(image);  //load the image G***optimize: perhaps there's a way to just load part of the image, to get the image dimensions
+				assert image!=null : "fImage is null";  //TODO fix
+  			ImageUtilities.loadImage(image);  //load the image TODO optimize: perhaps there's a way to just load part of the image, to get the image dimensions
 				height=image.getHeight(this);	//get the image's height
 				width=image.getWidth(this);	//get the image's width
 				freeImage();  //free the image memory; this should speed up view flowing
 			}
-			catch(URISyntaxException e)	//G***do something better here
+			catch(URISyntaxException e)	//TODO do something better here
 			{
 				Log.error(e);
 			}
-			catch(IOException e)	//G***do something better here
+			catch(IOException e)	//TODO do something better here
 			{
 				Log.error(e);
 			}
 		}
 		setHeight(height);	//set the height of the image view to whatever we found
 		setWidth(width);	//set the width of the image view to whatever we found
-/*G***del
-Log.trace("creating image view for {0}"+
-		"parent: {4}\n parent parent: {5}"+
-		"\n parent parent parent: {6}"+
-		"\n parent parent parent parent: {7}"+
-		"\n parent parent parent parent parent: {8}\n container: {9}", new Object[]
-			{
-				getHRef(),
-				(getParent()!=null ? getParent().getClass().getName() : "null"),
-				(getParent()!=null && getParent().getParent()!=null ? getParent().getParent().getClass().getName() : "null"),
-				(getParent()!=null && getParent().getParent()!=null && getParent().getParent().getParent()!=null ? getParent().getParent().getParent().getClass().getName() : "null"),
-				(getParent()!=null && getParent().getParent()!=null && getParent().getParent().getParent()!=null && getParent().getParent().getParent().getParent()!=null ? getParent().getParent().getParent().getParent().getClass().getName() : "null"),
-				(getParent()!=null && getParent().getParent()!=null && getParent().getParent().getParent()!=null && getParent().getParent().getParent().getParent()!=null && getParent().getParent().getParent().getParent().getParent()!=null ? getParent().getParent().getParent().getParent().getParent().getClass().getName() : "null"),
-				getContainer()
-			}
-		);
-*/
-//G***del Log.trace("XHTMLImageView.initialize(), width: "+fWidth+", height: "+fHeight);	//G***del
 	}
 
 	/**Fetches the attributes to use when rendering.

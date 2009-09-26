@@ -19,9 +19,9 @@ import com.garretwilson.swing.event.*;
 import com.garretwilson.swing.rdf.*;
 import com.garretwilson.swing.text.*;
 import com.garretwilson.swing.text.Annotation;
-import static com.garretwilson.swing.text.TextComponentConstants.*;
+
 import com.garretwilson.swing.text.xml.*;
-import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
+import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingText;
 import com.globalmentor.io.*;
 import com.globalmentor.log.Log;
 import com.globalmentor.net.*;
@@ -356,7 +356,7 @@ Log.trace("ready to fire property change");
 		public void clearBookmarks()
 		{
 			bookmarkHighlightTagMap.clear();  //clear the bookmarks and their corresponding highlights
-		  TextComponentUtilities.removeHighlights(getXMLTextPane(), bookmarkHighlightPainter);  //remove all bookmark highlights G***it would probably be better to remove them one at a time with the highlight tag
+		  TextComponents.removeHighlights(getXMLTextPane(), bookmarkHighlightPainter);  //remove all bookmark highlights G***it would probably be better to remove them one at a time with the highlight tag
 			userDataModified=true;	//show that the user data has been modified
 			firePropertyChange(BOOKMARKS_PROPERTY, null, null); //fire an event showing that the bookmarks have changed
 		}
@@ -847,13 +847,13 @@ Log.trace();  //G***del
 		getXMLTextPane().setAsynchronousLoad(true);	//turn on asynchronous loading TODO fix this better; tidy up throughout the code
 		getXMLTextPane().setPaged(true); //show that the text pane should page its information
 		setAntialias(true);	//default to antialiasing, updating the action
-		setZoom(DocumentConstants.DEFAULT_ZOOM);	//set the default zoom level, selecting the appropriate action
+		setZoom(DocumentUtilities.DEFAULT_ZOOM);	//set the default zoom level, selecting the appropriate action
 		add(getXMLTextPane(), BorderLayout.CENTER);	//add the text pane to the center of our control
 		xmlTextPane.setEditable(false);	//don't let the OEB text pane be edited in this implementation
 		xmlTextPane.addProgressListener(this);	//listen for progress events
 		xmlTextPane.addHyperlinkListener(this);  //listen for hyperlink events
 			//catch all document changes in the text pane, since the document is actually changed in a separate thread
-		xmlTextPane.addPropertyChangeListener(DOCUMENT_PROPERTY, new PropertyChangeListener()
+		xmlTextPane.addPropertyChangeListener(TextComponents.DOCUMENT_PROPERTY, new PropertyChangeListener()
 			{
 			  //if the document property changes, call onDocumentChange()
 			  public void propertyChange(final PropertyChangeEvent event) {onDocumentChange();}
@@ -1070,20 +1070,20 @@ Log.trace("new page index", newPageIndex);
 					final int pos=editorPane.viewToModel(point);	//get the position of the mouse click
 
 						//get the view closest to the viewer, making sure we have a forward bias or we'll get the wrong view
-				  final View view=SwingTextUtilities.getLeafView(editorPane.getUI().getRootView(editorPane), pos, Position.Bias.Forward);
+				  final View view=SwingText.getLeafView(editorPane.getUI().getRootView(editorPane), pos, Position.Bias.Forward);
 				  final AttributeSet attributeSet=view.getAttributes(); //get the view's attributes
-						if(XHTMLSwingTextUtilities.isImage(attributeSet)) //if this is an image
+						if(XHTMLSwingText.isImage(attributeSet)) //if this is an image
 						{
 	Log.trace("Is image element.");
 	//G***del						final String src=(String)attributeSet.getAttribute("src");	//G***fix; use a constant
-							final String href=XHTMLSwingTextUtilities.getImageHRef(attributeSet); //get a reference to the image file represented by the element
+							final String href=XHTMLSwingText.getImageHRef(attributeSet); //get a reference to the image file represented by the element
 	//G***del Debug.notify("image from: "+src);	//G***fix
 							if(href!=null)  //if we found a reference to the image
 							{
 									//take into account that the href is relative to this file's base URI
 								try
 								{
-									final String baseRelativeHRef=XMLStyleUtilities.getBaseRelativeHRef(attributeSet, href);
+									final String baseRelativeHRef=XMLStyles.getBaseRelativeHRef(attributeSet, href);
 		Log.trace("Image href: ", href);
 									viewImage(baseRelativeHRef);  //show the image
 								}
@@ -1199,17 +1199,17 @@ Log.trace("new page index", newPageIndex);
 				DefaultStyledDocument defaultStyledDocument=(DefaultStyledDocument)document;	//cast the document to a default styled document
 						  //"View Image"
 					//see if we can get an image element at this position
-				final Element imageElement=XHTMLSwingTextUtilities.getImageElement(defaultStyledDocument, pos);
+				final Element imageElement=XHTMLSwingText.getImageElement(defaultStyledDocument, pos);
 				if(imageElement!=null)  //if we found an image element
 				{
-					final String href=XHTMLSwingTextUtilities.getImageHRef(imageElement.getAttributes()); //get a reference to the image file represented by the element
+					final String href=XHTMLSwingText.getImageHRef(imageElement.getAttributes()); //get a reference to the image file represented by the element
 					if(href!=null)  //if we found a reference to the image
 					{
 						try
 						{
 								//G***add something here to extract the name of the image, especially after we can get a URL relative to the file base
 								//take into account that the href is relative to this file's base URL
-							final String baseRelativeHRef=XMLStyleUtilities.getBaseRelativeHRef(imageElement.getAttributes(), href);
+							final String baseRelativeHRef=XMLStyles.getBaseRelativeHRef(imageElement.getAttributes(), href);
 							JMenuItem viewImageMenuItem=popupMenu.add(new ViewImageAction(baseRelativeHRef)); //add an action to view the image
 							popupMenu.addSeparator(); //add a separator
 						}

@@ -1,8 +1,23 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.unicode;
 
 import javax.swing.table.*;
 import com.globalmentor.java.Integers;
-import com.globalmentor.text.unicode.*;
 
 /**Table model for displaying Unicode code points.
 @author Garret Wilson
@@ -10,8 +25,8 @@ import com.globalmentor.text.unicode.*;
 public class UnicodeTableModel extends AbstractTableModel
 {
 
-	/**The number of Unicode code points.*/ //G***fix for extended Unicode code points
-	protected final static int UNICODE_CODE_POINT_COUNT=0x10000;	  //G***maybe put this in UnicodeConstants
+	/**The number of Unicode code points.*/ //TODO fix for extended Unicode code points
+	protected final static int UNICODE_CODE_POINT_COUNT=0x10000;	  //TODO maybe put this in UnicodeConstants
 
 	/**The number of rows of Unicode code points to show at a time.*/
 	protected final static int ROW_COUNT=0x10;
@@ -81,12 +96,12 @@ public class UnicodeTableModel extends AbstractTableModel
 	*/
 	public String getColumnName(int columnIndex)
 	{
-//G***fix		return Integer.toHexString(columnIndex%0x10).toUpperCase();  //show the hex values 0...F repeatedly
+//TODO fix		return Integer.toHexString(columnIndex%0x10).toUpperCase();  //show the hex values 0...F repeatedly
 		return Integers.toHexString(ROW_COUNT*columnIndex, 4).toUpperCase(); //show the starting Unicode code point value of this row in hex
-//G***del 		return Integer.toHexString(ROW_COUNT*columnIndex).toUpperCase();
+//TODO del 		return Integer.toHexString(ROW_COUNT*columnIndex).toUpperCase();
 	}
 
-/*G***fix
+/*TODO fix
             public Class getColumnClass(int c) {return getValueAt(0, c).getClass();}
             public boolean isCellEditable(int row, int col) {return true;}
             public void setValueAt(Object aValue, int row, int column) {

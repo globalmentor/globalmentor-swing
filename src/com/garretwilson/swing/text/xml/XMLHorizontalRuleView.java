@@ -1,20 +1,34 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import java.awt.*;
 
-import javax.swing.BorderFactory;
-import javax.swing.border.*;
 import javax.swing.text.*;
 
 import com.globalmentor.log.Log;
 
-/**Represents a horizontal rule. G***later move to xhtml package
+/**Represents a horizontal rule.
 	This class was written referencing <code>javax.swing.text.html.HRuleView</code>
 	by Timothy Prinzing and Sara Swanson version 1.27 02/02/00, and the original
 	version was based on code from that class.
 @author Garret Wilson
 */
-public class XMLHorizontalRuleView extends View
+public class XMLHorizontalRuleView extends View	//TODO later move to XHTML package
 {
 
 	/**The space above a horizontal rule.*/
@@ -30,13 +44,13 @@ public class XMLHorizontalRuleView extends View
 	{
 		super(element); //construct the parent
 Log.trace("created horizontal rule view");
-//G***del	setPropertiesFromAttributes();
+//TODO del	setPropertiesFromAttributes();
 	}
 
     /**
      * Update any cached values that come from attributes.
      */
-/*G***fix
+/*TODO fix
     protected void setPropertiesFromAttributes() {
 	StyleSheet sheet = ((HTMLDocument)getDocument()).getStyleSheet();
 	AttributeSet eAttr = getElement().getAttributes();
@@ -77,7 +91,7 @@ Log.trace("created horizontal rule view");
 
     // This will be removed and centralized at some point, need to unify this
     // and avoid private classes.
-/*G***fix
+/*TODO fix
     private float getLength(CSS.Attribute key, AttributeSet a) {
 	CSS.LengthValue lv = (CSS.LengthValue) a.getAttribute(key);
 	float len = (lv != null) ? lv.getValue() : 0;
@@ -93,11 +107,11 @@ Log.trace("created horizontal rule view");
 	public void paint(final Graphics graphics, Shape allocation)
 	{
 		final Rectangle rectangle=(allocation instanceof Rectangle) ? (Rectangle)allocation : allocation.getBounds();  //get the bounding rectangle of the painting area
-/*G***fix
-		rectangle.x=getLeftInset(); //G***testing
-		rectangle.width-=getLeftInset()+getRightInset(); //G***testing
+/*TODO fix
+		rectangle.x=getLeftInset(); //TODO testing
+		rectangle.width-=getLeftInset()+getRightInset(); //TODO testing
 */
-//G***del Debug.notify("Rectangle width: "+rectangle.width);  //G***del
+//TODO del Debug.notify("Rectangle width: "+rectangle.width);  //TODO del
 		final int y=rectangle.y+SPACE_ABOVE;  //compensate for space above
 		final int height=rectangle.height-(SPACE_ABOVE+SPACE_BELOW);  //subtract the space above and below from the height
 		graphics.fillRect(rectangle.x, y, rectangle.width, height);  //fill the horizontal rule
@@ -111,15 +125,15 @@ Log.trace("created horizontal rule view");
 	*/
 	public float getPreferredSpan(final int axis)
 	{
-//G***fix	Insets i = bevel.getBorderInsets(getContainer());
+//TODO fix	Insets i = bevel.getBorderInsets(getContainer());
 		switch (axis)
 		{
 		  case View.X_AXIS:
-//G***del				return Float.MAX_VALUE; //G***testing
-				return 0; //G***testing; see why a max value doesn't work; actually, this may be correct -- the Swing HTML code only adds suggested margins to this
-//G***fix				return i.left + i.right;
+//TODO del				return Float.MAX_VALUE; //TODO testing
+				return 0; //TODO testing; see why a max value doesn't work; actually, this may be correct -- the Swing HTML code only adds suggested margins to this
+//TODO fix				return i.left + i.right;
 		  case View.Y_AXIS:
-				return 2+SPACE_ABOVE+SPACE_BELOW; //G***don't hard-code this in
+				return 2+SPACE_ABOVE+SPACE_BELOW; //TODO don't hard-code this in
 		  default:
 				throw new IllegalArgumentException("Invalid axis: "+axis);
 		}
@@ -135,7 +149,7 @@ Log.trace("created horizontal rule view");
 	@see View#getPreferredSpan
 	@see #setSize
 	*/
-/*G***del; doesn't work
+/*TODO del; doesn't work
 	public float getMinimumSpan(int axis)
 	{
 		return 0;  //report that the object can be scaled away to nothing, although setSize() will not actually allow this to occur
@@ -143,7 +157,7 @@ Log.trace("created horizontal rule view");
 */
 
 	/**Gets the resize weight for the axis.
-		The horizontal rule is rigid vertically and flexible horizontally. G***maybe give something similar to the image view; in particular, try no resize weight vertially; try this for tables as well
+		The horizontal rule is rigid vertically and flexible horizontally. TODO maybe give something similar to the image view; in particular, try no resize weight vertially; try this for tables as well
 	@param axis The axis (<code>X_AXIS</code> or <code>Y_AXIS</code>).
 	@return The resize weight for the axis.
 	*/
@@ -152,11 +166,11 @@ Log.trace("created horizontal rule view");
 		switch (axis)
 		{
 		  case View.X_AXIS:
-			  return 1; //G***comment
+			  return 1; //TODO comment
 		  case View.Y_AXIS:
-				return 0; //G***comment
+				return 0; //TODO comment
 		  default:
-		    return 0; //G***comment
+		    return 0; //TODO comment
 		}
 	}
 
@@ -232,13 +246,13 @@ Log.trace("created horizontal rule view");
      * implemented to multiplex the attributes specified in the
      * model with a StyleSheet.
      */
-/*G***fix
+/*TODO fix
     public AttributeSet getAttributes() {
 	return attr;
     }
 */
 
-/*G***fix
+/*TODO fix
     public void changedUpdate(DocumentEvent changes, Shape a, ViewFactory f) {
 	super.changedUpdate(changes, a, f);
 	int pos = changes.getOffset();
@@ -250,7 +264,7 @@ Log.trace("created horizontal rule view");
 */
 
     // --- variables ------------------------------------------------
-/*G***fix
+/*TODO fix
     private Border bevel;
     private float topMargin;
     private float bottomMargin;
@@ -263,6 +277,6 @@ Log.trace("created horizontal rule view");
 */
 
     /** View Attributes. */
-//G***fix    private AttributeSet attr;
+//TODO fix    private AttributeSet attr;
 }
 

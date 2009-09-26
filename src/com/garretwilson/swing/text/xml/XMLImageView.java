@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import java.awt.*;
@@ -7,28 +23,26 @@ import java.awt.image.ImageObserver;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.net.URISyntaxException;
-import java.net.URL;
-import javax.swing.*;
 import javax.swing.text.*;
+import javax.swing.text.html.ImageView;
 
-import com.globalmentor.net.URLs;
 import com.globalmentor.log.Log;
 
 /**View that displays an image. The image reference is kept using a soft pointer
 	so that when memory is low the JVM can reclaim the image memory. The image,
 	therefore, can be loaded or reloaded at any time using <code>loadImage()</code>.
-	A class should be derived from this class that correctly sets the image href,
-	width, and height.
-	This class was written referencing <code>javax.swing.text.html.ImageView</code>
+	<p>A class should be derived from this class that correctly sets the image href,
+	width, and height.</p>
+	<p>This class was written referencing {@link ImageView}
 	by Jens Alfke version 1.40 02/02/00, and the original version was based on
-	code from that class.
+	code from that class.</p>
 @author Garret Wilson
-@see javax.swing.text.html.ImageView
-@see XMLObjectView#setHeight
-@see XMLObjectView#setWidth
-@see #setHRef
+@see ImageView
+@see XMLObjectView#setHeight(int)
+@see XMLObjectView#setWidth(int)
+@see #setHRef(String)
 */
-public abstract class XMLImageView extends XMLObjectView implements ImageObserver	//G***fix, MouseListener, MouseMotionListener
+public abstract class XMLImageView extends XMLObjectView implements ImageObserver	//TODO fix, MouseListener, MouseMotionListener
 {
 
 	/**The reference to the image, which can be reclaimed if memory is running low.*/
@@ -38,7 +52,7 @@ public abstract class XMLImageView extends XMLObjectView implements ImageObserve
 	@see #paint
 	@see #imageUpdate
 	*/
-//G***del; not needed now that FRAMEBITS has been discovered	protected boolean startedLoading=false;
+//TODO del; not needed now that FRAMEBITS has been discovered	protected boolean startedLoading=false;
 	protected boolean startedLoading=false;
 
 	/**Whether or not the image has finished loading.
@@ -59,7 +73,7 @@ public abstract class XMLImageView extends XMLObjectView implements ImageObserve
 		protected void setHRef(final String newHRef) {href=newHRef;}
 
     // --- Attribute Values ------------------------------------------
-/*G***del if not needed
+/*TODO del if not needed
     public static final String
     	TOP = "top",
     	TEXTTOP = "texttop",
@@ -81,11 +95,11 @@ public abstract class XMLImageView extends XMLObjectView implements ImageObserve
 	/**Loads the image immediately and returns it.
 	@return The loaded image.
 	*/
-/*G***fix after deciding how this method should be used
+/*TODO fix after deciding how this method should be used
 	protected Image loadImage()
 	{
 
-			final Image image=(Image)document.getResource(src);	//get the image resource G***check to make sure what is returned is really an image
+			final Image image=(Image)document.getResource(src);	//get the image resource TODO check to make sure what is returned is really an image
 		  imageReference=new SoftReference(image);  //create a soft reference to the image to store locally
 
 	}
@@ -103,7 +117,7 @@ public abstract class XMLImageView extends XMLObjectView implements ImageObserve
 	*/
 	public void setShowing(final boolean newShowing)
 	{
-Log.trace();  //G***del
+Log.trace();  //TODO del
 		super.setShowing(newShowing); //do the default functionality
 		if(!newShowing) //if we're being hidden
 		{
@@ -126,29 +140,29 @@ Log.trace();  //G***del
 	*/
 	protected Image getImage() throws URISyntaxException, IOException
 	{
-Log.trace("XMLImageView.getImage(): ", getHRef()); //G***del
-		if(shownImage!=null)  //G***testing; comment
-			return shownImage;  //G***comment
+Log.trace("XMLImageView.getImage(): ", getHRef()); //TODO del
+		if(shownImage!=null)  //TODO testing; comment
+			return shownImage;  //TODO comment
 		else
 		{
-			//G***put some sort of assert that the image reference is not equal to null or something; or maybe this isn't needed, since the constructor calls initialize()
+			//TODO put some sort of assert that the image reference is not equal to null or something; or maybe this isn't needed, since the constructor calls initialize()
 			Image image=imageReference!=null ? (Image)imageReference.get() : null;  //get the image to which the soft reference refers
 			if(image==null) //if we have not loaded the image yet, or the image memory has been reclaimed
-			{ //G***put all this into a separate function
-				Log.trace("loading image"); //G***del
+			{ //TODO put all this into a separate function
+				Log.trace("loading image"); //TODO del
 				if(imageReference!=null)  //if we used to have a reference to an image, but memory was running low and it was reclaimed
 				{
-					Log.trace("Image memory reclaimed, reloading."); //G***del
-					System.gc();  //indicate that garbage collection should occur to attempt to give us more memory G***testing memory
+					Log.trace("Image memory reclaimed, reloading."); //TODO del
+					System.gc();  //indicate that garbage collection should occur to attempt to give us more memory TODO testing memory
 				}
 				startedLoading=false; //show that the image hasn't started loading, yet
 				finishedLoading=false;  //show that the image hasn't finished loading, either
-				final XMLDocument document=(XMLDocument)getDocument();  //get the document used to load resources G***make sure this is an XML document
+				final XMLDocument document=(XMLDocument)getDocument();  //get the document used to load resources TODO make sure this is an XML document
 					//get the href, taking into account that the href is relative to this file's base URL
-//G***del System.out.println("image href: "+getHRef());  //G***del
-			  final String href=XMLStyleUtilities.getBaseRelativeHRef(getAttributes(), getHRef());
-//G***del System.out.println("image base relateive href: "+href);  //G***del
-				image=(Image)document.getResource(href);	//get the image resource G***check to make sure what is returned is really an image
+//TODO del System.out.println("image href: "+getHRef());  //TODO del
+			  final String href=XMLStyles.getBaseRelativeHRef(getAttributes(), getHRef());
+//TODO del System.out.println("image base relateive href: "+href);  //TODO del
+				image=(Image)document.getResource(href);	//get the image resource TODO check to make sure what is returned is really an image
 				imageReference=new SoftReference(image);  //create a soft reference to the image to store locally
 			}
 			return image; //return the image
@@ -181,28 +195,28 @@ Log.trace("XMLImageView.getImage(): ", getHRef()); //G***del
      * implemented to multiplex the attributes specified in the
      * model with a StyleSheet.
      */
-/*G***fix
+/*TODO fix
     public AttributeSet getAttributes() {
 	return attr;
     }
 */
 
     /** Is this image within a link? */
-/*G***fix
+/*TODO fix
     boolean isLink( ) {
 	return isLink;
     }
 */
 
     /** Returns the size of the border to use. */
-/*G***fix
+/*TODO fix
     int getBorder( ) {
         return border;
     }
 */
 
     /** Returns the amount of extra space to add along an axis. */
-/*G***fix
+/*TODO fix
     int getSpace( int axis ) {
 	if (axis == X_AXIS) {
 	    return xSpace;
@@ -212,14 +226,14 @@ Log.trace("XMLImageView.getImage(): ", getHRef()); //G***del
 */
 
     /** Returns the border's color, or null if this is not a link. */
-/*G***fix or delete
+/*TODO fix or delete
     Color getBorderColor( ) {
     	StyledDocument doc = (StyledDocument) getDocument();
         return doc.getForeground(getAttributes());
     }
 */
 
-/*G***fix
+/*TODO fix
     boolean hasPixels( ImageObserver obs ) {
         return fImage != null && fImage.getHeight(obs)>0
 			      && fImage.getWidth(obs)>0;
@@ -229,15 +243,15 @@ Log.trace("XMLImageView.getImage(): ", getHRef()); //G***del
 
     /** Return a URL for the image source,
         or null if it could not be determined. */
-/*G***fix
+/*TODO fix
     private URL getSourceURL( ) {
  	String src = "file:/D:/Projects/oeb/understandingoeb/oebobjects_classdiagram.jpg";
-//G***fix 	String src = (String) fElement.getAttributes().getAttribute(HTML.Attribute.SRC);
+//TODO fix 	String src = (String) fElement.getAttributes().getAttribute(HTML.Attribute.SRC);
  	if( src==null ) return null;
 
-//G***fix	URL reference = ((HTMLDocument)getDocument()).getBase();
+//TODO fix	URL reference = ((HTMLDocument)getDocument()).getBase();
         try {
-//G***fix 	    URL u = new URL(reference,src);
+//TODO fix 	    URL u = new URL(reference,src);
  	    URL u = new URL(src);
 	    return u;
         } catch (MalformedURLException e) {
@@ -247,7 +261,7 @@ Log.trace("XMLImageView.getImage(): ", getHRef()); //G***del
 */
 
     /** Look up an integer-valued attribute. <b>Not</b> recursive. */
-/*G***fix
+/*TODO fix
     private int getIntAttr(HTML.Attribute name, int deflt ) {
     	AttributeSet attr = fElement.getAttributes();
     	if( attr.isDefined(name) ) {		// does not check parents!
@@ -268,7 +282,7 @@ Log.trace("XMLImageView.getImage(): ", getHRef()); //G***del
 */
 
     /** My attributes may have changed. */
-/*G***del if we don't need
+/*TODO del if we don't need
     public void changedUpdate(DocumentEvent e, Shape a, ViewFactory f) {
 if(DEBUG) System.out.println("OEBImageView: changedUpdate begin...");
     	super.changedUpdate(e,a,f);
@@ -297,31 +311,31 @@ if(DEBUG) System.out.println("OEBImageView: changedUpdate begin...");
 Log.trace("(before super) paint() {0}, isShowing: {1} startedLoading: {2} finishedLoading: {3}", new Object[]{getHRef(), new Boolean(isShowing()), new Boolean(startedLoading), new Boolean(finishedLoading)});
 		super.paint(graphics, allocation);  //do the default painting
 		final Graphics2D graphics2D=(Graphics2D)graphics;  //cast to the 2D version of graphics
-		  //set pixel interpolation to its highest quality G***probably do this conditionally, based on some sort of flag
+		  //set pixel interpolation to its highest quality TODO probably do this conditionally, based on some sort of flag
 		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 Log.trace("(after super) paint() {0}, isShowing: {1} startedLoading: {2} finishedLoading: {3}", new Object[]{getHRef(), new Boolean(isShowing()), new Boolean(startedLoading), new Boolean(finishedLoading)});
-//G***del Log.trace("imageView.paint() currentWidth: "+currentWidth+" currentHeight: "+currentHeight);
-//G***del when works		paintingVisible=true;	//show that calls to getComponent().repaint() are actually causes this image view to get repainted
-//G***fix	Color oldColor = g.getColor();
-		  //G***switch to using getBounds()
+//TODO del Log.trace("imageView.paint() currentWidth: "+currentWidth+" currentHeight: "+currentHeight);
+//TODO del when works		paintingVisible=true;	//show that calls to getComponent().repaint() are actually causes this image view to get repainted
+//TODO fix	Color oldColor = g.getColor();
+		  //TODO switch to using getBounds()
 		final Rectangle rectangle=(allocation instanceof Rectangle) ? (Rectangle)allocation : allocation.getBounds();  //get the bounding rectangle of the painting area
-//G***del Log.trace("Inside OEBImageView.paint(), width: "+currentWidth+" height: "+currentHeight+" alloc width: "+alloc.width+" alloc height: "+alloc.height);	//G***del; testing image
-/*G***fix
+//TODO del Log.trace("Inside OEBImageView.paint(), width: "+currentWidth+" height: "+currentHeight+" alloc width: "+alloc.width+" alloc height: "+alloc.height);	//TODO del; testing image
+/*TODO fix
 	fBounds.setBounds(alloc);
         int border = getBorder();
 */
-/*G***del when works
+/*TODO del when works
 		int x = fBounds.x + border + getSpace(X_AXIS);
 		int y = fBounds.y + border + getSpace(Y_AXIS);
 		int width = fWidth;
 		int height = fHeight;
 */
-		final int x=rectangle.x;	//G***comment
+		final int x=rectangle.x;	//TODO comment
 		final int y=rectangle.y;
 		final int width=getCurrentWidth();  //get the current image width
 		final int height=getCurrentHeight();  //get the current image height
 
-//G***fix	int sel = getSelectionState();
+//TODO fix	int sel = getSelectionState();
 
 	// Make sure my Component is in the right place:
 /*
@@ -335,13 +349,13 @@ Log.trace("(after super) paint() {0}, isShowing: {1} startedLoading: {2} finishe
 	fComponent.setBounds(x,y,width,height);
 	*/
 	// If no pixels yet, draw gray outline and icon:
-/*G***fix
+/*TODO fix
 	if( ! hasPixels(this) ) {
 	    g.setColor(Color.lightGray);
 	    g.drawRect(x,y,width-1,height-1);
 	    g.setColor(oldColor);
 */
-/*G***fix
+/*TODO fix
 	    loadIcons();
 	    Icon icon = fImage==null ?sMissingImageIcon :sPendingImageIcon;
 	    if( icon != null )
@@ -352,12 +366,12 @@ Log.trace("(after super) paint() {0}, isShowing: {1} startedLoading: {2} finishe
 	// Draw image:
 	try
 	{
-//G***del when works		final Image image=getImage(); //get the image, which may include relading it
+//TODO del when works		final Image image=getImage(); //get the image, which may include relading it
 		shownImage=getImage(); //get the image, which may include relading it; this will for now set a hard reference to the image so that the image memory will not be reclaimed while it it showing
 		if(shownImage!=null )
 		{
 Log.trace("got the image");
-	//G***fix		fImageIcon.paintIcon((Component)getContainer(), g, x, y);	//G***testing
+	//TODO fix		fImageIcon.paintIcon((Component)getContainer(), g, x, y);	//TODO testing
 
 			if(finishedLoading || !startedLoading)	//if we've finished loading the image, or we haven't even started loading it, yet
 			{
@@ -367,39 +381,39 @@ Log.trace("ready to draw image with current width {0} and current height {1}", n
 				//  this function will return with the image already loaded without
 				//  imageUpdate() being called, so we have to manipulate the
 				//  finishedLoading and startedLoading variables here as well
-//G***bring back; testing				finishedLoading=g.drawImage(image, x, y, alloc.width, alloc.height, this);
-Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" height "+getCurrentHeight()); //G***del
+//TODO bring back; testing				finishedLoading=g.drawImage(image, x, y, alloc.width, alloc.height, this);
+Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" height "+getCurrentHeight()); //TODO del
 				finishedLoading=graphics.drawImage(shownImage, x, y, getCurrentWidth(), getCurrentHeight(), this);
-	//G***fix or del			final boolean isImageDrawn=g.drawImage(fImage, x, y, alloc.width, alloc.height, this);
-	//G***del when works			final boolean isImageDrawn=g.drawImage(fImage, x, y, width/2, height/2, this);
+	//TODO fix or del			final boolean isImageDrawn=g.drawImage(fImage, x, y, alloc.width, alloc.height, this);
+	//TODO del when works			final boolean isImageDrawn=g.drawImage(fImage, x, y, width/2, height/2, this);
 
 				if(!startedLoading && !finishedLoading) //if the image has not yet started loading (and loading hasn't already finished)
 				{
 					((Graphics2D)graphics).setPaint(Color.black);
-					graphics.setFont(new Font("Arial", Font.PLAIN, 14));  //G***fix all this; use a constant
-					final String statusString="Loading image...";  //G***fix; i18n; comment
+					graphics.setFont(new Font("Arial", Font.PLAIN, 14));  //TODO fix all this; use a constant
+					final String statusString="Loading image...";  //TODO fix; i18n; comment
 					final FontRenderContext fontRenderContext=graphics2D.getFontRenderContext();  //get the font rendering context
-							//G***probably make sure that it is antialiased, here
+							//TODO probably make sure that it is antialiased, here
 					final Rectangle2D statusBounds=graphics2D.getFont().getStringBounds(statusString, fontRenderContext); //get the bounds of the status string
 					final int statusX=x;  //find out where we would paint the status
 					final int statusY=y+20;
 						//if the string we would draw doesn't go outside our image
 					if(statusX+statusBounds.getWidth()<x+getCurrentWidth() && statusY+statusBounds.getHeight()<x+getCurrentHeight())
 					{
-						graphics.drawString(statusString, statusX, statusY);	//G***testing; i18n
+						graphics.drawString(statusString, statusX, statusY);	//TODO testing; i18n
 					}
 
-	//G***del if not needed				startedLoading=true;  //G***testing
+	//TODO del if not needed				startedLoading=true;  //TODO testing
 				}
-				//G***should we update startedLoading for consistency, since finishedLoading might be set without startedLoading being set?
+				//TODO should we update startedLoading for consistency, since finishedLoading might be set without startedLoading being set?
 			}
 
-	//G***del Log.trace("image drawn: "+isImageDrawn);	//G***del
+	//TODO del Log.trace("image drawn: "+isImageDrawn);	//TODO del
 
-//G***fix		g.drawImage(fImage,x, y,width,height,this);
+//TODO fix		g.drawImage(fImage,x, y,width,height,this);
 
 
-//G***fix	    g.drawImage(fImage, x, y, (int)getParent().getPreferredSpan(X_AXIS)/3, height, this);
+//TODO fix	    g.drawImage(fImage, x, y, (int)getParent().getPreferredSpan(X_AXIS)/3, height, this);
 	    // Use the following instead of g.drawImage when
 	    // BufferedImageGraphics2D.setXORMode is fixed (4158822).
 
@@ -415,23 +429,23 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
 */
 		}
 	}
-	catch(URISyntaxException uriSyntaxException)  //if there was an error getting the image G***probably set some sort of flag so that we won't try to load it again next time
+	catch(URISyntaxException uriSyntaxException)  //if there was an error getting the image TODO probably set some sort of flag so that we won't try to load it again next time
 	{
 		Log.error(uriSyntaxException); //report the error
-		((Graphics2D)graphics).setPaint(Color.black);  //G***fix all this
+		((Graphics2D)graphics).setPaint(Color.black);  //TODO fix all this
 		graphics.setFont(new Font("Arial", Font.PLAIN, 14));
-		graphics.drawString("Error loading image.", x, y+20);	//G***testing; i18n
+		graphics.drawString("Error loading image.", x, y+20);	//TODO testing; i18n
 	}
-	catch(IOException ioException)  //if there was an error getting the image G***probably set some sort of flag so that we won't try to load it again next time
+	catch(IOException ioException)  //if there was an error getting the image TODO probably set some sort of flag so that we won't try to load it again next time
 	{
 		Log.error(ioException); //report the error
-		((Graphics2D)graphics).setPaint(Color.black);  //G***fix all this
+		((Graphics2D)graphics).setPaint(Color.black);  //TODO fix all this
 		graphics.setFont(new Font("Arial", Font.PLAIN, 14));
-		graphics.drawString("Error loading image.", x, y+20);	//G***testing; i18n
+		graphics.drawString("Error loading image.", x, y+20);	//TODO testing; i18n
 	}
 
 	// If selected exactly, we need a black border & grow-box:
-/*G***del or fix
+/*TODO del or fix
 	Color bc = getBorderColor();
 	if( sel == 2 ) {
 	    // Make sure there's room for a border:
@@ -451,7 +465,7 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
 */
 
 	// Draw border:
-/*G***del or fix
+/*TODO del or fix
 	if( border > 0 ) {
 	    if( bc != null ) g.setColor(bc);
 	    // Draw a thick rectangle:
@@ -464,7 +478,7 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
 
     /** Request that this view be repainted.
         Assumes the view is still at its last-drawn location. */
-/*G***fix
+/*TODO fix
     protected void repaint( long delay ) {
     	if( fContainer != null && fBounds!=null ) {
 	    fContainer.repaint(delay,
@@ -476,7 +490,7 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
     /** Determines whether the image is selected, and if it's the only thing selected.
     	@return  0 if not selected, 1 if selected, 2 if exclusively selected.
     		 "Exclusive" selection is only returned when editable. */
-/*G***fix
+/*TODO fix
     protected int getSelectionState( ) {
     	int p0 = fElement.getStartOffset();
     	int p1 = fElement.getEndOffset();
@@ -501,7 +515,7 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
 */
 
     /** Returns the text editor's highlight color. */
-/*G***fix
+/*TODO fix
     protected Color getHighlightColor( ) {
     	JTextComponent textComp = (JTextComponent)fContainer;
     	return textComp.getSelectionColor();
@@ -515,7 +529,7 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
     // preference changed, or repaint, we just reset the fWidth/fHeight as
     // necessary and return. This is ok as we know when loading finishes
     // it will pick up the new height/width, if necessary.
-/*G***del if not needed
+/*TODO del if not needed
     public boolean imageUpdate( Image img, int flags, int x, int y,
     				int width, int height ) {
     	if( fImage==null || fImage != img )
@@ -531,19 +545,19 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
 	short changed = 0;
         if( (flags & ImageObserver.HEIGHT) != 0 )
 */
-/*G***fix
+/*TODO fix
             if( ! getElement().getAttributes().isDefined(HTML.Attribute.HEIGHT) ) {
 		changed |= 1;
             }
 */
-//G***del if not needed			changed |= 1;
-/*G***fix
+//TODO del if not needed			changed |= 1;
+/*TODO fix
         if( (flags & ImageObserver.WIDTH) != 0 )
             if( ! getElement().getAttributes().isDefined(HTML.Attribute.WIDTH) ) {
 		changed |= 2;
             }
 */
-/*G***del if not needed
+/*TODO del if not needed
 		changed |= 2;
 	synchronized(this) {
 	    if ((changed & 1) == 1) {
@@ -593,8 +607,8 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
      * Swiped from Component.java
      * @see #imageUpdate
      */
-//G***fix    private static boolean sIsInc = true;
-//G***fix    private static int sIncRate = 100;
+//TODO fix    private static boolean sIsInc = true;
+//TODO fix    private static int sIncRate = 100;
 
     // --- Layout ----------------------------------------------------------
 
@@ -606,7 +620,7 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
      * @param axis View.X_AXIS or View.Y_AXIS
      * @return the weight
      */
-/*G***fix after figuring out what can be returned
+/*TODO fix after figuring out what can be returned
     public int getResizeWeight(int axis) {
 	return 0;
     }
@@ -614,7 +628,7 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
 
     /** Change the size of this image. This alters the HEIGHT and WIDTH
     	attributes of the Element and causes a re-layout. */
-/*G***fix
+/*TODO fix
     protected void resize( int width, int height ) {
     	if( width==fWidth && height==fHeight )
     	    return;
@@ -625,11 +639,11 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
     	// Replace attributes in document:
 	MutableAttributeSet attr = new SimpleAttributeSet();
 */
-/*G***fix
+/*TODO fix
 	attr.addAttribute(HTML.Attribute.WIDTH ,Integer.toString(width));
 	attr.addAttribute(HTML.Attribute.HEIGHT,Integer.toString(height));
 */
-/*G***fix
+/*TODO fix
 	((StyledDocument)getDocument()).setCharacterAttributes(
 			fElement.getStartOffset(),
 			fElement.getEndOffset(),
@@ -640,7 +654,7 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
     // --- Mouse event handling --------------------------------------------
 
     /** Select or grow image when clicked. */
-/*G***fix
+/*TODO fix
     public void mousePressed(MouseEvent e){
     	Dimension size = fComponent.getSize();
     	if( e.getX() >= size.width-7 && e.getY() >= size.height-7
@@ -677,7 +691,7 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
 */
 
     /** Resize image if initial click was in grow-box: */
-/*G***fix
+/*TODO fix
     public void mouseDragged(MouseEvent e ) {
     	if( fGrowBase != null ) {
     	    Point loc = fComponent.getLocationOnScreen();
@@ -704,7 +718,7 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
     }
 */
 
-/*G***fix
+/*TODO fix
     public void mouseReleased(MouseEvent e){
     	fGrowBase = null;
     	//! Should post some command to make the action undo-able
@@ -712,7 +726,7 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
 */
 
     /** On double-click, open image properties dialog. */
-/*G***fix
+/*TODO fix
     public void mouseClicked(MouseEvent e){
     	if( e.getClickCount() == 2 ) {
     	    //$ IMPLEMENT
@@ -729,7 +743,7 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
 
     // --- Static icon accessors -------------------------------------------
 
-//G***fix    private Icon makeIcon(final String gifFile) throws IOException {
+//TODO fix    private Icon makeIcon(final String gifFile) throws IOException {
         /* Copy resource into a byte array.  This is
          * necessary because several browsers consider
          * Class.getResource a security risk because it
@@ -737,7 +751,7 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
          * Class.getResourceAsStream just returns raw
          * bytes, which we can convert to an image.
          */
-/*G***fix
+/*TODO fix
 	InputStream resource = HTMLEditorKit.getResourceAsStream(gifFile);
 
         if (resource == null) {
@@ -767,7 +781,7 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
     }
 */
 
-/*G***fix
+/*TODO fix
     private void loadIcons( ) {
         try{
             if( sPendingImageIcon == null )
@@ -780,7 +794,7 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
     }
 */
 
-/*G***fix
+/*TODO fix
     protected StyleSheet getStyleSheet() {
 	HTMLDocument doc = (HTMLDocument) getDocument();
 	return doc.getStyleSheet();
@@ -789,26 +803,26 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
 
     // --- member variables ------------------------------------------------
 
-//G***fix    private AttributeSet attr;
-//G***fix    private Element   fElement;
-//G***del when works		private Image     fImage;
+//TODO fix    private AttributeSet attr;
+//TODO fix    private Element   fElement;
+//TODO del when works		private Image     fImage;
 
-//G***fix    private Container fContainer;
-//G***fix    private Rectangle fBounds;
-//G***fix    private Component fComponent;
-//G***fix    private Point     fGrowBase;        // base of drag while growing image
-//G***fix    private boolean   fGrowProportionally;	// should grow be proportional?
+//TODO fix    private Container fContainer;
+//TODO fix    private Rectangle fBounds;
+//TODO fix    private Component fComponent;
+//TODO fix    private Point     fGrowBase;        // base of drag while growing image
+//TODO fix    private boolean   fGrowProportionally;	// should grow be proportional?
     /** Set to true, while the receiver is locked, to indicate the reciever
      * is loading the image. This is used in imageUpdate. */
-//G***fix    private boolean   loading;
-//G***fix    private boolean   isLink;
-//G***fix    private int       border;
-//G***fix    private int       xSpace;
-//G***fix    private int       ySpace;
+//TODO fix    private boolean   loading;
+//TODO fix    private boolean   isLink;
+//TODO fix    private int       border;
+//TODO fix    private int       xSpace;
+//TODO fix    private int       ySpace;
 
     // --- constants and static stuff --------------------------------
 
-/*G***fix
+/*TODO fix
     private static Icon sPendingImageIcon,
     			sMissingImageIcon;
     private static final String
@@ -816,16 +830,16 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
         MISSING_IMAGE_SRC = "icons/image-failed.gif";
 */
 
-//G***test    private static final boolean DEBUG = false;
+//TODO test    private static final boolean DEBUG = false;
 
-//G***del    private static final boolean DEBUG = true;	//G***del; testing
+//TODO del    private static final boolean DEBUG = true;	//TODO del; testing
 
 
     //$ move this someplace public
-//G***fix    static final String IMAGE_CACHE_PROPERTY = "imageCache";
+//TODO fix    static final String IMAGE_CACHE_PROPERTY = "imageCache";
 
     // Height/width to use before we know the real size:
-/*G***fix
+/*TODO fix
     private static final int
         DEFAULT_WIDTH = 32,
         DEFAULT_HEIGHT= 32,
@@ -848,10 +862,10 @@ Log.trace("Painting image "+href+" at "+x+", "+y+" width "+getCurrentWidth()+" h
 	@return <code>false</code> if the infoflags indicate that the image is
 		completely loaded; <code>true</code> otherwise.
 	*/
-	public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height)	//G***testing
+	public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height)	//TODO testing
 	{
-//G***del Log.trace(getHRef());  //G***del
-/*G***del
+//TODO del Log.trace(getHRef());  //TODO del
+/*TODO del
 Log.trace("imageUpdate() {0}, infoflags: {1}"+
 		" isShowing: {2} finishedLoading: {3}\n parent: {4}\n parent parent: {5}"+
 		"\n parent parent parent: {6}\n container: {7}", new Object[]
@@ -867,34 +881,34 @@ Log.trace("imageUpdate() {0}, infoflags: {1}"+
 			}
 		);
 */
-/*G***fix
+/*TODO fix
 		if((infoflags & SOMEBITS)!=0)	//if there are some bits coming in, the image has started loading
-			startedLoading=true;	//show that the image has started loading G***what if, for a small image,
+			startedLoading=true;	//show that the image has started loading TODO what if, for a small image,
 
 		if(
 
 		if(!infoflags & ALLBITS)!=0)	//if all bits have been loaded
 */
-//G***fix Log.trace("imageUpdate() visible: "+paintingVisible+" Started loading: "+startedLoading+" Finished loading: "+finishedLoading);
-/*G***del
-Log.trace("Parent: "+getParent());  //G***del; testing
-if(getParent()!=null) //G***del
+//TODO fix Log.trace("imageUpdate() visible: "+paintingVisible+" Started loading: "+startedLoading+" Finished loading: "+finishedLoading);
+/*TODO del
+Log.trace("Parent: "+getParent());  //TODO del; testing
+if(getParent()!=null) //TODO del
 {
-	Log.trace("Parent's parent: "+getParent().getParent());  //G***del; testing
-	if(getParent().getParent()!=null) //G***del
-		Log.trace("Parent's parent's parent: "+getParent().getParent().getParent());  //G***del; testing
+	Log.trace("Parent's parent: "+getParent().getParent());  //TODO del; testing
+	if(getParent().getParent()!=null) //TODO del
+		Log.trace("Parent's parent's parent: "+getParent().getParent().getParent());  //TODO del; testing
 }
-Log.trace("Container: "+getContainer());  //G***del; testing
+Log.trace("Container: "+getContainer());  //TODO del; testing
 */
-//G***del Log.trace(getHRef()+" allbits: ", infoflags & ALLBITS);
-//G***del Log.trace(getHRef()+" framebits: ", infoflags & FRAMEBITS);
+//TODO del Log.trace(getHRef()+" allbits: ", infoflags & ALLBITS);
+//TODO del Log.trace(getHRef()+" framebits: ", infoflags & FRAMEBITS);
 		startedLoading=true;	//if imageUpdate() is ever called, we've at least started loading the image
 		if((infoflags & (ALLBITS|FRAMEBITS))!=0)	//if we at any time receive all the bits, or if we're suddenly receiving frames from a multiple frame image, we've finished loading the image
 			finishedLoading=true;	//show that we've finished loading the image
 		if(finishedLoading) //only repaint the image if it has finished loading
 		{
 Log.trace("Finished loading ", getHRef());
-/*G***del
+/*TODO del
 Log.trace("image finished loading, ready to repaint\n{0}, infoflags: {1}"+
 		" isShowing: {2} finishedLoading: {3}\n parent: {4}\n parent parent: {5}"+
 		"\n parent parent parent: {6}\n container: {7}", new Object[]
@@ -910,12 +924,12 @@ Log.trace("image finished loading, ready to repaint\n{0}, infoflags: {1}"+
 			}
 		);
 */
-//G***del when works			if(paintingVisible)	//if calls to getComponent().repaint() are actually causes this image view to get repainted
+//TODO del when works			if(paintingVisible)	//if calls to getComponent().repaint() are actually causes this image view to get repainted
 			if(isShowing())	//if this view is showing
 			{
 Log.trace("Is showing ", getHRef());
-//G***del Log.trace("*********OEBImageView.imageUpdate(), SOMEBITS: "+(infoflags & SOMEBITS)+" ALLBITS: "+(infoflags & ALLBITS)+" FRAMEBITS: "+(infoflags & FRAMEBITS));	//G***del
-/*G***del; Debug no longer has a format trace method
+//TODO del Log.trace("*********OEBImageView.imageUpdate(), SOMEBITS: "+(infoflags & SOMEBITS)+" ALLBITS: "+(infoflags & ALLBITS)+" FRAMEBITS: "+(infoflags & FRAMEBITS));	//TODO del
+/*TODO del; Debug no longer has a format trace method
 Log.trace("image finished loading, ready to repaint\n{0}, infoflags: {1}"+
 		" isShowing: {2} finishedLoading: {3}\n parent: {4}\n parent parent: {5}"+
 		"\n parent parent parent: {6}"+
@@ -935,23 +949,23 @@ Log.trace("image finished loading, ready to repaint\n{0}, infoflags: {1}"+
 			}
 		);
 */
-				if(getContainer()!=null)  //G***testing
+				if(getContainer()!=null)  //TODO testing
 				{
 Log.trace("Have container ", getHRef());
-//G***del when works					paintingVisible=false;	//for our next repaint force paint() to prove once more that it is still getting called
+//TODO del when works					paintingVisible=false;	//for our next repaint force paint() to prove once more that it is still getting called
 				  final Rectangle bounds=getBounds(); //get our painting bounds
 Log.trace(getHRef()+" painting bounds: ", bounds);
-/*G***del; gives wrong coordinates
-					bounds.x=x; //G***testing image repaint
+/*TODO del; gives wrong coordinates
+					bounds.x=x; //TODO testing image repaint
 					bounds.y=y;
 */
-//G***del Log.trace("Found container, ready to call repaint with bounds: "+bounds);
-				  if(bounds.width==0 || bounds.height==0) //G***testing; kludge to compensate for table layout errors
+//TODO del Log.trace("Found container, ready to call repaint with bounds: "+bounds);
+				  if(bounds.width==0 || bounds.height==0) //TODO testing; kludge to compensate for table layout errors
 					{
 						bounds.width=getCurrentWidth();  //get the current image width
 						bounds.height=getCurrentHeight();  //get the current image height
 					}
-Log.trace("Repainting image "+href+" with bounds: ", bounds); //G***del
+Log.trace("Repainting image "+href+" with bounds: ", bounds); //TODO del
 						//since the image is still visible (and imageUpdate() is still being called), repaint the image -- but only the areas within our bounds
 					getContainer().repaint(bounds.x, bounds.y, bounds.width, bounds.height);  //repaint only the areas within our bounds
 				}
@@ -962,7 +976,7 @@ Log.trace("Repainting image "+href+" with bounds: ", bounds); //G***del
 			//we want to keep getting image data until we're finished, or until a multi-frame image is hidden
 			//(put another way, we want to continue loading non-animation images, even if they are hidden
 		return !isFinished && (isShowing() || !isAnimation);
-//G***del		return ((infoflags & (ALLBITS|ABORT)) == 0) && isShowing();  //G***testing isShowing()
+//TODO del		return ((infoflags & (ALLBITS|ABORT)) == 0) && isShowing();  //TODO testing isShowing()
 	}
 
 

@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
@@ -128,13 +144,13 @@ public class AddressTypePanel extends BasicPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		domesticCheckBox.setText("Domestic");	//G***i18n
-		internationalCheckBox.setText("International");	//G***i18n
-		postalCheckBox.setText("Postal");	//G***i18n
-		parcelCheckBox.setText("Parcel");	//G***i18n
-		homeCheckBox.setText("Home");	//G***i18n
-		workCheckBox.setText("Work");	//G***i18n
-		preferredCheckBox.setText("Preferred");	//G***i18n
+		domesticCheckBox.setText("Domestic");	//TODO i18n
+		internationalCheckBox.setText("International");	//TODO i18n
+		postalCheckBox.setText("Postal");	//TODO i18n
+		parcelCheckBox.setText("Parcel");	//TODO i18n
+		homeCheckBox.setText("Home");	//TODO i18n
+		workCheckBox.setText("Work");	//TODO i18n
+		preferredCheckBox.setText("Preferred");	//TODO i18n
 		preferredCheckBox.setFont(preferredCheckBox.getFont().deriveFont(Font.BOLD));
 		add(preferredCheckBox, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		add(workCheckBox, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -144,15 +160,6 @@ public class AddressTypePanel extends BasicPanel
 		add(postalCheckBox, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		add(parcelCheckBox, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		setAddressType(Address.NO_ADDRESS_TYPE);	//clear the fields
-/*G***del when works
-		add(preferredCheckBox, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 8, 0, 0), 0, 0));
-		add(workCheckBox, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 8, 0, 0), 0, 0));
-		add(homeCheckBox, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 8, 0, 0), 0, 0));
-		add(domesticCheckBox, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 8, 0, 0), 0, 0));
-		add(internationalCheckBox, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 8, 0, 0), 0, 0));
-		add(postalCheckBox, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 8, 0, 0), 0, 0));
-		add(parcelCheckBox, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 8, 0, 0), 0, 0));
-*/
 	}
 
 }

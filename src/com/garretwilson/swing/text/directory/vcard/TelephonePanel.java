@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
@@ -8,7 +24,6 @@ import com.garretwilson.swing.*;
 import com.garretwilson.swing.itu.*;
 import com.globalmentor.itu.*;
 import com.globalmentor.text.ArgumentSyntaxException;
-import com.globalmentor.text.SyntaxException;
 import com.globalmentor.text.directory.vcard.*;
 
 /**A panel containing fields for the <code>TEL</code> type of a vCard
@@ -129,9 +144,6 @@ public class TelephonePanel extends BasicVCardPanel
 		}
 	}
 
-	/**The number of buttons on the panel.*/
-//G***del	private int buttonCount;
-
 	/**Default constructor.*/
 	public TelephonePanel()
 	{
@@ -159,10 +171,10 @@ public class TelephonePanel extends BasicVCardPanel
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		editTelephoneTypeAction=new EditTelephoneTypeAction();
 		telephoneTypeButton=new JButton(getEditTelephoneTypeAction());
-		telephoneTypeButton.setHorizontalTextPosition(SwingConstants.LEFT);	//G***testing
-//G***fix		telephoneTypeButton.setBorder(null);	//G**testing
+		telephoneTypeButton.setHorizontalTextPosition(SwingConstants.LEFT);	//TODO testing
+//TODO fix		telephoneTypeButton.setBorder(null);	//G**testing
 		telephoneNumberPanel=new TelephoneNumberPanel();	
-//G***del		buttonCount=0;	//G***fix all this now that we don't allow extra buttons
+//TODO del		buttonCount=0;	//TODO fix all this now that we don't allow extra buttons
 		setDefaultFocusComponent(telephoneNumberPanel);	//set the default focus component
 		initialize();	//initialize the panel
 		setTelephoneNumber(telephoneNumber);	//set the given telephone number
@@ -184,7 +196,7 @@ public class TelephonePanel extends BasicVCardPanel
 	@param action The new action for which a button should be added.
 	@return The added button representing the given action.
 	*/
-/*G***del
+/*TODO del
 	public JButton addButton(final Action action)
 	{
 		final JButton button=new JButton(action);	//create a button from the action
@@ -203,12 +215,12 @@ public class TelephonePanel extends BasicVCardPanel
 	@return The new intended use, a combination of
 		<code>Telephone.XXX_TELEPHONE_TYPE</code> constants ORed together.
 	*/
-/*G***del if not needed	
+/*TODO del if not needed	
 	public static int askTelephoneType(final Component parentComponent, final int telephoneType)
 	{
 		final TelephoneTypePanel telephoneTypePanel=new TelephoneTypePanel(telephoneType);	//create a new panel with our current telephone type 
 			//ask for the new telephone type; if they accept the changes
-		if(OptionPane.showConfirmDialog(parentCompent, newResourcePanel, "New Resource", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//G***i18n
+		if(OptionPane.showConfirmDialog(parentCompent, newResourcePanel, "New Resource", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//TODO i18n
 		{
 		
 		}
@@ -222,7 +234,7 @@ public class TelephonePanel extends BasicVCardPanel
 	{
 		final TelephoneTypePanel telephoneTypePanel=new TelephoneTypePanel(getTelephoneType());	//create a new panel with our current telephone type 
 			//ask for the new telephone type; if they accept the changes
-		if(BasicOptionPane.showConfirmDialog(this, telephoneTypePanel, "Telephone Intended Uses", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//G***i18n
+		if(BasicOptionPane.showConfirmDialog(this, telephoneTypePanel, "Telephone Intended Uses", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//TODO i18n
 		{
 			setTelephoneType(telephoneTypePanel.getTelephoneType());	//update the telephone type
 			return true;	//show that the user accepted the changes and that they were updated		
@@ -239,10 +251,10 @@ public class TelephonePanel extends BasicVCardPanel
 		/**Default constructor.*/
 		public EditTelephoneTypeAction()
 		{
-			super("Type");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Edit type");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Edit the intended usage type for this telephone number.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_T));  //set the mnemonic key G***i18n
+			super("Type");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Edit type");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Edit the intended usage type for this telephone number.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_T));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.PROPERTY_ICON_FILENAME)); //load the correct icon
 		}
 	

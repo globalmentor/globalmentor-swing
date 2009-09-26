@@ -1,10 +1,23 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text;
 
 import java.awt.*;
 import javax.swing.text.*;
-
-import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
 
 /**A view that is not visible and is breakable only as a last resort.
 @author Garret Wilson
@@ -41,7 +54,7 @@ public class InvisibleView extends ZeroSpanView
 	*/
 	public int getBreakWeight(int axis, float pos, float len)
 	{
-		return BadBreakWeight+1;	//an invisible view is the worst possible break there could be G***is it really *that* bad? maybe it should be GoodBreakWeight-1
+		return BadBreakWeight+1;	//an invisible view is the worst possible break there could be TODO is it really *that* bad? maybe it should be GoodBreakWeight-1
 	}
 
 	/**Provides a way to determine the next visually represented model 

@@ -251,10 +251,10 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		}
 
 	/**The factor by which text should be zoomed.*/
-	private float zoom=DocumentConstants.DEFAULT_ZOOM;
+	private float zoom=DocumentUtilities.DEFAULT_ZOOM;
 
 		/**@return The factor by which text should be zoomed.
-		@see DocumentConstants#DEFAULT_ZOOM
+		@see DocumentUtilities#DEFAULT_ZOOM
 		*/
 		public float getZoom() {return zoom;}
 
@@ -373,7 +373,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		{
 			searchOffset=-1; //reset the search offset to -1
 				//remove all highlights from previous searches
-		  TextComponentUtilities.removeHighlights(this, searchHighlightPainter);
+		  TextComponents.removeHighlights(this, searchHighlightPainter);
 		}
 
 	/**The length of the last search match, or zero if there has been no match.*/
@@ -671,7 +671,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 			will be the document's URI.
 		<p>The base URI is also updated in the currently loaded document.</p>
 		@param baseURI The new location against which to resolve relative URIs.
-		@see DocumentConstants#BASE_URI_PROPERTY
+		@see DocumentUtilities#BASE_URI_PROPERTY
 		*/
 		public void setBaseURI(final URI baseURI)
 		{
@@ -1576,7 +1576,7 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
 		{
 			final XMLDocument xmlDocument=(XMLDocument)document;  //case the document to an XML document
 				//cast the document to an XML document and get the element that the URI represents, if possible
-			final Element element=xmlDocument.getElement(XMLStyleConstants.TARGET_URI_ATTRIBUTE_NAME, uri);
+			final Element element=xmlDocument.getElement(XMLStyles.TARGET_URI_ATTRIBUTE_NAME, uri);
 			if(element!=null)	//if we found a matching element in the document
 			{
 			  final int offset=element.getStartOffset(); //get the starting position of the element

@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import java.awt.*;
@@ -10,15 +26,11 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 
 import com.garretwilson.swing.event.XMLLinkEvent;
-import com.globalmentor.io.*;
 import com.globalmentor.java.*;
 import com.globalmentor.log.Log;
 import com.globalmentor.net.*;
 import com.globalmentor.text.xml.oeb.*;
 import com.globalmentor.text.xml.xlink.*;
-import com.globalmentor.util.*;
-
-import static com.globalmentor.net.ContentTypeConstants.*;
 import static com.globalmentor.text.xml.xhtml.XHTML.*;
 
 /**Class to watch the associated component and fire hyperlink events on it
@@ -30,11 +42,11 @@ import static com.globalmentor.text.xml.xhtml.XHTML.*;
 	controller will be used. Otherwise, this link controller will be used to
 	detect links.</p>
 	<p>To add linking functionality for other namespaces, a child class should
-	override <code>isLinkElement(Element)</code> and
-	<code>getLinkElementHRef(Element)</code>.
+	override {@link #isLinkElement(Element)} and
+	{@link #getLinkElementHRef(Element)}.
 @author Garret Wilson
-@see #isLinkElement
-@see #getLinkElementHRef
+@see #isLinkElement(Element)
+@see #getLinkElementHRef(Element)
 */
 public class XMLLinkController extends MouseAdapter implements MouseMotionListener, Serializable
 {
@@ -68,7 +80,7 @@ public class XMLLinkController extends MouseAdapter implements MouseMotionListen
 		{
 			final Point point=new Point(mouseEvent.getX(), mouseEvent.getY());	//create a point from the mouse click coordinates
 			final int pos=editorPane.viewToModel(point);	//get the position of the mouse click
-//G***del	Debug.notify("Mouse clicked on position: "+pos);	//G***fix
+//TODO del	Debug.notify("Mouse clicked on position: "+pos);	//TODO fix
 			if(pos>=0)	//if we found a valid position in the document
 			{
 				activateLink(pos, editorPane, mouseEvent.getX(), mouseEvent.getY());  //try activate a link at that position
@@ -86,7 +98,7 @@ public class XMLLinkController extends MouseAdapter implements MouseMotionListen
 	*/
 	public void mouseMoved(final MouseEvent mouseEvent)
 	{
-//G***del Log.trace("Inside XMLEditorKit.LinkController.mouseMoved()");	//G***del
+//TODO del Log.trace("Inside XMLEditorKit.LinkController.mouseMoved()");	//TODO del
 		final JEditorPane editorPane=(JEditorPane)mouseEvent.getSource();	//get the source of the event
 		final XMLEditorKit editorKit=(XMLEditorKit)editorPane.getEditorKit();	//get the editor kit for the editor pane
 		boolean adjustCursor=true;	//we'll assume we'll adjust the cursor unless we're still over the same element
@@ -94,10 +106,10 @@ public class XMLLinkController extends MouseAdapter implements MouseMotionListen
 		if(!editorPane.isEditable())	//if the editor pane isn't editable (it's being used for browsing)
 		{
 			final Point point=new Point(mouseEvent.getX(), mouseEvent.getY());	//create a new point object with the position of the mouse
-				//G***testing
+				//TODO testing
 			final int pos=editorPane.viewToModel(point);	//get the position in the model of the mouse movement
 
-/*G***fix; see why this functions slightly differently than editorPane.viewToModel()
+/*TODO fix; see why this functions slightly differently than editorPane.viewToModel()
 			int pos=editorPane.getUI().viewToModel(editorPane, point, bias);	//get the position in the model of the mouse click
 			if(bias[0]==Position.Bias.Backward && pos>0)
 				pos--;
@@ -111,22 +123,22 @@ public class XMLLinkController extends MouseAdapter implements MouseMotionListen
 					Element element=xmlDocument.getCharacterElement(pos);	//get the element for this position
 					if(currentElement!=element)		//if we've moved to a different element
 					{
-Log.trace("We've moved to a different element; currentURI: ", currentURI);	//G***del
+Log.trace("We've moved to a different element; currentURI: ", currentURI);	//TODO del
 						currentElement=element;	//show that we have a new current element
 						while(element!=null)  //we'll keep looking up the chain for a link element until we find one or run out of elements
 						{
 						  final XMLLinkController linkController=getLinkController(element); //get a link controller for this element
 							if(linkController.isLinkElement(element))	//if this is a link element
 							{
-//G***del when works									final String href=getLinkElementHRef(element);	//get the href for the element we're over (we don't know if this is a link element, so this may return null)
+//TODO del when works									final String href=getLinkElementHRef(element);	//get the href for the element we're over (we don't know if this is a link element, so this may return null)
 								try
 								{
 									final URI uri=linkController.getLinkElementURI(xmlDocument, element);	//get the URI for the element we're over (we don't know if this is a link element, so this may return null)
-Log.trace("URI: ", uri);	//G***del
-//G***del when works									if(url!=currentURL)	//if we're over a different link
+Log.trace("URI: ", uri);	//TODO del
+//TODO del when works									if(url!=currentURL)	//if we're over a different link
 									if(!Objects.equals(uri, currentURI))	//if we're over a different link (comparing the URIs using the URI.equals() method, if possible)
 									{
-//G***del when works										final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element G***what if this is null?
+//TODO del when works										final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element TODO what if this is null?
 										fireEntryExitEvents(editorPane, xmlDocument, currentURI, uri, element);	//fire the appropriate events for exiting and entering a link
 										currentURI=uri;	//update which link we're over
 										if(uri!=null)	//if we're now over a link
@@ -139,7 +151,7 @@ Log.trace("URI: ", uri);	//G***del
 								}
 								catch(URISyntaxException uriSyntaxException)  //if the URI could not be formed
 								{
-									Log.warn(uriSyntaxException); //continue normally G***should this be something just under a warning, since this is a user-caused error?
+									Log.warn(uriSyntaxException); //continue normally TODO should this be something just under a warning, since this is a user-caused error?
 								}
 								break;  //stop looking for links up the hierarchy; we just found one
 							}
@@ -181,34 +193,34 @@ Log.trace("URI: ", uri);	//G***del
  */
 	protected boolean activateLink(final int pos, final JEditorPane editorPane, final int x, final int y)
 	{
-//G***fix super.activateLink(pos, editorPane, x, y);	//G***testing
-//G***del Log.trace("Inside OEBEditorKit.activateLink()");
+//TODO fix super.activateLink(pos, editorPane, x, y);	//TODO testing
+//TODO del Log.trace("Inside OEBEditorKit.activateLink()");
 		final Document document=editorPane.getDocument();	//get the document in the editor pane
 		if(document instanceof XMLDocument)	//if this is an XML document
 		{
-//G***del Log.trace("OEBEditorKit.activeLink() is an OEBDocument");
+//TODO del Log.trace("OEBEditorKit.activeLink() is an OEBDocument");
 			XMLDocument xmlDocument=(XMLDocument)document;	//cast the document to an XML document
 			Element element=xmlDocument.getCharacterElement(pos);	//get the element this position represents
-//G***del when works				final String elementName=(String)attributeSet.getAttribute(StyleConstants.NameAttribute);	//get the name of this element
-//G***del Log.trace("OEBEditorKit.activeLink() is on element: "+(elementName!=null ? elementName : "null"));
-//G***del Log.trace("element: "+element.toString());	//G***testing
+//TODO del when works				final String elementName=(String)attributeSet.getAttribute(StyleConstants.NameAttribute);	//get the name of this element
+//TODO del Log.trace("OEBEditorKit.activeLink() is on element: "+(elementName!=null ? elementName : "null"));
+//TODO del Log.trace("element: "+element.toString());	//TODO testing
 
 			while(element!=null)  //we'll keep looking up the chain for a link element until we find one or run out of elements
 			{
 				final XMLLinkController linkController=getLinkController(element); //get a link controller for this element
 				if(linkController.isLinkElement(element))	//if the link controller says this is a link element
 				{
-//G***del when not needed						final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element G***make sure we really need this
-//G***fix		protected String getLinkElementHRef(final Element element)
-//G***del when not needed						final String href=getLinkElementHRef(element);	//get the href value
-//G***del when not needed						final URL url=getLinkElementURL(xmlDocument, element);	//get the link URL
-//G***del Debug.notify("OEBEditorKit.activeLink() found href: "+href);
+//TODO del when not needed						final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element TODO make sure we really need this
+//TODO fix		protected String getLinkElementHRef(final Element element)
+//TODO del when not needed						final String href=getLinkElementHRef(element);	//get the href value
+//TODO del when not needed						final URL url=getLinkElementURL(xmlDocument, element);	//get the link URL
+//TODO del Debug.notify("OEBEditorKit.activeLink() found href: "+href);
 						//ask the link controller to create a hyperlink event
-					final HyperlinkEvent linkEvent=linkController.createHyperlinkEvent(editorPane, xmlDocument, /*G***del if not needed url, */element);
-	//G***fix for usemap
-					if(linkEvent!=null)	//if a hyperlink event was successfully created G***doesn't this always succeed?
+					final HyperlinkEvent linkEvent=linkController.createHyperlinkEvent(editorPane, xmlDocument, /*TODO del if not needed url, */element);
+	//TODO fix for usemap
+					if(linkEvent!=null)	//if a hyperlink event was successfully created TODO doesn't this always succeed?
 					{
-/*G***del
+/*TODO del
 							//because it's likely the target won't be this same element and may not even be a link
 						currentElement=null;  //show that we're no longer on the old element
 						currentURL=null;  //show that we're no longer using the old URL
@@ -239,14 +251,14 @@ Log.trace("URI: ", uri);	//G***del
 	protected boolean isLinkElement(final Element element)
 	{
 		final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-		final String xlinkType=XMLStyleUtilities.getXMLAttributeValue(attributeSet, XLink.XLINK_NAMESPACE_URI.toString(), XLink.ATTRIBUTE_TYPE);	//get the xlink:type of this element (if there is one)
+		final String xlinkType=XMLStyles.getXMLAttributeValue(attributeSet, XLink.XLINK_NAMESPACE_URI.toString(), XLink.ATTRIBUTE_TYPE);	//get the xlink:type of this element (if there is one)
 		if(xlinkType!=null)	//if this is an XLink element
 			return true;	//show that this is a link element
-				//G***for now, until we support default attributes in the DTD, accept a link that only has an xlink:href
-				//G***do we even need this anymore? del this and make xlink:type mandatory like the specification says
-//G***del		else if XMLStyleUtilities.getXMLAttributeValue(attributeSet, XLinkConstants.XLINK_NAMESPACE_URI.toString(), XLinkConstants.ATTRIBUTE_HREF);	//if there is an xlink:href
-//G***dle		else if(attributeSet.getAttribute(XLinkConstants.XLINK_HREF)!=null)	
-//G***del			return true;	//G***del when default attributes are supported in the DTD
+				//TODO for now, until we support default attributes in the DTD, accept a link that only has an xlink:href
+				//TODO do we even need this anymore? del this and make xlink:type mandatory like the specification says
+//TODO del		else if XMLStyleUtilities.getXMLAttributeValue(attributeSet, XLinkConstants.XLINK_NAMESPACE_URI.toString(), XLinkConstants.ATTRIBUTE_HREF);	//if there is an xlink:href
+//TODO del		else if(attributeSet.getAttribute(XLinkConstants.XLINK_HREF)!=null)	
+//TODO del			return true;	//TODO del when default attributes are supported in the DTD
 		else	//if this is another element
 			return false;	//show that this element doesn't have the xlink:type attribute
 	}
@@ -262,11 +274,11 @@ Log.trace("URI: ", uri);	//G***del
 	protected String getLinkElementHRef(final Element element)
 	{
 		final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-		final String xlinkType=XMLStyleUtilities.getXMLAttributeValue(attributeSet, XLink.XLINK_NAMESPACE_URI.toString(), XLink.ATTRIBUTE_TYPE);	//get the xlink:type of this element (if there is one)
-//G***bring back when the DTD supports default attributes			if(xlinkType!=null)	//if this is an XLink element
-				//G***use getDefinedAttribute(), so as not to search up the hierarchy
-			return XMLStyleUtilities.getXMLAttributeValue(attributeSet, XLink.XLINK_NAMESPACE_URI.toString(), XLink.ATTRIBUTE_HREF);	//return the xlink:href of this element (if there is one)
-//G***bring back when the DTD supports default attributes			return null;	//show that this isn't an XLink element, because it didn't have an "xlink:type" attribute
+		final String xlinkType=XMLStyles.getXMLAttributeValue(attributeSet, XLink.XLINK_NAMESPACE_URI.toString(), XLink.ATTRIBUTE_TYPE);	//get the xlink:type of this element (if there is one)
+//TODO bring back when the DTD supports default attributes			if(xlinkType!=null)	//if this is an XLink element
+				//TODO use getDefinedAttribute(), so as not to search up the hierarchy
+			return XMLStyles.getXMLAttributeValue(attributeSet, XLink.XLINK_NAMESPACE_URI.toString(), XLink.ATTRIBUTE_HREF);	//return the xlink:href of this element (if there is one)
+//TODO bring back when the DTD supports default attributes			return null;	//show that this isn't an XLink element, because it didn't have an "xlink:type" attribute
 	}
 
 	/**Gets the full URI specified element if the specified element
@@ -280,19 +292,19 @@ Log.trace("URI: ", uri);	//G***del
 		represent a link or if the element's href is not present.
 	@exception URISyntaxException Thrown if the element's href and/or the
 		base URI do not allow a valid URI to be constructed.
-	@see #getLinkElementHRef
-	@see XMLDocument#getBaseURI
-	@see XMLStyleConstants#getBaseURI
+	@see #getLinkElementHRef(Element)
+	@see XMLDocument#getBaseURI()
+	@see XMLStyles#getBaseURI(AttributeSet)
 	*/
 	protected URI getLinkElementURI(final XMLDocument xmlDocument, final Element element) throws URISyntaxException
 	{
 		final String href=getLinkElementHRef(element);  //get the href of the element
 		if(href!=null)  //if there is an href
 		{
-			URI baseURI=XMLStyleUtilities.getBaseURI(element.getAttributes()); //get the base URI of the document
+			URI baseURI=XMLStyles.getBaseURI(element.getAttributes()); //get the base URI of the document
 			if(baseURI==null) //if we couldn't found a base URI in the attributes
 				baseURI=xmlDocument.getBaseURI();	//get the base URI from the document
-						//G***make sure this works for fragments
+						//TODO make sure this works for fragments
 			return URIs.createURI(baseURI, href);	//convert the href into a full URI, correctly processing URI fragments beginning with "#"
 		}
 		return null;  //show that we could not find an href for the element
@@ -308,7 +320,7 @@ Log.trace("URI: ", uri);	//G***del
        * @param pos the position
        * @param html the editor pane
  */
-/*G***fix
+/*TODO fix
 protected void activateLink(int pos, JEditorPane editor) {
 		activateLink(pos, editor, -1, -1);
 }
@@ -324,14 +336,14 @@ protected void activateLink(int pos, JEditorPane editor) {
        * @param pos the position
        * @param html the editor pane
  */
-/*G***del when not needed
+/*TODO del when not needed
 	protected void activateLink(int pos, JEditorPane editorPane, int x, int y)
 	{
-//G***del Log.trace("Inside XMLEditorKit.activateLink()");
-		return;	//G***fix for XLink
+//TODO del Log.trace("Inside XMLEditorKit.activateLink()");
+		return;	//TODO fix for XLink
 	}
 */
-/*G***fix
+/*TODO fix
 		final Document document=editorPane.getDocument();	//get the document in the editor pane
 		if(document instanceof XMLDocument)	//if this is an XML document
 		{
@@ -393,14 +405,14 @@ protected void activateLink(int pos, JEditorPane editor) {
 	/**Creates and returns a new instance of a hyperlink event.
 	@param editorPane The editor pane for which the event belongs and will be fired.
 	@param xmlDocument The document in which the link lies.
-//G***fix	@param eventType
-//G***del if not needed		@param href The hypertext reference.
+//TODO fix	@param eventType
+//TODO del if not needed		@param href The hypertext reference.
 	@param element The link element.
 	@return The new hyperlink event.
 	*/
-	protected HyperlinkEvent createHyperlinkEvent(final JEditorPane editorPane, final XMLDocument xmlDocument, /*G***fix final EventType eventType,*/ /*G***del if not needed String href, */final Element element) //G***fix so that fireEntryExitEvents() can call this
+	protected HyperlinkEvent createHyperlinkEvent(final JEditorPane editorPane, final XMLDocument xmlDocument, /*TODO fix final EventType eventType,*/ /*TODO del if not needed String href, */final Element element) //TODO fix so that fireEntryExitEvents() can call this
 	{
-//G***del Log.trace("Inside XMLEditorKit.createHyperlinkEvent() with href of: "+href);	//G***del
+//TODO del Log.trace("Inside XMLEditorKit.createHyperlinkEvent() with href of: "+href);	//TODO del
 		URI uri;	//we'll try get a full URI from the href
 		String description; //we'll store a description of the URI here, or the message we get if we fail to form a URI
 		try
@@ -413,7 +425,7 @@ protected void activateLink(int pos, JEditorPane editor) {
 			uri=null;	//don't use the URI
 			description=getLinkElementHRef(element);  //store the href that resulted in the invalid URI
 		}
-//G***change this later to be an XLinkEvent
+//TODO change this later to be an XLinkEvent
 			//create a hyperlink event with the specified URI and href
 		final HyperlinkEvent linkEvent=new XMLLinkEvent(editorPane, HyperlinkEvent.EventType.ACTIVATED, uri, description);
 		return linkEvent;	//return the link we created
@@ -432,19 +444,19 @@ protected void activateLink(int pos, JEditorPane editor) {
 	*/
 	protected void fireEntryExitEvents(final JEditorPane editorPane, final XMLDocument xmlDocument, final URI currentURI, final URI newURI, final Element element)
 	{
-//G***del Log.trace("XMLEditorKit.fireEntryExitEvents() with href of: "+href);	//G***del
+//TODO del Log.trace("XMLEditorKit.fireEntryExitEvents() with href of: "+href);	//TODO del
 		if(currentURI!=null)	//if we were over a link before
 		{
-				//create a hyperlink event to represent exiting a hyperlink G***eventually use the common hyperlink event factory
+				//create a hyperlink event to represent exiting a hyperlink TODO eventually use the common hyperlink event factory
 			final HyperlinkEvent exitEvent=new XMLLinkEvent(editorPane, HyperlinkEvent.EventType.EXITED, currentURI, currentURI.toString());
-//G***del Log.trace("ready to fire exit event: "+exitEvent);  //G***del
+//TODO del Log.trace("ready to fire exit event: "+exitEvent);  //TODO del
 			editorPane.fireHyperlinkUpdate(exitEvent);	//fire the exit event
 		}
 		if(newURI!=null)	//if we're over a new link
 		{
-//G***fix		final HyperlinkEvent linkEvent=new HyperlinkEvent(editorPane, HyperlinkEvent.EventType.ACTIVATED, uri, description);
+//TODO fix		final HyperlinkEvent linkEvent=new HyperlinkEvent(editorPane, HyperlinkEvent.EventType.ACTIVATED, uri, description);
 
-				//create a hyperlink event representing entering a hyperlink G***eventually use the common hyperlink event factory
+				//create a hyperlink event representing entering a hyperlink TODO eventually use the common hyperlink event factory
 			final HyperlinkEvent enteredEvent=new XMLLinkEvent(editorPane, HyperlinkEvent.EventType.ENTERED, newURI, newURI.toString());
 			editorPane.fireHyperlinkUpdate(enteredEvent);	//fire the enter event
 		}
@@ -462,20 +474,20 @@ protected void activateLink(int pos, JEditorPane editor) {
 		if(attributeSet!=null)  //if we have an attribute set
 		{
 				//final a registered XML link controller to which to delegate if we can
-			/*G***fix final */String elementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(attributeSet); //get the namespace of this element, if it has one
-//G***del Log.trace("Looking for view factory for namespace: ", elementNamespaceURI); //G***del
-			if(elementNamespaceURI==null) //if this element has no namespace G***this code is duplicated from XMLViewFactory---combine somehow
+			/*TODO fix final */String elementNamespaceURI=XMLStyles.getXMLElementNamespaceURI(attributeSet); //get the namespace of this element, if it has one
+//TODO del Log.trace("Looking for view factory for namespace: ", elementNamespaceURI); //TODO del
+			if(elementNamespaceURI==null) //if this element has no namespace TODO this code is duplicated from XMLViewFactory---combine somehow
 			{
-				final ContentType mediaType=XMLStyleUtilities.getMediaType(attributeSet); //see if this element's document has a media type defined
+				final ContentType mediaType=XMLStyles.getMediaType(attributeSet); //see if this element's document has a media type defined
 				if(mediaType!=null) //if there is a media type defined for this element's document
-				{ //G***probably do all this differently later, like registering a view factory with a media type or something or, better yet, registering a namespace with a media type
+				{ //TODO probably do all this differently later, like registering a view factory with a media type or something or, better yet, registering a namespace with a media type
 					if(ContentType.TEXT_PRIMARY_TYPE.equals(mediaType.getPrimaryType()) && OEB.X_OEB1_DOCUMENT_SUBTYPE.equals(mediaType.getSubType()))
-						elementNamespaceURI=OEB.OEB1_DOCUMENT_NAMESPACE_URI.toString(); //G***testing
+						elementNamespaceURI=OEB.OEB1_DOCUMENT_NAMESPACE_URI.toString(); //TODO testing
 					else if(isHTML(mediaType))
-						elementNamespaceURI=XHTML_NAMESPACE_URI.toString(); //G***testing
+						elementNamespaceURI=XHTML_NAMESPACE_URI.toString(); //TODO testing
 				}
 			}
-//G***del Log.trace("Decided namespace is really: ", elementNamespaceURI); //G***del
+//TODO del Log.trace("Decided namespace is really: ", elementNamespaceURI); //TODO del
 			linkController=getLinkController(elementNamespaceURI); //see if a link controller has been registered for this namespace (which may be null)
 		}
 		if(linkController==null)  //if we couldn't find a link controller

@@ -1,13 +1,27 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text;
 
-import java.awt.Rectangle;
-import javax.swing.SwingConstants;
 import javax.swing.text.*;
 
 /**Routines for working with Swing text classes.
 @author Garret Wilson
 */
-public class SwingTextUtilities
+public class SwingText
 {
 
 	/**Determines the beginning model position of the text component, ensuring
@@ -17,7 +31,7 @@ public class SwingTextUtilities
 		a value of -1 will be returned.
 	@exception BadLocationException Thrown if the offset is out of range.
 	 */
-	public static int getBegin(final JTextComponent textComponent) throws BadLocationException	//G***this might better to in XMLSectionView.getNextVisualPosition... or something
+	public static int getBegin(final JTextComponent textComponent) throws BadLocationException	//TODO this might better to in XMLSectionView.getNextVisualPosition... or something
 	{
 		final View sectionView=textComponent.getUI().getRootView(textComponent).getView(0);	//get the section view
 		final int endOffset=sectionView.getEndOffset();	//find out where the section view ends
@@ -57,7 +71,7 @@ public class SwingTextUtilities
 		a value of -1 will be returned.
 	@exception BadLocationException Thrown if the offset is out of range.
 	 */
-	public static int getEnd(final JTextComponent textComponent) throws BadLocationException	//G***this might better to in XMLSectionView.getNextVisualPosition... or something
+	public static int getEnd(final JTextComponent textComponent) throws BadLocationException	//TODO this might better to in XMLSectionView.getNextVisualPosition... or something
 	{
 		final View sectionView=textComponent.getUI().getRootView(textComponent).getView(0);	//get the section view
 		final int startOffset=sectionView.getStartOffset();	//find out where the section view begins
@@ -86,19 +100,19 @@ public class SwingTextUtilities
 	*/
 	public static View getLeafView(final View view, final int pos, final Position.Bias bias)
 	{
-/*G***del
+/*TODO del
 Log.trace("looking for leaf view at view: ", view);
 Log.trace("view starts at: ", view.getStartOffset());
 Log.trace("view ends at: ", view.getEndOffset());
 */
 		if(view.getViewCount()>0) //if this view has children
 		{
-/*G***del
-//G***fix		  final int viewIndex=((CompositeView)view).getViewIndexAtPosition(pos);  //G***testing
-//G***fix			.getViewIndexAtPosition(pos); //get the view's child that represents the position
+/*TODO del
+//TODO fix		  final int viewIndex=((CompositeView)view).getViewIndexAtPosition(pos);  //TODO testing
+//TODO fix			.getViewIndexAtPosition(pos); //get the view's child that represents the position
 */
 		  final int viewIndex=view.getViewIndex(pos, bias); //get the view's child that represents the position
-//G***del		  final int viewIndex=view.getViewIndex(pos, Position.Bias.Forward); //get the view's child that represents the position
+//TODO del		  final int viewIndex=view.getViewIndex(pos, Position.Bias.Forward); //get the view's child that represents the position
 			if(viewIndex>=0)  //if the index returned is valid
 			{
 			  return getLeafView(view.getView(viewIndex), pos, bias); //pass the request down to this child view
@@ -115,7 +129,7 @@ Log.trace("view ends at: ", view.getEndOffset());
   @return The leaf element for the given position.
 	@see javax.swing.text.DefaultStyledDocument#getCharacterElement
 	*/
-/*G***fix
+/*TODO fix
 	public static Element getLeafElement(final Element rootElement, final int pos)
 	{
 		Element element=null; //we haven't found the leaf element yet
@@ -143,9 +157,9 @@ Log.trace("view ends at: ", view.getEndOffset());
 	public static final int getRowEnd(JTextComponent c, int offs) throws BadLocationException
 	{
 		Rectangle r;
-		if(c instanceof XMLTextPane)	//G***newswing
+		if(c instanceof XMLTextPane)	//TODO newswing
 		{
-			r = ((XMLTextPane)c).modelToView(offs, Position.Bias.Backward);	//G***newswing
+			r = ((XMLTextPane)c).modelToView(offs, Position.Bias.Backward);	//TODO newswing
 		}
 		else
 		{
@@ -200,7 +214,7 @@ return offs;
 	@param element The element to insert.
 	@param index The index in the parent at which the element should be inserted.
 	*/
-/*G***fix
+/*TODO fix
 	public static void insertElementBetween(final Element rootElement, final AbstractDocument.BranchElement parentElement, final DefaultStyledDocument.LeafElement element, final int index)
 	{
 		final Element[] elementBuffer=new Element[1]; //create an element buffer for this one element
@@ -210,14 +224,14 @@ return offs;
 
 		final int insertBeginPos=element
 
-						final LeafElement swingLeafElement=(LeafElement)createLeafElement(swingParentElement, contentAttributeSet, oldLength-1, oldLength+textStringBuffer.length()-1);  //G***testing
+						final LeafElement swingLeafElement=(LeafElement)createLeafElement(swingParentElement, contentAttributeSet, oldLength-1, oldLength+textStringBuffer.length()-1);  //TODO testing
 
-					  return swingLeafElement;  //G***testing
-/*G***fix
+					  return swingLeafElement;  //TODO testing
+/*TODO fix
 						final Element[] swingElementBuffer=new Element[1]; //create an element buffer for this one element
 						swingElementBuffer[0]=swingLeafElement; //place the leaf element in the buffer
 						final int siblingCount=swingParentElement.getChildCount(); //find out how many children the parent already has
-Log.trace("text sibling count: ", siblingCount);  //G***del
+Log.trace("text sibling count: ", siblingCount);  //TODO del
 						swingParentElement.replace(siblingCount, 0, swingElementBuffer); //place the leaf element in the parent
 
 */

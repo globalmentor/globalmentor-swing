@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text;
 
 import java.awt.Font;
@@ -84,9 +100,9 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	{
 		super(content, styles);	//construct the parent class
 		this.uriInputStreamable=checkInstance(uriInputStreamable, "Missing URIInputStreamable");	//store the URIInputStreamable
-		//G***fix		setProperty(AbstractDocument.I18NProperty);  //G***testing i18n
-		//G***fix		putProperty("i18n", Boolean.TRUE);  //G***testing i18n
-		Log.trace("Document i18n property: ", getProperty("i18n")); //G***testing i18n		
+		//TODO fix		setProperty(AbstractDocument.I18NProperty);  //TODO testing i18n
+		//TODO fix		putProperty("i18n", Boolean.TRUE);  //TODO testing i18n
+		Log.trace("Document i18n property: ", getProperty("i18n")); //TODO testing i18n		
 	}
 
 	/**Gets the font from an attribute set
@@ -101,7 +117,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	*/
 	public Font getFont(final AttributeSet attributeSet)
 	{
-		final float zoomFactor=DocumentUtilities.getZoom(this, DocumentConstants.DEFAULT_ZOOM);  //get the zoom factor, assuming a default value if no value is specified
+		final float zoomFactor=DocumentUtilities.getZoom(this, DocumentUtilities.DEFAULT_ZOOM);  //get the zoom factor, assuming a default value if no value is specified
 		final StyleContext styles=(StyleContext)getAttributeContext();	//get the style context
 		if(styles instanceof XMLCSSStyleContext)	//TODO refactor into a generic style context that supports zoom
 		{
@@ -152,7 +168,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	@return A sorted array of names of available fonts.
 	@see XMLCSSStyleContext#getAvailableFontFamilyNames
 	*/
-	/*G***del when works
+	/*TODO del when works
 	public String[] getAvailableFontFamilyNames()
 	{
 		return ((XMLCSSStyleContext)getAttributeContext()).getAvailableFontFamilyNames();  //return the array of font family names from the syle context
@@ -176,7 +192,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	/**Sets the location against which to resolve relative URIs. By default this
 		will be the document's URI.
 	@param baseURI The new location against which to resolve relative URIs.
-	@see DocumentConstants#BASE_URI_PROPERTY
+	@see DocumentUtilities#BASE_URI_PROPERTY
 	*/
 	public void setBaseURI(final URI baseURI)
 	{
@@ -186,8 +202,8 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	/**Gets the location against which to resolve relative URIs.
 	@return The location against which to resolve relative URIs, or <code>null</code>
 		if there is no base URI.
-	//G***del	@exception URISyntaxException Thrown if the a URI could not be created.
-	@see DocumentConstants#BASE_URI_PROPERTY
+	//TODO del	@exception URISyntaxException Thrown if the a URI could not be created.
+	@see DocumentUtilities#BASE_URI_PROPERTY
 	*/
 	public URI getBaseURI()
 	{
@@ -238,7 +254,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	*/
 	protected void fireMadeProgress(final ProgressEvent progressEvent)
 	{
-//G***del if not needed		final ProgressEvent progressEvent=new ProgressEvent(this, status);	//create a new progress event
+//TODO del if not needed		final ProgressEvent progressEvent=new ProgressEvent(this, status);	//create a new progress event
 		final Object[] listeners=progressListenerList.getListenerList();	//get the non-null array of listeners
 		for(int i=listeners.length-2; i>=0; i-=2)	//look at each listener, from last to first
 		{

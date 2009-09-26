@@ -1,14 +1,26 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
-
-import javax.swing.text.*;
-
-//G***maybe delete this class
 
 /**A generic view for displaying XML. Also provides static utility functions
 	used in other non-descendant views.
 @author Garret Wilson
 */
-public class XMLView
+public class XMLView	//TODO maybe delete this class
 {
 
 	/**Constructs an X	/**Determines how attractive a break opportunity in this view is. This can be
@@ -21,8 +33,8 @@ public class XMLView
 		This is implemented to forward to the superclass for axis perpendicular to
 		the flow axis. Along the flow axis the following values may be returned:
 		<ul>
-//G***fix			<li>View.ExcellentBreakWeight: If there is whitespace proceeding the desired break
-//G***fix		 *   location.
+//TODO fix			<li>View.ExcellentBreakWeight: If there is whitespace proceeding the desired break
+//TODO fix		 *   location.
 			<li>View.BadBreakWeight: If the desired break location results in a break
 				location of the starting offset (i.e. not even one child view can fit.</li>
 			<li>View.GoodBreakWeight: If the other conditions don't occur.
@@ -43,16 +55,16 @@ public class XMLView
 		@see ExcellentBreakWeight
 		@see ForcedBreakWeight
 	*/
-/*G***fix or del
+/*TODO fix or del
 	public int getBreakWeight(final View view, int axis, float pos, float len)
 	{
-//G***del System.out.println("Inside XMLBlockView.getBreakWeight axis: "+axis+" pos: "+pos+" len: "+len+" name: "+XMLStyleConstants.getXMLElementName(getElement().getAttributes()));	//G***del
-System.out.println("Inside XMLView.getBreakWeight axis: "+axis+" pos: "+pos+" len: "+len+" name: "+view.getAttributes().getAttribute(StyleConstants.NameAttribute));	//G***del
+//TODO del System.out.println("Inside XMLBlockView.getBreakWeight axis: "+axis+" pos: "+pos+" len: "+len+" name: "+XMLStyleConstants.getXMLElementName(getElement().getAttributes()));	//TODO del
+System.out.println("Inside XMLView.getBreakWeight axis: "+axis+" pos: "+pos+" len: "+len+" name: "+view.getAttributes().getAttribute(StyleConstants.NameAttribute));	//TODO del
 
-//G***del		final int tileAxis=getAxis();	//get our axis for tiling (this view's axis)
+//TODO del		final int tileAxis=getAxis();	//get our axis for tiling (this view's axis)
 		if(axis==view.getAxis())	//if they want to break along our tiling axis
 		{
-//G***bring back when works			return View.GoodBreakWeight;	//show that this break spot will work
+//TODO bring back when works			return View.GoodBreakWeight;	//show that this break spot will work
 			return View.GoodBreakWeight;	//show that this break spot will work
 		}
 		else	//if they want to break along another axis besides the one we know about
@@ -75,20 +87,20 @@ System.out.println("Inside XMLView.getBreakWeight axis: "+axis+" pos: "+pos+" le
 			into fragments.
 		@see View#createFragment
 	*/
-/*G***fix
+/*TODO fix
 	public View createFragment(int p0, int p1)
 	{
-//G***del System.out.println("Inside createFragment(), p0: "+p0+" p1: "+p1+" name: "+XMLStyleConstants.getXMLElementName(getElement().getAttributes()));	//G***del
-System.out.println("Inside XMLBLockView.createFragment(), p0: "+p0+" p1: "+p1+" name: "+getAttributes().getAttribute(StyleConstants.NameAttribute));	//G***del
-System.out.println("Our startOffset: "+getStartOffset()+" endOffset: "+getEndOffset());	//G***del
-//G***del System.out.println("Inside createFragment(), p0: "+p0+" p1: "+p1);	//G***del
-//G***del System.out.println("Our startOffset: : "+getStartOffset()+" endOffset: "+getEndOffset());	//G***del
+//TODO del System.out.println("Inside createFragment(), p0: "+p0+" p1: "+p1+" name: "+XMLStyleConstants.getXMLElementName(getElement().getAttributes()));	//TODO del
+System.out.println("Inside XMLBLockView.createFragment(), p0: "+p0+" p1: "+p1+" name: "+getAttributes().getAttribute(StyleConstants.NameAttribute));	//TODO del
+System.out.println("Our startOffset: "+getStartOffset()+" endOffset: "+getEndOffset());	//TODO del
+//TODO del System.out.println("Inside createFragment(), p0: "+p0+" p1: "+p1);	//TODO del
+//TODO del System.out.println("Our startOffset: : "+getStartOffset()+" endOffset: "+getEndOffset());	//TODO del
 
 
 
 
 
-//G***del		XMLBlockView fragmentView=(XMLBlockView)clone();	//create a clone of this view
+//TODO del		XMLBlockView fragmentView=(XMLBlockView)clone();	//create a clone of this view
 		if(p0<=getStartOffset() && p1>=getEndOffset())	//if the range they want encompasses all of our view
 			return this;	//return ourselves; there's no use to try to break ourselves up
 		else	//if the range they want only includes part of our view
@@ -97,20 +109,20 @@ System.out.println("Our startOffset: "+getStartOffset()+" endOffset: "+getEndOff
 
 
 
-//G***del			final BoxView fragmentView=new BoxView(getElement(), getAxis());	//G***testing! highly unstable! trying to fix vertical spacing bug
+//TODO del			final BoxView fragmentView=new BoxView(getElement(), getAxis());	//TODO testing! highly unstable! trying to fix vertical spacing bug
 
-			//G***maybe start looking somewhere here to find the vertical spacing bug
+			//TODO maybe start looking somewhere here to find the vertical spacing bug
 
 			final XMLBlockView fragmentView=(XMLBlockView)clone();	//create a clone of this view
 
 
-	//G***fix		final XMLBlockFragmentView fragmentView=new XMLBlockFragmentView(this);	//create a fragment to hold part of our content
+	//TODO fix		final XMLBlockFragmentView fragmentView=new XMLBlockFragmentView(this);	//create a fragment to hold part of our content
 			for(int i=0; i<getViewCount(); ++i)	//look at each child view
 			{
 				final View childView=getView(i);	//get a reference to this child view
 				if(childView.getStartOffset()<p1 && childView.getEndOffset()>p0)	//if this view is within our range
 				{
-	//G***del when works			if(childView.getStartOffset()>=p0 && childView.getEndOffset()<=p1)	//if this view is within our range
+	//TODO del when works			if(childView.getStartOffset()>=p0 && childView.getEndOffset()<=p1)	//if this view is within our range
 					final int startPos=Math.max(p0, childView.getStartOffset());	//find out where we want to start, staying within this child view
 					final int endPos=Math.min(p1, childView.getEndOffset());	//find out where we want to end, staying within this child view
 					fragmentView.append(childView.createFragment(startPos, endPos));	//add a portion (or all) of this child to our fragment
@@ -126,20 +138,20 @@ System.out.println("Our startOffset: "+getStartOffset()+" endOffset: "+getEndOff
 			view with the lowest starting offset
 		@see View#getRange
 		*/
-//G***testing
-/*G***fix
+//TODO testing
+/*TODO fix
 		public int getStartOffset()
 		{
 			int startOffset=Integer.MAX_VALUE;	//we'll start out with a high number, and we'll end up with the lowest starting offset of all the views
 			final int numViews=getViewCount();	//find out how many view are on this page
-//G***del System.out.println("getStartOffset() viewCount: "+numViews+" name: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" super: "+super.getStartOffset());	//G***del
+//TODO del System.out.println("getStartOffset() viewCount: "+numViews+" name: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" super: "+super.getStartOffset());	//TODO del
 			if(numViews>0)	//if we have child views
 			{
 				for(int viewIndex=0; viewIndex<numViews; ++viewIndex)	//look at each view on this page
 				{
 					final View view=getView(viewIndex);	//get a reference to this view
 					startOffset=Math.min(startOffset, view.getStartOffset());	//if this view has a lower starting offset, use its starting offset
-//G***del System.out.println("  View: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" child: "+(String)view.getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" startOffset: "+view.getStartOffset()+" New start offset: "+startOffset);	//G***del
+//TODO del System.out.println("  View: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" child: "+(String)view.getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" startOffset: "+view.getStartOffset()+" New start offset: "+startOffset);	//TODO del
 				}
 				return startOffset;	//return the starting offset we found
 			}
@@ -153,20 +165,20 @@ System.out.println("Our startOffset: "+getStartOffset()+" endOffset: "+getEndOff
 			view with the largest ending offset
 		@see View#getRange
 		*/
-//G***testing
-/*G***fix
+//TODO testing
+/*TODO fix
 		public int getEndOffset()
 		{
 			int endOffset=0;	//start out with a low ending offset, and we'll wind up with the largest ending offset
 			final int numViews=getViewCount();	//find out how many view are on this page
-//G***del System.out.println("getEndOffset() viewCount: "+numViews+" name: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" super: "+super.getEndOffset());	//G***del
+//TODO del System.out.println("getEndOffset() viewCount: "+numViews+" name: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" super: "+super.getEndOffset());	//TODO del
 			if(numViews>0)	//if we have child views
 			{
 				for(int viewIndex=0; viewIndex<numViews; ++viewIndex)	//look at each view on this page
 				{
 					final View view=getView(viewIndex);	//get a reference to this view
 					endOffset=Math.max(endOffset, view.getEndOffset());	//if this view has a larger ending offset, use that instead
-//G***del System.out.println("  View: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" child: "+(String)view.getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" endOffset: "+view.getEndOffset()+" New end offset: "+endOffset);	//G***del
+//TODO del System.out.println("  View: "+(String)getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" child: "+(String)view.getElement().getAttributes().getAttribute(XMLCSSStyleConstants.XMLElementNameName)+" endOffset: "+view.getEndOffset()+" New end offset: "+endOffset);	//TODO del
 				}
 				return endOffset;	//return the largest ending offset we found
 			}

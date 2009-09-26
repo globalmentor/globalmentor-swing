@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text;
 
 import javax.swing.text.BadLocationException;
@@ -156,7 +172,7 @@ public class Bookmark implements Comparable, Position
 	@exception BadLocationException Thrown if that last attached position is no
 		longer valid.
 	*/
-/*G***del
+/*TODO del
 	public void attach(final Document document) throws BadLocationException
 	{
 		attach(document, getOffset());  //attach ourselves to the document at our last recorded position
@@ -214,7 +230,7 @@ public class Bookmark implements Comparable, Position
 		a document.
 	@param position The position in the document.
 	*/
-/*G***del if we don't need
+/*TODO del if we don't need
 	public Bookmark(final Position position)
 	{
 	  setPosition(position);  //set the position
@@ -329,7 +345,7 @@ public class Bookmark implements Comparable, Position
 	*/
 	public boolean equals(Object object)
 	{
-Log.trace("Comparing bookmark "+this+" to object: ", object); //G***del
+Log.trace("Comparing bookmark "+this+" to object: ", object); //TODO del
 		if(object instanceof Bookmark)	//if we're being compared with another bookmark
 		{
 			final Bookmark otherBookmark=(Bookmark)object;  //cast the other object to a bookmark
@@ -373,7 +389,7 @@ Log.trace("Comparing bookmark "+this+" to object: ", object); //G***del
 			else  //if the ending offsets are the same, compare the names
 			{
 				return Java.compareTo(getName(), bookmark.getName());  //compare the names
-/*G***del
+/*TODO del
 				if(getName()!=null && bookmark.getName()!=null) //if both bookmarks have names
 					return getName().compareTo(bookmark.getName()); //compare the names
 				else if(getName()==bookmark.getName())  //if neither bookmark has a name (we know at this point that one does not have a name, so if the names are equal then neither name exists)
@@ -386,7 +402,7 @@ Log.trace("Comparing bookmark "+this+" to object: ", object); //G***del
 	}
 
 	/**@return A string representation of the bookmark.*/
-/*G***fix or del
+/*TODO fix or del
 	public String toString()
 	{
 

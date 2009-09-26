@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text;
 
 import java.util.List;
@@ -10,13 +26,13 @@ import com.globalmentor.java.Objects;
 /**A default implementation of a view factory that allows a fallback view
 	factory to be invoked if this view factory doesn't know how to create a
 	particular view.
-	<p>As this class implements <code>ViewsFactory</code>, which allows multiple
+	<p>As this class implements {@link ViewsFactory}, which allows multiple
 	views to be created, one should usually override
-	<code>create(Element, boolean)</code> and use the default implementation of
+	{@link #create(Element, boolean)} and use the default implementation of
 	the other methods.</p>
 @author Garret Wilson
 */
-public abstract class DefaultViewFactory implements ViewsFactory //G***maybe use this as a basis for XMLViewFactory
+public abstract class DefaultViewFactory implements ViewsFactory //TODO maybe use this as a basis for XMLViewFactory
 {
 
 	/**The view factory to use as a fallback in case this view factory cannot
@@ -108,7 +124,7 @@ public abstract class DefaultViewFactory implements ViewsFactory //G***maybe use
 		}
 		else  //if we have no fallback view factory
 		  throw new IllegalArgumentException(Objects.toString(element));  //show that we don't know what to do with the element
-//G***del			return new XMLInlineView(element);	//everything we don't know what to do with gets to be an inline view G***should this be the default?
+//TODO del			return new XMLInlineView(element);	//everything we don't know what to do with gets to be an inline view TODO should this be the default?
 	}
 
 }

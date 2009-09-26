@@ -1,20 +1,31 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.directory.vcard;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeListener;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
 import com.globalmentor.text.directory.vcard.*;
-import com.globalmentor.util.*;
 
 /**A panel allowing entry of one or more telecommunication types
 	(e.g. <code>TEL</code> and <code>EMAIL</code>) of a vCard <code>text/directory</code>
@@ -38,15 +49,15 @@ public class TelecommunicationsPanel extends ContentPanel
 		public Action getAddEmailAction() {return addEmailAction;}
 
 	/**The action for removing an address.*/
-//G***fix	private final Action removeAddressAction;
+//TODO fix	private final Action removeAddressAction;
 
 		/**@return The action for removing an address.*/
-//G***fix		public Action getRemoveAddressAction() {return removeAddressAction;}
+//TODO fix		public Action getRemoveAddressAction() {return removeAddressAction;}
 
 	protected final JToolBar buttonToolBar;
 
 	/**@return The content component in which the telecommunications panels will be placed.*/
-	protected JPanel getContentPanel() {return (JPanel)getContentComponent();}	//G***why can't we return something else, here--why cast to a JPanel?
+	protected JPanel getContentPanel() {return (JPanel)getContentComponent();}	//TODO why can't we return something else, here--why cast to a JPanel?
 
 	/**Places the telephones in the panel.
 	@param telephones The telephone numbers to display, or <code>null</code> if
@@ -120,7 +131,7 @@ public class TelecommunicationsPanel extends ContentPanel
 	*/
 	public void setTelecommunications(final Telephone[] telephones, final Email[] emails)
 	{
-		getContentPanel().removeAll();	//remove all the components from the content panel G***maybe remove the listeners first
+		getContentPanel().removeAll();	//remove all the components from the content panel TODO maybe remove the listeners first
 		if(telephones!=null)	//if telephones were given
 		{
 			for(int i=0; i<telephones.length; ++i)	//look at each telephone
@@ -173,10 +184,10 @@ public class TelecommunicationsPanel extends ContentPanel
 	*/
 	public TelecommunicationsPanel(final Telephone[] telephones, final Email[] emails)
 	{
-		super(new ModifiablePanel(new BasicGridBagLayout()), false);	//construct the panel using a grid bag layout, but don't initialize the panel G***is this right? double-check construction with a panel
+		super(new ModifiablePanel(new BasicGridBagLayout()), false);	//construct the panel using a grid bag layout, but don't initialize the panel TODO is this right? double-check construction with a panel
 		addTelephoneAction=new AddTelephoneAction();
 		addEmailAction=new AddEmailAction();
-//G***fix		removeAddressAction=new RemoveAddressAction();
+//TODO fix		removeAddressAction=new RemoveAddressAction();
 		buttonToolBar=new JToolBar(JToolBar.HORIZONTAL);
 		initialize();	//initialize the panel
 		setTelecommunications(telephones, emails);	//set the given telephones and emails
@@ -187,15 +198,15 @@ public class TelecommunicationsPanel extends ContentPanel
 	{
 		super.initializeUI();	//do the default user interface initialization
 		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
-		setTitle("Telecommunications");	//G***i18n
+		setTitle("Telecommunications");	//TODO i18n
 		buttonToolBar.setFloatable(false);
 		buttonToolBar.add(Box.createGlue());	//put glue before and after the button to center them 
 		buttonToolBar.add(new JButton(getAddTelephoneAction()));
 		buttonToolBar.add(new JButton(getAddEmailAction()));
-//G***fix		buttonPanel.add(new JButton(getRemoveAddressAction()));
+//TODO fix		buttonPanel.add(new JButton(getRemoveAddressAction()));
 		buttonToolBar.add(Box.createGlue());	//put glue before and after the button to center them 
 		add(buttonToolBar, BorderLayout.SOUTH);
-/*G***fix gridbag
+/*TODO fix gridbag
 		add(buttonPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		add(tabbedPane, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 */
@@ -205,7 +216,7 @@ public class TelecommunicationsPanel extends ContentPanel
 	public void updateStatus()
 	{
 		super.updateStatus();	//do the default status updating
-//G***fix		getRemoveAddressAction().setEnabled(getTabbedPane().getTabCount()>1);	//don't allow all the tabs to be removed
+//TODO fix		getRemoveAddressAction().setEnabled(getTabbedPane().getTabCount()>1);	//don't allow all the tabs to be removed
 	}
 
 	/**Adds a telephone to the content panel.
@@ -242,14 +253,14 @@ public class TelecommunicationsPanel extends ContentPanel
 			//add the component to the content panel, in a location based upon the components already present 
 		getContentPanel().add(component, new GridBagConstraints(0, getContentPanel().getComponentCount(), 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, NO_INSETS, 0, 0));
 		setModified(true);	//show that we've been modified by the addition of this component
-/*G***del; we may not even need this pack method any more, if revalidate() works
+/*TODO del; we may not even need this pack method any more, if revalidate() works
 		if(getParentOptionPane()!=null)	//if this panel is inside an option pane
 		{
 			WindowUtilities.packWindow(this);	//pack the window we're inside, if there is one, to ensure there's enough room to view this component
 		}
 */
-//G***del		invalidate();	//G***testing
-//G***del		repaint();	//repaint ourselves (important if we're inside a JOptionPane, for instance)
+//TODO del		invalidate();	//TODO testing
+//TODO del		repaint();	//repaint ourselves (important if we're inside a JOptionPane, for instance)
 		revalidate();	//update the layout
 	}
 
@@ -257,7 +268,7 @@ public class TelecommunicationsPanel extends ContentPanel
 	@return <code>true</code> if the address was moved, or <code>false</code> if
 		the action was cancelled or if there is only one address remaining.
 	*/
-/*G***fix
+/*TODO fix
 	public boolean removeAddress()
 	{
 		if(getTabbedPane().getTabCount()>1)	//if we have more than one address
@@ -266,7 +277,7 @@ public class TelecommunicationsPanel extends ContentPanel
 			if(selectedComponent!=null)	//if a component is selected
 			{
 					//if they really want to delete the address
-				if(JOptionPane.showConfirmDialog(this, "Are you sure you want to permanently remove this address?", "Remove Address", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)	//G***i18n
+				if(JOptionPane.showConfirmDialog(this, "Are you sure you want to permanently remove this address?", "Remove Address", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)	//TODO i18n
 				{
 					getTabbedPane().remove(selectedComponent);	//remove the selected component
 					return true;	//show that we removed the address
@@ -283,10 +294,10 @@ public class TelecommunicationsPanel extends ContentPanel
 		/**Default constructor.*/
 		public AddTelephoneAction()
 		{
-			super("Add Phone");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Add a telephone");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Add a new telephone number.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key G***i18n
+			super("Add Phone");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Add a telephone");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Add a new telephone number.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.PHONE_ICON_FILENAME)); //load the correct icon
 		}
 	
@@ -311,10 +322,10 @@ public class TelecommunicationsPanel extends ContentPanel
 		/**Default constructor.*/
 		public AddEmailAction()
 		{
-			super("Add Email");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Add an email");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Add a new email address.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_E));  //set the mnemonic key G***i18n
+			super("Add Email");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Add an email");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Add a new email address.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_E));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.EMAIL_ICON_FILENAME)); //load the correct icon
 		}
 	
@@ -324,7 +335,7 @@ public class TelecommunicationsPanel extends ContentPanel
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
 			final EmailPanel emailPanel=new EmailPanel();	//create a default email panel
-//G***fix			if(emailPanel.editEmailType())	//ask the user for the email type; if they accept the changes
+//TODO fix			if(emailPanel.editEmailType())	//ask the user for the email type; if they accept the changes
 			{
 				emailPanel.setLabelsVisible(false);	//turn off the labels
 				addComponent(emailPanel);	//add the new email panel

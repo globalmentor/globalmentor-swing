@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import java.awt.*;
@@ -9,13 +25,11 @@ import javax.swing.text.*;
 import com.garretwilson.awt.Inset;
 import com.garretwilson.swing.text.ContainerBoxView;
 import com.garretwilson.swing.text.ContainerView;
-import com.garretwilson.swing.text.DocumentUtilities;
 import com.garretwilson.swing.text.FragmentViewFactory;
-import com.garretwilson.swing.text.ViewUtilities;
-import static com.garretwilson.swing.text.ViewUtilities.*;
-import static com.garretwilson.swing.text.SwingTextUtilities.*;
+import static com.garretwilson.swing.text.Views.*;
+import static com.garretwilson.swing.text.SwingText.*;
 import com.garretwilson.swing.text.ViewBreakStrategy;
-import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
+import com.garretwilson.swing.text.xml.css.XMLCSSStyles;
 import com.garretwilson.swing.text.xml.css.XMLCSSView;
 import com.garretwilson.swing.text.xml.css.XMLCSSViewPainter;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
@@ -110,9 +124,9 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 	public XMLParagraphView(final Element element)
 	{
 		super(element);	//construct the parent class
-//G***del Log.trace("Creating XMLParagraphView, i18n property: ", getDocument().getProperty("i18n")); //G***testing
-Log.trace(); //G***testing
-//TODO fix antialias and fonts		  strategy=new com.garretwilson.swing.text.TextLayoutStrategy();  //G***fix; testing i18n
+//TODO del Log.trace("Creating XMLParagraphView, i18n property: ", getDocument().getProperty("i18n")); //TODO testing
+Log.trace(); //TODO testing
+//TODO fix antialias and fonts		  strategy=new com.garretwilson.swing.text.TextLayoutStrategy();  //TODO fix; testing i18n
 	}
 
 	/**@return The insets of the view.*/
@@ -128,8 +142,8 @@ Log.trace(); //G***testing
 	public void release()
 	{
 		layoutPool=null;  //release the pool of views
-		strategy=null;  //G***testing ViewReleasable
-		//G***later, maybe release the strategy and the child views as well
+		strategy=null;  //TODO testing ViewReleasable
+		//TODO later, maybe release the strategy and the child views as well
 	}
 */
 
@@ -141,38 +155,38 @@ Log.trace(); //G***testing
 		final AttributeSet attributeSet=getAttributes();	//get our attributes
 		if(attributeSet!=null)	//if we have attributes
 		{
-			setBackgroundColor(XMLCSSStyleUtilities.getBackgroundColor(attributeSet));	//set the background color from the attributes
-			setParagraphInsets(attributeSet);	//G***fix
-			setJustification(StyleConstants.getAlignment(attributeSet));	//G***fix
-//G***del			setJustification(StyleConstants.ALIGN_JUSTIFIED);	//G***fix
-//G***fix			setLineSpacing(StyleConstants.getLineSpacing(attributeSet));	//G***fix
-//G***fix			setLineSpacing(2);	//G***fix; testing
-//G***del			setLineSpacing(1.5f);	//G***fix; testing
-			setLineSpacing(XMLCSSStyleUtilities.getLineHeight(attributeSet));	//set the line height amount from our CSS attributes G***fix this to correctly use the number
-		  setVisible(!XMLCSS.CSS_DISPLAY_NONE.equals(XMLCSSStyleUtilities.getDisplay(attributeSet))); //the paragraph is visible only if it doesn't have a display of "none"
-//G***del			LineSpacing=3;	//G***fix; testing
+			setBackgroundColor(XMLCSSStyles.getBackgroundColor(attributeSet));	//set the background color from the attributes
+			setParagraphInsets(attributeSet);	//TODO fix
+			setJustification(StyleConstants.getAlignment(attributeSet));	//TODO fix
+//TODO del			setJustification(StyleConstants.ALIGN_JUSTIFIED);	//TODO fix
+//TODO fix			setLineSpacing(StyleConstants.getLineSpacing(attributeSet));	//TODO fix
+//TODO fix			setLineSpacing(2);	//TODO fix; testing
+//TODO del			setLineSpacing(1.5f);	//TODO fix; testing
+			setLineSpacing(XMLCSSStyles.getLineHeight(attributeSet));	//set the line height amount from our CSS attributes TODO fix this to correctly use the number
+		  setVisible(!XMLCSS.CSS_DISPLAY_NONE.equals(XMLCSSStyles.getDisplay(attributeSet))); //the paragraph is visible only if it doesn't have a display of "none"
+//TODO del			LineSpacing=3;	//TODO fix; testing
 
 			final Document document=getDocument();	//get our document
 			if(document instanceof StyledDocument)		//if this is a styled document
 			{
 				final StyledDocument styledDocument=(StyledDocument)document;	//cast the document to a styled document
 				final Font font=styledDocument.getFont(attributeSet);	//let the document get the font from the attributes
-//G***find some way to cache the font in the attributes
-				setFirstLineIndent(XMLCSSStyleUtilities.getTextIndent(attributeSet, font));	//set the text indent amount from the CSS property in the attributes, providing a font in case the length is in ems
+//TODO find some way to cache the font in the attributes
+				setFirstLineIndent(XMLCSSStyles.getTextIndent(attributeSet, font));	//set the text indent amount from the CSS property in the attributes, providing a font in case the length is in ems
 
 
 
-//G***fix			firstLineIndent = (int)StyleConstants.getFirstLineIndent(attributeSet);	//G***fix
+//TODO fix			firstLineIndent = (int)StyleConstants.getFirstLineIndent(attributeSet);	//TODO fix
 
-				//G***we may want to set the insets in setPropertiesFromAttributes(); for
+				//TODO we may want to set the insets in setPropertiesFromAttributes(); for
 				//percentages, getPreferredeSpan(), etc. will have to look at the preferred
 				//span and make calculations based upon the percentages
-				//G***probably have some other exernal helper class that sets the margins based upon the attributes
-				final short marginTop=(short)Math.round(XMLCSSStyleUtilities.getMarginTop(attributeSet)); //get the top margin from the attributes
-				final short marginLeft=(short)Math.round(XMLCSSStyleUtilities.getMarginLeft(attributeSet, font)); //get the left margin from the attributes
-				final short marginBottom=(short)Math.round(XMLCSSStyleUtilities.getMarginBottom(attributeSet)); //get the bottom margin from the attributes
-				final short marginRight=(short)Math.round(XMLCSSStyleUtilities.getMarginRight(attributeSet, font)); //get the right margin from the attributes
-				setInsets(marginTop, marginLeft, marginBottom, marginRight);	//G***fix; testing
+				//TODO probably have some other exernal helper class that sets the margins based upon the attributes
+				final short marginTop=(short)Math.round(XMLCSSStyles.getMarginTop(attributeSet)); //get the top margin from the attributes
+				final short marginLeft=(short)Math.round(XMLCSSStyles.getMarginLeft(attributeSet, font)); //get the left margin from the attributes
+				final short marginBottom=(short)Math.round(XMLCSSStyles.getMarginBottom(attributeSet)); //get the bottom margin from the attributes
+				final short marginRight=(short)Math.round(XMLCSSStyles.getMarginRight(attributeSet, font)); //get the right margin from the attributes
+				setInsets(marginTop, marginLeft, marginBottom, marginRight);	//TODO fix; testing
 			}
 		}
 	}
@@ -246,9 +260,9 @@ Log.trace(); //G***testing
   {
 		if(isVisible()) //if this view is visible
 		{
-					//G***testing fractional metrics; should this be in XMLInlineView?
+					//TODO testing fractional metrics; should this be in XMLInlineView?
 			final Graphics2D graphics2D=(Graphics2D)graphics;  //cast to the 2D version of graphics
-			  //turn on fractional metrics G***probably do this conditionally, based on some sort of flag
+			  //turn on fractional metrics TODO probably do this conditionally, based on some sort of flag
 //TODO del; moved to XMLCSSViewPainter			graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 //TODO del; moved to XMLCSSViewPainter		  graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			XMLCSSViewPainter.paint(graphics, allocation, this, getAttributes());	//paint our CSS-specific parts
@@ -315,7 +329,7 @@ Log.trace(); //G***testing
 		{
 			boolean onlyObjectsPresent=true; //assume there are only objects present in this paragraph
 			int inlineViewCount=0;  //we'll keep a record of how many inline views there are
-//G***fix			boolean firstInlineViewHasMultipleWords=false;  //assume the first inline view has multiple words
+//TODO fix			boolean firstInlineViewHasMultipleWords=false;  //assume the first inline view has multiple words
 			for(int i=0; i<poolViewCount; ++i)  //look at each view in the pool
 			{
 				final View pooledView=layoutPool.getView(i);  //get a reference to this pooled view
@@ -325,16 +339,16 @@ Log.trace(); //G***testing
 				}
 				else if(pooledView instanceof XMLInlineView)
 				{
-//G***fix					if(inlineViweCount==0)  //if this is the first inline view we've found
-//				G***fix					{
-//				G***fix						final Segment segment=getText(pooledView.getStartOffset(), pooledView.getEndOffset());  //get the segment of text the inline view represents
-//				G***fix						pooledView.getElement().get
-//				G***fix					}
+//TODO fix					if(inlineViweCount==0)  //if this is the first inline view we've found
+//				TODO fix					{
+//				TODO fix						final Segment segment=getText(pooledView.getStartOffset(), pooledView.getEndOffset());  //get the segment of text the inline view represents
+//				TODO fix						pooledView.getElement().get
+//				TODO fix					}
 					++inlineViewCount;  //show that we've found another inline view
 				}
 			}
 			final View parentView=getParent();  //get our parent view
-			final String parentDisplay=XMLCSSStyleUtilities.getDisplay(parentView.getAttributes()); //see what kind of parent we have
+			final String parentDisplay=XMLCSSStyles.getDisplay(parentView.getAttributes()); //see what kind of parent we have
 			final boolean isInTableCell=XMLCSS.CSS_DISPLAY_TABLE_CELL.equals(parentDisplay);  //see if we're inside a table cell
 			setFirstLineIndented(!onlyObjectsPresent && (inlineViewCount>1 || !isInTableCell)); //if there are only objects present in this paragraph, or if there's only one inline view in a table cell, we won't indent
 		}
@@ -367,7 +381,7 @@ Log.trace(); //G***testing
 	{
 		if(axis==getAxis())	//if they want to break along our tiling axis
 		{		  	
-			final String pageBreakAfter=XMLCSSStyleUtilities.getPageBreakAfter(getAttributes());	//see how the view considers breaking after it
+			final String pageBreakAfter=XMLCSSStyles.getPageBreakAfter(getAttributes());	//see how the view considers breaking after it
 				//if we should avoid breaking after this view, and the provided length is more than we need (i.e. we aren't being asked to break in our middle)
 			if(XMLCSS.CSS_PAGE_BREAK_AFTER_AVOID.equals(pageBreakAfter) && len>getPreferredSpan(axis))
 			{
@@ -546,10 +560,10 @@ Log.trace(); //G***testing
 				if(childView instanceof XMLInlineView)  //if this is an XML inline view
 					verticalAlign=((XMLInlineView)childView).getVerticalAlign();  //get the cached vertical alignment value directly from the view
 				else  //if the view is another type
-					verticalAlign=XMLCSSStyleUtilities.getVerticalAlign(childView.getAttributes()); //get the vertical alignment specified by the inline view
+					verticalAlign=XMLCSSStyles.getVerticalAlign(childView.getAttributes()); //get the vertical alignment specified by the inline view
 				final int relativeIndex=i>0 ? i-1 : (offsets.length>1 ? i+1 : i);  //we'll move the offset relative to the offset before us or, if this is the first offset, the one after us; if there is only one offset, use ourselves
-//G***del Log.trace("Relative index: ", relativeIndex); //G***del
-				  //G***this currently doesn't work for subscripts of subscripts or superscripts of superscripts or a superscript followed by a subscript, etc.
+//TODO del Log.trace("Relative index: ", relativeIndex); //TODO del
+				  //TODO this currently doesn't work for subscripts of subscripts or superscripts of superscripts or a superscript followed by a subscript, etc.
 				final int relativeOffset=offsets[relativeIndex];  //get the span to which we're relative
 				final int relativeSpan=spans[relativeIndex];  //get the span to which we're relative
 				if(XMLCSS.CSS_VERTICAL_ALIGN_SUPER.equals(verticalAlign))  //if this is superscript
@@ -558,7 +572,7 @@ Log.trace(); //G***testing
 				}
 				else if(XMLCSS.CSS_VERTICAL_ALIGN_SUB.equals(verticalAlign))  //if this is subscript
 				{
-						//G***fix; right now, it doesn't compensate for the linespacing
+						//TODO fix; right now, it doesn't compensate for the linespacing
 				  offsets[i]=relativeOffset+Math.round(relativeSpan*.60f); //move the box 20% below the relative box of the relative box's height
 				}
 			}
@@ -571,17 +585,17 @@ Log.trace(); //G***testing
 
 		public float getPreferredSpan(int axis)
 		{
-			return axis==Y_AXIS ? super.getPreferredSpan(axis)*getLineSpacing() : super.getPreferredSpan(axis);	//G***testing
+			return axis==Y_AXIS ? super.getPreferredSpan(axis)*getLineSpacing() : super.getPreferredSpan(axis);	//TODO testing
 		}
 
 		public float getMaximumSpan(int axis)
 		{
-			return axis==Y_AXIS ? super.getMaximumSpan(axis)*getLineSpacing() : super.getMaximumSpan(axis);	//G***testing
+			return axis==Y_AXIS ? super.getMaximumSpan(axis)*getLineSpacing() : super.getMaximumSpan(axis);	//TODO testing
 		}
 
 		public float getMinimumSpan(int axis)
 		{
-			return axis==Y_AXIS ? super.getMinimumSpan(axis)*getLineSpacing() : super.getMinimumSpan(axis);	//G***testing
+			return axis==Y_AXIS ? super.getMinimumSpan(axis)*getLineSpacing() : super.getMinimumSpan(axis);	//TODO testing
 		}
 	}
 
@@ -681,7 +695,7 @@ Log.trace(); //G***testing
 		*/
 		protected void forwardUpdateToView(final View view, final DocumentEvent event, final Shape allocation, final ViewFactory factory)
 		{
-			view.setParent(this);	//reparent the view to the pool G***check about hierarchy reparenting; see XMLPagedView.PagePoolView
+			view.setParent(this);	//reparent the view to the pool TODO check about hierarchy reparenting; see XMLPagedView.PagePoolView
 			super.forwardUpdateToView(view, event, allocation, factory);	//forward the update normally
 		}
 
@@ -731,13 +745,13 @@ Log.trace(); //G***testing
 		@returns the offset and span for each child view in the offsets and spans
 			parameters.
 		*/
-		protected void layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans)  //G***testing
+		protected void layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans)  //TODO testing
 		{
 			super.layoutMinorAxis(targetSpan, axis, offsets, spans);	//do the default layout
 		  //if we're the first fragement, there is at least one row, and the first line should be indented
 		  if(isFirstFragment() && offsets.length>0 && isFirstLineIndented())
-//G***del when works			if(offsets.length>0)	//if there is at least one row, and the first line should be indented
-				offsets[0]+=firstLineIndent;	//add the correct indentation amount to the first row G***use an accessor function here for firstLineIndent, if we can
+//TODO del when works			if(offsets.length>0)	//if there is at least one row, and the first line should be indented
+				offsets[0]+=firstLineIndent;	//add the correct indentation amount to the first row TODO use an accessor function here for firstLineIndent, if we can
 		}
 
 	}
@@ -756,7 +770,7 @@ Log.trace(); //G***testing
    */
   public void preferenceChanged(View child, boolean width, boolean height)
   {
-//G***del  	removeAll();	//G***testing
+//TODO del  	removeAll();	//TODO testing
   	super.preferenceChanged(child, width, height);
   	
   }
@@ -782,7 +796,7 @@ Log.trace(); //G***testing
 		*/
 		public Color getBackgroundColor()
 		{
-//G***del; ParagraphView doesn't seem to do the same type of caching			synchronize();	//make sure we have the correct cached property values
+//TODO del; ParagraphView doesn't seem to do the same type of caching			synchronize();	//make sure we have the correct cached property values
 			return backgroundColor;
 		}
 

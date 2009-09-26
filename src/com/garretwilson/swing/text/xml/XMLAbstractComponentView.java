@@ -1,17 +1,32 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import java.awt.*;
-import javax.swing.*;
 import javax.swing.text.*;
 import com.garretwilson.swing.text.ViewComponentManager;
 
 /**Represents a Java component based upon <code>java.awt.Component</code>.
 	A class must be derived from this abstract class with an appropriate
-	<code>createComponent()</code> implemented, as well as the correct width and
+	{@link #createComponent()} implemented, as well as the correct width and
 	height set.
-@see XMLObjectView#setWidth
-@see XMLObjectView#setWidth
-@see #createComponent
+@see XMLObjectView#setWidth(int)
+@see XMLObjectView#setWidth(int)
+@see #createComponent()
 @author Garret Wilson
 */
 public abstract class XMLAbstractComponentView extends XMLObjectView
@@ -39,24 +54,24 @@ public abstract class XMLAbstractComponentView extends XMLObjectView
 		*/
 		protected void setComponent(final Component newComponent)
 		{
-//G***del System.out.println("XMLAbstractComponentView setting component: "+newComponent.getClass().getName());  //G***del
-//G***del if not needed		  Debug.assert(SwingUtilities.isEventDispatchThread(), "XMLAbstractComponentView.setComponent() called from outside the AWT event thread.");  //G***fix; we may not even need this, if we know the size already, so we could even spin this off in a different thread as the Swing version does
+//TODO del System.out.println("XMLAbstractComponentView setting component: "+newComponent.getClass().getName());  //TODO del
+//TODO del if not needed		  Debug.assert(SwingUtilities.isEventDispatchThread(), "XMLAbstractComponentView.setComponent() called from outside the AWT event thread.");  //TODO fix; we may not even need this, if we know the size already, so we could even spin this off in a different thread as the Swing version does
 		  if(newComponent!=null)  //if we are being given a component
 			{
-//G***del				final Dimension componentSize
-//G***del				newComponent.getSize()
-//G***del if not needed		    getComponentManager().add(newComponent);  //add the component to our component manager
+//TODO del				final Dimension componentSize
+//TODO del				newComponent.getSize()
+//TODO del if not needed		    getComponentManager().add(newComponent);  //add the component to our component manager
 				  //add the component to our component manager, specifying that the component should always stay the same size as the view
 		    getComponentManager().add(newComponent, 0, 0, getWidth(), getHeight());
-//G***fix				newComponent.validate();  //G***testing
+//TODO fix				newComponent.validate();  //TODO testing
 			}
-/*G***fix
+/*TODO fix
 			else  //if the component is being removed
 				getComponentManager().re
 */
 		  component=newComponent; //set the component we're assigned to
-/*G***del if not needed
-		  final Container container=getContainer();  //get the container we're place in G***this used to be parent.getContainer() inside setParent(); this probably won't make a difference
+/*TODO del if not needed
+		  final Container container=getContainer();  //get the container we're place in TODO this used to be parent.getContainer() inside setParent(); this probably won't make a difference
 Log.trace("Container: ", container);
 		  if(container!=null) //if we have a valid container
 				container.add(component); //add the component to the container
@@ -78,23 +93,23 @@ Log.trace("Container: ", container);
 	@param parent The parent of the view, <code>null</code> if none.
 	@see #createComponent
 	*/
-/*G***del
+/*TODO del
 	public void setParent(final View parent)
 	{
-//G***del System.out.println("XMLAbstractComponentView setting parent");  //G***del
+//TODO del System.out.println("XMLAbstractComponentView setting parent");  //TODO del
 		super.setParent(parent);  //let the super class set the parent; we should do this first so setComponent() will be able to find a container to which to add the component
 */
-/*G***del if not needed
+/*TODO del if not needed
 		if(parent!=null && getComponent()==null) //if we've been given a parent, and we haven't yet created a component
 		{
-//G***del System.out.println("XMLAbstractComponentView creating component"); //G***del
-//G***del Log.trace("XMLComponentView.setParent() creating component; component before: "+component);
+//TODO del System.out.println("XMLAbstractComponentView creating component"); //TODO del
+//TODO del Log.trace("XMLComponentView.setParent() creating component; component before: "+component);
 		  final Component component=createComponent();  //create the component
-//G***fix		  component.setVisible(false); //don't show the component initially; it will be shown at the appropriate time using show() when called from paint()
+//TODO fix		  component.setVisible(false); //don't show the component initially; it will be shown at the appropriate time using show() when called from paint()
 		  setComponent(component);  //set the component, which will add the component to our container
 		}
 */
-//G***del	}
+//TODO del	}
 
 	/**Creates a component for displaying.
 	@return A component to display.
@@ -114,35 +129,35 @@ Log.trace("Container: ", container);
 		super.setShowing(showing);  //update showing in the parent class
 		if(showing) //if we should be showing now
 		{
-/*G***del
-System.out.println("Setting showing, current width: "+getCurrentWidth());  //G***del
-System.out.println("Setting showing, current height: "+getCurrentHeight());  //G***del
+/*TODO del
+System.out.println("Setting showing, current width: "+getCurrentWidth());  //TODO del
+System.out.println("Setting showing, current height: "+getCurrentHeight());  //TODO del
 */
-			if(getComponent()==null) //if we haven't yet created a component  //G***testing
+			if(getComponent()==null) //if we haven't yet created a component  //TODO testing
 			{
-	//G***del System.out.println("XMLAbstractComponentView creating component"); //G***del
-	//G***del Log.trace("XMLComponentView.setParent() creating component; component before: "+component);
+	//TODO del System.out.println("XMLAbstractComponentView creating component"); //TODO del
+	//TODO del Log.trace("XMLComponentView.setParent() creating component; component before: "+component);
 				final Component component=createComponent();  //create the component
-//G***del System.out.println("component size after createComponent(): "+component.getSize().getWidth()+" height: "+component.getSize().getHeight());  //G***del
-	//G***fix		  component.setVisible(false); //don't show the component initially; it will be shown at the appropriate time using show() when called from paint()
+//TODO del System.out.println("component size after createComponent(): "+component.getSize().getWidth()+" height: "+component.getSize().getHeight());  //TODO del
+	//TODO fix		  component.setVisible(false); //don't show the component initially; it will be shown at the appropriate time using show() when called from paint()
 				setComponent(component);  //set the component, which will add the component to our container
 			}
 		}
 		componentManager.setShowing(showing); //tell the component manager our new status
-/*G***del when works
+/*TODO del when works
 		final Component component=getComponent(); //get our component
 		if(component!=null) //if we have a valid component
 		{
 
 
-//G***add a way to put the component back into the container when it's time to show it again
+//TODO add a way to put the component back into the container when it's time to show it again
 
 			component.setVisible(showing); //show or hide the component appropriately
-			//G***testing a way to remove the component from the container
+			//TODO testing a way to remove the component from the container
 		  if(isShowing() && !showing)  //if we're already showing and we're now being hidden
 			{
-				final Container container=getContainer();  //get the container we're place in G***this used to be parent.getContainer() inside setParent(); this probably won't make a difference
-Log.trace("Container: ", container);  //G***del
+				final Container container=getContainer();  //get the container we're place in TODO this used to be parent.getContainer() inside setParent(); this probably won't make a difference
+Log.trace("Container: ", container);  //TODO del
 				if(container!=null) //if we have a valid container
 					container.remove(component); //remove the component from the container
 			}
@@ -162,15 +177,15 @@ Log.trace("Container: ", container);  //G***del
 	*/
 	public void paint(final Graphics graphics, final Shape allocation)
 	{
-/*G***del
+/*TODO del
 Log.trace("appletView.paint() currentWidth: "+currentWidth+" currentHeight: "+currentHeight);
-Rectangle bounds=allocation.getBounds();  //G***testing
+Rectangle bounds=allocation.getBounds();  //TODO testing
 Log.trace("appletView.paint() bounds: "+bounds);
 */
 		super.paint(graphics, allocation);  //do the default painting, which will update our dimensions if needed
 		componentManager.setLocation(allocation); //tell the component manager our new location
-/*G***del
-		  //get the bounding rectangle of the painting area G***use a utility function
+/*TODO del
+		  //get the bounding rectangle of the painting area TODO use a utility function
 		final Rectangle rectangle=(allocation instanceof Rectangle) ? (Rectangle)allocation : allocation.getBounds();
 		componentManager.setLocation(rectangle.x, rectangle.y); //tell the component manager our new location, even though we're managing the component
 		final Component component=getComponent(); //get the associated component
@@ -181,7 +196,7 @@ Log.trace("appletView.paint() bounds: "+bounds);
 		}
 */
 
-/*G***del when works
+/*TODO del when works
 
 		super.paint(graphics, allocation); //do the default painting
 		final Component component=getComponent(); //get the associated component
@@ -193,13 +208,13 @@ Log.trace("appletView.paint() bounds: "+bounds);
 
 
 */
-/*G***del
-Log.trace("Just set bounds: "+bounds.x+" "+bounds.y+" "+currentWidth+" "+currentHeight);  //G***fix
-Log.trace("Bounds results: "+component.getBounds()); //G***testing
-//G***fix component.invalidate(); //G***testing
+/*TODO del
+Log.trace("Just set bounds: "+bounds.x+" "+bounds.y+" "+currentWidth+" "+currentHeight);  //TODO fix
+Log.trace("Bounds results: "+component.getBounds()); //TODO testing
+//TODO fix component.invalidate(); //TODO testing
 */
-//G***del component.doLayout(); //G***testing
-//G***del }
+//TODO del component.doLayout(); //TODO testing
+//TODO del }
 
 //G**del when works		}
 	}
@@ -212,7 +227,7 @@ Log.trace("Bounds results: "+component.getBounds()); //G***testing
 	public void setSize(float width, float height)
 	{
 		super.setSize(width, height); //do the default size setting
-		componentManager.setSize(getWidth(), getHeight(), getCurrentWidth(), getCurrentHeight()); //G***testing
+		componentManager.setSize(getWidth(), getHeight(), getCurrentWidth(), getCurrentHeight()); //TODO testing
 	}
 
 }

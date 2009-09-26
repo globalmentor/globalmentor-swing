@@ -1,26 +1,64 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text;
 
 import java.net.URI;
 
-import javax.swing.text.AttributeSet;
 import javax.swing.text.Document;
-import javax.swing.text.MutableAttributeSet;
 
 import com.globalmentor.java.Booleans;
 import com.globalmentor.rdf.RDF;
 
-/**A collection of utility methods for working with Swing text
-	<code>Document</code> and derived objects.
+/**A collection of utility methods for working with Swing text {@link Document} and derived objects.
 @author Garret Wilson
 */
-public class DocumentUtilities implements DocumentConstants
+public class DocumentUtilities
 {
+
+	/**The <code>Boolean</code> property representing antialiased text.*/
+//TODO del if not needed	public final static String ANTIALIAS_DOCUMENT_PROPERTY="antialias";
+
+	/**The name of the property that indicates the base URI against which relative URIs should be referenced.*/
+	public final static String BASE_URI_PROPERTY="baseURI";
+
+	/**The name of the document property which will contain whether the document
+		should be paged, stored as a <code>Boolean</code>.
+	*/
+	public final static String PAGED_PROPERTY="paged";
+
+	/**The name of the document property which may contain the RDF data model.*/
+	public final static String RDF_PROPERTY="rdf";
+
+	/**Whether or not text in this view or any child views should be antialiased, stored as a <code>Boolean</code>.*/
+	public final static String ANTIALIAS_PROPERTY="antialias";
+
+	/**The name of the document property which will contain the zoom level stored
+		as a <code>Float</code>.
+	*/
+	public final static String ZOOM_PROPERTY="zoomFactor";
+
+	/**The default zoom level of the text pane.*/
+	public final static float DEFAULT_ZOOM=1.20f;
 
 	/**Sets the location against which to resolve relative URIs. By default this
 		will be the document's URI.
 	@param document The document the property of which to set.
 	@param baseURI The new location against which to resolve relative URIs.
-	@see #BASE_URI_PROPERTY
+	@see DocumentUtilities#BASE_URI_PROPERTY
 	*/
 	public static void setBaseURI(final Document document, final URI baseURI)
 	{
@@ -31,7 +69,7 @@ public class DocumentUtilities implements DocumentConstants
 	@param document The document from which to retrieve the property.
 	@return The location against which to resolve relative URIs, or <code>null</code>
 		if there is no base URI.
-	@see #BASE_URI_PROPERTY
+	@see DocumentUtilities#BASE_URI_PROPERTY
 	*/
 	public static URI getBaseURI(final Document document)
 	{
@@ -125,5 +163,5 @@ public class DocumentUtilities implements DocumentConstants
 	{
 		return document.getProperty(ZOOM_PROPERTY) instanceof Float;
 	}
-
+	
 }

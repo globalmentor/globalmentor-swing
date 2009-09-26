@@ -1,11 +1,25 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text;
 
 import java.awt.*;
 import java.util.*;
 import static java.lang.Math.*;
 import static java.util.Collections.*;
-import java.util.List;
-import javax.swing.SwingUtilities;
 import javax.swing.text.*;
 
 import static com.globalmentor.java.Objects.*;
@@ -16,18 +30,18 @@ import com.garretwilson.awt.Inset;
 	Used with a view that contains AWT/Swing components.
 	<p>Views that use the view manager should:
 	  <ul>
-			<li>call <code>ViewComponentManager.setLocation()</code> from within
+			<li>call {@link ViewComponentManager#setLocation(Shape)} from within
 				<code>View.paint()</code> after calling the view's default version.</li>
-			<li>call <code>ViewComponentManager.setSize()</code> from within
-				<code>View.setSize()</code> after calling the view's default version.</li>
-			<li>call <code>ViewComponentManager.setShowing()</code> as needed.</li>
+			<li>call {@link ViewComponentManager#setSize(float, float)} from within
+				{@link View#setSize(float, float)} after calling the view's default version.</li>
+			<li>call {@link ViewComponentManager#setShowing(boolean)} as needed.</li>
 		</ul>
 	</p>
-	<p>If region-based positioning is used, the associated view should implement <code>Inset</code>.</p>
+	<p>If region-based positioning is used, the associated view should implement {@link Inset}.</p>
 @author Garret Wilson
 @see Inset
 */
-public class ViewComponentManager //G***finish the class comments with examples of usage
+public class ViewComponentManager //TODO finish the class comments with examples of usage
 {
 	
 	/**A component position.
@@ -221,7 +235,7 @@ public class ViewComponentManager //G***finish the class comments with examples 
 		@return The managed component's information, <code>null</code> if there is no
 			information stored for the specified component.
 		*/
-/*G***del if not needed
+/*TODO del if not needed
 		protected ComponentInfo getComponentInfo(final Component component)
 		{
 			return componentInfoMap.get(component); //get the component information for the component
@@ -491,11 +505,11 @@ public class ViewComponentManager //G***finish the class comments with examples 
 	*/
 	public synchronized void setShowing(final boolean newShowing)
 	{
-/*G***del
-Log.trace("****setShowing()");  //G***del
-Log.trace("set showing, old: ", new Boolean(showing)); //G***del
-Log.trace("set showing, new: ", new Boolean(newShowing)); //G***del
-Log.traceStack(); //G***del
+/*TODO del
+Log.trace("****setShowing()");  //TODO del
+Log.trace("set showing, old: ", new Boolean(showing)); //TODO del
+Log.trace("set showing, new: ", new Boolean(newShowing)); //TODO del
+Log.traceStack(); //TODO del
 */
 		showing=newShowing; //update our showing status
 		for(final Component component:getComponents())  //for each component
@@ -515,29 +529,29 @@ Log.traceStack(); //G***del
 	*/
 	protected void setShowing(final Component component, final boolean showing)
 	{
-//G***del Log.trace("setting component showing: ", new Boolean(showing)); //G***del
+//TODO del Log.trace("setting component showing: ", new Boolean(showing)); //TODO del
 		component.setVisible(showing); //show or hide the component appropriately
 		final Container container=getView().getContainer();  //get the container the view is placed in
 		if(showing) //if we're now showing the component
 		{
-//G***del Log.trace("showing component"); //G***del
+//TODO del Log.trace("showing component"); //TODO del
 			if(container!=null && component.getParent()!=container) //if we have a valid container, and the component isn't already in the container
 			{
-//G***del Log.trace("component into container"); //G***del
-//G***del System.out.println("component size before added to container: "+component.getSize().getWidth()+" height: "+component.getSize().getHeight());  //G***del
+//TODO del Log.trace("component into container"); //TODO del
+//TODO del System.out.println("component size before added to container: "+component.getSize().getWidth()+" height: "+component.getSize().getHeight());  //TODO del
 				container.add(component); //add the component to the container
-//G***del System.out.println("component size after added to container: "+component.getSize().getWidth()+" height: "+component.getSize().getHeight());  //G***del
+//TODO del System.out.println("component size after added to container: "+component.getSize().getWidth()+" height: "+component.getSize().getHeight());  //TODO del
 
 			}
 		}
-		else /*G***del if(!showing)*/  //if we're now being hidden (even if we were already hidden, container.remove(component) shouldn't hurt if the component was already removed)
+		else /*TODO del if(!showing)*/  //if we're now being hidden (even if we were already hidden, container.remove(component) shouldn't hurt if the component was already removed)
 		{
-//G***del Log.trace("hiding component"); //G***del
-		//G***testing a way to remove the component from the container
-//G***del Log.trace("Container: ", container);  //G***del
+//TODO del Log.trace("hiding component"); //TODO del
+		//TODO testing a way to remove the component from the container
+//TODO del Log.trace("Container: ", container);  //TODO del
 			if(container!=null && component.getParent()==container) //if we have a valid container, and the component is in the container
 			{
-//G***del Log.trace("removing component from container"); //G***del
+//TODO del Log.trace("removing component from container"); //TODO del
 				container.remove(component); //remove the component from the container
 			}
 		}
@@ -729,7 +743,7 @@ Log.traceStack(); //G***del
 					component.setSize(scaledSize);  //update the component's size (sizes are absolute, and do not have to be offset from the view origin)
 				}
 				component.validate(); //tell the component to validate itself, laying out its child components if needed
-/*G***del; sizes are relative, and don't need to be updated relative to the view origin
+/*TODO del; sizes are relative, and don't need to be updated relative to the view origin
 					final Dimension scaledSize=componentInfo.getScaledSize();  //get the scaled size of this component, if we have it
 					if(scaledSize!=null)  //if we have a scaled size for this component
 					{

@@ -1,12 +1,27 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import javax.swing.text.*;
 
-/**A block view that is used to contain several inline views within a block
-	view.
+/**A block view that is used to contain several inline views within a block view.
 @author Garret Wilson
 */
-public class XMLAnonymousBlockView extends XMLBlockView //G***do we even need this class, because wouldn't an anonymous block view with only inline views be an anonymous paragraph view?
+public class XMLAnonymousBlockView extends XMLBlockView //TODO do we even need this class, because wouldn't an anonymous block view with only inline views be an anonymous paragraph view?
 {
 
 	/**The attributes of the anonymous block view.*/
@@ -71,10 +86,10 @@ public class XMLAnonymousBlockView extends XMLBlockView //G***do we even need th
 		if(ownedElements.length>0)  //if we have elements we own (we always should)
 		{
 		  final View[] addedViews=new View[ownedElements.length]; //create an array in which to store the views we create
-//G***del Log.trace(getClass().getName());  //G***del
+//TODO del Log.trace(getClass().getName());  //TODO del
 		  for(int i=0; i<ownedElements.length; ++i) //look at each of the elements we own
 			{
-//G***del Log.trace("Element "+i+" attribute set: "+com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(e.getElement(i).getAttributes()));  //G***del
+//TODO del Log.trace("Element "+i+" attribute set: "+com.garretwilson.swing.text.AttributeSetUtilities.getAttributeSetString(e.getElement(i).getAttributes()));  //TODO del
 				addedViews[i]=viewFactory.create(ownedElements[i]); //create a view for this element
 	    }
 	    replace(0, 0, addedViews);  //load our created views as children

@@ -1,13 +1,30 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import java.awt.event.ActionEvent;
 import java.net.URI;
 import javax.swing.*;
 import javax.swing.text.*;
+
+import com.garretwilson.swing.XMLTextPane;
 import com.garretwilson.swing.text.TextComponentFocusTargetAction;
 
-/**Action that inserts an XML element into the currently focused
-	<code>XMLTextPane</code>.
+/**Action that inserts an XML element into the currently focused {@link XMLTextPane}
 @author Garret Wilson
 @see XMLTextPane
 */
@@ -32,7 +49,7 @@ public class InsertXMLElementAction extends TextComponentFocusTargetAction
 	*/
 	public InsertXMLElementAction(final URI elementNamespaceURI, final String elementQName)
 	{
-		this(null, elementNamespaceURI, elementQName);	//construct the class with no name G***maybe construct our own name
+		this(null, elementNamespaceURI, elementQName);	//construct the class with no name TODO maybe construct our own name
 	}
 
 	/**Name constructor with no default target.

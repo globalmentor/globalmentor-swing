@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import java.net.URI;
@@ -6,10 +22,11 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
 
-import static com.garretwilson.swing.text.StyleUtilities.*;
-import static com.garretwilson.swing.text.xml.XMLStyleConstants.*;
+import static com.garretwilson.swing.text.Styles.*;
 
 import static com.globalmentor.java.Objects.*;
+
+import com.garretwilson.swing.text.Styles;
 import com.globalmentor.java.Objects;
 import com.globalmentor.model.NameValuePair;
 import com.globalmentor.net.ContentType;
@@ -18,7 +35,7 @@ import com.globalmentor.text.xml.XML;
 
 /**A collection of utilities for working with XML values used Swing style.
 <p>These routines store XML attributes in the Swing attributes as an
-	<code>XMLAttribute</code> object, keyed to the attribute name prefixed
+	{@link XMLAttribute} object, keyed to the attribute name prefixed
 	by the namespace URI and '$', if the attribute has a non-<code>null</code>
 	namespace.</p>
 <p>XML-specific attributes besides the XML attributes themselves are stored
@@ -26,8 +43,68 @@ import com.globalmentor.text.xml.XML;
 @author Garret Wilson
 @see com.garretwilson.swing.text.xml.XMLAttribute
 */
-public class XMLStyleUtilities
+public class XMLStyles
 {
+
+	/**The default font size.*/	//TODO should this go elsewhere?
+	public final static int DEFAULT_FONT_SIZE=12;
+
+	/**The default line height (line spacing).*/	//TODO should this go elsewhere?
+	public final static float DEFAULT_LINE_HEIGHT=1.0f;
+
+	/**The default text indent.*/	//TODO should this go elsewhere?
+	public final static int DEFAULT_TEXT_INDENT=0;
+
+	/**Whether or not a component should get a page-break view.
+	Overrides the paragraph view and block/inline attributes.
+	@see #PARAGRAPH_VIEW_ATTRIBUTE_NAME
+	*/
+	public final static String PAGE_BREAK_VIEW_ATTRIBUTE_NAME=Styles.SWING_ATTRIBUTE_START+"pageBreakView";
+
+	/**The public ID of the document type of the document, the root element of
+		which this set of attributes represents.
+	*/
+	public final static String XML_DOCTYPE_PUBLIC_ID=Styles.SWING_ATTRIBUTE_START+"xmlDocTypePublicID";
+
+	/**The system ID of the document type of the document, the root element of
+		which this set of attributes represents.
+	*/
+	public final static String XML_DOCTYPE_SYSTEM_ID=Styles.SWING_ATTRIBUTE_START+"xmlDocTypeSystemID";
+
+	/**The local name of the XML element this set of attributes represents.*/
+	public final static String XML_ELEMENT_LOCAL_NAME_ATTRIBUTE_NAME=Styles.SWING_ATTRIBUTE_START+"xmlElementLocalName";
+
+	/**The name of the XML element this set of attributes represents.*/
+	public final static String XML_ELEMENT_NAME_ATTRIBUTE_NAME=Styles.SWING_ATTRIBUTE_START+"xmlElementName";
+
+		/**The name of elements that are anonymously created.*/
+		public final static String ANONYMOUS_XML_ELEMENT_NAME=Styles.SWING_ATTRIBUTE_START+"anonymous";
+
+	/**The namespace URI of the XML element this set of attributes represents.*/
+	public final static String XML_ELEMENT_NAMESPACE_URI_ATTRIBUTE_NAME=Styles.SWING_ATTRIBUTE_START+"xmlElementNamespaceURI";
+
+	/**A <code>Boolean</code> specifying whether the XML element this set of
+		attributes represents is an empty element.*/
+	public final static String XML_EMPTY_ELEMENT=Styles.SWING_ATTRIBUTE_START+"xmlEmptyElement";
+
+	/**The array of processing instructions this document contains.*/
+	public final static String XML_PROCESSING_INSTRUCTIONS_ATTRIBUTE_NAME=Styles.SWING_ATTRIBUTE_START+"xmlProcessingInstructions";
+
+	/**The name of the attribute representing the base URI.*/
+	public final static String BASE_URI_ATTRIBUTE_NAME=Styles.SWING_ATTRIBUTE_START+"baseURI";
+
+	/**The name of the attribute representing the media type.*/
+	public final static String MEDIA_TYPE_ATTRIBUTE_NAME=Styles.SWING_ATTRIBUTE_START+"mediaType";
+
+	/**The name of the attribute representing the full XLink target ID URI,
+		including for example the ID as a relative path.*/
+	public final static String TARGET_URI_ATTRIBUTE_NAME=Styles.SWING_ATTRIBUTE_START+"targetURI";
+
+	/**The RDF resource description of the document hierarchy this set of attributes represents.*/
+	public final static String DOCUMENT_DESCRIPTION_ATTRIBUTE_NAME=Styles.SWING_ATTRIBUTE_START+"documentDescription";
+
+	/**Whether or not text in this view or any child views should be antialiased.*/
+	public final static String ANTIALIAS_ATTRIBUTE_NAME=Styles.SWING_ATTRIBUTE_START+"antialias";
 
 	/**An empty array of name/value pairs to return when, for example, no
 		processing instructions are available.
@@ -101,7 +178,7 @@ public class XMLStyleUtilities
 	}
 	
 	/**The name of the map of XML attributes.*/
-//G***fix	public final static String XMLAttributesAttributeName="XMLAttributes";
+//TODO fix	public final static String XMLAttributesAttributeName="XMLAttributes";
 
 	/**Returns an XML attribute with the given namespace and local name from the attribute set.
 		The attribute is resolved by searching the parent attribute set hierarchy.
@@ -110,7 +187,7 @@ public class XMLStyleUtilities
 	@param attributeLocalName The local name of the XML attribute.
 	@return The attribute if the attribute is defined up the hierarchy, else <code>null</code>.
 	*/
-/*G***del if not needed
+/*TODO del if not needed
 	public static Object getDefinedAttribute(AttributeSet attributeSet, final String attributeNamespaceURI, final String attributeLocalName)
 	{
 		return attributeSet!=null ? //make sure there is an attributeset
@@ -195,7 +272,7 @@ public class XMLStyleUtilities
 	@return The target URI of the element, or <code>null</code> if the element
 		has no target URI defined.
 	*/
-/*G***fix
+/*TODO fix
 	public static String getAttributeNamespace(final AttributeSet attributeSet)
 	{
 		return (URI)getDefinedAttribute(attributeSet, TARGET_URI_ATTRIBUTE_NAME);	//get the target URI if one is defined
@@ -207,7 +284,7 @@ public class XMLStyleUtilities
 	@param uri The element target URI, such as would be the target of a hypertext
 		reference.
 	*/
-/*G***fix
+/*TODO fix
 	public static void setTargetURI(final MutableAttributeSet attributeSet, final URI uri)
 	{
 		attributeSet.addAttribute(TARGET_URI_ATTRIBUTE_NAME, uri);	//add the attribute to the attribute set
@@ -255,7 +332,7 @@ public class XMLStyleUtilities
 	@param a The attribute set.
 	@return <code>true</code> if the paragraphView is set, else <code>false</code>.
 	*/
-/*G***del
+/*TODO del
 	public static boolean isParagraphView(AttributeSet a)
 	{
 		final Boolean paragraphView=(Boolean)getDefinedAttribute(a, PARAGRAPH_VIEW_ATTRIBUTE_NAME);	//get the paragraph view attribute
@@ -267,7 +344,7 @@ public class XMLStyleUtilities
 	@param a The attribute set.
 	@param b Whether or not the associated element should have a paragraph view.
 	*/
-/*G***del
+/*TODO del
 	public static void setParagraphView(final MutableAttributeSet a, final boolean b)
 	{
 		a.addAttribute(PARAGRAPH_VIEW_ATTRIBUTE_NAME, new Boolean(b));	//add the attribute to the attribute set
@@ -331,8 +408,8 @@ public class XMLStyleUtilities
 		if(baseURI!=null) //if we find a base URI
 		{
 			return baseURI.relativize(new URI(href)).toString();	//create a relative URI from the base URI and return its string value
-//G***this doesn't work; the base URL is not relative to where we're really starting from		  return URLUtilities.getRelativePath(baseURL, URLUtilities.createURL(baseURL, href)); //create an href relative to the document's base URL
-//G***del when works		  return URLUtilities.createURL(baseURL, href).toString(); //create an href relative to the document's base URL
+//TODO this doesn't work; the base URL is not relative to where we're really starting from		  return URLUtilities.getRelativePath(baseURL, URLUtilities.createURL(baseURL, href)); //create an href relative to the document's base URL
+//TODO del when works		  return URLUtilities.createURL(baseURL, href).toString(); //create an href relative to the document's base URL
 		}
 		else  //if we couldn't find a base URI
 			return href;  //just return the href as it is
@@ -544,8 +621,9 @@ public class XMLStyleUtilities
 		attributeSet.addAttribute(XML_PROCESSING_INSTRUCTIONS_ATTRIBUTE_NAME, processingInstructions);	//add the attribute to the attribute set
 	}
 
+
 	/**The array of processing instructions this document contains.*/
-//G***del if not needed	public final static String XML_PROCESSING_INSTRUCTIONS_ATTRIBUTE_NAME=SWING_ATTRIBUTE_START+"xmlProcessingInstructions";
+//TODO del if not needed	public final static String XML_PROCESSING_INSTRUCTIONS_ATTRIBUTE_NAME=SWING_ATTRIBUTE_START+"xmlProcessingInstructions";
 
 
 	/**Gets the XML element attributes the Swing attributes represent. The
@@ -553,7 +631,7 @@ public class XMLStyleUtilities
 	@param a The attribute set.
 	@return The map of XML attributes.
 	*/
-/*G***fix
+/*TODO fix
 	public static NamedNodeMap getXMLAttributes(AttributeSet a)
 	{
 		return (NamedNodeMap)getDefinedAttribute(a, XMLAttributesAttributeName);	//get the attribute
@@ -564,7 +642,7 @@ public class XMLStyleUtilities
 	@param a The attribute set
 	@param xmlAttributes The map of XML attributes.
 	*/
-/*G***fix
+/*TODO fix
 	public static void setXMLAttributes(final MutableAttributeSet a, final NamedNodeMap xmlAttributes)
 	{
 		a.addAttribute(XMLAttributesAttributeName, xmlAttributes);	//add the attribute to the attribute set

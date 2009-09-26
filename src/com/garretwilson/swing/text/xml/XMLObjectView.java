@@ -1,22 +1,38 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import java.awt.*;
-import javax.swing.*;
 import javax.swing.text.*;
+
 import com.garretwilson.swing.text.ViewHidable;
 
 /**Abstract base class to represent a resizable object, such as a component,
 	image, or applet. The object is automatically resized to be proportional to
 	the requested width.
-	Implements <code>ViewHidable</code> so that it can be notified if the view
-	is being hidden so that it can hide the object.
-	A class should be derived from this abstract class that sets the appropriate
-	width and height of the object.
-@see #setWidth
-@see #setWidth
+	<p>Implements {@link ViewHidable} so that it can be notified if the view
+	is being hidden so that it can hide the object.</p>
+	<p>A class should be derived from this abstract class that sets the appropriate
+	width and height of the object.</p>
+@see #setWidth(int)
+@see #setWidth(int)
 @author Garret Wilson
 */
-public abstract class XMLObjectView extends View implements ViewHidable //G***should we change this to Hidable and make ViewComponentManager implement it as well?
+public abstract class XMLObjectView extends View implements ViewHidable //TODO should we change this to Hidable and make ViewComponentManager implement it as well?
 {
 
 	/**The minimum amount of size to allow for changing; any change lower than
@@ -89,7 +105,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //G***sh
 		*/
 		public void setCurrentWidth(final int newCurrentWidth) {currentWidth=newCurrentWidth;}
 
-		  //G***testing
+		  //TODO testing
 	/**The height of the object requested by the parent view.*/
 	private int requestedHeight;
 
@@ -233,7 +249,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //G***sh
      *   away from the origin.  An alignment of 0.5 would be the
      *   center of the view.
      */
-/*G***fix
+/*TODO fix
     public float getAlignment(int axis) {
 	switch (axis) {
 	case View.Y_AXIS:
@@ -255,7 +271,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //G***sh
      *   valid location in the associated document
      * @see View#modelToView
      */
-/*G***fix
+/*TODO fix
     public Shape modelToView(int pos, Shape a, Position.Bias b) throws BadLocationException {
 	int p0 = getStartOffset();
 	int p1 = getEndOffset();
@@ -310,7 +326,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //G***sh
      *  given point of view
      * @see View#viewToModel
      */
-/*G***fix
+/*TODO fix
     public int viewToModel(float x, float y, Shape a, Position.Bias[] bias) {
 	Rectangle alloc = (Rectangle) a;
 	if (x < alloc.x + alloc.width) {
@@ -334,7 +350,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //G***sh
 	public int viewToModel(float x, float y, Shape allocation, Position.Bias[] bias)
 	{
 		final Rectangle rectangle=allocation instanceof Rectangle ? (Rectangle)allocation : allocation.getBounds();  //get the allocation rectangle
-//G***del; this code would only accept mouse clicks on the left side of the object, for example: 		if(x<rectangle.x+(rectangle.width/2)) //if the position is on the left side of the object G***do we want width/2, or just width?
+//TODO del; this code would only accept mouse clicks on the left side of the object, for example: 		if(x<rectangle.x+(rectangle.width/2)) //if the position is on the left side of the object TODO do we want width/2, or just width?
 		if(x<rectangle.x+rectangle.width) //if the position is on the actual object
 		{
 		  bias[0]=Position.Bias.Forward;  //set the bias forward
@@ -354,9 +370,9 @@ public abstract class XMLObjectView extends View implements ViewHidable //G***sh
      * @param width the width
      * @param height the height
      */
-/*G***fix
+/*TODO fix
     public void setSize(float width, float height) {
-			//G***fix comments
+			//TODO fix comments
     	// Ignore this -- image size is determined by the tag attrs and
     	// the image itself, not the surrounding layout!
     }
@@ -368,15 +384,15 @@ public abstract class XMLObjectView extends View implements ViewHidable //G***sh
 	*/
 	public void setSize(float width, float height)
 	{
-/*G***del
-		setRequestedWidth(width); //G***testing
-		setRequestedHeight(height); //G***testing
+/*TODO del
+		setRequestedWidth(width); //TODO testing
+		setRequestedHeight(height); //TODO testing
 */
-//G***the problem here seems to be that a table wants to fill the entire page, and tries to set the
-//G***size of the iamge to fill the table; the image tries to stay in proportion, tells the table
-//G***of that fact, and the table tries to resize again, starting the whole process over
+//TODO the problem here seems to be that a table wants to fill the entire page, and tries to set the
+//TODO size of the iamge to fill the table; the image tries to stay in proportion, tells the table
+//TODO of that fact, and the table tries to resize again, starting the whole process over
 
-//G***del Log.trace("XMLObjectView.setSize(), width: "+width+" height: "+height);
+//TODO del Log.trace("XMLObjectView.setSize(), width: "+width+" height: "+height);
 		if(width!=0 && height!=0) //if valid sizes are passed (this might be set to zero from our getPreferredSize(), and checking that here keeps the object from being scaled away to nothing)
 		{
 		  final int oldCurrentWidth=getCurrentWidth();  //get the current current width
@@ -385,44 +401,44 @@ public abstract class XMLObjectView extends View implements ViewHidable //G***sh
 			//  the size forever if we keep readjusting the size to match. Therefore,
 			//  we'll only change the size if the size is being changed significantly.
 			//  This is not the best way to do this; we should instead modify the
-			//  resizing logic in the table. This is a short-term fix. G***
-//G***del Log.trace("old currents, width: "+oldCurrentWidth+" height: "+oldCurrentHeight);
-//G***del Log.trace("absolute width difference: "+Math.abs(width-oldCurrentWidth)+" absolute heigh difference: "+Math.abs(height-oldCurrentHeight));
-//G***fix		  if(Math.abs(width-oldCurrentWidth)>MINIMUM_SIZE_CHANGE || Math.abs(height-oldCurrentHeight)>MINIMUM_SIZE_CHANGE)
+			//  resizing logic in the table. This is a short-term fix. TODO 
+//TODO del Log.trace("old currents, width: "+oldCurrentWidth+" height: "+oldCurrentHeight);
+//TODO del Log.trace("absolute width difference: "+Math.abs(width-oldCurrentWidth)+" absolute heigh difference: "+Math.abs(height-oldCurrentHeight));
+//TODO fix		  if(Math.abs(width-oldCurrentWidth)>MINIMUM_SIZE_CHANGE || Math.abs(height-oldCurrentHeight)>MINIMUM_SIZE_CHANGE)
 		  {
-	//G***del Log.trace("old currents, width: "+currentWidth+" height: "+currentHeight);
+	//TODO del Log.trace("old currents, width: "+currentWidth+" height: "+currentHeight);
 				final int newCurrentWidth=(int)width; //set the current width to the new value
 				int newCurrentHeight;  //we'll put the new current height here
 				if(newCurrentWidth==getWidth()) //if the width is the same as our standard width
 					newCurrentHeight=getHeight(); //the way to ensure proportionality is to set the height to what was originally set as the standard height, since that's what the width is set to
 				else  //if the object is being scaled
 				{
-//G***fix					if(newCurrentWidth!=oldCurrentWidth)  //G***testing
+//TODO fix					if(newCurrentWidth!=oldCurrentWidth)  //TODO testing
 					{
 
-	//G***del Log.trace("Object is being scaled.");
-					final float ratio=(float)getWidth()/(float)getHeight(); //find the ratio of the object G***optimize perhaps keep this updated automatically when the size is set
-	//G***del Log.trace("making proportional with ratio: "+ratio);
+	//TODO del Log.trace("Object is being scaled.");
+					final float ratio=(float)getWidth()/(float)getHeight(); //find the ratio of the object TODO optimize perhaps keep this updated automatically when the size is set
+	//TODO del Log.trace("making proportional with ratio: "+ratio);
 					newCurrentHeight=(int)((float)newCurrentWidth/ratio); //set the height to be proportional to the width
 					}
-//G***fix					else
+//TODO fix					else
 					{
-//G***fix						newCurrentHeight=(int)height; //G***testing
+//TODO fix						newCurrentHeight=(int)height; //TODO testing
 					}
 				}
 
-//G***del newCurrentHeight=(int)height; //G***testing; del
+//TODO del newCurrentHeight=(int)height; //TODO testing; del
 
 
 				setCurrentWidth(newCurrentWidth); //set the new current width
 				setCurrentHeight(newCurrentHeight); //set the new current height
-	//G***del Log.trace("old currents, width: "+oldCurrentWidth+" height: "+oldCurrentHeight);
-	//G***del Log.trace("new currents, width: "+newCurrentWidth+" height: "+newCurrentHeight);
+	//TODO del Log.trace("old currents, width: "+oldCurrentWidth+" height: "+oldCurrentHeight);
+	//TODO del Log.trace("new currents, width: "+newCurrentWidth+" height: "+newCurrentHeight);
 				if(newCurrentWidth!=oldCurrentWidth || newCurrentHeight!=oldCurrentHeight)  //if the size has changed
 				{
-//G***del 	Log.trace("old currents, width: "+oldCurrentWidth+" height: "+oldCurrentHeight);
-//G***del 	Log.trace("new currents, width: "+newCurrentWidth+" height: "+newCurrentHeight);
-//G***del 	Log.trace("Notifying parent that preferences have changed.");
+//TODO del 	Log.trace("old currents, width: "+oldCurrentWidth+" height: "+oldCurrentHeight);
+//TODO del 	Log.trace("new currents, width: "+newCurrentWidth+" height: "+newCurrentHeight);
+//TODO del 	Log.trace("Notifying parent that preferences have changed.");
 					final View parent=getParent();  //get the parent view
 					if(parent!=null)  //if there is a parent view
 						parent.preferenceChanged(this, newCurrentWidth!=oldCurrentWidth, newCurrentHeight!=oldCurrentHeight); //report to the parent view that this view's preferences have changed

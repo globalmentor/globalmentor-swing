@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.unicode;
 
 import java.beans.PropertyChangeEvent;
@@ -8,7 +24,8 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 
 import com.garretwilson.swing.*;
-import static com.garretwilson.swing.text.TextComponentConstants.*;
+import com.garretwilson.swing.text.TextComponents;
+
 import static com.globalmentor.java.Objects.*;
 
 import com.globalmentor.text.unicode.*;
@@ -208,7 +225,7 @@ public class UnicodeStatusBar extends StatusBar
 	{
 		textComponent.addCaretListener(caretListener);	//listen for caret events
 		textComponent.getDocument().addDocumentListener(documentListener);	//listen for document changes in the document
-		textComponent.addPropertyChangeListener(DOCUMENT_PROPERTY, documentPropertyChangeListener);	//listen for document changes
+		textComponent.addPropertyChangeListener(TextComponents.DOCUMENT_PROPERTY, documentPropertyChangeListener);	//listen for document changes
 		updateStatus(textComponent);	//update the status for the text component, which will save the current caret position
 	}
 
@@ -219,7 +236,7 @@ public class UnicodeStatusBar extends StatusBar
 	{
 		textComponent.removeCaretListener(caretListener);	//stop listening for caret events
 		textComponent.getDocument().removeDocumentListener(documentListener);	//stop listening for document changes in the document
-		textComponent.removePropertyChangeListener(DOCUMENT_PROPERTY, documentPropertyChangeListener);	//listen for document changes
+		textComponent.removePropertyChangeListener(TextComponents.DOCUMENT_PROPERTY, documentPropertyChangeListener);	//listen for document changes
 		position=-1;	//show that we no longer represent a valid position
 	}
 }

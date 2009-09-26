@@ -1,16 +1,28 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml.xhtml;
 
 import java.net.URI;
-import java.util.List;
 
 import javax.swing.text.AttributeSet;
-import javax.swing.text.Document;
-import javax.swing.text.MutableAttributeSet;
-import com.garretwilson.swing.text.StyleUtilities;
 import com.garretwilson.swing.text.xml.*;
 import com.globalmentor.io.*;
 import com.globalmentor.net.ContentType;
-import com.globalmentor.text.xml.XMLDOMImplementation;
+import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.xhtml.*;
 
 import static com.globalmentor.text.xml.xhtml.XHTML.*;
@@ -61,10 +73,10 @@ public class XHTMLEditorKit extends XMLEditorKit
 	public XMLDocument createDefaultDocument()
 	{
 		final XMLDocument swingDocument=super.createDefaultDocument();	//create a default document
-		final XMLDOMImplementation domImplementation=new XMLDOMImplementation();	//create a new DOM implementation G***later use some Java-specific stuff
+		final DOMImplementation domImplementation=XML.createDocumentBuilder(true).getDOMImplementation();	//create a new DOM implementation
 			//create an XML document for the XHTML <div> element
 		final org.w3c.dom.Document xhtml=domImplementation.createDocument(XHTML_NAMESPACE_URI.toString(), ELEMENT_DIV, null);	//create an XML document for XHTML <div>
-//G***del if not needed		XMLUtilities.appendText(xhtml.getDocumentElement(), "\n");	//append a newline to the div
+//TODO del if not needed		XMLUtilities.appendText(xhtml.getDocumentElement(), "\n");	//append a newline to the div
 //TODO probably bring this back when the XMLEditorPane can more intelligently handle editing of complex documents final org.w3c.dom.Document xhtml=XHTMLUtilities.createXHTMLDocument();	//create a default XHTML DOM document
 		setXML(xhtml, null, getMediaType(), swingDocument);	//set the XHTML into the new document, using our media type TODO make sure the base URI gets updated---somehow (maybe the calling code should do this afterwards)
 		return swingDocument;	//return the default document we created
@@ -73,7 +85,7 @@ public class XHTMLEditorKit extends XMLEditorKit
 	/**Creates a copy of the editor kit.
 	@return A copy of the XML editor kit.
 	*/
-	public Object clone() {return new XHTMLEditorKit(getMediaType(), getURIInputStreamable());}  //G***why do we need this?
+	public Object clone() {return new XHTMLEditorKit(getMediaType(), getURIInputStreamable());}  //TODO why do we need this?
 
 	/**Determines if the specified element represents an empty element&mdash;an
 		element that might be declared as <code>EMPTY</code> in a DTD.
@@ -86,9 +98,9 @@ public class XHTMLEditorKit extends XMLEditorKit
 		{
 			return true;	//this is an empty element
 		}
-		final String elementNamespaceURIString=XMLStyleUtilities.getXMLElementNamespaceURI(attributeSet);	//get the namespace URI string G***eventually just store and retrieve URIs if possible
+		final String elementNamespaceURIString=XMLStyles.getXMLElementNamespaceURI(attributeSet);	//get the namespace URI string TODO eventually just store and retrieve URIs if possible
 		final URI elementNamespaceURI=elementNamespaceURIString!=null ? URI.create(elementNamespaceURIString) : null;	//create a URI from the string
-		final String elementLocalName=XMLStyleUtilities.getXMLElementLocalName(attributeSet);	//get the local name of the element
+		final String elementLocalName=XMLStyles.getXMLElementLocalName(attributeSet);	//get the local name of the element
 		return XHTML.isEmptyElement(elementNamespaceURI, elementLocalName);	//see if this is an XHTML empty element
 	}
 
@@ -130,10 +142,10 @@ public class XHTMLEditorKit extends XMLEditorKit
 	/**Gets the target ID of of the specified element. This ID represents the
 		target of a link. The default target ID (the value of the "id" attribute)
 		is located, and if it does not exist the value of the "name" attribute is
-		used. G***what about checking the DTD for an element of type ID?
+		used. TODO what about checking the DTD for an element of type ID?
 	@param attributeSet The attribute set of the element which may contain a
 		target ID.
-	//G***del when works	@param element The element which may contain a target ID.
+	//TODO del when works	@param element The element which may contain a target ID.
 	@return The target ID value of the element, or <code>null</code> if the
 		element does not define a target ID.
 	*/
@@ -142,8 +154,8 @@ public class XHTMLEditorKit extends XMLEditorKit
 		String targetID=super.getTargetID(attributeSet); //get the standard "id" attribute value
 		if(targetID==null)  //if the "id" attribute didn't have a value
 		{
-	//G***del when works			final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-			targetID=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, "name");  //return the value of the "name" attribute, if it exists G***use a constant here
+	//TODO del when works			final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
+			targetID=XMLStyles.getXMLAttributeValue(attributeSet, null, "name");  //return the value of the "name" attribute, if it exists TODO use a constant here
 		}
 		return targetID;  //return whatever target ID we found, if any
 	}

@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.Dimension;
@@ -58,10 +74,10 @@ public class AddressPanel extends BasicVCardPanel
 		}
 
 	/**The panel allowing selection of the address type.*/
-//G***del	private final AddressTypePanel addressTypePanel;
+//TODO del	private final AddressTypePanel addressTypePanel;
 
 		/**@return The panel allowing selection of the address type.*/
-//G***del		public AddressTypePanel getAddressTypePanel() {return addressTypePanel;}
+//TODO del		public AddressTypePanel getAddressTypePanel() {return addressTypePanel;}
 
 	/**The label of the post office box.*/
 	private final JLabel postOfficeBoxLabel;
@@ -79,7 +95,7 @@ public class AddressPanel extends BasicVCardPanel
 	private final JLabel streetAddressesLabel;
 
 	/**The label of the first street address text field.*/
-//G***del	private final JLabel streetAddress1Label;
+//TODO del	private final JLabel streetAddress1Label;
 
 	/**The street address text pane.*/
 	private final JTextPane streetAddressTextPane;
@@ -145,7 +161,7 @@ public class AddressPanel extends BasicVCardPanel
 			postalCodeTextField.setText(address.getPostalCode()!=null ? address.getPostalCode() : "");
 			countryNameComboBox.setSelectedItem(address.getCountryName()!=null ? address.getCountryName() : "");
 			setAddressType(address.getAddressType());
-//G***del			addressTypePanel.setAddressType(address.getAddressType());
+//TODO del			addressTypePanel.setAddressType(address.getAddressType());
 			selectLanguageAction.setLocale(address.getLocale());
 		}
 		else	//if there is no address, clear the fields
@@ -157,7 +173,7 @@ public class AddressPanel extends BasicVCardPanel
 			postalCodeTextField.setText("");
 			countryNameComboBox.setSelectedItem("");
 			setAddressType(Address.DEFAULT_ADDRESS_TYPE);
-//G***del			addressTypePanel.setAddressType(Address.NO_ADDRESS_TYPE);
+//TODO del			addressTypePanel.setAddressType(Address.NO_ADDRESS_TYPE);
 			selectLanguageAction.setLocale(null);
 		}
 	}
@@ -203,8 +219,8 @@ public class AddressPanel extends BasicVCardPanel
 		editAddressTypeAction=new EditAddressTypeAction();
 		addressTypeButton=new JButton(getEditAddressTypeAction());
 		addressTypeButton.setHorizontalTextPosition(SwingConstants.LEFT);
-//G***fix		addressTypeButton.setBorder(null);
-//G***del		addressTypePanel=new AddressTypePanel();
+//TODO fix		addressTypeButton.setBorder(null);
+//TODO del		addressTypePanel=new AddressTypePanel();
 		postOfficeBoxLabel=new JLabel();
 		postOfficeBoxTextField=new JTextField();
 		streetAddressesLabel=new JLabel();
@@ -229,30 +245,30 @@ public class AddressPanel extends BasicVCardPanel
 	{
 		super.initializeUI();	//do the default user interface initialization
 		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(SelectLanguageAction.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
-		postOfficeBoxLabel.setText("PO Box");	//G***i18n
+		postOfficeBoxLabel.setText("PO Box");	//TODO i18n
 		postOfficeBoxTextField.setColumns(5);
 		postOfficeBoxTextField.getDocument().addDocumentListener(getModifyDocumentListener());
-		streetAddressesLabel.setText("Street Address");	//G***i18n
+		streetAddressesLabel.setText("Street Address");	//TODO i18n
 			//TODO turn off tab-handling for streetAddressTextPane
-//G***del; fix; this doesn't work		streetAddressTextPane.setFocusTraversalKeysEnabled(true);
+//TODO del; fix; this doesn't work		streetAddressTextPane.setFocusTraversalKeysEnabled(true);
 		streetAddressTextPane.getDocument().addDocumentListener(getModifyDocumentListener());
-		localityLabel.setText("City");	//G***i18n
+		localityLabel.setText("City");	//TODO i18n
 		localityTextField.setColumns(8);
 		localityTextField.getDocument().addDocumentListener(getModifyDocumentListener());
-//G***fix		streetAddressTextPane.setMinimumSize(new Dimension(streetAddressTextPane.getMinimumSize().width, localityTextField.getPreferredSize().height*3));
-//G***fix		streetAddressTextPane.setPreferredSize(streetAddressTextPane.getMinimumSize());
+//TODO fix		streetAddressTextPane.setMinimumSize(new Dimension(streetAddressTextPane.getMinimumSize().width, localityTextField.getPreferredSize().height*3));
+//TODO fix		streetAddressTextPane.setPreferredSize(streetAddressTextPane.getMinimumSize());
 
-//G***del		streetAddressTextPane.setBorder(localityTextField.getBorder());
-		regionLabel.setText("State or Province");	//G***i18n
+//TODO del		streetAddressTextPane.setBorder(localityTextField.getBorder());
+		regionLabel.setText("State or Province");	//TODO i18n
 		regionTextField.setColumns(8);
 		regionTextField.getDocument().addDocumentListener(getModifyDocumentListener());
-		postalCodeLabel.setText("Postal Code");	//G***i18n
+		postalCodeLabel.setText("Postal Code");	//TODO i18n
 		postalCodeTextField.setColumns(8);
-		postalCodeTextField.setText("G***del");
+		postalCodeTextField.setText("TODO del");
 		postalCodeTextField.getDocument().addDocumentListener(getModifyDocumentListener());
-		countryNameLabel.setText("Country");	//G***i18n
+		countryNameLabel.setText("Country");	//TODO i18n
 		countryNameComboBox.setEditable(true);
-		countryNameComboBox.setModel(new DefaultComboBoxModel(Locales.getAvailableDisplayCountries()));	//G***i18n
+		countryNameComboBox.setModel(new DefaultComboBoxModel(Locales.getAvailableDisplayCountries()));	//TODO i18n
 		countryNameComboBox.addActionListener(getModifyActionListener());
 		final JScrollPane streetAddressScrollPane=new JScrollPane(streetAddressTextPane);
 			//TODO fix this with a derived text pane that is scrollable and allows tracksViewport... to be set
@@ -281,8 +297,8 @@ public class AddressPanel extends BasicVCardPanel
 		add(countryNameLabel, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(countryNameComboBox, new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
 
-//G***del		add(addressTypePanel, new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
-//G***del when works		add(addressTypePanel, new GridBagConstraints(3, 2, 1, 7, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, NO_INSETS, 0, 0));
+//TODO del		add(addressTypePanel, new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
+//TODO del when works		add(addressTypePanel, new GridBagConstraints(3, 2, 1, 7, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, NO_INSETS, 0, 0));
 
 	}
 
@@ -294,7 +310,7 @@ public class AddressPanel extends BasicVCardPanel
 	{
 		final AddressTypePanel addressTypePanel=new AddressTypePanel(getAddressType());	//create a new panel with our current address type 
 			//ask for the new address type; if they accept the changes
-		if(BasicOptionPane.showConfirmDialog(this, addressTypePanel, "Delivery Address Type", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//G***i18n
+		if(BasicOptionPane.showConfirmDialog(this, addressTypePanel, "Delivery Address Type", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//TODO i18n
 		{
 			setAddressType(addressTypePanel.getAddressType());	//update the address type
 			return true;	//show that the user accepted the changes and that they were updated		
@@ -311,10 +327,10 @@ public class AddressPanel extends BasicVCardPanel
 		/**Default constructor.*/
 		public EditAddressTypeAction()
 		{
-			super("Type");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Edit type");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Edit the delivery address type for this address.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_T));  //set the mnemonic key G***i18n
+			super("Type");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Edit type");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Edit the delivery address type for this address.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_T));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.PROPERTY_ICON_FILENAME)); //load the correct icon
 		}
 	

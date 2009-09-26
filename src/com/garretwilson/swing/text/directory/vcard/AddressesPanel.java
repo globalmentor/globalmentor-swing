@@ -1,8 +1,23 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.event.*;
 import java.text.MessageFormat;
 import java.util.*;
@@ -39,21 +54,21 @@ public class AddressesPanel extends ContentPanel
 		public Action getRemoveAddressAction() {return removeAddressAction;}
 
 	/**The tabbed pane containing the address panels.*/
-//G***fix	private final JTabbedPane tabbedPane;
+//TODO fix	private final JTabbedPane tabbedPane;
 
 		/**@return The tabbed pane containing the address panels.*/
-//G***fix		protected JTabbedPane getTabbedPane() {return tabbedPane;}
+//TODO fix		protected JTabbedPane getTabbedPane() {return tabbedPane;}
 
 	/**@return The tabbed pane containing the address panels.*/
 	protected JTabbedPane getTabbedPane() {return (JTabbedPane)getContentComponent();}
 
 	/**The stored array of labels we keep so that they won't be lost.*/ 
-//G***del	private LocaleText[] labels=new LocaleText[]{};	//TODO allow these to be edited in the panel
+//TODO del	private LocaleText[] labels=new LocaleText[]{};	//TODO allow these to be edited in the panel
 	
 	/**Places the labels into the tabs.
 	@param labels The labels to place in the tabs.
 	*/
-/*G***del
+/*TODO del
 	public void setLabels(LocaleText[] labels)
 	{
 		this.labels=labels;	//save the labels for later
@@ -61,7 +76,7 @@ public class AddressesPanel extends ContentPanel
 */
 	
 	/**@return An array of entered labels.*/
-/*G***del
+/*TODO del
 	public LocaleText[] getLabels()
 	{
 		return labels;	//return the labels we stored
@@ -166,8 +181,8 @@ public class AddressesPanel extends ContentPanel
 	public AddressesPanel(final Address[] addresses, final Label[] labels)
 	{
 		super(new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT), false);	//construct the panel using a grid bag layout, but don't initialize the panel
-//G***fix		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
-//G***fix		tabbedPane=new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+//TODO fix		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
+//TODO fix		tabbedPane=new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 		addAddressAction=new AddAddressAction();
 		addLabelAction=new AddLabelAction();
 		removeAddressAction=new RemoveAddressAction();
@@ -181,7 +196,7 @@ public class AddressesPanel extends ContentPanel
 	{
 		super.initializeUI();	//do the default user interface initialization
 		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
-		setTitle("Addresses");	//G***i18n
+		setTitle("Addresses");	//TODO i18n
 		buttonToolBar.setFloatable(false);
 		buttonToolBar.add(Box.createGlue());	//put glue before and after the button to center them 
 		buttonToolBar.add(new JButton(getAddAddressAction()));
@@ -189,7 +204,7 @@ public class AddressesPanel extends ContentPanel
 		buttonToolBar.add(new JButton(getRemoveAddressAction()));
 		buttonToolBar.add(Box.createGlue());	//put glue before and after the button to center them 
 		add(buttonToolBar, BorderLayout.SOUTH);
-/*G***fix gridbag
+/*TODO fix gridbag
 		add(buttonPanel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		add(tabbedPane, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 */
@@ -199,7 +214,7 @@ public class AddressesPanel extends ContentPanel
 	public void updateStatus()
 	{
 		super.updateStatus();	//do the default status updating
-//G***del when works		getRemoveAddressAction().setEnabled(getTabbedPane().getTabCount()>1);	//don't allow all the tabs to be removed
+//TODO del when works		getRemoveAddressAction().setEnabled(getTabbedPane().getTabCount()>1);	//don't allow all the tabs to be removed
 		getRemoveAddressAction().setEnabled(getTabbedPane().getTabCount()>0);	//only allow removal if there are tabs to be removed
 	}
 
@@ -221,8 +236,8 @@ public class AddressesPanel extends ContentPanel
 	protected void addAddressPanel(final AddressPanel addressPanel)
 	{
 		addressPanel.addPropertyChangeListener(getModifyModifiedPropertyChangeListener());	//listen for changes to the address and update the modified status in response TODO remove when we have a modifiable tabbed pane
-		final String title="Address";	//get a title for the address G***i18n
-//G***del when works		final String title=getTabTitle(address);	//get an title for the address
+		final String title="Address";	//get a title for the address TODO i18n
+//TODO del when works		final String title=getTabTitle(address);	//get an title for the address
 		getTabbedPane().addTab(title, addressPanel.getIcon(), addressPanel);	//add the panel
 		setModified(true);	//show that we've been modified
 		updateStatus();	//update the status
@@ -246,7 +261,7 @@ public class AddressesPanel extends ContentPanel
 	protected void addLabelPanel(final LabelPanel labelPanel)
 	{
 		labelPanel.addPropertyChangeListener(getModifyModifiedPropertyChangeListener());	//listen for changes to the label and update the modified status in response TODO remove when we have a modifiable tabbed pane
-		final String title="Label";	//get a title for the address G***i18n
+		final String title="Label";	//get a title for the address TODO i18n
 		getTabbedPane().addTab(title, labelPanel.getIcon(), labelPanel);	//add the panel
 		setModified(true);	//show that we've been modified
 		updateStatus();	//update the status
@@ -258,16 +273,16 @@ public class AddressesPanel extends ContentPanel
 	*/
 	public boolean removeAddress()
 	{
-//G***del if not needed		if(getTabbedPane().getTabCount()>1)	//if we have more than one address
+//TODO del if not needed		if(getTabbedPane().getTabCount()>1)	//if we have more than one address
 		{
 			final Component selectedComponent=getTabbedPane().getSelectedComponent();	//get the component selected in the tabbed pane
 			if(selectedComponent!=null)	//if a component is selected
 			{
 					//determine the name of the thing we're deleting
-				final String objectName=selectedComponent instanceof LabelPanel ? "label" : "address";	//G***i18n				
+				final String objectName=selectedComponent instanceof LabelPanel ? "label" : "address";	//TODO i18n				
 					//if they really want to delete the address or label
 				if(JOptionPane.showConfirmDialog(this, MessageFormat.format("Are you sure you want to permanently remove this {0}?", new Object[]{objectName}),
-						MessageFormat.format("Remove {0}", new Object[]{objectName}), JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)	//G***i18n
+						MessageFormat.format("Remove {0}", new Object[]{objectName}), JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)	//TODO i18n
 				{
 					selectedComponent.removePropertyChangeListener(getModifyModifiedPropertyChangeListener());	//stop listening for changes TODO remove when we have a modifiable tabbed pane
 					getTabbedPane().remove(selectedComponent);	//remove the selected component
@@ -284,8 +299,8 @@ public class AddressesPanel extends ContentPanel
 	@param address The address for which a title should be returned.
 	@return An appropriate title for the address tab.
 	*/
-/*G***del if not needed
-	protected String getTabTitle(final Address address)	//G***i18n
+/*TODO del if not needed
+	protected String getTabTitle(final Address address)	//TODO i18n
 	{
 		final String title;	//TODO fix with a better tab label algorithm
 		if((address.getAddressType()&Address.PREFERRED_ADDRESS_TYPE)!=0)	
@@ -318,10 +333,10 @@ public class AddressesPanel extends ContentPanel
 		/**Default constructor.*/
 		public AddAddressAction()
 		{
-			super("Add Address");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Add an address");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Add a new address.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_A));  //set the mnemonic key G***i18n
+			super("Add Address");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Add an address");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Add a new address.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_A));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.MAIL_ICON_FILENAME)); //load the correct icon
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.CTRL_MASK)); //add the accelerator
 		}
@@ -347,10 +362,10 @@ public class AddressesPanel extends ContentPanel
 		/**Default constructor.*/
 		public AddLabelAction()
 		{
-			super("Add Label");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Add a label");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Add a new label.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_L));  //set the mnemonic key G***i18n
+			super("Add Label");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Add a label");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Add a new label.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_L));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.NOTE_ICON_FILENAME)); //load the correct icon
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, KeyEvent.CTRL_MASK)); //add the accelerator
 		}
@@ -376,10 +391,10 @@ public class AddressesPanel extends ContentPanel
 		/**Default constructor.*/
 		public RemoveAddressAction()
 		{
-			super("Remove");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Remove this address or label");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Remove the selected address or label.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_E));  //set the mnemonic key G***i18n
+			super("Remove");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Remove this address or label");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Remove the selected address or label.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_E));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.DELETE_ICON_FILENAME)); //load the correct icon
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.CTRL_MASK)); //add the accelerator
 		}

@@ -1,10 +1,25 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.directory.vcard;
 
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.event.DocumentListener;
 
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
@@ -217,22 +232,22 @@ public class OrganizationPanel extends BasicVCardPanel
 	{
 		super.initializeUI();	//do the default user interface initialization
 		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
-		setTitle("Organization");	//G***i18n
+		setTitle("Organization");	//TODO i18n
 		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(SelectLanguageAction.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
-		nameLabel.setText("Organization Name");	//G***i18n
+		nameLabel.setText("Organization Name");	//TODO i18n
 		getSelectOrganizationNameLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectOrganizationNameLanguageButton=createSelectLanguageButton(getSelectOrganizationNameLanguageAction());
 		nameTextField.setColumns(16);
 		nameTextField.getDocument().addDocumentListener(getModifyDocumentListener());
-		unitsLabel.setText("Unit(s)");	//G***i18n
+		unitsLabel.setText("Unit(s)");	//TODO i18n
 		unitsTextField.setColumns(10);
 		unitsTextField.getDocument().addDocumentListener(getModifyDocumentListener());
-		titleLabel.setText("Job Title");	//G***i18n
+		titleLabel.setText("Job Title");	//TODO i18n
 		getSelectTitleLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectTitleLanguageButton=createSelectLanguageButton(getSelectTitleLanguageAction());
 		titleTextField.setColumns(16);
 		titleTextField.getDocument().addDocumentListener(getModifyDocumentListener());
-		roleLabel.setText("Role");	//G***i18n
+		roleLabel.setText("Role");	//TODO i18n
 		getSelectRoleLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectRoleLanguageButton=createSelectLanguageButton(getSelectRoleLanguageAction());
 		roleTextField.setColumns(12);

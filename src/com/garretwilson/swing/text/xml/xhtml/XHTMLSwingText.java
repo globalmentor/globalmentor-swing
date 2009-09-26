@@ -1,10 +1,26 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml.xhtml;
 
 import java.io.File;
 import java.net.URI;
 
 import javax.swing.text.*;
-import com.garretwilson.swing.text.xml.XMLStyleUtilities;
+import com.garretwilson.swing.text.xml.XMLStyles;
 
 import static com.globalmentor.text.xml.xhtml.XHTML.*;
 
@@ -15,11 +31,11 @@ import com.globalmentor.net.ContentTypeConstants;
 /**Provides utility functions to manipulate Swing text classes representing XHTML.
 @author Garret Wilson
 */
-public class XHTMLSwingTextUtilities
+public class XHTMLSwingText
 {
 
 	/**This class cannot be publicly instantiated.*/
-	private XHTMLSwingTextUtilities() {}
+	private XHTMLSwingText() {}
 
 
 	/**Gets the element in the hierarchy responsible for the given position that
@@ -52,11 +68,11 @@ public class XHTMLSwingTextUtilities
 		<code>false</code> if otherwise or the specified attribute set was
 		<code>null</code>.
 	*/
-	public static boolean isImage(final AttributeSet attributeSet)  //G***this should really be in XHTMLSwingTextUtilities
+	public static boolean isImage(final AttributeSet attributeSet)  //TODO this should really be in XHTMLSwingTextUtilities
 	{
 		if(attributeSet!=null) //if a valid attribute set is passed
 		{
-			final String elementName=XMLStyleUtilities.getXMLElementName(attributeSet); //get the name of this element
+			final String elementName=XMLStyles.getXMLElementName(attributeSet); //get the name of this element
 			if(elementName!=null) //if there is an element name
 			{
 				if(elementName.equals(ELEMENT_IMG))	//if this is an <img> element
@@ -71,100 +87,6 @@ public class XHTMLSwingTextUtilities
 		}
 		return false; //this does not appear to be an image element
 	}
-
-	/**Returns all child elements for which views should be created. If
-		a paged view holds multiple documents, for example, the children of those
-		document elements will be included. An XHTML document, furthermore, will
-		return the contents of its <code>&lt;body&gt;</code> element.
-		It is assumed that the ranges precisely enclose any child elements within
-		that range, so any elements that start within the given range will be
-		included.
-	@param newStartOffset This range's starting offset.
-	@param newEndOffset This range's ending offset.
-	@return An array of elements for which views should be created.
-	*/
-/*G***del when works
-	protected boolean isHTMLDocumentElement(final AttributeSet documentAttributeSet)
-	{
-		final Element element=getElement(); //get a reference to our element
-		final int documentElementCount=element.getElementCount();  //find out how many child elements there are (representing XML documents)
-		for(int documentElementIndex=0; documentElementIndex<documentElementCount; ++documentElementIndex) //look at each element representing an XML document
-		{
-			final Element documentElement=element.getElement(documentElementIndex); //get a reference to this child element
-				//if this document starts within our range
-			if(documentElement.getStartOffset()>=startOffset && documentElement.getStartOffset()<endOffset)
-			{
-				final AttributeSet documentAttributeSet=documentElement.getAttributes();  //get the attributes of the document element
-				if(XMLStyleUtilities.isPageBreakView(documentAttributeSet)) //if this is a page break element
-				{
-	Log.trace("found page break view"); //G***del
-					viewChildElementList.add(documentElement);  //add this element to our list of elements; it's not a top-level document like the others G***this is a terrible hack; fix
-				}
-				else
-				{
-	//G***del if not needed				Element baseElement=documentElement;  //we'll find out which element to use as the parent; in most documents, that will be the document element; in HTML elements, it will be the <body> element
-					final MediaType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet);  //get the media type of the document
-					final String documentElementLocalName=XMLStyleUtilities.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
-					final String documentElementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element local name
-					final int childElementCount=documentElement.getElementCount();  //find out how many children are in the document
-					for(int childIndex=0; childIndex<childElementCount; ++childIndex)  //look at the children of the document element
-					{
-						final Element childElement=documentElement.getElement(childIndex); //get a reference to the child element
-						if(childElement.getStartOffset()>=startOffset && childElement.getStartOffset()<endOffset) //if this child element starts within our range
-						{
-							final AttributeSet childAttributeSet=childElement.getAttributes();  //get the child element's attributes
-							final String childElementLocalName=XMLStyleUtilities.getXMLElementLocalName(childAttributeSet);  //get the child element local name
-		Log.trace("Looking at child: ", childElementLocalName); //G***del
-							boolean isHTMLBody=false; //we'll determine if this element is a <body> element of XHTML
-							if(XHTMLConstants.ELEMENT_BODY.equals(childElementLocalName))  //if this element is "body"
-							{
-								//we'll determine if this body element is HTML by one of following:
-								//  * the element is in the XHTML or OEB namespace
-								//  * the element is in no namespace but the document is of type text/html or text/x-oeb1-document
-								//  * the element is in no namespace and the document element is
-								//      an <html> element in the XHTML or OEB namespace
-								final String childElementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(childAttributeSet);  //get the child element local name
-								if(childElementNamespaceURI!=null)  //if the body element has a namespace
-								{
-										//if it's part of the XHTML or OEB namespace
-									if(XHTMLConstants.XHTML_NAMESPACE_URI.equals(childElementNamespaceURI)
-											|| OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(childElementNamespaceURI))
-										isHTMLBody=true;  //show that this is an HTML body element
-								}
-								else  //if the body element has no namespace
-								{
-										//if the document type is text/html or text/x-oeb1-document
-									if(documentMediaType!=null && (documentMediaType.match(MediaType.TEXT_HTML) || documentMediaType.match(MediaType.TEXT_X_OEB1_DOCUMENT)))
-										isHTMLBody=true;  //is an HTML body element
-									else if(XHTMLConstants.ELEMENT_HTML.equals(documentElementLocalName)  //if the document element is an XHTML or OEB <html> element
-											&& (XHTMLConstants.XHTML_NAMESPACE_URI.equals(documentElementNamespaceURI) || OEBConstants.OEB1_DOCUMENT_NAMESPACE_URI.equals(documentElementNamespaceURI)))
-										isHTMLBody=true;  //is an HTML body element
-								}
-							}
-							if(isHTMLBody)  //if this element is an XHTML <body> element
-							{
-								final int bodyChildElementCount=childElement.getElementCount(); //find out how many children the body element has
-								for(int bodyChildIndex=0; bodyChildIndex<bodyChildElementCount; ++bodyChildIndex) //look at each of the body element's children
-								{
-		Log.trace("Adding body child element: ", bodyChildIndex);
-									final Element bodyChildElement=childElement.getElement(bodyChildIndex); //get this child element of the body element
-									if(bodyChildElement.getStartOffset()>=startOffset && bodyChildElement.getStartOffset()<endOffset) //if this child element starts within our range
-										viewChildElementList.add(bodyChildElement);  //add this body child element to our list of elements
-								}
-							}
-							else  //if this element is not an XHTML <body> element
-							{
-		Log.trace("Adding child element: ", childIndex);
-								viewChildElementList.add(childElement);  //add this child element to our list of elements
-							}
-						}
-					}
-				}
-			}
-		}
-		return (Element[])viewChildElementList.toArray(new Element[viewChildElementList.size()]); //return the views as an array of views
-	}
-*/
 
 	/**Determines if the specified attribute set represents an HTML document.
 		An element is considered to be a document element if one of the following
@@ -183,7 +105,7 @@ public class XHTMLSwingTextUtilities
 	*/
 	public static boolean isHTMLDocumentElement(final AttributeSet documentAttributeSet)
 	{
-		final ContentType documentMediaType=XMLStyleUtilities.getMediaType(documentAttributeSet);  //get the media type of the document
+		final ContentType documentMediaType=XMLStyles.getMediaType(documentAttributeSet);  //get the media type of the document
 			//if the document media type is an HTML media type
 		if(isHTML(documentMediaType)) 
 		{
@@ -191,8 +113,8 @@ public class XHTMLSwingTextUtilities
 		}
 		else  //if the media type isn't HTML
 		{
-			final String documentElementLocalName=XMLStyleUtilities.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
-			final String documentElementNamespaceURIString=XMLStyleUtilities.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element namespace URI
+			final String documentElementLocalName=XMLStyles.getXMLElementLocalName(documentAttributeSet);  //get the document element local name
+			final String documentElementNamespaceURIString=XMLStyles.getXMLElementNamespaceURI(documentAttributeSet);  //get the document element namespace URI
 			final URI documentElementNamespaceURI=documentElementNamespaceURIString!=null ? URI.create(documentElementNamespaceURIString) : null;
 				//TODO change all the XMLStyleUtilities.getXMLElementNamespaceURI() calls to return URIs
 			if(ELEMENT_HTML.equals(documentElementLocalName)  //if the document element is an XHTML or OEB <html> element
@@ -225,7 +147,7 @@ public class XHTMLSwingTextUtilities
 	*/
 	public static boolean isHTMLElement(final AttributeSet attributeSet, final AttributeSet documentAttributeSet)
 	{
-		final String elementNamespaceURI=XMLStyleUtilities.getXMLElementNamespaceURI(attributeSet);  //get the element namespace
+		final String elementNamespaceURI=XMLStyles.getXMLElementNamespaceURI(attributeSet);  //get the element namespace
 		if(elementNamespaceURI!=null)  //if the element has a namespace
 		{
 				//TODO change all the XMLStyleUtilities.getXMLElementNamespaceURI() calls to return URIs
@@ -252,19 +174,19 @@ public class XHTMLSwingTextUtilities
 	{
 		if(attributeSet!=null) //if a valid attribute set is passed
 		{
-			final String elementName=XMLStyleUtilities.getXMLElementName(attributeSet); //get the name of this element
-			if(elementName!=null) //if there is an element name G***use ELEMENT_IMG.equals(), etc. so that this line is unecessary
+			final String elementName=XMLStyles.getXMLElementName(attributeSet); //get the name of this element
+			if(elementName!=null) //if there is an element name TODO use ELEMENT_IMG.equals(), etc. so that this line is unecessary
 			{
 					//see if this is an <img> or <object> element
 				if(elementName.equals(ELEMENT_IMG)) //if the corresponding element is an img element
 				{
 						//get the src attribute, representing the href of the image, or null if not present
-					return XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_IMG_ATTRIBUTE_SRC);
+					return XMLStyles.getXMLAttributeValue(attributeSet, null, ELEMENT_IMG_ATTRIBUTE_SRC);
 				}
 				else if(elementName.equals(ELEMENT_OBJECT)) //if the corresponding element is an object element
 				{
 						//get the data attribute, representing the href of the image, or null if not present
-					return XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_DATA);
+					return XMLStyles.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_DATA);
 				}
 			}
 		}
@@ -283,15 +205,15 @@ public class XHTMLSwingTextUtilities
 		if(attributeSet!=null)  //if there are attributes
 		{
 				//see if there is a code type attribute
-			final String codeType=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_CODETYPE);
+			final String codeType=XMLStyles.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_CODETYPE);
 			if(codeType!=null)  //if the object has a code type
 				return ContentType.getInstance(codeType); //create a media type from the given type
 				//see if there is a type attribute, since there is no code type specified
-			final String type=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_TYPE);
+			final String type=XMLStyles.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_TYPE);
 			if(type!=null)  //if the object has a code type
 				return ContentType.getInstance(type); //create a media type from the given type and return it
 				//see if there is a data attribute, since there is no type specified
-			final String data=XMLStyleUtilities.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_DATA);
+			final String data=XMLStyles.getXMLAttributeValue(attributeSet, null, ELEMENT_OBJECT_ATTRIBUTE_DATA);
 			if(data!=null)  //if the object has a data attribute
 				return Files.getContentType(new File(data)); //try to get a media type from the file and return it
 		}
@@ -302,9 +224,9 @@ public class XHTMLSwingTextUtilities
 	@param mediaType The media type to test.
 	@return <code>true</code> if the media type is recognized and supported.
 	*/
-	public static boolean isMediaTypeSupported(final ContentType mediaType) //G***update these for all media types
+	public static boolean isMediaTypeSupported(final ContentType mediaType) //TODO update these for all media types
 	{
-			//G***we should really probably just have a map or something -- or maybe not (this is probably more lightweight)
+			//TODO we should really probably just have a map or something -- or maybe not (this is probably more lightweight)
 		final String topLevelType=mediaType.getPrimaryType();  //get the top-level type
 		final String subType=mediaType.getSubType();  //get the subtype
 		if(ContentType.APPLICATION_PRIMARY_TYPE.equals(topLevelType))  //application/*

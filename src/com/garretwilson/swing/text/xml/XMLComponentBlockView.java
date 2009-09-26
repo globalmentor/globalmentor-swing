@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import java.awt.*;
@@ -11,18 +27,17 @@ import com.garretwilson.swing.text.*;
 /**Provides a block view with one or more components embedded. The children will
 	be loaded as with a normal block view, except that the added components will
 	be visible in the view. The components are added using the constants from
-	<code>BorderLayout</code> except for <code>BorderLayout.CENTER</code>.
-	Implements <code>ViewHidable</code> so that it can be notified if the view
+	{@link BorderLayout} except for {@link BorderLayout#CENTER}.
+	Implements {@link ViewHidable} so that it can be notified if the view
 	is being hidden so that it can hide the object.
-@see BorderLayout
 @author Garret Wilson
-//G***maybe rename to XMLBorderComponentBlockView
-
-//G***later make a way to free the embedded component, just as we should do with the XMLAbstractComponentView and children
-//G***this could perhaps be generalized even more to an XMLPrefixedComponentView or Something
+@see BorderLayout
 */
 public class XMLComponentBlockView extends XMLBlockView implements ViewComponentManageable, ViewHidable
 {
+//TODO maybe rename to XMLBorderComponentBlockView
+//TODO later make a way to free the embedded component, just as we should do with the XMLAbstractComponentView and children
+//TODO this could perhaps be generalized even more to an XMLPrefixedComponentView or Something
 
 	/**The object that manages the components this view owns.*/
 	private final ViewComponentManager componentManager;

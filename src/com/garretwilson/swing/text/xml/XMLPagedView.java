@@ -1,50 +1,47 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.text.xml;
 
 import java.awt.*;
 import java.awt.font.*;
 import java.awt.geom.*;
-import java.lang.ref.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
 import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.SizeRequirements;
 
-import com.garretwilson.awt.EventQueueUtilities;
 import com.garretwilson.swing.ComponentUtilities;
 import com.garretwilson.swing.SwingApplication;
-import com.garretwilson.swing.XMLTextPane;	//G***del when we can find a better place to set the paged view variable of XMLTextPane
-import com.garretwilson.swing.event.PageEvent;
-import com.garretwilson.swing.event.PageListener;
-import com.garretwilson.swing.event.ProgressEvent;
-import com.garretwilson.swing.event.ProgressListener;
-import com.garretwilson.swing.text.AnonymousElement;
-//G***del if not needed import com.garretwilson.swing.text.ViewHidable;
-import com.garretwilson.swing.text.ContainerBoxView;
-import com.garretwilson.swing.text.ContainerView;
-import com.garretwilson.swing.text.ViewUtilities;
-import com.garretwilson.swing.text.xml.css.XMLCSSStyleUtilities;
-import com.garretwilson.swing.text.xml.xhtml.XHTMLSwingTextUtilities;
+import com.garretwilson.swing.XMLTextPane;	//TODO del when we can find a better place to set the paged view variable of XMLTextPane
+import com.garretwilson.swing.event.*;
+import com.garretwilson.swing.text.*;
 
-import com.globalmentor.java.Java;
-import com.globalmentor.java.Objects;
 import com.globalmentor.log.Log;
-import com.globalmentor.text.xml.oeb.OEB;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
-import com.globalmentor.text.xml.xhtml.XHTML;
 
 /**View of several pages.
-	<p>Although this class overrides <code>FlowView</code>, much of the layout is
-	actually a replication of code in <code>BoxView</code>, which is necessary
+	<p>Although this class overrides {@link FlowView}, much of the layout is
+	actually a replication of code in {@link BoxView}, which is necessary
 	because the latter hides a lot of layout-related variables, which we need
-	to update since we extend some of the functionality of <code>BoxView</code>.</p>
+	to update since we extend some of the functionality of {@link BoxView}.</p>
 	<p>This class, before hiding a page of views, informs each view that implements
 	<code>ViewHidable</code> that it is about to be hidden.</p>
-@see com.garretwilson.swing.text.ViewHidable
+@see ViewHidable
 @see FlowView
 */
 public class XMLPagedView extends FlowView
@@ -62,7 +59,7 @@ public class XMLPagedView extends FlowView
 	private EventListenerList progressListenerList=new EventListenerList();
 
 	/**The font used for painting page number.*/
-	private final static Font PAGE_NUMBER_FONT=new Font("Serif", Font.PLAIN, 12); //G***fix
+	private final static Font PAGE_NUMBER_FONT=new Font("Serif", Font.PLAIN, 12); //TODO fix
 
 	/**The insets for each page.*/
 	private short pageTopInset, pageLeftInset, pageBottomInset, pageRightInset; 
@@ -101,9 +98,9 @@ public class XMLPagedView extends FlowView
 	public XMLPagedView(Element element)
 	{
 		super(element, View.X_AXIS);	//construct the parent, showing that we're tiled along the X axis (but flowing vertically)
-//G***del if we don't need		setPropertiesFromAttributes();	//set our properties from the attributes
-		//G***fix setting flow stategy if we need to
-//G***fix threadlayout		strategy=new PageFlowStrategy();	//G***testing
+//TODO del if we don't need		setPropertiesFromAttributes();	//set our properties from the attributes
+		//TODO fix setting flow stategy if we need to
+//TODO fix threadlayout		strategy=new PageFlowStrategy();	//TODO testing
 //TODO fix		strategy=new PageFlowStrategy(this);	//create a flow strategy which may or may not be used in a threaded way (newswing threadlayout)
 
 		strategy=new PaginateStrategy();	//install our custom paginate strategy
@@ -116,7 +113,7 @@ public class XMLPagedView extends FlowView
 	}
 
 
-	/*G***fix
+	/*TODO fix
 A copy of our...
 	private Graphics paintGraphics=null;
 	private Shape paintAllocation=null;
@@ -137,8 +134,8 @@ A copy of our...
 	public int getPageCount()
 	{
 		return getViewCount();  //return the number of child views we have
-//G***fix		return getViewCount();  //return the number of child views we have
-//G***del Log.trace("getPageCount(): ", flowLayoutInfo!=null ? flowLayoutInfo.getLength() : -50);
+//TODO fix		return getViewCount();  //return the number of child views we have
+//TODO del Log.trace("getPageCount(): ", flowLayoutInfo!=null ? flowLayoutInfo.getLength() : -50);
 		  //return the number of pages we've paginated or, if we have no layout info, return zero
 //TODO fix		return flowLayoutInfo!=null ? flowLayoutInfo.getLength() : 0;
 	}
@@ -160,11 +157,11 @@ A copy of our...
 	*/
 	public void setPageIndex(int newPageIndex)
 	{
-//G***del Log.trace("requesting page", newPageIndex);
+//TODO del Log.trace("requesting page", newPageIndex);
 		newPageIndex=getCanonicalPageIndex(newPageIndex);	//make sure the page passed is the canonical one
 		if(pageIndex!=newPageIndex)	//if we're really changing the page number
 		{
-//G***del Log.trace("Changing from page: "+PageIndex+" to page "+newPageIndex+" pageCount: "+getPageCount()); //G***del
+//TODO del Log.trace("Changing from page: "+PageIndex+" to page "+newPageIndex+" pageCount: "+getPageCount()); //TODO del
 				//first, tell all the views on the current pages they are about to be hidden
 			if(pageIndex!=-1 && getPageCount()>0) //if there is a page already being displayed, and we have at least one page
 			{
@@ -175,7 +172,7 @@ A copy of our...
 					if(isLaidOut(i))	//if this page has been laid out (this function works for threading and non-threading situations)
 					{
 						final View pageView=getView(i); //get a reference to this view
-						ViewUtilities.hideView(pageView); //tell the view that it is being hidden
+						Views.hideView(pageView); //tell the view that it is being hidden
 					}
 				}
 			}
@@ -185,7 +182,7 @@ A copy of our...
 			final Container container=getContainer();	//get a reference to our container
 			if(container!=null)	//if we're in a container
 			{
-				container.repaint();	//repaint our container G***check
+				container.repaint();	//repaint our container TODO check
 			}
 		}
 	}
@@ -206,7 +203,7 @@ A copy of our...
 				DisplayPageCount=displayPageCount;	//set the new display page count
 				layoutChanged(getAxis());	//show that our layout has changed along this axis
 
-//G***probably repaint in the even thread
+//TODO probably repaint in the even thread
 				final Container container=getContainer();	//get a reference to our container
 				if(container!=null)	//if we're in a container
 					container.repaint();	//repaint our container
@@ -295,7 +292,7 @@ A copy of our...
 	*/
 	public void goNextPage()
 	{
-//G***del System.out.println("XMLPagedView.goNextPage(), pageIndex: "+getPageIndex()+" pageCount: "+getPageCount());	//G***del
+//TODO del System.out.println("XMLPagedView.goNextPage(), pageIndex: "+getPageIndex()+" pageCount: "+getPageCount());	//TODO del
 		final int pageIndex=getPageIndex();	//get the current page index
 		final int nextPageIndex=pageIndex==0 ? 1 : pageIndex+getDisplayPageCount();	//see what our next page index would be, compensating for the first page set with only one page
 		if(nextPageIndex>=0 && nextPageIndex<getPageCount())	//if going to the next page would give us a valid index
@@ -347,20 +344,20 @@ A copy of our...
 		return getViewIndexAtPosition(pos);	//see which child view is responsible for the requested position
 	}
 
-		//G***fix this with the correct modelToView() stuff
+		//TODO fix this with the correct modelToView() stuff
 		public int getPageStartOffset(final int pageIndex)
 		{
 //TODO fix			return isLaidOut(pageIndex) ? flowLayoutInfo.getStartOffset(pageIndex) : -1;
 			final View childView=getView(pageIndex);	//get the view for the given page
-			return childView!=null ? childView.getStartOffset() : -1;  //return the start offset of the page, or -1 if there is no such page G***testing
+			return childView!=null ? childView.getStartOffset() : -1;  //return the start offset of the page, or -1 if there is no such page TODO testing
 		}
 
-		//G***fix this with the correct modelToView() stuff
+		//TODO fix this with the correct modelToView() stuff
 		public int getPageEndOffset(final int pageIndex)
 		{
 //TODO fix			return isLaidOut(pageIndex) ? flowLayoutInfo.getEndOffset(pageIndex) : -1;
 			final View childView=getView(pageIndex);	//get the view for the given page
-			return childView!=null ? childView.getEndOffset() : -1;  //return the start offset of the page, or -1 if there is no such page G***testing
+			return childView!=null ? childView.getEndOffset() : -1;  //return the start offset of the page, or -1 if there is no such page TODO testing
 		}
 
 	/**Determines if the page at the given index is currently showing
@@ -379,16 +376,16 @@ A copy of our...
 		strategy will never by set to null while it is being checked.
 		@return <code>true</code> if the indicated view has been laid out.
 		@see #onLayoutComplete
-	//G***we need to change this to make sure that the page given is valid
+	//TODO we need to change this to make sure that the page given is valid
 	*/
 	public synchronized boolean isLaidOut(final int pageIndex)	//(newswing threadlayout)
 	{
 		return pageIndex>=0 && pageIndex<getViewCount();
-/*G***fix all this		
-		//if we don't thread or if we're currently not threading, the view is laid out; if we are threading, ask the flow strategy for the answer G***what if the rowIndex is out of bounds?
-	//G***del System.out.println("XMLPagedView.isLaidOut() rowIndex: "+rowIndex+" layoutStrategyThread not null: "+(layoutStrategyThread!=null)+" strategy not null: "+(strategy!=null));	//G***del
-		return ((PageFlowStrategy)strategy).isLaidOut(pageIndex);  //ask the strategy whether the page is laid out G***fix cast
-	//G***del		return !isThreaded() || layoutStrategyThread==null || ((PageFlowStrategy)strategy).isLaidOut(rowIndex);
+/*TODO fix all this		
+		//if we don't thread or if we're currently not threading, the view is laid out; if we are threading, ask the flow strategy for the answer TODO what if the rowIndex is out of bounds?
+	//TODO del System.out.println("XMLPagedView.isLaidOut() rowIndex: "+rowIndex+" layoutStrategyThread not null: "+(layoutStrategyThread!=null)+" strategy not null: "+(strategy!=null));	//TODO del
+		return ((PageFlowStrategy)strategy).isLaidOut(pageIndex);  //ask the strategy whether the page is laid out TODO fix cast
+	//TODO del		return !isThreaded() || layoutStrategyThread==null || ((PageFlowStrategy)strategy).isLaidOut(rowIndex);
 */
 }
 
@@ -397,14 +394,14 @@ A copy of our...
   	meaning that the view hierchy is being unloaded. (This assumes this view is the direct
   	parent of the UI root view.
   @param parent The parent of the view, <code>null</code> if none.
-  @see ViewUtilities#hideView(View)
+  @see Views#hideView(View)
 	*/
 	public void setParent(final View parent)	//TODO maybe put this in some more primitive parent class
 	{
 		super.setParent(parent);	//set the parent normally
 		if(parent==null)	//if this view is being uninstalled
 		{
-			ViewUtilities.hideView(this); //hide this entire view hierarchy (this is important for component views, for instance)			
+			Views.hideView(this); //hide this entire view hierarchy (this is important for component views, for instance)			
 		}
   }
 
@@ -415,14 +412,14 @@ A copy of our...
 	@param offset The starting index (0&lt;=<var>offset</var>&lt;<=<code>getViewCount()</code>) into the child views to insert the new views.
 	@param length the number of existing child views (0&lt;=<var>length</var>&lt;<=<code>getViewCount()-<var>offset</var></code>) to remove.
 	@param views the child views to add, or <code>null</code> if no children are being added.
-	@see ViewUtilities#hideView(View)
+	@see Views#hideView(View)
 	*/
 	public void replace(final int offset, final int length, final View[] views)
 	{
 		for(int i=offset+length-1; i>=offset; --i)	//look at each component to remove (order doesn't matter)
 		{
 			final View view=getView(i); //get the view at the given index
-			ViewUtilities.hideView(view); //tell the view that it is being hidden (this is important for applet views, for instance)
+			Views.hideView(view); //tell the view that it is being hidden (this is important for applet views, for instance)
 		}
 		super.replace(offset, length, views);	//do the default replacement
 	}
@@ -435,7 +432,7 @@ A copy of our...
 		final Cursor originalCursor=container!=null ? ComponentUtilities.setCursor(container, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)) : null;	//show the wait cursor
 		try
 		{
-			ViewUtilities.invalidateHierarchy(getPagePoolView());	//invalidate the page pool, which will notify this view that it needs laid out
+			Views.invalidateHierarchy(getPagePoolView());	//invalidate the page pool, which will notify this view that it needs laid out
 		}
 		finally	//always put the cursor back to how we found it
 		{
@@ -461,7 +458,7 @@ A copy of our...
   public void changedUpdate(DocumentEvent changes, Shape a, ViewFactory f) {	//TODO check; do we need this?
       // update any property settings stored, and layout should be 
 // recomputed 
-//G***fix setPropertiesFromAttributes();
+//TODO fix setPropertiesFromAttributes();
 layoutChanged(X_AXIS);
 layoutChanged(Y_AXIS);
 super.changedUpdate(changes, a, f);
@@ -496,7 +493,7 @@ super.changedUpdate(changes, a, f);
 		tempRectangle.width=(int)getPageWidth();	//find out how wide to make each page
 		tempRectangle.height=(int)getPageHeight();	//find out how hight to make each page
 		final Rectangle clipRectangle=graphics.getClipBounds();	//find out the clipping bounds
-		//paint the dividers and page numbers for each page G***probably put this in a separate function
+		//paint the dividers and page numbers for each page TODO probably put this in a separate function
 		final Color originalColor=graphics.getColor();	//get the original graphics color
 		final Font originalFont=graphics.getFont();	//get the original graphics font
 		graphics.setColor(Color.black);  //change to black for the divider
@@ -512,11 +509,11 @@ super.changedUpdate(changes, a, f);
 			if(pageIndex<pageEndIndex-1)	//if this isn't the last page, draw the vertical divider between pages
 			{
 
-					//G***fix this so that we draw the divider nicely
-//G***shouldn't the first y argument not have "TempRectanglex+"?
-//G***fix				g.drawLine(TempRectangle.x+TempRectangle.width, TempRectangle.x+TempRectangle.y, TempRectangle.x+TempRectangle.width, TempRectangle.y+TempRectangle.height);
-				final int outerSpineHalfWidth=(int)Math.round(tempRectangle.width*0.025); //G***testing
-				final int innerSpineHalfWidth=(int)Math.round(tempRectangle.width*0.003); //G***testing
+					//TODO fix this so that we draw the divider nicely
+//TODO shouldn't the first y argument not have "TempRectanglex+"?
+//TODO fix				g.drawLine(TempRectangle.x+TempRectangle.width, TempRectangle.x+TempRectangle.y, TempRectangle.x+TempRectangle.width, TempRectangle.y+TempRectangle.height);
+				final int outerSpineHalfWidth=(int)Math.round(tempRectangle.width*0.025); //TODO testing
+				final int innerSpineHalfWidth=(int)Math.round(tempRectangle.width*0.003); //TODO testing
 
 				paintSpineSection(graphics2D, tempRectangle.x+tempRectangle.width, tempRectangle.y, tempRectangle.height, outerSpineHalfWidth, Color.lightGray, Color.white); //paint this section of the spine
 				paintSpineSection(graphics2D, tempRectangle.x+tempRectangle.width, tempRectangle.y, tempRectangle.height, -outerSpineHalfWidth, Color.lightGray, Color.white); //paint this section of the spine
@@ -525,22 +522,22 @@ super.changedUpdate(changes, a, f);
 			}
 			if(isLaidOut(pageIndex))	//if we actually have a page view for this page, and it has been laid out
 			{
-					//G***maybe put page number painting in each page; maybe not
+					//TODO maybe put page number painting in each page; maybe not
 				final View pageView=getView(pageIndex); //get a reference to this view
 				final int pageLeftInset=getPageLeftInset();  //get the page's left inset
 				final int pageRightInset=getPageRightInset();  //get the page's right inset
 				final int pageBottomInset=getPageBottomInset();  //get the page's right inset
-				final String pageNumberString=String.valueOf(pageIndex+1);  //create a string with the page number to paint G***use a getPageNumber() method instead
+				final String pageNumberString=String.valueOf(pageIndex+1);  //create a string with the page number to paint TODO use a getPageNumber() method instead
 				final Rectangle2D pageNumberBounds=graphics2D.getFont().getStringBounds(pageNumberString, fontRenderContext); //get the bounds of the string
-	//G***del Log.trace("page number left inset: "+getLeftInset()+" right inset: "+getRightInset());  //G***del
+	//TODO del Log.trace("page number left inset: "+getLeftInset()+" right inset: "+getRightInset());  //TODO del
 				int pageNumberX;  //we'll determine which side of the page the number goes on
 				if(pageIndex==pageEndIndex-1)  //if we're on the last page
-					pageNumberX=tempRectangle.x+tempRectangle.width-pageRightInset+(int)((float)(pageRightInset-pageNumberBounds.getWidth())/2);	//G***fix; comment; use local variable
-				else  //if we're not on the last page G***put code here for the middle of a three-page spread
-					pageNumberX=tempRectangle.x+(int)((float)(pageLeftInset-pageNumberBounds.getWidth())/2);	//G***fix; comment; use local variable
-				final int pageNumberY=tempRectangle.y+tempRectangle.height-pageBottomInset+(int)((float)(pageBottomInset-pageNumberBounds.getHeight())/2);	//G***fix; comment; use local variable
-					//G***take into account the size of the font, make it a nicer color, etc.
-				graphics.drawString(pageNumberString, pageNumberX, pageNumberY);	//G***testing; i18n
+					pageNumberX=tempRectangle.x+tempRectangle.width-pageRightInset+(int)((float)(pageRightInset-pageNumberBounds.getWidth())/2);	//TODO fix; comment; use local variable
+				else  //if we're not on the last page TODO put code here for the middle of a three-page spread
+					pageNumberX=tempRectangle.x+(int)((float)(pageLeftInset-pageNumberBounds.getWidth())/2);	//TODO fix; comment; use local variable
+				final int pageNumberY=tempRectangle.y+tempRectangle.height-pageBottomInset+(int)((float)(pageBottomInset-pageNumberBounds.getHeight())/2);	//TODO fix; comment; use local variable
+					//TODO take into account the size of the font, make it a nicer color, etc.
+				graphics.drawString(pageNumberString, pageNumberX, pageNumberY);	//TODO testing; i18n
 			}
 		}
 		graphics.setColor(originalColor);  //revert to the original color
@@ -552,7 +549,7 @@ super.changedUpdate(changes, a, f);
 			tempRectangle.y=top+getOffset(Y_AXIS, pageIndex);
 			tempRectangle.width=getSpan(X_AXIS, pageIndex);
 			tempRectangle.height=getSpan(Y_AXIS, pageIndex);
-			if(isLaidOut(pageIndex)/*G***del if we can && pageIndex>=0 && pageIndex<pageCount*/)	//if this page has been laid out (this function works for threading and non-threading situations) (newswing threadlayout)
+			if(isLaidOut(pageIndex)/*TODO del if we can && pageIndex>=0 && pageIndex<pageCount*/)	//if this page has been laid out (this function works for threading and non-threading situations) (newswing threadlayout)
 			{
 				if(tempRectangle.intersects(clipRectangle))	//if this area needs painted and this is a valid page
 				{
@@ -566,13 +563,13 @@ super.changedUpdate(changes, a, f);
 	protected void paintSpineSection(final Graphics2D graphics2D, final int topX, final int topY, final int height, int horizontalDelta, final Color color1, final Color color2)
 	{
 		final Paint originalPaint=graphics2D.getPaint(); //get the current paint used
-//G***del		final float startX=horizontalDelta>0 ? x1 : x1+horizontalDelta; //see where we should start
-		final GradientPaint gradientPaint=new GradientPaint(topX, topY, color1, topX+horizontalDelta, topY, color2);  //G***testing
-		graphics2D.setPaint(gradientPaint); //G***fix
+//TODO del		final float startX=horizontalDelta>0 ? x1 : x1+horizontalDelta; //see where we should start
+		final GradientPaint gradientPaint=new GradientPaint(topX, topY, color1, topX+horizontalDelta, topY, color2);  //TODO testing
+		graphics2D.setPaint(gradientPaint); //TODO fix
 		if(horizontalDelta>0) //if we have a positive delta
-			graphics2D.fillRect(topX, topY, horizontalDelta, height); //G***fix; comment
+			graphics2D.fillRect(topX, topY, horizontalDelta, height); //TODO fix; comment
 		else  //if we have a negative delta
-			graphics2D.fillRect(topX+horizontalDelta, topY, -horizontalDelta, height); //G***fix; comment
+			graphics2D.fillRect(topX+horizontalDelta, topY, -horizontalDelta, height); //TODO fix; comment
 		graphics2D.setPaint(originalPaint); //set the paint back to its original paint
 	}
 
@@ -604,8 +601,8 @@ super.changedUpdate(changes, a, f);
 		{
 			adjustAmount=getPageTopInset()+getPageBottomInset();	//add the top and bottom page insets together
 		}
-			//G***put this line in a lower view such as XMLBlockView
-//G***testing		return layoutSpan-adjustAmount;	//return the default span, accounting for any insets
+			//TODO put this line in a lower view such as XMLBlockView
+//TODO testing		return layoutSpan-adjustAmount;	//return the default span, accounting for any insets
 		return (int)getPageHeight()-adjustAmount;
 	}
 
@@ -628,7 +625,7 @@ super.changedUpdate(changes, a, f);
 		{
 			adjustAmount=getPageTopInset();	//compensate for the top page inset
 		}
-			//G***put this line in a lower view such as XMLBlockView
+			//TODO put this line in a lower view such as XMLBlockView
 		return adjustAmount;	//return the default star of the flow, accounting for any inset
 	}
 
@@ -650,7 +647,7 @@ super.changedUpdate(changes, a, f);
 	*/
 	protected void loadChildren(final ViewFactory viewFactory)
 	{
-		final Container container=getContainer();	//get a reference to our container G***all this should probably go somewhere else
+		final Container container=getContainer();	//get a reference to our container TODO all this should probably go somewhere else
 		if(container instanceof XMLTextPane)	//if the container is an XML text pane
 			((XMLTextPane)container).setPagedView(this);	//tell it that it has a paged view
 		if(getPagePoolView()==null)	//if there is no layout pool, yet
@@ -943,7 +940,7 @@ Log.trace("laying out major axis, page", i, "gets offset", offsets[i]);
      *  not represent a valid location in the associated document
      * @see View#modelToView
      */
-/*G***fix
+/*TODO fix
     public Shape modelToView(int pos, Shape a, Position.Bias b) throws BadLocationException {
 	if (! isAllocationValid()) {
 	    Rectangle alloc = a.getBounds();
@@ -964,19 +961,19 @@ Log.trace("laying out major axis, page", i, "gets offset", offsets[i]);
 	*/
 	public int viewToModel(float x, float y, Shape a, Position.Bias[] bias)
 	{
-//G***what if we're in the middle of paginating?
-//G***del Log.trace("Inside XMLPagedView.viewToModel() for x: "+x+" y: "+y);
+//TODO what if we're in the middle of paginating?
+//TODO del Log.trace("Inside XMLPagedView.viewToModel() for x: "+x+" y: "+y);
 		if(!isAllocationValid())	//if our allocation isn't value
 		{
-//G***del Log.trace("Inside XMLPagedView.viewToModel(), allocation isn't valid; changing size");
-			final Rectangle allocationRect=a.getBounds();	//get the bounds of the area into which the caller thinks we've been rendered G***this probably isn't the best thing to do under a threaded scenario
+//TODO del Log.trace("Inside XMLPagedView.viewToModel(), allocation isn't valid; changing size");
+			final Rectangle allocationRect=a.getBounds();	//get the bounds of the area into which the caller thinks we've been rendered TODO this probably isn't the best thing to do under a threaded scenario
 			setSize(allocationRect.width, allocationRect.height);	//update our size
 		}
-//G***fix	return super.viewToModel(x, y, a, bias);
+//TODO fix	return super.viewToModel(x, y, a, bias);
 		final Rectangle insideAlloc=getInsideAllocation(a);	//get the inside allocation, with insets removed
 		if(isBefore((int)x, (int)y, insideAlloc))	//if the point is before the information that is showing
 		{
-//G***del Log.trace("XMLPagedView.viewToModel() is before");
+//TODO del Log.trace("XMLPagedView.viewToModel() is before");
 	    int returnValue=-1;	//we'll default to a -1 if we can't find a correct position
 			try
 			{
@@ -993,7 +990,7 @@ Log.trace("laying out major axis, page", i, "gets offset", offsets[i]);
 		}
 		else if(isAfter((int)x, (int)y, insideAlloc))	//if the point is after the information that is showing
 		{
-//G***del Log.trace("XMLPagedView.viewToModel() is after");
+//TODO del Log.trace("XMLPagedView.viewToModel() is after");
 	    int returnValue=-1;	//we'll default to a -1 if we can't find a correct position
 	    try
 			{
@@ -1010,13 +1007,13 @@ Log.trace("laying out major axis, page", i, "gets offset", offsets[i]);
 		}
 		else	//if the location is within our displayed content area
 		{
-//G***del Log.trace("XMLPagedView.viewToModel() is within our displayed content; ready to call getViewAtPoint()");
+//TODO del Log.trace("XMLPagedView.viewToModel() is within our displayed content; ready to call getViewAtPoint()");
 			final View view=getViewAtPoint((int)x, (int) y, insideAlloc);	//locate the appropriate child
-//G***del Log.trace("XMLPagedView.viewToModel() found view: "+Debug.getNullStatus(view));
+//TODO del Log.trace("XMLPagedView.viewToModel() found view: "+Debug.getNullStatus(view));
 	    if(view!=null)	//if we found a view at the specified point
 	      return view.viewToModel(x, y, insideAlloc, bias);	//ask that view to find the model location at the specified point
 		}
-		return -1;	//if we were unable, for some reason, to find a view, return -1 G***is this correct?
+		return -1;	//if we were unable, for some reason, to find a view, return -1 TODO is this correct?
 	}
 
 		/**
@@ -1034,7 +1031,7 @@ Log.trace("laying out major axis, page", i, "gets offset", offsets[i]);
 		 */
 		public float getAlignment(int axis) {
 			return 0;
-/*G***fix
+/*TODO fix
 				switch (axis) {
 				case Y_AXIS:
 			float a = 0.5f;
@@ -1147,11 +1144,11 @@ Log.trace("laying out major axis, page", i, "gets offset", offsets[i]);
 		/**Sets the cached properties from the attributes. This version forces the
 		  margins to a particular size.
 		*/
-/*G***fix
-		protected void setPropertiesFromAttributes()  //G***fix; hack because of new style-based margins
+/*TODO fix
+		protected void setPropertiesFromAttributes()  //TODO fix; hack because of new style-based margins
 		{
 			super.setPropertiesFromAttributes();  //set the attributes normally
-			setInsets((short)25, (short)25, (short)25, (short)25);	//G***fix; testing
+			setInsets((short)25, (short)25, (short)25, (short)25);	//TODO fix; testing
 		}
 */
 		/**Each page does not need to fill its children, since its parent
@@ -1532,14 +1529,14 @@ return v;
 			final Cursor originalCursor=container!=null ? ComponentUtilities.setCursor(container, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)) : null;	//show the wait cursor
 			try
 			{
-				fireMadeProgress(new ProgressEvent(flowView, PAGINATE_TASK, "Repaginating pages...", 0, 1));	//show that we are ready to start paginating pages, but we haven't really started, yet G***i18n
+				fireMadeProgress(new ProgressEvent(flowView, PAGINATE_TASK, "Repaginating pages...", 0, 1));	//show that we are ready to start paginating pages, but we haven't really started, yet TODO i18n
 					//make sure the layout pool has the correct dimensions of the page so that it will do unrestrained layout correctly TODO check the axis to make sure we use the correct insets
 				getPagePoolView().setSize((int)getPageWidth()-getPageLeftInset()-getPageRightInset(), (int)getPageHeight()-getPageTopInset()-getPageBottomInset());	//set the size of the page pool to be exactly the size of the displayed page; giving insets to the page pool results in incorrect layout
 				super.layout(flowView);	//do the layout normally
 /*TODO fix end-of-pagination repainting
 				if(container!=null)	//if we're in a container
 				{
-					container.repaint();	//repaint our container G***check
+					container.repaint();	//repaint our container TODO check
 				}
 */
 			}
@@ -1550,7 +1547,7 @@ return v;
 					container.setCursor(originalCursor); //set the cursor back to its original form
 				}
 			}
-			fireMadeProgress(new ProgressEvent(flowView, PAGINATE_TASK, "Paginated all "+flowView.getViewCount()+" pages.", flowView.getViewCount(), flowView.getViewCount()));	//show that we paginated all the pages G***i18n
+			fireMadeProgress(new ProgressEvent(flowView, PAGINATE_TASK, "Paginated all "+flowView.getViewCount()+" pages.", flowView.getViewCount(), flowView.getViewCount()));	//show that we paginated all the pages TODO i18n
 				//fire a page event with our current page number, since our page count changed
 			firePageEvent(new PageEvent(this, getPageIndex(), getPageCount()));
 		}
@@ -1567,13 +1564,13 @@ return v;
 		{
 			final float progress=(float)flowView.getEndOffset()/pos;	//find out how far we are along the content
 			final float estimatedRowCount=rowIndex*progress;	//find out the total rows by multiplying the number of rows *already* collected by the progress
-			fireMadeProgress(new ProgressEvent(flowView, PAGINATE_TASK, "Paginating page "+(rowIndex+1)+" of ~"+Math.round(estimatedRowCount)+"...", rowIndex, estimatedRowCount));	//show that we are paginating the specified page, and the number of pages we guess there will be G***i18n
+			fireMadeProgress(new ProgressEvent(flowView, PAGINATE_TASK, "Paginating page "+(rowIndex+1)+" of ~"+Math.round(estimatedRowCount)+"...", rowIndex, estimatedRowCount));	//show that we are paginating the specified page, and the number of pages we guess there will be TODO i18n
 			final int nextPos=super.layoutRow(flowView, rowIndex, pos);	//do the default layout
 /*TODO
 			final Container container=getContainer();	//get a reference to our container
 			if(container!=null)	//if we're in a container
 			{
-				container.repaint();	//repaint our container G***check
+				container.repaint();	//repaint our container TODO check
 			}
 */
 			return nextPos;	//return the next position for layout
@@ -1616,7 +1613,7 @@ return v;
 		{
 			if(viewFactory==null) //if there is no view factory, we can't load the children
 				return; //we can't do anything
-	//G***del Log.trace("loading children for page pool, offsets "+startOffset+" to "+endOffset);
+	//TODO del Log.trace("loading children for page pool, offsets "+startOffset+" to "+endOffset);
 			final Element parentElement=getElement();	//get the parent element 
 			final Element[] childElements=XMLSectionView.getSectionChildElements(parentElement, getStartOffset(), getEndOffset()); //get the child elements that fall within our range
 			final View[] views=XMLBlockView.createBlockViews(parentElement, childElements, viewFactory);  //create the child views, ensuring they are block elements
@@ -1633,7 +1630,7 @@ return v;
 		*/
 		protected void forwardUpdateToView(final View view, final DocumentEvent event, final Shape allocation, final ViewFactory factory)
 		{
-			view.setParent(this);	//reparent the view to the pool G***is this needed, with the new layout() below? should this reparent the hierarchy? investigate super versions to see exactly what this does
+			view.setParent(this);	//reparent the view to the pool TODO is this needed, with the new layout() below? should this reparent the hierarchy? investigate super versions to see exactly what this does
 			super.forwardUpdateToView(view, event, allocation, factory);	//forward the update normally
 		}
 
@@ -1664,7 +1661,7 @@ return v;
 				ViewUtilities.reparentHierarchy(getView(i));  //reparent all views under this one
 			}
 */
-			ViewUtilities.reparentHierarchy(this); //make sure all the child views have correct parents (previous layouts could cause, for instance, a paragraph row to think it has a parent of a now-unused paragraph fragement)
+			Views.reparentHierarchy(this); //make sure all the child views have correct parents (previous layouts could cause, for instance, a paragraph row to think it has a parent of a now-unused paragraph fragement)
 			super.layout(width, height);	//do the default layout
 		}
 	
