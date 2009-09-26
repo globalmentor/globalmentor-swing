@@ -1,10 +1,26 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
 import javax.swing.*;
 
 /**An class for simple rendering of custom strings and icons in a list cell.
-	A child class should override <code>getListCellRendererString()</code> and
+	A child class should override {@link SimpleListCellRenderer#getListCellRendererString(Object)} and
 	return the correct string for display. If that method is not overridden,
 	the value will be converted to a string by default.
 	<p>If it is desired that an icon be displayed, a child class should override
@@ -31,7 +47,7 @@ public class SimpleListCellRenderer extends DefaultListCellRenderer
 		final Component component=super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus); //get the default component
 		final String string=getListCellRendererString(list, value, index, isSelected, cellHasFocus);  //get the string to display
 		final Icon icon=getListCellRendererIcon(list, value, index, isSelected, cellHasFocus);  //get the icon to display
-//G***assert the string is not null
+//TODO assert the string is not null
 		assert component instanceof JLabel : "List cell renderer component is not a JLabel";
 		final JLabel label=(JLabel)component; //cast the component to a label, assuming that the component is a JLabel (which is likely the implementation used by the default)
 		label.setText(string);  //set the correct text

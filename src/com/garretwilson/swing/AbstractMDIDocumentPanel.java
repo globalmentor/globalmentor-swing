@@ -1,41 +1,49 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
 import java.io.*;
-import java.net.URI;
-import java.util.*;
-import javax.swing.*;
-import com.garretwilson.model.*;
-import com.globalmentor.java.Booleans;
 import com.globalmentor.model.ObjectState;
 import com.globalmentor.rdf.*;
-import com.globalmentor.text.xml.XMLSerializer;
-import com.globalmentor.util.*;
-
-import org.w3c.dom.*;
 
 /**An application panel that contains a document for multiple document interface
 	architecture.
 @author Garret Wilson
 */
-public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implements ObjectState<RDFResource>	//G***eventually delete this class and replace it with ResourceApplicationPanel
+@Deprecated
+public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implements ObjectState<RDFResource>	//TODO eventually delete this class and replace it with ResourceApplicationPanel
 {
 //TODO make this class implement com.garretwilson.io.Streamable as well (create that class)
 
 	/**The document file.*/
-//G***del when works	private File file=null;
+//TODO del when works	private File file=null;
 
 	/**@return The file used by this document, or <code>null</code> if unknown.*/
-//G***del when works	public File getFile() {return file;}
+//TODO del when works	public File getFile() {return file;}
 
 	/**Sets the file used by this document.
 	@param newFile The file used, or <code>null</code> if unknown.
 	*/
-//G***del when works	public void setFile(final File newFile) {file=newFile;}
+//TODO del when works	public void setFile(final File newFile) {file=newFile;}
 
-//G***del when works	private final RDF rdf;  //G***testing
+//TODO del when works	private final RDF rdf;  //TODO testing
 
-//G***del when works	protected RDF getRDF() {return rdf;}  //G***testing; comment
+//TODO del when works	protected RDF getRDF() {return rdf;}  //TODO testing; comment
 
 	/**Whether the data has been modified; the default is not modified.*/
 	private boolean modified=false;
@@ -67,7 +75,7 @@ public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implement
 		/**Sets the resource that describes this document.
 		@param resource The resource that describes this document.
 		*/
-		public void setObject(final RDFResource resource) {this.resource=resource;}	//G***maybe throw an exception if the resource is null
+		public void setObject(final RDFResource resource) {this.resource=resource;}	//TODO maybe throw an exception if the resource is null
 
 	/**Sets the reference URI of the document. This results in the resource
 		returned by <code>getResource()</code> being changed to another object,
@@ -76,17 +84,17 @@ public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implement
 	@exception IllegalArgumentException Thrown if the provided reference URI is
 		<code>null</code>.
 	*/
-/*G***del when works
+/*TODO del when works
 	public void setReferenceURI(final URI referenceURI) throws IllegalArgumentException
 	{
-		resource=new DefaultRDFResource(resource, referenceURI); //create a new resource with a different URI G***change to get this from the data model
+		resource=new DefaultRDFResource(resource, referenceURI); //create a new resource with a different URI TODO change to get this from the data model
 	}
 */
 
 	/**Default constructor.*/
 	public AbstractMDIDocumentPanel()
 	{
-//G***del		super();  //construct the parent
+//TODO del		super();  //construct the parent
 		this(true); //do the default construction
 	}
 
@@ -96,7 +104,7 @@ public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implement
 	*/
 	protected AbstractMDIDocumentPanel(final boolean initialize)
 	{
-//G***del		super();  //construct the parent
+//TODO del		super();  //construct the parent
 		this(false, false, initialize); //do the default construction, initializing the panel if needed
 	}
 
@@ -107,7 +115,7 @@ public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implement
 	*/
 	protected AbstractMDIDocumentPanel(final Component applicationComponent, final boolean initialize)
 	{
-//G***del		super(applicationComponent);  //construct the parent
+//TODO del		super(applicationComponent);  //construct the parent
 		this(true, true, false);  //do the default construction without initializing
 		setContentComponent(applicationComponent); //set the application component
 		if(initialize)  //if we should initialize
@@ -120,7 +128,7 @@ public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implement
 	*/
 	public AbstractMDIDocumentPanel(final Component applicationComponent)
 	{
-//G***del		super(applicationComponent);  //construct the parent
+//TODO del		super(applicationComponent);  //construct the parent
 		this(applicationComponent, true); //construct and initialize the panel
 	}
 
@@ -144,11 +152,11 @@ public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implement
 	protected AbstractMDIDocumentPanel(final boolean hasToolBar, final boolean hasStatusBar, final boolean initialize)
 	{
 		super(hasToolBar, hasStatusBar, false);  //construct the parent, but don't initialize it, yet
-/*G***del when works		
-		rdf=new RDF();  //G***testing; comment
+/*TODO del when works		
+		rdf=new RDF();  //TODO testing; comment
 		resource=createDefaultResource(); //create the default resource used for describing the document
 */
-//G***del		description=new DefaultDocumentDescription();	//create a new document description
+//TODO del		description=new DefaultDocumentDescription();	//create a new document description
 		if(initialize)  //if we should initialize
 		  initialize(); //initialize the panel
 	}
@@ -156,11 +164,11 @@ public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implement
 	/**Creates any application objects and initializes data.
 		Any class that overrides this method must call this version.
 	*/
-/*G***del
+/*TODO del
 	protected void initializeData()
 	{
 		super.initializeData(); //do the default data initialization
-		rdf=new RDF();  //G***testing; comment
+		rdf=new RDF();  //TODO testing; comment
 		resource=createDefaultResource(); //create the default resource used for describing the document
 	}
 */
@@ -168,7 +176,7 @@ public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implement
 	/**Creates the default resource used for describing the document.
 	@return A resource for describing the document.
 	*/
-/*G***del when works	
+/*TODO del when works	
 	protected RDFResource createDefaultResource()
 	{
 		return getRDF().createResource();  //create a default resource
@@ -182,7 +190,7 @@ public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implement
 	*/
 	public void read(final InputStream inputStream) throws IOException
 	{
-//G***fix		read(inputStream, null);	//read with no description
+//TODO fix		read(inputStream, null);	//read with no description
 	}
 
 }

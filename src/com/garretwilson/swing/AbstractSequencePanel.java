@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
@@ -5,11 +21,10 @@ import java.awt.event.*;
 import javax.swing.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.globalmentor.model.Verifiable;
-import com.globalmentor.util.*;
 
 /**Base class for a panel that allows progression in a sequence.
 <p>When progressing through the sequence, this panel attempts to verify
-	 the content component, if it is <code>Verifiable</code>, before changing
+	 the content component, if it is {@link Verifiable}, before changing
 	 position in the sequence and before finishing.</p>
 @author Garret Wilson
 @see Verifiable
@@ -125,7 +140,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 	private final Timer confirmTimer;
 
 		/**@return The timer that allows confirmation only within a specified time.*/
-//G***del if not needed		protected Timer getConfirmTimer() {return confirmTimer;}
+//TODO del if not needed		protected Timer getConfirmTimer() {return confirmTimer;}
 
 	/**The action currently being confirmed and which, if confirmed, will be performed.*/
 	private Action confirmingAction;
@@ -468,10 +483,10 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		/**Default constructor.*/
 		public StartAction()
 		{
-			super("Start");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Start sequence");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Start the sequence.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_S));  //set the mnemonic key G***i18n
+			super("Start");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Start sequence");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Start the sequence.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_S));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.ENTER_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -498,10 +513,10 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		/**Default constructor.*/
 		public PreviousAction()
 		{
-			super("Previous");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Previous step");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Go to the previous step.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key G***i18n
+			super("Previous");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Previous step");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Go to the previous step.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.HAND_POINT_LEFT_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -528,10 +543,10 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		/**Default constructor.*/
 		public NextAction()
 		{
-			super("Next");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Next step");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Go to the next step.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_N));  //set the mnemonic key G***i18n
+			super("Next");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Next step");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Go to the next step.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_N));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.HAND_POINT_RIGHT_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -559,10 +574,10 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		/**Default constructor.*/
 		public FinishAction()
 		{
-			super("Finish");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Finish sequence");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Finish the sequence.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_F));  //set the mnemonic key G***i18n
+			super("Finish");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Finish sequence");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Finish the sequence.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_F));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.EXIT_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -590,10 +605,10 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel
 		/**Constructs an activity submit action.*/
 		public ConfirmAction()
 		{
-			super("Confirm");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Confirm input.");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Confirm the input.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key G***i18n
+			super("Confirm");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Confirm input.");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Confirm the input.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.ACCEPT_ICON_FILENAME)); //load the correct icon
 		}
 

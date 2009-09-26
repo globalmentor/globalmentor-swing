@@ -1,7 +1,22 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.draw;
 
 import java.awt.*;
-import java.awt.geom.RectangularShape;
 
 /**A rectangle that can be dynamically drawn on the screen.
 @author Garret Wilson
@@ -65,17 +80,11 @@ public class DrawRectangle extends DrawShape
 	*/
 	public void draw(final Graphics graphics)
 	{
-/*G***del
-Log.trace("ready to draw rectangle from point: ", getLocation()); //G***del
-Log.trace("ready to draw rectangle to point: ", getEndLocation()); //G***del
-Log.trace("width: ", getWidth()); //G***del
-Log.trace("height: ", getHeight()); //G***del
-*/
 	  graphics.setColor(getColor());  //set the graphics to the correct color
 		if(isPermanent()) //if the shape and location has been accepted
 		{
-		  graphics.setXORMode(Color.white); //G***testing; comment
-//G***del if not needed			graphics.setPaintMode();  //paint normally
+		  graphics.setXORMode(Color.white); //TODO testing; comment
+//TODO del if not needed			graphics.setPaintMode();  //paint normally
 			graphics.fillRect(
 					Math.min(getLocation().x, getEndLocation().x),
 					Math.min(getLocation().y, getEndLocation().y),
@@ -83,8 +92,8 @@ Log.trace("height: ", getHeight()); //G***del
 		}
 		else  //if the shape is still being modified
 		{
-//G***del Log.trace("not permanent"); //G***del
-		  graphics.setXORMode(Color.white); //G***testing; comment
+//TODO del Log.trace("not permanent"); //TODO del
+		  graphics.setXORMode(Color.white); //TODO testing; comment
 			graphics.drawRect(
 					Math.min(getLocation().x, getEndLocation().x),
 					Math.min(getLocation().y, getEndLocation().y),

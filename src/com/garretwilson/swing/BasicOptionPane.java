@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
@@ -10,14 +26,14 @@ import com.globalmentor.util.*;
 
 /**An option pane that knows how to verify its contents before closing the
 	dialog.
-<p>This class offers several improvements over <code>JOptionPane</code>:</p>
+<p>This class offers several improvements over {@link JOptionPane}:</p>
 <ul>
-	<li>If the message object implements <code>DefaultFocusable</code>, the
+	<li>If the message object implements {@link DefaultFocusable}, the
 		initial focus component is given the focus when the pane is displayed.</li>  
-	<li>If the message object implements <code>Verifiable</code>, the input
+	<li>If the message object implements {@link Verifiable}, the input
 		is verified before the pane is allowed to close.</li>
-	<li>If <code>setValue()</code> is called with an explicit
-		<code>Integer</code> value, that value will be returned even if options
+	<li>If {@link #setValue(Object)} is called with an explicit
+		{@link Integer} value, that value will be returned even if options
 		are present.</li>
 </ul>
 @author Garret Wilson
@@ -144,7 +160,7 @@ public class BasicOptionPane extends JOptionPane
 				super(message, messageType, optionType, icon, options, initialValue);
     }
 
-//G***add other methods here
+//TODO add other methods here
 
 
 	/**
@@ -259,7 +275,7 @@ public class BasicOptionPane extends JOptionPane
     public static int showConfirmDialog(Component parentComponent, Object message,
                                         String title, int optionType) {
 
-//G***del Log.trace("show confirm dialog 1"); //G***del
+//TODO del Log.trace("show confirm dialog 1"); //TODO del
         return showConfirmDialog(parentComponent, message, title, optionType,
                                  QUESTION_MESSAGE);
     }
@@ -292,7 +308,7 @@ public class BasicOptionPane extends JOptionPane
     public static int showConfirmDialog(Component parentComponent, Object message,
                                         String title, int optionType,
                                         int messageType) {
-//G***del Log.trace("show confirm dialog 2"); //G***del
+//TODO del Log.trace("show confirm dialog 2"); //TODO del
         return showConfirmDialog(parentComponent, message, title, optionType,
                                 messageType, null);
     }
@@ -322,7 +338,7 @@ public class BasicOptionPane extends JOptionPane
     public static int showConfirmDialog(Component parentComponent, Object message,
                                         String title, int optionType,
                                         int messageType, Icon icon) {
-//G***del Log.trace("show confirm dialog 3"); //G***del
+//TODO del Log.trace("show confirm dialog 3"); //TODO del
         return showOptionDialog(parentComponent, message, title, optionType,
                                 messageType, icon, null, null);
     }
@@ -370,12 +386,12 @@ public class BasicOptionPane extends JOptionPane
      * @return an integer indicating the option chosen by the user,
      *         or CLOSED_OPTION if the user closed the Dialog
      */
-/*G***del when new JDK1.4 version works 
+/*TODO del when new JDK1.4 version works 
     public static int showOptionDialog(Component parentComponent, Object message,
                                        String title, int optionType,
                                        int messageType, Icon icon,
                                        Object[] options, Object initialValue) {
-//G***del  Log.trace("inside custom showOptionDialog()"); //G***del
+//TODO del  Log.trace("inside custom showOptionDialog()"); //TODO del
         JOptionPane             pane = new OptionPane(message, messageType,
                                                        optionType, icon,
                                                        options, initialValue);
@@ -512,7 +528,7 @@ public class BasicOptionPane extends JOptionPane
      */
     public JDialog createDialog(Component parentComponent, String title)
 		{
-//G***del			final JDialog dialog=super.createDialog(parentComponent, title);  //create the default dialog
+//TODO del			final JDialog dialog=super.createDialog(parentComponent, title);  //create the default dialog
 
         final JDialog dialog;
 
@@ -525,13 +541,13 @@ public class BasicOptionPane extends JOptionPane
 
         final Container             contentPane = dialog.getContentPane();
 					//see if the message is verifiable
-				final Verifiable verifiableMessage=message instanceof Verifiable ? (Verifiable)message : null;  //G***newswing
+				final Verifiable verifiableMessage=message instanceof Verifiable ? (Verifiable)message : null;  //TODO newswing
 
         contentPane.setLayout(new BorderLayout());
         contentPane.add(this, BorderLayout.CENTER);
         dialog.pack();
         dialog.setLocationRelativeTo(parentComponent);
-				dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);  //don't automatically close the dialog G***newswing
+				dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);  //don't automatically close the dialog TODO newswing
         dialog.addWindowListener(new WindowAdapter() {
             boolean gotFocus = false;
             public void windowClosing(WindowEvent we) {
@@ -555,8 +571,8 @@ public class BasicOptionPane extends JOptionPane
 									if(event.getNewValue() instanceof Integer
 										&& ((Integer)event.getNewValue()).intValue()==OK_OPTION)  //if the user is pressing "OK"
 									{
-	//G***del									if(OptionPane.this.getValue().equals(new )
-										if(verifiableMessage!=null) //if the message is verifiable G***newswing
+	//TODO del									if(OptionPane.this.getValue().equals(new )
+										if(verifiableMessage!=null) //if the message is verifiable TODO newswing
 										{
 											if(!verifiableMessage.verify()) //verify the content pane; if it doesn't verify
 											{
@@ -585,7 +601,7 @@ public class BasicOptionPane extends JOptionPane
 	public void selectInitialValue()
 	{
 		final Object message=getMessage();	//get the message object used in the pane
-/*G***fix; this might be useful in the future		
+/*TODO fix; this might be useful in the future		
 		if(message instanceof Container)
 		{
 			final FocusTraversalPolicy focusTraversalPolicy=((Container)message).getFocusTraversalPolicy(); 
@@ -593,10 +609,10 @@ public class BasicOptionPane extends JOptionPane
 			{
 				final Component defaultComponent=focusTraversalPolicy.getDefaultComponent((Container)message);
 				if(defaultComponent!=null)
-					defaultComponent.requestFocusInWindow();	//G***testing
+					defaultComponent.requestFocusInWindow();	//TODO testing
 			}
-//G***fix			else
-//G***fix				super.selectInitialValue();	//do the default initial value selection
+//TODO fix			else
+//TODO fix				super.selectInitialValue();	//do the default initial value selection
 		}
 */
 		//if the message object knows how to request the default focus, let it do so if it can; if it can't
@@ -604,7 +620,7 @@ public class BasicOptionPane extends JOptionPane
 	{	 
 		super.selectInitialValue();	//do the default initial value selection
 	}
-/*G***del when works
+/*TODO del when works
 			//if the message object knows which component should get the default focus
 		if(message instanceof DefaultFocusable && ((DefaultFocusable)message).getDefaultFocusComponent()!=null)	 
 			((DefaultFocusable)message).getDefaultFocusComponent().requestFocusInWindow();	//request focus for the default component

@@ -31,7 +31,7 @@ import javax.swing.table.TableColumnModel;
 import com.garretwilson.awt.FontUtilities;
 import com.garretwilson.swing.*;
 
-import static com.garretwilson.swing.ComponentUtilities.*;
+import static com.garretwilson.swing.Components.*;
 import com.garretwilson.swing.event.ListDataAdapter;
 
 import com.globalmentor.text.unicode.*;

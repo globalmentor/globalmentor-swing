@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
@@ -7,7 +23,7 @@ import javax.swing.*;
 	bag layout with the border paradigm, and content can be added by a component
 	being placed in the panel center.
 <p>Accelerators will be added to the component for all actions added to the
-	toolbar inside <code>initializeToolBar()</code>.</p> 
+	toolbar inside {@link ToolStatusPanel#initializeToolBar(JToolBar)}.</p> 
 @see BasicGridBagLayout 
 @author Garret Wilson
 */
@@ -148,14 +164,6 @@ public class ToolStatusPanel extends ContentPanel
 			initialize();   //initialize everything
 	}
 
-	/**Initializes the panel. Should only be called once per instance.*/
-/*G***del if not needed
-	public void initialize()	//TODO set a flag that will only allow initialization once per instance
-	{
-		super.initialize();	//do the default initialization
-	}
-*/
-
 	/**Initializes the user interface.
 	<p>After initializing the toolbar, accelerators are added for any actions
 		added to the toolbar.</p>
@@ -170,13 +178,11 @@ public class ToolStatusPanel extends ContentPanel
 		if(toolbar!=null) //if we have a toolbar
 		{
 			initializeToolBar(toolbar);  //initialize the toolbar
-//G***del when works			add(toolBar, toolBarPosition);  //put the toolbar in the correct position
 		}
 		final StatusBar statusBar=getStatusBar();	//get the status bar
 		if(statusBar!=null) //if we have a status bar
 		{
 			initializeStatusBar(statusBar);  //initialize the status bar
-//G***del when works			add(statusBar, statusBarPosition);  //put the status bar in the correct position
 		}
   }
 

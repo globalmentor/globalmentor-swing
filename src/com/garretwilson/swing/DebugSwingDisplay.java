@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.BorderLayout;
@@ -23,7 +39,7 @@ public class DebugSwingDisplay implements DebugDisplay
 	private JTextArea debugTextArea;
 
 	/**Whether this displayer is enabled.*/
-//G***del if not needed	private boolean enabled=false;
+//TODO del if not needed	private boolean enabled=false;
 
 	/**Default constructor.*/
 	public DebugSwingDisplay()
@@ -53,7 +69,7 @@ public class DebugSwingDisplay implements DebugDisplay
 	  		final JScrollPane scrollPane=new JScrollPane();	//create a new scroll pane
 				final JTextArea textArea=new JTextArea();	//create a new text area
 				frame.setSize(new Dimension(800, 600));	//give the frame a default size
-		    textArea.setText("Debug output\n");	//G***put the current date here or something
+		    textArea.setText("Debug output\n");	//TODO put the current date here or something
 		    textArea.setEditable(false);	//don't allow the text to be edited
 		    frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
 		    scrollPane.getViewport().add(textArea, null);
@@ -91,9 +107,9 @@ public class DebugSwingDisplay implements DebugDisplay
 	*/
 	public void notify(final String message)
 	{
-		final String wrappedMessage=Strings.wrap(message, 100);	//wrap the error message at 100 characters G***probably use a constant here
-			//G***maybe later use a specified frame as the parent
-		JOptionPane.showMessageDialog(null, wrappedMessage, "Debug Message", JOptionPane.INFORMATION_MESSAGE);	//G***i18n; comment
+		final String wrappedMessage=Strings.wrap(message, 100);	//wrap the error message at 100 characters TODO probably use a constant here
+			//TODO maybe later use a specified frame as the parent
+		JOptionPane.showMessageDialog(null, wrappedMessage, "Debug Message", JOptionPane.INFORMATION_MESSAGE);	//TODO i18n; comment
 	}
 
 	/**Displays an error message.
@@ -104,10 +120,10 @@ public class DebugSwingDisplay implements DebugDisplay
 	*/
 	public void error(final String errorString)
 	{
-		final String wrappedErrorString=Strings.wrap(errorString, 100);	//wrap the error message at 100 characters G***probably use a constant here
-			//G***maybe later use a specified frame as the parent
-			//G***maybe later allow the title to be changed
-		JOptionPane.showMessageDialog(null, wrappedErrorString, "Error", JOptionPane.ERROR_MESSAGE);	//G***i18n; comment
+		final String wrappedErrorString=Strings.wrap(errorString, 100);	//wrap the error message at 100 characters TODO probably use a constant here
+			//TODO maybe later use a specified frame as the parent
+			//TODO maybe later allow the title to be changed
+		JOptionPane.showMessageDialog(null, wrappedErrorString, "Error", JOptionPane.ERROR_MESSAGE);	//TODO i18n; comment
 	}
 
 }

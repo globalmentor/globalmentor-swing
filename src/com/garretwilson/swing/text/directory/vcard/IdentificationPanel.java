@@ -178,7 +178,7 @@ public class IdentificationPanel extends BasicVCardPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
+		setBorder(Borders.createDefaultTitledBorder());	//set a titled border
 		setTitle("Identification");	//TODO i18n
 		final PropertyChangeListener modifyLocalePropertyChangeListener=createModifyPropertyChangeListener(SelectLanguageAction.LOCALE_PROPERTY_NAME);	//create a property change listener to change the modified status when the locale property changes
 			//add listeners to all the components of the name panel to update the status when modified

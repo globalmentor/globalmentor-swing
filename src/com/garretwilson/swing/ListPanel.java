@@ -1,24 +1,42 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
+import java.util.List;
+
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 
 /**Panel that contains a list and buttons for selecting and unselecting all items.
 <p>In order to create and edit items, an edit strategy  must be set (besides
-	setting the list to be editable using <code>setEditable(true)</code>). Actual
+	setting the list to be editable using {@link ListPanel#setEditable(boolean)}. Actual
 	modification of the list will only be performed if the list uses a list model
-	that implements either <code>javax.swing.DefaultListModel</code> or
-	<code>java.util.List</code>.</p>
+	that implements either {@link DefaultListModel} or
+	{@link List}.</p>
 <p>Bound properties:</p>
 <dl>
-	<dt><code>Editable.EDITABLE_PROPERTY</code> (<code>Boolean</code>)</dt>
+	<dt>{@link Editable#EDITABLE_PROPERTY} ({@link Boolean})</dt>
 	<dd>Indicates the editable status has changed.</dd>
 </dl>
 @param <E> The type of each element in the list.
 @author Garret Wilson
-@see java.util.List
-@see javax.swing.DefaultListModel
+@see List
+@see DefaultListModel
 @see ListEditStrategy
 */
 public class ListPanel<E> extends ContentPanel implements Editable
@@ -45,7 +63,7 @@ public class ListPanel<E> extends ContentPanel implements Editable
 		@param editStrategy The edit strategy for editing items in the list, or
 			<code>null</code> if there is no edit strategy.
 		*/
-//G***del if not needed		public void setEditStrategy(final ListEditStrategy editStrategy) {this.editStrategy=editStrategy;}	//TODO make sure we unregister the old list strategy first by removing all listeners to the list
+//TODO del if not needed		public void setEditStrategy(final ListEditStrategy editStrategy) {this.editStrategy=editStrategy;}	//TODO make sure we unregister the old list strategy first by removing all listeners to the list
 
 	/**The list this panel represents.*/
 	private final JList list;
@@ -107,11 +125,11 @@ public class ListPanel<E> extends ContentPanel implements Editable
 		buttonToolBar=new JToolBar(JToolBar.VERTICAL);
 		selectAllButton=new JButton(editStrategy.getSelectAllAction());
 		selectNoneButton=new JButton(editStrategy.getSelectNoneAction());
-		editSeparator=ToolBarUtilities.createToolBarSeparator(buttonToolBar);
+		editSeparator=ToolBars.createToolBarSeparator(buttonToolBar);
 		addButton=new JButton(editStrategy.getAddAction());
 		deleteButton=new JButton(editStrategy.getDeleteAction());
 		editButton=new JButton(editStrategy.getEditAction());
-		moveSeparator=ToolBarUtilities.createToolBarSeparator(buttonToolBar);
+		moveSeparator=ToolBars.createToolBarSeparator(buttonToolBar);
 		moveUpButton=new JButton(editStrategy.getMoveUpAction());
 		moveDownButton=new JButton(editStrategy.getMoveDownAction());
 		editable=false;	//default to not being editable
@@ -145,8 +163,8 @@ public class ListPanel<E> extends ContentPanel implements Editable
 		final int selectionMode=getList().getSelectionMode();	//get the list selection mode
 		final boolean isMultipleSelectionAllowed=selectionMode!=ListSelectionModel.SINGLE_SELECTION;	//see if multiple selections are allowed, either single intervals or multiple intervals
 		final boolean isEditable=isEditable();	//see whether the list can be edited
-//G***maybe just go with the way things work now, even though the lead selection may not be visible		final int selectedIndex=list.getSelectedIndex();	//get the first selected index 
-//G***del if not needed		final boolean isLeadSelected=leadSelectionIndex>=0 && list.isSelectedIndex(leadSelectionIndex);	//see whether the lead index is selected	
+//TODO maybe just go with the way things work now, even though the lead selection may not be visible		final int selectedIndex=list.getSelectedIndex();	//get the first selected index 
+//TODO del if not needed		final boolean isLeadSelected=leadSelectionIndex>=0 && list.isSelectedIndex(leadSelectionIndex);	//see whether the lead index is selected	
 		selectAllButton.setVisible(isMultipleSelectionAllowed);	//only show the selection buttons if interval selections are allowed
 		selectNoneButton.setVisible(isMultipleSelectionAllowed);	//only show the selection buttons if multiple selections are allowed
 		editSeparator.setVisible(isMultipleSelectionAllowed && isEditable);	//only show the edit separator if editing is allowed, and we're showing buttons before it

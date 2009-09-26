@@ -1,20 +1,32 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.beans.*;
-import java.io.*;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import com.garretwilson.resources.icon.IconResources;
 import com.globalmentor.log.Log;
 import com.globalmentor.model.Modifiable;
 import com.globalmentor.model.ObjectState;
 import com.globalmentor.rdf.*;
 
-/**Class that manages multiple documents in a <code>JDesktopPane</code>.
+/**Class that manages multiple documents in a {@link JDesktopPane}.
 @author Garret Wilson
 */
 public class MDIManager implements InternalFrameListener	//TODO replace this class with a DesktopPaneResourceComponentDecorator
@@ -56,11 +68,11 @@ public class MDIManager implements InternalFrameListener	//TODO replace this cla
     {
       public void vetoableChange(final PropertyChangeEvent propertyChangeEvent) throws PropertyVetoException
       {
-/*G***del
-Log.trace("Vetoable change: ", propertyChangeEvent);  //G***del
-Log.trace("property name: ", propertyChangeEvent.getPropertyName());  //G***del
-Log.trace("old value: ", propertyChangeEvent.getOldValue());  //G***del
-Log.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
+/*TODO del
+Log.trace("Vetoable change: ", propertyChangeEvent);  //TODO del
+Log.trace("property name: ", propertyChangeEvent.getPropertyName());  //TODO del
+Log.trace("old value: ", propertyChangeEvent.getOldValue());  //TODO del
+Log.trace("new value: ", propertyChangeEvent.getNewValue());  //TODO del
 */
 					//if the internal frame is trying to close
 				if(JInternalFrame.IS_CLOSED_PROPERTY.equals(propertyChangeEvent.getPropertyName())
@@ -68,10 +80,10 @@ Log.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
 				{
 					if(canCloseInternalFrame(internalFrame)) //if this frame can close
 					{
-//G***fix						setFile(null);  //disassociate the file from the internal frame G***check; see if we need to explicitly pass a key
+//TODO fix						setFile(null);  //disassociate the file from the internal frame TODO check; see if we need to explicitly pass a key
 					}
 					else  //if the frame cannot close
-						throw new PropertyVetoException("canceled", propertyChangeEvent); //cancel the closing G***i18n
+						throw new PropertyVetoException("canceled", propertyChangeEvent); //cancel the closing TODO i18n
 				}
       }
     });
@@ -85,7 +97,7 @@ Log.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
     });
 		getDesktopPane().add(internalFrame, getDesktopPane().DEFAULT_LAYER);  //add the frame to the default layer
 		getDesktopPane().getDesktopManager().activateFrame(internalFrame);  //activate the internal frame we just added
-//G***fix		updateTitle(internalFrame);  //update the internal frame's title
+//TODO fix		updateTitle(internalFrame);  //update the internal frame's title
 	}
 
 	/**@return The currently active <code>JInternalFrame</code> on the desktop,
@@ -193,7 +205,7 @@ Log.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del
 	*/
   public void internalFrameClosed(final InternalFrameEvent internalFrameEvent)
 	{
-Log.trace("internal frame closed"); //G***del
+Log.trace("internal frame closed"); //TODO del
 		if(getDesktopPane().getAllFrames().length==0) //if this is the last frame closed
 ;//TODO fix		  getApplicationFrame().updateStatus();  //update our actions to reflect that all frames have been closed
 	}
@@ -239,8 +251,8 @@ Log.trace("internal frame closed"); //G***del
 	public static JInternalFrame createDefaultInternalFrame(final String title)
 	{
 		final JInternalFrame internalFrame=new JInternalFrame(title, true, true, true, true); //create a default internal frame
-		internalFrame.setVisible(true); //G***testing
-		internalFrame.setBounds(0, 0, 640, 480); //G***testing
+		internalFrame.setVisible(true); //TODO testing
+		internalFrame.setBounds(0, 0, 640, 480); //TODO testing
 		return internalFrame; //return the frame we created
 	}
 

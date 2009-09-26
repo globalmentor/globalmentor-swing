@@ -1,41 +1,29 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
-import java.util.*;
 import javax.swing.*;
 
 /**Various convenience methods for working with Swing toolbars.
 @author Garret Wilson
  */
-public class ToolBarUtilities
+public class ToolBars
 {
-
-	/**Creates a default application toolbar with rollover buttons and no text.
-	Using this method promotes consistency across components.
-	@see JToolBar#setRollover(boolean)
-	*/
-/*G***del when not needed
-	public static BasicToolBar createApplicationToolBar()
-	{
-		final BasicToolBar toolBar=new BasicToolBar();  //create the toolbar
-		toolBar.setRollover(true);	//default to a rollover toolbar
-		toolBar.setButtonTextVisible(false);	//don't show text by default
-		return toolBar; //return the toolbar we created
-	}
-*/
-
-	/**Creates a default toolbar from the tool actions of the given action manager.
-	@param actionManager The manager that contains the tool actions
-	@see #setupToolBar
-	*/
-/*G***del when not needed
-	public static BasicToolBar createApplicationToolBar(final ActionManager actionManager)
-	{
-		final BasicToolBar toolBar=createApplicationToolBar();	//create a default toolbar
-		setupToolBar(toolBar, actionManager);	//set up the toolbar with the action manager tool actions
-		return toolBar;	//return the toolbar we created and initialized
-	}
-*/
 
 	/**Creates a toolbar separator of default size, with an orientation
 		appropriate for the given toolbar.

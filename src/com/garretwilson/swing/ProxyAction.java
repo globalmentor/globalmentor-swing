@@ -1,23 +1,37 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.event.*;
 import java.beans.*;
 import javax.swing.*;
-import javax.swing.event.*;
-import static com.garretwilson.swing.ComponentConstants.*;
 
 /**Action that stands as a proxy for another action. This action will change its
 	properties to reflect the proxied action, and will activate the proxied action
 	when activated.
-	<p>Some code based upon <code>javax.swing.AbstractButton</code></p>
+	<p>Some code based upon {@link AbstractButton}</p>
 @author Garret Wilson
 */
 public class ProxyAction extends AbstractAction implements PropertyChangeListener
 {
 	/**The action being proxied, or <code>null</code> if no action is being proxied.*/
-	private Action proxiedAction=null;  //G***maybe later make this a weak reference so that if it goes away, we remove ourselves as a listener or something
+	private Action proxiedAction=null;  //TODO maybe later make this a weak reference so that if it goes away, we remove ourselves as a listener or something
 
-//G***can we ever get garbage collected? won't the proxied action still be referencing us?
+//TODO can we ever get garbage collected? won't the proxied action still be referencing us?
 
 		/**@return The action being proxied, or <code>null</code> if no action is
 		  being proxied.
@@ -25,10 +39,10 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 		public Action getProxiedAction() {return proxiedAction;}
 
 	/**The listener we use to find out when the proxied action is changing.*/
-//G***del if not needed	private PropertyChangeListener actionPropertyChangeListener;
+//TODO del if not needed	private PropertyChangeListener actionPropertyChangeListener;
 
 	/**Whether action properties should be updated when the proxied action changes.*/
-//G***fix	private boolean shouldUpdateProperties=true;
+//TODO fix	private boolean shouldUpdateProperties=true;
 
 	/**Defines a proxy action object with a default description string and
 		default icon.
@@ -37,7 +51,7 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 	{
 		super();  //construct the parent
 		setProxiedAction(null); //show that we don't have a proxied action, yet (this will correctly disable the action)
-		setEnabled(true);	//G***testing
+		setEnabled(true);	//TODO testing
 	}
 
 	/**Defines a proxy action object with the specified description string and a
@@ -74,7 +88,7 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 	/**Sets the proxying <code>Action</code> properties according to values
 		from the proxied <code>Action</code> instance. Be default all properties
 		are updated.
-//G***fix
+//TODO fix
 		<p>
 			If the <code>Action</code> passed in is <code>null</code>,
 		  the following things will occur:
@@ -92,7 +106,7 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 	*/
 	protected void configurePropertiesFromAction(final Action action)
 	{
-//G***Del Log.trace("configuring properties from actions: ", action); //G***del
+//TODO Del Log.trace("configuring properties from actions: ", action); //TODO del
 		if(action!=null)  //if there is an action
 		{
 			if(action instanceof AbstractAction)	//if the action is an abstract action, we can iterate its properties
@@ -113,26 +127,26 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 			}
 			else	//if the given action is a normal action, update the values that we know about
 			{
-	//G***don't change the name to work around a Java bug that adds the text to buttons even if they shouldn't be changed
-	//G***fix; see above comment		  putValue(Action.NAME, action.getValue(Action.NAME));
-				putValue(NAME, action.getValue(NAME));	//G***see if this works in JDK 1.4.1
+	//TODO don't change the name to work around a Java bug that adds the text to buttons even if they shouldn't be changed
+	//TODO fix; see above comment		  putValue(Action.NAME, action.getValue(Action.NAME));
+				putValue(NAME, action.getValue(NAME));	//TODO see if this works in JDK 1.4.1
 			  putValue(SMALL_ICON, action.getValue(SMALL_ICON));
 			  putValue(SHORT_DESCRIPTION, action.getValue(SHORT_DESCRIPTION));
 			  putValue(LONG_DESCRIPTION, action.getValue(LONG_DESCRIPTION));
-	/*G***fix; with a proxied action with a mnemonic key of Integer('s'), this traps Alt+F4
-			  if(action.getValue(Action.MNEMONIC_KEY)!=null)  //G***testing; why is this needed, and not for the others?
+	/*TODO fix; with a proxied action with a mnemonic key of Integer('s'), this traps Alt+F4
+			  if(action.getValue(Action.MNEMONIC_KEY)!=null)  //TODO testing; why is this needed, and not for the others?
 			    putValue(Action.MNEMONIC_KEY, action.getValue(Action.MNEMONIC_KEY));
 	*/
-	//G***fix; this gives strange results sometimes		  putValue(Action.ACTION_COMMAND_KEY, action.getValue(Action.ACTION_COMMAND_KEY));
-	//G***fix; this gives strange results sometimes		  putValue(Action.ACCELERATOR_KEY, action.getValue(Action.ACCELERATOR_KEY));
-				putValue(ACCELERATOR_KEY, action.getValue(ACCELERATOR_KEY)); //G***is this fixed in JDK1.4.x?
+	//TODO fix; this gives strange results sometimes		  putValue(Action.ACTION_COMMAND_KEY, action.getValue(Action.ACTION_COMMAND_KEY));
+	//TODO fix; this gives strange results sometimes		  putValue(Action.ACCELERATOR_KEY, action.getValue(Action.ACCELERATOR_KEY));
+				putValue(ACCELERATOR_KEY, action.getValue(ACCELERATOR_KEY)); //TODO is this fixed in JDK1.4.x?
 			}
 		  setEnabled(action.isEnabled()); //update the enabled property (which isn't stored using a normal key/value pair, as are the other properties)
 		}
 		else  //if there is no action
 		{
-//G***del Log.trace("no action; disabling"); //G***del
-			//G***fix the properties appropriately
+//TODO del Log.trace("no action; disabling"); //TODO del
+			//TODO fix the properties appropriately
 			setEnabled(false);  //disable this action
 		}
 	}
@@ -170,28 +184,28 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 	    proxiedAction=action; //update the action
 	    if(oldAction!=null) //if we had an action before
 			{
-//G***del				removeActionListener(oldAction);  //don't listen for the old action anymore
+//TODO del				removeActionListener(oldAction);  //don't listen for the old action anymore
 				oldAction.removePropertyChangeListener(this); //don't listen for the old action anymore
-//G***del if not needed				actionPropertyChangeListener=null;  //we no longer need the listener for the old action
+//TODO del if not needed				actionPropertyChangeListener=null;  //we no longer need the listener for the old action
 	    }
 	    configurePropertiesFromAction(proxiedAction); //now that we have a new action, configure our properties from it
 		  if(proxiedAction!=null) //if we now have an action
 			{
-/*G***do we need this?
+/*TODO do we need this?
 		// Don't add if it is already a listener
 		if (!isListener(ActionListener.class, action)) {
 		    addActionListener(action);
 			}
 */
 		  proxiedAction.addPropertyChangeListener(this);  //add ourselves as a listener to the property changes of the proxied action
-/*G***del if not needed
+/*TODO del if not needed
 			//create a listener to find out when the proxied action changes properties
 		  actionPropertyChangeListener=createActionPropertyChangeListener(action);
 		  proxiedAction.addPropertyChangeListener(actionPropertyChangeListener);  //add the listener to the proxied action
 */
 			}
 		}
-		firePropertyChange("proxiedAction", oldAction, proxiedAction);  //show that our proxied action has changed G***use a constant here
+		firePropertyChange("proxiedAction", oldAction, proxiedAction);  //show that our proxied action has changed TODO use a constant here
 	}
 
 	/**Called whenever a bound property in the proxied action is changed.
@@ -201,9 +215,9 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 	public void propertyChange(final PropertyChangeEvent propertyChangeEvent)
 	{
 		final String propertyName=propertyChangeEvent.getPropertyName();  //get the property name being changed
-//G***del Log.trace("proxied property changed: ", propertyName);  //G***del when fixed enabled/disabled
-//G***del Log.trace("new value: ", propertyChangeEvent.getNewValue());  //G***del when fixed enabled/disabled
-/*G***fix for when/if we have a weak reference to the proxied action
+//TODO del Log.trace("proxied property changed: ", propertyName);  //TODO del when fixed enabled/disabled
+//TODO del Log.trace("new value: ", propertyChangeEvent.getNewValue());  //TODO del when fixed enabled/disabled
+/*TODO fix for when/if we have a weak reference to the proxied action
 		if(proxyAction==null) //if we no longer have a proxy action (its weak reference has been garbage collected)
 		{
 			final Action proxiedAction=(Action)e.getSource(); //get the action being proxied
@@ -212,21 +226,21 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 		else  //if we still have a proxy action
 		{
 */
-//G***del Log.trace("property being changed: ", propertyName);  //G***del
-/*G***del; not needed; "enabled" property changes apparently property propogate
+//TODO del Log.trace("property being changed: ", propertyName);  //TODO del
+/*TODO del; not needed; "enabled" property changes apparently property propogate
 		if("enabled".equals(propertyName)) //if the enabled property is changing, we'll have to call the method manually, apparently
 		{
 
 		}
 		else
 */
-		if(ENABLED_PROPERTY.equals(propertyName))  //if the enabled state is changing, we must change the actual property (which will change the property value), rather than just changing the underlying value or the actual property won't change
+		if(Components.ENABLED_PROPERTY.equals(propertyName))  //if the enabled state is changing, we must change the actual property (which will change the property value), rather than just changing the underlying value or the actual property won't change
 		{
-			setEnabled(((Boolean)propertyChangeEvent.getNewValue()).booleanValue()); //G***testing
+			setEnabled(((Boolean)propertyChangeEvent.getNewValue()).booleanValue()); //TODO testing
 		}
-		else if(!"proxiedAction".equals(propertyName)) //if the proxied action is itself proxied, don't respond when it changes its proxied action G***use constant here
+		else if(!"proxiedAction".equals(propertyName)) //if the proxied action is itself proxied, don't respond when it changes its proxied action TODO use constant here
 		{
-			if(!NAME.equals(propertyName)) //G***don't change the name to work around a Java bug that adds the text to buttons even if they shouldn't be changed TODO check with JDK 1.4.x
+			if(!NAME.equals(propertyName)) //TODO don't change the name to work around a Java bug that adds the text to buttons even if they shouldn't be changed TODO check with JDK 1.4.x
 				putValue(propertyName, propertyChangeEvent.getNewValue());  //unconditionally update the value in the proxied action
 		}
 	}
@@ -255,7 +269,7 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 	@see Action
 	@see #setProxiedAction
 	*/
-/*G***del when not needed
+/*TODO del when not needed
 	protected PropertyChangeListener createActionPropertyChangeListener(final Action proxiedAction)
 	{
 		return new ProxyActionPropertyChangeListener(this, proxiedAction);  //create a listener and return it

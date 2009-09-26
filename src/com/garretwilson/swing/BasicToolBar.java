@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.Component;
@@ -8,7 +24,7 @@ import javax.swing.*;
 <p>This toolbar maintains whether contained buttons should display text.
 	When a button is added, whether the button has text will depend on the status
 	of the toolbar <code>buttonTextVisible</code> property unless the button has
-	no icon. When this property is changed using <code>setButtonTextVisible()</code>,
+	no icon. When this property is changed using {@link #setButtonTextVisible(boolean)},
 	all buttons on the toolbar change to match the new setting. The default
 	value of the <code>buttonTextVisible</code> property is <code>true</code>.</p>
 <p>If an added button's action defines an accelerator, it is added to the
@@ -180,14 +196,14 @@ public class BasicToolBar extends JToolBar
 		final Icon icon=button.getIcon();	//see if the button has an icon
 		final Action action=button.getAction();	//get the button's action, if there is one
 		final boolean hideText=icon!=null ? !isButtonTextVisible() : false;	//always show the text if there is no icon; otherwise, show or hide the text appropriately			
-		button.putClientProperty(ButtonConstants.HIDE_ACTION_TEXT_PROPERTY, Boolean.valueOf(hideText));	//tell the button whether its text should be hidden
+		button.putClientProperty(Buttons.HIDE_ACTION_TEXT_PROPERTY, Boolean.valueOf(hideText));	//tell the button whether its text should be hidden
 		final String text=button.getText();	//get the button text
 		if(hideText)	//if we should hide text
 		{
 			if(text!=null && text.length()>0)	//if there is text
 			{
 				button.setText(null);	//clear the button text
-//G***fix			button.repaint();	//G***fix
+//TODO fix			button.repaint();	//TODO fix
 			}
 		}
 		else if(text==null || text.length()==0)	//if we should show the text, but there is no text
@@ -216,7 +232,7 @@ public class BasicToolBar extends JToolBar
 		{
 			final KeyStroke keyStroke=(KeyStroke)acceleratorValue;	//cast the accelerator value to a keystroke
 			final Container parent=getParent();	//get the parent container
-			if(parent instanceof JComponent)	//if the parent is a component G***maybe search up the chain for a component
+			if(parent instanceof JComponent)	//if the parent is a component TODO maybe search up the chain for a component
 			{
 				final JComponent parentComponent=(JComponent)parent;	//cast the parent to a component
 					//store the keystroke in the parent's input map pointing to the action name

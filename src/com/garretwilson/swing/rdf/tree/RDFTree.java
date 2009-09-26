@@ -1,21 +1,32 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.rdf.tree;
 
-import java.net.URI;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 
 import com.globalmentor.rdf.*;
-import com.globalmentor.text.xml.XMLDOMImplementation;
-
-import org.w3c.dom.*;
 
 /**Class that displays RDF in a tree and allows it to be explored.
 @author Garret Wilson
 */
 public class RDFTree extends JTree	//TODO eventually delete this class and just allow the model to be set
 {
-	private RDFXMLGenerator rdfXMLifier=new RDFXMLGenerator();  //create an object for serializing RDF G***maybe allow this to be specified externally
+	private RDFXMLGenerator rdfXMLifier=new RDFXMLGenerator();  //create an object for serializing RDF TODO maybe allow this to be specified externally
 
 	  /**@return The RDF XML-ifier currently being used to generate labels; this
 		  object may be replaced at any time.
@@ -85,9 +96,9 @@ public class RDFTree extends JTree	//TODO eventually delete this class and just 
 	/**Initializes the user interface.*/
 	private void initializeUI()
   {
-//G***del		  //setup the icon for RDF literals
-//G***del; this is now done by default		rdfResourceTreeCellRenderer.registerRDFLiteralIcon(IconResources.getIcon(IconResources.STRING_ICON_FILENAME));
-//G***del and fix whole class		setCellRenderer(rdfResourceTreeCellRenderer); //render the icons using our cell renderer for RDF
+//TODO del		  //setup the icon for RDF literals
+//TODO del; this is now done by default		rdfResourceTreeCellRenderer.registerRDFLiteralIcon(IconResources.getIcon(IconResources.STRING_ICON_FILENAME));
+//TODO del and fix whole class		setCellRenderer(rdfResourceTreeCellRenderer); //render the icons using our cell renderer for RDF
 		setCellRenderer(rdfResourceTreeCellRenderer); //render the icons using our cell renderer for RDF
   }
 

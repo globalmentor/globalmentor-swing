@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.draw;
 
 import java.awt.*;
@@ -8,7 +24,7 @@ import com.globalmentor.java.Objects;
 
 /**Strategy for drawing a shape on a component.
 	An instance of the strategy must be registered as both a
-	<code>MouseListener</code> and a <code>MouseMotionListener</code> with the
+	{@link MouseListener} and a {@link MouseMotionListener} with the
 	component on which the shape will be drawn.
 @see Drawable
 @author Garret Wilson
@@ -48,7 +64,7 @@ public class DrawShapeStrategy extends MouseInputAdapter
 	*/
 	public DrawShapeStrategy(final Component newComponent, final DrawShape newDrawShape)
 	{
-		component=newComponent; //save the component in which the component should be drawn G***should we automatically register ourselves with the component?
+		component=newComponent; //save the component in which the component should be drawn TODO should we automatically register ourselves with the component?
 		drawShape=newDrawShape; //save the object being drawn
 	}
 
@@ -65,7 +81,7 @@ public class DrawShapeStrategy extends MouseInputAdapter
 	*/
 	public void mousePressed(final MouseEvent mouseEvent)
 	{
-//G***del Log.trace("mouse pressed");  //G***del
+//TODO del Log.trace("mouse pressed");  //TODO del
 		if(SwingUtilities.isLeftMouseButton(mouseEvent)) //if the left button is pressed
 		{
 			final DrawShape drawShape=getDrawShape(); //get the shape being drawn
@@ -107,7 +123,7 @@ public class DrawShapeStrategy extends MouseInputAdapter
 			final DrawShape drawShape=getDrawShape(); //get the shape being drawn
 			if(drawShape!=null) //if we have a shape being drawn
 			{
-	//G***del Log.trace("trying to move shape");  //G***del
+	//TODO del Log.trace("trying to move shape");  //TODO del
 				draw(drawShape);  //undraw the shape
 				drawShape.setEndLocation(mouseEvent.getX(), mouseEvent.getY()); //update the ending position
 				draw(drawShape);  //redraw the shape
@@ -130,7 +146,7 @@ public class DrawShapeStrategy extends MouseInputAdapter
 	/**Draws a drawable object on the component.
 	@param drawable The object to draw.
 	*/
-	protected void draw(final Drawable drawable) //G***maybe move this to a DrawComponent or to some DrawUtilities
+	protected void draw(final Drawable drawable) //TODO maybe move this to a DrawComponent or to some DrawUtilities
 	{
 		final Graphics graphics=component.getGraphics();  //get the graphics context
 		if(graphics!=null)  //if graphics are available
@@ -150,7 +166,7 @@ public class DrawShapeStrategy extends MouseInputAdapter
 	@param graphics The graphics context to use to draw the object.
 	@param drawable The object to draw.
 	*/
-	protected static void draw(final Graphics graphics, final Drawable drawable) //G***maybe move this to a DrawComponent or to some DrawUtilities
+	protected static void draw(final Graphics graphics, final Drawable drawable) //TODO maybe move this to a DrawComponent or to some DrawUtilities
 	{
 		drawable.draw(graphics);  //tell the object to draw itself
 	}

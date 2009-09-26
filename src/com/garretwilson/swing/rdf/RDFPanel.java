@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.rdf;
 
 import java.io.*;
@@ -96,11 +112,11 @@ public class RDFPanel<R extends RDFResource, M extends ResourceModel<R>> extends
 	/**Initialize the user interface.*/
 	protected void initializeUI()
 	{
-//G***del; let the calling class do this		sourceTextPane.setEditable(false);	//don't let the text pane be edited
+//TODO del; let the calling class do this		sourceTextPane.setEditable(false);	//don't let the text pane be edited
 		editable=true;	//default to being editable 
 		rdfTree.setCellRenderer(new RDFResourceTreeCellRenderer()); //render the icons using our cell renderer for RDF
-		addView(TREE_MODEL_VIEW, "RDF", rdfScrollPane);	//add the RDF component as the tree view G***i18n
-		addView(SOURCE_MODEL_VIEW, "RDF+XML", xmlScrollPane);	//add the XML component as the source view G***i18n
+		addView(TREE_MODEL_VIEW, "RDF", rdfScrollPane);	//add the RDF component as the tree view TODO i18n
+		addView(SOURCE_MODEL_VIEW, "RDF+XML", xmlScrollPane);	//add the XML component as the source view TODO i18n
 		super.initializeUI(); //do the default UI initialization
 	}
 
@@ -118,7 +134,7 @@ public class RDFPanel<R extends RDFResource, M extends ResourceModel<R>> extends
 			case TREE_MODEL_VIEW:	//if we're changing to the tree view
 				if(model.getResource()!=null)	//if we have an RDF resource
 				{
-						//G***maybe use a common RDFXMLifier
+						//TODO maybe use a common RDFXMLifier
 					final TreeNode treeNode=new RDFObjectTreeNode(model.getResource(), new RDFXMLGenerator()); //create a tree node for the resource
 					getRDFTree().setModel(new DefaultTreeModel(treeNode));  //create a new tree model and set the model for the tree
 				}
@@ -180,7 +196,7 @@ public class RDFPanel<R extends RDFResource, M extends ResourceModel<R>> extends
 							final RDFXMLProcessor rdfXMLProcessor=new RDFXMLProcessor();	//create a new RDF processor
 							final RDF rdf=rdfXMLProcessor.processRDF(document);	//process the RDF from the XML
 /*TODO find some way to find the original resource selected, if any
-							rdfResource=null;	//G***fix
+							rdfResource=null;	//TODO fix
 */
 						}
 						catch(URISyntaxException uriSyntaxException)	//TODO fix so that other types of exceptions are accepted; create a general ParseException or SyntaxException
@@ -210,7 +226,7 @@ public class RDFPanel<R extends RDFResource, M extends ResourceModel<R>> extends
 		super.onModelViewChange(oldView, newView);	//perform the default functionality
 		switch(oldView)	//see which view we're changing from
 		{
-/*G***del if not needed
+/*TODO del if not needed
 				case TREE_MODEL_VIEW:	//if we're changing from the tree view
 					getXMLTextPane().getDocument().removeDocumentListener(getModifyDocumentListener());	//don't listen for changes to the XML text pane any more
 					getXMLTextPane().setDocument(getXMLTextPane().getEditorKit().createDefaultDocument());	//remove the content from the XML text pane by installing a new document
@@ -223,7 +239,7 @@ public class RDFPanel<R extends RDFResource, M extends ResourceModel<R>> extends
 		}
 		switch(newView)	//see which view we're changing to
 		{
-/*G***del if not needed
+/*TODO del if not needed
 				case TREE_MODEL_VIEW:	//if we're changing to the tree view
 					getXMLTextPane().getDocument().addDocumentListener(getModifyDocumentListener());	//add ourselves as a document listener to the XML text pane
 					break;

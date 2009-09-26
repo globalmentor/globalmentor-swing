@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.io.*;
@@ -69,7 +85,7 @@ public class XMLDocumentModelViewIOKit extends ModelViewIOKit<XMLNodeModel<org.w
 			xmlPanel.setModel(new XMLNodeModel<org.w3c.dom.Document>());	//clear all data from the panel
 			xmlPanel.setModelView(XMLPanel.SOURCE_MODEL_VIEW);	//switch to the source and try to load the source with no interpretation					
 			xmlPanel.setModel(new XMLNodeModel<org.w3c.dom.Document>());	//clear all data from the panel again, because changing the data view might have created default XML
-			final JTextPane sourceTextPane=xmlPanel.getSourceTextPane();	//get a reference to the source text pane G***maybe make an accessor method for setting the source
+			final JTextPane sourceTextPane=xmlPanel.getSourceTextPane();	//get a reference to the source text pane TODO maybe make an accessor method for setting the source
 			final Document document=sourceTextPane.getDocument();	//get the source document
 			inputStream.reset();	//start back at the beginning of the stream
 		//TODO del when works			final StringBuffer autodetectPrereadCharacters=new StringBuffer();	//this will receive whatever characters were read while prereading the encoding TODO it would be better to update the XML processor code to push these characters back automatically, as the InputStreamUtilities.getBOMEncoding() method does
@@ -80,7 +96,7 @@ public class XMLDocumentModelViewIOKit extends ModelViewIOKit<XMLNodeModel<org.w
 			try
 			{		
 				sourceTextPane.getEditorKit().read(inputStream, document, 0);	//have the editor kit read the document from the reader
-//TODO del when works				sourceTextPane.getDocument().insertString(0, autodetectPrereadCharacters.toString(), null);	//insert the preread characters at the front of the document G***check
+//TODO del when works				sourceTextPane.getDocument().insertString(0, autodetectPrereadCharacters.toString(), null);	//insert the preread characters at the front of the document TODO check
 			}
 			catch(BadLocationException badLocationException)
 			{

@@ -197,7 +197,7 @@ public class TelecommunicationsPanel extends ContentPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		setBorder(BorderUtilities.createDefaultTitledBorder());	//set a titled border
+		setBorder(Borders.createDefaultTitledBorder());	//set a titled border
 		setTitle("Telecommunications");	//TODO i18n
 		buttonToolBar.setFloatable(false);
 		buttonToolBar.add(Box.createGlue());	//put glue before and after the button to center them 

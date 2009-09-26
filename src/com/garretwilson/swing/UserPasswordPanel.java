@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.GridBagConstraints;
@@ -90,40 +106,11 @@ public class UserPasswordPanel extends BasicPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		usernameLabel.setText("User");	//G***i18n
+		usernameLabel.setText("User");	//TODO i18n
 		usernameField.setColumns(16);
 		add(usernameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, LABEL_INSETS, 0, 0));
 		add(usernameField, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, FIELD_INSETS, 0, 0));
 		add(passwordPanel, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, LABEL_INSETS, 0, 0));
 	}
 
-	/**Updates the states of the actions, including enabled/disabled status,
-		proxied actions, etc.
-	*/
-/*G***del
-	public void updateStatus()
-	{
-		super.updateStatus();	//do the default updating
-		passwordVerificationLabel.setVisible(isVerifyPassword());	//only show the password verification if we should verify the password
-		passwordVerificationField.setVisible(isVerifyPassword());	//only show the password verification if we should verify the password
-	}
-*/
-
-	/**Verifies the component.
-	@return <code>true</code> if the component contents are valid, <code>false</code>
-		if not.
-	*/
-/*G***del
-	public boolean verify()
-	{
-			//if we should verify password and the passwords don't match
-		if(isVerifyPassword() && !Arrays.equals(passwordField.getPassword(), passwordVerificationField.getPassword()))
-		{
-			JOptionPane.showMessageDialog(this, "Please verify the entered password by entering the same password in both fields.", "Invalid user", JOptionPane.ERROR_MESSAGE);	//G***i18n
-			passwordVerificationField.requestFocusInWindow(); //focus on the password verificiation field
-			return false; //show that verification failed			
-		}
-		return super.verify();  //if we couldn't find any problems, verify the parent class
-	}
-*/
 }

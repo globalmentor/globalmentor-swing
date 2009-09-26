@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.Component;
@@ -17,7 +33,7 @@ The actions are categorized into groups, and action managers may merge or
 <p>For consistency and merging, the provided actions should be used if possible
 	to represent top-level menus.</p>
 <p>To indicate that actions should be visibly separated in any menu or toolbar,
-	an instance of <code>SeparatorAction</code> should be used.</p>
+	an instance of {@link SeparatorAction} should be used.</p>
 <p>Each menu action may have an action manager order property that will
 	determine its order within its group. Several default orders are provided and
 	should be used for consistency and to facility proper merging. The predefined
@@ -309,7 +325,7 @@ public class ActionManager implements Cloneable
 		no actions.
 	@see ActionMen
 	 */
-/*G***del; this is only needed for menu items, so there's no point in splitting it out
+/*TODO del; this is only needed for menu items, so there's no point in splitting it out
 	protected static Iterator getSortedActionIterator(final List actionList)
 	{
 	final List actionList=(List)menuActionListMap.get(parentAction);	//see if there is a list of children for this parent
@@ -339,7 +355,7 @@ public class ActionManager implements Cloneable
 					//don't put two separators in a row, and don't put a separator as the first component 
 				if(lastComponent!=null && !(lastComponent instanceof JSeparator))	//if this isn't the first component and it doesn't come before a separator
 				{
-					lastComponent=ToolBarUtilities.createToolBarSeparator(toolBar);	//create a toolbar separator
+					lastComponent=ToolBars.createToolBarSeparator(toolBar);	//create a toolbar separator
 					toolBar.add(lastComponent);	//add the separator
 				}				
 			}
@@ -366,7 +382,7 @@ public class ActionManager implements Cloneable
 	@param The new component to represent the action.
 	@see 
 	*/
-/*G***maybe fix later
+/*TODO maybe fix later
 	public static Component createComponent(final Action action)
 	{
 		return new JButton(action);	//return a new button to represent the action
@@ -461,12 +477,12 @@ public class ActionManager implements Cloneable
 		/**Default constructor.*/
 		public FileMenuAction()
 		{
-			super("File");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "File menu");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "File and resource-related functions.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_F));  //set the mnemonic key G***i18n
-//G***fix if needed			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
-//G***fix			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, Event.ALT_MASK)); //add the accelerator G***i18n
+			super("File");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "File menu");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "File and resource-related functions.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_F));  //set the mnemonic key TODO i18n
+//TODO fix if needed			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
+//TODO fix			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, Event.ALT_MASK)); //add the accelerator TODO i18n
 			putValue(MENU_ORDER_PROPERTY, new Integer(FILE_MENU_ACTION_ORDER));	//set the order
 		}
 
@@ -484,12 +500,12 @@ public class ActionManager implements Cloneable
 		/**Default constructor.*/
 		public EditMenuAction()
 		{
-			super("Edit");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Edit menu");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Edit functions.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_E));  //set the mnemonic key G***i18n
-//G***fix if needed			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
-//G***fix			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, Event.ALT_MASK)); //add the accelerator G***i18n
+			super("Edit");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Edit menu");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Edit functions.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_E));  //set the mnemonic key TODO i18n
+//TODO fix if needed			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
+//TODO fix			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, Event.ALT_MASK)); //add the accelerator TODO i18n
 			putValue(MENU_ORDER_PROPERTY, new Integer(EDIT_MENU_ACTION_ORDER));	//set the order
 		}
 
@@ -507,10 +523,10 @@ public class ActionManager implements Cloneable
 		/**Default constructor.*/
 		public InsertMenuAction()
 		{
-			super("Insert");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Insert menu");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Insert functions.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_I));  //set the mnemonic key G***i18n
+			super("Insert");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Insert menu");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Insert functions.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_I));  //set the mnemonic key TODO i18n
 			putValue(MENU_ORDER_PROPERTY, new Integer(INSERT_MENU_ACTION_ORDER));	//set the order
 		}
 
@@ -528,12 +544,12 @@ public class ActionManager implements Cloneable
 		/**Default constructor.*/
 		public ViewMenuAction()
 		{
-			super("View");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "View menu");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "View functions.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_V));  //set the mnemonic key G***i18n
-//G***fix if needed			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
-//G***fix			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, Event.ALT_MASK)); //add the accelerator G***i18n
+			super("View");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "View menu");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "View functions.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_V));  //set the mnemonic key TODO i18n
+//TODO fix if needed			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
+//TODO fix			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, Event.ALT_MASK)); //add the accelerator TODO i18n
 			putValue(MENU_ORDER_PROPERTY, new Integer(VIEW_MENU_ACTION_ORDER));	//set the order
 		}
 
@@ -551,12 +567,12 @@ public class ActionManager implements Cloneable
 		/**Default constructor.*/
 		public ConfigureMenuAction()
 		{
-			super("Configure");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Configuration menu");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Configuration functions.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key G***i18n
-//G***fix if needed			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
-//G***fix			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, Event.ALT_MASK)); //add the accelerator G***i18n
+			super("Configure");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Configuration menu");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Configuration functions.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key TODO i18n
+//TODO fix if needed			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
+//TODO fix			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, Event.ALT_MASK)); //add the accelerator TODO i18n
 			putValue(MENU_ORDER_PROPERTY, new Integer(CONFIGURE_MENU_ACTION_ORDER));	//set the order
 		}
 
@@ -574,12 +590,12 @@ public class ActionManager implements Cloneable
 		/**Default constructor.*/
 		public HelpMenuAction()
 		{
-			super("Help");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Help menu");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Helpful functions.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_H));  //set the mnemonic key G***i18n
-//G***fix if needed			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
-//G***del			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK)); //add the accelerator G***i18n
+			super("Help");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Help menu");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Helpful functions.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_H));  //set the mnemonic key TODO i18n
+//TODO fix if needed			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
+//TODO del			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK)); //add the accelerator TODO i18n
 			putValue(MENU_ORDER_PROPERTY, new Integer(HELP_MENU_ACTION_ORDER));	//set the order
 		}
 

@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
@@ -68,21 +84,21 @@ public class ImagePanel extends JPanel
 		updateDisplay(); //update the labels
 	}
 
-	/**Image constructor. G***fix Automatically fits the image in a separate thread.
+	/**Image constructor. TODO fix Automatically fits the image in a separate thread.
 	@param image The image to be displayed.
 	*/
 	public ImagePanel(final Image image)
 	{
 		this(); //do the default construction
 		setImage(image);  //set the image
-//G***fix		imageComponent.fitImage();  //fit the image
+//TODO fix		imageComponent.fitImage();  //fit the image
 	}
 
 	/**Initialize the user interface.*/
   private void jbInit()
   {
 		//setup the toolbar
-		toolBar.putClientProperty("JToolBar.isRollover", Boolean.TRUE);	//G***fix with constants or utility function
+		toolBar.putClientProperty("JToolBar.isRollover", Boolean.TRUE);	//TODO fix with constants or utility function
     toolBar.add(getZoomInAction()); //zoom in
 		toolBar.add(zoomLabel); //1X
 		toolBar.add(getZoomOutAction()); //zoom out
@@ -106,7 +122,7 @@ public class ImagePanel extends JPanel
 	protected void updateDisplay()
 	{
 		zoomLabel.setText(String.valueOf(Math.round(imageComponent.getZoomFactor()*100))+'%');  //update the zoom percentage on the label
-//G***del		zoomLabel.setText(String.valueOf(MathUtilities.round(imageComponent.getZoomFactor(), 2))+'X");
+//TODO del		zoomLabel.setText(String.valueOf(MathUtilities.round(imageComponent.getZoomFactor(), 2))+'X");
 	}
 
 	/**Action for zooming in.*/
@@ -115,10 +131,10 @@ public class ImagePanel extends JPanel
 		/**Default constructor.*/
 		public ZoomInAction()
 		{
-			super("Zoom in");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Zoom In");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Increase the zoom factor.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_I));  //set the mnemonic key G***i18n
+			super("Zoom in");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Zoom In");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Increase the zoom factor.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_I));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.ZOOM_IN_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -128,7 +144,7 @@ public class ImagePanel extends JPanel
 		public void actionPerformed(ActionEvent e)
 		{
 			imageComponent.setZoomFactor(imageComponent.getZoomFactor()*ZOOM_DELTA_FACTOR);  //increase the zoom factor the correct amount
-//G***del		  updateDisplay(); //update the zoom label
+//TODO del		  updateDisplay(); //update the zoom label
 		}
 	}
 
@@ -138,10 +154,10 @@ public class ImagePanel extends JPanel
 		/**Default constructor.*/
 		public ZoomOutAction()
 		{
-			super("Zoom out");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Zoom Out");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Decrease the zoom factor.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_O));  //set the mnemonic key G***i18n
+			super("Zoom out");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Zoom Out");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Decrease the zoom factor.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_O));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.ZOOM_OUT_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -151,7 +167,7 @@ public class ImagePanel extends JPanel
 		public void actionPerformed(ActionEvent e)
 		{
 			imageComponent.setZoomFactor(imageComponent.getZoomFactor()/ZOOM_DELTA_FACTOR);  //decrease the zoom factor the correct amount
-//G***del		  updateDisplay(); //update the zoom label
+//TODO del		  updateDisplay(); //update the zoom label
 		}
 	}
 
@@ -161,10 +177,10 @@ public class ImagePanel extends JPanel
 		/**Default constructor.*/
 		public FitImageAction()
 		{
-			super("Fit image");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Fit image to View");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Fit the image to the view..");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_F));  //set the mnemonic key G***i18n
+			super("Fit image");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Fit image to View");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Fit the image to the view..");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_F));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.IMAGE_SIZE_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -174,7 +190,7 @@ public class ImagePanel extends JPanel
 		public void actionPerformed(ActionEvent e)
 		{
 			imageComponent.fitImage(); //fit the image to the container
-//G***del		  updateDisplay(); //update the zoom label
+//TODO del		  updateDisplay(); //update the zoom label
 		}
 	}
 }

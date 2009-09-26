@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
@@ -7,12 +23,8 @@ import java.io.*;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.swing.unicode.UnicodeStatusBar;
-import com.globalmentor.io.*;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.text.Text;
-import com.globalmentor.util.*;
-
-import static com.globalmentor.net.ContentTypeConstants.*;
 
 /**A panel to edit plain text.
 @author Garret Wilson
@@ -46,7 +58,7 @@ public class TextPanel extends ModelPanel<StringBuilder>
 	{
 		textPane.setEditable(editable);	//show whether or not the text pane is editable
 		textPane.setBackground(editable ? Color.WHITE : Color.LIGHT_GRAY);	//set the color to match
-//G***del		textPane.setEnabled(editable);	//set the enabled status to match
+//TODO del		textPane.setEnabled(editable);	//set the enabled status to match
 	}
 
 	/**Default constructor.*/
@@ -74,7 +86,7 @@ public class TextPanel extends ModelPanel<StringBuilder>
 	protected void initializeUI()
 	{
 		super.initializeUI(); //do the default UI initialization
-		textPane.setContentType(ContentType.toString(ContentType.TEXT_PRIMARY_TYPE, Text.PLAIN_SUBTYPE));	//set the content type to "text/plain" G***maybe allow this panel to support multiple MIME types, and put the setting of the type back into TextResourceKit
+		textPane.setContentType(ContentType.toString(ContentType.TEXT_PRIMARY_TYPE, Text.PLAIN_SUBTYPE));	//set the content type to "text/plain" TODO maybe allow this panel to support multiple MIME types, and put the setting of the type back into TextResourceKit
 		textPane.getDocument().addDocumentListener(getModifyDocumentListener());	//show that we're modified whenever the text is edited (we never change the document, we just load and save text into the document)
 		add(scrollPane, BorderLayout.CENTER);	//place the text pane, in its scroll pane, in the center of the panel
 		add(unicodeStatusBar, BorderLayout.SOUTH);	//put the Unicode status bar in the south TODO make this an option
@@ -105,11 +117,11 @@ public class TextPanel extends ModelPanel<StringBuilder>
 		/**Default constructor.*/
 		public UnicodeAction()
 		{
-			super("U+");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Select Unicode character.");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Access the set of Unicode code points.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_U));  //set the mnemonic key G***i18n
-//G***fix			putValue(SMALL_ICON, new ImageIcon(ReaderFrame.class.getResource("info.gif")));	//load the correct icon G***use a constant here
+			super("U+");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Select Unicode character.");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Access the set of Unicode code points.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_U));  //set the mnemonic key TODO i18n
+//TODO fix			putValue(SMALL_ICON, new ImageIcon(ReaderFrame.class.getResource("info.gif")));	//load the correct icon TODO use a constant here
 		}
 
 		/**Called when the action should be performed.

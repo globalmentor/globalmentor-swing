@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.Component;
@@ -9,17 +25,11 @@ import java.util.*;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
-import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-import com.garretwilson.awt.DefaultFocusable;
-
 import static com.globalmentor.java.Booleans.*;
 
-import com.globalmentor.model.Modifiable;
 import com.globalmentor.net.Resource;
 
 /**Class that manages resource components in a desktop pane.
@@ -80,7 +90,7 @@ public class DesktopPaneResourceComponentDecorator<R extends Resource> extends R
 									{
 										if(!resourceComponentManager.canClose(resourceComponentState))	//ask the resource component manager if this resource component state can close; if it can't
 										{
-											throw new PropertyVetoException("Resource manager prevented component from closing.", propertyChangeEvent); //cancel the closing G***i18n
+											throw new PropertyVetoException("Resource manager prevented component from closing.", propertyChangeEvent); //cancel the closing TODO i18n
 										}
 									}
 								}
@@ -122,7 +132,7 @@ public class DesktopPaneResourceComponentDecorator<R extends Resource> extends R
 		addInternalFrameListeners(internalFrame);	//add the internal frame
 		getDesktopPane().add(internalFrame, JDesktopPane.DEFAULT_LAYER);  //add the frame to the default layer
 		getDesktopPane().getDesktopManager().activateFrame(internalFrame);  //activate the internal frame we just added
-		//G***fix		updateTitle(internalFrame);  //update the internal frame's title
+		//TODO fix		updateTitle(internalFrame);  //update the internal frame's title
 	}
 
 	/**Called when a resource component is removed.
@@ -166,8 +176,8 @@ public class DesktopPaneResourceComponentDecorator<R extends Resource> extends R
 	protected JInternalFrame createInternalFrame(final String title)	//TODO maybe put this in a utility class
 	{
 		final JInternalFrame internalFrame=new JInternalFrame(title, true, true, true, true); //create a default internal frame
-		internalFrame.setVisible(true); //G***testing
-		internalFrame.setBounds(0, 0, 640, 480); //G***testing
+		internalFrame.setVisible(true); //TODO testing
+		internalFrame.setBounds(0, 0, 640, 480); //TODO testing
 		return internalFrame; //return the frame we created
 	}
 	
@@ -265,7 +275,7 @@ public class DesktopPaneResourceComponentDecorator<R extends Resource> extends R
   public void internalFrameClosed(final InternalFrameEvent internalFrameEvent)
 	{
 /*TODO fix
-Log.trace("internal frame closed"); //G***del
+Log.trace("internal frame closed"); //TODO del
 		if(getDesktopPane().getAllFrames().length==0) //if this is the last frame closed
 ;//TODO fix		  getApplicationFrame().updateStatus();  //update our actions to reflect that all frames have been closed
 */

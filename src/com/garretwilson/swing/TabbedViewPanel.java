@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
@@ -11,12 +27,11 @@ import com.garretwilson.resources.icon.IconResources;
 import com.globalmentor.collections.DecoratorReverseMap;
 import com.globalmentor.collections.ReverseMap;
 import com.globalmentor.model.Verifiable;
-import com.globalmentor.util.*;
 
 /**Panel that allows multiple views of data to be displayed in separate tabs.
 When the view value is changed, the appropriate tab is selected; when a new tab
 	is selected, the view value is changed accordingly.
-<p>The tabbed view panel uses a <code>BasicGridBagLayout</code> with a border
+<p>The tabbed view panel uses a {@link BasicGridBagLayout} with a border
 	paradigm.</p>
 <p>Subclasses should set the correct default view only after initializing the tabs.</p>
 @author Garret Wilson
@@ -307,32 +322,5 @@ public abstract class TabbedViewPanel<M> extends ModelViewablePanel<M>
 			getTabbedPane().setSelectedComponent(component);	//select the tabbed pane that represents the view 
 		}
 	}
-
-	/**Verifies the component.
-	<p>This version abandons default functionality and only verifies the current
-		view component and then saves the current viewsaves any editing changes to the model.</p>
-	@return <code>true</code> if the component contents are valid, <code>false</code>
-		if not.
-	@see #saveModel()
-	*/
-/*G***del; TODO modify the verify() method (shown here from ModelPanel) so that it does not attempt to verify every tab on the panel
-	public boolean verify()
-	{
-		boolean verified=super.verify();	//perform the default verification---do this first so that any child components that we may need for our model can be verified, saving their models
-		if(verified)	//if the default verification succeeded
-		{
-			try
-			{
-				saveModel();	//store any model data that was being edited, if any
-			}
-			catch(IOException ioException)	//if there were any problems saving the model
-			{
-				SwingApplication.displayApplicationError(this, ioException);	//display the error
-				verified=false;	//show that the component didn't verify
-			}
-		}
-		return verified;	//show whether or not we successfully verified the component
-	}
-*/
 
 }

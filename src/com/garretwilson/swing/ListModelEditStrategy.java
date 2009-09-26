@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.Component;
@@ -10,12 +26,12 @@ import com.globalmentor.model.Modifiable;
 
 /**A plug-in strategy class for editing items from a list model.
 <p>Actual modification of the list will only be performed if the list model
-	implements either <code>javax.swing.DefaultListModel</code> or
-	<code>java.util.List</code>.</p>
-<p>If a <code>Modifiable</code> object is given, its modified
+	implements either {@link DefaultListModel} or
+	{@link List}.</p>
+<p>If a {@link Modifiable} object is given, its modified
 	status will be set when an item is added, edited, or deleted.</p>
 <p>For best results, derived classes should override
-	<code>getParentComponent()</code>, along with <code>getModifiable()</code>
+	{@link ListModelEditStrategy#getParentComponent()}, along with {@link ListModelEditStrategy#getModifiable()}
 	if needed.</p>
 @param <E> The type of element in the list model.
 @author Garret Wilson
@@ -215,7 +231,7 @@ public abstract class ListModelEditStrategy<E>
 		{
 			final E item=(E)listModel.getElementAt(index);	//get the currently selected item
 				//ask the user for confimation to delete the item
-			if(BasicOptionPane.showConfirmDialog(getParentComponent(), "Are you sure you want to delete the item, \""+item+"\"?", "Confirm delete", BasicOptionPane.OK_CANCEL_OPTION)==BasicOptionPane.OK_OPTION)	//G***i18n
+			if(BasicOptionPane.showConfirmDialog(getParentComponent(), "Are you sure you want to delete the item, \""+item+"\"?", "Confirm delete", BasicOptionPane.OK_CANCEL_OPTION)==BasicOptionPane.OK_OPTION)	//TODO i18n
 			{
 				deleteItem(item);	//delete the item before removing it from the list
 				if(listModel instanceof DefaultListModel)	//if the list model is a default list model
@@ -374,10 +390,10 @@ public abstract class ListModelEditStrategy<E>
 		/**Default constructor.*/
 		public AddAction()
 		{
-			super("Add");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Add item");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Add an item to the list.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_A));  //set the mnemonic key G***i18n
+			super("Add");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Add item");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Add an item to the list.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_A));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.DOCUMENT_NEW_ICON_FILENAME)); //load the correct icon
 		}
 	
@@ -396,10 +412,10 @@ public abstract class ListModelEditStrategy<E>
 		/**Default constructor.*/
 		public DeleteAction()
 		{
-			super("Delete");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Delete item");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Delete an item from the list.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_D));  //set the mnemonic key G***i18n
+			super("Delete");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Delete item");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Delete an item from the list.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_D));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.DELETE_ICON_FILENAME)); //load the correct icon
 		}
 	
@@ -418,10 +434,10 @@ public abstract class ListModelEditStrategy<E>
 		/**Default constructor.*/
 		public EditAction()
 		{
-			super("Edit");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Edit item");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Edit the selected item.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_E));  //set the mnemonic key G***i18n
+			super("Edit");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Edit item");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Edit the selected item.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_E));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.EDIT_ICON_FILENAME)); //load the correct icon
 		}
 	
@@ -440,10 +456,10 @@ public abstract class ListModelEditStrategy<E>
 		/**Default constructor.*/
 		public MoveUpAction()
 		{
-			super("Move Up");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Move up");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Move the selected item up in the list.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_U));  //set the mnemonic key G***i18n
+			super("Move Up");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Move up");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Move the selected item up in the list.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_U));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.MOVE_UP_ICON_FILENAME)); //load the correct icon
 		}
 		
@@ -462,10 +478,10 @@ public abstract class ListModelEditStrategy<E>
 		/**Default constructor.*/
 		public MoveDownAction()
 		{
-			super("Move Down");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Move down");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Move the selected item down in the list.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_D));  //set the mnemonic key G***i18n
+			super("Move Down");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Move down");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Move the selected item down in the list.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_D));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.MOVE_DOWN_ICON_FILENAME)); //load the correct icon
 		}
 		

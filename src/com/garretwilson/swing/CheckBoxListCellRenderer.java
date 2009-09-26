@@ -1,9 +1,23 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.border.*;
-import javax.swing.plaf.UIResource;
 
 import com.globalmentor.log.Log;
 
@@ -40,7 +54,7 @@ public class CheckBoxListCellRenderer extends JCheckBox implements ListCellRende
   {
 		setComponentOrientation(list.getComponentOrientation());
 		setSelected(isSelected);  //show whether the item is selected
-/*G***fix
+/*TODO fix
 	if (value instanceof Icon) {
 	    setIcon((Icon)value);
 	    setText("");
@@ -49,20 +63,20 @@ public class CheckBoxListCellRenderer extends JCheckBox implements ListCellRende
 	    setIcon(null);
 	    setText((value == null) ? "" : value.toString());
 	}
-		final String string=getListCellRendererString(list, value, index, isSelected, cellHasFocus);  //get the string to display G***we have a new version of this method now
-//G***assert the string is not null
+		final String string=getListCellRendererString(list, value, index, isSelected, cellHasFocus);  //get the string to display TODO we have a new version of this method now
+//TODO assert the string is not null
 		Debug.assert(component instanceof JLabel, "List cell renderer component not a JLabel");
 		((JLabel)component).setText(string);  //set the correct text, assuming that the component is a JLabel (which is likely the implementation used by the default
 		return component; //return the component, now using our custom text
   }
 */
 		final String text=getListCellRendererString(list, value, index, isSelected, cellHasFocus);  //get the string to display
-//G***assert the string is not null
+//TODO assert the string is not null
 		setText(text);  //set the correct text
 		setEnabled(list.isEnabled());
 	  setFont(list.getFont());
 	  setBorder((cellHasFocus) ? UIManager.getBorder("List.focusCellHighlightBorder") : noFocusBorder);
-			//G***fix; setBorder() doesn't seem to work, but this method is inconsistent with the normal UI representation
+			//TODO fix; setBorder() doesn't seem to work, but this method is inconsistent with the normal UI representation
 		if(cellHasFocus || index==list.getLeadSelectionIndex())  //if this cell has the focus (or it's the lead selection index), show the focus using the selection attributes
 		{
 			setBackground(list.getSelectionBackground());

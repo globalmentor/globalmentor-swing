@@ -1,15 +1,28 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.event.*;
 import java.beans.*;
 import java.lang.ref.*;
 
 import javax.swing.*;
-import javax.swing.event.*;
 
-import static com.garretwilson.swing.ComponentConstants.*;
 import static com.globalmentor.java.Objects.*;
 
 /**Action that knows how to create its own component.
@@ -22,10 +35,10 @@ public abstract class ComponentAction<C extends Component> extends AbstractActio
 //TODO del if not needed	public final static String SELECTED_OBJECTS_PROPERTY="selectedObjects";
 
 	/**The listener we use to find out when the proxied action is changing.*/
-//G***del if not needed	private PropertyChangeListener actionPropertyChangeListener;
+//TODO del if not needed	private PropertyChangeListener actionPropertyChangeListener;
 
 	/**Whether action properties should be updated when the proxied action changes.*/
-//G***fix	private boolean shouldUpdateProperties=true;
+//TODO fix	private boolean shouldUpdateProperties=true;
 
 	/**Defines a proxy action object with a default description string and
 		default icon.
@@ -90,7 +103,7 @@ public abstract class ComponentAction<C extends Component> extends AbstractActio
 	*/
 	protected void configureComponent(final C component)
 	{
-/*G***fix		
+/*TODO fix		
 		component.set
 		String text = a!=null? (String)a.getValue(Action.NAME) : null;
 		Icon icon   = a!=null? (Icon)a.getValue(Action.SMALL_ICON) : null;
@@ -158,7 +171,7 @@ public abstract class ComponentAction<C extends Component> extends AbstractActio
 			{
 				final JComponent jComponent=asInstance(component, JComponent.class);	//get the component as a JComponent, if it is one
 				final String propertyName=propertyChangeEvent.getPropertyName();	//get the property name
-				if(ENABLED_PROPERTY.equals(propertyName))  //if the enabled state is changing, we must change the actual property (which will change the property value), rather than just changing the underlying value or the actual property won't change
+				if(Components.ENABLED_PROPERTY.equals(propertyName))  //if the enabled state is changing, we must change the actual property (which will change the property value), rather than just changing the underlying value or the actual property won't change
 				{
 					component.setEnabled(((Boolean)propertyChangeEvent.getNewValue()).booleanValue());	//update the enabled state
 				}

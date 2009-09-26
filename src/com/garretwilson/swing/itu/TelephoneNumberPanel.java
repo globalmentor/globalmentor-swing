@@ -1,13 +1,27 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.itu;
 
 import java.awt.*;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 import com.garretwilson.swing.*;
 import com.globalmentor.itu.*;
 import com.globalmentor.text.ArgumentSyntaxException;
-import com.globalmentor.text.SyntaxException;
 
 /**A panel allowing entry of an international public telecommunication number
 	for geographic areas as defined in ITU-T E.164,
@@ -78,7 +92,7 @@ public class TelephoneNumberPanel extends ModifiablePanel
 		}
 		else	//if there is no telephone number, clear the fields
 		{
-			countryCodeComboBox.setSelectedItem("1");	//G***i18n; fix in conjunction with com.garretwilson.itu.CountryCode
+			countryCodeComboBox.setSelectedItem("1");	//TODO i18n; fix in conjunction with com.garretwilson.itu.CountryCode
 			nationalDestinationCodeTextField.setText("");
 			subscriberNumberTextField.setText("");
 		}
@@ -138,19 +152,19 @@ public class TelephoneNumberPanel extends ModifiablePanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		countryCodeLabel.setText("Country");	//G***i18n
+		countryCodeLabel.setText("Country");	//TODO i18n
 		countryCodeComboBox.setEditable(true);
-		countryCodeComboBox.setPrototypeDisplayValue("000");	//G***testing
-//G***gix		honorificPrefixComboBox.setModel(new DefaultComboBoxModel(HONORIFIC_PREFIX_EXAMPLES));	//set up the example honorific prefixes
+		countryCodeComboBox.setPrototypeDisplayValue("000");	//TODO testing
+//TODO gix		honorificPrefixComboBox.setModel(new DefaultComboBoxModel(HONORIFIC_PREFIX_EXAMPLES));	//set up the example honorific prefixes
 		countryCodeComboBox.addActionListener(getModifyActionListener());
-		nationalDestinationCodeLabel.setText("Area Code");	//G***i18n
+		nationalDestinationCodeLabel.setText("Area Code");	//TODO i18n
 		nationalDestinationCodeTextField.setColumns(8);
 		nationalDestinationCodeTextField.getDocument().addDocumentListener(getModifyDocumentListener());
-		subscriberNumberLabel.setText("Number");	//G***i18n
+		subscriberNumberLabel.setText("Number");	//TODO i18n
 		subscriberNumberTextField.setColumns(10);
 		subscriberNumberTextField.getDocument().addDocumentListener(getModifyDocumentListener());
-//G***del when works		final JLabel imageLabel=new JLabel(IconResources.getIcon(IconResources.PHONE_ICON_FILENAME)); //create a label with the image		
-//G***del when works		add(imageLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
+//TODO del when works		final JLabel imageLabel=new JLabel(IconResources.getIcon(IconResources.PHONE_ICON_FILENAME)); //create a label with the image		
+//TODO del when works		add(imageLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(countryCodeLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
 		add(countryCodeComboBox, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
 		add(nationalDestinationCodeLabel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
@@ -177,7 +191,7 @@ public class TelephoneNumberPanel extends ModifiablePanel
 			}
 			catch(final ArgumentSyntaxException syntaxException)	//if the information isn't a valid telephone number
 			{
-				JOptionPane.showMessageDialog(this, "The telephone number you entered is invalid: "+syntaxException.getMessage(), "Invalid telephone number", JOptionPane.ERROR_MESSAGE);	//G***i18n
+				JOptionPane.showMessageDialog(this, "The telephone number you entered is invalid: "+syntaxException.getMessage(), "Invalid telephone number", JOptionPane.ERROR_MESSAGE);	//TODO i18n
 				nationalDestinationCodeTextField.requestFocusInWindow(); //focus on part of the telephone number text field
 				return false; //show that verification failed
 			}

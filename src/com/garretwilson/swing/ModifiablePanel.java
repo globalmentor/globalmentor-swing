@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
@@ -8,30 +24,29 @@ import com.garretwilson.awt.*;
 import com.garretwilson.swing.event.*;
 import com.globalmentor.java.*;
 import com.globalmentor.model.Modifiable;
-import com.globalmentor.util.*;
 
 /**A panel that can be modified, and recognized when its contained components
 	have been modified.
 <p>The panel can keep track of whether its contents have been modified.</p>
-<p>If the <code>Modifiable.MODIFIED_PROPERTY</code> is set to false, all
-	all descendant components that implement <code>Modifiable</code> have
+<p>If the {@link Modifiable#MODIFIED_PROPERTY}is set to <code>false</code>, all
+	all descendant components that implement {@link Modifiable} have
 	their modified properties set to <code>false</code> as well.</p>
-<p>Whenever a component is added that is <code>Modifiable</code> or has
-	<code>Modifiable</code> children, listeners are installed that will
+<p>Whenever a component is added that is {@link Modifiable} or has
+	{@link Modifiable} children, listeners are installed that will
 	change this panel's modified status to <code>true</code> when one of those
 	children are modified. (Setting the modification status of those children
 	to <code>false</code> will have no effect.) Similarly, recognized child
 	components such as text components, radio buttons, and checkboxes, along
-	with children of added non-<code>Modifiable</code> components, will have
+	with children of added non-{@link Modifiable} components, will have
 	listeners installed that change this panel's modification status to
 	<code>true</code> in response to modifications in those components.</p>
 <p>Bound properties:</p>
 <dl>
-	<dt><code>Modifiable.MODIFIED_PROPERTY</code> (<code>Boolean</code>)</dt>
+	<dt>{@link Modifiable#MODIFIED_PROPERTY} (<code>Boolean</code>)</dt>
 	<dd>Indicates that the boolean modified property has been changed.</dd>
 </dl>
 @author Garret Wilson
-@see java.beans.PropertyChangeListener
+@see PropertyChangeListener
 */
 public class ModifiablePanel extends BasicPanel implements Modifiable
 {
@@ -177,7 +192,7 @@ public class ModifiablePanel extends BasicPanel implements Modifiable
 	{
 		super.initialize();	//do the default initialization
 		setModified(false);	//show that the information has not been modified		
-		updateStatus();  //update the status again, because it might have been updated while we were modified G***this means updateStatus() is called twice---try to get around that, or maybe even place updateStatus() in setModified()
+		updateStatus();  //update the status again, because it might have been updated while we were modified TODO this means updateStatus() is called twice---try to get around that, or maybe even place updateStatus() in setModified()
 	}
 
 	/**Adds the specified component to this container at the specified index.
@@ -256,7 +271,7 @@ public class ModifiablePanel extends BasicPanel implements Modifiable
 		{
 			component.addPropertyChangeListener(getModifyModifiedPropertyChangeListener());	//listen for modifications and modify this panel in response
 		}
-/*G***fix
+/*TODO fix
 		else if(component instanceof JTextComponent)	//if the component is a text component
 		{
 			((JTextComponent)component).getD
@@ -346,7 +361,7 @@ public class ModifiablePanel extends BasicPanel implements Modifiable
 		updates the modified status to <code>true</code>.
 	@see #setModified
 	*/
-/*G***bring back
+/*TODO bring back
 	public PropertyChangeListener createModifyPropertyChangeListener()
 	{
 		return new PropertyChangeListener()	//create a new property change listener that will do nothing but set modified to true
@@ -415,7 +430,7 @@ public class ModifiablePanel extends BasicPanel implements Modifiable
 		the modified status to <code>true</code>.
 	@see #setModified
 	*/
-/*G***fix or del
+/*TODO fix or del
 	protected DocumentListener createModifyDocumentListener()
 	{
 		return new DocumentModifyAdapter()	//create a new document listener that will do nothing but update the status

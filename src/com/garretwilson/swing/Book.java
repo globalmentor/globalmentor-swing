@@ -1,7 +1,23 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
-import java.awt.event.*;  //G***fix for image mouse clicks
+import java.awt.event.*;  //TODO fix for image mouse clicks
 import java.beans.*;
 import java.io.*;
 import java.net.*;
@@ -12,7 +28,7 @@ import static java.util.Collections.*;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.text.*;  //G***del when image click code is moved elsewhere
+import javax.swing.text.*;  //TODO del when image click code is moved elsewhere
 import com.garretwilson.model.ResourceModel;
 import com.garretwilson.resources.icon.*;
 import com.garretwilson.swing.event.*;
@@ -51,7 +67,7 @@ import com.globalmentor.util.prefs.PreferencesUtilities;
 @see javax.swing.JPanel
 @see com.garretwilson.swing.XMLTextPane
 */
-public class Book extends ToolStatusPanel implements PageListener, AdjustmentListener, CaretListener, ProgressListener, HyperlinkListener, MouseListener  //G***testing MouseListener for image viewing
+public class Book extends ToolStatusPanel implements PageListener, AdjustmentListener, CaretListener, ProgressListener, HyperlinkListener, MouseListener  //TODO testing MouseListener for image viewing
 {
 	/**The property representing the antialias setting.*/
 	public final static String ANTIALIAS_PROPERTY="antialias";
@@ -66,7 +82,7 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 	public final static String HISTORY_INDEX_PROPERTY="historyIndex";
 
 	/**The property which stores the user data <code>File</code> object.*/
-//G***del	public final static String USER_DATA_FILE_PROPERTY="userData";
+//TODO del	public final static String USER_DATA_FILE_PROPERTY="userData";
 
 	/**The property representing the zoom level.*/
 	public final static String ZOOM_PROPERTY="zoom";
@@ -86,7 +102,7 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 	private final XMLTextPane xmlTextPane;
 
 		/**@return The text pane used to display information.*/
-		public XMLTextPane getXMLTextPane() {return xmlTextPane;}	//G***maybe later change this to protected access
+		public XMLTextPane getXMLTextPane() {return xmlTextPane;}	//TODO maybe later change this to protected access
 
 	/**The scrollbar for showing the position within the book.*/
 	private final JScrollBar scrollBar;
@@ -99,7 +115,7 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 		/**Sets the scrollbar for showing the position within the book.
 		@param newScrollBar The scrollbar to use for showing the book position.
 		*/
-/*G***del if not needed
+/*TODO del if not needed
 		protected void setScrollBar(final JScrollBar newScrollBar)
 		{
 			if(scrollBar!=newScrollBar) //if we're really changing scrollbars,
@@ -221,11 +237,11 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 		therefore serves as both a definitive list of bookmarks and a map of
 		highlights which correspond to those bookmarks. This tree map ensures
 		that the key set will always be in natural bookmark order, from lowest
-		to highest.*/  //G***maybe make this a bound property
+		to highest.*/  //TODO maybe make this a bound property
 	private final Map bookmarkHighlightTagMap;
 
-		/**@return The list of bookmarks in the book.*/ //G***maybe later just make an Iterator available
-//G***del		protected List getBookmarkList() {return bookmarkList;}
+		/**@return The list of bookmarks in the book.*/ //TODO maybe later just make an Iterator available
+//TODO del		protected List getBookmarkList() {return bookmarkList;}
 
 		/**Adds an unnamed bookmark at the current location in the document.*/
 		public void addBookmark()
@@ -240,7 +256,7 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 		*/
 		public void addBookmark(final String name)
 		{
-Log.trace();  //G***del
+Log.trace();  //TODO del
 			int offset=-1; //we'll store the offset here at which the bookmark should be inserted
 				//see if there is a selection
 			final boolean isSelection=getXMLTextPane().getSelectionEnd()>getXMLTextPane().getSelectionStart();
@@ -298,14 +314,14 @@ Log.trace();  //G***del
 					bookmark.attach(getXMLTextPane().getDocument());  //attach the bookmark to the document
 				//add a bookmark highlighter to the text pane to show the bookmark at the correct location
 				final Object bookmarkHighlight=getXMLTextPane().getHighlighter().addHighlight(bookmark.getOffset(), bookmark.getOffset()+1, bookmarkHighlightPainter);
-Log.trace("bookmark highlight returned is: ", bookmarkHighlight); //G***del
+Log.trace("bookmark highlight returned is: ", bookmarkHighlight); //TODO del
 				bookmarkHighlightTagMap.put(bookmark, bookmarkHighlight); //add the bookmark highlight to the map, keyed to the bookmark
 Log.trace("key set: ", bookmarkHighlightTagMap.keySet());
 Log.trace("values: ", bookmarkHighlightTagMap.values());
 
 Log.trace("after putting bookmark, found tag: ", bookmarkHighlightTagMap.get(bookmark));
 Log.trace("contains bookmark key: ", new Boolean(bookmarkHighlightTagMap.containsKey(bookmark)));
-//G***del Log.trace("contains value key: ", new Boolean(bookmarkHighlightTagMap.containsKey(bookmarkHighlight)));
+//TODO del Log.trace("contains value key: ", new Boolean(bookmarkHighlightTagMap.containsKey(bookmarkHighlight)));
 Log.trace("contains value: ", new Boolean(bookmarkHighlightTagMap.containsValue(bookmarkHighlight)));
 				userDataModified=true;	//show that the user data has been modified
 				firePropertyChange(BOOKMARKS_PROPERTY, null, null); //fire an event showing that the bookmarks have changed
@@ -345,7 +361,7 @@ Log.trace("ready to fire property change");
 			while(iterator.hasNext()) //while there are more bookmarks
 			{
 				final Bookmark currentBookmark=(Bookmark)iterator.next();  //get the next bookmark
-//G***del when works				if(currentBookmark.getOffset()==offset)  //if this bookmark starts at the offset
+//TODO del when works				if(currentBookmark.getOffset()==offset)  //if this bookmark starts at the offset
 				if(currentBookmark.contains(offset))  //if this bookmark starts at the offset
 					bookmark=currentBookmark; //store the bookmark and look for another one
 			}
@@ -356,7 +372,7 @@ Log.trace("ready to fire property change");
 		public void clearBookmarks()
 		{
 			bookmarkHighlightTagMap.clear();  //clear the bookmarks and their corresponding highlights
-		  TextComponents.removeHighlights(getXMLTextPane(), bookmarkHighlightPainter);  //remove all bookmark highlights G***it would probably be better to remove them one at a time with the highlight tag
+		  TextComponents.removeHighlights(getXMLTextPane(), bookmarkHighlightPainter);  //remove all bookmark highlights TODO it would probably be better to remove them one at a time with the highlight tag
 			userDataModified=true;	//show that the user data has been modified
 			firePropertyChange(BOOKMARKS_PROPERTY, null, null); //fire an event showing that the bookmarks have changed
 		}
@@ -421,12 +437,12 @@ Log.trace("ready to fire property change");
 			{
 				if(!annotation.isAttached())  //if the annotation isn't attached to the document
 					annotation .attach(getXMLTextPane().getDocument());  //attach the annotation to the document
-				final Highlighter.HighlightPainter annotationHighlightPainter=new DefaultHighlighter.DefaultHighlightPainter(annotation.getColor());  //G***testing; comment
+				final Highlighter.HighlightPainter annotationHighlightPainter=new DefaultHighlighter.DefaultHighlightPainter(annotation.getColor());  //TODO testing; comment
 				//add an annotation highlighter to the text pane to show the annotation at the correct location
 				final Object annotationHighlight=getXMLTextPane().getHighlighter().addHighlight(annotation.getStartOffset(), annotation.getEndOffset(), annotationHighlightPainter);
 				annotationHighlightTagMap.put(annotation, annotationHighlight); //add the annotation highlight to the map, keyed to the annotation
 				userDataModified=true;	//show that the user data has been modified
-//G***fix				firePropertyChange(BOOKMARKS_PROPERTY_NAME, null, null); //fire an event showing that the bookmarks have changed
+//TODO fix				firePropertyChange(BOOKMARKS_PROPERTY_NAME, null, null); //fire an event showing that the bookmarks have changed
 			}
 		}
 
@@ -441,7 +457,7 @@ Log.trace("ready to fire property change");
 				annotationHighlightTagMap.remove(annotation);  //remove the annotation and highlight tag from the map
 				getXMLTextPane().getHighlighter().removeHighlight(annotationHighlightTag);  //remove the highlight itself
 				userDataModified=true;	//show that the user data has been modified
-//G***fix				firePropertyChange(BOOKMARKS_PROPERTY_NAME, null, null); //fire an event showing that the bookmarks have changed
+//TODO fix				firePropertyChange(BOOKMARKS_PROPERTY_NAME, null, null); //fire an event showing that the bookmarks have changed
 			}
 		}
 
@@ -487,7 +503,7 @@ Log.trace("ready to fire property change");
 	*/
 	public URI getURI()
 	{
-//G***del; now close() removes the base URI, making this next line work		return DocumentUtilities.getBaseURI(getXMLTextPane().getDocument());	//get the base URI of the document
+//TODO del; now close() removes the base URI, making this next line work		return DocumentUtilities.getBaseURI(getXMLTextPane().getDocument());	//get the base URI of the document
 		return getXMLTextPane().getBaseURI();  //get the base URI property value
 	}
 
@@ -495,13 +511,13 @@ Log.trace("ready to fire property change");
 		text pane has an XML document with RDF metadata.
 	@return The RDF data model associated with the book, or <code>null</code> if
 		there is no RDF metadata.
-//	G***this will eventually probably go somewhere else, when this turns into an XMLReader component or something; we'll probably store the publication in a property
+//	TODO this will eventually probably go somewhere else, when this turns into an XMLReader component or something; we'll probably store the publication in a property
 	*/
 	public RDF getRDF()
 	{
 		final Document document=getXMLTextPane().getDocument(); //get the document associated with the text pane
 		if(document instanceof BasicStyledDocument) //if the document is a basic styled document
-		  return ((BasicStyledDocument)document).getRDF();  //get the RDF data model from the XML document G***why don't we get the property value directly?
+		  return ((BasicStyledDocument)document).getRDF();  //get the RDF data model from the XML document TODO why don't we get the property value directly?
 	  return null;  //show that we could not find an RDF data model
 	}
 
@@ -513,7 +529,7 @@ Log.trace("ready to fire property change");
 	{
 		final Document document=getXMLTextPane().getDocument(); //get the document associated with the text pane
 		if(document instanceof XMLDocument) //if the document is an XML document
-		  return ((XMLDocument)document).getPublication();  //get the OEB publication object from the OEB document G***why don't we get the property value directly?
+		  return ((XMLDocument)document).getPublication();  //get the OEB publication object from the OEB document TODO why don't we get the property value directly?
 	  return null;  //show that we could not find a publication
 	}
 
@@ -522,7 +538,7 @@ Log.trace("ready to fire property change");
 		data file.
 	@see #USER_DATA_FILE_PROPERTY
 	*/
-/*G***del if not needed
+/*TODO del if not needed
 	public File getUserDataFile()
 	{
 		final Object userDataFile=getXMLTextPane().getDocument().getProperty(USER_DATA_FILE_PROPERTY); //get the user data file from the document
@@ -625,9 +641,9 @@ Log.trace("ready to fire property change");
 	}
 
 	//history
-	//G***probably make something to limit the size of the history list
-	//G***don't forget to clear the history list when a new document is loaded
-	//G***tie the history to a property
+	//TODO probably make something to limit the size of the history list
+	//TODO don't forget to clear the history list when a new document is loaded
+	//TODO tie the history to a property
 
 	/**The list of history positions.*/
 	private java.util.List historyList;
@@ -712,19 +728,19 @@ Log.trace("ready to fire property change");
 	/**Stores the current position in the history list.*/
 	protected void storePositionHistory()
 	{
-Log.trace();  //G***del
+Log.trace();  //TODO del
 		final int pageIndex=getPageIndex(); //get our current page index
 		if(pageIndex!=-1) //if we have a valid page index
 		{
-//G***del Log.trace("pageIndex: "+pageIndex);
+//TODO del Log.trace("pageIndex: "+pageIndex);
 			final int offset=getXMLTextPane().getPageStartOffset(pageIndex);  //get the starting offset of our page
-//G***del Log.trace("offset: "+offset);
-//G***del 		  Log.trace(""+getXMLTextPane().getDocument().getStartPosition());  //G***testing
+//TODO del Log.trace("offset: "+offset);
+//TODO del 		  Log.trace(""+getXMLTextPane().getDocument().getStartPosition());  //TODO testing
 		  try
 			{
-//G***del Log.trace("Before creating position from offset: "+offset+" document length: "+getXMLTextPane().getDocument().getLength());
+//TODO del Log.trace("Before creating position from offset: "+offset+" document length: "+getXMLTextPane().getDocument().getLength());
 				final Position position=getXMLTextPane().getDocument().createPosition(offset);  //create a position from our offset
-//G***del Log.trace("After creating position from offset: "+offset);
+//TODO del Log.trace("After creating position from offset: "+offset);
 				addHistory(position); //add this position to our history list
 			}
 			catch(BadLocationException e) //we should never have a bad location
@@ -817,7 +833,7 @@ Log.trace();  //G***del
 	protected void initializeActions(final ActionManager actionManager)
 	{
 		super.initializeActions(actionManager);	//do the default initialization
-/*G***transfer to MentoractReaderPanel	
+/*TODO transfer to MentoractReaderPanel	
 		final Action fileMenuAction=ActionManager.getFileMenuAction();
 		actionManager.addMenuAction(fileMenuAction);	//file
 		actionManager.addMenuAction(fileMenuAction, sdiManager.getResourceComponentManager().getOpenAction());	//file|open
@@ -835,7 +851,7 @@ Log.trace();  //G***del
 	/**Initializes the user interface.*/
 	protected void initializeUI()
 	{
-//	G***fix		setDefaultFocusComponent(burrowTreePanel);	//TODO put this in the constructor, maybe
+//	TODO fix		setDefaultFocusComponent(burrowTreePanel);	//TODO put this in the constructor, maybe
 		super.initializeUI();	//do the default initialization
 		backAction.setEnabled(false); //default to no history
 		viewPropertiesAction.setEnabled(false); //default to having no properties to view
@@ -858,13 +874,13 @@ Log.trace();  //G***del
 			  //if the document property changes, call onDocumentChange()
 			  public void propertyChange(final PropertyChangeEvent event) {onDocumentChange();}
 			});
-	  xmlTextPane.addPageListener(this); //add ourselves as a page listener, so that we can update the forward and backwards actions G***we probably want to get the events directly from the book
-/*G***del when works
+	  xmlTextPane.addPageListener(this); //add ourselves as a page listener, so that we can update the forward and backwards actions TODO we probably want to get the events directly from the book
+/*TODO del when works
 		getXMLTextPane().addHyperlinkListener(  //add a listener for hyperlink events
 			new HyperlinkListener()
 			{
 				public void hyperlinkUpdate(HyperlinkEvent hyperlinkEvent)
-				{//G***check about the loadingPage flag
+				{//TODO check about the loadingPage flag
 					if(hyperlinkEvent.getEventType()==HyperlinkEvent.EventType.ACTIVATED)	//if the cursor is entering the
 					{
 						activateLink(hyperlinkEvent);	//activate the link
@@ -873,15 +889,15 @@ Log.trace();  //G***del
 			});
 */
 		xmlTextPane.addCaretListener(this);	//listen for caret events so that we can enable or disable certain actions
-		xmlTextPane.addMouseListener(this);	//G***testing
-//G***fix		statusBar.add(statusProgressBar, new GridBagConstraints(1, 0, 1, 1, 0.5, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));	//G***testing
-//G***fix		statusSlider.setPaintLabels(true);  //turn on label painting
-//G***fix		statusSlider.setPaintTicks(true); //turn on tick painting
+		xmlTextPane.addMouseListener(this);	//TODO testing
+//TODO fix		statusBar.add(statusProgressBar, new GridBagConstraints(1, 0, 1, 1, 0.5, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));	//TODO testing
+//TODO fix		statusSlider.setPaintLabels(true);  //turn on label painting
+//TODO fix		statusSlider.setPaintTicks(true); //turn on tick painting
 
 
-//G***fix		statusSlider.setPaintTrack(true); //turn on track painting
-//G***fix		statusSlider.setMajorTickSpacing(2);  //G***testing
-//G***fix		statusSlider.setMajorTickSpacing(1);
+//TODO fix		statusSlider.setPaintTrack(true); //turn on track painting
+//TODO fix		statusSlider.setMajorTickSpacing(2);  //TODO testing
+//TODO fix		statusSlider.setMajorTickSpacing(1);
 
 		getStatusBar().setStatusVisible(true);	//always show the status label
 		getStatusBar().setProgressVisible(true);	//always show the progress bar
@@ -897,20 +913,20 @@ Log.trace();  //G***del
 	public void madeProgress(final ProgressEvent progressEvent)
 	{
 		final StatusBar statusBar=getStatusBar();	//get our status bar
-//G***del Log.trace("made progress: ", progressEvent.getTask());  //G**del
+//TODO del Log.trace("made progress: ", progressEvent.getTask());  //G**del
 		if(progressEvent.isFinished())  //if the progress is finished (whatever the progress is)
 		{
-//G***del Log.trace("is finished: ", progressEvent.getTask());  //G**del
-		  if(progressEvent.getTask().equals(XMLTextPane.CONSTRUCT_TASK))  //if the document is finished being constructed, we'll treat this as a "finished loading" notification G***probably add some specific document setting event later, or something; actually, that's already there with the document property changing
+//TODO del Log.trace("is finished: ", progressEvent.getTask());  //G**del
+		  if(progressEvent.getTask().equals(XMLTextPane.CONSTRUCT_TASK))  //if the document is finished being constructed, we'll treat this as a "finished loading" notification TODO probably add some specific document setting event later, or something; actually, that's already there with the document property changing
 			{
-//TODO fix				refreshGoGuidesMenu();  //G***testing; comment; G***fix for multithreaded loading
+//TODO fix				refreshGoGuidesMenu();  //TODO testing; comment; TODO fix for multithreaded loading
 			}
-		  else if(progressEvent.getTask().equals(XMLTextPane.PAGINATE_TASK))  //if the document is finished being paginated G***probably add some specific document setting event later, or something; actually, that's already there with the document property changing
+		  else if(progressEvent.getTask().equals(XMLTextPane.PAGINATE_TASK))  //if the document is finished being paginated TODO probably add some specific document setting event later, or something; actually, that's already there with the document property changing
 			{
 				firePropertyChange(BOOKMARKS_PROPERTY, null, null); //fire an event showing that the bookmarks have changed, because pagination changes the pages they point to
 			}
-//G***del when works			setStatus("");	//clear the status
-//G***del Log.trace("setting status progress to zero"); //G***del
+//TODO del when works			setStatus("");	//clear the status
+//TODO del Log.trace("setting status progress to zero"); //TODO del
 		  statusBar.setProgress("", 0);  //set the value of the progress bar to zero
 		}
 		else  //if the progress is still ongoing
@@ -926,8 +942,8 @@ Log.trace();  //G***del
 			{
 				statusBar.setProgress(progressEvent.getStatus()); //show the progress status on the status bar
 			}
-/*G***maybe fix for threaded pagination
-		  if(e.getTask().equals(XMLPagedView.PAGINATE_TASK))  //if we've paginated another page G***testing; maybe only do this if we have threaded pagination
+/*TODO maybe fix for threaded pagination
+		  if(e.getTask().equals(XMLPagedView.PAGINATE_TASK))  //if we've paginated another page TODO testing; maybe only do this if we have threaded pagination
 			{
 				final int pageIndex=book.getPageIndex(); //get our current page index
 				final int pageCount=book.getPageCount(); //get our current page count
@@ -936,9 +952,9 @@ Log.trace();  //G***del
 				nextPageAction.setEnabled(pageIndex+displayPageCount<pageCount); //we can only go forwards if the turning the page would not be over the total number of pages
 			}
 */
-//TODO fix; doesn't work inside the AWT event thread, but it *must* be called from there:	statusBar.paintImmediately(statusBar.getBounds());	//G***testing
+//TODO fix; doesn't work inside the AWT event thread, but it *must* be called from there:	statusBar.paintImmediately(statusBar.getBounds());	//TODO testing
 		}
-//G***bring back, fix		setStatusLater(e.getStatus());	//update the status later
+//TODO bring back, fix		setStatusLater(e.getStatus());	//update the status later
 	}
 
 	/**Invoked when a hyperlink action occurs.
@@ -949,8 +965,8 @@ Log.trace();  //G***del
 		if(hyperlinkEvent.getEventType()==HyperlinkEvent.EventType.ENTERED)	//if the cursor is entering a hyperlink
 			getStatusBar().setStatus(hyperlinkEvent.getURL().toString());	//show the URL in the status
 		else if(hyperlinkEvent.getEventType()==HyperlinkEvent.EventType.EXITED)	//if the cursor is exiting a hyperlink
-			getStatusBar().setStatus("");	//G***testing
-				//G***check about the loadingPage flag
+			getStatusBar().setStatus("");	//TODO testing
+				//TODO check about the loadingPage flag
 		if(hyperlinkEvent.getEventType()==HyperlinkEvent.EventType.ACTIVATED)	//if the cursor is entering the
 		{
 			activateLink(hyperlinkEvent);	//activate the link
@@ -961,22 +977,22 @@ Log.trace();  //G***del
 		indicators
 	@param pageEvent The page event.
 	*/
-	//G***change the page event to pageChange()
-	public void pageChanged(PageEvent pageEvent)  //G***change the page event to a bound property
+	//TODO change the page event to pageChange()
+	public void pageChanged(PageEvent pageEvent)  //TODO change the page event to a bound property
 	{
-//G***del Log.trace("page changed event, new page index: {0} count: {1}", new Object[]{pageEvent.getPageIndex(), pageEvent.getPageCount()});  //G***fix
-//G***del Log.traceStack();
+//TODO del Log.trace("page changed event, new page index: {0} count: {1}", new Object[]{pageEvent.getPageIndex(), pageEvent.getPageCount()});  //TODO fix
+//TODO del Log.traceStack();
 		final int pageIndex=pageEvent.getPageIndex(); //get the new page index
 		final int pageCount=pageEvent.getPageCount(); //get the page count
 		final int displayPageCount=getDisplayPageCount(); //find out how many pages at a time are being displayed
-Log.trace("page index: ", pageIndex);		  //G***del
-Log.trace("page count: ", pageCount);		  //G***del
-Log.trace("display page count: ", displayPageCount);		  //G***del
+Log.trace("page index: ", pageIndex);		  //TODO del
+Log.trace("page count: ", pageCount);		  //TODO del
+Log.trace("display page count: ", displayPageCount);		  //TODO del
 		final JScrollBar scrollBar=getScrollBar();  //get our scrollbar, if we have one
 		if(scrollBar!=null) //if we have a scrollbar
 		{
 			final XMLTextPane textPane=getXMLTextPane();	//get a reference to our text pane
-/*G***del
+/*TODO del
 			final XMLTextPane textPane=getXMLTextPane();	//get a reference to our text pane
 			final int absolutePageIndex=textPane.getAbsolutePageIndex(pageIndex);
 */
@@ -988,18 +1004,18 @@ Log.trace("maximum", maximum);
 			final int newValue=pageIndex==0 ? pageIndex : textPane.getAbsolutePageIndex(pageIndex);	//other than the first page, the other pages will be offset by the extra space in the first set
 Log.trace("new value", newValue);
 			scrollBar.setValues(newValue, displayPageCount, 0, maximum);	//update the scrollbar, pretending all the page sets are full of pages
-/*G***del when works
-			scrollBar.setMinimum(0); //show that we start with page one G***maybe put this somewhere else
-			scrollBar.setExtent(0); //show that we start with page one G***maybe put this somewhere else
+/*TODO del when works
+			scrollBar.setMinimum(0); //show that we start with page one TODO maybe put this somewhere else
+			scrollBar.setExtent(0); //show that we start with page one TODO maybe put this somewhere else
 			scrollBar.setMaximum(pageCount-1);  //show how many pages there are
 			scrollBar.setValue(pageIndex);  //show which page we're on
 */
-/*G***fix
-		statusSlider.setMinimum(1); //show that we start with page one G***maybe put this somewhere else
+/*TODO fix
+		statusSlider.setMinimum(1); //show that we start with page one TODO maybe put this somewhere else
 		statusSlider.setMaximum(pageCount);  //show how many pages there are
 		statusSlider.setValue(pageIndex+1);  //show which page we're on
 */
-			final StringBuffer toolTipTextStringBuffer=new StringBuffer("Page "); //construct a string with the current page number G***i18n
+			final StringBuffer toolTipTextStringBuffer=new StringBuffer("Page "); //construct a string with the current page number TODO i18n
 			toolTipTextStringBuffer.append(pageIndex+1); //add the page number to the string
 			if(displayPageCount>1) //if there are more than one page being shown
 			{
@@ -1007,7 +1023,7 @@ Log.trace("new value", newValue);
 				toolTipTextStringBuffer.append(pageIndex+displayPageCount<=pageCount ? pageIndex+displayPageCount : pageCount); //add the last page number in the range to the string
 			}
 			scrollBar.setToolTipText(toolTipTextStringBuffer.toString());  //add the tooltip text showing the page number
-//G****fix		statusSlider.setToolTipText(toolTipTextStringBuffer.toString());  //add the tooltip text showing the page number
+//TODO *fix		statusSlider.setToolTipText(toolTipTextStringBuffer.toString());  //add the tooltip text showing the page number
 		}
 		previousPageAction.setEnabled(pageIndex>0); //we can only go back if the new page index is greater than zero
 		nextPageAction.setEnabled(pageIndex+displayPageCount<pageCount); //we can only go forwards if the turning the page would not be over the total number of pages
@@ -1050,7 +1066,7 @@ Log.trace("new page index", newPageIndex);
 	*/
 	public void mouseClicked(MouseEvent mouseEvent)
 	{
-//G***del Log.trace("Mouse clicked...");
+//TODO del Log.trace("Mouse clicked...");
 		if(mouseEvent.isPopupTrigger()) //if this is a trigger to popup a context menu
 		{
 			popupTriggered(mouseEvent); //show that a popup was triggered
@@ -1063,7 +1079,7 @@ Log.trace("new page index", newPageIndex);
 			}
 			else  //if no popup was triggered in any previous press or release
 			{
-				final JEditorPane editorPane=(JEditorPane)mouseEvent.getSource();	//get the source of the event G***should we really assume the source is the editor pane? probably not
+				final JEditorPane editorPane=(JEditorPane)mouseEvent.getSource();	//get the source of the event TODO should we really assume the source is the editor pane? probably not
 				if(!editorPane.isEditable())	//if the editor pane is read-only
 				{
 					final Point point=new Point(mouseEvent.getX(), mouseEvent.getY());	//create a point from the mouse click coordinates
@@ -1075,9 +1091,9 @@ Log.trace("new page index", newPageIndex);
 						if(XHTMLSwingText.isImage(attributeSet)) //if this is an image
 						{
 	Log.trace("Is image element.");
-	//G***del						final String src=(String)attributeSet.getAttribute("src");	//G***fix; use a constant
+	//TODO del						final String src=(String)attributeSet.getAttribute("src");	//TODO fix; use a constant
 							final String href=XHTMLSwingText.getImageHRef(attributeSet); //get a reference to the image file represented by the element
-	//G***del Debug.notify("image from: "+src);	//G***fix
+	//TODO del Debug.notify("image from: "+src);	//TODO fix
 							if(href!=null)  //if we found a reference to the image
 							{
 									//take into account that the href is relative to this file's base URI
@@ -1095,36 +1111,36 @@ Log.trace("new page index", newPageIndex);
 						}
 
 
-				  //G***this doesn't work with object fallback images; we really need to get the *view* represented and get the *attribute* set from the view to check for an image
+				  //TODO this doesn't work with object fallback images; we really need to get the *view* represented and get the *attribute* set from the view to check for an image
 
-	//G***del Debug.notify("Mouse clicked on position: "+pos);	//G***fix
-	/*G***fix
+	//TODO del Debug.notify("Mouse clicked on position: "+pos);	//TODO fix
+	/*TODO fix
 					if(pos>=0)	//if we found a valid position in the document
 						activateLink(pos, editorPane, e.getX(), e.getY());	//try activate a link at that position
 	*/
 
 
 
-/*G***del when we've successfully switched from using elements to using views
+/*TODO del when we've successfully switched from using elements to using views
 					final Document document=editorPane.getDocument();	//get the document in the editor pane
 					if(document instanceof XMLDocument)	//if this is an XML document
 					{
-	//G***del Log.trace("OEBBook mouse clicked in an OEBDocument");
+	//TODO del Log.trace("OEBBook mouse clicked in an OEBDocument");
 						XMLDocument xmlDocument=(XMLDocument)document;	//cast the document to an XML document
 						Element element=xmlDocument.getCharacterElement(pos);	//get the element this position represents
 
-						element=element!=null ? element.getParentElement() : null; //if the element has a parent, get that parent; this is because, right now, the images have dummy text beneath them G***fix eventually
+						element=element!=null ? element.getParentElement() : null; //if the element has a parent, get that parent; this is because, right now, the images have dummy text beneath them TODO fix eventually
 	Log.trace("Checking mouse click element.");
-	//G***del 					final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
-	//G***del					final String elementName=XMLStyleConstants.getXMLElementName(attributeSet); //get the name of this element
-	//G***del Log.trace("mouse clicked on element: "+elementName);  //G***del
-	//G***del when works					final String elementName=(String)attributeSet.getAttribute(StyleConstants.NameAttribute);	//get the name of this element
+	//TODO del 					final AttributeSet attributeSet=element.getAttributes();	//get the attributes of this element
+	//TODO del					final String elementName=XMLStyleConstants.getXMLElementName(attributeSet); //get the name of this element
+	//TODO del Log.trace("mouse clicked on element: "+elementName);  //TODO del
+	//TODO del when works					final String elementName=(String)attributeSet.getAttribute(StyleConstants.NameAttribute);	//get the name of this element
 						if(OEBSwingTextUtilities.isImageElement(element)) //if this is an image element
 						{
 	Log.trace("Is image element.");
-	//G***del						final String src=(String)attributeSet.getAttribute("src");	//G***fix; use a constant
+	//TODO del						final String src=(String)attributeSet.getAttribute("src");	//TODO fix; use a constant
 							final String href=OEBSwingTextUtilities.getImageElementHRef(element); //get a reference to the image file represented by the element
-	//G***del Debug.notify("image from: "+src);	//G***fix
+	//TODO del Debug.notify("image from: "+src);	//TODO fix
 							if(href!=null)  //if we found a reference to the image
 							{
 	Log.trace("Image href: ", href);
@@ -1147,7 +1163,7 @@ Log.trace("new page index", newPageIndex);
 	*/
   public void mousePressed(MouseEvent mouseEvent)
 	{
-//G***del Log.trace("mousePressed is trigger: ", new Boolean(mouseEvent.isPopupTrigger()));  //G***del
+//TODO del Log.trace("mousePressed is trigger: ", new Boolean(mouseEvent.isPopupTrigger()));  //TODO del
 		if(mouseEvent.isPopupTrigger()) //if this is a trigger to popup a context menu
 		{
 			mousePressReleasePopupTrigger=true; //show that a mouse press or release triggered a popup
@@ -1162,7 +1178,7 @@ Log.trace("new page index", newPageIndex);
 	*/
   public void mouseReleased(MouseEvent mouseEvent)
 	{
-//G***del Log.trace("mouseReleased is trigger: ", new Boolean(mouseEvent.isPopupTrigger()));  //G***del
+//TODO del Log.trace("mouseReleased is trigger: ", new Boolean(mouseEvent.isPopupTrigger()));  //TODO del
 		if(mouseEvent.isPopupTrigger()) //if this is a trigger to popup a context menu
 		{
 			mousePressReleasePopupTrigger=true; //show that a mouse press or release triggered a popup
@@ -1207,7 +1223,7 @@ Log.trace("new page index", newPageIndex);
 					{
 						try
 						{
-								//G***add something here to extract the name of the image, especially after we can get a URL relative to the file base
+								//TODO add something here to extract the name of the image, especially after we can get a URL relative to the file base
 								//take into account that the href is relative to this file's base URL
 							final String baseRelativeHRef=XMLStyles.getBaseRelativeHRef(imageElement.getAttributes(), href);
 							JMenuItem viewImageMenuItem=popupMenu.add(new ViewImageAction(baseRelativeHRef)); //add an action to view the image
@@ -1225,7 +1241,7 @@ Log.trace("new page index", newPageIndex);
 			if(bookmark!=null)  //if there is a bookmark at this position
 			{
 				JMenuItem deleteBookmarkMenuItem=popupMenu.add(new DeleteBookmarkAction(bookmark)); //add an action to delete the bookmark
-//G***fix or del				deleteBookmarkMenuItem.setMnemonic('i');	//G***i18n
+//TODO fix or del				deleteBookmarkMenuItem.setMnemonic('i');	//TODO i18n
 				popupMenu.addSeparator(); //add a separator
 			}
 				//"Delete Annotation"
@@ -1233,7 +1249,7 @@ Log.trace("new page index", newPageIndex);
 			if(annotation!=null)  //if there is an annotation at this position
 			{
 				JMenuItem deleteAnnotationMenuItem=popupMenu.add(new DeleteAnnotationAction(annotation)); //add an action to delete the annotation
-//G***fix or del				deleteBookmarkMenuItem.setMnemonic('i');	//G***i18n
+//TODO fix or del				deleteBookmarkMenuItem.setMnemonic('i');	//TODO i18n
 				popupMenu.addSeparator(); //add a separator
 			}
 				//"Define XXXX"
@@ -1245,33 +1261,33 @@ Log.trace("new page index", newPageIndex);
 				if(isSelection) //if there is a selection
 				{
 					final int textOffset=getXMLTextPane().getSelectionStart(); //we'll start with the selection start
-					final int textLength=Math.min(getXMLTextPane().getSelectionEnd()-textOffset, 128); //we'll end with the selection end, making sure the selection isn't too large G***use a constant here
+					final int textLength=Math.min(getXMLTextPane().getSelectionEnd()-textOffset, 128); //we'll end with the selection end, making sure the selection isn't too large TODO use a constant here
 					defineText=document.getText(textOffset, textLength).trim(); //get the text they've selected and trim it, in case they accidentally got whitespace along with it
 				}
 				else  //if there isn't a selection, try to see what word is being clicked on
 				{
-								//G***check to see if text is highlighted; if so, use the highlighted portion
-					final int textOffset=Math.max(pos-64, 0); //find out the start of the text to retrieve; make sure we don't go past the beginning of the document G***use a constant here
-					final int textLength=Math.min(document.getLength()-textOffset, 128); //find out how much text to retrieve; make sure we don't go past the end of the document G***use a constant here
+								//TODO check to see if text is highlighted; if so, use the highlighted portion
+					final int textOffset=Math.max(pos-64, 0); //find out the start of the text to retrieve; make sure we don't go past the beginning of the document TODO use a constant here
+					final int textLength=Math.min(document.getLength()-textOffset, 128); //find out how much text to retrieve; make sure we don't go past the end of the document TODO use a constant here
 					final int relativeOffset=Math.min(pos-textOffset, textLength-1);  //find out where the position will be in the text we retrieve, makeing sure it isn't past the end of the text
-/*G***del
+/*TODO del
 Log.trace("position: ", pos);
 Log.trace("Text offset: ", textOffset);
 Log.trace("Text length: ", textLength);
 Log.trace("Relative offset: ", relativeOffset);
 */
-						//G***this ignores different elements, so <h1>Title</h1><p>text</p> give "Titletext"; fix so that only the element text is returned
+						//TODO this ignores different elements, so <h1>Title</h1><p>text</p> give "Titletext"; fix so that only the element text is returned
 					final String text=document.getText(textOffset, textLength); //get the text surrounding the position
-					final BreakIterator wordBreakIterator=BreakIterator.getWordInstance();  //get a break iterator to find a word based on the appropriate locale G***use the specific locale here
+					final BreakIterator wordBreakIterator=BreakIterator.getWordInstance();  //get a break iterator to find a word based on the appropriate locale TODO use the specific locale here
 					wordBreakIterator.setText(text);  //set the text of the break iterator
 					final int wordEnd=wordBreakIterator.following(relativeOffset); //get the end of the word
 					final int wordBegin=wordBreakIterator.previous(); //get the beginning of the word
-	//G***do the isLetter thing to make sure this is a word
+	//TODO do the isLetter thing to make sure this is a word
 					defineText=text.substring(wordBegin, wordEnd).trim(); //get the word to define, trimming it in case the selection was whitespace
 				}
-				if(defineText.length()>0 && defineText.length()<64) //if there is something to define at this location, and it's not too long G***use a constant here
+				if(defineText.length()>0 && defineText.length()<64) //if there is something to define at this location, and it's not too long TODO use a constant here
 				{
-						//G***check the current locale and record that in the action as well
+						//TODO check the current locale and record that in the action as well
 					JMenuItem defineWordMenuItem=popupMenu.add(new DefineAction(defineText)); //add an action to define the word
 						//separator
 					popupMenu.addSeparator(); //add a separator
@@ -1333,10 +1349,10 @@ Log.trace("Relative offset: ", relativeOffset);
 	{
 		close();  //close whatever book is open
 
-/*G***fix
-		final XMLEditorKit.XMLViewFactory xmlViewFactory=(XMLEditorKit.XMLViewFactory)oebEditorKit.getViewFactory();  //get the view factory from the editor kit G***make sure this is an XMLViewFactory
+/*TODO fix
+		final XMLEditorKit.XMLViewFactory xmlViewFactory=(XMLEditorKit.XMLViewFactory)oebEditorKit.getViewFactory();  //get the view factory from the editor kit TODO make sure this is an XMLViewFactory
 		  //register a QTI view factory with the QTI namespace, with the normal XML view factory as the fallback
-//G***if fix, register with the XMLTextPane, not the view factory		xmlViewFactory.registerViewFactory(QTIConstants.QTI_1_1_NAMESPACE_URI, new QTIViewFactory());
+//TODO if fix, register with the XMLTextPane, not the view factory		xmlViewFactory.registerViewFactory(QTIConstants.QTI_1_1_NAMESPACE_URI, new QTIViewFactory());
 */
 		getXMLTextPane().setPage(uri, getURIInputStreamable());	//tell the text pane to read from the URI
 	}
@@ -1344,7 +1360,7 @@ Log.trace("Relative offset: ", relativeOffset);
 	/**Closes the book, if one is open.*/
 	public void close()
 	{
-		historyList.clear();  //clear the history list G***probably put a clearHistory() method instead
+		historyList.clear();  //clear the history list TODO probably put a clearHistory() method instead
 		setHistoryIndex(0); //show that we have no history
 		clearBookmarks(); //clear the bookmark list
 		getXMLTextPane().setBaseURI(null);	//show that nothing is open (do this so that the new blank document will not have its base URI set automatically) 
@@ -1375,7 +1391,7 @@ Log.trace("Relative offset: ", relativeOffset);
 	@exception IOExeption Thrown if an I/O error occurs.
 	@see OEBTextPane#read
 	*/
-/*G***del
+/*TODO del
 	public void read(final Reader in, final Object desc) throws IOException
 	{
 		getXMLTextPane().read(in, desc);	//let the OEB text pane read the content
@@ -1476,10 +1492,10 @@ Log.trace("document change, URI: ", uri);
 		getXMLTextPane().setPageIndex(pageIndex);	//sets the page index of the OEB text pane
 	}
 
-	//G***fix this with the correct modelToView() stuff; comment
+	//TODO fix this with the correct modelToView() stuff; comment
 	public int getPageIndex(final int pos)
 	{
-		return getXMLTextPane().getPageIndex(pos); //G***comment; decide how we really want to allow access here
+		return getXMLTextPane().getPageIndex(pos); //TODO comment; decide how we really want to allow access here
 	}
 
 	/**@return <code>true</code> if the specified page is one of the pages being
@@ -1495,7 +1511,7 @@ Log.trace("document change, URI: ", uri);
 	*/
 	public void goNextPage()
 	{
-//G***del System.out.println("OEBBook.goNextPage()");	//G***del
+//TODO del System.out.println("OEBBook.goNextPage()");	//TODO del
 		getXMLTextPane().goNextPage();	//tell the text pane to go to the next page
 	}
 
@@ -1532,10 +1548,10 @@ Log.trace("document change, URI: ", uri);
 		default browser. The previous location is stored in the history list.
 	@param url The destination URL.
 	*/
-/*G***fix or del	
-	public void go(final URL url)	//G***fix all this -- this is just a quick kludge to see if it will work
+/*TODO fix or del	
+	public void go(final URL url)	//TODO fix all this -- this is just a quick kludge to see if it will work
 	{
-Log.trace("Inside OEBBook.goURL()");	//G***del
+Log.trace("Inside OEBBook.goURL()");	//TODO del
 		storePositionHistory(); //store our position in the history list
 Log.trace("ready to call XMLTextPane.go(URL)");
 		getXMLTextPane().go(url);  //tell the text pane to go to the URL
@@ -1549,7 +1565,7 @@ Log.trace("ready to call XMLTextPane.go(URL)");
 	*/
 	public void go(final URI uri)
 	{
-Log.trace("Inside OEBBook.goURI()");	//G***del
+Log.trace("Inside OEBBook.goURI()");	//TODO del
 	  storePositionHistory(); //store our position in the history list
 Log.trace("ready to call XMLTextPane.go(URI)");
 		getXMLTextPane().go(uri);  //tell the text pane to go to the URI
@@ -1588,7 +1604,7 @@ Log.trace("ready to call XMLTextPane.go(URI)");
 	/**Activates a particular hyperlink from a given hyperlink event.
 	@param hyperlinkEvent The event which contains information about the hyperlink
 		to be activated.
-	*/  //G***add checking for out-of-spine content here
+	*/  //TODO add checking for out-of-spine content here
 	public void activateLink(final HyperlinkEvent hyperlinkEvent)
 	{
 Log.trace("Inside OEBBook.activateLink().");
@@ -1610,9 +1626,9 @@ Log.trace("Inside OEBBook.activateLink().");
 		}
 		try
 		{
-			final XMLDocument xmlDocument=(XMLDocument)getXMLTextPane().getDocument();	//get the loaded document G***should we assume this is an XML document?
+			final XMLDocument xmlDocument=(XMLDocument)getXMLTextPane().getDocument();	//get the loaded document TODO should we assume this is an XML document?
 			final ContentType mediaType=xmlDocument.getResourceMediaType(hyperlinkURI.toString());	//get the media type of the resource specified by this hyperlink event
-Log.trace("Media type: ", mediaType);	//G***del
+Log.trace("Media type: ", mediaType);	//TODO del
 			if(mediaType!=null)	//if we think we know the media type of the file involved
 			{
 					//TODO create convenience utility methods similar to MediaTypeUtilities.isAudio() for all of these checks
@@ -1620,29 +1636,29 @@ Log.trace("Media type: ", mediaType);	//G***del
 				if(Audio.isAudio(mediaType))	//if this is an audio media type
 				{
 Log.trace("found an audio file.");
-//G***del; fix				  mouseEvent.consume(); //consume the event so that the mouse click won't be interpreted elsewhere
+//TODO del; fix				  mouseEvent.consume(); //consume the event so that the mouse click won't be interpreted elsewhere
 					final Clip clip=(Clip)xmlDocument.getResource(hyperlinkURI.toString());	//get and open a clip to the audio
 Log.trace("ready to start clip.");
-					clip.start();	//start the clip playing G***do we need to close it later?
+					clip.start();	//start the clip playing TODO do we need to close it later?
 					return;	//don't do any more processing
 				}
-				else if(topLevelType.equals(ContentType.IMAGE_PRIMARY_TYPE))	//if this is an image media type G***does this work correctly relative to the document base URI?
+				else if(topLevelType.equals(ContentType.IMAGE_PRIMARY_TYPE))	//if this is an image media type TODO does this work correctly relative to the document base URI?
 				{
 					viewImage(hyperlinkURI.toString()); //view the image at the given location
 					return;	//don't do any more processing
 				}
 			}
-			//G***add an option in goURI() to go later, in the AWT thread
-			//G***check to see if we actually went to the hyperlink; if not, try to use the browser
+			//TODO add an option in goURI() to go later, in the AWT thread
+			//TODO check to see if we actually went to the hyperlink; if not, try to use the browser
 			SwingUtilities.invokeLater(new Runnable()	//invoke the hyperlink traversal until a later time in the event thread, so the mouse click won't be re-interpreted when we arrive at the hyperlink destination
 			{
 				public void run() {go(hyperlinkURI);}	//if the hyperlink was not for a special-case URI, just go to the URI
 			});
 		}
-		catch(Exception exception)	//if anything goes wrong with any of this G***is this too broad?
+		catch(Exception exception)	//if anything goes wrong with any of this TODO is this too broad?
 		{
-			Log.traceStack(exception);  //G***fix
-			Log.error("Error activating hyperlink "+hyperlinkURI+": "+exception);	//G***fix; this is an important error which should be reported back to the user in a consistent way
+			Log.traceStack(exception);  //TODO fix
+			Log.error("Error activating hyperlink "+hyperlinkURI+": "+exception);	//TODO fix; this is an important error which should be reported back to the user in a consistent way
 		}
 	}
 
@@ -1678,7 +1694,7 @@ Log.trace("ready to start clip.");
 				Log.warn(securityException);	//warn of the security problem			
 			}
 		}
-		final String newSearchText=(String)JOptionPane.showInputDialog(this, "Enter search word or phrase:", "Search", JOptionPane.QUESTION_MESSAGE, null, null, defaultSearchText);	//G***i18n
+		final String newSearchText=(String)JOptionPane.showInputDialog(this, "Enter search word or phrase:", "Search", JOptionPane.QUESTION_MESSAGE, null, null, defaultSearchText);	//TODO i18n
 		if(newSearchText!=null && newSearchText.length()>0) //if they want to search
 		{
 			searchText=newSearchText;	//save the search text for other searches
@@ -1721,15 +1737,15 @@ Log.trace("ready to start clip.");
 	*/
 	public void search(final String searchText, final int searchOffset)
 	{
-		final int matchOffset;  //G***testing; comment; don't access deeply
-		getStatusBar().setStatus("Searching...");	//G***testing; i18n G***doesn't work, because this is in a separate AWT thread
+		final int matchOffset;  //TODO testing; comment; don't access deeply
+		getStatusBar().setStatus("Searching...");	//TODO testing; i18n TODO doesn't work, because this is in a separate AWT thread
 		try
 		{
 			matchOffset=getXMLTextPane().search(searchText, searchOffset);  //ask the XML text pane to search for text
 		}
 		finally
 		{
-			getStatusBar().setStatus("");	//G***testing; comment
+			getStatusBar().setStatus("");	//TODO testing; comment
 		}
 		if(matchOffset<0) //if the text was not found
 		{
@@ -1738,25 +1754,25 @@ Log.trace("ready to start clip.");
 	}
 
 	/**Shows an image in a separate image viewing window.
-	@param href The absolute or relative reference to the image file. G***fix later when images are relative to documents in other directories
+	@param href The absolute or relative reference to the image file. TODO fix later when images are relative to documents in other directories
 	*/
 	protected void viewImage(final String href)
 	{
 		final Document document=getXMLTextPane().getDocument();	//get the document in the editor pane
 		if(document instanceof XMLDocument)	//if this is an XML document
 		{
-//G***del Log.trace("OEBBook mouse clicked in an OEBDocument");
+//TODO del Log.trace("OEBBook mouse clicked in an OEBDocument");
 			XMLDocument xmlDocument=(XMLDocument)document;	//cast the document to an XML document
 		  try
 			{
-				final Image image=(Image)xmlDocument.getResource(href);	//get the image resource G***check to make sure what is returned is really an image
+				final Image image=(Image)xmlDocument.getResource(href);	//get the image resource TODO check to make sure what is returned is really an image
 				viewImage(image, href); //view the image
 			}
-			catch(URISyntaxException ex)  //G***fix
+			catch(URISyntaxException ex)  //TODO fix
 			{
 				Log.error(ex);
 			}
-		  catch(IOException ex)  //G***fix
+		  catch(IOException ex)  //TODO fix
 			{
 		  	Log.error(ex);
 			}
@@ -1769,13 +1785,13 @@ Log.trace("ready to start clip.");
 	*/
 	public void viewImage(final Image image, final String title)
 	{
-//G***del; this doesn't seem to make loading faster				ImageUtilities.loadImage(image);  //make sure the image is loaded G***do we need this? this doesn't seem to be causing the blank image problem
+//TODO del; this doesn't seem to make loading faster				ImageUtilities.loadImage(image);  //make sure the image is loaded TODO do we need this? this doesn't seem to be causing the blank image problem
 
 		final ImagePanel imagePanel=new ImagePanel(image);  //create an image panel in which to show the image
 		JOptionPane.showMessageDialog(this, imagePanel, title, JOptionPane.INFORMATION_MESSAGE);  //show the image panel
-/*G***del when works
+/*TODO del when works
 
-		final ImageIcon imageIcon=new ImageIcon(image); //G***testing
+		final ImageIcon imageIcon=new ImageIcon(image); //TODO testing
 			//have an option pane create and show a new dialog using our about panel
 		new JOptionPane(imageIcon, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION).createDialog(this, title).show();
 */
@@ -1803,14 +1819,14 @@ Log.trace("ready to start clip.");
 		*/
 		public Shape paintLayer(final Graphics graphics, final int startOffset, final int endOffset, final Shape viewBounds, final JTextComponent textComponent, final View view)
 		{
-//G***fix; this is abstract; maybe descend from DefaultLayerPainter or whatever it is			super.paintLayer(graphics, startOffset, endOffset, viewBounds, textComponent, view);  //draw the default highlighting first
-				//G***save the return value from super.paintLayer() and merge it with what we paint from the icon
+//TODO fix; this is abstract; maybe descend from DefaultLayerPainter or whatever it is			super.paintLayer(graphics, startOffset, endOffset, viewBounds, textComponent, view);  //draw the default highlighting first
+				//TODO save the return value from super.paintLayer() and merge it with what we paint from the icon
 			try
 			{
 				final Shape highlightShape=view.modelToView(startOffset, Position.Bias.Forward, endOffset, Position.Bias.Backward, viewBounds);  //get the display coordinates of this model offset
 					//get a rectangle that contains the shape
 				final Rectangle highlightRectangle=highlightShape instanceof Rectangle ? (Rectangle)highlightShape : highlightShape.getBounds();
-//G***del or fix; this is not immediately updated because it puts it out of the highlight bounds				highlightRectangle.x-=BOOKMARK_ICON.getIconWidth(); //we'll center the icon horizontally at the starting offset
+//TODO del or fix; this is not immediately updated because it puts it out of the highlight bounds				highlightRectangle.x-=BOOKMARK_ICON.getIconWidth(); //we'll center the icon horizontally at the starting offset
 				highlightRectangle.width=BOOKMARK_ICON.getIconWidth(); //update the width of our rectangle to reflect what is painted
 				highlightRectangle.height=BOOKMARK_ICON.getIconWidth(); //update the height of our rectangle to reflect what is painted
 				highlightRectangle.x-=highlightRectangle.width/2; //center the highlight horizontally
@@ -1877,10 +1893,10 @@ Log.trace("ready to start clip.");
 		/**Default constructor.*/
 		public BackAction()
 		{
-			super("Back");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Back");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Go back to the previous location in the book.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_B));  //set the mnemonic key G***i18n
+			super("Back");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Back");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Go back to the previous location in the book.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_B));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.BACK_VERSION_ICON_FILENAME)); //load the correct icon
 		  putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Event.ALT_MASK)); //add the accelerator
 		}
@@ -1900,10 +1916,10 @@ Log.trace("ready to start clip.");
 		/**Default constructor.*/
 		public CloseAction()
 		{
-			super("Close");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Close the open eBook");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Close the currently open eBook.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key G***i18n
+			super("Close");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Close the open eBook");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Close the currently open eBook.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.BOOK_CLOSED_ICON_FILENAME)); //load the correct icon
 		  putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.CTRL_MASK)); //add the accelerator
 			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_CLOSE_MENU_ACTION_ORDER));	//set the order
@@ -1924,10 +1940,10 @@ Log.trace("ready to start clip.");
 		/**Default constructor.*/
 		public CopyAction()
 		{
-			super("Copy");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Copy selected text.");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Copy the selected text to the clipboard.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key G***i18n
+			super("Copy");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Copy selected text.");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Copy the selected text to the clipboard.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key TODO i18n
 		  putValue(SMALL_ICON, IconResources.getIcon(IconResources.COPY_ICON_FILENAME)); //load the correct icon
 		  putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C, Event.CTRL_MASK)); //add the accelerator
 		}
@@ -1951,10 +1967,10 @@ Log.trace("ready to start clip.");
 		*/
 		public DefineAction(final String word)
 		{
-			super("Define \""+word+"\"");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "View the definition of \""+word+"\".");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "View the definition of \""+word+"\".");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_D));  //set the mnemonic key G***i18n
+			super("Define \""+word+"\"");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "View the definition of \""+word+"\".");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "View the definition of \""+word+"\".");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_D));  //set the mnemonic key TODO i18n
 		  putValue(SMALL_ICON, IconResources.getIcon(IconResources.BOOK_QUESTION_ICON_FILENAME)); //load the correct icon
 		  text=word; //store the reference to the word
 		}
@@ -1968,7 +1984,7 @@ Log.trace("ready to start clip.");
 			{
 					//create a string for looking up the text; the BrowserLauncher.openURL() method should automatically URLEncode the text
 				final String definitionURLString="http://www.dictionary.com/cgi-bin/dict.pl?term="+text;
-				BrowserLauncher.openURL(definitionURLString);	//browse to dictionary.com to lookup the word G***try internal dictionaries first
+				BrowserLauncher.openURL(definitionURLString);	//browse to dictionary.com to lookup the word TODO try internal dictionaries first
 			}
 			catch(IOException ioException)  //if there is an IO exception browsing to the URL
 			{
@@ -1988,9 +2004,9 @@ Log.trace("ready to start clip.");
 		*/
 		public DeleteAnnotationAction(final Annotation annotation)
 		{
-			super("Delete Annotation");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Delete annoation.");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Delete the selected annotation.");	//set the long description G***i18n
+			super("Delete Annotation");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Delete annoation.");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Delete the selected annotation.");	//set the long description TODO i18n
 		  putValue(SMALL_ICON, IconResources.getIcon(IconResources.NOTEPAD_DELETE_ICON_FILENAME)); //load the correct icon
 		  deleteAnnotation=annotation; //store the annotation to be deleted
 		}
@@ -2000,7 +2016,7 @@ Log.trace("ready to start clip.");
 		*/
 		public void actionPerformed(ActionEvent e)
 		{
-//G***ask for verification
+//TODO ask for verification
 		  removeAnnotation(deleteAnnotation); //remove the annotation
 		}
 	}
@@ -2015,9 +2031,9 @@ Log.trace("ready to start clip.");
 		*/
 		public DeleteBookmarkAction(final Bookmark bookmark)
 		{
-			super("Delete Bookmark");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Delete bookmark.");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Delete the selected bookmark.");	//set the long description G***i18n
+			super("Delete Bookmark");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Delete bookmark.");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Delete the selected bookmark.");	//set the long description TODO i18n
 		  putValue(SMALL_ICON, IconResources.getIcon(IconResources.BOOKMARK_DELETE_ICON_FILENAME)); //load the correct icon
 		  deleteBookmark=bookmark; //store the bookmark to be deleted
 		}
@@ -2027,8 +2043,8 @@ Log.trace("ready to start clip.");
 		*/
 		public void actionPerformed(ActionEvent e)
 		{
-//G***ask for verification
-Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());  //G***del
+//TODO ask for verification
+Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());  //TODO del
 		  removeBookmark(deleteBookmark); //remove the bookmark
 		}
 	}
@@ -2050,10 +2066,10 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 		*/
 		public InsertBookmarkAction(final int pos)
 		{
-			super("Insert Bookmark...");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Insert a bookmark.");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Insert a bookmark at the current location in the book.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_B));  //set the mnemonic key G***i18n
+			super("Insert Bookmark...");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Insert a bookmark.");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Insert a bookmark at the current location in the book.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_B));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.BOOKMARK_ICON_FILENAME)); //load the correct icon
 		  bookmarkPos=pos;  //store the position of the bookmark
 		}
@@ -2064,9 +2080,9 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
 
-		  final String defaultBookmarkName="bookmark name";  //we need a default name to work around a JDK 1.3 bug which does not display an input field with no default text G***i18n
+		  final String defaultBookmarkName="bookmark name";  //we need a default name to work around a JDK 1.3 bug which does not display an input field with no default text TODO i18n
 				//ask the user for a bookmark name
-			final String specifiedName=(String)JOptionPane.showInputDialog(Book.this, "Enter a bookmark name, or leave blank for an unnamed bookmark:", "Insert Bookmark", JOptionPane.QUESTION_MESSAGE, null, null, defaultBookmarkName); //G***i18n
+			final String specifiedName=(String)JOptionPane.showInputDialog(Book.this, "Enter a bookmark name, or leave blank for an unnamed bookmark:", "Insert Bookmark", JOptionPane.QUESTION_MESSAGE, null, null, defaultBookmarkName); //TODO i18n
 		  if(specifiedName!=null)  //if they didn't cancel
 			{
 				final String trimmedSpecifiedName=specifiedName.trim(); //trim the bookmark name
@@ -2097,11 +2113,11 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 	*/
 	class InsertHighlightAction extends AbstractAction
 	{
-//G***del		protected int highlightStartPos;
+//TODO del		protected int highlightStartPos;
 
-//G***del		protected int highlightEndPos;
+//TODO del		protected int highlightEndPos;
 
-//G***del		protected Color highlightColor;
+//TODO del		protected Color highlightColor;
 
 		/**Constructor that specifies the starting and ending position of a highlight.
 		@param startPos The starting position in the document at which the highlight
@@ -2110,7 +2126,7 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 			should be added.
 		param color The color of the highlight.
 		*/
-/*G***del
+/*TODO del
 		public InsertHighlightAction(final int startPos, final int endPos, final Color color)
 		{
 */
@@ -2119,12 +2135,12 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 		*/
 		public InsertHighlightAction()
 		{
-			super("Insert Highlighted Annotation");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Insert a highlighted annotation.");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Insert a highlighted annotation at the current selection in the book.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_H));  //set the mnemonic key G***i18n
+			super("Insert Highlighted Annotation");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Insert a highlighted annotation.");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Insert a highlighted annotation at the current selection in the book.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_H));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.PAINT_ICON_FILENAME)); //load the correct icon
-/*G***del
+/*TODO del
 		  highlightStartPos=startPos;  //store the starting position of the highlight
 		  highlightEndPos=endPos;  //store the ending position of the highlight
 			highlightColor=color; //store the color of the highlight
@@ -2136,10 +2152,10 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 		*/
 		public void actionPerformed(ActionEvent e)
 		{
-/*G***fix
-		  final String defaultBookmarkName="bookmark name";  //we need a default name to work around a JDK 1.3 bug which does not display an input field with no default text G***i18n
+/*TODO fix
+		  final String defaultBookmarkName="bookmark name";  //we need a default name to work around a JDK 1.3 bug which does not display an input field with no default text TODO i18n
 				//ask the user for a bookmark name
-			final String specifiedName=(String)JOptionPane.showInputDialog(Book.this, "Enter a bookmark name, or leave blank for an unnamed bookmark:", "Insert Bookmark", JOptionPane.QUESTION_MESSAGE, null, null, defaultBookmarkName); //G***i18n
+			final String specifiedName=(String)JOptionPane.showInputDialog(Book.this, "Enter a bookmark name, or leave blank for an unnamed bookmark:", "Insert Bookmark", JOptionPane.QUESTION_MESSAGE, null, null, defaultBookmarkName); //TODO i18n
 		  if(specifiedName!=null)  //if they didn't cancel
 			{
 				final String trimmedSpecifiedName=specifiedName.trim(); //trim the bookmark name
@@ -2156,7 +2172,7 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 				{
 					Log.error(badLocationException); //report the error
 				}
-//G***del			}
+//TODO del			}
 		}
 	}
 
@@ -2166,10 +2182,10 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 		/**Default constructor.*/
 		public PreviousPageAction()
 		{
-			super("Previous Page");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Previous Page");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Turn to the previous page in the book.");	//set the long description G***Int
-//G***fix			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key G***i18n
+			super("Previous Page");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Previous Page");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Turn to the previous page in the book.");	//set the long description TODO Int
+//TODO fix			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.HAND_POINT_LEFT_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -2188,10 +2204,10 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 		/**Default constructor.*/
 		public NextPageAction()
 		{
-			super("Next Page");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Next Page");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Turn to the next page in the book.");	//set the long description G***Int
-//G***fix			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_N));  //set the mnemonic key G***i18n
+			super("Next Page");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Next Page");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Turn to the next page in the book.");	//set the long description TODO Int
+//TODO fix			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_N));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.HAND_POINT_RIGHT_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -2210,10 +2226,10 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 		/**Default constructor.*/
 		public ViewPropertiesAction()
 		{
-			super("Properties...");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "View properties.");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "View the document metadata properties.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key G***i18n
+			super("Properties...");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "View properties.");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "View the document metadata properties.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key TODO i18n
 		  putValue(SMALL_ICON, IconResources.getIcon(IconResources.PROPERTY_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -2229,7 +2245,7 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 					//create a new panel in which to show the RDF
 				final RDFPanel<RDFResource, ResourceModel<RDFResource>> rdfPanel=new RDFPanel<RDFResource, ResourceModel<RDFResource>>(new ResourceModel<RDFResource>(publication, getXMLTextPane().getBaseURI(), getXMLTextPane().getURIInputStreamable()));  
 				  //show the properties in an information dialog
-				BasicOptionPane.showMessageDialog(Book.this, rdfPanel, "Properties", BasicOptionPane.INFORMATION_MESSAGE);	//G***i18n
+				BasicOptionPane.showMessageDialog(Book.this, rdfPanel, "Properties", BasicOptionPane.INFORMATION_MESSAGE);	//TODO i18n
 			}
 		}
 	}
@@ -2240,14 +2256,14 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 		protected String imageHRef;
 
 		/**Constructor.
-		@param href The absolute or relative reference to the image file. G***fix later when images are relative to documents in other directories
+		@param href The absolute or relative reference to the image file. TODO fix later when images are relative to documents in other directories
 		*/
 		public ViewImageAction(final String href)
 		{
-			super("View Image");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "View the image.");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "View the image in a separate window.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_I));  //set the mnemonic key G***i18n
+			super("View Image");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "View the image.");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "View the image in a separate window.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_I));  //set the mnemonic key TODO i18n
 		  putValue(SMALL_ICON, IconResources.getIcon(IconResources.IMAGE_ICON_FILENAME)); //load the correct icon
 		  imageHRef=href; //store the reference to the image
 		}
@@ -2268,10 +2284,10 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 		/**Default constructor.*/
 		public SearchAction()
 		{
-			super("Find...");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Find text");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Search for text within the book.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_F));  //set the mnemonic key G***i18n
+			super("Find...");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Find text");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Search for text within the book.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_F));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SEARCH_ICON_FILENAME)); //load the correct icon
 		  putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, Event.CTRL_MASK)); //add the accelerator
 		}
@@ -2292,10 +2308,10 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 		/**Default constructor.*/
 		public SearchAgainAction()
 		{
-			super("Find Again");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Find text again");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Search for text that occurs after the last search.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_A));  //set the mnemonic key G***i18n
+			super("Find Again");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Find text again");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Search for text that occurs after the last search.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_A));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SEARCH_AGAIN_ICON_FILENAME)); //load the correct icon
 		  putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0)); //add the accelerator
 		}
@@ -2329,18 +2345,18 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 			switch(displayPageCount)	//see how many pages we should display
 			{
 				case 1:	//if we should show a single page
-					putValue(NAME, "1 Page");	//set the correct name G***i18n
-					putValue(SHORT_DESCRIPTION, "Single Page");	//set the short description G***Int
-					putValue(LONG_DESCRIPTION, "Display only one page at a time.");	//set the long description G***Int
-				  putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_1));  //set the mnemonic key G***i18n
+					putValue(NAME, "1 Page");	//set the correct name TODO i18n
+					putValue(SHORT_DESCRIPTION, "Single Page");	//set the short description TODO Int
+					putValue(LONG_DESCRIPTION, "Display only one page at a time.");	//set the long description TODO Int
+				  putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_1));  //set the mnemonic key TODO i18n
 					putValue(SMALL_ICON, IconResources.getIcon(IconResources.COLUMNS1_ICON_FILENAME)); //load the correct icon
 					break;
 				case 2:	//if we should show two pages
 				default:	//for any other number of pages
-					putValue(NAME, "2 Pages");	//set the correct name G***i18n
-					putValue(SHORT_DESCRIPTION, "Facing Pages");	//set the short description G***Int
-					putValue(LONG_DESCRIPTION, "Display two pages at a time.");	//set the long description G***Int
-					putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_2));  //set the mnemonic key G***i18n
+					putValue(NAME, "2 Pages");	//set the correct name TODO i18n
+					putValue(SHORT_DESCRIPTION, "Facing Pages");	//set the short description TODO Int
+					putValue(LONG_DESCRIPTION, "Display two pages at a time.");	//set the long description TODO Int
+					putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_2));  //set the mnemonic key TODO i18n
 					putValue(SMALL_ICON, IconResources.getIcon(IconResources.COLUMNS2_ICON_FILENAME)); //load the correct icon
 					break;
 			}
@@ -2374,10 +2390,10 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 		{
 			super(zoomGroup);	//construct the parent class
 			this.zoom=zoom; //save the zoom factor
-			final String percentString=NumberFormat.getPercentInstance().format(zoom); //create a percentage string from the zoom factor G***i18n use selected locale
+			final String percentString=NumberFormat.getPercentInstance().format(zoom); //create a percentage string from the zoom factor TODO i18n use selected locale
 			putValue(NAME, percentString);	//set the correct name
-			putValue(SHORT_DESCRIPTION, "Zoom "+percentString);	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Display everything "+percentString+" of its original size.");	//set the long description G***i18n
+			putValue(SHORT_DESCRIPTION, "Zoom "+percentString);	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Display everything "+percentString+" of its original size.");	//set the long description TODO i18n
 		}
 
 		/**Called when the action should be performed.
@@ -2395,11 +2411,11 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 		/**Default constructor.*/
 		public AntialiasAction()
 		{
-			super("Smooth Text");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Turn on font smoothing.");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Turn on antialias-based font smoothing.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_S));  //set the mnemonic key G***i18n
-//G***fix			putValue(SMALL_ICON, new ImageIcon(ReaderFrame.class.getResource("info.gif")));	//load the correct icon G***use a constant here
+			super("Smooth Text");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Turn on font smoothing.");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Turn on antialias-based font smoothing.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_S));  //set the mnemonic key TODO i18n
+//TODO fix			putValue(SMALL_ICON, new ImageIcon(ReaderFrame.class.getResource("info.gif")));	//load the correct icon TODO use a constant here
 		}
 
 		/**Called when the action should be performed.
@@ -2426,7 +2442,7 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 			putValue(NAME, guide.getTitle());	//set the correct name
 			putValue(SHORT_DESCRIPTION, guide.getTitle());	//set the short description
 		  putValue(LONG_DESCRIPTION, guide.getHRef());	//set the long description to equal the actual reference
-//G***fix			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key G***i18n
+//TODO fix			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_P));  //set the mnemonic key TODO i18n
 		}
 
 		/**Called when the action should be performed.
@@ -2451,19 +2467,19 @@ Log.trace("Ready to remove bookmark at position: ", deleteBookmark.getOffset());
 		{
 Log.trace("ReaderFrame.GoBookmarkAction constructor, offset:", bookmark.getOffset());
 			this.bookmark=bookmark;	//save the bookmark
-//G***del when works			setBookmark(bookmark);	//save the bookmark
+//TODO del when works			setBookmark(bookmark);	//save the bookmark
 		  final int pageIndex=getPageIndex(bookmark.getOffset()); //get the page index of the bookmark
 			final Document document=getXMLTextPane().getDocument(); //get a reference to the document
 Log.trace("document length", document.getLength());
-			final int bookmarkedTextLength=Math.min(document.getLength()-bookmark.getOffset(), 16); //find out how much text to show; make sure we don't go past the document G***use a constant here
+			final int bookmarkedTextLength=Math.min(document.getLength()-bookmark.getOffset(), 16); //find out how much text to show; make sure we don't go past the document TODO use a constant here
 			final String bookmarkNameString=bookmark.getName()!=null ? bookmark.getName()+": " : "";  //if there is a bookmark name, include it
 			try
 			{
-				final String bookmarkedText=document.getText(bookmark.getOffset(), bookmarkedTextLength); //get the bookmarked text G***use a constant
+				final String bookmarkedText=document.getText(bookmark.getOffset(), bookmarkedTextLength); //get the bookmarked text TODO use a constant
 				final String bookmarkString=bookmarkNameString+"Page "+(pageIndex+1)+" ("+bookmarkedText+"...)";  //G**i18n; use a getPageNumber(pageIndex) method; comment
-				putValue(NAME, bookmarkString);	//set the correct name G***fix
-				putValue(SHORT_DESCRIPTION, bookmarkString);	//set the short description G***fix
-				putValue(LONG_DESCRIPTION, bookmarkString);	//set the long description to equal the actual reference G***fix
+				putValue(NAME, bookmarkString);	//set the correct name TODO fix
+				putValue(SHORT_DESCRIPTION, bookmarkString);	//set the short description TODO fix
+				putValue(LONG_DESCRIPTION, bookmarkString);	//set the long description to equal the actual reference TODO fix
 			}
 			catch(BadLocationException badLocationException) //we should never get a bad location, since we test the offsets and lengths
 			{

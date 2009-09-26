@@ -1,12 +1,27 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
 
 /**A panel that allows selection of a boolean choice, with radio buttons
-	representing true and false.
+	representing <code>true</code> and <code>false</code>.
 @author Garret Wilson
-@see com.garretwilson.swing.rdf.maqro.QuestionPanel
 */
 public class BooleanPanel extends ModifiablePanel implements SwingConstants
 {
@@ -77,8 +92,8 @@ public class BooleanPanel extends ModifiablePanel implements SwingConstants
 		super.initializeUI(); //do the default UI initialization
 		buttonGroup.add(trueRadioButton);
 		buttonGroup.add(falseRadioButton);
-		trueRadioButton.setText("True");	//G***i18n
-		falseRadioButton.setText("False");	//G***i18n
+		trueRadioButton.setText("True");	//TODO i18n
+		falseRadioButton.setText("False");	//TODO i18n
 		final int axis;	//determine the axis to use
 		switch(getOrientation())	//see which orientation we're using
 		{

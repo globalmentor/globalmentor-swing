@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.event.*;
@@ -7,10 +23,10 @@ import javax.swing.event.EventListenerList;
 
 /**Class that fires action events when an item is double-clicked or the Enter
 	key is pressed. This class will be superceded if a future version of
-	<code>javax.swing.JList</code> handles these key/mouse bindings for the
+	{@link JList} handles these key/mouse bindings for the
 	correct UI.
 	<p>This class was created from consulting the JDK 1.3.1 API documentation for
-	<code>javax.swing.JList</code> and <code>javax.swing.JButton</code>, along with
+	{@link JList} and {@link JButton}, along with
 	the sample <code>ActionJList</code> code at
 	<a href="http://www.rgagnon.com/javadetails/java-0201.html">http://www.rgagnon.com/javadetails/java-0201.html</a>.</p>
 @author Garret Wilson
@@ -80,7 +96,7 @@ public class ActionList extends JList
 								if(clickedIndex==selectedIndex)	//if they clicked on the selected index (without checking, double-clicking somewhere else on the list would fire the action)
 								{
 									fireActionPerformed();  //fire an action performed event
-									mouseEvent.consume(); //consume the mouse event G***do we need this?
+									mouseEvent.consume(); //consume the mouse event TODO do we need this?
 								}
 							}
 						}
@@ -101,7 +117,7 @@ public class ActionList extends JList
   protected void fireActionPerformed()
 	{
 		final Object[] selectedValues=getSelectedValues(); //get the selected values
-		if(selectedValues.length==1)  //if there is only one value selected G***fix for multiple values
+		if(selectedValues.length==1)  //if there is only one value selected TODO fix for multiple values
 		{
 			//create a new action event and fire it to the listeners
 			fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, selectedValues[0].toString()));

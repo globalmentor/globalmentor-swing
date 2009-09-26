@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
@@ -7,14 +23,14 @@ import javax.swing.*;
 /**An adapter that can be added as a listener for mouse events, popping
 	up a menu when the popup mouse button is pressed.
 <p>An instance of this class may installed into a component by calling
-	<code>install()</code> or by adding an instance of this class as a mouse
+	{@link PopupAdapter#install(Component)} or by adding an instance of this class as a mouse
 	listener.</p> 
 <p>Typical uses of this class include any of the following:</p>
 	<ul>
 		<li>Constructing the class with a default popup menu to always use.</li>
-		<li>Overriding <code>getPopupMenu()</code> to dynamically create a popup
+		<li>Overriding {@link PopupAdapter#getPopupMenu()} to dynamically create a popup
 			menu.</li>
-		<li>Overriding <code>getPopupMenu(Component, int, int)</code> to
+		<li>Overriding {@link PopupAdapter#getPopupMenu(Component, int, int)} to
 			dynamically create a popup menu based on the specified coordinates in the
 			given component.</li>
 	</ul>

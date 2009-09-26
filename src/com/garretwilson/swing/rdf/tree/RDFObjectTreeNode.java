@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.rdf.tree;
 
 import java.io.IOException;
@@ -28,10 +44,10 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 	}
 
 	/**The RDF data model to which the RDF object belongs.*/
-//G***del if not needed	private final RDF rdf;
+//TODO del if not needed	private final RDF rdf;
 
 	  /**@return The RDF data model to which the RDF object belongs.*/
-//G***del if not neede		protected RDF getRDF() {return rdf;}
+//TODO del if not neede		protected RDF getRDF() {return rdf;}
 
 
 //TODO make a boolean property setListCollapsed() or something to allow the display of lists to be special-cased or not
@@ -56,51 +72,51 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 	/**The object that determines how the resources will be sorted in a list,
 		or <code>null</code> if the resources in a list should not be sorted.
 	*/
-//G***fix, maybe	private Comparator comparator=null;
+//TODO fix, maybe	private Comparator comparator=null;
 
 		/**@return The object that determines how the resources will be sorted in,
 			a list, or <code>null</code> if the resources in a list should not be
 			sorted.
 		*/
-//G***fix, maybe		public Comparator getComparator() {return comparator;}
+//TODO fix, maybe		public Comparator getComparator() {return comparator;}
 
 		/**Sets the method of sorting the resources in lists.
 		@param newComparator The object that determines how the resources in a list
 			will be sorted, or <code>null</code> if the resources in a list should
 			not be sorted.
 		*/
-//G***fix, maybe		public void setComparator(final Comparator newComparator) {comparator=newComparator;}
+//TODO fix, maybe		public void setComparator(final Comparator newComparator) {comparator=newComparator;}
 
 	/**Constructs a tree node from an RDF object not in the context of any
 		property.
-//G***del	@param rdfModel The RDF data model to which the RDF object belongs.
+//TODO del	@param rdfModel The RDF data model to which the RDF object belongs.
 	@param rdfObject The resource to represent in the tree.
 	@param rdfXMLifier The RDF XML-ifier to use for creating labels.
 	*/
-	public RDFObjectTreeNode(/*G***del final RDF rdfModel, */final RDFObject rdfObject, final RDFXMLGenerator rdfXMLifier)
+	public RDFObjectTreeNode(/*TODO del final RDF rdfModel, */final RDFObject rdfObject, final RDFXMLGenerator rdfXMLifier)
 	{
 		this(null, rdfObject, rdfXMLifier);  //construct the tree node without any property resource
 	}
 
 	/**Constructs a tree node from an RDF property resource and an RDF object.
-//G***del	@param rdfModel The RDF data model to which the RDF object belongs.
+//TODO del	@param rdfModel The RDF data model to which the RDF object belongs.
 	@param rdfProperty The property of which this object is a resource, or
 		<code>null</code> if this object should not be considered the object of
 		any property.
 	@param rdfObject The resource to represent in the tree.
 	@param rdfXMLifier The RDF XML-ifier to use for creating labels.
 	*/
-	public RDFObjectTreeNode(/*G***del final RDF rdfModel, */final RDFResource rdfProperty, final RDFObject rdfObject, final RDFXMLGenerator rdfXMLifier)
+	public RDFObjectTreeNode(/*TODO del final RDF rdfModel, */final RDFResource rdfProperty, final RDFObject rdfObject, final RDFXMLGenerator rdfXMLifier)
 	{
 		super(rdfObject); //store the RDF object as the user object
-//G***del 		rdf=rdfModel; //save the RDF data model
+//TODO del 		rdf=rdfModel; //save the RDF data model
 		property=rdfProperty; //save the property of which this resource is the object
 		xmlGenerator=rdfXMLifier; //save the XMLifier we'll use for generating labels
 	}
 
   /**@return <code>true</code> if this is a literal or a resource with no
 		properties.
-	*/  //G***fix to compensate for type properties
+	*/  //TODO fix to compensate for type properties
 	public boolean isLeaf()
 	{
 		return getUserObject() instanceof RDFLiteral
@@ -112,12 +128,12 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 	*/
 	protected void loadChildNodes() throws IOException
 	{
-		removeAllChildren();	//remove all children G***maybe put this in some common place
+		removeAllChildren();	//remove all children TODO maybe put this in some common place
 //TODO see if we should use this		public void unloadChildNodes()
 		if(getUserObject() instanceof RDFResource)  //if we represent an RDF resource
 		{
 			final RDFResource resource=(RDFResource)getUserObject();	//cast the user object to a resource
-//G***del when works			if(RDFUtilities.isType(resource, RDFConstants.RDF_NAMESPACE_URI, RDFConstants.LIST_TYPE_NAME))	//if this is a list
+//TODO del when works			if(RDFUtilities.isType(resource, RDFConstants.RDF_NAMESPACE_URI, RDFConstants.LIST_TYPE_NAME))	//if this is a list
 			if(resource instanceof RDFListResource)	//if this is a list
 			{
 				final RDFListResource listResource=(RDFListResource)resource;	//cast the resource to a list

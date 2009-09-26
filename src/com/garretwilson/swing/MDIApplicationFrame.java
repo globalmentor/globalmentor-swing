@@ -1,14 +1,24 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.beans.*;
-import java.io.*;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.event.*;
-
-import com.garretwilson.resources.icon.IconResources;
 
 import com.globalmentor.log.Log;
 import com.globalmentor.model.ObjectState;
@@ -17,11 +27,12 @@ import com.globalmentor.rdf.*;
 /**Main frame parent class for a multiple document interface (MDI) application.
 @author Garret Wilson
 */
+@Deprecated
 public abstract class MDIApplicationFrame extends ObsoleteApplicationFrame
 {
 
 	//window menu identifiers
-/*G***fix
+/*TODO fix
 	public final static long MENU_FILE_NONE=0;
 	public final static long MENU_FILE_NEW=1;
 	public final static long MENU_FILE_OPEN=2;
@@ -76,7 +87,7 @@ public abstract class MDIApplicationFrame extends ObsoleteApplicationFrame
 	*/
 	public MDIApplicationFrame()
 	{
-		this(true, true);  //construct the parent class G***fix
+		this(true, true);  //construct the parent class TODO fix
 	}
 	
 	/**Constructor with a default panel.
@@ -86,7 +97,7 @@ public abstract class MDIApplicationFrame extends ObsoleteApplicationFrame
 	*/
 	public MDIApplicationFrame(final boolean initialize)
 	{
-		this(true, true, initialize); //create an application frame with a default application panel G***fix default hasXXXs
+		this(true, true, initialize); //create an application frame with a default application panel TODO fix default hasXXXs
 	}	
 
 	/**Constructor that allows options to be set, such as the presence of a status
@@ -110,10 +121,10 @@ public abstract class MDIApplicationFrame extends ObsoleteApplicationFrame
 	*/
 	public MDIApplicationFrame(final boolean hasMenuBar, final boolean hasStatusBar, final boolean initialize)
 	{
-//G***fix		super(hasMenuBar, hasStatusBar);  //construct the parent class
+//TODO fix		super(hasMenuBar, hasStatusBar);  //construct the parent class
 		super(false);	//construct the parent class
 		desktopPane=new JDesktopPane(); //create the desktop pane
-		mdiManager=new MDIManager(/*TODO fix this, */desktopPane); //create a new MDI manager to manage the internal frames G***later create a custom one
+		mdiManager=new MDIManager(/*TODO fix this, */desktopPane); //create a new MDI manager to manage the internal frames TODO later create a custom one
 		if(initialize)	//if we should initialize the frame
 			initialize();	//initialize the frame				
 	}
@@ -135,7 +146,7 @@ public abstract class MDIApplicationFrame extends ObsoleteApplicationFrame
 		{
 			if(internalFrame.isClosable())  //if the frame is closable
 				internalFrame.doDefaultCloseAction(); //tell it to close
-	//G***del if not needed		getDesktopPane().getDesktopManager().closeFrame(internalFrame); //close the selected frame
+	//TODO del if not needed		getDesktopPane().getDesktopManager().closeFrame(internalFrame); //close the selected frame
 		}
 	}
 
@@ -159,12 +170,12 @@ public abstract class MDIApplicationFrame extends ObsoleteApplicationFrame
 	*/
 	protected void setDocumentDescription(final ObjectState<RDFResource> description)
 	{
-Log.trace("setting description: ", description); //G***del
+Log.trace("setting description: ", description); //TODO del
 		final JInternalFrame internalFrame=getMDIManager().getSelectedFrame();  //get the currently selected internal frame
 		if(internalFrame!=null) //if there is an internal frame open
 		{
 		  setDocumentDescription(internalFrame, description);  //store the description, keyed to the internal frame
-Log.trace("setting frame title: ", description.getObject().getURI()); //G***del
+Log.trace("setting frame title: ", description.getObject().getURI()); //TODO del
 		  updateTitle(internalFrame);  //update the internal frame's title
 		}
 	}
@@ -173,7 +184,7 @@ Log.trace("setting frame title: ", description.getObject().getURI()); //G***del
 		the frame so that appropriate updates can occur when the frame is closed, etc.
 	@param internalFrame The frame to add to theh desktop.
 	*/
-/*G***fix
+/*TODO fix
 	protected void addInternalFrame(final JInternalFrame internalFrame)
 	{
 		internalFrame.addInternalFrameListener(this);  //show that we want to hear about internal frame events
@@ -188,10 +199,10 @@ Log.trace("setting frame title: ", description.getObject().getURI()); //G***del
 				{
 					if(canCloseFile()) //if this frame can close
 					{
-						setFile(null);  //disassociate the file from the internal frame G***check; see if we need to explicitly pass a key
+						setFile(null);  //disassociate the file from the internal frame TODO check; see if we need to explicitly pass a key
 					}
 					else  //if the frame cannot close
-						throw new PropertyVetoException("canceled", propertyChangeEvent); //cancel the closing G***i18n
+						throw new PropertyVetoException("canceled", propertyChangeEvent); //cancel the closing TODO i18n
 				}
       }
     });
@@ -228,12 +239,12 @@ Log.trace("setting frame title: ", description.getObject().getURI()); //G***del
 		final ObjectState<RDFResource> description=getDocumentDescription(internalFrame); //get the file associated with this frame
 		if(description!=null)  //if a description is available
 		{
-//G***del			try
+//TODO del			try
 			{
-			  title=description.getObject().getURI().toString(); //show the canonical file path in the title G***maybe show something special for an anonymous resource
-//G***del				title=file.getCanonicalPath(); //show the canonical file path in the title
+			  title=description.getObject().getURI().toString(); //show the canonical file path in the title TODO maybe show something special for an anonymous resource
+//TODO del				title=file.getCanonicalPath(); //show the canonical file path in the title
 			}
-/*G***del			
+/*TODO del			
 			catch(IOException ioException)  //if an I/O exception occurss while trying to get the canonical path
 			{
 				Log.warn(ioException);  //warn that an error occurred
@@ -242,7 +253,7 @@ Log.trace("setting frame title: ", description.getObject().getURI()); //G***del
 */
 		}
 		else  //if no file is availalbe
-		  title="(untitled)"; //create a title for unsaved files G***i81n
+		  title="(untitled)"; //create a title for unsaved files TODO i81n
 		internalFrame.setTitle(title); //show the correct title
 	}
 
@@ -268,7 +279,7 @@ Log.trace("setting frame title: ", description.getObject().getURI()); //G***del
 	}
 
 	/**Exits the application.*/
-	public void exit()  //G***should we add an exit code parameter?
+	public void exit()  //TODO should we add an exit code parameter?
 	{
 		if(!getMDIManager().canCloseInternalFrames()) //if we can't close all the internal frames
 			return; //don't exit

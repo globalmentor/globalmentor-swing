@@ -1,9 +1,23 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.io.*;
 import java.net.URI;
-import java.util.*;
-import java.util.prefs.Preferences;
 
 import static com.globalmentor.java.OperatingSystem.*;
 
@@ -11,10 +25,6 @@ import com.globalmentor.io.*;
 import com.globalmentor.java.*;
 import com.globalmentor.log.Log;
 import com.globalmentor.model.Modifiable;
-import com.globalmentor.net.Authenticable;
-import com.globalmentor.net.http.HTTPClient;
-import com.globalmentor.rdf.*;
-import com.globalmentor.rdf.dublincore.RDFDublinCore;
 
 /**A framed Swing application that maintains configuration information.
 <p>If a configuration is provided via <code>setConfiguration()</code>, that
@@ -227,7 +237,7 @@ public abstract class ConfiguredFramedSwingApplication<C> extends FramedSwingApp
 					//ask if we can close even though we can't save the configuration information
 				canClose=JOptionPane.showConfirmDialog(this,
 					"Unable to save configuration information; are you sure you want to close?",
-					"Unable to save configuration", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION;	//G***i18n
+					"Unable to save configuration", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION;	//TODO i18n
 */
 			}
 		}

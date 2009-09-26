@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.Component;
@@ -17,7 +33,7 @@ import javax.swing.event.EventListenerList;
 import com.garretwilson.model.*;
 
 import com.garretwilson.resources.icon.IconResources;
-import static com.garretwilson.swing.ComponentUtilities.*;
+import static com.garretwilson.swing.Components.*;
 import com.globalmentor.log.Log;
 import com.globalmentor.model.DefaultObjectState;
 import com.globalmentor.model.Modifiable;
@@ -346,7 +362,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 			final R resource=resourceComponentState.getResource();	//get the resource
 			final String resourceURIString=resource.getURI()!=null ? resource.getURI().toString() : "";	//get a string representing the resource URI, if there is one
 				//see if they want to save the changes
-			switch(BasicOptionPane.showConfirmDialog(component, "Save modified resource "+resourceURIString+ "?", "Resource Modified", BasicOptionPane.YES_NO_CANCEL_OPTION))	//G***i18n
+			switch(BasicOptionPane.showConfirmDialog(component, "Save modified resource "+resourceURIString+ "?", "Resource Modified", BasicOptionPane.YES_NO_CANCEL_OPTION))	//TODO i18n
 			{
 				case BasicOptionPane.YES_OPTION:	//if they want to save the changes
 					return save(resourceComponentState);	//save the selected resource and report whether the save was successful
@@ -457,7 +473,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		try
 		{
 			final R resource=getResourceSelector().getResource(referenceURI);	//get a description of the resource
-			final Cursor originalCursor=ComponentUtilities.setPredefinedCursor(getParentComponent(), Cursor.WAIT_CURSOR);	//change the cursor
+			final Cursor originalCursor=Components.setPredefinedCursor(getParentComponent(), Cursor.WAIT_CURSOR);	//change the cursor
 			try
 			{
 				return open(resource);	//open the resource
@@ -647,13 +663,13 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 			{
 				write(resource, resourceComponentState.getComponent()); //save the resource
 				resourceComponentState.setResource(resource);	//change the resource of the component state
-/*G***del if not needed
+/*TODO del if not needed
 				if(!ObjectUtilities.equals(resourceComponentState.getResource().getReferenceURI(), uri))	//if the URI isn't the same //TODO fix or delete comment: wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)
 				{
 					resourceComponentState.getResource().setReferenceURI(uri);	//update the resource description's URI
 				}
 */
-	//G***fix or del				setFile(file);  //update the file, just in case they override saveFile() and don't call this version
+	//TODO fix or del				setFile(file);  //update the file, just in case they override saveFile() and don't call this version
 				return true;	//show that the resource was successfully saved
 			}
 		}
@@ -711,7 +727,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		final ResourceComponentState resourceComponentState=getResourceComponentState();	//get the current resource component state
 		if(resourceComponentState!=null)	//if a resource is open
 		{
-//G***del if not needed			if(canClose(resourceComponentState))	//if we can close the open resource
+//TODO del if not needed			if(canClose(resourceComponentState))	//if we can close the open resource
 			{
 				revert(resourceComponentState);	//revert this resource component state
 			}
@@ -783,10 +799,10 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		/**Default constructor.*/
 		public NewAction()
 		{
-			super("New...");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Create a new file ");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Create a new file.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_N));  //set the mnemonic key G***i18n
+			super("New...");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Create a new file ");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Create a new file.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_N));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.NEW_ICON_FILENAME)); //load the correct icon
 			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_NEW_MENU_ACTION_ORDER));	//set the order
 		}
@@ -805,10 +821,10 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		/**Default constructor.*/
 		public OpenAction()
 		{
-			super("Open...");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Open a resource");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Display a dialog to select a file, and then load the selected resource.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_O));  //set the mnemonic key G***i18n
+			super("Open...");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Open a resource");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Display a dialog to select a file, and then load the selected resource.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_O));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.OPEN_ICON_FILENAME)); //load the correct icon
 			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_OPEN_MENU_ACTION_ORDER));	//set the order
 		}
@@ -828,10 +844,10 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		/**Default constructor.*/
 		public CloseAction()
 		{
-			super("Close");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Close the open resource");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Close the currently open resource.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key G***i18n
+			super("Close");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Close the open resource");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Close the currently open resource.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.CLOSE_ICON_FILENAME)); //load the correct icon
 		  putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.CTRL_MASK)); //add the accelerator
 			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_CLOSE_MENU_ACTION_ORDER));	//set the order
@@ -852,12 +868,12 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		/**Default constructor.*/
 		public SaveAction()
 		{
-			super("Save");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Save the open resource");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Save the currently open resource.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_V));  //set the mnemonic key; for some reason, 's' causes the action to be activated when Alt+F4 is pressed G***i18n
+			super("Save");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Save the open resource");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Save the currently open resource.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_V));  //set the mnemonic key; for some reason, 's' causes the action to be activated when Alt+F4 is pressed TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK)); //add the accelerator G***i18n
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK)); //add the accelerator TODO i18n
 			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_SAVE_MENU_ACTION_ORDER));	//set the order
 		}
 
@@ -876,10 +892,10 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		/**Default constructor.*/
 		public RevertAction()
 		{
-			super("Revert");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Revert the open resource");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Revert the currently open resource.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_R));  //set the mnemonic key G***i18n
+			super("Revert");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Revert the open resource");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Revert the currently open resource.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_R));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.REDO_ICON_FILENAME)); //load the correct icon
 			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_REVERT_MENU_ACTION_ORDER));	//set the order
 		}

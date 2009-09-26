@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.event.*;
@@ -8,7 +24,7 @@ import javax.swing.tree.*;
 
 /**Class that fires action events when a node is double-clicked or the Enter
 	key is pressed. This class will be superceded if a future version of
-	<code>javax.swing.JTree</code> handles these key/mouse bindings for the
+	{@link JTree} handles these key/mouse bindings for the
 	correct UI.
 @see ActionList
 @author Garret Wilson
@@ -75,7 +91,7 @@ public class ActionTree extends JTree
 								if(clickedPath.equals(selectionPath))	//if they clicked on the selected path (without checking, double-clicking somewhere else on the tree would fire the action)
 								{
 									fireActionPerformed();  //fire an action performed event
-									mouseEvent.consume(); //consume the mouse event G***do we need this?
+									mouseEvent.consume(); //consume the mouse event TODO do we need this?
 								}
 							}
 						}
@@ -104,7 +120,7 @@ public class ActionTree extends JTree
 
 		final TreePath selectionPath=getSelectionPath();  //get the selection path
 		//create a new action event and fire it to the listeners
-		fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null)); //G***fix action command
+		fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null)); //TODO fix action command
 	}
 
 	/**Adds an <code>ActionListener</code> to the list.

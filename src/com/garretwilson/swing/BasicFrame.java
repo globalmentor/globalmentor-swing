@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
@@ -11,7 +27,6 @@ import com.garretwilson.resources.icon.IconResources;
 import com.globalmentor.java.*;
 import com.globalmentor.log.Log;
 import com.globalmentor.model.Modifiable;
-import com.globalmentor.util.*;
 
 import static com.globalmentor.util.prefs.PreferencesUtilities.*;
 
@@ -311,7 +326,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 		actionManager=null;	//default to no action manager until one is asked for
 		closeAction=new CloseAction();  //create the close action
 		  //don't do anything automatically on close; we'll handle responding to close events
-		super.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);	//tell the parent to set its default close operation G***this implementation depends on the fact that the super class doesn't use the accessor methods---that's probably dangerous
+		super.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);	//tell the parent to set its default close operation TODO this implementation depends on the fact that the super class doesn't use the accessor methods---that's probably dangerous
 		enableEvents(AWTEvent.WINDOW_EVENT_MASK); //enable window events, so that we can respond to close events
 		if(contentPane!=null)	//if we have a content pane
 			setContentPane(contentPane); //set the given container as the content pane
@@ -325,14 +340,14 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 						if(isVisible()) restoreBoundsPreferences();}	//restore the new bounds if we are visible
 				});
 //TODO actually, this window state change needs to be fixed---it isn't working correctly
-//G***del		addWindowStateListener(new WindowStateListener()	//listen for the window state changing so that we can save it in the preferences
-//G***del				{
-//G***del public void windowStateChanged(WindowEvent e) {/*G***fix saveStatePreferences();*/}	//save the new state
-//G***del				});
-//G***del		defaultFocusComponent=null;	//default to no default focus component
+//TODO del		addWindowStateListener(new WindowStateListener()	//listen for the window state changing so that we can save it in the preferences
+//TODO del				{
+//TODO del public void windowStateChanged(WindowEvent e) {/*TODO fix saveStatePreferences();*/}	//save the new state
+//TODO del				});
+//TODO del		defaultFocusComponent=null;	//default to no default focus component
 			//create and install a new layout focus traversal policy that will
 			//automatically use the default focus component, if available
-/*G***fix
+/*TODO fix
 		setFocusTraversalPolicy(new LayoutFocusTraversalPolicy()
 				{
 					public Component getDefaultComponent(final Container focusCycleRoot)	//if the default component is requested
@@ -342,13 +357,13 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 					}
 				});
 */
-/*G***fix; move from componentShown() to here and find out why this doesn't ever get called
-		addWindowListener(new WindowAdapter() {	//G***testing; tidy; comment
+/*TODO fix; move from componentShown() to here and find out why this doesn't ever get called
+		addWindowListener(new WindowAdapter() {	//TODO testing; tidy; comment
 				private boolean gotFocus = false;
 				public void windowGainedFocus(WindowEvent we) {
 						// Once window gets focus, set initial focus
 						if (!gotFocus) {
-							gotFocus=requestDefaultFocusComponentFocus();	//G***testing
+							gotFocus=requestDefaultFocusComponentFocus();	//TODO testing
 						}
 				}
 		});
@@ -367,11 +382,11 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 		initializeUI(); //initialize the user interface
 		pack();	//set the initial size to its default
 		updateStatus();  //update the actions
-//G***bring back		setSize(800, 600);	//default to 800X600; the window can be maximized after it's shown G***determine the initial size based upon the resolution
-//G***fix		setExtendedState(MAXIMIZED_BOTH);	//maximize the frame G***get this from preferences
-//G***transfer this to WindowUtilities, maybe		GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
-//G***fix		WindowUtilities.maximize(this); //maximize the frame G***remove this, as JDK 1.4 has a programmatic maximization
-//G***del; doesn't fix the problem		getContentPane().requestFocus();	//focus on the content pane
+//TODO bring back		setSize(800, 600);	//default to 800X600; the window can be maximized after it's shown TODO determine the initial size based upon the resolution
+//TODO fix		setExtendedState(MAXIMIZED_BOTH);	//maximize the frame TODO get this from preferences
+//TODO transfer this to WindowUtilities, maybe		GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
+//TODO fix		WindowUtilities.maximize(this); //maximize the frame TODO remove this, as JDK 1.4 has a programmatic maximization
+//TODO del; doesn't fix the problem		getContentPane().requestFocus();	//focus on the content pane
 	}
 
 	/**Initializes actions in the action manager.
@@ -494,7 +509,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 			}
 			menuItem.setSelected(toggleAction.isSelected());	//set the initial selected state of the menu item
 				//create a property change listener to update the button in response to the action "selected" state changing
-			final PropertyChangeListener selectedPropertyChangeListener=ButtonUtilities.createToggleActionSelectedPropertyChangeListener(menuItem);
+			final PropertyChangeListener selectedPropertyChangeListener=Buttons.createToggleActionSelectedPropertyChangeListener(menuItem);
 			toggleAction.addPropertyChangeListener(selectedPropertyChangeListener);	//listen for the action "selected" state changing
 		}
 		else	//if we should create a normal menu item
@@ -641,13 +656,13 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 	@param newVisible <code>true</code> to make the component visible;
 		<code>false</code> to make it invisible.
 	*/
-/*G***del when works
+/*TODO del when works
 	public void setVisible(final boolean newVisible)
 	{
 		super.setVisible(newVisible);	//update the visible status normally
 		if(newVisible)	//if the frame is now visible
 		{
-//G***del			final Rectangle bounds=getBounds();	//get the current bounds
+//TODO del			final Rectangle bounds=getBounds();	//get the current bounds
 			final Preferences preferences=getPreferences();	//get the preferences
 			final int x=preferences.getInt(BOUNDS_X_PREFERENCE, -1);	//get the stored bounds, using invalid dimensions for defaults
 			final int y=preferences.getInt(BOUNDS_Y_PREFERENCE, -1);
@@ -706,7 +721,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 			final int width=preferences.getInt(BOUNDS_WIDTH_PREFERENCE, -1);
 			final int height=preferences.getInt(BOUNDS_HEIGHT_PREFERENCE, -1);
 //TODO maybe the stuff gets changed around here---the height and width seem to be changed, but the x and y seem to be lost
-//G***there's some sort of timing issue: when debugging, the things get changed correctly, but in real time often the x and y coordinates get set before the extended state is updated to maximized
+//TODO there's some sort of timing issue: when debugging, the things get changed correctly, but in real time often the x and y coordinates get set before the extended state is updated to maximized
 			useDefault=width<0 || height<0;	//use the default if we didn't get valid dimensions
 			if(!useDefault)	//if we had valid dimensions stored
 			{
@@ -729,7 +744,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 
 	public void setExtendedState(int state)
 	{
-		super.setExtendedState(state);	//G***testing	
+		super.setExtendedState(state);	//TODO testing	
 	}
 
 	/**Action for closing the frame.*/
@@ -738,10 +753,10 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 		/**Default constructor.*/
 		public CloseAction()
 		{
-			super("Close");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Close the window");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Close the window.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_O));  //set the mnemonic key G***i18n
+			super("Close");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Close the window");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Close the window.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_O));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.EXIT_ICON_FILENAME)); //load the correct icon
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.ALT_MASK)); //add the accelerator
 			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_EXIT_MENU_ACTION_ORDER));	//set the order

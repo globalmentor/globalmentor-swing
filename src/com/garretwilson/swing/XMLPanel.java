@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.BorderLayout;
@@ -46,23 +62,23 @@ public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeMo
 		public JTextPane getSourceTextPane() {return sourceTextPane;}
 
 	/**@return <code>true</code> if the text can be edited.*/
-/*G***TODO fix editable
+/*TODO TODO fix editable
 	public boolean isEditable() {return xmlTextPane.isEditable();}
 */	
 	/**Sets whether or not the text can be edited.
 	@param editable <code>true</code> if the text can be edited, or
 		<code>false</code> if the information should be read-only.
 	*/
-/*G***TODO fix editable
+/*TODO TODO fix editable
 	public void setEditable(final boolean editable)
 	{
 		xmlTextPane.setEditable(editable);	//show whether or not the text pane is editable
 
 
-//G***fix		xmlTextPane.setBackground(editable ? Color.WHITE : Color.LIGHT_GRAY);	//set the color to match
+//TODO fix		xmlTextPane.setBackground(editable ? Color.WHITE : Color.LIGHT_GRAY);	//set the color to match
 
 
-//G***del		textPane.setEnabled(editable);	//set the enabled status to match
+//TODO del		textPane.setEnabled(editable);	//set the enabled status to match
 	}
 */
 
@@ -84,10 +100,10 @@ public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeMo
 		/**@return The status bar showing information about the current Unicode character.*/
 		protected final UnicodeStatusBar getUnicodeStatusBar() {return unicodeStatusBar;}
 
-	/**G***testing.*/
+	/**TODO testing.*/
 	private final Action emphasisAction;
 
-		/**@return G***testing*/
+		/**@return TODO testing*/
 		public Action getEmphasisAction() {return emphasisAction;}
 
 	/**Sets the data model.
@@ -147,8 +163,8 @@ public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeMo
 
 		unicodeStatusBar=new UnicodeStatusBar();	//create a new Unicode status bar
 
-//G***fix		emphasisAction=new EmphasisAction();  //G***testing
-		emphasisAction=new InsertXMLElementAction("<em>emphasis</em>", XHTML.XHTML_NAMESPACE_URI, XHTML.ELEMENT_EM, getXMLTextPane());  //G***testing
+//TODO fix		emphasisAction=new EmphasisAction();  //TODO testing
+		emphasisAction=new InsertXMLElementAction("<em>emphasis</em>", XHTML.XHTML_NAMESPACE_URI, XHTML.ELEMENT_EM, getXMLTextPane());  //TODO testing
 
 
 		if(initialize)  //if we should initialize
@@ -159,8 +175,8 @@ public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeMo
 	protected void initializeUI()
 	{
 		getSourceTextPane().setContentType(ContentType.toString(ContentType.TEXT_PRIMARY_TYPE, PLAIN_SUBTYPE));	//set the content type of the source view to "text/plain"
-		addView(WYSIWYG_MODEL_VIEW, getXMLTextPane().getContentType(), getXMLScrollPane());	//add the XML text pane as the WYSIWYG view G***i18n
-		addView(SOURCE_MODEL_VIEW, "XML", getSourceScrollPane());	//add the source XML text pane as the source view G***i18n
+		addView(WYSIWYG_MODEL_VIEW, getXMLTextPane().getContentType(), getXMLScrollPane());	//add the XML text pane as the WYSIWYG view TODO i18n
+		addView(SOURCE_MODEL_VIEW, "XML", getSourceScrollPane());	//add the source XML text pane as the source view TODO i18n
 
 		add(unicodeStatusBar, BorderLayout.SOUTH);	//put the Unicode status bar in the south TODO make this an option
 
@@ -179,7 +195,7 @@ updateStatus();	//testing; probably put a convenience method to create this list
 
 				//add ourselves to listen to the XML text pane, so that if the XML text pane
 				//	changes documents we can add ourselves to the document to listen for modifications
-/*G***del if not needed
+/*TODO del if not needed
 		xmlTextPane.addPropertyChangeListener(XMLTextPane.DOCUMENT_PROPERTY, new PropertyChangeListener()
 			{
 				public void propertyChange(final PropertyChangeEvent propertyChangeEvent)	//if the document property changes
@@ -191,13 +207,13 @@ updateStatus();	//testing; probably put a convenience method to create this list
 				}
 			});	//TODO transfer to TextApplicationPanel
 */
-//G***del if not needed		setModified(false);	//show that the information has not been modified
+//TODO del if not needed		setModified(false);	//show that the information has not been modified
 	}
 
 	/**@return An array of actions to use in a toolbar, with any
 		<code>null</code> actions representing separators.
 	*/
-/*G***fix
+/*TODO fix
 	public Action[] getToolBarActions()
 	{
 		return new Action[]{getSaveAction(), getEmphasisAction()};	//return the toolbar actions for this panel
@@ -299,8 +315,8 @@ updateStatus();	//testing; probably put a convenience method to create this list
 						try
 						{
 							final Document document=XML.parse(inputStream, model.getBaseURI(), true, new URIInputStreamableXMLEntityResolver(model));	//parse the XML document
-//G***del Log.trace("document tree from source");
-//G***del XMLUtilities.printTree(document, System.out);
+//TODO del Log.trace("document tree from source");
+//TODO del XMLUtilities.printTree(document, System.out);
 							saveModel(model, document);	//store the document in the model
 						}
 						finally
@@ -322,8 +338,8 @@ updateStatus();	//testing; probably put a convenience method to create this list
 					{
 						final XMLDocument swingDocument=(XMLDocument)getXMLTextPane().getDocument();	//get the Swing document
 						final Document document=xmlEditorKit.getXML(swingDocument);	//get the XML DOM document from the Swing document
-//G***del						Log.trace("document tree from WYSIWYG");
-//G***del						XMLUtilities.printTree(document, System.out);
+//TODO del						Log.trace("document tree from WYSIWYG");
+//TODO del						XMLUtilities.printTree(document, System.out);
 						saveModel(model, document);	//store the document in the model
 					}
 				}
@@ -379,7 +395,7 @@ updateStatus();	//testing; probably put a convenience method to create this list
 	}
 
 	/**Unloads the open resource, if any, and resets to defaults.*/
-/*G***fix
+/*TODO fix
 	public void close()
 	{
 		getXMLPanel().setXMLModel(new XMLDocumentModel());	//remove all the XML from the XML panel

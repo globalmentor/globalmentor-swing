@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
@@ -7,12 +23,11 @@ import javax.swing.*;
 import com.garretwilson.resources.icon.IconResources;
 import com.globalmentor.java.*;
 import com.globalmentor.model.Localeable;
-import com.globalmentor.util.*;
 
 /**Action for selecting a language from a dialog.
 <p>Bound properties:</p>
 <dl>
-	<dt><code>LocaleConstants.LOCALE_PROPERTY_NAME</code> (<code>Locale</code>)</dt>
+	<dt>{@link Localeable#LOCALE_PROPERTY_NAME} ({@link Locale})</dt>
 	<dd>Indicates that the boolean locale property has been changed.</dd>
 </dl>
 @author Garret Wilson
@@ -78,13 +93,13 @@ public class SelectLanguageAction extends AbstractAction implements Localeable
 	*/
 	public SelectLanguageAction(final Locale locale, final Component parentComponent)
 	{
-		super("Language");	//create the base class G***i18n
+		super("Language");	//create the base class TODO i18n
 		this.locale=locale;	//set the language (don't call the setter method, as superclasses might want to access other locale variables from inside a nested class from the outer class' constructor, which would result in a null-pointer exception even though the outer class' variable had been initialized) 
 		this.parentComponent=parentComponent;	//set the parent component
-		putValue(SHORT_DESCRIPTION, "Select language");	//set the short description G***i18n
-		putValue(LONG_DESCRIPTION, "Select the language.");	//set the long description G***i18n
-		putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_L));  //set the mnemonic key G***i18n
-		putValue(SMALL_ICON, IconResources.getIcon(IconResources.GLOBE_ICON_FILENAME)); //load the correct icon G***use a better icon
+		putValue(SHORT_DESCRIPTION, "Select language");	//set the short description TODO i18n
+		putValue(LONG_DESCRIPTION, "Select the language.");	//set the long description TODO i18n
+		putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_L));  //set the mnemonic key TODO i18n
+		putValue(SMALL_ICON, IconResources.getIcon(IconResources.GLOBE_ICON_FILENAME)); //load the correct icon TODO use a better icon
 		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_L, Event.CTRL_MASK)); //add the accelerator
 	}
 	
@@ -95,7 +110,7 @@ public class SelectLanguageAction extends AbstractAction implements Localeable
 	{
 		final LanguagePanel languagePanel=new LanguagePanel(getLocale());	//create a new language panel
 			//ask for a new language; if the user accepts the changes
-		if(BasicOptionPane.showConfirmDialog(parentComponent, languagePanel, "Select language", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//G***i18n
+		if(BasicOptionPane.showConfirmDialog(parentComponent, languagePanel, "Select language", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//TODO i18n
 		{
 			setLocale(languagePanel.getLanguage());	//update the language
 		}

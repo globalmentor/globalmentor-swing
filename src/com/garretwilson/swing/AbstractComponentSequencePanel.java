@@ -1,19 +1,36 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
-import javax.swing.*;
+
+import com.globalmentor.model.Verifiable;
 
 /**Base class for panels that allow progression from one contained panel to
 	another. Useful for wizard panels.
 <p>In order for the correct buttons to automatically be shown, the preferred
-	method is to call <code>showSequenceDialog</code>.
+	method is to call {@link #showSequenceDialog(Component, String)}.
 <p>The panel's content component represents the current component in the
 	sequence.</p>
-<p>Each of the components in the sequence that implement <code>Verifiable</code>
+<p>Each of the components in the sequence that implement {@link Verifiable}
 	will be verified before moving to the next component.</p>
 @author Garret Wilson
-@see ContentPanel#getContentComponent
-@see #showSequenceDialog
+@see ContentPanel#getContentComponent()
+@see #showSequenceDialog(Component, String)
 */
 public abstract class AbstractComponentSequencePanel extends AbstractSequencePanel
 {
@@ -50,7 +67,7 @@ public abstract class AbstractComponentSequencePanel extends AbstractSequencePan
 	protected void initializeUI()
 	{
 		super.initializeUI();	//do the default initialization
-//G***del when works		start();	//start the sequence
+//TODO del when works		start();	//start the sequence
 	}
 
 	/**Goes to the first step in the sequence.*/

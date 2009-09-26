@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
@@ -32,6 +48,7 @@ This class maintains the default close operation of
 @see Application
 @see #displayError
 */
+@Deprecated
 public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class when dependent classes are modified to use the new ApplicationFrame
 {
 
@@ -60,7 +77,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		public final SwingApplication getApplication() {return application;}
 
 	/**The description used for the currently opened document.*/
-//G***del	private DocumentDescribable description=null;
+//TODO del	private DocumentDescribable description=null;
 
 	/**The description of the currently opened document.*/
 	private ObjectState<RDFResource> documentDescription=null;
@@ -215,7 +232,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		*/
 		public void setApplicationName(final String newApplicationName) {applicationName=newApplicationName;}
 
-	/**The application version.*/ //G***maybe rename this to applicationVersion
+	/**The application version.*/ //TODO maybe rename this to applicationVersion
 	private String version=null;
 
 		/**@return The version text, or <code>null</code> if there is no text.*/
@@ -368,13 +385,13 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		this.application=application;	//store the application
 		if(application!=null)	//if this frame represents an application
 			setDefaultCloseOperation(EXIT_ON_CLOSE);	//exit when the frame closes
-		fileNewAction=new FileNewAction();  //create the new action G***maybe lazily create these
+		fileNewAction=new FileNewAction();  //create the new action TODO maybe lazily create these
 		fileOpenAction=new FileOpenAction();  //create the open action
 		fileCloseAction=new FileCloseAction();  //create the close action
-//G***del		fileCloseAction.setEnabled(false); //default to nothing to close
+//TODO del		fileCloseAction.setEnabled(false); //default to nothing to close
 		fileSaveAction=new FileSaveAction();  //create the save action
 		fileSaveAsAction=new FileSaveAsAction();  //create the save as action
-//G***del		fileSaveAction.setEnabled(false); //default to nothing to save
+//TODO del		fileSaveAction.setEnabled(false); //default to nothing to save
 		closeAction=new CloseAction();  //create the close action
 		exitAction=new ExitAction();  //create the exit action
 		setFileExitAction(exitAction);	//default to using the exit action for file|exit
@@ -406,13 +423,13 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	/**Updates the states of the actions, including enabled/disabled status,
 		proxied actions, etc.
 	*/
-/*G***fix if neeed
+/*TODO fix if neeed
 	protected void updateStatus()
 	{
 		super.updateStatus();	//update the status normally
-//G***fix this; this isn't good, because if a child class uses another save action, such as a proxied action, this will screw things up
-//G***fix		final RDFResourceState description=getDocumentDescription();	//see what document is being described
-//G***fix		getFileSaveAction().setEnabled(description!=null && description.isModified());	//only enable saving when there is a document that's modified
+//TODO fix this; this isn't good, because if a child class uses another save action, such as a proxied action, this will screw things up
+//TODO fix		final RDFResourceState description=getDocumentDescription();	//see what document is being described
+//TODO fix		getFileSaveAction().setEnabled(description!=null && description.isModified());	//only enable saving when there is a document that's modified
 	}
 */
 
@@ -440,14 +457,14 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	{
 		final long inclusions=getFileMenuInclusions();  //see which file menu items should be included
 		final JMenu fileMenu=new JMenu(); //create the menu
-		fileMenu.setText("File");	//G***i18n
-		fileMenu.setMnemonic('f');	//G***i18n
+		fileMenu.setText("File");	//TODO i18n
+		fileMenu.setMnemonic('f');	//TODO i18n
 		if((inclusions & MENU_FILE_NEW)!=0) //file|new
 		{
 			final Action[] fileNewActions=getFileNewActions();  //get the array of multiple new actions
 			if(fileNewActions!=null)  //if we have multiple file new actions
 			{
-				final JMenu fileNewMenu=new JMenu(getFileNewAction());  //add the main File|New menu G***testing
+				final JMenu fileNewMenu=new JMenu(getFileNewAction());  //add the main File|New menu TODO testing
 				for(int i=0; i<fileNewActions.length; ++i) //look at each of the file new actions to create submenus
 				{
 				  fileNewMenu.add(fileNewActions[i]);  //add this action to the submenu
@@ -467,12 +484,12 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		if((inclusions & MENU_FILE_CLOSE)!=0) //file|close
 		{
 			JMenuItem fileCloseMenuItem=fileMenu.add(getFileCloseAction());
-//G***del			fileCloseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.CTRL_MASK));	//add Ctrl+F4 as an accelerator G***why do we need this twice?
+//TODO del			fileCloseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.CTRL_MASK));	//add Ctrl+F4 as an accelerator TODO why do we need this twice?
 		}
 		if((inclusions & MENU_FILE_SAVE)!=0) //file|save
 		{
 			JMenuItem fileSaveMenuItem=fileMenu.add(getFileSaveAction());
-//G***del			fileSaveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK));	//add Ctrl+S as an accelerator G***i18n G***why do we need this twice?
+//TODO del			fileSaveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK));	//add Ctrl+S as an accelerator TODO i18n TODO why do we need this twice?
 		}
 		if((inclusions & MENU_FILE_SAVE_AS)!=0) //file|save as
 		{
@@ -495,8 +512,8 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		final long inclusions=getHelpMenuInclusions();  //see which help menu items should be included
 		final JMenu helpMenu=new JMenu(); //create the menu
 			//help menu
-		helpMenu.setText("Help");	//G***i18n
-		helpMenu.setMnemonic('h');	//G***i18n
+		helpMenu.setText("Help");	//TODO i18n
+		helpMenu.setMnemonic('h');	//TODO i18n
 		if((inclusions & MENU_HELP_CONTENTS)!=0) //help|contents
 		{
 			final JMenuItem helpContentsMenuItem=helpMenu.add(getHelpContentsAction());
@@ -564,7 +581,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	*/
 	public boolean saveFile()
 	{
-//G***del Log.trace("saving file");
+//TODO del Log.trace("saving file");
 		final ObjectState<RDFResource> description=getDocumentDescription(); //get a description of the document
 		if(description!=null) //if we have a description of the document
 		{
@@ -608,13 +625,13 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 				if(!Objects.equals(description.getObject().getURI(), uri))	//if the URI wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)
 				{
 					description.getObject().setReferenceURI(uri);	//update the resource description's URI
-/*G***del when works
+/*TODO del when works
 						//create a copy of the resource description, using the new URI
-					final RDFResource newResource=new DefaultRDFResource(description.getRDFResource(), uri);	//G***but what if the other resource was a special type?
+					final RDFResource newResource=new DefaultRDFResource(description.getRDFResource(), uri);	//TODO but what if the other resource was a special type?
 					documentDescription.setRDFResource(newResource);	//update the resource to the one with the new URI
 */
 				}
-//G***fix or del				setFile(file);  //update the file, just in case they override saveFile() and don't call this version
+//TODO fix or del				setFile(file);  //update the file, just in case they override saveFile() and don't call this version
 			}
 		}
 		return result;  //show whether the operation completed
@@ -633,9 +650,9 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		if(!Objects.equals(description.getObject().getURI(), uri))	//if the URI should be changed
 		{
 			description.getObject().setReferenceURI(uri);	//update the resource description's URI
-/*G***del when works
+/*TODO del when works
 				//create a copy of the resource description, using the new URI
-			final RDFResource newResource=new DefaultRDFResource(description.getRDFResource(), uri);	//G***but what if the other resource was a special type?
+			final RDFResource newResource=new DefaultRDFResource(description.getRDFResource(), uri);	//TODO but what if the other resource was a special type?
 			documentDescription.setRDFResource(newResource);	//update the resource to the one with the new URI
 */
 		}
@@ -647,10 +664,10 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	@param description A description of the opened document.
 	@return <code>true</code> if the description contains a specified location.
 	*/
-/*G***del when works	
+/*TODO del when works	
 	protected boolean isLocationSpecified(final DocumentDescribable description)
 	{
-//G***del Log.trace("is location anonymous: ", new Boolean(description.getResource().isAnonymous()));
+//TODO del Log.trace("is location anonymous: ", new Boolean(description.getResource().isAnonymous()));
 		return description.getFile()!=null; //see if there is a file specified
 	}
 */
@@ -672,18 +689,18 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 			aboutPanel.setCopyright(getCopyright());  //set the copyright information, if available
 		}
 		//determine a title for the dialog, based upon the application name
-//G***del when works	final String dialogTitle="About"+(getApplicationName()!=null ? " "+getApplicationName() : "");
+//TODO del when works	final String dialogTitle="About"+(getApplicationName()!=null ? " "+getApplicationName() : "");
 			//determine a title for the dialog, based upon the application title
-		final String dialogTitle="About"+(aboutPanel.getTitle()!=null ? " "+aboutPanel.getTitle() : "");	//G***i18n
+		final String dialogTitle="About"+(aboutPanel.getTitle()!=null ? " "+aboutPanel.getTitle() : "");	//TODO i18n
 		//have an option pane create and show a new dialog using our about panel
-		BasicOptionPane.showMessageDialog(this, aboutPanel, dialogTitle, JOptionPane.INFORMATION_MESSAGE);	//G***check and see why we originally had a more complex version
-/*G***del if not needed
+		BasicOptionPane.showMessageDialog(this, aboutPanel, dialogTitle, JOptionPane.INFORMATION_MESSAGE);	//TODO check and see why we originally had a more complex version
+/*TODO del if not needed
 			//create a new dialog for our about panel
 		final JDialog aboutDialog=new OptionPane(aboutPanel, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION).createDialog(this, dialogTitle);
 		aboutDialog.pack();	//pack the dialog
 		aboutDialog.setVisible(true);	//show the dialog
 */
-//G***del if not needed		new OptionPane(aboutPanel, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION).createDialog(this, dialogTitle).show();  //G***check
+//TODO del if not needed		new OptionPane(aboutPanel, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION).createDialog(this, dialogTitle).show();  //TODO check
 	}
 
 	/**Determines whether the frame and application can close.
@@ -729,8 +746,8 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	{
 		if(description.isModified()) //if the document has been modified
 		{
-				//see if they want to remove save the document G***probably put the filename in, if available
-			switch(JOptionPane.showConfirmDialog(this, "Document modified; save modifications?", "Save File", JOptionPane.YES_NO_CANCEL_OPTION)) //G***i18n
+				//see if they want to remove save the document TODO probably put the filename in, if available
+			switch(JOptionPane.showConfirmDialog(this, "Document modified; save modifications?", "Save File", JOptionPane.YES_NO_CANCEL_OPTION)) //TODO i18n
 			{
 				case JOptionPane.YES_OPTION: //if they want to save
 					return saveFile(); //save the file and return whether it was successful
@@ -749,7 +766,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	*/
 	protected URI askOpenFile()
 	{
-		return null;  //by default we do not ask for a file G***maybe make a default file asking
+		return null;  //by default we do not ask for a file TODO maybe make a default file asking
 	}
 
 	/**Opens the file at the given location.
@@ -759,21 +776,21 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	@return A description of the opened document, or <code>null</code> if the
 		document was not opened.
 	*/
-	protected ObjectState<RDFResource> openFile(final URI uri)	//G***fix the "call this version afterwards" and delete if not needed
+	protected ObjectState<RDFResource> openFile(final URI uri)	//TODO fix the "call this version afterwards" and delete if not needed
 	{
-/*G***fix; maybe this can't go here in the new architecture
+/*TODO fix; maybe this can't go here in the new architecture
 		if(!description.getResource().getReferenceURI().equals(uri))	//if the URI wasn't updated (e.g. the overridden saveFile() didn't call the version in this class)
 		{
 				//create a copy of the resource description, using the new URI
-			final RDFResource newResource=new DefaultRDFResource(description.getResource(), uri);	//G***but what if the other resource was a special type?
+			final RDFResource newResource=new DefaultRDFResource(description.getResource(), uri);	//TODO but what if the other resource was a special type?
 			documentDescription.setResource(newResource);	//update the resource to the one with the new URI
 		}
 */		
-/*G***fix
+/*TODO fix
 		setFile(file);  //set the file used for this document
 		return true;  //this version always succeeds
 */
-		return null;	//G***fix
+		return null;	//TODO fix
 	}
 
 	/**Asks the user for a location for saving.
@@ -782,14 +799,14 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	*/
 	protected URI askSaveFile()
 	{
-		return null;  //by default we do not ask for a file G***maybe make a default file asking
+		return null;  //by default we do not ask for a file TODO maybe make a default file asking
 	}
 
 	/**Retrieves the file used for the currently opened document.
 	@return The file used for the currently opened document, or <code>null</code>
 		if no file is available.
 	*/
-/*G***fix
+/*TODO fix
 	protected File getFile()
 	{
 		return file;  //return whatever file we know about
@@ -799,7 +816,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	/**Sets the file used for the currently opened document.
 	@param newFile The file to use for saving the document.
 	*/
-/*G***fix
+/*TODO fix
 	protected void setFile(final File newFile)
 	{
 		file=newFile; //store the file
@@ -811,14 +828,14 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	*/
 	public void setStatus(final String status)
 	{
-/*G***fix		
-//G***del Log.trace("told to change status"); //G***del
+/*TODO fix		
+//TODO del Log.trace("told to change status"); //TODO del
 		if(statusStatusLabel!=null) //if we have a status label
 		{
-//G***del Log.trace("changing status to: ", status); //G***del
+//TODO del Log.trace("changing status to: ", status); //TODO del
 		  statusStatusLabel.setText(status);	//set the status
-//G***del 			statusStatusLabel.repaint();  //G***del; testing
-//G***del 			statusBar.repaint();  //G***del; testing
+//TODO del 			statusStatusLabel.repaint();  //TODO del; testing
+//TODO del 			statusBar.repaint();  //TODO del; testing
 		}
 */		
 	}
@@ -833,20 +850,20 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		final String errorMessage;	//we'll store the error message in this variable
 		if(exception instanceof FileNotFoundException)	//if a file was not found
 		{
-			errorMessage="File not found: "+exception.getMessage();	//G***comment; i18n
+			errorMessage="File not found: "+exception.getMessage();	//TODO comment; i18n
 		}
-		else if(exception instanceof CharConversionException)	//if there was an error converting characters; G***put this elsewhere, fix for non-Sun JVMs
+		else if(exception instanceof CharConversionException)	//if there was an error converting characters; TODO put this elsewhere, fix for non-Sun JVMs
 		{
-			errorMessage="Invalid character encountered for file encoding.";	//G***comment; i18n
+			errorMessage="Invalid character encountered for file encoding.";	//TODO comment; i18n
 		}
 		else  //for any another error
 		{
 		  final String message=exception.getMessage();  //get the exception message
 			errorMessage=message!=null ? message : exception.getClass().getName();  //if the message is null, use the class name of the exception as the message
 		}
-//G***del Log.trace("Ready to display error message: "+errorMessage);
-		final String displayMessage=Strings.wrap(errorMessage, 100);	//wrap the error message at 100 characters G***probably use a constant here
-		JOptionPane.showMessageDialog(this, displayMessage, title, JOptionPane.ERROR_MESSAGE);	//G***i18n; comment
+//TODO del Log.trace("Ready to display error message: "+errorMessage);
+		final String displayMessage=Strings.wrap(errorMessage, 100);	//wrap the error message at 100 characters TODO probably use a constant here
+		JOptionPane.showMessageDialog(this, displayMessage, title, JOptionPane.ERROR_MESSAGE);	//TODO i18n; comment
 	}
 
 	/**Action for closing the frame.*/
@@ -855,10 +872,10 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		/**Default constructor.*/
 		public CloseAction()
 		{
-			super("Close");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Close the window");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Close the window.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_O));  //set the mnemonic key G***i18n
+			super("Close");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Close the window");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Close the window.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_O));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.EXIT_ICON_FILENAME)); //load the correct icon
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.ALT_MASK)); //add the accelerator
 		}
@@ -878,10 +895,10 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		/**Default constructor.*/
 		public ExitAction()
 		{
-			super("Exit");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Exit the application");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Exit the application.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_X));  //set the mnemonic key G***i18n
+			super("Exit");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Exit the application");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Exit the application.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_X));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.EXIT_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -890,7 +907,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		*/
 		public void actionPerformed(ActionEvent e)
 		{
-//G***del when works			exit(); //exit the application
+//TODO del when works			exit(); //exit the application
 			close(); //close the frame; this assumes that setDefaultCloseOperation has been set to DISPOSE_ON_CLOSE or EXIT_ON_CLOSE
 		}
 	}
@@ -901,10 +918,10 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		/**Default constructor.*/
 		public FileNewAction()
 		{
-			super("New...");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Create a new file ");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Create a new file.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_N));  //set the mnemonic key G***i18n
+			super("New...");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Create a new file ");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Create a new file.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_N));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.NEW_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -923,10 +940,10 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		/**Default constructor.*/
 		public FileOpenAction()
 		{
-			super("Open...");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Open a file ");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Bring up a dialog to select a file, and then load the selected file.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_O));  //set the mnemonic key G***i18n
+			super("Open...");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Open a file ");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Bring up a dialog to select a file, and then load the selected file.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_O));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.OPEN_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -935,7 +952,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		*/
 		public void actionPerformed(ActionEvent e)
 		{
-//G***fix			openFile(); //open a file
+//TODO fix			openFile(); //open a file
 		}
 	}
 
@@ -945,10 +962,10 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		/**Default constructor.*/
 		public FileCloseAction()
 		{
-			super("Close");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Close the open file.");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Close the currently open file.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key G***i18n
+			super("Close");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Close the open file.");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Close the currently open file.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_C));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.CLOSE_ICON_FILENAME)); //load the correct icon
 		  putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.CTRL_MASK)); //add the accelerator
 		}
@@ -968,12 +985,12 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		/**Default constructor.*/
 		public FileSaveAction()
 		{
-			super("Save");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Save the open file");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Save the currently open file.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_S));  //set the mnemonic key G***i18n
+			super("Save");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Save the open file");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Save the currently open file.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_S));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_ICON_FILENAME)); //load the correct icon
-		  putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK)); //add the accelerator G***i18n
+		  putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK)); //add the accelerator TODO i18n
 		}
 
 		/**Called when the action should be performed.
@@ -991,10 +1008,10 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		/**Default constructor.*/
 		public FileSaveAsAction()
 		{
-			super("Save As");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Save file as another filename");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Save the currently open file under a differennt filename.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_A));  //set the mnemonic key G***i18n
+			super("Save As");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Save file as another filename");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Save the currently open file under a differennt filename.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_A));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.SAVE_AS_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -1013,10 +1030,10 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		/**Default constructor.*/
 		public HelpContentsAction()
 		{
-			super("Help Topics...");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "Help Topics");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Bring up a list of topics for finding help.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_H));  //set the mnemonic key G***i18n
+			super("Help Topics...");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "Help Topics");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Bring up a list of topics for finding help.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_H));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.HELP_ICON_FILENAME)); //load the correct icon
 		}
 
@@ -1035,10 +1052,10 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		/**Default constructor.*/
 		public AboutAction()
 		{
-			super("About...");	//create the base class G***Int
-			putValue(SHORT_DESCRIPTION, "About the Application");	//set the short description G***Int
-			putValue(LONG_DESCRIPTION, "Show more information about the application.");	//set the long description G***Int
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_A));  //set the mnemonic key G***i18n
+			super("About...");	//create the base class TODO Int
+			putValue(SHORT_DESCRIPTION, "About the Application");	//set the short description TODO Int
+			putValue(LONG_DESCRIPTION, "Show more information about the application.");	//set the long description TODO Int
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_A));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.INFO_ICON_FILENAME)); //load the correct icon
 		}
 

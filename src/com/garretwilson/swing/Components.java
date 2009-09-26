@@ -1,10 +1,24 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
 
 import javax.swing.*;
-
-import com.globalmentor.log.Log;
 
 /**Convenience methods to be used for Swing components.
 Some of these methods apply to AWT components as well, but use the Swing utilities
@@ -13,11 +27,14 @@ to acess the AWT event queue and are therefore included in the
 @see SwingUtilities
 @author Garret Wilson
 */
-public class ComponentUtilities
+public class Components
 {
 
+	/**The enabled property.*/
+	public final static String ENABLED_PROPERTY="enabled";
+
 	/**This class cannot be publicly instantiated.*/
-	private ComponentUtilities(){}
+	private Components(){}
 
 	/**Sets the cursor for a component immediately, returning the original cursor.
 	@param component The component whose cursor should be set.
@@ -65,7 +82,6 @@ public class ComponentUtilities
 		{
 			public void run()
 			{
-Log.trace("Ready to set cursor: ", cursor.getName());  //G***del
 				component.setCursor(cursor);	//set the new cursor
 			}
 		});

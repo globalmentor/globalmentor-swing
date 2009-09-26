@@ -26,7 +26,7 @@ import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.SizeRequirements;
 
-import com.garretwilson.swing.ComponentUtilities;
+import com.garretwilson.swing.Components;
 import com.garretwilson.swing.SwingApplication;
 import com.garretwilson.swing.XMLTextPane;	//TODO del when we can find a better place to set the paged view variable of XMLTextPane
 import com.garretwilson.swing.event.*;
@@ -429,7 +429,7 @@ A copy of our...
 	{
 			//TODO is changing the cursor more trouble than it's worth? check the time it takes to do this
 		final Container container=getContainer();	//see if the flow view has a container (it always should);
-		final Cursor originalCursor=container!=null ? ComponentUtilities.setCursor(container, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)) : null;	//show the wait cursor
+		final Cursor originalCursor=container!=null ? Components.setCursor(container, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)) : null;	//show the wait cursor
 		try
 		{
 			Views.invalidateHierarchy(getPagePoolView());	//invalidate the page pool, which will notify this view that it needs laid out
@@ -1526,7 +1526,7 @@ return v;
 		public void layout(final FlowView flowView)
 		{
 			final Container container=flowView.getContainer();	//see if the flow view has a container (it always should)
-			final Cursor originalCursor=container!=null ? ComponentUtilities.setCursor(container, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)) : null;	//show the wait cursor
+			final Cursor originalCursor=container!=null ? Components.setCursor(container, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)) : null;	//show the wait cursor
 			try
 			{
 				fireMadeProgress(new ProgressEvent(flowView, PAGINATE_TASK, "Repaginating pages...", 0, 1));	//show that we are ready to start paginating pages, but we haven't really started, yet TODO i18n

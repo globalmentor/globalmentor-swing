@@ -1,13 +1,26 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.rdf.tree;
 
 import java.util.*;
 import javax.swing.tree.*;
 
-import com.garretwilson.model.*;
-import com.globalmentor.marmot.Marmot;
 import com.globalmentor.net.Resource;
 import com.globalmentor.rdf.*;
-import com.globalmentor.util.*;
 
 /**Utilities for manipulating trees of RDF resources.
 @author Garret Wilson
@@ -28,14 +41,14 @@ public class RDFTreeUtilities
 	*/
 	public static MutableTreeNode createFileResourceTreeNode(final RDF rdf, final List<? extends Resource> topLevelResourceList)
 	{
-		final DefaultMutableTreeNode rootNode=new DefaultMutableTreeNode("Resources");  //create the root node G***i18n; fix
+		final DefaultMutableTreeNode rootNode=new DefaultMutableTreeNode("Resources");  //create the root node TODO i18n; fix
 			//create the top-level resources
 		final Iterator<? extends Resource> topLevelResourceIterator=topLevelResourceList.iterator();  //get an iterator to all the top-level resources
 		while(topLevelResourceIterator.hasNext()) //while there are more top-level resources
 		{
 			final Resource topLevelResource=topLevelResourceIterator.next();  //get the next top-level resource
 			final RDFResource topLevelRDFResource=rdf.getResource(topLevelResource.getURI());  //get the RDF resource representing the top-level resource
-			if(topLevelRDFResource!=null)  //if such an RDF resource exists G***fix error handling
+			if(topLevelRDFResource!=null)  //if such an RDF resource exists TODO fix error handling
 			{
 				final RDFResourceTreeNode topLevelTreeNode=createFileResourceTreeNode(topLevelRDFResource);  //create a tree node from the top-level resource
 				rootNode.add(topLevelTreeNode); //add the tree node to the root
@@ -68,7 +81,7 @@ public class RDFTreeUtilities
 				while(itemResourceIterator.hasNext()) //while there are more resources
 				{
 					final RDFResource itemResource=(RDFResource)itemResourceIterator.next();  //get the next resource
-Log.trace("found item resource: ", itemResource);  //G***del
+Log.trace("found item resource: ", itemResource);  //TODO del
 						//create a new tree node to represent the resource, recursively discovering folders
 					final RDFResourceTreeNode itemResourceNode=createFileResourceTreeNode(itemResource);
 					rdfResourceTreeNode.add(itemResourceNode); //add the resource node to the folder node

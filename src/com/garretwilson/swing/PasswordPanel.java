@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.GridBagConstraints;
@@ -5,8 +21,6 @@ import java.awt.Insets;
 import java.util.Arrays;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
-
-import static com.globalmentor.java.Objects.*;
 
 /**Allows entry and optional verification of a password.
 @author Garret Wilson
@@ -73,9 +87,9 @@ public class PasswordPanel extends BasicPanel
 	public void initializeUI()
 	{
 		super.initializeUI();	//do the default user interface initialization
-		passwordLabel.setText("Password");	//G***i18n
+		passwordLabel.setText("Password");	//TODO i18n
 		passwordField.setColumns(16);
-		passwordVerificationLabel.setText("Password Verification");	//G***i18n
+		passwordVerificationLabel.setText("Password Verification");	//TODO i18n
 		passwordVerificationLabel.setVisible(false);	//start out assuming we shouldn't verify the password
 		passwordVerificationField.setColumns(16);
 		passwordVerificationField.setVisible(false);	//start out assuming we shouldn't verify the password
@@ -104,7 +118,7 @@ public class PasswordPanel extends BasicPanel
 			//if we should verify password and the passwords don't match
 		if(isVerifyPassword() && !Arrays.equals(passwordField.getPassword(), passwordVerificationField.getPassword()))
 		{
-			JOptionPane.showMessageDialog(this, "Please verify the entered password by entering the same password in both fields.", "Invalid password", JOptionPane.ERROR_MESSAGE);	//G***i18n
+			JOptionPane.showMessageDialog(this, "Please verify the entered password by entering the same password in both fields.", "Invalid password", JOptionPane.ERROR_MESSAGE);	//TODO i18n
 			passwordVerificationField.requestFocusInWindow(); //focus on the password verificiation field
 			return false; //show that verification failed			
 		}

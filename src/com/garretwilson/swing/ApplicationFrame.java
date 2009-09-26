@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
@@ -7,23 +23,24 @@ import com.garretwilson.resources.icon.IconResources;
 import com.globalmentor.log.Log;
 import com.globalmentor.rdf.*;
 import com.globalmentor.rdf.dublincore.RDFDublinCore;
+import com.globalmentor.util.Application;
 
 /**Main frame parent class for an application.
 <p>This class requires that the content pane be an instance of
-	<code>ApplicationFrame.ApplicationContentPane</code>.</p>
-<p>If an <code>Application</code> is set for the frame, the close
-	operation changes to <code>EXIT_ON_CLOSE</code>. (This is essential to work
+	{@link ApplicationContentPane}.</p>
+<p>If an {@link Application} is set for the frame, the close
+	operation changes to {@link WindowConstants#EXIT_ON_CLOSE}. (This is essential to work
 	around a JDK bug that under certain instances runs a daemon thread that
 	prevents the JVM from exiting, even if the main program thread has finished
-	and the sole frame has closed.) If there is no <code>Application</code> set,
-	the close operation remains the default, <code>DISPOSE_ON_CLOSE</code>.</p>
+	and the sole frame has closed.) If there is no {@link Application} set,
+	the close operation remains the default, {@link WindowConstants#DISPOSE_ON_CLOSE}.</p>
 <p>This class maintains the default close operation of
-	<code>DO_NOTHING_ON_CLOSE</code> . This allows the class listen to window
+	{@link WindowConstants#DO_NOTHING_ON_CLOSE}. This allows the class listen to window
 	events and perform consistent <code>canClose()</code> checks for all methods
 	of closing. This is all handled transparently&mdash;once closing should occur,
 	the local default close operation setting is honored as normal.</p>
 <p>If an application is provided, the application's preference node is used
-	to store user preferences.</p> 
+	to store user preferences.</p>
 @author Garret Wilson
 @see Application
 @see SwingApplication
@@ -252,7 +269,7 @@ public class ApplicationFrame extends BasicFrame
 	/**Initializes the user interface.
 		Any derived class that overrides this method should call this version.
 	*/
-/*G***del if not needed
+/*TODO del if not needed
   protected void initializeUI()
   {
   	super.initializeUI();	//do the default UI initialization
@@ -262,13 +279,13 @@ public class ApplicationFrame extends BasicFrame
 	/**Updates the states of the actions, including enabled/disabled status,
 		proxied actions, etc.
 	*/
-/*G***fix if needed
+/*TODO fix if needed
 	protected void updateStatus()
 	{
 		super.updateStatus();	//update the status normally
-//G***fix this; this isn't good, because if a child class uses another save action, such as a proxied action, this will screw things up
-//G***fix		final RDFResourceState description=getDocumentDescription();	//see what document is being described
-//G***fix		getFileSaveAction().setEnabled(description!=null && description.isModified());	//only enable saving when there is a document that's modified
+//TODO fix this; this isn't good, because if a child class uses another save action, such as a proxied action, this will screw things up
+//TODO fix		final RDFResourceState description=getDocumentDescription();	//see what document is being described
+//TODO fix		getFileSaveAction().setEnabled(description!=null && description.isModified());	//only enable saving when there is a document that's modified
 	}
 */
 
@@ -277,16 +294,16 @@ public class ApplicationFrame extends BasicFrame
 	{
 		final AboutPanel aboutPanel=new AboutPanel(getApplication());	//create a new about panel for the application
 			//determine a title for the dialog, based upon the application title
-		final String dialogTitle="About"+(aboutPanel.getTitle()!=null ? " "+aboutPanel.getTitle() : "");	//G***i18n
+		final String dialogTitle="About"+(aboutPanel.getTitle()!=null ? " "+aboutPanel.getTitle() : "");	//TODO i18n
 		//have an option pane create and show a new dialog using our about panel
-		BasicOptionPane.showMessageDialog(this, aboutPanel, dialogTitle, JOptionPane.INFORMATION_MESSAGE);	//G***check and see why we originally had a more complex version
+		BasicOptionPane.showMessageDialog(this, aboutPanel, dialogTitle, JOptionPane.INFORMATION_MESSAGE);	//TODO check and see why we originally had a more complex version
 	}
 
 	/**Determines whether the frame can close.
 	This version attempts to save any application configuration information.
 	@return <code>true</code> if the frame can close.
 	*/
-/*G***del; transferred to Application
+/*TODO del; transferred to Application
 	public boolean canClose()
 	{
 		boolean canClose=super.canClose();	//try to perform the default closing functionality
@@ -306,7 +323,7 @@ public class ApplicationFrame extends BasicFrame
 						//ask if we can close even though we can't save the configuration information
 					canClose=JOptionPane.showConfirmDialog(this,
 						"Unable to save configuration information; are you sure you want to close?",
-						"Unable to save configuration", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION;	//G***i18n
+						"Unable to save configuration", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION;	//TODO i18n
 				}
 			}
 		}
@@ -320,7 +337,7 @@ public class ApplicationFrame extends BasicFrame
 	@see #getDocumentDescription
 	@see #canClose(RDFResourceState)
 	*/
-/*G***fix
+/*TODO fix
 	public boolean canClose()
 	{
 		return canCloseFile();	//return whether or not the current file can be closed
@@ -334,7 +351,7 @@ public class ApplicationFrame extends BasicFrame
 	If there is a document description, the frame's <code>canClose()</code> method
 		is called for the description. 
 	*/
-/*G***fix
+/*TODO fix
 	public boolean canCloseFile()
 	{
 		boolean canClose=true;	//default to being able to be closed
@@ -444,7 +461,7 @@ public class ApplicationFrame extends BasicFrame
 		public ApplicationContentPane(final Component applicationComponent, final boolean hasToolBar, final boolean hasStatusBar, final boolean initialize)
 		{
 			super(applicationComponent, hasToolBar, hasStatusBar, initialize);  //construct the parent class without intializing TODO create a method to create a default center panel
-/*G***fix
+/*TODO fix
 			toolBarPosition=BorderLayout.NORTH;	//default to the toolbar in the north
 			statusBarPosition=BorderLayout.SOUTH;	//default to the status bar in the south
 			toolBar=hasToolBar ? createToolBar() : null;	//create a toolbar if we should have one
@@ -461,10 +478,10 @@ public class ApplicationFrame extends BasicFrame
 		/**Default constructor.*/
 		public ExitAction()
 		{
-			super("Exit");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Exit the application");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Exit the application.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_X));  //set the mnemonic key G***i18n
+			super("Exit");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Exit the application");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Exit the application.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_X));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.EXIT_ICON_FILENAME)); //load the correct icon
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.ALT_MASK)); //add the accelerator
 			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.FILE_EXIT_MENU_ACTION_ORDER));	//set the order
@@ -485,10 +502,10 @@ public class ApplicationFrame extends BasicFrame
 		/**Default constructor.*/
 		public AboutAction()
 		{
-			super("About...");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "About the application");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Show more information about the application.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_A));  //set the mnemonic key G***i18n
+			super("About...");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "About the application");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Show more information about the application.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_A));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.INFO_ICON_FILENAME)); //load the correct icon
 			putValue(ActionManager.MENU_ORDER_PROPERTY, new Integer(ActionManager.HELP_ABOUT_MENU_ACTION_ORDER));	//set the order
 		}

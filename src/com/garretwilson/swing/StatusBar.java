@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
@@ -16,7 +32,7 @@ public class StatusBar extends BasicToolBar
 	protected final Insets STATUS_INSETS=new Insets(2, 2, 2, 2);
 
 	/**The zero-based relative size of the general status label font.*/
-//G***del	protected final int STATUS_LABEL_RELATIVE_FONT_SIZE=-1;
+//TODO del	protected final int STATUS_LABEL_RELATIVE_FONT_SIZE=-1;
 
 	/**The zero-based relative size of the progress bar font.*/
 	protected final int PROGRESS_BAR_RELATIVE_FONT_SIZE=-1;
@@ -127,9 +143,9 @@ public class StatusBar extends BasicToolBar
 		setStatusVisible(false);	//hide status until there is some change in status
 		setProgressVisible(false);	//hide progress until there is some change in progress
 			//change the font size of the status label
-//G***del if not needed		statusLabel.setFont(statusLabel.getFont().deriveFont((float)statusLabel.getFont().getSize()+STATUS_LABEL_RELATIVE_FONT_SIZE));
+//TODO del if not needed		statusLabel.setFont(statusLabel.getFont().deriveFont((float)statusLabel.getFont().getSize()+STATUS_LABEL_RELATIVE_FONT_SIZE));
 		addStatusComponent(statusLabel);	//add the general status label
-//G***fix		statusStatusLabel.setFont(statusBar.getFont().deriveFont((float)statusBar.getFont().getSize()-1));	//G***testing
+//TODO fix		statusStatusLabel.setFont(statusBar.getFont().deriveFont((float)statusBar.getFont().getSize()-1));	//TODO testing
 //G**fix		statusBar.add(statusStatusLabel, new GridBagConstraints(0, 0, 1, 1, 0.5, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));	//add the status label to the status bar
 				//TODO i18n add these status components correctly west or east based upon component orientation, and make sure the orientation of the status component panel matches 
 			//add the status component panel
@@ -148,7 +164,7 @@ public class StatusBar extends BasicToolBar
 	public void addStatusComponent(final Component component)
 	{
 			//add the status component to the status component panel in the next position horizontally
-		getStatusComponentPanel().add(component, ((BasicGridBagLayout)getStatusComponentPanel().getLayout()).createNextBoxConstraints(BasicGridBagLayout.X_AXIS));	//G***fix, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH));
+		getStatusComponentPanel().add(component, ((BasicGridBagLayout)getStatusComponentPanel().getLayout()).createNextBoxConstraints(BasicGridBagLayout.X_AXIS));	//TODO fix, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH));
 	}
 
 	/**Sets whether general status is visible.

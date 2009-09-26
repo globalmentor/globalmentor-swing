@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
@@ -10,7 +26,7 @@ import javax.swing.plaf.basic.BasicListUI;
 /**User interface class that allows list items to be toggled on and off, as if
 	the control key were always pressed. Range selections with the shift key
 	function normally.
-	<p>This class is derived in part from sections of <code>BasicListUI</code>
+	<p>This class is derived in part from sections of {@link BasicListUI}
 	1.54 00/02/02, Copyright 1997-2000 Sun Microsystems, Inc.</p>
 @author Garret Wilson
 */
@@ -25,17 +41,8 @@ public class ToggleListUI extends BasicListUI
 	protected void installKeyboardActions()
 	{
 		super.installKeyboardActions(); //install the default keyboard actions
-/*G***del
-	  final InputMap inputMap=getInputMap(JComponent.WHEN_FOCUSED); //get the current input map
-		SwingUtilities.replaceUIInputMap(list, JComponent.WHEN_FOCUSED, inputMap);
-		ActionMap map=getActionMap(); //get the input map
-		if(map!=null)
-		{
-	    SwingUtilities.replaceUIActionMap(list, map);
-		}
-*/
 		final ActionMap map=createToggleActionMap();  //create our custom action map TODO later reimplement this to check to see if a map has already been created and stored in the UI, as does BasicListUI
-				//G***find a way to merge these actions with the ones we're adding; maybe just
+				//TODO find a way to merge these actions with the ones we're adding; maybe just
 		SwingUtilities.replaceUIActionMap(list, map); //replace the list's map with our custom one
 	}
 
@@ -51,7 +58,7 @@ public class ToggleListUI extends BasicListUI
 		map.put("selectFirstRow",
 					new HomeAction("selectFirstRow", CHANGE_LEAD));
 		map.put("selectLastRow",
-					new EndAction("selctLastRow", CHANGE_LEAD));  //G***fix spelling
+					new EndAction("selctLastRow", CHANGE_LEAD));  //TODO fix spelling
 		map.put("scrollUp",
 					new PageUpAction("scrollUp", CHANGE_LEAD));
 		map.put("scrollDown",

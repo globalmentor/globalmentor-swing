@@ -1,20 +1,37 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing.rdf.tree;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 
+import com.garretwilson.swing.tree.IconTreeNode;
 import com.globalmentor.log.Log;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.rdf.*;
-import com.globalmentor.rdf.xpackage.*;
 
 /**A tree cell renderer that can render different icons and strings for user
 	objects that are XPackage RDF resources.
-	<p>If the a tree node is a <code>IconTreeNode</code> that has an icon, its icon
+	<p>If the a tree node is an {@link IconTreeNode} that has an icon, its icon
 	is used. If not, specified icons are used for the specified types of
 	RDF resource user objects, using first the XPackage content type and then, if
 	there is no content type, the RDF resource type. If the user object is not an
 	RDF resource, the specified class of user object is used to find an icon.
-	If a tree node is not a <code>DefaultMutableTreeCell</code>, the default
+	If a tree node is not a {@link DefaultMutableTreeNode}, the default
 	icons are used from the parent class.</p>
 @author Garret Wilson
 */

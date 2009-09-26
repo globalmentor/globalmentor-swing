@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.applet.*;
@@ -18,32 +34,23 @@ import org.w3c.dom.DocumentFragment;
 
 import com.garretwilson.awt.EventQueueUtilities;
 
-import com.garretwilson.swing.event.PageEvent;
-import com.garretwilson.swing.event.PageListener;
-import com.garretwilson.swing.event.ProgressEvent;
-import com.garretwilson.swing.event.ProgressListener;
+import com.garretwilson.swing.event.*;
 import com.garretwilson.swing.text.*;
 import com.garretwilson.swing.text.rdf.maqro.MAQROViewFactory;
 import com.garretwilson.swing.text.xml.*;
-import com.garretwilson.swing.text.xml.oeb.OEBEditorKit;  //G***move elsewhere if we can
+import com.garretwilson.swing.text.xml.oeb.OEBEditorKit;  //TODO move elsewhere if we can
 import com.garretwilson.swing.text.xml.xeb.XEBEditorKit;
-import com.garretwilson.swing.text.xml.xhtml.XHTMLEditorKit;
-import com.garretwilson.swing.text.xml.xhtml.XHTMLLinkController;
-import com.garretwilson.swing.text.xml.xhtml.XHTMLViewFactory;
+import com.garretwilson.swing.text.xml.xhtml.*;
 import com.globalmentor.applet.*;
 import com.globalmentor.io.*;
 import com.globalmentor.log.Log;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.net.URIs;
-import com.globalmentor.net.URLs;
 import com.globalmentor.text.ArgumentSyntaxException;
 import com.globalmentor.text.Text;
-import com.globalmentor.text.xml.XMLDOMImplementation;
-import com.globalmentor.text.xml.XMLReader;
 import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.oeb.OEB;
 import com.globalmentor.text.xml.xhtml.XHTML;
-import com.globalmentor.urf.maqro.MAQRO;
 import com.globalmentor.util.zip.*;
 
 import static com.globalmentor.collections.iterators.Iterators.*;
@@ -62,7 +69,7 @@ import static com.globalmentor.text.xml.XML.*;
 @see com.garretwilson.swing.event.PageEvent
 @see com.garretwilson.swing.event.PageListener
 */
-public class XMLTextPane extends JTextPane implements AppletContext, /*G***del when works KeyListener, */ /*G***del JDK1.5 MouseMotionListener,*/ PageListener, ProgressListener, URIAccessible	//TODO eventually change this to a BasicTextPane
+public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del when works KeyListener, */ /*TODO del JDK1.5 MouseMotionListener,*/ PageListener, ProgressListener, URIAccessible	//TODO eventually change this to a BasicTextPane
 {
 
 	/**The name of the property that indicates the current editor kit.*/
@@ -110,8 +117,8 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 	*/
 	public final static int NEXT_SEARCH_OFFSET=-1;
 
-//G***del if not needed	/**The property representing the search position.*/
-//G***del if not needed	public final static String SEARCH_POSITION_PROPERTY="searchPositionProperty";
+//TODO del if not needed	/**The property representing the search position.*/
+//TODO del if not needed	public final static String SEARCH_POSITION_PROPERTY="searchPositionProperty";
 
 	/**The list of page event listeners.*/
 	private EventListenerList pageListenerList=new EventListenerList();
@@ -120,11 +127,11 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 	private EventListenerList progressListenerList=new EventListenerList();
 
 	/**The left key stroke, predefined for quick comparison.*/
-//G***del when keymap works	protected final static KeyStroke LEFT_KEY_STROKE=KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0);
+//TODO del when keymap works	protected final static KeyStroke LEFT_KEY_STROKE=KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0);
 
 	/**The right key stroke, predefined for quick comparison.*/
-//G***del when keymap works
-//G***del	protected final static KeyStroke RIGHT_KEY_STROKE=KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0);
+//TODO del when keymap works
+//TODO del	protected final static KeyStroke RIGHT_KEY_STROKE=KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0);
 
 	/**The access to input streams via URIs based upon the first document loaded; used to reload.*/
 	protected URIInputStreamable baseURIInputStreamable;
@@ -163,15 +170,15 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		public void setURIOutputStreamable(final URIOutputStreamable outputStreamable) {uriOutputStreamable=checkInstance(outputStreamable);}
 
 	/**The current position of the mouse.*/
-//G***del JDK1.5	private Point mousePosition=new Point(0, 0);
+//TODO del JDK1.5	private Point mousePosition=new Point(0, 0);
 
 		/**@return The current position of the mouse at its last movement.*/
-//G***del JDK1.5		protected Point getMousePosition() {return mousePosition;}
+//TODO del JDK1.5		protected Point getMousePosition() {return mousePosition;}
 
 		/**Keeps a record of the current position of the mouse at its last movement.
 		@param pos The position of the mouse to record
 		*/
-//G***del JDK1.5		protected void setMousePosition(final Point pos) {mousePosition=pos;}
+//TODO del JDK1.5		protected void setMousePosition(final Point pos) {mousePosition=pos;}
 
 	/**Whether this pane pages its information.*/
 	private boolean paged=false;
@@ -197,7 +204,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 	/**The name of the key map for paged key functions.*/
 	protected final static String PAGED_KEYMAP_NAME="pagedKeymap";
 
-//G***del when works	protected final Keymap originalKeymap;  //the keymap originally installed; we'll install keymaps under this
+//TODO del when works	protected final Keymap originalKeymap;  //the keymap originally installed; we'll install keymaps under this
 
 	/**Basic key bindings with custom keys.*/
 	protected static final KeyBinding[] BASIC_KEY_BINDINGS=
@@ -237,17 +244,17 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 			should be no paged view.
 		@see XMLTextPane#fetchPagedView
 		*/
-		public void setPagedView(final XMLPagedView pagedView)	//G***make this protected if we can
+		public void setPagedView(final XMLPagedView pagedView)	//TODO make this protected if we can
 		{
-//G***del			Log.traceStack("Setting the paged view");  //G***del
+//TODO del			Log.traceStack("Setting the paged view");  //TODO del
 
-			//G***remove the listeners from any previous page view, if present
+			//TODO remove the listeners from any previous page view, if present
 			this.pagedView=pagedView;	//set our paged view
 			pagedView.addPageListener(this);	//show that we want to be notified of page changes the paged view makes, so that we can forward those events
 			pagedView.addProgressListener(this);	//show that we want to be notified of any progress the paged view makes, so that we can forward those events
 			pagedView.setDisplayPageCount(DisplayPageCount);	//in case our display page count has previously been set, tell our page view about it now that we have one
-//G***del		  setAntialias(antialias);  //set the antialias value to the value we saved, so it will be reflected in the new document
-//G***del Log.trace(this, "Getting paged view's attributes, attribute set is mutable: "+(pagedViewAttributeSet instanceof MutableAttributeSet));  //G***del; testing
+//TODO del		  setAntialias(antialias);  //set the antialias value to the value we saved, so it will be reflected in the new document
+//TODO del Log.trace(this, "Getting paged view's attributes, attribute set is mutable: "+(pagedViewAttributeSet instanceof MutableAttributeSet));  //TODO del; testing
 		}
 
 	/**The factor by which text should be zoomed.*/
@@ -263,13 +270,13 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		*/
 		public void setZoom(final float newZoom)
 		{
-//G***del			final float oldZoomFactor=getZoomFactor(); //get the current zoom factor
+//TODO del			final float oldZoomFactor=getZoomFactor(); //get the current zoom factor
 			if(zoom!=newZoom)  //if the zoom factor is really changing
 			{
-//G***del Log.trace("changing view factor from "+oldZoomFactor+" to "+newZoomFactor); //G***del
+//TODO del Log.trace("changing view factor from "+oldZoomFactor+" to "+newZoomFactor); //TODO del
 				zoom=newZoom; //set the new zoom factor
 				DocumentUtilities.setZoom(getDocument(), zoom);  //store the new zoom factor in the document
-//G***del				document.putProperty(XMLDocument.ZOOM_FACTOR_PROPERTY, new Float(zoomFactor)); //store the new zoom factor in the document
+//TODO del				document.putProperty(XMLDocument.ZOOM_FACTOR_PROPERTY, new Float(zoomFactor)); //store the new zoom factor in the document
 				final XMLPagedView pagedView=getPagedView();  //get a reference to our paged view
 				if(pagedView!=null)  //if we have a paged view
 				{
@@ -280,7 +287,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 					}
 					catch(final Exception exception)
 					{
-						SwingApplication.displayApplicationError(XMLTextPane.this, "Error opening document", exception); //G***do we need to clean up anything? G***i18n
+						SwingApplication.displayApplicationError(XMLTextPane.this, "Error opening document", exception); //TODO do we need to clean up anything? TODO i18n
 					}
 				}
 			}
@@ -293,14 +300,14 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		/**@return Whether text in this component is antialiased.*/
 		public boolean isAntialias()
 		{
-//G***del Log.trace("Inside isAntialias(), returning: "+antialias);
-/*G***del
+//TODO del Log.trace("Inside isAntialias(), returning: "+antialias);
+/*TODO del
 		  final Document document=getDocument();  //get a reference to the associated document
 		  Object antialiasProperty=document.getProperty(DocumentConstants.ANTIALIAS_DOCUMENT_PROPERTY); //get the antialias property
 		  return antialiasProperty instanceof Boolean ? ((Boolean)antialiasProperty).booleanValue() : false;  //return the boolean value of the antialias property
 */
 		  //if we have a paged view, see if it requests antialiasing; otherwise, use our local variable
-//G***fix		  return getPagedView()!=null ? XMLStyleConstants.isAntialias(getPagedView().getAttributes()) : antialias;
+//TODO fix		  return getPagedView()!=null ? XMLStyleConstants.isAntialias(getPagedView().getAttributes()) : antialias;
 		  return antialias;
 		}
 
@@ -312,25 +319,25 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 			final boolean oldAntialias=isAntialias(); //get the current antialias value
 			if(oldAntialias!=newAntialias)  //if the antialias is really changing
 			{
-//G***del					//store the new value as a property in the document
-//G***del				getDocument().putProperty(DocumentConstants.ANTIALIAS_DOCUMENT_PROPERTY, new Boolean(newAntialias));
-//G***del				final AttributeSet pagedViewAttributeSet=pagedView.getAttributes();  //get the paged view's attribute set
-//G***del				if(pagedViewAttributeSet instanceof MutableAttributeSet)  //if we can change the paged view's attributes
+//TODO del					//store the new value as a property in the document
+//TODO del				getDocument().putProperty(DocumentConstants.ANTIALIAS_DOCUMENT_PROPERTY, new Boolean(newAntialias));
+//TODO del				final AttributeSet pagedViewAttributeSet=pagedView.getAttributes();  //get the paged view's attribute set
+//TODO del				if(pagedViewAttributeSet instanceof MutableAttributeSet)  //if we can change the paged view's attributes
 				antialias=newAntialias; //set the new antialias status variable so that we can set whatever new document is installed
 				DocumentUtilities.setAntialias(getDocument(), newAntialias);  //store the new antialias setting in the document
 				final XMLPagedView pagedView=getPagedView();  //get a reference to our paged view
 				if(pagedView!=null)  //if we have a paged view
 				{
 //TODO del					XMLStyleUtilities.setAntialias((MutableAttributeSet)pagedView.getAttributes(), newAntialias);  //set the view's antialias property
-//G***fix, if needed				  pagedView.changedUpdate(new javax.swing.text.AbstractDocument.DefaultDocumentEvent(0, getDocument().getLength(), DocumentEvent.EventType.CHANGE), getBounds(), pagedView.getViewFactory());  //send a synthetic changeUpdate() so that all the children and layout strategies can get a chance to reinitialize
+//TODO fix, if needed				  pagedView.changedUpdate(new javax.swing.text.AbstractDocument.DefaultDocumentEvent(0, getDocument().getLength(), DocumentEvent.EventType.CHANGE), getBounds(), pagedView.getViewFactory());  //send a synthetic changeUpdate() so that all the children and layout strategies can get a chance to reinitialize
 
 					pagedView.repaginate();  //relayout the paged view TODO use something more generic for when we don't have a paged view
 				}
-/*G***fix
+/*TODO fix
 				final XMLPagedView pagedView=getPagedView();  //get a reference to our paged view
 				if(pagedView!=null && pagedView.getAttributes() instanceof MutableAttributeSet)  //if we have a paged view, and its attributes are mutable
 				{
-//G***fix					XMLStyleConstants.setAntialias((MutableAttributeSet)pagedView.getAttributes(), newAntialias);  //set the view's antialias property
+//TODO fix					XMLStyleConstants.setAntialias((MutableAttributeSet)pagedView.getAttributes(), newAntialias);  //set the view's antialias property
 					pagedView.relayout();  //relayout the paged view
 				}
 */
@@ -377,14 +384,14 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		}
 
 	/**The length of the last search match, or zero if there has been no match.*/
-//G***del if not needed	private int searchLength=0;
+//TODO del if not needed	private int searchLength=0;
 
 		/**@return The length of the last search match, or zero if there has been
 		  no match.*/
-//G***del if not needed		public int getSearchLength() {return searchLength;}
+//TODO del if not needed		public int getSearchLength() {return searchLength;}
 
 	/**A map of view factories, each keyed to a namespace URI string.*/
-	private final Map<String, ViewFactory> namespaceViewFactoryMap=new HashMap<String, ViewFactory>();	//G***fix; this is accessed through a complex sequence from the superclass and is not yet initialized
+	private final Map<String, ViewFactory> namespaceViewFactoryMap=new HashMap<String, ViewFactory>();	//TODO fix; this is accessed through a complex sequence from the superclass and is not yet initialized
 
 		/**Registers a view factory for a particular namespace URI. These will be
 		  used by any installed <code>XMLEditorKit</code>.
@@ -396,20 +403,20 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*G***del w
 		public void registerViewFactory(final String namespaceURI, final ViewFactory viewFactory)
 		{
 			namespaceViewFactoryMap.put(namespaceURI, viewFactory); //store the view factory in the map, keyed to the namespace URI
-Log.trace("XMLTextPane installing view factory for namespace: ", namespaceURI); //G***del
-Log.trace("Current installed editor kit: ", getEditorKit().getClass().getName()); //G***del
+Log.trace("XMLTextPane installing view factory for namespace: ", namespaceURI); //TODO del
+Log.trace("Current installed editor kit: ", getEditorKit().getClass().getName()); //TODO del
 		  if(getEditorKit() instanceof XMLEditorKit)  //if the currently installed editor kit is an XMLEditorKit
 			{
 				final XMLEditorKit xmlEditorKit=(XMLEditorKit)getEditorKit(); //get the editor kit already installed
 				xmlEditorKit.registerViewFactory(namespaceURI, viewFactory);  //duplicate the local registration in the current XML editor kit
 			}
-/*G***del when works
-Log.trace("XMLTextPane installing view factory for namespace: ", namespaceURI); //G***del
-Log.trace("Current installed editor kit: ", getEditorKit().getClass().getName()); //G***del
+/*TODO del when works
+Log.trace("XMLTextPane installing view factory for namespace: ", namespaceURI); //TODO del
+Log.trace("Current installed editor kit: ", getEditorKit().getClass().getName()); //TODO del
 		  if(getEditorKit() instanceof XMLEditorKit)  //if the currently installed editor kit is an XMLEditorKit
 			{
 				final XMLEditorKit xmlEditorKit=(XMLEditorKit)getEditorKit(); //get the editor kit already installed
-				final XMLEditorKit.XMLViewFactory xmlViewFactory=(XMLEditorKit.XMLViewFactory)xmlEditorKit.getViewFactory();  //get the view factory from the editor kit G***make sure this is an XMLViewFactory
+				final XMLEditorKit.XMLViewFactory xmlViewFactory=(XMLEditorKit.XMLViewFactory)xmlEditorKit.getViewFactory();  //get the view factory from the editor kit TODO make sure this is an XMLViewFactory
 				xmlViewFactory.registerViewFactory(namespaceURI, viewFactory);  //duplicate the local registration in the current XML view factory
 			}
 */
@@ -473,7 +480,7 @@ Log.trace("Current installed editor kit: ", getEditorKit().getClass().getName())
 		*/
 		public Iterator<String> getLinkControllerNamespaceIterator()
 		{
-			return namespaceLinkControllerMap!=null ? namespaceLinkControllerMap.keySet().iterator() : (Iterator<String>)EMPTY_ITERATOR; //return an iterator to the keys, which are namespaces G***fix
+			return namespaceLinkControllerMap!=null ? namespaceLinkControllerMap.keySet().iterator() : (Iterator<String>)EMPTY_ITERATOR; //return an iterator to the keys, which are namespaces TODO fix
 		}
 
 	/**The default keymap created by the parent constructor.*/
@@ -488,8 +495,8 @@ Log.trace("Current installed editor kit: ", getEditorKit().getClass().getName())
 	public XMLTextPane(XMLDocument doc)
 	{
 		this();	//do the default constructing
-		//G***testing hint
-/*G***del
+		//TODO testing hint
+/*TODO del
         Graphics2D graphics2D=(Graphics2D)getGraphics();
 
                 AffineTransform xf
@@ -503,8 +510,8 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 
 
 		setXMLDocument(doc);	//set the document
-//G***del; this is done in the default constructor		addMouseMotionListener(this);	//keep track of mouse movements G***fix; currently used for updating hyperlink on page change
-//G***del when works		addKeyListener(this);  //show that we want to be notified of key presses so that we can implement paging functionality
+//TODO del; this is done in the default constructor		addMouseMotionListener(this);	//keep track of mouse movements TODO fix; currently used for updating hyperlink on page change
+//TODO del when works		addKeyListener(this);  //show that we want to be notified of key presses so that we can implement paging functionality
 	}
 
 	/**Constructs a new <code>XMLTextPane</code> and the editor kit is set to a
@@ -516,7 +523,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	{
 		super();	//construct the parent class
 		setEditorKit(getEditorKit());	//TODO why is this needed for loading text documents to edit? this was already done in the parent class! without this line, though, text documents won't be edited
-//G***del when works		originalKeymap=getKeymap();  //get the current key map and store it for future use
+//TODO del when works		originalKeymap=getKeymap();  //get the current key map and store it for future use
 		uriInputStreamable=DefaultURIAccessible.getDefaultURIAccessible();	//start with a default method of getting input streams
 		uriOutputStreamable=DefaultURIAccessible.getDefaultURIAccessible();	//start with a default method of getting output streams
 		/*TODO use after fixing each editor kit to have a default constructor 
@@ -530,9 +537,9 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		*/
 		defaultKeymap=getKeymap();	//save the current keymap
 		final Keymap basicKeymap=addKeymap(BASIC_KEYMAP_NAME, defaultKeymap); //create a new keymap for our custom actions
-		loadKeymap(defaultKeymap, BASIC_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit changes?
+		loadKeymap(defaultKeymap, BASIC_KEY_BINDINGS, getActions()); //load our custom keymap TODO what happens if this is set and then the editor kit changes?
 		final Keymap pagedKeymap=addKeymap(PAGED_KEYMAP_NAME, basicKeymap); //create a new keymap for paging
-		loadKeymap(pagedKeymap, PAGED_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit is changed?
+		loadKeymap(pagedKeymap, PAGED_KEY_BINDINGS, getActions()); //load our custom keymap TODO what happens if this is set and then the editor kit is changed?
 		updateKeymap();	//update the keymap based upon our current settings
 		final ViewFactory xhtmlViewFactory=new XHTMLViewFactory();  //create a view factory fo XHTML
 		registerViewFactory(XHTML.XHTML_NAMESPACE_URI.toString(), xhtmlViewFactory);  //associate the XHTML view factory with XHTML elements
@@ -542,8 +549,8 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		registerLinkController(OEB.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML link controller with OEB elements
 		final ViewFactory maqroViewFactory=new MAQROViewFactory();  //create a view factory fo MAQRO
 //TODO convert to URF		registerViewFactory(MAQRO.MAQRO_NAMESPACE_URI.toString(), maqroViewFactory);  //associate the MAQRO view factory with MAQRO elements
-//G***del; doesn't work		setBackground(Color.white); //G***set to get the background color from the document itself
-//G***del; maybe delete class		setCaret(new XMLCaret(getCaret()));	//G***testing
+//TODO del; doesn't work		setBackground(Color.white); //TODO set to get the background color from the document itself
+//TODO del; maybe delete class		setCaret(new XMLCaret(getCaret()));	//TODO testing
 	}
 
 	/**Searches the view hierarchy for an XMLPagedView, and uses the first one
@@ -552,9 +559,9 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	@see XMLTextPane#setPagedView
 	@see XMLTextPane#fetchPagedView
 	*/
-/*G***bring this back when we can find a place to call it from
+/*TODO bring this back when we can find a place to call it from
 	protected void fetchPagedView()
-	{	//G***do we have to to through the UI to get the root view?
+	{	//TODO do we have to to through the UI to get the root view?
 		setPagedView(fetchPagedView(getUI().getRootView(this)));	//get the UI's root view and try to fetch a paged view from it; set whatever we get (null or otherwise) as the paged view
 	}
 */
@@ -565,7 +572,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	@see XMLTextPane#setPagedView
 	@see XMLTextPane#fetchPagedView
 	*/
-/*G***bring this back when we can find a place to call it from
+/*TODO bring this back when we can find a place to call it from
 	protected XMLPagedView fetchPagedView(final View view)
 	{
 		if(view!=null)	//if this is a valid view
@@ -593,7 +600,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		com.garretwilson.swing.text.xml.XMLDocument.
 	@see XMLTextPane#setXMLDocument
 	*/
-/**G***we can't have this because we the default JTextPane method creates a default editor kit that creates a default document before we can do anything about it
+/**TODO we can't have this because we the default JTextPane method creates a default editor kit that creates a default document before we can do anything about it
 	public void setDocument(Document doc)
 	{
 		if(doc instanceof XMLDocument)	//if this is an XMLDocument, which we require
@@ -641,7 +648,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	public void setXMLDocument(XMLDocument document)
 	{
 		setDocument(document);	//we know this is an XML document, so just set the document normally
-//G***fix; this perhaps isn't called if we have a section view at the bottom
+//TODO fix; this perhaps isn't called if we have a section view at the bottom
 	}
 
 	/**Returns the model associated with the editor. This is a convenience method
@@ -649,7 +656,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	@return The document model.
 	@see JTextPane#getStyledDocument
 	*/
-	public XMLDocument getXMLDocument() //G***maybe delete this method
+	public XMLDocument getXMLDocument() //TODO maybe delete this method
 	{
 		return (XMLDocument)getDocument();	//get the document, cast it to an XMLDocument, and return it
 	}
@@ -746,8 +753,8 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 			{
 				if(text.length()>0)	//if there is any text
 				{
-					if(text.charAt(0)!='<')	//if this text doesn't start with markup G***use a constant
-						text="<div xmlns=\""+XHTML.XHTML_NAMESPACE_URI+"\">"+text+"</div>";	//wrap the text with a <div> element G***this assumes a lot about HTML; make this more generic if we can---see the namespace code from XMLPanel
+					if(text.charAt(0)!='<')	//if this text doesn't start with markup TODO use a constant
+						text="<div xmlns=\""+XHTML.XHTML_NAMESPACE_URI+"\">"+text+"</div>";	//wrap the text with a <div> element TODO this assumes a lot about HTML; make this more generic if we can---see the namespace code from XMLPanel
 				}
 			}
 		}
@@ -766,7 +773,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	 * @return the text
 	 * @see #setText
 	 */
-/*G***see if this already works
+/*TODO see if this already works
 	public String getText() {
 String txt;
 try {
@@ -840,15 +847,15 @@ try {
 		baseURI=uri;	//update our base URI (don't call the setBaseURI() method, because we don't want to change the base URI of the old document
 		setBaseURIInputStreamable(uriInputStreamable);	//show the base URI accessor
 		setURIInputStreamable(uriInputStreamable);  //use whatever input stream locator they specify
-//G***make sure we set all the properties like the subclass uses
-//G***note that the underlying class calls this.read(), which performs similar but not identical functionality as code here -- it would be good to use that, if possible
+//TODO make sure we set all the properties like the subclass uses
+//TODO note that the underlying class calls this.read(), which performs similar but not identical functionality as code here -- it would be good to use that, if possible
 		ContentType contentType=URIs.getContentType(uri);  //get the media type of the URI
-		Log.trace("content type is first: ", contentType);  //G***del
+		Log.trace("content type is first: ", contentType);  //TODO del
 		InputStream inputStream=null;	//we'll attempt to get an input stream based upon the content type
 			//if this appears to be an XEB book zip file, an OEB publication zip file or an application/zip file, change our input stream locator and switch to a URI inside the file
 		if(OEB_ZIP_MEDIA_TYPE.match(contentType) || XEB_ZIP_MEDIA_TYPE.match(contentType) || ZIP_MEDIA_TYPE.match(contentType))
 		{
-Log.trace("found zip file: ", uri);  //G***del
+Log.trace("found zip file: ", uri);  //TODO del
 			if(URIs.FILE_SCHEME.equals(uri.getScheme()))  //if this is the file scheme
 			{
 			  final File zipFile=new File(uri);  //create a file for accessing the zip file
@@ -884,7 +891,7 @@ Log.trace("found zip file: ", uri);  //G***del
 				}
 			}
 			else  //if this is not a zip file, but some other sort of zip access, throw an exception
-				Log.error("Zip file must use URI file protocol");  //G***fix
+				Log.error("Zip file must use URI file protocol");  //TODO fix
 		}
 		inputStream=getInputStream(uri);	//get an input stream to the URI
 		setContentType(contentType.toString());	//set the content type, which will select the appropriate editor kit
@@ -892,9 +899,9 @@ Log.trace("found zip file: ", uri);  //G***del
 /*TODO we need to update the key maps when the editor kit changes; this test works, but is probably not correct---it gets the current keymap, which is probably one of the keymaps we already loaded and set; maybe we should save references to the key maps and just reload them
 		final Keymap defaultKeymap=getKeymap();	//get the current keymap
 		final Keymap xmlKeymap=addKeymap(XML_KEYMAP_NAME, defaultKeymap); //create a new keymap for our custom actions
-		loadKeymap(defaultKeymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit changes?
+		loadKeymap(defaultKeymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap TODO what happens if this is set and then the editor kit changes?
 		final Keymap pagedKeymap=addKeymap(PAGED_KEYMAP_NAME, xmlKeymap); //create a new keymap for paging
-		loadKeymap(pagedKeymap, PAGED_KEY_BINDINGS, getActions()); //load our custom keymap G***what happens if this is set and then the editor kit is changed?
+		loadKeymap(pagedKeymap, PAGED_KEY_BINDINGS, getActions()); //load our custom keymap TODO what happens if this is set and then the editor kit is changed?
 
 		updateKeymap();	//TODO testing for paging keys
 */		
@@ -915,11 +922,11 @@ Log.trace("found zip file: ", uri);  //G***del
 	*/
 	protected void load(final URI baseURI, final InputStream inputStream) throws IOException
 	{
-		final EditorKit editorKit=getEditorKit();	//get the current editor kit, and assume it's an XML editor kit G***we might want to check just to make sure
+		final EditorKit editorKit=getEditorKit();	//get the current editor kit, and assume it's an XML editor kit TODO we might want to check just to make sure
 		final Document document=editorKit.createDefaultDocument();	//create a default document
 		document.putProperty(Document.StreamDescriptionProperty, URIs.toValidURL(baseURI));	//store a URL version of the URI in the document, as getPage() expects this to be a URL
 		DocumentUtilities.setBaseURI(document, baseURI);	//store the base URI in the document
-Log.trace("reading from stream"); //G***del
+Log.trace("reading from stream"); //TODO del
 		final DocumentLoader documentLoader=new DocumentLoader(inputStream, document);	//create a thread for loading the document 
 		//TODO check for already loading asynchronously, as does JEditorPane
 		if(document instanceof AbstractDocument)	//if the document is an abstract document, which can give a load priority
@@ -964,12 +971,12 @@ Log.trace("reading from stream"); //G***del
 			final EditorKit editorKit=getEditorKit();	//get the current editor kit
 			if(editorKit instanceof BasicStyledEditorKit)	//if this is our basic editor kit
 			{
-					//G***this might all go away when we revamp progress management
-				((BasicStyledEditorKit)editorKit).addProgressListener(XMLTextPane.this);	//show that we want to be notified of any progress the XML editor kit makes G***should one of these go in the XMLTextPane? will it conflict with this one?
+					//TODO this might all go away when we revamp progress management
+				((BasicStyledEditorKit)editorKit).addProgressListener(XMLTextPane.this);	//show that we want to be notified of any progress the XML editor kit makes TODO should one of these go in the XMLTextPane? will it conflict with this one?
 			}
 			if(document instanceof BasicStyledDocument) //if this is a basic document
 			{
-				((BasicStyledDocument)document).addProgressListener(XMLTextPane.this);	//show that we want to be notified of any progress the XML document makes G***should this go here or elsewhere? should this bubble up to the editor kit instead?
+				((BasicStyledDocument)document).addProgressListener(XMLTextPane.this);	//show that we want to be notified of any progress the XML document makes TODO should this go here or elsewhere? should this bubble up to the editor kit instead?
 			}
 			try
 			{
@@ -977,7 +984,7 @@ Log.trace("reading from stream"); //G***del
 			}
 			catch(final Throwable throwable)	//if there are any errors
 			{
-				SwingApplication.displayApplicationError(XMLTextPane.this, "Error opening document", throwable); //G***do we need to clean up anything? G***i18n
+				SwingApplication.displayApplicationError(XMLTextPane.this, "Error opening document", throwable); //TODO do we need to clean up anything? TODO i18n
 			}
 			finally
 			{
@@ -997,13 +1004,13 @@ Log.trace("reading from stream"); //G***del
 		*/
 		public void load() throws IOException
 		{
-				//show the wait cursor G***do we want to make sure the cursor is set from the AWT thread?
-			final Cursor originalCursor=ComponentUtilities.setCursor(XMLTextPane.this, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				//show the wait cursor TODO do we want to make sure the cursor is set from the AWT thread?
+			final Cursor originalCursor=Components.setCursor(XMLTextPane.this, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			try
 			{
-					//G***when does this get closed?
+					//TODO when does this get closed?
 				read(inputStream, document);  //read the document from the input stream
-				fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Constructing the document..."));	//G***testing i18n
+				fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Constructing the document..."));	//TODO testing i18n
 				try
 				{
 						//make sure the actual document change occurs in the event queue to prevent exceptions from occurring 
@@ -1017,13 +1024,13 @@ Log.trace("reading from stream"); //G***del
 				}
 				catch(InterruptedException interruptedException)
 				{
-					Log.error(interruptedException);	//G***fix
+					Log.error(interruptedException);	//TODO fix
 				}
 				catch(InvocationTargetException invocationTargetException)
 				{
-					Log.error(invocationTargetException);	//G***fix
+					Log.error(invocationTargetException);	//TODO fix
 				}
-				fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Finished constructing the document...", true));	//G***testing i18n
+				fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Finished constructing the document...", true));	//TODO testing i18n
 			}
 			finally
 			{
@@ -1041,7 +1048,7 @@ Log.trace("reading from stream"); //G***del
 		reserved character encoding.
 	@see #getStream(URI)
 	*/
-/*G***del
+/*TODO del
 	protected InputStream getStream(final URL url) throws IOException
 	{
 		try
@@ -1095,10 +1102,10 @@ Log.trace("reading from stream"); //G***del
 	*/
 	public void read(InputStream in, Object desc) throws IOException
 	{
-Log.trace("inside read()"); //G***fix all this
-//G***fix		else  //if this is not an XML document and an XML editor kit
+Log.trace("inside read()"); //TODO fix all this
+//TODO fix		else  //if this is not an XML document and an XML editor kit
 		{
-			final String charset=(String)getClientProperty("charset");  //get the character set being used G***use a constant here
+			final String charset=(String)getClientProperty("charset");  //get the character set being used TODO use a constant here
 				//create a reader from the input stream
 			final Reader reader=(charset != null) ? new InputStreamReader(in, charset) : new InputStreamReader(in);
 			super.read(reader, desc);  //read from the reader as just plain text
@@ -1115,8 +1122,8 @@ Log.trace("inside read()"); //G***fix all this
 	*/
 	void read(InputStream inputStream, Document document) throws IOException
 	{
-//G***del		final XMLReader xmlReader=createReader(inputStream, getPage()); //create a reader from the input stream and the current URL
-Log.trace("reading from stream into document"); //G***del
+//TODO del		final XMLReader xmlReader=createReader(inputStream, getPage()); //create a reader from the input stream and the current URL
+Log.trace("reading from stream into document"); //TODO del
 		try
 		{
 			getEditorKit().read(inputStream, document, 0);  //let the editor kit read the document from the input stream
@@ -1125,7 +1132,7 @@ Log.trace("reading from stream into document"); //G***del
 		{
 	    throw new IOException(e.getMessage());  //rethrow the error as an IO exception
 		}
-/*G***fix
+/*TODO fix
 	try {
 	    String charset = (String) getClientProperty("charset");
 	    Reader r = (charset != null) ? new InputStreamReader(in, charset) :
@@ -1163,7 +1170,7 @@ Log.trace("reading from stream into document"); //G***del
 	*/
 	public void setXML(final DocumentFragment xmlDocumentFragment, final URI baseURI, final ContentType mediaType)
 	{
-		final DOMImplementation domImplementation=new XMLDOMImplementation();	//TODO get a DOMImplementation in an implementation-agnostic way
+		final DOMImplementation domImplementation=XML.createDocumentBuilder(true).getDOMImplementation();
 			//create a document with an document element of <xhtml:div> TODO create something less XHTML-ish and more generic
 		final org.w3c.dom.Document xmlDocument=domImplementation.createDocument(XHTML.XHTML_NAMESPACE_URI.toString(), XML.createQualifiedName(XHTML.XHTML_NAMESPACE_PREFIX, XHTML.ELEMENT_DIV), null);
 			//import the document fragment and append it to the root element of our document
@@ -1187,14 +1194,14 @@ Log.trace("reading from stream into document"); //G***del
 		{
 			final XMLEditorKit xmlEditorKit=(XMLEditorKit)getEditorKit();	//cast the editor kit to an XML editor kit
 			final XMLDocument swingXMLDocument=xmlEditorKit.createDefaultDocument();	//create a default document
-			final Cursor originalCursor=ComponentUtilities.setCursor(XMLTextPane.this, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			final Cursor originalCursor=Components.setCursor(XMLTextPane.this, Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			try
 			{
 					//tell the editor kit to put the XML into the document
 				xmlEditorKit.setXML(xmlDocument, baseURI, mediaType, swingXMLDocument);
-//TODO fix progress					fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Constructing the document..."));	//G***testing i18n
+//TODO fix progress					fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Constructing the document..."));	//TODO testing i18n
 				setDocument(swingXMLDocument);	//show that the text pane is using this document (this actually creates the views)
-//TODO fix progress					fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Finished constructing the document...", true));	//G***testing i18n
+//TODO fix progress					fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Finished constructing the document...", true));	//TODO testing i18n
 			}
 			finally
 			{
@@ -1224,9 +1231,9 @@ Log.trace("reading from stream into document"); //G***del
 			{
 					//tell the editor kit to put the XML into the document
 				xmlEditorKit.setXML(xmlDocumentArray, baseURIArray, mediaTypeArray, xmlDocument);
-//TODO fix progress					fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Constructing the document..."));	//G***testing i18n
+//TODO fix progress					fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Constructing the document..."));	//TODO testing i18n
 				setDocument(xmlDocument);	//show that the text pane is using this document (this actually creates the views)
-//TODO fix progress					fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Finished constructing the document...", true));	//G***testing i18n
+//TODO fix progress					fireMadeProgress(new ProgressEvent(this, CONSTRUCT_TASK, "Finished constructing the document...", true));	//TODO testing i18n
 			}
 			finally
 			{
@@ -1236,14 +1243,14 @@ Log.trace("reading from stream into document"); //G***del
 	}
 */
 
-/*G***del
+/*TODO del
 		public final void setContentType(String type)
 		{
-			Debug.notify("Content type: "+type);  //G***del; fix
-			super(type);  //G***fix
+			Debug.notify("Content type: "+type);  //TODO del; fix
+			super(type);  //TODO fix
 
 
-//G***fix			xmlEditorKit.read(url, document, 0);	//read the file from the given URL
+//TODO fix			xmlEditorKit.read(url, document, 0);	//read the file from the given URL
 
 
 
@@ -1343,7 +1350,7 @@ Log.trace("reading from stream into document"); //G***del
      *
      * @return true if a viewport should force the Scrollables width to match its own.
 		 */
-/*G***fix or delete
+/*TODO fix or delete
 		public boolean getScrollableTracksViewportWidth() {
 				return true;
 		}
@@ -1355,8 +1362,8 @@ Log.trace("reading from stream into document"); //G***del
 		if necessary.
 	@param e The document event.
 	*/
-	//G***is there a better place to put this?
-/*G***del
+	//TODO is there a better place to put this?
+/*TODO del
 	public void insertUpdate(DocumentEvent e)
 	{
 System.out.println("Inside XMLTextPage.insertUpdate(), fetching new paged view.");
@@ -1410,7 +1417,7 @@ System.out.println("Inside XMLTextPage.insertUpdate(), fetching new paged view."
 		final Point mousePosition=getMousePosition();	//get the current mouse position
 		if(mousePosition!=null)	//if the mouse is over the component
 		{
-					  //G***this is somewhat of a hack; do something better, such as having a locationChanged event on page changes and navigation (on non-paged components, for example)
+					  //TODO this is somewhat of a hack; do something better, such as having a locationChanged event on page changes and navigation (on non-paged components, for example)
 			final MouseEvent mouseEvent=new MouseEvent(this, MouseEvent.MOUSE_MOVED,
 				  System.currentTimeMillis(), 0,
 					mousePosition.x, mousePosition.y, 0, false);
@@ -1435,7 +1442,7 @@ System.out.println("Inside XMLTextPage.insertUpdate(), fetching new paged view."
 	}
 
 	/**The index of the currently displayed page.*/
-//G***del	private int PageIndex;
+//TODO del	private int PageIndex;
 
 	/**@return The index of the currently displayed page.*/
 	public int getPageIndex()
@@ -1456,22 +1463,22 @@ System.out.println("Inside XMLTextPage.insertUpdate(), fetching new paged view."
 				resetSearchPosition();  //reset our search offset since we're changing pages
 				getPagedView().setPageIndex(pageIndex);	//set the new page index
 			}
-/*G***del if not needed
+/*TODO del if not needed
 			final int newPageIndex=getPageIndex();	//get our new page index
-System.out.println("XMLTextPane just changed the page index from: "+oldPageIndex+" to: "+newPageIndex);	//G***del
+System.out.println("XMLTextPane just changed the page index from: "+oldPageIndex+" to: "+newPageIndex);	//TODO del
 			if(oldPageIndex!=newPageIndex)	//if we actually changed pages
 				firePageEvent(new PageEvent(this, newPageIndex));	//report that our page has changed
 */
 		}
 	}
 
-	//G***fix this with the correct modelToView() stuff; comment
+	//TODO fix this with the correct modelToView() stuff; comment
 	public int getPageIndex(final int pos)
 	{
-		if(getPagedView()!=null)	//G***comment
-			return getPagedView().getPageIndex(pos);  //G***comment
-		else  //G***comment
-			return -1;  //G***comment
+		if(getPagedView()!=null)	//TODO comment
+			return getPagedView().getPageIndex(pos);  //TODO comment
+		else  //TODO comment
+			return -1;  //TODO comment
 	}
 
 	/**The variable used to remember the number of pages to display in case there
@@ -1483,7 +1490,7 @@ System.out.println("XMLTextPane just changed the page index from: "+oldPageIndex
 		*/
 		public int getDisplayPageCount()
 		{
-//G***del when works			return getPagedView()!=null ? getPagedView().getDisplayPageCount() : 1;	//return the number of displayed pages if we have a paged view, or 1 if not
+//TODO del when works			return getPagedView()!=null ? getPagedView().getDisplayPageCount() : 1;	//return the number of displayed pages if we have a paged view, or 1 if not
 			return DisplayPageCount;	//return our page count, which should always be the same as what we've set the paged view to be
 		}
 
@@ -1497,7 +1504,7 @@ System.out.println("XMLTextPane just changed the page index from: "+oldPageIndex
 			if(getPagedView()!=null)	//if we have a paged view
 			{
 				getPagedView().setDisplayPageCount(displayPageCount);	//tell it to update the number of pages it displays at a time
-				invalidate();	//show that the text pane needs to be revalidated G***testing
+				invalidate();	//show that the text pane needs to be revalidated TODO testing
 			}
 		}
 
@@ -1524,13 +1531,13 @@ System.out.println("XMLTextPane just changed the page index from: "+oldPageIndex
 		return pagedView!=null ? pagedView.getLogicalPageIndex(absolutePageIndex) : absolutePageIndex==0 ? absolutePageIndex : -1;	//if there is no page view, there can only be one absolute (and logical) page index: 0
 	}
 
-	//G***fix this with the correct modelToView() stuff; make sure the error return value is correct
+	//TODO fix this with the correct modelToView() stuff; make sure the error return value is correct
 	public int getPageStartOffset(final int pageIndex)
 	{
 		return getPagedView()!=null ? getPagedView().getPageStartOffset(pageIndex) : -1;  //return the paged view's starting offset
 	}
 
-	//G***fix this with the correct modelToView() stuff; make sure the error return value is correct
+	//TODO fix this with the correct modelToView() stuff; make sure the error return value is correct
 	public int getPageEndOffset(final int pageIndex)
 	{
 		return getPagedView()!=null ? getPagedView().getPageEndOffset(pageIndex) : -1;  //return the paged view's ending offset
@@ -1549,7 +1556,7 @@ System.out.println("XMLTextPane just changed the page index from: "+oldPageIndex
 	*/
 	public void goNextPage()
 	{
-//G***del System.out.println("XMLTextPane.goNextPage()");	//G***del
+//TODO del System.out.println("XMLTextPane.goNextPage()");	//TODO del
 		if(getPagedView()!=null)	//if we have a paged view
 			getPagedView().goNextPage();	//tell it to go to the next page
 	}
@@ -1570,7 +1577,7 @@ System.out.println("XMLTextPane just changed the page index from: "+oldPageIndex
 	*/
 	public void go(final URI uri)
 	{
-Log.trace("Inside XMLTextPane.goURI()");	//G***del
+Log.trace("Inside XMLTextPane.goURI()");	//TODO del
 		final Document document=getDocument();  //get the document associated with the text pane
 		if(document instanceof XMLDocument) //if this is an XML document
 		{
@@ -1588,7 +1595,7 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
 
 				try
 				{
-					BrowserLauncher.openURL(uri.toString());	//G***testing; comment; decide if we want this done here or by the caller
+					BrowserLauncher.openURL(uri.toString());	//TODO testing; comment; decide if we want this done here or by the caller
 				}
 				catch(IOException e)  //if there is an IO exception browsing to the URI
 				{
@@ -1685,15 +1692,15 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
 		Present to fulfill obligations of <code>KeyListener</code> interface.
 	@param e The event generated from the key press and release.
 	*/
-//G***del when works	public void keyTyped(KeyEvent e) {}
+//TODO del when works	public void keyTyped(KeyEvent e) {}
 
 	/**Invoked when a key has been pressed. Creates necessary paging functionality
 		in response to paging keys.
 	*/
-/**G***del when works
+/**TODO del when works
 	public void keyPressed(KeyEvent e)
 	{
-//G***fix			Debug.notify(KeyStroke.getKeyStrokeForEvent(e).toString()); //G***testing
+//TODO fix			Debug.notify(KeyStroke.getKeyStrokeForEvent(e).toString()); //TODO testing
 	}
 */
 
@@ -1701,7 +1708,7 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
 		Present to fulfill obligations of <code>KeyListener</code> interface.
 	@param e The event generated from the key release.
 	*/
-//G***del when works	public void keyReleased(KeyEvent e) {}
+//TODO del when works	public void keyReleased(KeyEvent e) {}
 
 	/**Adds a listener that will be notified when the page is changed.
 	@param listener The object to be notified.
@@ -1738,7 +1745,7 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
 	*/
 	public void pageChanged(PageEvent e)
 	{
-		firePageEvent(e);	//refire that event to our listeners G***perhaps do some manipulation here
+		firePageEvent(e);	//refire that event to our listeners TODO perhaps do some manipulation here
 	}
 
 	/**Adds a progress listener.
@@ -1776,7 +1783,7 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
 	*/
 	public void madeProgress(final ProgressEvent e)
 	{
-		fireMadeProgress(e);	//refire that event to our listeners G***perhaps do some manipulation here
+		fireMadeProgress(e);	//refire that event to our listeners TODO perhaps do some manipulation here
 	}
 
 	//AppletContext methods
@@ -1788,7 +1795,7 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
 	*/
 	public AudioClip getAudioClip(final URL url)
 	{
-//G***del Debug.notify("Applet.getAudioClip(): "+url);  //G***del
+//TODO del Debug.notify("Applet.getAudioClip(): "+url);  //TODO del
 		final Document document=getDocument();  //get the document associated with the text pane
 		if(document instanceof XMLDocument) //if this is an XML document
 		{
@@ -1796,18 +1803,18 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
 			try
 			{
 				final Clip clip=(Clip)xmlDocument.getResource(url.toString());	//get and open a clip to the audio
-					//G***we need to fix this better; right now, we get a ClassCastException if they give a URL to an image, for instance
-	//G***del Log.trace("ready to start clip.");
+					//TODO we need to fix this better; right now, we get a ClassCastException if they give a URL to an image, for instance
+	//TODO del Log.trace("ready to start clip.");
 				return new ClipAudioClip(clip); //create an audio clip from the clip and return it
 			}
 			catch(URISyntaxException uriSyntaxException)  //if there's a problem with the audio clip location
 			{
-				Log.warn(uriSyntaxException);  //show that we can't load the clip G***fix better with Java console info
+				Log.warn(uriSyntaxException);  //show that we can't load the clip TODO fix better with Java console info
 				return null;  //show that we couldn't load the audio clip
 			}
 			catch(IOException ioException)  //if there's a problem loading the audio clip
 			{
-				Log.warn(ioException);  //show that we can't load the clip G***fix better with Java console info
+				Log.warn(ioException);  //show that we can't load the clip TODO fix better with Java console info
 				return null;  //show that we couldn't load the audio clip
 			}
 		}
@@ -1829,7 +1836,7 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
      * @return  the image at the specified URL.
      * @see     java.awt.Image
      */
-    public Image getImage(URL url) {return null;} //G***fix
+    public Image getImage(URL url) {return null;} //TODO fix
 
     /**
      * Finds and returns the applet in the document represented by this
@@ -1840,7 +1847,7 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
      * @return  the applet with the given name, or <code>null</code> if
      *          not found.
      */
-    public Applet getApplet(String name) {return null;} //G***fix
+    public Applet getApplet(String name) {return null;} //TODO fix
 
     /**
      * Finds all the applets in the document represented by this applet
@@ -1849,7 +1856,7 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
      * @return  an enumeration of all applets in the document represented by
      *          this applet context.
      */
-    public Enumeration getApplets() {return null;} //G***fix
+    public Enumeration getApplets() {return null;} //TODO fix
 
     /**
      * Replaces the Web page currently being viewed with the given URL.
@@ -1858,7 +1865,7 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
      *
      * @param   url   an absolute URL giving the location of the document.
      */
-    public void showDocument(URL url) {} //G***fix
+    public void showDocument(URL url) {} //TODO fix
 
     /**
      * Requests that the browser or applet viewer show the Web page
@@ -1890,7 +1897,7 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
      * @param   target   a <code>String</code> indicating where to display
      *                   the page.
      */
-    public void showDocument(URL url, String target) {} //G***fix
+    public void showDocument(URL url, String target) {} //TODO fix
 
     /**
      * Requests that the argument string be displayed in the
@@ -1900,7 +1907,7 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
      *
      * @param   status   a string to display in the status window.
      */
-    public void showStatus(String status) {} //G***fix
+    public void showStatus(String status) {} //TODO fix
 
 		/**
 		 * Associates the specified stream with the specified key in this
@@ -1920,7 +1927,7 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
 		 *         interface.
 		 * @since JDK1.4
 		 */
-		public void setStream(String key, InputStream stream) throws IOException {}	//G***fix
+		public void setStream(String key, InputStream stream) throws IOException {}	//TODO fix
 
 		/**
 		 * Returns the stream to which specified key is associated within this 
@@ -1935,7 +1942,7 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
 		 * @param key key whose associated stream is to be returned.
 		 * @since JDK1.4
 		 */
-		public InputStream getStream(String key) {return null;}	//G***fix
+		public InputStream getStream(String key) {return null;}	//TODO fix
 
 		/**
 		 * Finds all the keys of the streams in this applet context.
@@ -1948,7 +1955,7 @@ Log.trace("Inside XMLTextPane.goURI()");	//G***del
 		 *          context.
 		 * @since JDK1.4
 		 */
-		public Iterator getStreamKeys() {return null;}	//G***fix
+		public Iterator getStreamKeys() {return null;}	//TODO fix
 
 
 }

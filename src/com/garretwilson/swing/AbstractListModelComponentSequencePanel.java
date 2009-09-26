@@ -1,21 +1,37 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
+import java.util.List;
+
 import javax.swing.*;
 import javax.swing.event.*;
-
-import com.globalmentor.model.Modifiable;
 
 /**A component sequence panel that produces its sequence components from items
 	in a list model. (The list items are not necessarily components.)
 <p>In order to create and edit items, an editor must be set (besides setting
-	the list to be editable using <code>setEditable(true)</code>). Actual
+	the list to be editable using {@link #setEditable(boolean)}). Actual
 	modification of the list will only be performed if the list uses a list model
-	that implements either <code>javax.swing.DefaultListModel</code> or
-	<code>java.util.List</code>.</p>
+	that implements either {@link DefaultListModel} or
+	{@link List}.</p>
 <p>Bound properties:</p>
 <dl>
-	<dt><code>Editable.EDITABLE_PROPERTY</code> (<code>Boolean</code>)</dt>
+	<dt>{@link Editable#EDITABLE_PROPERTY} (<code>Boolean</code>)</dt>
 	<dd>Indicates the editable status has changed.</dd>
 </dl>
 @param <E> The type of elements contained in the list model.
@@ -194,7 +210,7 @@ public abstract class AbstractListModelComponentSequencePanel<E> extends Abstrac
 		super.updateStatus(); //update the default actions
 		getStartAction().setEnabled(getIndex()<0); //only allow starting if we haven't started, yet
 		final boolean isEditable=isEditable();	//see whether the list can be edited
-/*G***fix with edit strategy
+/*TODO fix with edit strategy
 		editSeparator.setVisible(isEditable);	//only show the edit separator if editing is allowed
 		addButton.setVisible(isEditable);	//only show the add button if editing is allowed
 		deleteButton.setVisible(isEditable);	//only show the delete button if editing is allowed
@@ -306,7 +322,7 @@ public abstract class AbstractListModelComponentSequencePanel<E> extends Abstrac
 	*/
 	protected void onIntervalAdded(final int index0, final int index1)
 	{
-/*G***fix
+/*TODO fix
 		if(getIndex()<0 && index0>=0)	//if a valid index was added, and we hadn't started the sequence before TODO only move if we've already started the sequence, or wanted to---but how would we know that?
 		{
 			goFirst();	//
@@ -392,10 +408,10 @@ public abstract class AbstractListModelComponentSequencePanel<E> extends Abstrac
 		}
 		
 		/**@return The component acting as the parent for windows.*/
-//G***del if not needed		protected Component getParentComponent() {return AbstractListModelComponentSequencePanel.this;}
+//TODO del if not needed		protected Component getParentComponent() {return AbstractListModelComponentSequencePanel.this;}
 
 		/**@return The object that represents the list model modification status.*/
-//	G***del if not needed		protected Modifiable getModifiable() {return AbstractListModelComponentSequencePanel.this;}
+//	TODO del if not needed		protected Modifiable getModifiable() {return AbstractListModelComponentSequencePanel.this;}
 
 		/**Edits an object from the list.
 		<p>This version does nothing and simply returns the item, as it is assumed

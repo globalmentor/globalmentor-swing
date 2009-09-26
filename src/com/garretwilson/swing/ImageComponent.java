@@ -1,12 +1,27 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
 import javax.swing.*;
-import com.garretwilson.swing.draw.Drawable;
 
 /**Component that displays an image.
 	The image can be zoomed using a bound property
-	Allows scrolling within a <code>JScrollPane</code>.
+	Allows scrolling within a {@link JScrollPane}.
 @author Garret Wilson
 @see JScrollPane
 */
@@ -131,8 +146,8 @@ public class ImageComponent extends JComponent implements Scrollable
 			if(zoomSize==null)  //if we need to update the zoom size of the image
 			{
 				final double zoomFactor=getZoomFactor(); //get the zoom factor
-				final int zoomWidth=(int)(width*zoomFactor); //calculate the zoom width G***should we eventually support partial dimensions?
-				final int zoomHeight=(int)(height*zoomFactor); //calculate the zoom height G***should we eventually support partial dimensions?
+				final int zoomWidth=(int)(width*zoomFactor); //calculate the zoom width TODO should we eventually support partial dimensions?
+				final int zoomHeight=(int)(height*zoomFactor); //calculate the zoom height TODO should we eventually support partial dimensions?
 				setZoomSize(new Dimension(zoomWidth, zoomHeight));  //update the zoom size
 			}
 		}
@@ -148,7 +163,7 @@ public class ImageComponent extends JComponent implements Scrollable
 		as possible without enlargement. If the image is already contained within
 		its container at normal size, or the image component has no parent
 		container, no action occurs.
-//G***fix		The zoom factor is not changed immediately, but is changed later in the AWT
+//TODO fix		The zoom factor is not changed immediately, but is changed later in the AWT
 		thread so that any container sizes may first be correctly setup.
 	@see #setZoomfactor
 	*/
@@ -166,28 +181,28 @@ public class ImageComponent extends JComponent implements Scrollable
 					double zoomFactor=1.0;  //start out assuming we don't need to zoom the image
 					int zoomWidth=imageSize.width;  //start out assuming the zoomed width will be same as the image width
 					int zoomHeight=imageSize.height;  //start out assuming the zoomed height will be same as the image height
-//G***del Log.trace("original zoom width: ", zoomWidth);  //G***del
-//G***del Log.trace("original zoom height: ", zoomHeight);  //G***del
-//G***del Log.trace("container width: ", containerSize.width);  //G***del
-//G***del Log.trace("container height: ", containerSize.height);  //G***del
+//TODO del Log.trace("original zoom width: ", zoomWidth);  //TODO del
+//TODO del Log.trace("original zoom height: ", zoomHeight);  //TODO del
+//TODO del Log.trace("container width: ", containerSize.width);  //TODO del
+//TODO del Log.trace("container height: ", containerSize.height);  //TODO del
 					if(zoomWidth>containerSize.width)  //if the image is wider than the container
 					{
 						zoomFactor=(double)containerSize.width/imageSize.width; //find the percentage of the original image width we should use for reduction
 						zoomWidth=(int)(imageSize.width*zoomFactor);  //reduce the image width to fit within the container
 						zoomHeight=(int)(imageSize.height*zoomFactor); //reduce the image height to match the original image proportions
 					}
-//G***del Log.trace("1 new zoom width: ", zoomWidth);  //G***del
-//G***del Log.trace("1 new zoom height: ", zoomHeight);  //G***del
-//G***del Log.trace("1 new zoom factor: "+zoomFactor);  //G***del
+//TODO del Log.trace("1 new zoom width: ", zoomWidth);  //TODO del
+//TODO del Log.trace("1 new zoom height: ", zoomHeight);  //TODO del
+//TODO del Log.trace("1 new zoom factor: "+zoomFactor);  //TODO del
 					if(zoomHeight>containerSize.height)  //if the image is higher than the container
 					{
 						zoomFactor=(double)containerSize.height/imageSize.height; //find the percentage of the original image heiht we should use for reduction
 						zoomWidth=(int)(imageSize.width*zoomFactor);  //reduce the image width to match the original image proportions
 						zoomHeight=(int)(imageSize.height*zoomFactor); //reduce the image height to fit within the container
 					}
-//G***del Log.trace("2 new zoom width: ", zoomWidth);  //G***del
-//G***del Log.trace("2 new zoom height: ", zoomHeight);  //G***del
-//G***del Log.trace("2 new zoom factor: "+zoomFactor);  //G***del
+//TODO del Log.trace("2 new zoom width: ", zoomWidth);  //TODO del
+//TODO del Log.trace("2 new zoom height: ", zoomHeight);  //TODO del
+//TODO del Log.trace("2 new zoom factor: "+zoomFactor);  //TODO del
 					setZoomFactor(zoomFactor);  //update the zoom factor we finally settled on
 				}
 			}
@@ -195,8 +210,8 @@ public class ImageComponent extends JComponent implements Scrollable
 	}
 
 
-	//G***instead of overriding paint, we should override paintComponent()
-	//G***see http://java.sun.com/docs/books/tutorial/uiswing/painting/overview.html#repaint
+	//TODO instead of overriding paint, we should override paintComponent()
+	//TODO see http://java.sun.com/docs/books/tutorial/uiswing/painting/overview.html#repaint
 
 	/**Paints the image.
 	@param graphics The graphics context used for painting.
@@ -204,12 +219,12 @@ public class ImageComponent extends JComponent implements Scrollable
 	public void paintComponent(final Graphics graphics)
 	{
 		super.paintComponent(graphics);  //do the default painting
-//G***del Log.trace("painting image");  //G***del
+//TODO del Log.trace("painting image");  //TODO del
 		final Image image=getImage(); //get the image to paint
 		final int width=image.getWidth(this); //get the width of the image
-//G***del Log.trace("image width: ", width);  //G***del
+//TODO del Log.trace("image width: ", width);  //TODO del
 		final int height=image.getHeight(this);  //get the height of the image
-//G***del Log.trace("image height: ", height);  //G***del
+//TODO del Log.trace("image height: ", height);  //TODO del
 		final Dimension zoomSize=getZoomSize(); //get the zoomed size of the image
 		if(zoomSize!=null) //if the image size is valid
 		  graphics.drawImage(image, 0, 0, zoomSize.width, zoomSize.height, this);  //paint the image
@@ -233,31 +248,31 @@ public class ImageComponent extends JComponent implements Scrollable
 	*/
 	public boolean imageUpdate(final Image image, final int infoFlags, final int x, final int y, final int width, final int height)
 	{
-//G***del Log.trace("updating image, width: ", width);
-//G***del Log.trace("updating image, height: ", height);
-//G***del		boolean shouldFit=false;  //G***testing
+//TODO del Log.trace("updating image, width: ", width);
+//TODO del Log.trace("updating image, height: ", height);
+//TODO del		boolean shouldFit=false;  //TODO testing
 		updateImageSize(width, height); //update the size of the image based upon our most recent knowledge
-//G***del		if((infoFlags&ALLBITS)==0) //G***testing
-//G***fix		if(width>0 && height>0) //G***testing
-		if((infoFlags&ALLBITS)!=0) //G***testing
+//TODO del		if((infoFlags&ALLBITS)==0) //TODO testing
+//TODO fix		if(width>0 && height>0) //TODO testing
+		if((infoFlags&ALLBITS)!=0) //TODO testing
 		{
-//G***del			if(getImageSize()==null && width>0 && height>0))
-		  fitImage(); //G***testing
+//TODO del			if(getImageSize()==null && width>0 && height>0))
+		  fitImage(); //TODO testing
 
 		}
 
-/*G***del
+/*TODO del
 		if(width>=0 && height>=0) //if the width and the height are both valid now
 		{
 			if(preferredScrollableViewportSize==null  //if we haven't yet updated the preferred scrolling dimensions
 				  || preferredScrollableViewportSize.getWidth()!=width  //or it has a different width
 				  || preferredScrollableViewportSize.getHeight()!=height)  //or it has a different height
 			{
-//G***del Log.trace("updating preferred scrollable viewport size"); //G***del
+//TODO del Log.trace("updating preferred scrollable viewport size"); //TODO del
 				preferredScrollableViewportSize=new Dimension(width, height); //update the preferred scroll size with the size of the image
-				setPreferredSize(preferredScrollableViewportSize);  //G***testing
-//G***del				invalidate(); //G***fix
-				revalidate(); //G***testing
+				setPreferredSize(preferredScrollableViewportSize);  //TODO testing
+//TODO del				invalidate(); //TODO fix
+				revalidate(); //TODO testing
 			}
 		}
 */
@@ -267,8 +282,8 @@ public class ImageComponent extends JComponent implements Scrollable
 	/**Draws a drawable object on the component.
 	@param drawable The object to draw.
 	*/
-/*G***del
-	public void draw(final Drawable drawable) //G***maybe move this to a DrawComponent or to some DrawUtilities
+/*TODO del
+	public void draw(final Drawable drawable) //TODO maybe move this to a DrawComponent or to some DrawUtilities
 	{
 		if(drawable!=null)  //if we have a valid drawable object
 		{
@@ -289,8 +304,8 @@ public class ImageComponent extends JComponent implements Scrollable
 	@param graphics The graphics context to use to draw the object.
 	@param drawable The object to draw.
 	*/
-/*G***del
-	public void draw(final Graphics graphics, final Drawable drawable) //G***maybe move this to a DrawComponent or to some DrawUtilities
+/*TODO del
+	public void draw(final Graphics graphics, final Drawable drawable) //TODO maybe move this to a DrawComponent or to some DrawUtilities
 	{
 		drawable.draw(graphics);  //tell the object to draw itself
 	}
@@ -300,7 +315,7 @@ public class ImageComponent extends JComponent implements Scrollable
 		has not been loaded, delagates to the parent version.
 	@return The preferred dimensions of the image component.
 	*/
-/*G***fix
+/*TODO fix
 	public Dimension getPreferredSize()
 	{
 		final Dimension imageSize=getImageSize(); //get the size of the image
@@ -314,8 +329,8 @@ public class ImageComponent extends JComponent implements Scrollable
 	*/
 	public Dimension getPreferredScrollableViewportSize()
 	{
-//G***del Log.trace("getting preferred scrollable viewport size"); //G***del
-				//G***fix to take into account border size, etc.
+//TODO del Log.trace("getting preferred scrollable viewport size"); //TODO del
+				//TODO fix to take into account border size, etc.
 		//return the preferred scroll size, if we've calculated it; if not, use this component's preferred size
 		return getImageSize()!=null ? getImageSize() : super.getPreferredSize();
 	}
@@ -338,7 +353,7 @@ public class ImageComponent extends JComponent implements Scrollable
      */
     public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction)
 		{
-			return 10;  //G***fix
+			return 10;  //TODO fix
 		}
 
 
@@ -358,7 +373,7 @@ public class ImageComponent extends JComponent implements Scrollable
      */
     public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction)
 		{
-			return 100; //G***fix
+			return 100; //TODO fix
 		}
 
 
@@ -378,7 +393,7 @@ public class ImageComponent extends JComponent implements Scrollable
      */
     public boolean getScrollableTracksViewportWidth()
 		{
-			return false;  //G***testing; fix
+			return false;  //TODO testing; fix
 		}
 
     /**
@@ -395,7 +410,7 @@ public class ImageComponent extends JComponent implements Scrollable
      */
     public boolean getScrollableTracksViewportHeight()
 		{
-			return false;  //G***testing; fix
+			return false;  //TODO testing; fix
 
 		}
 

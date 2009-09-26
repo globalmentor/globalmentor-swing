@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.*;
@@ -14,11 +30,10 @@ import com.garretwilson.awt.*;
 import com.garretwilson.swing.event.*;
 import com.globalmentor.java.*;
 import com.globalmentor.model.Verifiable;
-import com.globalmentor.util.*;
 
 import static com.globalmentor.collections.Arrays.*;
 
-/**An extended panel that has extra features beyond those in <code>JPanel</code>.
+/**An extended panel that has extra features beyond those in {@link JPanel}.
 <p>The panel stores properties and fires property change events when a
 	property is modified.</p>
 <p>The panel is verifiable, and automatically verifies all child components
@@ -48,18 +63,18 @@ import static com.globalmentor.collections.Arrays.*;
 <p>The panel keeps an event listener list for convenient adding and removal of specific event listener types.</p>
 <p>Bound properties:</p>
 <dl>
-	<dt><code>BasicPanel.ICON_PROPERTY</code> (<code>Icon</code>)</dt>
+	<dt>BasicPanel{@link #ICON_PROPERTY} (<code>Icon</code>)</dt>
 	<dd>Indicates the icon has been changed.</dd>
-	<dt><code>BasicPanel.TITLE_PROPERTY</code> (<code>String</code>)</dt>
+	<dt>BasicPanel{@link #TITLE_PROPERTY} (<code>String</code>)</dt>
 	<dd>Indicates the title has been changed.</dd>
-	<dt><code>BasicPanel.USER_MODE_PROPERTY</code> (<code>Integer</code>)</dt>
+	<dt>BasicPanel{@link #USER_MODE_PROPERTY} (<code>Integer</code>)</dt>
 	<dd>Indicates the user mode has been changed.</dd>
 </dl>
 @author Garret Wilson
-@see java.awt.Container#setFocusCycleRoot
-@see java.beans.PropertyChangeListener
-@see javax.swing.JOptionPane
-@see java.awt.GridBagLayout
+@see Container#setFocusCycleRoot(boolean)
+@see PropertyChangeListener
+@see JOptionPane
+@see GridBagLayout
 */
 public class BasicPanel extends JPanel implements Scrollable, ContainerConstants, CanClosable, DefaultFocusable, Verifiable, ActionManaged
 {
@@ -67,7 +82,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	/**The name of the bound icon property.*/
 	public final static String ICON_PROPERTY=BasicPanel.class.getName()+Java.PACKAGE_SEPARATOR+"icon";
 	/**The name of the bound title property.*/
-	public final static String TITLE_PROPERTY=BasicPanel.class.getName()+Java.PACKAGE_SEPARATOR+"title";	//G***maybe later move this to a titleable interface
+	public final static String TITLE_PROPERTY=BasicPanel.class.getName()+Java.PACKAGE_SEPARATOR+"title";	//TODO maybe later move this to a titleable interface
 	/**The name of the bound user mode property.*/
 	public final static String USER_MODE_PROPERTY=BasicPanel.class.getName()+Java.PACKAGE_SEPARATOR+"userMode";
 
@@ -461,7 +476,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	}
 	
 	/**@return The component that should get the initial focus.*/
-//G***fix	public Component getInitialFocusComponent() {return labelTextField;}
+//TODO fix	public Component getInitialFocusComponent() {return labelTextField;}
 	
 	
 	/**@return The <code>JOptionPane</code> in which this panel is embedded, or
@@ -532,7 +547,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 		updates the modified status to <code>true</code>.
 	@see #setModified
 	*/
-/*G***bring back
+/*TODO bring back
 	public PropertyChangeListener createModifyPropertyChangeListener()
 	{
 		return new PropertyChangeListener()	//create a new property change listener that will do nothing but set modified to true
@@ -558,7 +573,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 		the status.
 	@see #updateStatus
 	*/
-/*G***bring back; or maybe we don't need, now that we have createUpdateStatusItemListener()
+/*TODO bring back; or maybe we don't need, now that we have createUpdateStatusItemListener()
 	public ActionListener createUpdateStatusActionListener()
 	{
 		return new ActionListener()	//create a new action listener that will do nothing but update the status

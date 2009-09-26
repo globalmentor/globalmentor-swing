@@ -1,3 +1,19 @@
+/*
+ * Copyright © 1996-2009 GlobalMentor, Inc. <http://www.globalmentor.com/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.garretwilson.swing;
 
 import java.awt.event.*;
@@ -84,9 +100,9 @@ public abstract class ListEditStrategy<E> extends ListModelEditStrategy<E>
 			final int selectionMode=list.getSelectionMode();	//get the list selection mode
 			final boolean isMultipleSelectionAllowed=selectionMode!=ListSelectionModel.SINGLE_SELECTION;	//see if multiple selections are allowed, either single intervals or multiple intervals
 			final int listModelSize=list.getModel().getSize();	//see how long the list is
-	//G***maybe just go with the way things work now, even though the lead selection may not be visible		final int selectedIndex=list.getSelectedIndex();	//get the first selected index 
+	//TODO maybe just go with the way things work now, even though the lead selection may not be visible		final int selectedIndex=list.getSelectedIndex();	//get the first selected index 
 			final int selectedIndex=getLeadSelectionIndex();	//get the selected index
-	//G***del if not needed		final boolean isLeadSelected=leadSelectionIndex>=0 && list.isSelectedIndex(leadSelectionIndex);	//see whether the lead index is selected
+	//TODO del if not needed		final boolean isLeadSelected=leadSelectionIndex>=0 && list.isSelectedIndex(leadSelectionIndex);	//see whether the lead index is selected
 			getSelectAllAction().setEnabled(isMultipleSelectionAllowed && isListEnabled && listModelSize>0);	//only allow all items to be selected if there are items
 			getSelectNoneAction().setEnabled(isMultipleSelectionAllowed && isListEnabled && listModelSize>0);	//only allow no items to be selected if there are items
 			getAddAction().setEnabled(isListEnabled);	//only enable the add action if the list is enabled
@@ -162,10 +178,10 @@ public abstract class ListEditStrategy<E> extends ListModelEditStrategy<E>
 		/**Default constructor.*/
 		public SelectAllAction()
 		{
-			super("All");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Select all");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Select all items in the list.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_L));  //set the mnemonic key G***i18n
+			super("All");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Select all");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Select all items in the list.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_L));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.CHECK_MULTIPLE_ICON_FILENAME)); //load the correct icon
 		}
 	
@@ -184,10 +200,10 @@ public abstract class ListEditStrategy<E> extends ListModelEditStrategy<E>
 		/**Default constructor.*/
 		public SelectNoneAction()
 		{
-			super("None");	//create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Select none");	//set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Select no items in the list.");	//set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_N));  //set the mnemonic key G***i18n
+			super("None");	//create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Select none");	//set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Select no items in the list.");	//set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_N));  //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.UNCHECK_MULTIPLE_ICON_FILENAME)); //load the correct icon
 		}
 	
