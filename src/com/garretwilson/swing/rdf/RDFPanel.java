@@ -8,10 +8,10 @@ import javax.swing.tree.TreeNode;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.rdf.tree.*;
 import com.garretwilson.model.ResourceModel;
+import com.globalmentor.io.Charsets;
 import com.globalmentor.rdf.*;
-import com.globalmentor.text.CharacterEncoding;
-import com.globalmentor.text.xml.XMLDOMImplementation;
-import com.globalmentor.text.xml.XMLProcessor;
+import com.globalmentor.text.xml.URIInputStreamableXMLEntityResolver;
+import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.XMLSerializer;
 
 import org.w3c.dom.*;
@@ -88,7 +88,7 @@ public class RDFPanel<R extends RDFResource, M extends ResourceModel<R>> extends
 		rdfScrollPane=new JScrollPane(rdfTree);
 		sourceTextPane=new JTextPane();
 		xmlScrollPane=new JScrollPane(sourceTextPane);
-		domImplementation=new XMLDOMImplementation();	//create the XML DOM implementation
+		domImplementation=XML.createDocumentBuilder(true).getDOMImplementation();	//create the XML DOM implementation
 		if(initialize)  //if we should initialize
 			initialize();   //initialize the panel
 	}
@@ -172,12 +172,11 @@ public class RDFPanel<R extends RDFResource, M extends ResourceModel<R>> extends
 					final String sourceString=getSourceTextPane().getText();	//get the current source text
 					if(sourceString.length()>0)	//if there is source text
 					{
-						final XMLProcessor xmlProcessor=new XMLProcessor(model);	//create an XML processor to read the source
-						final byte[] sourceBytes=sourceString.getBytes(CharacterEncoding.UTF_8);	//convert the string to a series of UTF-8 bytes
+						final byte[] sourceBytes=sourceString.getBytes(Charsets.UTF_8_CHARSET);	//convert the string to a series of UTF-8 bytes
 						final InputStream inputStream=new BufferedInputStream(new ByteArrayInputStream(sourceBytes));	//create an input stream to the source as bytes
 						try
 						{
-							final Document document=xmlProcessor.parseDocument(inputStream, model.getBaseURI());	//parse the document into the XML data model
+							final Document document=XML.parse(inputStream, model.getBaseURI(), true, new URIInputStreamableXMLEntityResolver(model));	//parse the XML document
 							final RDFXMLProcessor rdfXMLProcessor=new RDFXMLProcessor();	//create a new RDF processor
 							final RDF rdf=rdfXMLProcessor.processRDF(document);	//process the RDF from the XML
 /*TODO find some way to find the original resource selected, if any

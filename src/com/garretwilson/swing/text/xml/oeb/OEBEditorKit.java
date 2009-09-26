@@ -2,12 +2,14 @@ package com.garretwilson.swing.text.xml.oeb;
 
 import java.io.*;
 import javax.swing.text.*;
+import javax.xml.parsers.DocumentBuilder;
 
 import com.garretwilson.swing.text.xml.*;
 import com.garretwilson.swing.text.xml.xeb.XEBEditorKit;
 import com.globalmentor.io.*;
 import com.globalmentor.rdf.*;
-import com.globalmentor.text.xml.XMLProcessor;
+import com.globalmentor.text.xml.URIInputStreamableXMLEntityResolver;
+import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.oeb.*;
 
 /**An editor kit for an OEB publication.
@@ -50,9 +52,8 @@ public class OEBEditorKit extends XEBEditorKit
 		if(document instanceof XMLDocument) //if this is a Swing XML document
 		{
 			final XMLDocument swingXMLDocument=(XMLDocument)document; //cast the document to a Swing XML document
-			final XMLProcessor xmlProcessor=new XMLProcessor(swingXMLDocument.getURIInputStreamable());  //create an XML processor that will use the input stream locator of the document for loading other needed documents
-				//create a new processor for loading the package information
-			final OEBPackageProcessor oebPackageProcessor=new OEBPackageProcessor(xmlProcessor);
+			final DocumentBuilder documentBuilder=XML.createDocumentBuilder(true, new URIInputStreamableXMLEntityResolver(swingXMLDocument.getURIInputStreamable()));  //create a new processor for loading the package information				
+			final OEBPackageProcessor oebPackageProcessor=new OEBPackageProcessor(documentBuilder);
 			final RDF packageRDF=oebPackageProcessor.read(inputStream, swingXMLDocument.getBaseURI()); //read the package from the input stream G***maybe rename this to "process()"
 			read(packageRDF, swingXMLDocument, pos);	//read the publication from the RDF data model
 		}

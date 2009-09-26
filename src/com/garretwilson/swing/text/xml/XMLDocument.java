@@ -37,8 +37,6 @@ import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
 import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 
 /**A document that models XML.
-@see com.globalmentor.text.xml.XMLProcessor
-@see com.globalmentor.text.xml.XMLDocument
 @author Garret Wilson
 */
 public class XMLDocument extends BasicStyledDocument

@@ -23,7 +23,8 @@ import com.globalmentor.log.Log;
 import com.globalmentor.model.NameValuePair;
 import com.globalmentor.net.*;
 import com.globalmentor.rdf.*;
-import com.globalmentor.text.xml.*;
+import com.globalmentor.text.xml.XML;
+import com.globalmentor.text.xml.XMLSerializer;
 import com.globalmentor.text.xml.stylesheets.css.*;
 import com.globalmentor.urf.maqro.Activity;
 
@@ -32,7 +33,6 @@ import org.w3c.dom.css.*;
 
 /**An editor kit for XML.
 @author Garret Wilson
-@see com.globalmentor.text.xml.XMLProcessor
 */
 public class XMLEditorKit extends BasicStyledEditorKit
 {
@@ -253,6 +253,7 @@ G***fix
 		 */
 	public void read(final Reader reader, final Document document, final int pos) throws IOException, BadLocationException
 	{
+/*TODO fix
 		if(document instanceof XMLDocument) //if this is a Swing XML document
 		{
 			XMLDocument swingXMLDocument=(XMLDocument)document; //cast the document to an XML document
@@ -260,6 +261,7 @@ G***fix
 			final XMLProcessor xmlProcessor=new XMLProcessor();	//create a new XML processor
 			final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(reader, baseURI);	//parse the document
 			xmlDocument.normalize();  //normalize the document
+*/
 /*TODO del if not needed
 				//read and set any contained RDF
 			final RDFXMLProcessor rdfProcessor=new RDFXMLProcessor(); //create a new RDF processor
@@ -274,9 +276,11 @@ G***fix
 			}  
 			swingXMLDocument.setRDF(rdf); //set the RDF in our document
 */
+/*TODO fix
 			setXML(xmlDocument, baseURI, getMediaType(), swingXMLDocument);  //G***fix
 		}
 		else  //if this is not an XML document we're reading into
+*/
 			super.read(reader, document, pos); //let the parent class do the reading
 	}
 
@@ -295,8 +299,11 @@ G***fix
 		{
 			XMLDocument swingXMLDocument=(XMLDocument)document; //cast the document to an XML document
 			final URI baseURI=swingXMLDocument.getBaseURI();  //get the base URI from the document
+			final org.w3c.dom.Document xmlDocument=XML.parse(inputStream, baseURI, true);
+/*TODO del
 			final XMLProcessor xmlProcessor=new XMLProcessor();	//create a new XML processor
 			final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(inputStream, baseURI);	//parse the document
+*/
 			xmlDocument.normalize();  //normalize the document
 /*TODO del if not needed
 				//read and set any contained RDF
@@ -772,7 +779,7 @@ catch (BadLocationException e)
 		final AttributeSet attributeSet=swingElement.getAttributes();  //get the element's attribute set
 		assert attributeSet!=null : "Missing attributes for document element.";  //assert that we have an attribute set
 		final String elementName=XMLStyleUtilities.getXMLElementName(attributeSet); //get the name of this element
-		final XMLDOMImplementation domImplementation=new XMLDOMImplementation();	//create a new DOM implementation G***later use some Java-specific stuff
+		final DOMImplementation domImplementation=XML.createDocumentBuilder(true).getDOMImplementation();	//create a new DOM implementation
 		final DocumentType documentType;  //we'll create a document type only if we find a system ID
 		final String docTypeSystemID=XMLStyleUtilities.getXMLDocTypeSystemID(attributeSet); //get the document type system ID if there is one
 		if(docTypeSystemID!=null) //if we found a system ID

@@ -5,6 +5,9 @@ import java.net.*;
 import java.util.*;
 
 import javax.swing.text.*;
+import javax.xml.parsers.DocumentBuilder;
+
+import org.xml.sax.SAXException;
 
 import com.garretwilson.model.ResourceModel;
 
@@ -32,14 +35,9 @@ import com.globalmentor.net.URIs;
 import com.globalmentor.rdf.*;
 import com.globalmentor.rdf.xeb.*;
 import com.globalmentor.rdf.xpackage.*;
-import com.globalmentor.text.xml.XMLDOMImplementation;
-import com.globalmentor.text.xml.XMLProcessor;
+import com.globalmentor.text.xml.URIInputStreamableXMLEntityResolver;
 import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.oeb.OEB;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSSProcessor;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
-import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.urf.maqro.*;
 
 /**An editor kit for an XEB publication.
@@ -189,8 +187,7 @@ System.out.println("Finished with file.");	//G***del
 		if(document instanceof XMLDocument) //if this is a Swing XML document
 		{
 			final XMLDocument swingXMLDocument=(XMLDocument)document; //cast the document to a Swing XML document	
-			final XMLProcessor xmlProcessor=new XMLProcessor(swingXMLDocument.getURIInputStreamable());  //create an XML processor that will use the input stream locator of the document for loading other needed documents
-			final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(inputStream, swingXMLDocument.getBaseURI());	//parse the public description document
+			final org.w3c.dom.Document xmlDocument=XML.parse(inputStream, swingXMLDocument.getBaseURI(), true, new URIInputStreamableXMLEntityResolver(swingXMLDocument.getURIInputStreamable()));	//parse the document using the input stream locator of the document for loading other needed documents
 			xmlDocument.normalize(); //normalize the package description document
 			final RDF rdf=new RDF();  //create a new RDF data model
 			rdf.registerResourceFactory(XEB_NAMESPACE_URI, new RDFXEB());  //register an XEbook factory TODO use a common instance
@@ -247,7 +244,7 @@ Log.trace(RDFResources.toString(rdf));
 				}
 			}
 */
-			final XMLProcessor xmlProcessor=new XMLProcessor(swingXMLDocument.getURIInputStreamable());  //create an XML processor that will use the input stream locator of the document for loading other needed documents
+			final DocumentBuilder documentBuilder=XML.createDocumentBuilder(true, new URIInputStreamableXMLEntityResolver(swingXMLDocument.getURIInputStreamable()));	//create a document builder using the input stream locator of the document for loading other needed documents
 			final ActivityModelIOKit activityModelIOKit=new ActivityModelIOKit(swingXMLDocument.getURIInputStreamable());	//create an IO kit for reading MAQRO activities
 			final int spineItemCount=itemList.size(); //find out how many spine items there are
 			final ContentData<?>[] contentDataArray=new ContentData[spineItemCount];	//create an array to hold each content data
@@ -283,7 +280,7 @@ Log.trace(RDFResources.toString(rdf));
 							final InputStream itemInputStream=swingXMLDocument.getInputStream(itemURI); //get an input stream to the object
 							try
 							{
-								final org.w3c.dom.Document xmlDocument=xmlProcessor.parseDocument(itemInputStream, itemURI);	//parse the document
+								final org.w3c.dom.Document xmlDocument=documentBuilder.parse(itemInputStream, itemURI.toString());	//parse the document
 							  xmlDocument.normalize();  //normalize the document TODO decide if we want to normalize in both places or not
 								contentDataArray[i]=new ContentData<org.w3c.dom.Document>(xmlDocument, itemURI, contentType, item);	//create an object representing the XML document content data, giving the item as the description
 							}
@@ -295,7 +292,11 @@ Log.trace(RDFResources.toString(rdf));
 					}
 					catch(final IllegalArgumentException illegalArgumentException)	//if we can't get the item's URI
 					{
-						throw (IOException)new IOException(illegalArgumentException.getMessage()).initCause(illegalArgumentException);	//create and trhwo an IO exception from the URI syntax exception
+						throw new IOException(illegalArgumentException.getMessage(), illegalArgumentException);	//create and throw an IO exception from the URI syntax exception
+					}
+					catch(final SAXException saxException)
+					{
+						throw new IOException(saxException.getMessage(), saxException);
 					}
 				}
 				else	//if this item has no href

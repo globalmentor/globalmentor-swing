@@ -8,10 +8,8 @@ import javax.swing.text.*;
 
 import com.garretwilson.model.*;
 import com.globalmentor.io.*;
-import com.globalmentor.text.CharacterEncoding;
 import com.globalmentor.text.xml.XMLDocumentModelIOKit;
 import com.globalmentor.text.xml.XMLNodeModel;
-import com.globalmentor.text.xml.XMLProcessor;
 
 /**An implementation for loading information into a view or
 	saving information from an XML panel using a model's I/O kit.
@@ -74,15 +72,15 @@ public class XMLDocumentModelViewIOKit extends ModelViewIOKit<XMLNodeModel<org.w
 			final JTextPane sourceTextPane=xmlPanel.getSourceTextPane();	//get a reference to the source text pane G***maybe make an accessor method for setting the source
 			final Document document=sourceTextPane.getDocument();	//get the source document
 			inputStream.reset();	//start back at the beginning of the stream
-			final StringBuffer autodetectPrereadCharacters=new StringBuffer();	//this will receive whatever characters were read while prereading the encoding TODO it would be better to update the XML processor code to push these characters back automatically, as the InputStreamUtilities.getBOMEncoding() method does
+		//TODO del when works			final StringBuffer autodetectPrereadCharacters=new StringBuffer();	//this will receive whatever characters were read while prereading the encoding TODO it would be better to update the XML processor code to push these characters back automatically, as the InputStreamUtilities.getBOMEncoding() method does
 				//see if we can determine the XML encoding before we we parse the stream
-			final CharacterEncoding encoding=XMLProcessor.getXMLEncoding(inputStream, new StringBuffer(), autodetectPrereadCharacters);
+		//TODO del when works			final CharacterEncoding encoding=XMLProcessor.getXMLEncoding(inputStream, new StringBuffer(), autodetectPrereadCharacters);
 				//use the character encoding we sensed to create a reader
-			final Reader reader=new InputStreamReader(inputStream, encoding.toString());
+//TODO del when works			final Reader reader=new InputStreamReader(inputStream, encoding.toString());
 			try
 			{		
-				sourceTextPane.getEditorKit().read(reader, document, 0);	//have the editor kit read the document from the reader
-				sourceTextPane.getDocument().insertString(0, autodetectPrereadCharacters.toString(), null);	//insert the preread characters at the front of the document G***check
+				sourceTextPane.getEditorKit().read(inputStream, document, 0);	//have the editor kit read the document from the reader
+//TODO del when works				sourceTextPane.getDocument().insertString(0, autodetectPrereadCharacters.toString(), null);	//insert the preread characters at the front of the document G***check
 			}
 			catch(BadLocationException badLocationException)
 			{
@@ -113,7 +111,7 @@ public class XMLDocumentModelViewIOKit extends ModelViewIOKit<XMLNodeModel<org.w
 		{
 			case XMLPanel.SOURCE_MODEL_VIEW:	//if the source is being edited
 				{
-					final Writer writer=new OutputStreamWriter(outputStream, CharacterEncoding.UTF_8);	//create a UTF-8 writer
+					final Writer writer=new OutputStreamWriter(outputStream, Charsets.UTF_8_CHARSET);	//create a UTF-8 writer
 					final JTextPane textPane=xmlPanel.getSourceTextPane();	//get a reference to the source text pane
 					final Document document=textPane.getDocument();	//get the document currently loaded into the text pane
 					try

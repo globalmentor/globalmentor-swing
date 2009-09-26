@@ -11,10 +11,11 @@ import com.globalmentor.io.*;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.net.ContentTypeConstants;
 
-import com.globalmentor.text.CharacterEncoding;
 import static com.globalmentor.text.Text.*;
+
+import com.globalmentor.text.xml.URIInputStreamableXMLEntityResolver;
+import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.XMLNodeModel;
-import com.globalmentor.text.xml.XMLProcessor;
 import com.globalmentor.text.xml.XMLSerializer;
 import com.globalmentor.text.xml.xhtml.XHTML;
 
@@ -293,12 +294,11 @@ updateStatus();	//testing; probably put a convenience method to create this list
 					final String sourceText=getSourceText();	//get the source text being edited
 					if(sourceText.length()>0)	//if we have source text
 					{
-						final XMLProcessor xmlProcessor=new XMLProcessor(model);	//create an XML processor to read the source
-						final byte[] sourceBytes=sourceText.getBytes(CharacterEncoding.UTF_8);	//convert the string to a series of UTF-8 bytes
+						final byte[] sourceBytes=sourceText.getBytes(Charsets.UTF_8_CHARSET);	//convert the string to a series of UTF-8 bytes
 						final InputStream inputStream=new BufferedInputStream(new ByteArrayInputStream(sourceBytes));	//create an input stream to the source as bytes
 						try
 						{
-							final Document document=xmlProcessor.parseDocument(inputStream, model.getBaseURI());	//parse the XML document
+							final Document document=XML.parse(inputStream, model.getBaseURI(), true, new URIInputStreamableXMLEntityResolver(model));	//parse the XML document
 //G***del Log.trace("document tree from source");
 //G***del XMLUtilities.printTree(document, System.out);
 							saveModel(model, document);	//store the document in the model
