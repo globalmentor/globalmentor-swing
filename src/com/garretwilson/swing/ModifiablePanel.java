@@ -71,7 +71,7 @@ public class ModifiablePanel extends BasicPanel implements Modifiable
 				firePropertyChange(MODIFIED_PROPERTY, Boolean.valueOf(oldModified), Boolean.valueOf(newModified));
 				if(!modified)	//if we're now not modified
 				{
-					ContainerUtilities.setModifiableDescendants(this, false);	//tell all of our child components that they are not modified, either
+					Containers.setModifiableDescendants(this, false);	//tell all of our child components that they are not modified, either
 				}
 			}
 		}

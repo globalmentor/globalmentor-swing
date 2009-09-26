@@ -22,6 +22,8 @@ import java.beans.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
+
+import com.garretwilson.awt.Containers;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
 import com.garretwilson.swing.event.*;
@@ -207,13 +209,13 @@ public class IdentificationPanel extends BasicVCardPanel
 		final JButton selectNicknameLanguageButton=createSelectLanguageButton(getSelectNicknameLanguageAction());
 		nicknameTextField.setColumns(8);
 		nicknameTextField.getDocument().addDocumentListener(getModifyDocumentListener());
-		add(namePanel, new GridBagConstraints(0, 0, 4, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
-		add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(selectNicknameLanguageButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(nicknameTextField, new GridBagConstraints(0, 2, 2, 1, 0.4, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
-		add(formattedNameLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(selectFormattedNameLanguageButton, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(formattedNameTextField, new GridBagConstraints(2, 2, 2, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
+		add(namePanel, new GridBagConstraints(0, 0, 4, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, Containers.NO_INSETS, 0, 0));
+		add(nicknameLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, Containers.NO_INSETS, 0, 0));
+		add(selectNicknameLanguageButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, Containers.NO_INSETS, 0, 0));
+		add(nicknameTextField, new GridBagConstraints(0, 2, 2, 1, 0.4, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, Containers.NO_INSETS, 0, 0));
+		add(formattedNameLabel, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, Containers.NO_INSETS, 0, 0));
+		add(selectFormattedNameLanguageButton, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, Containers.NO_INSETS, 0, 0));
+		add(formattedNameTextField, new GridBagConstraints(2, 2, 2, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, Containers.NO_INSETS, 0, 0));
 	}
 
 	/**Updates the constructed URI based upon current user input.*/

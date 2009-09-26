@@ -32,7 +32,7 @@ import javax.swing.event.*;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.DocumentFragment;
 
-import com.garretwilson.awt.EventQueueUtilities;
+import com.garretwilson.awt.EventQueues;
 
 import com.garretwilson.swing.event.*;
 import com.garretwilson.swing.text.*;
@@ -1014,7 +1014,7 @@ Log.trace("reading from stream"); //TODO del
 				try
 				{
 						//make sure the actual document change occurs in the event queue to prevent exceptions from occurring 
-					EventQueueUtilities.invokeInEventQueueAndWait(new Runnable()
+					EventQueues.invokeInEventQueueAndWait(new Runnable()
 							{
 								public void run()
 								{

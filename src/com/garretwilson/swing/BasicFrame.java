@@ -736,7 +736,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 		if(useDefault)	//if no bounds are stored in preferences
 		{
 			setSize(800, 600);	//set a default size, which will be saved
-			WindowUtilities.center(this);	//center the window, which will save the new location
+			Windows.center(this);	//center the window, which will save the new location
 			setExtendedState(MAXIMIZED_BOTH);	//maximize the window 
 		}
 		validate();	//make sure the components are all laid out correctly after was changed the size

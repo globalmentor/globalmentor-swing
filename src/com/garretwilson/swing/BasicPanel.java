@@ -27,6 +27,7 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 
 import com.garretwilson.awt.*;
+import static com.garretwilson.awt.Containers.*;
 import com.garretwilson.swing.event.*;
 import com.globalmentor.java.*;
 import com.globalmentor.model.Verifiable;
@@ -76,7 +77,7 @@ import static com.globalmentor.collections.Arrays.*;
 @see JOptionPane
 @see GridBagLayout
 */
-public class BasicPanel extends JPanel implements Scrollable, ContainerConstants, CanClosable, DefaultFocusable, Verifiable, ActionManaged
+public class BasicPanel extends JPanel implements Scrollable, CanClosable, DefaultFocusable, Verifiable, ActionManaged
 {
 
 	/**The name of the bound icon property.*/
@@ -472,7 +473,7 @@ public class BasicPanel extends JPanel implements Scrollable, ContainerConstants
 	*/
 	public boolean verify()
 	{
-		return ContainerUtilities.verifyDescendants(this);	//verify all descendant components 
+		return verifyDescendants(this);	//verify all descendant components 
 	}
 	
 	/**@return The component that should get the initial focus.*/

@@ -19,7 +19,7 @@ package com.garretwilson.swing.text.xml;
 import java.awt.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.*;
-import com.garretwilson.awt.FontUtilities;
+import com.garretwilson.awt.Fonts;
 
 import com.garretwilson.swing.text.xml.css.XMLCSSStyles;
 
@@ -354,7 +354,7 @@ public class XMLInlineView extends GlyphView implements TabableView
 		if(document instanceof XMLDocument) //if this is an XML document
 			return ((XMLDocument)document).getFont(c, style, size);  //get the font for the character from the document
 		else  //if this is not an XML document
-			return FontUtilities.getFont(c, style, size); //get the font for the character from the font utilities (which is probably where it would ultimately come from through the document, anyway)
+			return Fonts.getFont(c, style, size); //get the font for the character from the font utilities (which is probably where it would ultimately come from through the document, anyway)
 //TODO del			return null;  //show that we can't find a font for the character
 	}
 

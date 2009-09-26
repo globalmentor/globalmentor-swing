@@ -23,7 +23,7 @@ import java.awt.Font;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import com.garretwilson.awt.FontUtilities;
+import com.garretwilson.awt.Fonts;
 import com.globalmentor.text.unicode.*;
 
 /**A renderer that displays Unicode code points in a table.
@@ -66,7 +66,7 @@ public class UnicodeTableCellRenderer extends DefaultTableCellRenderer
 				{
 					final char character=(char)unicodeCharacter.getCodeValue();	//cast the Unicode code point to a character
 					text=String.valueOf(character);	//get a string representing that character TODO fix to work with extended Unicode code points
-					setFont(FontUtilities.getFont(character, table.getFont()));	//make sure the font supports the character
+					setFont(Fonts.getFont(character, table.getFont()));	//make sure the font supports the character
 				}
 				description=unicodeCharacter.getUniqueCharacterName();	//use the character name for the description
 			}

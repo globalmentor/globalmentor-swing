@@ -22,7 +22,7 @@ import java.io.*;
 import javax.swing.text.StyleContext;
 import javax.swing.text.AttributeSet;
 
-import com.garretwilson.awt.FontUtilities;
+import com.garretwilson.awt.Fonts;
 
 /**A pool of styles and their associated resources, created to store and
 	retrieve CSS styles attribute sets.
@@ -30,7 +30,7 @@ import com.garretwilson.awt.FontUtilities;
 	{@link StyleContext} to allow for soft references so that the memory
 	allocated to the fonts may be reclaimed if necessary.
 	This class is not currently thread safe.
-@see com.garretwilson.awt.FontUtilities
+@see com.garretwilson.awt.Fonts
 @author Garret Wilson
 */
 public class XMLCSSStyleContext extends StyleContext
@@ -86,11 +86,11 @@ public class XMLCSSStyleContext extends StyleContext
 	@param style The style of the font (such as <code>Font.PLAIN</code>).
 	@param size The point size (>=1).
 	@return A font with the given parameters, from the cache if possible.
-	@see FontUtilities#getFont(String, int, size)
+	@see Fonts#getFont(String, int, size)
 	*/
 	public Font getFont(final String family, final int style, final int size)
 	{
-		return FontUtilities.getFont(family, style, size);  //pass the request on the the font utilities
+		return Fonts.getFont(family, style, size);  //pass the request on the the font utilities
 	}
 
 	/**Gets a new font for the specified character by searching all available fonts.
@@ -99,11 +99,11 @@ public class XMLCSSStyleContext extends StyleContext
 	@param size The point size (>=1).
 	@return The new font, or <code>null</code> if a font could not be found that
 		matched this character.
-	@see FontUtilities#getFont(char, int, int)
+	@see Fonts#getFont(char, int, int)
 	*/
 	public Font getFont(final char c, final int style, final int size)
 	{
-		return FontUtilities.getFont(c, style, size); //pass the request to the font utilities
+		return Fonts.getFont(c, style, size); //pass the request to the font utilities
 	}
 
 	/**Gets the font from an attribute set using CSS names instead of the default

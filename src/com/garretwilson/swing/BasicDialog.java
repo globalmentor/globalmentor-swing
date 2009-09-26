@@ -18,7 +18,7 @@ package com.garretwilson.swing;
 
 import java.awt.*;
 import javax.swing.*;
-import com.garretwilson.awt.WindowUtilities;
+import com.garretwilson.awt.Windows;
 
 /**An improved dialog class with basic needed functionality.
 <p>This class improves its packing functionality by proportionally resizing
@@ -275,12 +275,12 @@ public class BasicDialog extends JDialog
 	its subcomponents.
 	<p>This version proportionally resizes the dialog if it prefers to be larger
 		than the screen and contains a scrollpane.</p>
-	@see WindowUtilities#constrainSize(Window)
+	@see Windows#constrainSize(Window)
 	*/
 	public void pack()
 	{
 		super.pack();	//pack the window normally
-		WindowUtilities.constrainSize(this);	//make sure this dialog isn't too large for the graphics configuration 
+		Windows.constrainSize(this);	//make sure this dialog isn't too large for the graphics configuration 
 	}
 	
 }

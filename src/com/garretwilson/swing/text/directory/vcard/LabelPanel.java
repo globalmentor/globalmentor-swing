@@ -22,6 +22,8 @@ import java.awt.event.*;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 import javax.swing.*;
+
+import com.garretwilson.awt.Containers;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.globalmentor.java.*;
@@ -158,9 +160,9 @@ public class LabelPanel extends BasicVCardPanel
 */
 		getSelectLanguageAction().addPropertyChangeListener(modifyLocalePropertyChangeListener);
 		final JButton selectLanguageButton=createSelectLanguageButton(getSelectLanguageAction());
-		add(addressTypeButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
-		add(selectLanguageButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(labelScrollPane, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, NO_INSETS, 0, 0));
+		add(addressTypeButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, Containers.NO_INSETS, 0, 0));
+		add(selectLanguageButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, Containers.NO_INSETS, 0, 0));
+		add(labelScrollPane, new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, Containers.NO_INSETS, 0, 0));
 	}
 
 	/**Asks the user for a new delivery address type and updates the value.

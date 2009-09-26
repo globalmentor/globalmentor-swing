@@ -19,6 +19,7 @@ package com.garretwilson.swing.text.directory.vcard;
 import java.awt.*;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
+import com.garretwilson.awt.Containers;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.globalmentor.java.*;
@@ -158,8 +159,8 @@ public class EmailPanel extends ModifiablePanel
 		addressTextField.setColumns(20);
 		addressTextField.getDocument().addDocumentListener(getModifyDocumentListener());
 		final JLabel imageLabel=new JLabel(IconResources.getIcon(IconResources.EMAIL_ICON_FILENAME)); //create a label with the image		
-		add(imageLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(addressTextField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
+		add(imageLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, Containers.NO_INSETS, 0, 0));
+		add(addressTextField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, Containers.NO_INSETS, 0, 0));
 	}
 	
 }

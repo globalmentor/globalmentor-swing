@@ -24,6 +24,8 @@ import java.net.*;
 import java.util.*;
 import static java.util.Collections.*;
 import javax.swing.*;
+
+import com.garretwilson.awt.Containers;
 import com.garretwilson.swing.*;
 import com.globalmentor.collections.ModifiableSet;
 import com.globalmentor.java.*;
@@ -236,14 +238,14 @@ public class ExplanatoryPanel extends BasicVCardPanel
 		final JScrollPane noteScrollPane=new JScrollPane(noteTextPane);
 		urlLabel.setText("Web Site URL");	//TODO i18n
 		urlTextField.getDocument().addDocumentListener(getModifyDocumentListener());
-		add(categoryLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(selectCategoryLanguageButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(categoryScrollPane, new GridBagConstraints(0, 1, 2, 3, 0.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, NO_INSETS, 0, 0));
-		add(noteLabel, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(selectNoteLanguageButton, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(noteScrollPane, new GridBagConstraints(2, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, NO_INSETS, 0, 0));
-		add(urlLabel, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, NO_INSETS, 0, 0));
-		add(urlTextField, new GridBagConstraints(2, 3, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, NO_INSETS, 0, 0));
+		add(categoryLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, Containers.NO_INSETS, 0, 0));
+		add(selectCategoryLanguageButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, Containers.NO_INSETS, 0, 0));
+		add(categoryScrollPane, new GridBagConstraints(0, 1, 2, 3, 0.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, Containers.NO_INSETS, 0, 0));
+		add(noteLabel, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, Containers.NO_INSETS, 0, 0));
+		add(selectNoteLanguageButton, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, Containers.NO_INSETS, 0, 0));
+		add(noteScrollPane, new GridBagConstraints(2, 1, 2, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, Containers.NO_INSETS, 0, 0));
+		add(urlLabel, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, Containers.NO_INSETS, 0, 0));
+		add(urlTextField, new GridBagConstraints(2, 3, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, Containers.NO_INSETS, 0, 0));
 	}
 
 	/**Verifies the component.

@@ -19,7 +19,7 @@ package com.garretwilson.swing.text;
 import java.awt.Color;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import com.garretwilson.awt.ColorUtilities;
+import com.garretwilson.awt.Colors;
 import com.globalmentor.java.Java;
 import com.globalmentor.java.Objects;
 
@@ -181,7 +181,7 @@ public class Annotation extends Bookmark
 		int result=super.compareTo(annotation); //compare the bookmark-related items
 		if(result==0) //if the bookmark-related items are equal
 		{
-		  result=ColorUtilities.compareTo(getColor(), annotation.getColor());  //compare the colors
+		  result=Colors.compareTo(getColor(), annotation.getColor());  //compare the colors
 			if(result==0) //if the colors are equal
 			{
 			  result=Java.compareTo(getText(), annotation.getText());  //compare the text

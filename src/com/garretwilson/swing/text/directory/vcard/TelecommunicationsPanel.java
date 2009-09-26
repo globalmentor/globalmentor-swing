@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.List;
 import javax.swing.*;
 import com.garretwilson.awt.BasicGridBagLayout;
+import com.garretwilson.awt.Containers;
 import com.garretwilson.resources.icon.IconResources;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.border.*;
@@ -251,7 +252,7 @@ public class TelecommunicationsPanel extends ContentPanel
 	{
 				//TODO use the new BasicGridBagLayout methods here
 			//add the component to the content panel, in a location based upon the components already present 
-		getContentPanel().add(component, new GridBagConstraints(0, getContentPanel().getComponentCount(), 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, NO_INSETS, 0, 0));
+		getContentPanel().add(component, new GridBagConstraints(0, getContentPanel().getComponentCount(), 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, Containers.NO_INSETS, 0, 0));
 		setModified(true);	//show that we've been modified by the addition of this component
 /*TODO del; we may not even need this pack method any more, if revalidate() works
 		if(getParentOptionPane()!=null)	//if this panel is inside an option pane

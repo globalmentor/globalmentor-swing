@@ -104,7 +104,7 @@ Log.trace("XHTMLImageView.initialize() src: ", getHRef());
 			{
 				final Image image=getImage(); //get the image, loading it if needed (in initialize() it will usually have to be loaded)
 				assert image!=null : "fImage is null";  //TODO fix
-  			ImageUtilities.loadImage(image);  //load the image TODO optimize: perhaps there's a way to just load part of the image, to get the image dimensions
+  			Images.loadImage(image);  //load the image TODO optimize: perhaps there's a way to just load part of the image, to get the image dimensions
 				height=image.getHeight(this);	//get the image's height
 				width=image.getWidth(this);	//get the image's width
 				freeImage();  //free the image memory; this should speed up view flowing

@@ -28,7 +28,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.TableColumnModel;
 
-import com.garretwilson.awt.FontUtilities;
+import com.garretwilson.awt.Fonts;
 import com.garretwilson.swing.*;
 
 import static com.garretwilson.swing.Components.*;
@@ -95,7 +95,7 @@ public class UnicodePanel extends ToolStatusPanel
 		unicodeTable.getTableHeader().setFont(baseTableHeaderFont.deriveFont((float)Math.round(baseTableHeaderFont.getSize()*0.8f)));	//reduce the size of the header
 */
 		final Font baseTableFont=unicodeTable.getFont();	//get the original table font
-		final Font cellFont=FontUtilities.getFont("Lucida Sans Regular", baseTableFont.getStyle(),	//TODO use a constant; see file:///d:/reference/Java/jdk-1_5_0-doc/guide/intl/font.html
+		final Font cellFont=Fonts.getFont("Lucida Sans Regular", baseTableFont.getStyle(),	//TODO use a constant; see file:///d:/reference/Java/jdk-1_5_0-doc/guide/intl/font.html
 				Math.round(baseTableFont.getSize()*2));	//derive the cell font size from the table font size
 //TODO fix		final Font cellFont=baseTableFont.deriveFont((float)Math.round(baseTableFont.getSize()*2));	//derive the cell font size from the table font size
 		unicodeTable.setFont(cellFont);	//change the table font
