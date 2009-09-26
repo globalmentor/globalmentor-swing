@@ -21,7 +21,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import javax.swing.text.*;
 
-import com.garretwilson.swing.text.DocumentUtilities;
+import com.garretwilson.swing.text.Documents;
 import com.garretwilson.swing.text.FragmentView;
 import com.garretwilson.swing.text.Views;
 import com.garretwilson.swing.text.xml.XMLListView;
@@ -49,7 +49,7 @@ public class XMLCSSViewPainter
 	*/
 	public static void paint(final Graphics graphics, final Shape allocation, final View view, final AttributeSet attributeSet)
 	{
-		final boolean antialias=DocumentUtilities.isAntialias(view.getDocument());	//see if the document specifies antialiasing
+		final boolean antialias=Documents.isAntialias(view.getDocument());	//see if the document specifies antialiasing
 //TODO del when works		final boolean isAntialias=XMLStyleUtilities.isAntialias(attributeSet);	//see if we should turn antialias on or off
 		final Graphics2D graphics2D=(Graphics2D)graphics;  //cast to the 2D version of graphics
 	  //turn on fractional metrics TODO probably do this conditionally, based on some sort of flag

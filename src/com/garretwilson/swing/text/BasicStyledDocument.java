@@ -59,7 +59,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 		if there is no metadata document.*/
 	public RDF getRDF()
 	{
-		return DocumentUtilities.getRDF(this);  //retrieve the RDF property value
+		return Documents.getRDF(this);  //retrieve the RDF property value
 	}
 	
 	/**Sets the RDF data model where metadata is stored.
@@ -67,7 +67,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	*/
 	public void setRDF(final RDF rdf)
 	{
-		DocumentUtilities.setRDF(this, rdf);  //set the RDF
+		Documents.setRDF(this, rdf);  //set the RDF
 	}
 
 	/**Constructs a default basic styled document with content with a size of <code>BUFFER_SIZE_DEFAULT</code> 
@@ -117,7 +117,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	*/
 	public Font getFont(final AttributeSet attributeSet)
 	{
-		final float zoomFactor=DocumentUtilities.getZoom(this, DocumentUtilities.DEFAULT_ZOOM);  //get the zoom factor, assuming a default value if no value is specified
+		final float zoomFactor=Documents.getZoom(this, Documents.DEFAULT_ZOOM);  //get the zoom factor, assuming a default value if no value is specified
 		final StyleContext styles=(StyleContext)getAttributeContext();	//get the style context
 		if(styles instanceof XMLCSSStyleContext)	//TODO refactor into a generic style context that supports zoom
 		{
@@ -192,22 +192,22 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	/**Sets the location against which to resolve relative URIs. By default this
 		will be the document's URI.
 	@param baseURI The new location against which to resolve relative URIs.
-	@see DocumentUtilities#BASE_URI_PROPERTY
+	@see Documents#BASE_URI_PROPERTY
 	*/
 	public void setBaseURI(final URI baseURI)
 	{
-		DocumentUtilities.setBaseURI(this, baseURI);	//store the base URI
+		Documents.setBaseURI(this, baseURI);	//store the base URI
 	}
 	
 	/**Gets the location against which to resolve relative URIs.
 	@return The location against which to resolve relative URIs, or <code>null</code>
 		if there is no base URI.
 	//TODO del	@exception URISyntaxException Thrown if the a URI could not be created.
-	@see DocumentUtilities#BASE_URI_PROPERTY
+	@see Documents#BASE_URI_PROPERTY
 	*/
 	public URI getBaseURI()
 	{
-		return DocumentUtilities.getBaseURI(this);	//return the value of the base URI property
+		return Documents.getBaseURI(this);	//return the value of the base URI property
 	}
 
 	/**Returns an input stream from a given URI.

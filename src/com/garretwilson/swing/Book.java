@@ -29,7 +29,6 @@ import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;  //TODO del when image click code is moved elsewhere
-import com.garretwilson.model.ResourceModel;
 import com.garretwilson.resources.icon.*;
 import com.garretwilson.swing.event.*;
 import com.garretwilson.swing.rdf.*;
@@ -863,7 +862,7 @@ Log.trace();  //TODO del
 		getXMLTextPane().setAsynchronousLoad(true);	//turn on asynchronous loading TODO fix this better; tidy up throughout the code
 		getXMLTextPane().setPaged(true); //show that the text pane should page its information
 		setAntialias(true);	//default to antialiasing, updating the action
-		setZoom(DocumentUtilities.DEFAULT_ZOOM);	//set the default zoom level, selecting the appropriate action
+		setZoom(Documents.DEFAULT_ZOOM);	//set the default zoom level, selecting the appropriate action
 		add(getXMLTextPane(), BorderLayout.CENTER);	//add the text pane to the center of our control
 		xmlTextPane.setEditable(false);	//don't let the OEB text pane be edited in this implementation
 		xmlTextPane.addProgressListener(this);	//listen for progress events

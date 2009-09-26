@@ -26,7 +26,7 @@ import com.globalmentor.rdf.RDF;
 /**A collection of utility methods for working with Swing text {@link Document} and derived objects.
 @author Garret Wilson
 */
-public class DocumentUtilities
+public class Documents
 {
 
 	/**The <code>Boolean</code> property representing antialiased text.*/
@@ -58,7 +58,7 @@ public class DocumentUtilities
 		will be the document's URI.
 	@param document The document the property of which to set.
 	@param baseURI The new location against which to resolve relative URIs.
-	@see DocumentUtilities#BASE_URI_PROPERTY
+	@see Documents#BASE_URI_PROPERTY
 	*/
 	public static void setBaseURI(final Document document, final URI baseURI)
 	{
@@ -69,7 +69,7 @@ public class DocumentUtilities
 	@param document The document from which to retrieve the property.
 	@return The location against which to resolve relative URIs, or <code>null</code>
 		if there is no base URI.
-	@see DocumentUtilities#BASE_URI_PROPERTY
+	@see Documents#BASE_URI_PROPERTY
 	*/
 	public static URI getBaseURI(final Document document)
 	{

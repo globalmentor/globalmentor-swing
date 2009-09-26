@@ -25,7 +25,6 @@ import javax.xml.parsers.DocumentBuilder;
 
 import org.xml.sax.SAXException;
 
-import com.garretwilson.model.ResourceModel;
 
 import com.garretwilson.swing.event.*;
 import static com.globalmentor.net.ContentTypeConstants.*;

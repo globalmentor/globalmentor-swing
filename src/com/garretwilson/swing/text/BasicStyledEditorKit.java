@@ -27,7 +27,6 @@ import javax.swing.text.*;
 
 import static com.globalmentor.java.Objects.*;
 
-import com.garretwilson.sun.demo.jfc.notepad.ElementTreePanel;
 import com.garretwilson.swing.*;
 import com.garretwilson.swing.event.*;
 import com.garretwilson.swing.text.Views;

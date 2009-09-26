@@ -194,7 +194,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 		  if(newPaged!=paged) //if value is really changing
 			{
 			  paged=newPaged; //update whether we're paged
-				DocumentUtilities.setPaged(getDocument(), paged);  //store the new paged value in the document
+				Documents.setPaged(getDocument(), paged);  //store the new paged value in the document
 				updateKeymap();	//update the keymap to reflect our new paged condition
 			}
 		}
@@ -258,10 +258,10 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 		}
 
 	/**The factor by which text should be zoomed.*/
-	private float zoom=DocumentUtilities.DEFAULT_ZOOM;
+	private float zoom=Documents.DEFAULT_ZOOM;
 
 		/**@return The factor by which text should be zoomed.
-		@see DocumentUtilities#DEFAULT_ZOOM
+		@see Documents#DEFAULT_ZOOM
 		*/
 		public float getZoom() {return zoom;}
 
@@ -275,7 +275,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 			{
 //TODO del Log.trace("changing view factor from "+oldZoomFactor+" to "+newZoomFactor); //TODO del
 				zoom=newZoom; //set the new zoom factor
-				DocumentUtilities.setZoom(getDocument(), zoom);  //store the new zoom factor in the document
+				Documents.setZoom(getDocument(), zoom);  //store the new zoom factor in the document
 //TODO del				document.putProperty(XMLDocument.ZOOM_FACTOR_PROPERTY, new Float(zoomFactor)); //store the new zoom factor in the document
 				final XMLPagedView pagedView=getPagedView();  //get a reference to our paged view
 				if(pagedView!=null)  //if we have a paged view
@@ -324,7 +324,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 //TODO del				final AttributeSet pagedViewAttributeSet=pagedView.getAttributes();  //get the paged view's attribute set
 //TODO del				if(pagedViewAttributeSet instanceof MutableAttributeSet)  //if we can change the paged view's attributes
 				antialias=newAntialias; //set the new antialias status variable so that we can set whatever new document is installed
-				DocumentUtilities.setAntialias(getDocument(), newAntialias);  //store the new antialias setting in the document
+				Documents.setAntialias(getDocument(), newAntialias);  //store the new antialias setting in the document
 				final XMLPagedView pagedView=getPagedView();  //get a reference to our paged view
 				if(pagedView!=null)  //if we have a paged view
 				{
@@ -620,10 +620,10 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	*/
 	public void setDocument(final Document document)
 	{
-		DocumentUtilities.setBaseURI(document, getBaseURI());	//store our base URI in the document
-		DocumentUtilities.setPaged(document, isPaged());  //store the new paged value in the document
-		DocumentUtilities.setZoom(document, getZoom());  //store the zoom factor in the document
-		DocumentUtilities.setAntialias(document, isAntialias());  //store the antialias setting in the document
+		Documents.setBaseURI(document, getBaseURI());	//store our base URI in the document
+		Documents.setPaged(document, isPaged());  //store the new paged value in the document
+		Documents.setZoom(document, getZoom());  //store the zoom factor in the document
+		Documents.setAntialias(document, isAntialias());  //store the antialias setting in the document
 		super.setDocument(document);  //set the document normally
 	}
 
@@ -678,12 +678,12 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 			will be the document's URI.
 		<p>The base URI is also updated in the currently loaded document.</p>
 		@param baseURI The new location against which to resolve relative URIs.
-		@see DocumentUtilities#BASE_URI_PROPERTY
+		@see Documents#BASE_URI_PROPERTY
 		*/
 		public void setBaseURI(final URI baseURI)
 		{
 			this.baseURI=baseURI;	//save the base URI
-			DocumentUtilities.setBaseURI(getDocument(), baseURI);	//store the base URI in the document
+			Documents.setBaseURI(getDocument(), baseURI);	//store the base URI in the document
 		}
 		
 		/**Gets the location against which to resolve relative URIs.
@@ -925,7 +925,7 @@ Log.trace("found zip file: ", uri);  //TODO del
 		final EditorKit editorKit=getEditorKit();	//get the current editor kit, and assume it's an XML editor kit TODO we might want to check just to make sure
 		final Document document=editorKit.createDefaultDocument();	//create a default document
 		document.putProperty(Document.StreamDescriptionProperty, URIs.toValidURL(baseURI));	//store a URL version of the URI in the document, as getPage() expects this to be a URL
-		DocumentUtilities.setBaseURI(document, baseURI);	//store the base URI in the document
+		Documents.setBaseURI(document, baseURI);	//store the base URI in the document
 Log.trace("reading from stream"); //TODO del
 		final DocumentLoader documentLoader=new DocumentLoader(inputStream, document);	//create a thread for loading the document 
 		//TODO check for already loading asynchronously, as does JEditorPane

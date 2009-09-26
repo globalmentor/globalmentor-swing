@@ -128,7 +128,7 @@ public class XMLViewFactory implements ViewsFactory
 		{
 			if(AbstractDocument.SectionElementName.equals(elementKind))	//if this is the default section element
 			{
-				if(DocumentUtilities.isPaged(element.getDocument()))  //if we should page our information
+				if(Documents.isPaged(element.getDocument()))  //if we should page our information
 					return new XMLPagedView(element);	//create a paged view for the entire section TODO testing
 				else  //if information is not paged
 					return new XMLSectionView(element);	//create an unpaged section view
