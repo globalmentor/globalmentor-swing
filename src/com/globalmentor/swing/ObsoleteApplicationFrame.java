@@ -22,6 +22,7 @@ import java.io.*;
 import java.net.*;
 import javax.swing.*;
 
+import com.globalmentor.application.Application;
 import com.globalmentor.java.*;
 import com.globalmentor.log.Log;
 import com.globalmentor.model.ObjectState;

@@ -19,10 +19,11 @@ package com.globalmentor.swing;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import com.globalmentor.application.Application;
 import com.globalmentor.log.Log;
 import com.globalmentor.rdf.*;
 import com.globalmentor.rdf.dublincore.RDFDublinCore;
-import com.globalmentor.util.Application;
 
 /**Main frame parent class for an application.
 <p>This class requires that the content pane be an instance of

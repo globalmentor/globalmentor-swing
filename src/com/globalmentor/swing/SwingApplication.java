@@ -20,6 +20,8 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.net.URI;
 import javax.swing.*;
+
+import com.globalmentor.application.Application;
 import com.globalmentor.java.*;
 import com.globalmentor.log.Log;
 import com.globalmentor.util.*;
