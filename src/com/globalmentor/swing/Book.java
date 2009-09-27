@@ -830,7 +830,7 @@ Log.trace();  //TODO del
 	protected void initializeActions(final ActionManager actionManager)
 	{
 		super.initializeActions(actionManager);	//do the default initialization
-/*TODO transfer to MentoractReaderPanel	
+/*TODO transfer to BookApplicationPanel	
 		final Action fileMenuAction=ActionManager.getFileMenuAction();
 		actionManager.addMenuAction(fileMenuAction);	//file
 		actionManager.addMenuAction(fileMenuAction, sdiManager.getResourceComponentManager().getOpenAction());	//file|open
@@ -1454,7 +1454,7 @@ Log.trace("document change, URI: ", uri);
 		closeAction.setEnabled(uri!=null);  //only enable the close button if there is a book open
 		searchAction.setEnabled(uri!=null);  //only enable searching if there is a file open
 		searchAgainAction.setEnabled(uri!=null);  //only enable searching if there is a file open
-//TODO transfer this to MentoractReaderPanel		reloadAction.setEnabled(book.getURI()!=null);  //only enable the reload button if there is a file open
+//TODO transfer this to BookApplicationPanel		reloadAction.setEnabled(book.getURI()!=null);  //only enable the reload button if there is a file open
 	  final RDF rdf=getRDF(); //get the loaded metadata
 		getViewPropertiesAction().setEnabled(rdf!=null);  //only enable the properties button if there is RDF TODO do we want to show the RDF or the publication description?
 	}
