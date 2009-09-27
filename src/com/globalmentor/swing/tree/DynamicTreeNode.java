@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import javax.swing.tree.*;
 
-import com.globalmentor.swing.SwingApplication;
+import com.globalmentor.swing.AbstractSwingApplication;
 
 /**A tree node that can dynamically load its children when needed.
 Child classes should override {@link #loadChildNodes()}.
@@ -102,7 +102,7 @@ public abstract class DynamicTreeNode extends DefaultMutableTreeNode
 			catch(final IOException ioException)	//if there was an error loading the child loads
 			{
 				loadError=ioException;	//save the load error
-				SwingApplication.displayApplicationError(null, ioException);	//display the error
+				AbstractSwingApplication.displayApplicationError(null, ioException);	//display the error
 			}
 		}
 	}  

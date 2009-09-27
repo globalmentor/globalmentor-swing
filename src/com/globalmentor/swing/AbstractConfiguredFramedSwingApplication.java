@@ -32,7 +32,7 @@ import com.globalmentor.model.Modifiable;
 @param <C> The type of configuration object.
 @author Garret Wilson
 */
-public abstract class ConfiguredFramedSwingApplication<C> extends FramedSwingApplication implements Modifiable
+public abstract class AbstractConfiguredFramedSwingApplication<C> extends AbstractFramedSwingApplication implements Modifiable
 {
 
 	/**The filename of the configuration file.*/
@@ -110,7 +110,7 @@ public abstract class ConfiguredFramedSwingApplication<C> extends FramedSwingApp
 	/**Reference URI constructor.
 	@param referenceURI The reference URI of the application.
 	*/
-	public ConfiguredFramedSwingApplication(final URI referenceURI)
+	public AbstractConfiguredFramedSwingApplication(final URI referenceURI)
 	{
 		this(referenceURI, NO_ARGUMENTS);	//construct the class with no arguments
 	}
@@ -119,7 +119,7 @@ public abstract class ConfiguredFramedSwingApplication<C> extends FramedSwingApp
 	@param referenceURI The reference URI of the application.
 	@param args The command line arguments.
 	*/
-	public ConfiguredFramedSwingApplication(final URI referenceURI, final String[] args)
+	public AbstractConfiguredFramedSwingApplication(final URI referenceURI, final String[] args)
 	{
 		super(referenceURI, args);	//construct the parent class
 	}

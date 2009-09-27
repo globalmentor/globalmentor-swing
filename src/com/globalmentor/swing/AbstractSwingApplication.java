@@ -21,22 +21,21 @@ import java.awt.Frame;
 import java.net.URI;
 import javax.swing.*;
 
-import com.globalmentor.application.Application;
+import com.globalmentor.application.*;
 import com.globalmentor.java.*;
 import com.globalmentor.log.Log;
-import com.globalmentor.util.*;
 
 /**An application that relies on Swing.
 This version creates a default authenticator for client authentication using Swing.
 @author Garret Wilson
 */
-public abstract class SwingApplication extends Application
+public abstract class AbstractSwingApplication extends AbstractApplication
 {
 
 	/**Reference URI constructor.
 	@param referenceURI The reference URI of the application.
 	*/
-	public SwingApplication(final URI referenceURI)
+	public AbstractSwingApplication(final URI referenceURI)
 	{
 		this(referenceURI, NO_ARGUMENTS);	//construct the class with no arguments
 	}
@@ -45,7 +44,7 @@ public abstract class SwingApplication extends Application
 	@param referenceURI The reference URI of the application.
 	@param args The command line arguments.
 	*/
-	public SwingApplication(final URI referenceURI, final String[] args)
+	public AbstractSwingApplication(final URI referenceURI, final String[] args)
 	{
 		super(referenceURI, args);	//construct the parent class
 		setAuthenticator(new SwingAuthenticator());	//create a default authenticator for HTTP connections on the default HTTP client
@@ -146,7 +145,7 @@ public abstract class SwingApplication extends Application
 	*/
 	public static void displayApplicationError(final Component parentComponent, final String title, final Throwable throwable)
 	{
-		final SwingApplication application=getSwingApplication(parentComponent);	//see if we can find an application object from the component
+		final AbstractSwingApplication application=getSwingApplication(parentComponent);	//see if we can find an application object from the component
 		if(application!=null)	//if we found an application
 		{
 			application.displayError(parentComponent, title, throwable);	//let the application display the error
@@ -182,7 +181,7 @@ public abstract class SwingApplication extends Application
 	*/
 	public static void displayApplicationError(final Component parentComponent, final String title, final String message)
 	{
-		final SwingApplication application=getSwingApplication(parentComponent);	//see if we can find an application object from the component
+		final AbstractSwingApplication application=getSwingApplication(parentComponent);	//see if we can find an application object from the component
 		if(application!=null)	//if we found an application
 		{
 			application.displayError(parentComponent, title, message);	//let the application display the error
@@ -234,7 +233,7 @@ public abstract class SwingApplication extends Application
 	@see JOptionPane#getFrameForComponent(Component)
 	@see ApplicationFrame
 	*/
-	public static SwingApplication getSwingApplication(final Component component)
+	public static AbstractSwingApplication getSwingApplication(final Component component)
 	{
 		final Frame frame=JOptionPane.getFrameForComponent(component);	//see if this component is in a frame
 		if(frame instanceof ApplicationFrame)	//if the frame is an application frame
@@ -252,31 +251,21 @@ public abstract class SwingApplication extends Application
 	}
 
 	/**Determines a default title for error messages.
-	@param throwable The condition that caused the error, or <code>null</code> if
-		the cause is unknown.
+	@param throwable The condition that caused the error, or <code>null</code> if the cause is unknown.
 	@return The default title for error messages.
 	*/
 	protected String getDefaultErrorTitle(final Throwable throwable)
 	{
-		final String title=getTitle();	//get the application title
-		final StringBuilder stringBuilder=new StringBuilder();	//construct the default title
-		if(title!=null)	//if we have a title
-		{
-			stringBuilder.append(title);	//append the string version of the title
-		}
+		final StringBuilder stringBuilder=new StringBuilder(determineLabel());	//construct the default title, starting with the label of the application
 		if(throwable!=null)	//if we were given a throwable
 		{
-			if(title!=null)	//if there was a title object
-			{
-				stringBuilder.append(' ');	//separate the title from the throwable class name
-			}
-			stringBuilder.append(Classes.getLocalName(throwable.getClass()));	//append the throwable local class name
+			stringBuilder.append(' ').append(Classes.getLocalName(throwable.getClass()));	//append the throwable local class name
 		}
-		return stringBuilder.toString();	//return the default string we constructed
+		return stringBuilder.toString();	//return the default title we constructed
 	}
 
 	/**Starts an application.
-	This method should never return, as it directly calls <code>exit()</code>.
+	This method should never return, as it directly calls {@link #exit()}.
 	@param application The application to start. 
 	@param args The command line arguments.
 	@return The application status.
@@ -328,7 +317,7 @@ public abstract class SwingApplication extends Application
 	*/
 	protected static void initialize(final Application application, final String[] args) throws Exception
 	{
-		Application.initialize(application, args);	//initialize the default environment
+		AbstractApplication.initialize(application, args);	//initialize the default environment
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());	//set the Swing look and feel to the system default
 	}
 

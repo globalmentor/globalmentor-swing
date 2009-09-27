@@ -24,7 +24,7 @@ import java.net.URI;
 /**A Swing application uses one main application frame.
 @author Garret Wilson
 */
-public abstract class FramedSwingApplication extends SwingApplication
+public abstract class AbstractFramedSwingApplication extends AbstractSwingApplication
 {
 
 	/**The main application frame, or <code>null</code> if the application frame
@@ -45,7 +45,7 @@ public abstract class FramedSwingApplication extends SwingApplication
 	/**Reference URI constructor.
 	@param referenceURI The reference URI of the application.
 	*/
-	public FramedSwingApplication(final URI referenceURI)
+	public AbstractFramedSwingApplication(final URI referenceURI)
 	{
 		this(referenceURI, NO_ARGUMENTS);	//construct the class with no arguments
 	}
@@ -54,7 +54,7 @@ public abstract class FramedSwingApplication extends SwingApplication
 	@param referenceURI The reference URI of the application.
 	@param args The command line arguments.
 	*/
-	public FramedSwingApplication(final URI referenceURI, final String[] args)
+	public AbstractFramedSwingApplication(final URI referenceURI, final String[] args)
 	{
 		super(referenceURI, args);	//construct the parent class
 		applicationFrame=null;	//show that we do not yet have an application frame
@@ -64,13 +64,14 @@ public abstract class FramedSwingApplication extends SwingApplication
 	This version creates the main application frame and displays it.
 	@return The application status.
 	@see #createApplicationFrame()
-	*/ 
+	*/
+	@Override
 	public int main()
 	{
 		final Frame applicationFrame=createApplicationFrame();	//create the application frame
 		setApplicationFrame(applicationFrame);	//set the application frame
 		applicationFrame.setVisible(true);	//show the frame
-		return super.main();	//perform the default functionality
+		return 0;
 	}
 
 	/**Creates the main frame for the application.

@@ -133,7 +133,7 @@ public abstract class ModelViewablePanel<M> extends ModelPanel<M> implements Mod
 					}
 					catch(IOException ioException)	//if there were any problems saving the model
 					{
-						SwingApplication.displayApplicationError(this, ioException);	//display the error
+						AbstractSwingApplication.displayApplicationError(this, ioException);	//display the error
 					}
 					onModelViewChange(oldView, newView);	//show this class that the model is changing
 					firePropertyChange(MODEL_VIEW_PROPERTY, new Integer(oldView), new Integer(newView));	//show that the property has changed

@@ -19,7 +19,9 @@ package com.globalmentor.swing;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
 import com.globalmentor.awt.BasicGridBagLayout;
+import com.globalmentor.urf.URF;
 import com.globalmentor.urf.URFResource;
 import com.globalmentor.urf.dcmi.DCMI;
 
@@ -28,9 +30,9 @@ import static com.globalmentor.java.Characters.*;
 /**A generic panel for displaying information about, for example, an application.
 <p>This panel recognizes the following resource properties:</p>
 <dl>
-	<dt><code>dc:title</code></dt> <dd>The title to display in the panel.</dd>
-	<dt><code>ver:version</code></dt> <dd>The vesion to display in the panel.</dd>
-	<dt><code>dc:rights</code></dt> <dd>The copyright information to display in the panel.</dd>
+	<dt><code>dc.title</code></dt> <dd>The title to display in the panel.</dd>
+	<dt><code>urf.version</code></dt> <dd>The vesion to display in the panel.</dd>
+	<dt><code>dc.rights</code></dt> <dd>The copyright information to display in the panel.</dd>
 </dl>
 @author Garret Wilson
 */
@@ -65,10 +67,7 @@ public class AboutPanel extends BasicPanel
 				if(resource!=null)	//if there is a new resource
 				{
 					setTitle(DCMI.getTitle(resource));	//set the title
-/*TODO convert to URF
-					final RDFObject versionObject=RDFVersion.getVersion(resource);	//get the version object
-					setVersion(versionObject!=null ? versionObject.toString() : null);	//set the version
-*/
+					setVersion(URF.getVersion(newResource));	//set the version
 					setCopyright(DCMI.getRights(resource));	//set the copyright
 				}
 				updateStatus();	//update our status based upon whether we now have a resource
@@ -200,7 +199,7 @@ public class AboutPanel extends BasicPanel
 		versionLabel.setText("Version XX Build XX");
 		final JButton propertiesButton=new JButton(getPropertiesAction());	//create a button for displaying the properties
 		add(titleLabel, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		add(propertiesButton, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+//TODO convert to URF		add(propertiesButton, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		add(versionLabel, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		add(copyrightLabel, new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(8, 0, 8, 0), 0, 0));
 		add(webLabelLabel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 4), 0, 0));

@@ -270,7 +270,7 @@ public abstract class TabbedViewPanel<M> extends ModelViewablePanel<M>
 			}
 			catch(IOException ioException)	//if there were any problems saving the model
 			{
-				SwingApplication.displayApplicationError(this, ioException);	//display the error
+				AbstractSwingApplication.displayApplicationError(this, ioException);	//display the error
 				verified=false;	//show that the component didn't verify
 			}
 		}

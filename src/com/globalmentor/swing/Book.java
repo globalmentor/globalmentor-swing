@@ -1593,7 +1593,7 @@ Log.trace("ready to call XMLTextPane.go(URI)");
 	  	}
 	  	catch(final IllegalArgumentException illegalArgumentException)
 	  	{
-	  		SwingApplication.displayApplicationError(this, illegalArgumentException);
+	  		AbstractSwingApplication.displayApplicationError(this, illegalArgumentException);
 	  	}
 		}
 	}
@@ -1746,7 +1746,7 @@ Log.trace("ready to start clip.");
 		}
 		if(matchOffset<0) //if the text was not found
 		{
-			SwingApplication.displayApplicationError(this, "Search Results", "The requested text was not found."); //show that the text was not found
+			AbstractSwingApplication.displayApplicationError(this, "Search Results", "The requested text was not found."); //show that the text was not found
 		}
 	}
 

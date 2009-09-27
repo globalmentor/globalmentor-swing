@@ -205,11 +205,11 @@ public abstract class ListModelEditStrategy<E>
 		}
 		catch(InstantiationException e)
 		{
-			SwingApplication.displayApplicationError(getParentComponent(), e);	//show the error
+			AbstractSwingApplication.displayApplicationError(getParentComponent(), e);	//show the error
 		}
 		catch(IllegalAccessException e)
 		{
-			SwingApplication.displayApplicationError(getParentComponent(), e);	//show the error
+			AbstractSwingApplication.displayApplicationError(getParentComponent(), e);	//show the error
 		}
 	}
 

@@ -29,7 +29,7 @@ import javax.swing.SizeRequirements;
 
 import com.globalmentor.log.Log;
 import com.globalmentor.swing.Components;
-import com.globalmentor.swing.SwingApplication;
+import com.globalmentor.swing.AbstractSwingApplication;
 import com.globalmentor.swing.XMLTextPane;
 import com.globalmentor.swing.event.*;
 import com.globalmentor.swing.text.*;
@@ -819,7 +819,7 @@ super.changedUpdate(changes, a, f);
   			}
   			catch(final Exception exception)	//if anything wrong happens in the main thread loop, report it and keep going
   			{
- 		  		SwingApplication.displayApplicationError(getContainer(), exception);
+ 		  		AbstractSwingApplication.displayApplicationError(getContainer(), exception);
   			}
   		}
   		while(!stopped);	//keep going until we are stopped

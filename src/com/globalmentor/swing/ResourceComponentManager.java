@@ -483,7 +483,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		}
 		catch(final IOException ioException)	//if there is an error opening the resource
 		{
-			SwingApplication.displayApplicationError(getParentComponent(), ioException);	//display the error to the user
+			AbstractSwingApplication.displayApplicationError(getParentComponent(), ioException);	//display the error to the user
 		}
 		return false;	//show that we couldn't open anything, for some reason
 	}
@@ -530,11 +530,11 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		}
 		catch(final SecurityException securityException)	//if there is an error selecting the resource
 		{
-			SwingApplication.displayApplicationError(getParentComponent(), securityException);	//display the error to the user
+			AbstractSwingApplication.displayApplicationError(getParentComponent(), securityException);	//display the error to the user
 		}
 		catch(final IOException ioException)	//if there is an error opening the resource
 		{
-			SwingApplication.displayApplicationError(getParentComponent(), ioException);	//display the error to the user
+			AbstractSwingApplication.displayApplicationError(getParentComponent(), ioException);	//display the error to the user
 		}
 		return false;	//show that we couldn't open anything, for some reason
 	}
@@ -621,7 +621,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 				}
 				catch(IOException ioException)	//if there is an error saving the resource
 				{
-					SwingApplication.displayApplicationError(getParentComponent(), ioException);	//display the error to the user
+					AbstractSwingApplication.displayApplicationError(getParentComponent(), ioException);	//display the error to the user
 				}
 			}
 			else  //if we don't have a URI
@@ -673,11 +673,11 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		}
 		catch(final SecurityException securityException)	//if there is an error selecting the resource
 		{
-			SwingApplication.displayApplicationError(getParentComponent(), securityException);	//display the error to the user
+			AbstractSwingApplication.displayApplicationError(getParentComponent(), securityException);	//display the error to the user
 		}
 		catch(IOException ioException)	//if there is an error saving the resource
 		{
-			SwingApplication.displayApplicationError(getParentComponent(), ioException);	//display the error to the user
+			AbstractSwingApplication.displayApplicationError(getParentComponent(), ioException);	//display the error to the user
 		}
 		return false;  //show that we couldn't save the resource		
 	}

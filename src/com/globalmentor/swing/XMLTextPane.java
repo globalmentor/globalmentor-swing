@@ -287,7 +287,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 					}
 					catch(final Exception exception)
 					{
-						SwingApplication.displayApplicationError(XMLTextPane.this, "Error opening document", exception); //TODO do we need to clean up anything? TODO i18n
+						AbstractSwingApplication.displayApplicationError(XMLTextPane.this, "Error opening document", exception); //TODO do we need to clean up anything? TODO i18n
 					}
 				}
 			}
@@ -984,7 +984,7 @@ Log.trace("reading from stream"); //TODO del
 			}
 			catch(final Throwable throwable)	//if there are any errors
 			{
-				SwingApplication.displayApplicationError(XMLTextPane.this, "Error opening document", throwable); //TODO do we need to clean up anything? TODO i18n
+				AbstractSwingApplication.displayApplicationError(XMLTextPane.this, "Error opening document", throwable); //TODO do we need to clean up anything? TODO i18n
 			}
 			finally
 			{

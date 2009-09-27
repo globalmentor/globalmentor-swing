@@ -62,7 +62,7 @@ public class ModelPanel<M> extends ModifiablePanel implements ModelView<M>
 				}
 				catch(IOException ioException)	//if there were any problems saving the model
 				{
-					SwingApplication.displayApplicationError(this, ioException);	//display the error
+					AbstractSwingApplication.displayApplicationError(this, ioException);	//display the error
 				}
 					//show that the property has changed
 				firePropertyChange(Model.MODEL_PROPERTY, oldModel, newModel);
@@ -123,7 +123,7 @@ public class ModelPanel<M> extends ModifiablePanel implements ModelView<M>
 		}
 		catch(IOException ioException)	//if there were any problems saving the model
 		{
-			SwingApplication.displayApplicationError(this, ioException);	//display the error
+			AbstractSwingApplication.displayApplicationError(this, ioException);	//display the error
 		}
 	}
 
@@ -158,7 +158,7 @@ public class ModelPanel<M> extends ModifiablePanel implements ModelView<M>
 			}
 			catch(IOException ioException)	//if there were any problems saving the model
 			{
-				SwingApplication.displayApplicationError(this, ioException);	//display the error
+				AbstractSwingApplication.displayApplicationError(this, ioException);	//display the error
 				verified=false;	//show that the component didn't verify
 			}
 		}

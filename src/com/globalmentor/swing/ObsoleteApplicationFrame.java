@@ -27,7 +27,6 @@ import com.globalmentor.java.*;
 import com.globalmentor.log.Log;
 import com.globalmentor.model.ObjectState;
 import com.globalmentor.rdf.*;
-import com.globalmentor.util.*;
 
 /**Main frame parent class for an application. This frame expects to contain
 	a <code>ToolStatusPanel</code>.
@@ -69,12 +68,12 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	/**The application this frame represents, or <code>null</code> if there is no
 		application information.
 	*/
-	private final SwingApplication application;
+	private final AbstractSwingApplication application;
 
 		/**@return The application this frame represents, or <code>null</code> if
 			there is no application information.
 		*/
-		public final SwingApplication getApplication() {return application;}
+		public final AbstractSwingApplication getApplication() {return application;}
 
 	/**The description used for the currently opened document.*/
 //TODO del	private DocumentDescribable description=null;
@@ -250,10 +249,11 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	*/
 	protected String constructTitle()
 	{
+		final Application application=getApplication();
 		final String title;
-		if(getApplication()!=null)	//if we have an application
+		if(application!=null)	//if we have an application
 		{
-			return getApplication().getTitle();	//get the application's title
+			return getApplication().determineLabel();	//get the application's label
 		}
 		else	//if we have no application
 		{
@@ -268,7 +268,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	*/
 	public ObsoleteApplicationFrame()
 	{
-		this((SwingApplication)null);	//construct the frame with no application	
+		this((AbstractSwingApplication)null);	//construct the frame with no application	
 	}
 
 	/**Application constructor.
@@ -277,7 +277,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 		<code>null</code> if there is no application information available or this
 		frame doesn't represent an application.
 	*/
-	public ObsoleteApplicationFrame(final SwingApplication application)
+	public ObsoleteApplicationFrame(final AbstractSwingApplication application)
 	{
 		this(application, true); //create an application frame with a default application panel and initialize
 	}
@@ -289,7 +289,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	*/
 	public ObsoleteApplicationFrame(final boolean initialize)
 	{
-		this((SwingApplication)null, initialize);	//construct the frame with no application	
+		this((AbstractSwingApplication)null, initialize);	//construct the frame with no application	
 	}
 
 	/**Application constructor with a default panel and optional initialization.
@@ -300,7 +300,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public ObsoleteApplicationFrame(final SwingApplication application, final boolean initialize)
+	public ObsoleteApplicationFrame(final AbstractSwingApplication application, final boolean initialize)
 	{
 		this(application, new ToolStatusPanel(), initialize); //create an application frame with a default application panel
 	}
@@ -323,7 +323,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	@param contentPane The container to be used as the content pane; usually
 		an <code>ToolStatusPanel</code>.
 	*/
-	public ObsoleteApplicationFrame(final SwingApplication application, final Container contentPane)
+	public ObsoleteApplicationFrame(final AbstractSwingApplication application, final Container contentPane)
 	{
 		this(application, contentPane, true);  //construct and initialize the frame
 	}
@@ -350,7 +350,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public ObsoleteApplicationFrame(final SwingApplication application, final Container contentPane, final boolean initialize)
+	public ObsoleteApplicationFrame(final AbstractSwingApplication application, final Container contentPane, final boolean initialize)
 	{
 		this(application, contentPane, true, initialize);	//construct the application frame with a menubar 
 	}
@@ -379,7 +379,7 @@ public class ObsoleteApplicationFrame extends BasicFrame	//TODO delete class whe
 	@param initialize <code>true</code> if the panel should initialize itself by
 		calling the initialization methods.
 	*/
-	public ObsoleteApplicationFrame(final SwingApplication application, final Container contentPane, final boolean hasMenuBar, final boolean initialize)
+	public ObsoleteApplicationFrame(final AbstractSwingApplication application, final Container contentPane, final boolean hasMenuBar, final boolean initialize)
 	{
 		super(contentPane, false);	//construct the parent class with the given content pane, but don't initialize it
 		this.application=application;	//store the application

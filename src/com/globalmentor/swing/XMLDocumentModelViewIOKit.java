@@ -105,7 +105,7 @@ public class XMLDocumentModelViewIOKit extends ModelViewIOKit<XMLNodeModel<org.w
 			}
 			sourceTextPane.setCaretPosition(0);	//move the caret to the beginning of the document
 			xmlPanel.setModified(false);	//show that the panel is not modified
-			SwingApplication.displayApplicationError(xmlPanel, ioException);	//show the error that caused us to load the source
+			AbstractSwingApplication.displayApplicationError(xmlPanel, ioException);	//show the error that caused us to load the source
 		}
 	}
 
