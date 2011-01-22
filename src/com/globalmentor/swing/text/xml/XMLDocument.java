@@ -36,6 +36,7 @@ import com.globalmentor.log.Log;
 import com.globalmentor.model.NameValuePair;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.net.ContentTypeConstants;
+import static com.globalmentor.net.URIs.*;
 import com.globalmentor.rdf.*;
 import com.globalmentor.sound.sampled.SampledSounds;
 import com.globalmentor.swing.event.ProgressEvent;
@@ -324,7 +325,7 @@ TODO comment
 	*/
 	public URI getResourceURI(final String href)
 	{
-		return getBaseURI().resolve(href);	//create and return a URI based upon the base URI, if any, and the given file location
+		return resolve(getBaseURI(), href);	//create and return a URI based upon the base URI, if any, and the given file location
 	}
 
 	/**Gets the media type of a particular resource.
