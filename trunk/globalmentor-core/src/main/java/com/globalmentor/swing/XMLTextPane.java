@@ -41,7 +41,7 @@ import com.globalmentor.net.ContentType;
 import com.globalmentor.net.URIs;
 import com.globalmentor.swing.event.*;
 import com.globalmentor.swing.text.*;
-import com.globalmentor.swing.text.rdf.maqro.MAQROViewFactory;
+//TODO fix import com.globalmentor.swing.text.rdf.maqro.MAQROViewFactory;
 import com.globalmentor.swing.text.xml.*;
 import com.globalmentor.swing.text.xml.oeb.OEBEditorKit;
 import com.globalmentor.swing.text.xml.xeb.XEBEditorKit;
@@ -547,7 +547,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		final XMLLinkController xhtmlLinkController=new XHTMLLinkController();  //create a link controller for XHTML
 		registerLinkController(XHTML.XHTML_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML view factory with XHTML elements
 		registerLinkController(OEB.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlLinkController);  //associate the XHTML link controller with OEB elements
-		final ViewFactory maqroViewFactory=new MAQROViewFactory();  //create a view factory fo MAQRO
+//TODO fix		final ViewFactory maqroViewFactory=new MAQROViewFactory();  //create a view factory fo MAQRO
 //TODO convert to URF		registerViewFactory(MAQRO.MAQRO_NAMESPACE_URI.toString(), maqroViewFactory);  //associate the MAQRO view factory with MAQRO elements
 //TODO del; doesn't work		setBackground(Color.white); //TODO set to get the background color from the document itself
 //TODO del; maybe delete class		setCaret(new XMLCaret(getCaret()));	//TODO testing

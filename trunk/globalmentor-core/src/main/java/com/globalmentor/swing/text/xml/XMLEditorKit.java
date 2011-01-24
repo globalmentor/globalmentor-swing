@@ -27,7 +27,7 @@ import javax.swing.text.Element;
 
 import static com.globalmentor.io.Charsets.*;
 import static com.globalmentor.java.Objects.*;
-import static com.globalmentor.urf.maqro.MAQRO.*;
+//TODO fix import static com.globalmentor.urf.maqro.MAQRO.*;
 
 import com.globalmentor.collections.IdentityHashSet;
 import com.globalmentor.io.*;
@@ -38,12 +38,12 @@ import com.globalmentor.net.*;
 import com.globalmentor.rdf.*;
 import com.globalmentor.swing.*;
 import com.globalmentor.swing.text.BasicStyledEditorKit;
-import com.globalmentor.swing.text.rdf.maqro.MAQROXMLElementKit;
+//TODO fix import com.globalmentor.swing.text.rdf.maqro.MAQROXMLElementKit;
 import com.globalmentor.swing.text.xml.css.*;
 import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.XMLSerializer;
 import com.globalmentor.text.xml.stylesheets.css.*;
-import com.globalmentor.urf.maqro.Activity;
+//TODO fix import com.globalmentor.urf.maqro.Activity;
 
 import org.w3c.dom.*;
 import org.w3c.dom.css.*;
@@ -67,10 +67,10 @@ public class XMLEditorKit extends BasicStyledEditorKit
 		protected DefaultXMLElementKit getDefaultXMLElementKit() {return defaultXMLElementKit;}
 
 	/**The kit for creating element specs from MAQRO XML elements.*/
-	private final MAQROXMLElementKit maqroXMLElementKit;
+//TODO fix	private final MAQROXMLElementKit maqroXMLElementKit;
 
 		/**@return The kit for creating element specs from MAQRO XML elements.*/
-		protected MAQROXMLElementKit getMAQROXMLElementKit() {return maqroXMLElementKit;}
+	//TODO fix	protected MAQROXMLElementKit getMAQROXMLElementKit() {return maqroXMLElementKit;}
 
 	/**The default view factory for an XML editor kit.*/
 	private final ViewFactory defaultViewFactory=new DefaultXMLViewFactory();
@@ -183,8 +183,8 @@ public class XMLEditorKit extends BasicStyledEditorKit
 	{
 		super(mediaType, uriInputStreamable);	//construct the parent class
 		defaultXMLElementKit=new DefaultXMLElementKit();	//create the default XML element kit
-		maqroXMLElementKit=new MAQROXMLElementKit(defaultXMLElementKit);	//create the MAQRO XML element kit
-		namespaceXMLElementKitMap.put(MAQRO_NAMESPACE_URI.toString(), maqroXMLElementKit);	//associate the MAQRO XML element kit with the MAQRO namespace
+//TODO fix		maqroXMLElementKit=new MAQROXMLElementKit(defaultXMLElementKit);	//create the MAQRO XML element kit
+//TODO fix		namespaceXMLElementKitMap.put(MAQRO_NAMESPACE_URI.toString(), maqroXMLElementKit);	//associate the MAQRO XML element kit with the MAQRO namespace
 //	TODO bring back if needed		swingStylesheetApplier=new SwingXMLCSSStylesheetApplier();	//create a new Swing stylesheet applier
 		xmlStylesheetApplier=new XMLCSSStylesheetApplier(getURIInputStreamable());	//create a new XML stylesheet applier, using ourselves as the input stream locator
 	}
@@ -594,10 +594,12 @@ catch (BadLocationException e)
 		{
 			return appendXMLDocumentElementSpecList(elementSpecList, (ContentData<org.w3c.dom.Document>)contentData, swingXMLDocument);	//append XML content
 		}
+/*TODO fix
 		else if(contentDataObject instanceof Activity)	//if this is a MAQRO activity
 		{
 			return appendMAQROActivityElementSpecList(elementSpecList, (ContentData<Activity>)contentData, swingXMLDocument);	//append MAQRO activity content
 		}
+*/
 		else	//if we don't recognize this content data
 		{
 			throw new IllegalArgumentException("Unrecognized content type "+contentData.getObject().getClass().getName());
@@ -610,6 +612,7 @@ catch (BadLocationException e)
 	@param swingXMLDocument The Swing document into which the content will be set.
 	@return The attribute set for the MAQRO activity.
 	*/
+/*TODO fix
 	protected MutableAttributeSet appendMAQROActivityElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final ContentData<? extends Activity> contentData, final XMLDocument swingXMLDocument)
 	{
 		final Activity activity=contentData.getObject();	//get a reference to this activity
@@ -617,6 +620,7 @@ catch (BadLocationException e)
 		final ContentType mediaType=contentData.getContentType(); //get a reference to the media type
 		return getMAQROXMLElementKit().appendElementSpecList(elementSpecList, activity, baseURI);	//delegate to the MAQRO XML element kit to append the activity
 	}
+*/
 
 	/**Appends element spec objects from XML document content data.
 	@param elementSpecList The list of element specs to be inserted into the document.
