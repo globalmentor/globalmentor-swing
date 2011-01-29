@@ -65,7 +65,6 @@ public abstract class AbstractFramedSwingApplication extends AbstractSwingApplic
 	@return The application status.
 	@see #createApplicationFrame()
 	*/
-	@Override
 	public int main()
 	{
 		final Frame applicationFrame=createApplicationFrame();	//create the application frame
