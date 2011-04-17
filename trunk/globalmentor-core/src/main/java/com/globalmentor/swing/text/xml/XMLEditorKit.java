@@ -1308,7 +1308,7 @@ Log.trace("Current element type: ", attributeNameObject.getClass().getName()); /
 
 
 
-				StringBuffers.collapse(textStringBuffer, Characters.WHITESPACE_CHAR_STRING, " ");	//TODO testing
+				StringBuffers.collapse(textStringBuffer, Characters.WHITESPACE_CHARACTERS, " ");	//TODO testing
 //	TODO del Log.trace("after collapsing whitespace: ", textStringBuffer);  //TODO del
 //	TODO del Log.trace("Adding text with attributes: ", contentAttributeSet);	//TODO del
 //	TODO fix textStringBuffer.append(CharacterConstants.WORD_JOINER_CHAR);	//TODO testing

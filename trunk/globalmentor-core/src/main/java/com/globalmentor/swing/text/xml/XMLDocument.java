@@ -851,7 +851,7 @@ Log.trace("ready to append text", text, "at offset", offset);
 //TODO fix		stringBuilder.append(text);	//append text
 final StringBuilder stringBuilder=new StringBuilder(text);	//create a string builder with the text
 //TODO fix final int newLength=StringBuilderUtilities.collapse(stringBuilder, CharacterConstants.WHITESPACE_CHARS, " ", begin, text.length());	//collapse all whitespace into spaces TODO fix across element boundaries
-		final int newLength=StringBuilders.collapse(stringBuilder, Characters.WHITESPACE_CHAR_STRING, " ");	//collapse all whitespace into spaces TODO fix across element boundaries
+		final int newLength=StringBuilders.collapse(stringBuilder, Characters.WHITESPACE_CHARACTERS, " ");	//collapse all whitespace into spaces TODO fix across element boundaries
 Log.trace("new length", newLength);
 		final int end=offset+newLength;	//see where the inserted, collapsed text ends
 Log.trace("end", end);

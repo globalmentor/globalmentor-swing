@@ -122,7 +122,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 							final String text=document.getText(element.getStartOffset(), element.getEndOffset()-element.getStartOffset());
 							//TODO bring back for efficiency				  document.getText(childElement.getStartOffset(), childElement.getEndOffset()-childElement.getStartOffset(), segment);
 									//if there are no visible characters (or the end-of-element character mark), and this isn't really just an empty element
-							if(CharSequences.notCharIndexOf(text, Characters.WHITESPACE_CHAR_STRING+Characters.CONTROL_CHARS+XMLDocument.ELEMENT_END_CHAR)<0	
+							if(CharSequences.notCharIndexOf(text, Characters.WHITESPACE_CHARACTERS.add(Characters.CONTROL_CHARS).add(XMLDocument.ELEMENT_END_CHAR))<0	
 									&& !XMLStyles.isXMLEmptyElement(attributeSet))
 							{
 		//TODO del Log.trace("found whitespace inside element: ", XMLStyleConstants.getXMLElementName(attributeSet)); //TODO del
