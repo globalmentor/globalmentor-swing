@@ -142,15 +142,15 @@ public class TelecommunicationsPanel extends ContentPanel
 		if(telephones==null || telephones.length==0)	//if no telephones were given, add the default telephones
 		{
 				//add a work voice telephone
-			final TelephonePanel workTelephonePanel=new TelephonePanel(null, Telephone.WORK_TELEPHONE_TYPE|Telephone.VOICE_TELEPHONE_TYPE);
+			final TelephonePanel workTelephonePanel=new TelephonePanel(null, EnumSet.of(Telephone.Type.WORK, Telephone.Type.VOICE));
 			workTelephonePanel.setLabelsVisible(false);	//turn off the labels
 			addComponent(workTelephonePanel);	
 				//add a home voice telephone
-			final TelephonePanel homeTelephonePanel=new TelephonePanel(null, Telephone.HOME_TELEPHONE_TYPE|Telephone.VOICE_TELEPHONE_TYPE);
+			final TelephonePanel homeTelephonePanel=new TelephonePanel(null, EnumSet.of(Telephone.Type.HOME, Telephone.Type.VOICE));
 			homeTelephonePanel.setLabelsVisible(false);	//turn off the labels
 			addComponent(homeTelephonePanel);
 				//add a mobile voice telephone
-			final TelephonePanel mobileTelephonePanel=new TelephonePanel(null, Telephone.CELL_TELEPHONE_TYPE|Telephone.VOICE_TELEPHONE_TYPE);
+			final TelephonePanel mobileTelephonePanel=new TelephonePanel(null, EnumSet.of(Telephone.Type.CELL, Telephone.Type.VOICE));
 			mobileTelephonePanel.setLabelsVisible(false);	//turn off the labels
 			addComponent(mobileTelephonePanel);
 		}

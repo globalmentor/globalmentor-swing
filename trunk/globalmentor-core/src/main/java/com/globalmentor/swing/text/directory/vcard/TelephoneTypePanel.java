@@ -17,219 +17,264 @@
 package com.globalmentor.swing.text.directory.vcard;
 
 import java.awt.*;
+import java.util.EnumSet;
+import java.util.Set;
+
 import javax.swing.*;
 import com.globalmentor.awt.BasicGridBagLayout;
 import com.globalmentor.awt.Containers;
 import com.globalmentor.swing.*;
 import com.globalmentor.text.directory.vcard.*;
 
-/**A panel allowing specification of the types of telephone of the <code>TEL</code>
-	type of a vCard <code>text/directory</code>
-	profile as defined in <a href="http://www.ietf.org/rfc/rfc2426.txt">RFC 2426</a>,
-	"vCard MIME Directory Profile".
-@author Garret Wilson
-*/
+/**
+ * A panel allowing specification of the types of telephone of the <code>TEL</code> type of a vCard <code>text/directory</code> profile as defined in <a
+ * href="http://www.ietf.org/rfc/rfc2426.txt">RFC 2426</a>, "vCard MIME Directory Profile".
+ * @author Garret Wilson
+ */
 public class TelephoneTypePanel extends BasicPanel
 {
 
-	/**The checkbox for a telephone number associated with a residence.*/
+	/** The checkbox for a telephone number associated with a residence. */
 	private final JCheckBox homeCheckBox;
 
-		/**@return The checkbox for a telephone number associated with a residence.*/
-		public JCheckBox getHomeCheckBox() {return homeCheckBox;}
+	/** @return The checkbox for a telephone number associated with a residence. */
+	public JCheckBox getHomeCheckBox()
+	{
+		return homeCheckBox;
+	}
 
-	/**The checkbox for a telephone number that has voice messaging support.*/
+	/** The checkbox for a telephone number that has voice messaging support. */
 	private final JCheckBox messageCheckBox;
 
-		/**@return The checkbox for a telephone number that has voice messaging support.*/
-		public JCheckBox getMessageCheckBox() {return messageCheckBox;}
+	/** @return The checkbox for a telephone number that has voice messaging support. */
+	public JCheckBox getMessageCheckBox()
+	{
+		return messageCheckBox;
+	}
 
-	/**The checkbox for a telephone number associated with a place of work.*/
+	/** The checkbox for a telephone number associated with a place of work. */
 	private final JCheckBox workCheckBox;
 
-		/**@return The checkbox for a telephone number associated with a place of work.*/
-		public JCheckBox getWorkCheckBox() {return workCheckBox;}
+	/** @return The checkbox for a telephone number associated with a place of work. */
+	public JCheckBox getWorkCheckBox()
+	{
+		return workCheckBox;
+	}
 
-	/**The checkbox for a preferred-use telephone number.*/
+	/** The checkbox for a preferred-use telephone number. */
 	private final JCheckBox preferredCheckBox;
 
-		/**@return The checkbox for a preferred-use telephone number.*/
-		public JCheckBox getPreferredCheckBox() {return preferredCheckBox;}
+	/** @return The checkbox for a preferred-use telephone number. */
+	public JCheckBox getPreferredCheckBox()
+	{
+		return preferredCheckBox;
+	}
 
-	/**The checkbox for a voice telephone number.*/
+	/** The checkbox for a voice telephone number. */
 	private final JCheckBox voiceCheckBox;
 
-		/**@return The checkbox for a voice telephone number.*/
-		public JCheckBox getVoiceCheckBox() {return voiceCheckBox;}
+	/** @return The checkbox for a voice telephone number. */
+	public JCheckBox getVoiceCheckBox()
+	{
+		return voiceCheckBox;
+	}
 
-	/**The checkbox for a facsimile telephone number.*/
+	/** The checkbox for a facsimile telephone number. */
 	private final JCheckBox faxCheckBox;
 
-		/**@return The checkbox for a facsimile telephone number.*/
-		public JCheckBox getFaxCheckBox() {return faxCheckBox;}
+	/** @return The checkbox for a facsimile telephone number. */
+	public JCheckBox getFaxCheckBox()
+	{
+		return faxCheckBox;
+	}
 
-	/**The checkbox for a cellular telephone number.*/
+	/** The checkbox for a cellular telephone number. */
 	private final JCheckBox cellCheckBox;
 
-		/**@return The checkbox for a cellular telephone number.*/
-		public JCheckBox getCellCheckBox() {return cellCheckBox;}
+	/** @return The checkbox for a cellular telephone number. */
+	public JCheckBox getCellCheckBox()
+	{
+		return cellCheckBox;
+	}
 
-	/**The checkbox for a video conferencing telephone number.*/
+	/** The checkbox for a video conferencing telephone number. */
 	private final JCheckBox videoCheckBox;
 
-		/**@return The checkbox for a video conferencing telephone number.*/
-		public JCheckBox getVideoCheckBox() {return videoCheckBox;}
+	/** @return The checkbox for a video conferencing telephone number. */
+	public JCheckBox getVideoCheckBox()
+	{
+		return videoCheckBox;
+	}
 
-	/**The checkbox for a paging device telephone number.*/
+	/** The checkbox for a paging device telephone number. */
 	private final JCheckBox pagerCheckBox;
 
-		/**@return The checkbox for a paging device telephone number.*/
-		public JCheckBox getPagerCheckBox() {return pagerCheckBox;}
+	/** @return The checkbox for a paging device telephone number. */
+	public JCheckBox getPagerCheckBox()
+	{
+		return pagerCheckBox;
+	}
 
-	/**The checkbox for a bulletin board system telephone number.*/
+	/** The checkbox for a bulletin board system telephone number. */
 	private final JCheckBox bbsCheckBox;
 
-		/**@return The checkbox for a bulletin board system telephone number.*/
-		public JCheckBox getBBSCheckBox() {return bbsCheckBox;}
+	/** @return The checkbox for a bulletin board system telephone number. */
+	public JCheckBox getBBSCheckBox()
+	{
+		return bbsCheckBox;
+	}
 
-	/**The checkbox for a modem-connected telephone number.*/
+	/** The checkbox for a modem-connected telephone number. */
 	private final JCheckBox modemCheckBox;
 
-		/**@return The checkbox for a modem-connected telephone number.*/
-		public JCheckBox getModemCheckBox() {return modemCheckBox;}
+	/** @return The checkbox for a modem-connected telephone number. */
+	public JCheckBox getModemCheckBox()
+	{
+		return modemCheckBox;
+	}
 
-	/**The checkbox for a car-phone telephone number.*/
+	/** The checkbox for a car-phone telephone number. */
 	private final JCheckBox carCheckBox;
 
-		/**@return The checkbox for a car-phone telephone number.*/
-		public JCheckBox getCarCheckBox() {return carCheckBox;}
+	/** @return The checkbox for a car-phone telephone number. */
+	public JCheckBox getCarCheckBox()
+	{
+		return carCheckBox;
+	}
 
-	/**The checkbox for an ISDN service telephone number.*/
+	/** The checkbox for an ISDN service telephone number. */
 	private final JCheckBox isdnCheckBox;
 
-		/**@return The checkbox for an ISDN service telephone number.*/
-		public final JCheckBox getISDNCheckBox() {return isdnCheckBox;}
+	/** @return The checkbox for an ISDN service telephone number. */
+	public final JCheckBox getISDNCheckBox()
+	{
+		return isdnCheckBox;
+	}
 
-	/**The checkbox for a personal communication services telephone number.*/
+	/** The checkbox for a personal communication services telephone number. */
 	private final JCheckBox pcsCheckBox;
 
-		/**@return The checkbox for a personal communication services telephone number.*/
-		public JCheckBox getPCSCheckBox() {return pcsCheckBox;}
-
-	/**Places the delivery telephone type into the various fields.
-	@param telephoneType The intended use, one or more of the
-		<code>Telephone.XXX_TELEPHONE_TYPE</code> constants ORed together.
-	@see Telephone
-	*/
-	public void setTelephoneType(final int telephoneType)
+	/** @return The checkbox for a personal communication services telephone number. */
+	public JCheckBox getPCSCheckBox()
 	{
-		homeCheckBox.setSelected((telephoneType & Telephone.HOME_TELEPHONE_TYPE)!=0);
-		messageCheckBox.setSelected((telephoneType & Telephone.MESSAGE_TELEPHONE_TYPE)!=0);
-		workCheckBox.setSelected((telephoneType & Telephone.WORK_TELEPHONE_TYPE)!=0);
-		preferredCheckBox.setSelected((telephoneType & Telephone.PREFERRED_TELEPHONE_TYPE)!=0);
-		voiceCheckBox.setSelected((telephoneType & Telephone.VOICE_TELEPHONE_TYPE)!=0);
-		faxCheckBox.setSelected((telephoneType & Telephone.FAX_TELEPHONE_TYPE)!=0);
-		cellCheckBox.setSelected((telephoneType & Telephone.CELL_TELEPHONE_TYPE)!=0);
-		videoCheckBox.setSelected((telephoneType & Telephone.VIDEO_TELEPHONE_TYPE)!=0);
-		pagerCheckBox.setSelected((telephoneType & Telephone.PAGER_TELEPHONE_TYPE)!=0);
-		bbsCheckBox.setSelected((telephoneType & Telephone.BBS_TELEPHONE_TYPE)!=0);
-		modemCheckBox.setSelected((telephoneType & Telephone.MODEM_TELEPHONE_TYPE)!=0);
-		carCheckBox.setSelected((telephoneType & Telephone.CAR_TELEPHONE_TYPE)!=0);
-		isdnCheckBox.setSelected((telephoneType & Telephone.ISDN_TELEPHONE_TYPE)!=0);
-		pcsCheckBox.setSelected((telephoneType & Telephone.PCS_TELEPHONE_TYPE)!=0);
+		return pcsCheckBox;
 	}
-	
-	/**@return The telephone intended use, a combination of
-		<code>Telephone.XXX_TELEPHONE_TYPE</code> constants ORed together.
-	@see Telephone
-	*/
-	public int getTelephoneType()
+
+	/**
+	 * Places the delivery telephone type into the various fields.
+	 * @param telephoneTypes The intended use.
+	 * @see Telephone#Type
+	 */
+	public void setTelephoneTypes(final Set<Telephone.Type> telephoneTypes)
 	{
-		int telephoneType=Telephone.NO_TELEPHONE_TYPE;	//start out without knowing the telephone type
+		homeCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.HOME));
+		messageCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.MESSAGE));
+		workCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.WORK));
+		preferredCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.PREFERRED));
+		voiceCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.VOICE));
+		faxCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.FAX));
+		cellCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.CELL));
+		videoCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.VIDEO));
+		pagerCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.PAGER));
+		bbsCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.BBS));
+		modemCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.MODEM));
+		carCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.CAR));
+		isdnCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.ISDN));
+		pcsCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.PCS_TELEPHONE));
+	}
+
+	/**
+	 * @return The telephone intended use
+	 * @see Telephone#Type
+	 */
+	public Set<Telephone.Type> getTelephoneTypes()
+	{
+		final Set<Telephone.Type> telephoneTypes = EnumSet.noneOf(Telephone.Type.class); //start out without knowing the telephone type
 		if(homeCheckBox.isSelected())
-			telephoneType|=Telephone.HOME_TELEPHONE_TYPE;
+			telephoneTypes.add(Telephone.Type.HOME);
 		if(messageCheckBox.isSelected())
-			telephoneType|=Telephone.MESSAGE_TELEPHONE_TYPE;
+			telephoneTypes.add(Telephone.Type.MESSAGE);
 		if(workCheckBox.isSelected())
-			telephoneType|=Telephone.WORK_TELEPHONE_TYPE;
+			telephoneTypes.add(Telephone.Type.WORK);
 		if(preferredCheckBox.isSelected())
-			telephoneType|=Telephone.PREFERRED_TELEPHONE_TYPE;
+			telephoneTypes.add(Telephone.Type.PREFERRED);
 		if(voiceCheckBox.isSelected())
-			telephoneType|=Telephone.VOICE_TELEPHONE_TYPE;
+			telephoneTypes.add(Telephone.Type.VOICE);
 		if(faxCheckBox.isSelected())
-			telephoneType|=Telephone.FAX_TELEPHONE_TYPE;
+			telephoneTypes.add(Telephone.Type.FAX);
 		if(cellCheckBox.isSelected())
-			telephoneType|=Telephone.CELL_TELEPHONE_TYPE;
+			telephoneTypes.add(Telephone.Type.CELL);
 		if(videoCheckBox.isSelected())
-			telephoneType|=Telephone.VIDEO_TELEPHONE_TYPE;
+			telephoneTypes.add(Telephone.Type.VIDEO);
 		if(pagerCheckBox.isSelected())
-			telephoneType|=Telephone.PAGER_TELEPHONE_TYPE;
+			telephoneTypes.add(Telephone.Type.PAGER);
 		if(bbsCheckBox.isSelected())
-			telephoneType|=Telephone.BBS_TELEPHONE_TYPE;
+			telephoneTypes.add(Telephone.Type.BBS);
 		if(modemCheckBox.isSelected())
-			telephoneType|=Telephone.MODEM_TELEPHONE_TYPE;
+			telephoneTypes.add(Telephone.Type.MODEM);
 		if(carCheckBox.isSelected())
-			telephoneType|=Telephone.CAR_TELEPHONE_TYPE;
+			telephoneTypes.add(Telephone.Type.CAR);
 		if(isdnCheckBox.isSelected())
-			telephoneType|=Telephone.ISDN_TELEPHONE_TYPE;
+			telephoneTypes.add(Telephone.Type.ISDN);
 		if(pcsCheckBox.isSelected())
-			telephoneType|=Telephone.PCS_TELEPHONE_TYPE;
-		return telephoneType;	//return the address type
+			telephoneTypes.add(Telephone.Type.PCS_TELEPHONE);
+		return telephoneTypes; //return the telephone types
 	}
 
-	/**Default constructor.
-	@see Telephone#DEFAULT_TELEPHONE_TYPE
-	*/
+	/**
+	 * Default constructor.
+	 * @see Telephone#DEFAULT_TELEPHONE_TYPE
+	 */
 	public TelephoneTypePanel()
 	{
-		this(Telephone.DEFAULT_TELEPHONE_TYPE);	//construct the panel with the default telephone type
+		this(EnumSet.of(Telephone.DEFAULT_TELEPHONE_TYPE)); //construct the panel with the default telephone type
 	}
 
-	/**Telepone type constructor.
-	@param telephoneType The intended use, one or more of the
-		<code>Telephone.XXX_TELEPHONE_TYPE</code> constants ORed together.
-	*/
-	public TelephoneTypePanel(final int telephoneType)
+	/**
+	 * Telephone type constructor.
+	 * @param telephoneTypes The intended use.
+	 */
+	public TelephoneTypePanel(final Set<Telephone.Type> telephoneTypes)
 	{
-		super(new BasicGridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
-		homeCheckBox=new JCheckBox();
-		messageCheckBox=new JCheckBox();
-		workCheckBox=new JCheckBox();
-		preferredCheckBox=new JCheckBox();
-		voiceCheckBox=new JCheckBox();
-		faxCheckBox=new JCheckBox();
-		cellCheckBox=new JCheckBox();
-		videoCheckBox=new JCheckBox();
-		pagerCheckBox=new JCheckBox();
-		bbsCheckBox=new JCheckBox();
-		modemCheckBox=new JCheckBox();
-		carCheckBox=new JCheckBox();
-		isdnCheckBox=new JCheckBox();
-		pcsCheckBox=new JCheckBox();
-		setDefaultFocusComponent(preferredCheckBox);	//set the default focus component
-		initialize();	//initialize the panel
-		setTelephoneType(telephoneType);	//set the given telephone type
+		super(new BasicGridBagLayout(), false); //construct the panel using a grid bag layout, but don't initialize the panel
+		homeCheckBox = new JCheckBox();
+		messageCheckBox = new JCheckBox();
+		workCheckBox = new JCheckBox();
+		preferredCheckBox = new JCheckBox();
+		voiceCheckBox = new JCheckBox();
+		faxCheckBox = new JCheckBox();
+		cellCheckBox = new JCheckBox();
+		videoCheckBox = new JCheckBox();
+		pagerCheckBox = new JCheckBox();
+		bbsCheckBox = new JCheckBox();
+		modemCheckBox = new JCheckBox();
+		carCheckBox = new JCheckBox();
+		isdnCheckBox = new JCheckBox();
+		pcsCheckBox = new JCheckBox();
+		setDefaultFocusComponent(preferredCheckBox); //set the default focus component
+		initialize(); //initialize the panel
+		setTelephoneTypes(telephoneTypes); //set the given telephone types
 	}
-	
-	/**Initializes the user interface.*/
+
+	/** Initializes the user interface. */
 	public void initializeUI()
 	{
-		super.initializeUI();	//do the default user interface initialization
-		homeCheckBox.setText("Home");	//TODO i18n
-		messageCheckBox.setText("Message");	//TODO i18n
-		workCheckBox.setText("Work");	//TODO i18n
-		preferredCheckBox.setText("Preferred");	//TODO i18n
+		super.initializeUI(); //do the default user interface initialization
+		homeCheckBox.setText("Home"); //TODO i18n
+		messageCheckBox.setText("Message"); //TODO i18n
+		workCheckBox.setText("Work"); //TODO i18n
+		preferredCheckBox.setText("Preferred"); //TODO i18n
 		preferredCheckBox.setFont(preferredCheckBox.getFont().deriveFont(Font.BOLD));
-		voiceCheckBox.setText("Voice");	//TODO i18n
-		faxCheckBox.setText("Fax");	//TODO i18n
-		cellCheckBox.setText("Mobile");	//TODO i18n
-		videoCheckBox.setText("Video");	//TODO i18n
-		pagerCheckBox.setText("Pager");	//TODO i18n
-		bbsCheckBox.setText("BBS");	//TODO i18n
-		modemCheckBox.setText("Modem");	//TODO i18n
-		carCheckBox.setText("Car");	//TODO i18n
-		isdnCheckBox.setText("ISDN");	//TODO i18n
-		pcsCheckBox.setText("PCS");	//TODO i18n
+		voiceCheckBox.setText("Voice"); //TODO i18n
+		faxCheckBox.setText("Fax"); //TODO i18n
+		cellCheckBox.setText("Mobile"); //TODO i18n
+		videoCheckBox.setText("Video"); //TODO i18n
+		pagerCheckBox.setText("Pager"); //TODO i18n
+		bbsCheckBox.setText("BBS"); //TODO i18n
+		modemCheckBox.setText("Modem"); //TODO i18n
+		carCheckBox.setText("Car"); //TODO i18n
+		isdnCheckBox.setText("ISDN"); //TODO i18n
+		pcsCheckBox.setText("PCS"); //TODO i18n
 		add(preferredCheckBox, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, Containers.NO_INSETS, 0, 0));
 		add(workCheckBox, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, Containers.NO_INSETS, 0, 0));
 		add(homeCheckBox, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, Containers.NO_INSETS, 0, 0));

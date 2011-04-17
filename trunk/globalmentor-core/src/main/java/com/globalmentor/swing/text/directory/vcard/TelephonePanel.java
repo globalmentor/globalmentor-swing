@@ -18,6 +18,9 @@ package com.globalmentor.swing.text.directory.vcard;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.EnumSet;
+import java.util.Set;
+
 import javax.swing.*;
 
 import com.globalmentor.awt.Containers;
@@ -50,33 +53,30 @@ public class TelephonePanel extends BasicVCardPanel
 	/**The telephone type label.*/
 	private final JButton telephoneTypeButton;
 
-	/**The local copy of the telephone type.*/
-	private int telephoneType;
+	/**The local copy of the telephone types.*/
+	private Set<Telephone.Type> telephoneTypes=EnumSet.noneOf(Telephone.Type.class);
 
-		/**@return The intended use, a combination of
-			<code>Telephone.XXX_TELEPHONE_TYPE</code> constants ORed together.
-		*/
-		protected int getTelephoneType() {return telephoneType;}
+		/**@return The intended use.*/
+		protected Set<Telephone.Type> getTelephoneTypes() {return telephoneTypes;}
 
 		/**Sets the telephone type.
-		@param telephoneType The intended use, one or more of the
-			<code>Telephone.XXX_TELEPHONE_TYPE</code> constants ORed together.
+		@param telephoneTypes The intended use.
 		*/
-		protected void setTelephoneType(final int telephoneType)
+		protected void setTelephoneTypes(final Set<Telephone.Type> telephoneTypes)
 		{
-			final int oldTelephoneType=this.telephoneType;	//get the old telephone type
-			if(oldTelephoneType!=telephoneType)	//if the telephone type is really changing
+			final Set<Telephone.Type> oldTelephoneTypes=this.telephoneTypes;	//get the old telephone types
+			if(!oldTelephoneTypes.equals(telephoneTypes))	//if the telephone types are really changing
 			{
-				this.telephoneType=telephoneType;	//store the telephone type locally
+				this.telephoneTypes=telephoneTypes;	//store the telephone types locally
 				setModified(true);	//show that we've changed the telephone type
 				telephoneTypeButton.setText(	//update the telephone type button
-						telephoneType!=Telephone.NO_TELEPHONE_TYPE	//if there is a telephone type
-						? Telephone.getTelephoneTypeString(telephoneType)	//show it
+						!telephoneTypes.isEmpty()	//if there is a telephone type
+						? Telephone.getTelephoneTypeString(telephoneTypes)	//show it
 						: "");	//if there is no telephone type, show nothing
 			}
 		}
 
-	/**Shows or hides the telphone number labels.
+	/**Shows or hides the telephone number labels.
 	@param visible <code>true</code> if the labels should be shown,
 		<code>false</code> if they should be hidden.
 	@see TelephoneNumberPanel#setLabelsVisible
@@ -112,11 +112,11 @@ public class TelephonePanel extends BasicVCardPanel
 		setTelephoneNumber(telephone);	//set the telephone number
 		if(telephone!=null)	//if there is telephone information
 		{
-			setTelephoneType(telephone.getTelephoneType());	//set and update the telephone type
+			setTelephoneTypes(telephone.getTelephoneTypes());	//set and update the telephone type
 		}
 		else	//if there is no telephone information, clear the fields
 		{
-			setTelephoneType(Telephone.DEFAULT_TELEPHONE_TYPE);	//set the default telephone type
+			setTelephoneTypes(EnumSet.of(Telephone.DEFAULT_TELEPHONE_TYPE));	//set the default telephone type
 		}
 	}
 	
@@ -129,10 +129,10 @@ public class TelephonePanel extends BasicVCardPanel
 		final TelephoneNumber telephoneNumber=telephoneNumberPanel.getTelephoneNumber();	//get the telephone number from the panel
 		if(telephoneNumber!=null)	//if a valid telephone number was entered
 		{		
-			final int telephoneType=getTelephoneType();	//get the telephone type
+			final Set<Telephone.Type> telephoneTypes=getTelephoneTypes();	//get the telephone type
 			try
 			{
-				return new Telephone(telephoneNumber, telephoneType);	//create and return telephone information representing the entered information
+				return new Telephone(telephoneNumber, telephoneTypes);	//create and return telephone information representing the entered information
 			}
 			catch(final ArgumentSyntaxException syntaxException)	//if the information isn't a valid telephone number (this should never happen, as we just received a valid telephone number)
 			{
@@ -157,17 +157,16 @@ public class TelephonePanel extends BasicVCardPanel
 	*/
 	public TelephonePanel(final Telephone telephone)
 	{
-			//construct a telephone panel with the telephone number and type, or the defeault type if no telephone is given
-		this(telephone, telephone!=null ? telephone.getTelephoneType() : Telephone.DEFAULT_TELEPHONE_TYPE); 
+			//construct a telephone panel with the telephone number and type, or the default type if no telephone is given
+		this(telephone, telephone!=null ? telephone.getTelephoneTypes() : EnumSet.of(Telephone.DEFAULT_TELEPHONE_TYPE)); 
 	}
 
 	/**Telephone number and telephone type constructor.
 	@param telephone The telephone information to place in the fields, or
 		<code>null</code> if default information should be displayed.
-	@param telephoneType The intended use, one or more of the
-		<code>Telephone.XXX_TELEPHONE_TYPE</code> constants ORed together.
+	@param telephoneTypes The intended use.
 	*/
-	public TelephonePanel(final TelephoneNumber telephoneNumber, final int telephoneType)
+	public TelephonePanel(final TelephoneNumber telephoneNumber, final Set<Telephone.Type> telephoneTypes)
 	{
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		editTelephoneTypeAction=new EditTelephoneTypeAction();
@@ -179,7 +178,7 @@ public class TelephonePanel extends BasicVCardPanel
 		setDefaultFocusComponent(telephoneNumberPanel);	//set the default focus component
 		initialize();	//initialize the panel
 		setTelephoneNumber(telephoneNumber);	//set the given telephone number
-		setTelephoneType(telephoneType);	//set the given telephone type
+		setTelephoneTypes(telephoneTypes);	//set the given telephone type
 		setModified(false);	//show that the information has not yet been modified
 	}
 	
@@ -233,11 +232,11 @@ public class TelephonePanel extends BasicVCardPanel
 	*/
 	public boolean editTelephoneType()
 	{
-		final TelephoneTypePanel telephoneTypePanel=new TelephoneTypePanel(getTelephoneType());	//create a new panel with our current telephone type 
+		final TelephoneTypePanel telephoneTypePanel=new TelephoneTypePanel(getTelephoneTypes());	//create a new panel with our current telephone type 
 			//ask for the new telephone type; if they accept the changes
 		if(BasicOptionPane.showConfirmDialog(this, telephoneTypePanel, "Telephone Intended Uses", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//TODO i18n
 		{
-			setTelephoneType(telephoneTypePanel.getTelephoneType());	//update the telephone type
+			setTelephoneTypes(telephoneTypePanel.getTelephoneTypes());	//update the telephone type
 			return true;	//show that the user accepted the changes and that they were updated		
 		}
 		else	//if the user cancels
