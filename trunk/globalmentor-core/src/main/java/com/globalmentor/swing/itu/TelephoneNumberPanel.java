@@ -87,9 +87,9 @@ public class TelephoneNumberPanel extends ModifiablePanel
 	{
 		if(telephoneNumber!=null)	//if there is a telephone number
 		{
-			countryCodeComboBox.setSelectedItem(telephoneNumber.getCCString());
-			nationalDestinationCodeTextField.setText(telephoneNumber.getNDCString());
-			subscriberNumberTextField.setText(telephoneNumber.getSNString());
+			countryCodeComboBox.setSelectedItem(telephoneNumber.getCountryCodeString());
+			nationalDestinationCodeTextField.setText(telephoneNumber.getNationalDestinationCodeString());
+			subscriberNumberTextField.setText(telephoneNumber.getSubscriberNumberString());
 		}
 		else	//if there is no telephone number, clear the fields
 		{

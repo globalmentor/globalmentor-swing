@@ -16,6 +16,8 @@
 
 package com.globalmentor.swing.text.directory.vcard;
 
+import static java.util.Arrays.asList;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.*;
@@ -89,17 +91,17 @@ public class AddressesPanel extends ContentPanel
 	@param addresses The addresses to place in the tabs.
 	@param labels The labels to place in the tabs.
 	*/
-	public void setAddresses(final Address[] addresses, final Label[] labels)
+	public void setAddresses(final Collection<Address> addresses, final Collection<Label> labels)
 	{
 		getTabbedPane().removeAll();	//remove all tabs
-		if(addresses.length>0 || labels.length>0)	//if there is at least one address or label
+		if(!addresses.isEmpty() || !labels.isEmpty())	//if there is at least one address or label
 		{
 			addAddresses(addresses);	//add the addresses
 			addLabels(labels);	//add the labels
 		}
 		else	//if there are no addresses or labels
 		{
-			addAddresses(new Address[]{new Address()});	//add a single default address
+			addAddresses(asList(new Address()));	//add a single default address
 		}
 		setDefaultFocusComponent(getTabbedPane().getComponentAt(0));	//set the default focus component to be the first tab (we'll always have at least one tab)
 	}
@@ -107,11 +109,11 @@ public class AddressesPanel extends ContentPanel
 	/**Places the addresses into the tabs.
 	@param addresses The addresses to place in the tabs.
 	*/
-	protected void addAddresses(final Address[] addresses)
+	protected void addAddresses(final Collection<Address> addresses)
 	{
-		for(int i=0; i<addresses.length; ++i)	//look at each of the addresses
+		for(final Address address:addresses)	//look at each of the addresses
 		{
-			addAddress(addresses[i]);	//add this address to the tabbed pane
+			addAddress(address);	//add this address to the tabbed pane
 		}
 	}
 	
@@ -138,11 +140,11 @@ public class AddressesPanel extends ContentPanel
 	/**Places the labels into the tabs.
 	@param labels The labels to place in the tabs.
 	*/
-	protected void addLabels(final Label[] labels)
+	protected void addLabels(final Collection<Label> labels)
 	{
-		for(int i=0; i<labels.length; ++i)	//look at each of the labels
+		for(final Label label:labels)	//look at each of the labels
 		{
-			addLabel(labels[i]);	//add this label to the tabbed pane
+			addLabel(label);	//add this label to the tabbed pane
 		}
 	}
 	
@@ -169,7 +171,7 @@ public class AddressesPanel extends ContentPanel
 	/**Default constructor.*/
 	public AddressesPanel()
 	{
-		this(new Address[]{new Address()}, new Label[]{});	//construct an address panel with one default address
+		this(asList(new Address()), Collections.<Label>emptyList());	//construct an address panel with one default address
 	}
 
 	/**Addresses constructor.
@@ -177,7 +179,7 @@ public class AddressesPanel extends ContentPanel
 	@param addresses The addresses to place in the tabs.
 	@param labels The labels to place in the tabs.
 	*/
-	public AddressesPanel(final Address[] addresses, final Label[] labels)
+	public AddressesPanel(final Collection<Address> addresses, final Collection<Label> labels)
 	{
 		super(new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 //TODO fix		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel

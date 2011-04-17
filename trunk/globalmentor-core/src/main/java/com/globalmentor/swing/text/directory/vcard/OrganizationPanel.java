@@ -126,7 +126,7 @@ public class OrganizationPanel extends BasicVCardPanel
 	/**Sets the organizational units. The locales are ignored.
 	@param units The organizational units.
 	*/
-	public void setUnits(final LocaledText[] units)
+	public void setUnits(final Collection<LocaledText> units)
 	{
 		unitsTextField.setText(Strings.concat(units, UNIT_SEPARATOR));
 	}
@@ -195,7 +195,7 @@ public class OrganizationPanel extends BasicVCardPanel
 	/**Default constructor.*/
 	public OrganizationPanel()
 	{
-		this(null, new LocaledText[]{}, null, null);	//create a panel with no initial values
+		this(null, Collections.<LocaledText>emptySet(), null, null);	//create a panel with no initial values
 	}
 
 	/**Full organization constructor.
@@ -206,7 +206,7 @@ public class OrganizationPanel extends BasicVCardPanel
 	@param role The role, occupation, or business category at the organization,
 		or <code>null</code> for no role.
 	*/
-	public OrganizationPanel(final LocaledText name, final LocaledText[] units, final LocaledText title, final LocaledText role)
+	public OrganizationPanel(final LocaledText name, final Collection<LocaledText> units, final LocaledText title, final LocaledText role)
 	{
 		super(new GridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 		nameLabel=new JLabel();

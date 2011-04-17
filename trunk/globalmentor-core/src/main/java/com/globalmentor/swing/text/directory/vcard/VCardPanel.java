@@ -115,17 +115,17 @@ public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable
 		final VCard vcard=getModel();	//get the data model
 		getIdentificationPanel().setVCardName(vcard.getName());
 		getIdentificationPanel().setFormattedName(vcard.getFormattedName());
-		getIdentificationPanel().setNicknames(vcard.getNicknameList().toArray(new LocaledText[vcard.getNicknameList().size()]));
+		getIdentificationPanel().setNicknames(vcard.getNicknames().toArray(new LocaledText[vcard.getNicknames().size()]));
 		getAddressesPanel().setAddresses(vcard.getAddresses(), vcard.getLabels());
 		getOrganizationPanel().setOrganizationName(vcard.getOrganizationName());
 		getOrganizationPanel().setUnits(vcard.getOrganizationUnits());
 		getOrganizationPanel().setJobTitle(vcard.getTitle());
 		getOrganizationPanel().setRole(vcard.getRole());
 			//TODO create getTelephones() and getEmails() that return arrays
-		final Telephone[] telephones=(Telephone[])vcard.getTelephoneList().toArray(new Telephone[vcard.getTelephoneList().size()]);
-		final Email[] emails=(Email[])vcard.getEmailList().toArray(new Email[vcard.getEmailList().size()]);
+		final Telephone[] telephones=(Telephone[])vcard.getTelephones().toArray(new Telephone[vcard.getTelephones().size()]);
+		final Email[] emails=(Email[])vcard.getEmails().toArray(new Email[vcard.getEmails().size()]);
 		getTelecommunicationsPanel().setTelecommunications(telephones, emails);
-		getExplanatoryPanel().setCategories(vcard.getCategoryList().toArray(new LocaledText[vcard.getCategoryList().size()]));
+		getExplanatoryPanel().setCategories(vcard.getCategories().toArray(new LocaledText[vcard.getCategories().size()]));
 		getExplanatoryPanel().setNote(vcard.getNote());
 		getExplanatoryPanel().setURL(vcard.getURL());
 	}
@@ -154,7 +154,7 @@ public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable
 		vcard.setTelephones(getTelecommunicationsPanel().getTelephones());
 		vcard.setEmails(getTelecommunicationsPanel().getEmails());
 		vcard.setCategories(getExplanatoryPanel().getCategories());
-		vcard.setNote(getExplanatoryPanel().getNote());
+		vcard.setNotes(getExplanatoryPanel().getNote());
 		vcard.setURL(getExplanatoryPanel().getURL());
 	}
 
