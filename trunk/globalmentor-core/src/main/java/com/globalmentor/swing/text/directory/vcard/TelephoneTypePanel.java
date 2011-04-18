@@ -168,9 +168,9 @@ public class TelephoneTypePanel extends BasicPanel
 	public void setTelephoneTypes(final Set<Telephone.Type> telephoneTypes)
 	{
 		homeCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.HOME));
-		messageCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.MESSAGE));
+		messageCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.MSG));
 		workCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.WORK));
-		preferredCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.PREFERRED));
+		preferredCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.PREF));
 		voiceCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.VOICE));
 		faxCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.FAX));
 		cellCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.CELL));
@@ -180,7 +180,7 @@ public class TelephoneTypePanel extends BasicPanel
 		modemCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.MODEM));
 		carCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.CAR));
 		isdnCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.ISDN));
-		pcsCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.PCS_TELEPHONE));
+		pcsCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.PCS));
 	}
 
 	/**
@@ -193,11 +193,11 @@ public class TelephoneTypePanel extends BasicPanel
 		if(homeCheckBox.isSelected())
 			telephoneTypes.add(Telephone.Type.HOME);
 		if(messageCheckBox.isSelected())
-			telephoneTypes.add(Telephone.Type.MESSAGE);
+			telephoneTypes.add(Telephone.Type.MSG);
 		if(workCheckBox.isSelected())
 			telephoneTypes.add(Telephone.Type.WORK);
 		if(preferredCheckBox.isSelected())
-			telephoneTypes.add(Telephone.Type.PREFERRED);
+			telephoneTypes.add(Telephone.Type.PREF);
 		if(voiceCheckBox.isSelected())
 			telephoneTypes.add(Telephone.Type.VOICE);
 		if(faxCheckBox.isSelected())
@@ -217,7 +217,7 @@ public class TelephoneTypePanel extends BasicPanel
 		if(isdnCheckBox.isSelected())
 			telephoneTypes.add(Telephone.Type.ISDN);
 		if(pcsCheckBox.isSelected())
-			telephoneTypes.add(Telephone.Type.PCS_TELEPHONE);
+			telephoneTypes.add(Telephone.Type.PCS);
 		return telephoneTypes; //return the telephone types
 	}
 
