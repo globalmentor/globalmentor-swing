@@ -16,7 +16,7 @@
 
 package com.globalmentor.swing.text.directory.vcard;
 
-import static java.util.Arrays.asList;
+import static java.util.Arrays.*;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -101,7 +101,7 @@ public class AddressesPanel extends ContentPanel
 		}
 		else	//if there are no addresses or labels
 		{
-			addAddresses(asList(new Address()));	//add a single default address
+			addAddresses(asList(new Address("", "", "", "", "", "", "")));	//add a single default address
 		}
 		setDefaultFocusComponent(getTabbedPane().getComponentAt(0));	//set the default focus component to be the first tab (we'll always have at least one tab)
 	}
@@ -171,7 +171,7 @@ public class AddressesPanel extends ContentPanel
 	/**Default constructor.*/
 	public AddressesPanel()
 	{
-		this(asList(new Address()), Collections.<Label>emptyList());	//construct an address panel with one default address
+		this(asList(new Address("", "", "", "", "", "", "")), Collections.<Label>emptyList());	//construct an address panel with one default address
 	}
 
 	/**Addresses constructor.
@@ -347,7 +347,7 @@ public class AddressesPanel extends ContentPanel
 		*/
 		public void actionPerformed(final ActionEvent actionEvent)
 		{
-			final AddressPanel addressPanel=new AddressPanel(new Address());	//create a default address panel
+			final AddressPanel addressPanel=new AddressPanel(new Address("", "", "", "", "", "", ""));	//create a default address panel
 			if(addressPanel.editAddressType())	//ask the user for the address type; if they accept the changes
 			{
 				addAddressPanel(addressPanel);	//add the address panel

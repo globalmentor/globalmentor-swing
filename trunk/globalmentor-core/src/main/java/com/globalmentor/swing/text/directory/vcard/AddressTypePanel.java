@@ -17,6 +17,9 @@
 package com.globalmentor.swing.text.directory.vcard;
 
 import java.awt.*;
+import java.util.EnumSet;
+import java.util.Set;
+
 import javax.swing.*;
 import com.globalmentor.awt.BasicGridBagLayout;
 import com.globalmentor.swing.*;
@@ -73,59 +76,62 @@ public class AddressTypePanel extends BasicPanel
 		/**@return The checkbox for an international delivery address.*/
 		public JCheckBox getPreferredCheckbox() {return preferredCheckBox;}
 
-	/**Places the delivery address type into the various fields.
-	@param addressType The new delivery address type, one or more of the
-		<code>Address.XXX_ADDRESS_TYPE</code> constants ORed together.
+	/**Places the delivery address types.
+	@param addressTypes The new delivery address types.
 	@see Address
 	*/
-	public void setAddressType(final int addressType)
+	public void setAddressTypes(final Set<Address.Type> addressTypes)
 	{
-		domesticCheckBox.setSelected((addressType & Address.DOMESTIC_ADDRESS_TYPE)!=0);
-		internationalCheckBox.setSelected((addressType & Address.INTERNATIONAL_ADDRESS_TYPE)!=0);
-		postalCheckBox.setSelected((addressType & Address.POSTAL_ADDRESS_TYPE)!=0);
-		parcelCheckBox.setSelected((addressType & Address.PARCEL_ADDRESS_TYPE)!=0);
-		homeCheckBox.setSelected((addressType & Address.HOME_ADDRESS_TYPE)!=0);
-		workCheckBox.setSelected((addressType & Address.WORK_ADDRESS_TYPE)!=0);
-		preferredCheckBox.setSelected((addressType & Address.PREFERRED_ADDRESS_TYPE)!=0);
+		domesticCheckBox.setSelected(addressTypes.contains(Address.Type.DOM));
+		internationalCheckBox.setSelected(addressTypes.contains(Address.Type.INTL));
+		postalCheckBox.setSelected(addressTypes.contains(Address.Type.POSTAL));
+		parcelCheckBox.setSelected(addressTypes.contains(Address.Type.PARCEL));
+		homeCheckBox.setSelected(addressTypes.contains(Address.Type.HOME));
+		workCheckBox.setSelected(addressTypes.contains(Address.Type.WORK));
+		preferredCheckBox.setSelected(addressTypes.contains(Address.Type.PREF));
 	}
 	
-	/**@return The delivery address type, a combination of the
-		<code>Address.XXX_ADDRESS_TYPE</code> constants ORed together.
+	/**@return The delivery address types.
 	@see Address
 	*/
-	public int getAddressType()
+	public Set<Address.Type> getAddressTypes()
 	{
-		int addressType=Address.NO_ADDRESS_TYPE;	//start out without knowing the address type
+		final Set<Address.Type> addressTypes=EnumSet.noneOf(Address.Type.class);	//start out without knowing the address types
 		if(domesticCheckBox.isSelected())
-			addressType|=Address.DOMESTIC_ADDRESS_TYPE;
+		{
+			addressTypes.add(Address.Type.DOM);
+		}
 		if(internationalCheckBox.isSelected())
-			addressType|=Address.INTERNATIONAL_ADDRESS_TYPE;
+		{
+			addressTypes.add(Address.Type.INTL);
+		}
 		if(postalCheckBox.isSelected())
-			addressType|=Address.POSTAL_ADDRESS_TYPE;
+		{
+			addressTypes.add(Address.Type.POSTAL);
+		}
 		if(parcelCheckBox.isSelected())
-			addressType|=Address.PARCEL_ADDRESS_TYPE;
+		{
+			addressTypes.add(Address.Type.PARCEL);
+		}
 		if(homeCheckBox.isSelected())
-			addressType|=Address.HOME_ADDRESS_TYPE;
+		{
+			addressTypes.add(Address.Type.HOME);
+		}
 		if(workCheckBox.isSelected())
-			addressType|=Address.WORK_ADDRESS_TYPE;
+		{
+			addressTypes.add(Address.Type.WORK);
+		}
 		if(preferredCheckBox.isSelected())
-			addressType|=Address.PREFERRED_ADDRESS_TYPE;
-		return addressType;	//return the address type
-	}
-
-	/**Default constructor.
-	@see Address#DEFAULT_ADDRESS_TYPE
-	*/
-	public AddressTypePanel()
-	{
-		this(Address.DEFAULT_ADDRESS_TYPE);	//construct the panel with the default address type
+		{
+			addressTypes.add(Address.Type.PREF);
+		}
+		return addressTypes;	//return the address types
 	}
 
 	/**Address type constructor.
-	@param addressType The new delivery address type, one or more of the
-		<code>Address.XXX_ADDRESS_TYPE</code> constants ORed together.
+	@param addressTypes The new delivery address types.
 	*/
-	public AddressTypePanel(final int addressType)
+	public AddressTypePanel(final Set<Address.Type> addressTypes)
 	{
 		super(new BasicGridBagLayout(), false);	//construct the panel using a grid bag layout
 		domesticCheckBox=new JCheckBox();
@@ -137,7 +143,7 @@ public class AddressTypePanel extends BasicPanel
 		preferredCheckBox=new JCheckBox();
 		setDefaultFocusComponent(preferredCheckBox);	//set the default focus component
 		initialize();	//initialize the panel
-		setAddressType(addressType);	//set the given addres type
+		setAddressTypes(addressTypes);	//set the given address type
 	}
 	
 	/**Initializes the user interface.*/
@@ -159,7 +165,7 @@ public class AddressTypePanel extends BasicPanel
 		add(internationalCheckBox, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		add(postalCheckBox, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		add(parcelCheckBox, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		setAddressType(Address.NO_ADDRESS_TYPE);	//clear the fields
+		setAddressTypes(EnumSet.noneOf(Address.Type.class));	//clear the fields
 	}
 
 }

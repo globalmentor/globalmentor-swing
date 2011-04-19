@@ -45,28 +45,25 @@ public class LabelPanel extends BasicVCardPanel
 	/**The address type button.*/
 	private final JButton addressTypeButton;
 
-	/**The local copy of the address type.*/
-	private int addressType;
+	/**The local copy of the address types.*/
+	private Set<Address.Type> addressTypes;
 
-		/**@return The delivery address type, a combination of
-			<code>Address.XXX_ADDRESS_TYPE</code> constants ORed together.
-		*/
-		protected int getAddressType() {return addressType;}
+		/**@return The delivery address types.*/
+		protected Set<Address.Type> getAddressTypes() {return addressTypes;}
 
-		/**Sets the address type.
-		@param addressType The delivery address type, one or more of the
-			<code>Address.XXX_ADDRESS_TYPE</code> constants ORed together.
+		/**Sets the address types.
+		@param addressTypes The delivery address types.
 		*/
-		protected void setAddressType(final int addressType)
+		protected void setAddressTypes(final Set<Address.Type> addressTypes)
 		{
-			final int oldAddressType=this.addressType;	//get the old address type
-			if(oldAddressType!=addressType)	//if the address type is really changing
+			final Set<Address.Type> oldAddressType=this.addressTypes;	//get the old address types
+			if(!oldAddressType.equals(addressTypes))	//if the address types are really changing
 			{
-				this.addressType=addressType;	//store the address type locally
+				this.addressTypes=addressTypes;	//store the address type locally
 				setModified(true);	//show that we've changed the address type
 				addressTypeButton.setText(	//update the address type button
-						addressType!=Address.NO_ADDRESS_TYPE	//if there is an address type
-						? Address.getAddressTypeString(addressType)	//show it
+						!addressTypes.isEmpty()	//if there is an address type
+						? Address.getTypeString(addressTypes)	//show it
 						: "");	//if there is no address type, show nothing
 			}
 		}
@@ -92,13 +89,13 @@ public class LabelPanel extends BasicVCardPanel
 		if(label!=null)	//if there is a label
 		{
 			labelTextPane.setText(label.getText());	//put the label in the text pane
-			setAddressType(label.getAddressType());
+			setAddressTypes(label.getAddressTypes());
 			selectLanguageAction.setLocale(label.getLocale());
 		}
 		else	//if there is no address, clear the fields
 		{
 			labelTextPane.setText("");
-			setAddressType(Address.DEFAULT_ADDRESS_TYPE);
+			setAddressTypes(Address.DEFAULT_TYPES);
 			selectLanguageAction.setLocale(null);
 		}
 	}
@@ -111,9 +108,9 @@ public class LabelPanel extends BasicVCardPanel
 		final String labelText=Strings.getNonEmptyString(labelTextPane.getText().trim());
 		if(labelText!=null)	//if label information was entered
 		{
-			final int addressType=getAddressType();
+			final Set<Address.Type> addressTypes=getAddressTypes();
 			final Locale locale=selectLanguageAction.getLocale();			
-			return new Label(labelText, addressType, locale);	//create and return a label representing the entered information
+			return new Label(labelText, addressTypes, locale);	//create and return a label representing the entered information
 		}
 		else	//if no label information was entered
 		{
@@ -170,11 +167,11 @@ public class LabelPanel extends BasicVCardPanel
 	*/
 	public boolean editAddressType()
 	{
-		final AddressTypePanel addressTypePanel=new AddressTypePanel(getAddressType());	//create a new panel with our current address type 
+		final AddressTypePanel addressTypePanel=new AddressTypePanel(getAddressTypes());	//create a new panel with our current address type 
 			//ask for the new address type; if they accept the changes
 		if(BasicOptionPane.showConfirmDialog(this, addressTypePanel, "Delivery Address Type", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//G***i18n
 		{
-			setAddressType(addressTypePanel.getAddressType());	//update the address type
+			setAddressTypes(addressTypePanel.getAddressTypes());	//update the address type
 			return true;	//show that the user accepted the changes and that they were updated		
 		}
 		else	//if the user cancels

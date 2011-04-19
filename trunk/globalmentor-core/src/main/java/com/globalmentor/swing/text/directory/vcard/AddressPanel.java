@@ -16,12 +16,15 @@
 
 package com.globalmentor.swing.text.directory.vcard;
 
+import static java.util.Arrays.*;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.*;
 import java.beans.PropertyChangeListener;
 import java.util.*;
+
 import javax.swing.*;
 
 import com.globalmentor.awt.Containers;
@@ -49,27 +52,24 @@ public class AddressPanel extends BasicVCardPanel
 	private final JButton addressTypeButton;
 
 	/**The local copy of the address type.*/
-	private int addressType;
+	private Set<Address.Type> addressTypes=EnumSet.noneOf(Address.Type.class);
 
-		/**@return The delivery address type, a combination of
-			<code>Address.XXX_ADDRESS_TYPE</code> constants ORed together.
-		*/
-		protected int getAddressType() {return addressType;}
+		/**@return The delivery address types.*/
+		protected Set<Address.Type> getAddressTypes() {return addressTypes;}
 
-		/**Sets the address type.
-		@param addressType The delivery address type, one or more of the
-			<code>Address.XXX_ADDRESS_TYPE</code> constants ORed together.
+		/**Sets the address types.
+		@param addressTypes The delivery address types.
 		*/
-		protected void setAddressType(final int addressType)
+		protected void setAddressTypes(final Set<Address.Type> addressTypes)
 		{
-			final int oldAddressType=this.addressType;	//get the old address type
-			if(oldAddressType!=addressType)	//if the address type is really changing
+			final Set<Address.Type> oldAddressTypes=this.addressTypes;	//get the old address types
+			if(!oldAddressTypes.equals(addressTypes))	//if the address types are really changing
 			{
-				this.addressType=addressType;	//store the address type locally
+				this.addressTypes=addressTypes;	//store the address type locally
 				setModified(true);	//show that we've changed the address type
 				addressTypeButton.setText(	//update the address type button
-						addressType!=Address.NO_ADDRESS_TYPE	//if there is an address type
-						? Address.getAddressTypeString(addressType)	//show it
+						!addressTypes.isEmpty()	//if there is an address type
+						? Address.getTypeString(addressTypes)	//show it
 						: "");	//if there is no address type, show nothing
 			}
 		}
@@ -90,7 +90,7 @@ public class AddressPanel extends BasicVCardPanel
 		public JTextField getPostOfficeBoxTextField() {return postOfficeBoxTextField;}
 
 	/**The extended addresses, which we won't edit but will save to keep from losing them.*/
-	private String[] extendedAddresses=new String[]{};
+	private List<String> extendedAddresses=new ArrayList<String>();
 
 	/**The label of the street address text fields.*/
 	private final JLabel streetAddressesLabel;
@@ -161,7 +161,7 @@ public class AddressPanel extends BasicVCardPanel
 			regionTextField.setText(address.getRegion()!=null ? address.getRegion() : "");
 			postalCodeTextField.setText(address.getPostalCode()!=null ? address.getPostalCode() : "");
 			countryNameComboBox.setSelectedItem(address.getCountryName()!=null ? address.getCountryName() : "");
-			setAddressType(address.getAddressType());
+			setAddressTypes(address.getTypes());
 //TODO del			addressTypePanel.setAddressType(address.getAddressType());
 			selectLanguageAction.setLocale(address.getLocale());
 		}
@@ -173,7 +173,7 @@ public class AddressPanel extends BasicVCardPanel
 			regionTextField.setText("");
 			postalCodeTextField.setText("");
 			countryNameComboBox.setSelectedItem("");
-			setAddressType(Address.DEFAULT_ADDRESS_TYPE);
+			setAddressTypes(Address.DEFAULT_TYPES);
 //TODO del			addressTypePanel.setAddressType(Address.NO_ADDRESS_TYPE);
 			selectLanguageAction.setLocale(null);
 		}
@@ -191,23 +191,17 @@ public class AddressPanel extends BasicVCardPanel
 		final String region=Strings.getNonEmptyString(regionTextField.getText().trim());
 		final String postalCode=Strings.getNonEmptyString(postalCodeTextField.getText().trim());
 		final String countryName=Strings.getNonEmptyString(countryNameComboBox.getSelectedItem().toString().trim());
-		final int addressType=getAddressType();
+		final Set<Address.Type> addressTypes=getAddressTypes();
 		final Locale locale=selectLanguageAction.getLocale();
 			//if address information was entered
 		if(postOfficeBox!=null || streetAddresses.length>0 || locality!=null || region!=null || postalCode!=null || countryName!=null)
 		{
-			return new Address(postOfficeBox, extendedAddresses, streetAddresses, locality, region, postalCode, countryName, addressType, locale);	//create and return an address representing the entered information
+			return new Address(postOfficeBox, extendedAddresses, asList(streetAddresses), locality, region, postalCode, countryName, addressTypes, locale);	//create and return an address representing the entered information
 		}
 		else	//if no address information was entered
 		{
 			return null;	//show that there was no address
 		}
-	}
-
-	/**Default constructor.*/
-	public AddressPanel()
-	{
-		this(new Address());	//initialize with a default address
 	}
 
 	/**Address constructor.
@@ -309,11 +303,11 @@ public class AddressPanel extends BasicVCardPanel
 	*/
 	public boolean editAddressType()
 	{
-		final AddressTypePanel addressTypePanel=new AddressTypePanel(getAddressType());	//create a new panel with our current address type 
+		final AddressTypePanel addressTypePanel=new AddressTypePanel(getAddressTypes());	//create a new panel with our current address type 
 			//ask for the new address type; if they accept the changes
 		if(BasicOptionPane.showConfirmDialog(this, addressTypePanel, "Delivery Address Type", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)	//TODO i18n
 		{
-			setAddressType(addressTypePanel.getAddressType());	//update the address type
+			setAddressTypes(addressTypePanel.getAddressTypes());	//update the address type
 			return true;	//show that the user accepted the changes and that they were updated		
 		}
 		else	//if the user cancels
