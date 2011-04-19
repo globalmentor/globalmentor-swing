@@ -16,7 +16,12 @@
 
 package com.globalmentor.swing.text.directory.vcard;
 
+import static com.globalmentor.collections.Sets.*;
+
 import java.awt.*;
+import java.util.EnumSet;
+import java.util.Set;
+
 import javax.swing.*;
 import com.globalmentor.awt.BasicGridBagLayout;
 import com.globalmentor.awt.Containers;
@@ -36,24 +41,21 @@ public class EmailPanel extends ModifiablePanel
 	/**The email text field.*/
 	private final JTextField addressTextField;
 	
-	/**The local copy of the email type.*/
-	private int emailType;
+	/**The local copy of the email types.*/
+	private Set<Email.Type> emailTypes=EnumSet.noneOf(Email.Type.class);
 
-		/**@return The email addressing type, a combination of
-			<code>Email.XXX_EMAIL_TYPE</code> constants ORed together.
-		*/
-		protected int getEmailType() {return emailType;}
+		/**@return The email addressing types.*/
+		protected Set<Email.Type> getEmailTypes() {return emailTypes;}
 
-		/**Sets the email type.
-		@param emailType The email addressing type, one or more of the
-			<code>Email.XXX_EMAIL_TYPE</code> constants ORed together.
+		/**Sets the email types.
+		@param emailTypes The email addressing types.
 		*/
-		protected void setEmailType(final int emailType)
+		protected void setEmailTypes(final Set<Email.Type> emailTypes)
 		{
-			this.emailType=emailType;	//store the email type locally
+			this.emailTypes=immutableSetOf(emailTypes);	//store the email type locally
 		}
 
-	/**Shows or hides the telphone number labels.
+	/**Shows or hides the telephone number labels.
 	@param visible <code>true</code> if the labels should be shown,
 		<code>false</code> if they should be hidden.
 	@see TelephoneNumberPanel#setLabelsVisible
@@ -91,12 +93,12 @@ public class EmailPanel extends ModifiablePanel
 		if(email!=null)	//if there is telephone information
 		{
 			setEmailAddress(email.getAddress());	//set the email address
-			setEmailType(email.getEmailType());	//set and update the email type
+			setEmailTypes(email.getTypes());	//set and update the email type
 		}
 		else	//if there is no email information, clear the fields
 		{
 			setEmailAddress("");	//clear the email address
-			setEmailType(Email.DEFAULT_EMAIL_TYPE);	//set the default email type
+			setEmailTypes(EnumSet.of(Email.DEFAULT_TYPE));	//set the default email type
 		}
 	}
 	
@@ -108,8 +110,7 @@ public class EmailPanel extends ModifiablePanel
 		final String emailAddress=Strings.getNonEmptyString(addressTextField.getText().trim());	//get the email address number from the panel
 		if(emailAddress!=null)	//if an email address was given
 		{
-			final int emailType=getEmailType();	//get the email type
-			return new Email(emailAddress, emailType);	//create and return email information representing the entered information
+			return new Email(emailAddress, getEmailTypes());	//create and return email information representing the entered information
 		}
 		else	//if no email address was given
 		{
@@ -120,26 +121,34 @@ public class EmailPanel extends ModifiablePanel
 	/**Default constructor.*/
 	public EmailPanel()
 	{
-		this(null);	//construct a default telephone panel
+		this((Email)null);	//construct a default telephone panel
 	}
 
-	/**Email constructor for a defualt telephone type of
-		<code>Email.INTERNET_EMAIL_TYPE</code>.
+	/**Email constructor for a default telephone type of {@value Email#DEFAULT_TYPE}.
 	@param email The email information to place in the fields, or
 		<code>null</code> if default information should be displayed.
 	*/
 	public EmailPanel(final Email email)
 	{
-		this(email!=null ? email.getAddress() : null, Email.INTERNET_EMAIL_TYPE); 
+		this(email!=null ? email.getAddress() : null, EnumSet.of(Email.DEFAULT_TYPE)); 
 	}
 
+	/**Email address and type constructor for a default telephone type of {@value Email#DEFAULT_TYPE}.
+	@param emailAddress The email address to place in the fields, or
+		<code>null</code> if default information should be displayed.
+	@param emailTypess The email address types.
+	*/
+	public EmailPanel(final String emailAddress)
+	{
+		this(emailAddress, EnumSet.of(Email.DEFAULT_TYPE));
+	}
+	
 	/**Email address and type constructor.
 	@param emailAddress The email address to place in the fields, or
 		<code>null</code> if default information should be displayed.
-	@param emailType The email address type, one or more of the
-		<code>Email.XXX_EMAIL_TYPE</code> constants ORed together.
+	@param emailTypess The email address types.
 	*/
-	public EmailPanel(final String emailAddress, final int emailType)
+	public EmailPanel(final String emailAddress, final Set<Email.Type> emailTypes)
 	{
 		super(new BasicGridBagLayout(), false);	//construct the panel using a grid bag layout, but don't initialize the panel
 //TODO del		editTelephoneTypeAction=new EditTelephoneTypeAction();
@@ -147,7 +156,7 @@ public class EmailPanel extends ModifiablePanel
 		setDefaultFocusComponent(addressTextField);	//set the default focus component
 		initialize();	//initialize the panel
 		setEmailAddress(emailAddress);	//set the given email address
-		setEmailType(emailType);	//set the given email type
+		setEmailTypes(emailTypes);	//set the given email type
 		setModified(false);	//show that the information has not yet been modified
 	}
 

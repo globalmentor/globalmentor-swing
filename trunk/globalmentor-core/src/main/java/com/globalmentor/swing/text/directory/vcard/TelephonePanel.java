@@ -71,7 +71,7 @@ public class TelephonePanel extends BasicVCardPanel
 				setModified(true);	//show that we've changed the telephone type
 				telephoneTypeButton.setText(	//update the telephone type button
 						!telephoneTypes.isEmpty()	//if there is a telephone type
-						? Telephone.getTelephoneTypeString(telephoneTypes)	//show it
+						? Telephone.getTypeString(telephoneTypes)	//show it
 						: "");	//if there is no telephone type, show nothing
 			}
 		}
@@ -112,11 +112,11 @@ public class TelephonePanel extends BasicVCardPanel
 		setTelephoneNumber(telephone);	//set the telephone number
 		if(telephone!=null)	//if there is telephone information
 		{
-			setTelephoneTypes(telephone.getTelephoneTypes());	//set and update the telephone type
+			setTelephoneTypes(telephone.getTypes());	//set and update the telephone type
 		}
 		else	//if there is no telephone information, clear the fields
 		{
-			setTelephoneTypes(EnumSet.of(Telephone.DEFAULT_TELEPHONE_TYPE));	//set the default telephone type
+			setTelephoneTypes(EnumSet.of(Telephone.DEFAULT_TYPE));	//set the default telephone type
 		}
 	}
 	
@@ -158,7 +158,7 @@ public class TelephonePanel extends BasicVCardPanel
 	public TelephonePanel(final Telephone telephone)
 	{
 			//construct a telephone panel with the telephone number and type, or the default type if no telephone is given
-		this(telephone, telephone!=null ? telephone.getTelephoneTypes() : EnumSet.of(Telephone.DEFAULT_TELEPHONE_TYPE)); 
+		this(telephone, telephone!=null ? telephone.getTypes() : EnumSet.of(Telephone.DEFAULT_TYPE)); 
 	}
 
 	/**Telephone number and telephone type constructor.

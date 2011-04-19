@@ -164,7 +164,7 @@ public class TelecommunicationsPanel extends ContentPanel
 		if(emails==null || emails.length==0)	//if no emails were given, add the default emails
 		{
 				//add an Internet email address
-			final EmailPanel internetEmailPanel=new EmailPanel(null, Email.INTERNET_EMAIL_TYPE);
+			final EmailPanel internetEmailPanel=new EmailPanel();
 			internetEmailPanel.setLabelsVisible(false);	//turn off the labels
 			addComponent(internetEmailPanel);
 		}

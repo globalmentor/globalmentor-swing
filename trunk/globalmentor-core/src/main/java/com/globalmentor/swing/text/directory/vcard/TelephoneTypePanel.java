@@ -223,11 +223,11 @@ public class TelephoneTypePanel extends BasicPanel
 
 	/**
 	 * Default constructor.
-	 * @see Telephone#DEFAULT_TELEPHONE_TYPE
+	 * @see Telephone#DEFAULT_TYPE
 	 */
 	public TelephoneTypePanel()
 	{
-		this(EnumSet.of(Telephone.DEFAULT_TELEPHONE_TYPE)); //construct the panel with the default telephone type
+		this(EnumSet.of(Telephone.DEFAULT_TYPE)); //construct the panel with the default telephone type
 	}
 
 	/**
