@@ -32,7 +32,7 @@ import com.globalmentor.model.Verifiable;
 import com.globalmentor.swing.event.*;
 
 import static com.globalmentor.awt.Containers.*;
-import static com.globalmentor.collections.Arrays.*;
+import static com.globalmentor.java.Arrays.*;
 
 /**An extended panel that has extra features beyond those in {@link JPanel}.
 <p>The panel stores properties and fires property change events when a

@@ -19,7 +19,8 @@ package com.globalmentor.swing;
 import java.awt.FlowLayout;
 import java.awt.LayoutManager;
 import java.io.IOException;
-import com.globalmentor.collections.Arrays;
+
+import com.globalmentor.java.Arrays;
 import com.globalmentor.model.ModelViewable;
 
 /**Panel that allows multiple views of a data model to be displayed.
