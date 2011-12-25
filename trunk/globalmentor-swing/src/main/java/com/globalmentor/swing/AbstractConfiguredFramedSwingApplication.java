@@ -165,7 +165,7 @@ public abstract class AbstractConfiguredFramedSwingApplication<C> extends Abstra
 			try
 			{
 				final File configurationFile=getConfigurationFile();	//get the configuration file
-				if(Files.checkExists(configurationFile))	//if there is a configuration file (or a backup configuration file)
+				if(Files.ensureExistsFromBackup(configurationFile))	//if there is a configuration file (or a backup configuration file)
 				{
 					configuration=configurationIOKit.load(Files.toURI(configurationFile));	//ask the I/O kit to load the configuration file
 				}
