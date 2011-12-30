@@ -200,7 +200,7 @@ public abstract class AbstractConfiguredFramedSwingApplication<C> extends Abstra
 
 				final File backupFile=Files.getBackupFile(configurationFile);  //get a backup file
 				configurationIOKit.save(configuration, Files.toURI(tempFile));	//ask the I/O kit to save the configuration to the temporary file
-				Files.moveFile(tempFile, configurationFile, backupFile); //move the temp file to the normal file, creating a backup if necessary
+				Files.move(tempFile, configurationFile, backupFile); //move the temp file to the normal file, creating a backup if necessary
 				setModified(false);	//the application has not been modified, as its configuration has just been saved
 			}
 			catch(SecurityException securityException)	//if we can't access the configuration file
