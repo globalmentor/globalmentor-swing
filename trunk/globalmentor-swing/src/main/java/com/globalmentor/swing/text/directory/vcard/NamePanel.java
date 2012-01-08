@@ -16,13 +16,14 @@
 
 package com.globalmentor.swing.text.directory.vcard;
 
+import static com.globalmentor.text.TextFormatter.*;
+
 import java.awt.*;
 import java.beans.*;
 import java.util.*;
 import javax.swing.*;
 
 import com.globalmentor.awt.Containers;
-import com.globalmentor.java.*;
 import com.globalmentor.swing.*;
 import com.globalmentor.text.directory.vcard.*;
 import com.globalmentor.util.*;
@@ -110,11 +111,11 @@ public class NamePanel extends BasicVCardPanel
 	{
 		if(name!=null)	//if there is a name
 		{
-			familyNameTextField.setText(Strings.concat(name.getFamilyNames(), VALUE_SEPARATOR));
-			givenNameTextField.setText(Strings.concat(name.getGivenNames(), VALUE_SEPARATOR));
-			additionalNameTextField.setText(Strings.concat(name.getAdditionalNames(), VALUE_SEPARATOR));
-			honorificPrefixComboBox.setSelectedItem(Strings.concat(name.getHonorificPrefixes(), VALUE_SEPARATOR));
-			honorificSuffixComboBox.setSelectedItem(Strings.concat(name.getHonorificSuffixes(), VALUE_SEPARATOR));
+			familyNameTextField.setText(formatList(VALUE_SEPARATOR, name.getFamilyNames()));
+			givenNameTextField.setText(formatList(VALUE_SEPARATOR, name.getGivenNames()));
+			additionalNameTextField.setText(formatList(VALUE_SEPARATOR, name.getAdditionalNames()));
+			honorificPrefixComboBox.setSelectedItem(formatList(VALUE_SEPARATOR, name.getHonorificPrefixes()));
+			honorificSuffixComboBox.setSelectedItem(formatList(VALUE_SEPARATOR, name.getHonorificSuffixes()));
 			selectLanguageAction.setLocale(name.getLocale());
 		}
 		else	//if there is no name, clear the fields

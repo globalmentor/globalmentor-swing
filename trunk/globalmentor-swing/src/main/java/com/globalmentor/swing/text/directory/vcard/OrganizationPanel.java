@@ -16,6 +16,8 @@
 
 package com.globalmentor.swing.text.directory.vcard;
 
+import static com.globalmentor.text.TextFormatter.*;
+
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.util.*;
@@ -128,7 +130,7 @@ public class OrganizationPanel extends BasicVCardPanel
 	*/
 	public void setUnits(final Collection<LocaledText> units)
 	{
-		unitsTextField.setText(Strings.concat(units, UNIT_SEPARATOR));
+		unitsTextField.setText(formatList(UNIT_SEPARATOR, units));
 	}
 
 	/**@return The organizational units.*/

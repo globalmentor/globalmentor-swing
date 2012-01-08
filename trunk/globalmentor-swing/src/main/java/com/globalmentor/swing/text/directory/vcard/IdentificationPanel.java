@@ -16,6 +16,8 @@
 
 package com.globalmentor.swing.text.directory.vcard;
 
+import static com.globalmentor.text.TextFormatter.*;
+
 import java.awt.*;
 import java.awt.event.ItemListener;
 import java.beans.*;
@@ -135,7 +137,7 @@ public class IdentificationPanel extends BasicVCardPanel
 	{
 		if(nicknames!=null)	//if there are nicknames
 		{
-			nicknameTextField.setText(Strings.concat(nicknames, VALUE_SEPARATOR));
+			nicknameTextField.setText(formatList(VALUE_SEPARATOR, nicknames));
 			if(nicknames.length>0)	//if there is at least one nickname
 			{
 				selectNicknameLanguageAction.setLocale(nicknames[0].getLocale());

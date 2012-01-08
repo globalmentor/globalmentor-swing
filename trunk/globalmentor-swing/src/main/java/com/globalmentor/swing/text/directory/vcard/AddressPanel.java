@@ -16,6 +16,7 @@
 
 package com.globalmentor.swing.text.directory.vcard;
 
+import static com.globalmentor.text.TextFormatter.*;
 import static java.util.Arrays.*;
 
 import java.awt.Dimension;
@@ -156,7 +157,7 @@ public class AddressPanel extends BasicVCardPanel
 		{
 			postOfficeBoxTextField.setText(address.getPostOfficeBox()!=null ? address.getPostOfficeBox() : "");
 			extendedAddresses=address.getExtendedAddresses();	//save the extended addresses so we won't lose them
-			streetAddressTextPane.setText(Strings.concat(address.getStreetAddresses(), '\n'));	//separate the street addresses with newlines and place them in the text pane
+			streetAddressTextPane.setText(formatList('\n', address.getStreetAddresses()));	//separate the street addresses with newlines and place them in the text pane
 			localityTextField.setText(address.getLocality()!=null ? address.getLocality() : "");
 			regionTextField.setText(address.getRegion()!=null ? address.getRegion() : "");
 			postalCodeTextField.setText(address.getPostalCode()!=null ? address.getPostalCode() : "");
