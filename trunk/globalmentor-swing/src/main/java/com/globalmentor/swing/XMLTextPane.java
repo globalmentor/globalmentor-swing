@@ -1172,7 +1172,7 @@ Log.trace("reading from stream into document"); //TODO del
 	{
 		final DOMImplementation domImplementation=XML.createDocumentBuilder(true).getDOMImplementation();
 			//create a document with an document element of <xhtml:div> TODO create something less XHTML-ish and more generic
-		final org.w3c.dom.Document xmlDocument=domImplementation.createDocument(XHTML.XHTML_NAMESPACE_URI.toString(), XML.createQualifiedName(XHTML.XHTML_NAMESPACE_PREFIX, XHTML.ELEMENT_DIV), null);
+		final org.w3c.dom.Document xmlDocument=domImplementation.createDocument(XHTML.XHTML_NAMESPACE_URI.toString(), XML.createQName(XHTML.XHTML_NAMESPACE_PREFIX, XHTML.ELEMENT_DIV), null);
 			//import the document fragment and append it to the root element of our document
 		xmlDocument.getDocumentElement().appendChild(xmlDocument.importNode(xmlDocumentFragment, true));
 		setXML(xmlDocument, baseURI, mediaType);	//set the XML using our created enclosing document
