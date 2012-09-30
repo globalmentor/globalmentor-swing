@@ -23,6 +23,7 @@ import java.util.*;
 import javax.swing.text.*;
 import javax.xml.parsers.DocumentBuilder;
 
+import org.urframework.maqro.*;
 import org.xml.sax.SAXException;
 
 
@@ -42,7 +43,6 @@ import com.globalmentor.swing.text.xml.xhtml.XHTMLEditorKit;
 import com.globalmentor.text.xml.URIInputStreamableXMLEntityResolver;
 import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.oeb.OEB;
-import com.globalmentor.urf.maqro.*;
 
 /**An editor kit for an XEB publication.
 @see XMLEditorKit

@@ -20,10 +20,11 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import org.urframework.URF;
+import org.urframework.URFResource;
+import org.urframework.dcmi.DCMI;
+
 import com.globalmentor.awt.BasicGridBagLayout;
-import com.globalmentor.urf.URF;
-import com.globalmentor.urf.URFResource;
-import com.globalmentor.urf.dcmi.DCMI;
 
 import static com.globalmentor.java.Characters.*;
 

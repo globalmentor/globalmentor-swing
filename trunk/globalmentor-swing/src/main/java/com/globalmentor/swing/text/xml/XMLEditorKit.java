@@ -27,7 +27,7 @@ import javax.swing.text.Element;
 
 import static com.globalmentor.io.Charsets.*;
 import static com.globalmentor.java.Objects.*;
-//TODO fix import static com.globalmentor.urf.maqro.MAQRO.*;
+//TODO fix import static org.urframework.maqro.MAQRO.*;
 
 import com.globalmentor.collections.IdentityHashSet;
 import com.globalmentor.io.*;
@@ -43,7 +43,7 @@ import com.globalmentor.swing.text.xml.css.*;
 import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.XMLSerializer;
 import com.globalmentor.text.xml.stylesheets.css.*;
-//TODO fix import com.globalmentor.urf.maqro.Activity;
+//TODO fix import org.urframework.maqro.Activity;
 
 import org.w3c.dom.*;
 import org.w3c.dom.css.*;
