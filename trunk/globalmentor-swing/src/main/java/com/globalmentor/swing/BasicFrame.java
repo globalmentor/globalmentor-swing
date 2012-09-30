@@ -23,7 +23,7 @@ import java.util.*;
 import java.util.prefs.*;
 import javax.swing.*;
 import com.globalmentor.awt.*;
-import com.globalmentor.java.*;
+import com.globalmentor.java.Objects;
 import com.globalmentor.log.Log;
 import com.globalmentor.model.Modifiable;
 

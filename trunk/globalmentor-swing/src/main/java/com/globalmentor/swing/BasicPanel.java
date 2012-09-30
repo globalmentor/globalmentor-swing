@@ -28,6 +28,7 @@ import javax.swing.event.*;
 
 import com.globalmentor.awt.*;
 import com.globalmentor.java.*;
+import com.globalmentor.java.Objects;
 import com.globalmentor.model.Verifiable;
 import com.globalmentor.swing.event.*;
 

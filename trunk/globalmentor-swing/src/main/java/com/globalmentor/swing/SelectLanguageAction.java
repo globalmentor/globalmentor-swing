@@ -20,7 +20,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
-import com.globalmentor.java.*;
+import com.globalmentor.java.Objects;
 import com.globalmentor.model.Localeable;
 
 /**Action for selecting a language from a dialog.

@@ -28,6 +28,7 @@ import javax.swing.*;
 import com.globalmentor.awt.Containers;
 import com.globalmentor.collections.ModifiableSet;
 import com.globalmentor.java.*;
+import com.globalmentor.java.Objects;
 import com.globalmentor.model.LocaledText;
 import com.globalmentor.swing.*;
 import com.globalmentor.text.directory.vcard.*;
