@@ -32,7 +32,7 @@ import static com.globalmentor.java.Characters.*;
 <p>This panel recognizes the following resource properties:</p>
 <dl>
 	<dt><code>dc.title</code></dt> <dd>The title to display in the panel.</dd>
-	<dt><code>urf.version</code></dt> <dd>The vesion to display in the panel.</dd>
+	<dt><code>urf.version</code></dt> <dd>The version to display in the panel.</dd>
 	<dt><code>dc.rights</code></dt> <dd>The copyright information to display in the panel.</dd>
 </dl>
 @author Garret Wilson

@@ -42,21 +42,23 @@ public abstract class AbstractFramedSwingApplication extends AbstractSwingApplic
 		*/
 		protected void setApplicationFrame(final Frame frame) {applicationFrame=frame;}
 	
-	/**Reference URI constructor.
-	@param referenceURI The reference URI of the application.
+	/**URI constructor.
+	@param uri The URI identifying the application.
+	@param name The name of the application.
 	*/
-	public AbstractFramedSwingApplication(final URI referenceURI)
+	public AbstractFramedSwingApplication(final URI uri, final String name)
 	{
-		this(referenceURI, NO_ARGUMENTS);	//construct the class with no arguments
+		this(uri, name, NO_ARGUMENTS);	//construct the class with no arguments
 	}
 
-	/**Reference URI and arguments constructor.
-	@param referenceURI The reference URI of the application.
+	/**URI and arguments constructor.
+	@param uri The URI identifying the application.
+	@param name The name of the application.
 	@param args The command line arguments.
 	*/
-	public AbstractFramedSwingApplication(final URI referenceURI, final String[] args)
+	public AbstractFramedSwingApplication(final URI uri, final String name, final String[] args)
 	{
-		super(referenceURI, args);	//construct the parent class
+		super(uri, name, args);	//construct the parent class
 		applicationFrame=null;	//show that we do not yet have an application frame
 	}
 

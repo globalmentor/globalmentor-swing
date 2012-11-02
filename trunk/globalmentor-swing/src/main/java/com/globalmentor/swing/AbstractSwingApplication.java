@@ -32,21 +32,23 @@ This version creates a default authenticator for client authentication using Swi
 public abstract class AbstractSwingApplication extends AbstractApplication
 {
 
-	/**Reference URI constructor.
-	@param referenceURI The reference URI of the application.
+	/**URI constructor.
+	@param uri The URI identifying the application.
+	@param name The name of the application.
 	*/
-	public AbstractSwingApplication(final URI referenceURI)
+	public AbstractSwingApplication(final URI uri, final String name)
 	{
-		this(referenceURI, NO_ARGUMENTS);	//construct the class with no arguments
+		this(uri, name, NO_ARGUMENTS);	//construct the class with no arguments
 	}
 
-	/**Reference URI and arguments constructor.
-	@param referenceURI The reference URI of the application.
+	/**URI and arguments constructor.
+	@param uri The URI identifying the application.
+	@param name The name of the application.
 	@param args The command line arguments.
 	*/
-	public AbstractSwingApplication(final URI referenceURI, final String[] args)
+	public AbstractSwingApplication(final URI uri, final String name, final String[] args)
 	{
-		super(referenceURI, args);	//construct the parent class
+		super(uri, name, args);	//construct the parent class
 		setAuthenticator(new SwingAuthenticator());	//create a default authenticator for HTTP connections on the default HTTP client
 	}
 
@@ -256,7 +258,7 @@ public abstract class AbstractSwingApplication extends AbstractApplication
 	*/
 	protected String getDefaultErrorTitle(final Throwable throwable)
 	{
-		final StringBuilder stringBuilder=new StringBuilder(determineLabel());	//construct the default title, starting with the label of the application
+		final StringBuilder stringBuilder=new StringBuilder(getName());	//construct the default title, starting with the label of the application
 		if(throwable!=null)	//if we were given a throwable
 		{
 			stringBuilder.append(' ').append(Classes.getLocalName(throwable.getClass()));	//append the throwable local class name

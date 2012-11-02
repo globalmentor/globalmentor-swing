@@ -106,22 +106,23 @@ public abstract class AbstractConfiguredFramedSwingApplication<C> extends Abstra
 		*/
 		protected void setConfigurationIOKit(final IOKit<C> ioKit) {configurationIOKit=ioKit;}
 
-
 	/**Reference URI constructor.
-	@param referenceURI The reference URI of the application.
+	@param uri The URI identifying the application.
+	@param name The name of the application.
 	*/
-	public AbstractConfiguredFramedSwingApplication(final URI referenceURI)
+	public AbstractConfiguredFramedSwingApplication(final URI uri, final String name)
 	{
-		this(referenceURI, NO_ARGUMENTS);	//construct the class with no arguments
+		this(uri, name, NO_ARGUMENTS);	//construct the class with no arguments
 	}
 
 	/**Reference URI and arguments constructor.
-	@param referenceURI The reference URI of the application.
+	@param uri The URI identifying the application.
+	@param name The name of the application.
 	@param args The command line arguments.
 	*/
-	public AbstractConfiguredFramedSwingApplication(final URI referenceURI, final String[] args)
+	public AbstractConfiguredFramedSwingApplication(final URI uri, final String name, final String[] args)
 	{
-		super(referenceURI, args);	//construct the parent class
+		super(uri, name, args);	//construct the parent class
 	}
 
 	/**Initializes the application.

@@ -93,7 +93,7 @@ public class ApplicationFrame extends BasicFrame
 		final String title;
 		if(application!=null)	//if we have an application
 		{
-			return getApplication().determineLabel();	//get the application's label
+			return getApplication().getName();	//get the application's label TODO add the capability for a label, which may be more decorated (e.g. with the trademark symbol) than just a name
 		}
 		else	//if we have no application
 		{
@@ -291,11 +291,13 @@ public class ApplicationFrame extends BasicFrame
 	/**Shows information about the application.*/
 	public void about()
 	{
+		/*TODO fix about box; determine how applications will store properties
 		final AboutPanel aboutPanel=new AboutPanel(getApplication());	//create a new about panel for the application
 			//determine a title for the dialog, based upon the application title
 		final String dialogTitle="About"+(aboutPanel.getTitle()!=null ? " "+aboutPanel.getTitle() : "");	//TODO i18n
 		//have an option pane create and show a new dialog using our about panel
 		BasicOptionPane.showMessageDialog(this, aboutPanel, dialogTitle, JOptionPane.INFORMATION_MESSAGE);	//TODO check and see why we originally had a more complex version
+		*/
 	}
 
 	/**Determines whether the frame can close.
