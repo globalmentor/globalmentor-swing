@@ -37,7 +37,7 @@ public class XMLDocumentFragmentPanel extends XMLPanel<DocumentFragment>
 	*/
 	public XMLDocumentFragmentPanel(final XMLNodeModel<DocumentFragment> model, final boolean initialize)
 	{
-		this(model, ContentType.getInstance(ContentType.TEXT_PRIMARY_TYPE, ContentTypeConstants.XML_SUBTYPE), initialize);	//construct the panel with a default text/xml media type
+		this(model, ContentType.create(ContentType.TEXT_PRIMARY_TYPE, ContentTypeConstants.XML_SUBTYPE), initialize);	//construct the panel with a default text/xml media type
 	}
 
 	/**Content type constructor.

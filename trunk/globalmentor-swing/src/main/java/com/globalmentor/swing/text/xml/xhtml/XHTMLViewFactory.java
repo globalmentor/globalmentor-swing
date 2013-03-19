@@ -32,7 +32,7 @@ public class XHTMLViewFactory extends XMLViewFactory
 {
 
 	/**A static application/java media type for quick reference in the view factory.*/
-	protected final static ContentType APPLICATION_JAVA_MEDIA_TYPE=ContentType.getInstance(ContentType.APPLICATION_PRIMARY_TYPE, ContentTypeConstants.JAVA_SUBTYPE);
+	protected final static ContentType APPLICATION_JAVA_MEDIA_TYPE=ContentType.create(ContentType.APPLICATION_PRIMARY_TYPE, ContentTypeConstants.JAVA_SUBTYPE);
 
 	/**Creates a view for the given element. If the element specifies a
 		namespace and a view factory has been registered for the given namespace,
@@ -80,7 +80,7 @@ public class XHTMLViewFactory extends XMLViewFactory
 						final ContentType mediaType=XHTMLSwingText.getObjectMediaType(recognizedObjectElement.getAttributes());
 						if(XHTMLSwingText.isMediaTypeSupported(mediaType)) //if we support this media type
 						{
-							if(mediaType.match(APPLICATION_JAVA_MEDIA_TYPE))  //if this is a Java applet
+							if(mediaType.hasBaseType(APPLICATION_JAVA_MEDIA_TYPE))  //if this is a Java applet
 							{
 								return new XHTMLAppletView(element);	//return an applet view for this object element
 							}

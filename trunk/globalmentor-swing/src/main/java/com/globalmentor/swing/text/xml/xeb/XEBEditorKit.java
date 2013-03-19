@@ -55,10 +55,10 @@ public class XEBEditorKit extends XHTMLEditorKit	//TODO eventually go back to de
 	public final static String READ_TASK="READ";
 
 	/**The "text/x-oeb1-document" content type.*/
-	protected final static ContentType OEB_DOCUMENT_MEDIA_TYPE=ContentType.getInstance(ContentType.TEXT_PRIMARY_TYPE, OEB.X_OEB1_DOCUMENT_SUBTYPE);
+	protected final static ContentType OEB_DOCUMENT_MEDIA_TYPE=ContentType.create(ContentType.TEXT_PRIMARY_TYPE, OEB.X_OEB1_DOCUMENT_SUBTYPE);
 
 	/**The "application/x-maqro+rdf+xml" content type.*/
-	protected final static ContentType MAQRO_MEDIA_TYPE=ContentType.getInstance(ContentType.APPLICATION_PRIMARY_TYPE, X_MAQRO_RDF_XML_SUBTYPE);
+	protected final static ContentType MAQRO_MEDIA_TYPE=ContentType.create(ContentType.APPLICATION_PRIMARY_TYPE, X_MAQRO_RDF_XML_SUBTYPE);
 	
 	/**Constructor.
 	@param uriInputStreamable The source of input streams for resources.
@@ -266,7 +266,7 @@ Log.trace(RDFResources.toString(rdf));
 //TODO fix with URF						final ContentType contentType=Marmot.getMediaType(item);	//get the item's content type
 						final ContentType contentType=URIs.getContentType(itemURI);	//get the item's content type
 //TODO fix						final ContentType contentType=null;	//TODO fix with URF
-						if(MAQRO_MEDIA_TYPE.match(contentType))	//if this is a MAQRO activity
+						if(MAQRO_MEDIA_TYPE.hasBaseType(contentType))	//if this is a MAQRO activity
 						{
 							final InputStream itemInputStream=swingXMLDocument.getInputStream(itemURI); //get an input stream to the object
 							try

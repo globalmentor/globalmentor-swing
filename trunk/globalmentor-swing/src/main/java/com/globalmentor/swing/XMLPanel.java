@@ -131,7 +131,7 @@ public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeMo
 	*/
 	public XMLPanel(final XMLNodeModel<N> model, final boolean initialize)
 	{
-		this(model, ContentType.getInstance(ContentType.TEXT_PRIMARY_TYPE, ContentTypeConstants.XML_SUBTYPE), initialize);	//construct the panel with a default text/xml media type
+		this(model, ContentType.create(ContentType.TEXT_PRIMARY_TYPE, ContentTypeConstants.XML_SUBTYPE), initialize);	//construct the panel with a default text/xml media type
 	}
 
 	/**Content type constructor.
@@ -224,7 +224,7 @@ updateStatus();	//testing; probably put a convenience method to create this list
 	/**@return The XML content type of the panel.*/
 	public ContentType getContentType()
 	{
-		return ContentType.getInstance(getXMLTextPane().getContentType());	//return the XML text pane content type
+		return ContentType.create(getXMLTextPane().getContentType());	//return the XML text pane content type
 	}	
 
 	/**Sets the XML content type of the panel.

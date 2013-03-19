@@ -76,22 +76,22 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	public final static String EDITOR_KIT_PROPERTY="editorKit";
 
 	/**The "application/zip" content type.*/
-	protected final static ContentType ZIP_MEDIA_TYPE=ContentType.getInstance(ContentType.APPLICATION_PRIMARY_TYPE, ZIP_SUBTYPE);
+	protected final static ContentType ZIP_MEDIA_TYPE=ContentType.create(ContentType.APPLICATION_PRIMARY_TYPE, ZIP_SUBTYPE);
 
 	/**The "application/x-oeb1-package+xml" content type.*/
-	protected final static ContentType OEB_PACKAGE_MEDIA_TYPE=ContentType.getInstance(ContentType.APPLICATION_PRIMARY_TYPE, OEB.X_OEB1_PACKAGE_XML_SUBTYPE);
+	protected final static ContentType OEB_PACKAGE_MEDIA_TYPE=ContentType.create(ContentType.APPLICATION_PRIMARY_TYPE, OEB.X_OEB1_PACKAGE_XML_SUBTYPE);
 
 	/**The "application/x-oeb-publication+zip" content type.*/
-	protected final static ContentType OEB_ZIP_MEDIA_TYPE=ContentType.getInstance(ContentType.APPLICATION_PRIMARY_TYPE, OEB.X_OEB_PUBLICATION_ZIP_SUBTYPE);
+	protected final static ContentType OEB_ZIP_MEDIA_TYPE=ContentType.create(ContentType.APPLICATION_PRIMARY_TYPE, OEB.X_OEB_PUBLICATION_ZIP_SUBTYPE);
 
 	/**The "application/x-xebook+rdf+xml" content type.*/
-	protected final static ContentType XEBOOK_MEDIA_TYPE=ContentType.getInstance(ContentType.APPLICATION_PRIMARY_TYPE, X_XEBOOK_RDF_XML_SUBTYPE);
+	protected final static ContentType XEBOOK_MEDIA_TYPE=ContentType.create(ContentType.APPLICATION_PRIMARY_TYPE, X_XEBOOK_RDF_XML_SUBTYPE);
 
 	/**The "application/x-xebook+rdf+xml+zip" content type.*/
-	protected final static ContentType XEB_ZIP_MEDIA_TYPE=ContentType.getInstance(ContentType.APPLICATION_PRIMARY_TYPE, X_XEBOOK_RDF_XML_ZIP_SUBTYPE);
+	protected final static ContentType XEB_ZIP_MEDIA_TYPE=ContentType.create(ContentType.APPLICATION_PRIMARY_TYPE, X_XEBOOK_RDF_XML_ZIP_SUBTYPE);
 
 	/**The "text/plain" content type.*/
-	protected final static ContentType TEXT_PLAIN_MEDIA_TYPE=ContentType.getInstance(ContentType.TEXT_PRIMARY_TYPE, Text.PLAIN_SUBTYPE);
+	protected final static ContentType TEXT_PLAIN_MEDIA_TYPE=ContentType.create(ContentType.TEXT_PRIMARY_TYPE, Text.PLAIN_SUBTYPE);
 
 	//TODO fix asynchronous stop-gap kludge to correctly get the asynchronous setting from the document---if that's the best way to do it
 	protected boolean asynchronousLoad=false;
@@ -748,7 +748,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	{
 		try
 		{
-			final ContentType contentType=ContentType.getInstance(getContentType());	//find out the content type TODO check for null
+			final ContentType contentType=ContentType.create(getContentType());	//find out the content type TODO check for null
 			if(isXML(contentType))	//if this is XML TODO all this special handling needs to go in the editor kit; really, this should go in the code using the text pane, complementary to the decoding
 			{
 				if(text.length()>0)	//if there is any text
@@ -853,7 +853,7 @@ try {
 		Log.trace("content type is first: ", contentType);  //TODO del
 		InputStream inputStream=null;	//we'll attempt to get an input stream based upon the content type
 			//if this appears to be an XEB book zip file, an OEB publication zip file or an application/zip file, change our input stream locator and switch to a URI inside the file
-		if(OEB_ZIP_MEDIA_TYPE.match(contentType) || XEB_ZIP_MEDIA_TYPE.match(contentType) || ZIP_MEDIA_TYPE.match(contentType))
+		if(OEB_ZIP_MEDIA_TYPE.hasBaseType(contentType) || XEB_ZIP_MEDIA_TYPE.hasBaseType(contentType) || ZIP_MEDIA_TYPE.hasBaseType(contentType))
 		{
 Log.trace("found zip file: ", uri);  //TODO del
 			if(URIs.FILE_SCHEME.equals(uri.getScheme()))  //if this is the file scheme
@@ -869,8 +869,8 @@ Log.trace("found zip file: ", uri);  //TODO del
 				  final ContentType zipEntryContentType=Files.getMediaType(zipEntry.getName());	//see what content type this entry has TODO use XPackage if available
 				  if(zipEntryContentType!=null)	//if we know the content type of this zip entry
 				  {
-					  if((XEBOOK_MEDIA_TYPE.match(zipEntryContentType) && !OEB_ZIP_MEDIA_TYPE.match(contentType))	//if this is an XEbook that isn't in an OEB zip file
-					  		|| (OEB_PACKAGE_MEDIA_TYPE.match(zipEntryContentType) && !XEB_ZIP_MEDIA_TYPE.match(contentType)))	//or if this is an OEB package that isn't in a XEB zip file
+					  if((XEBOOK_MEDIA_TYPE.hasBaseType(zipEntryContentType) && !OEB_ZIP_MEDIA_TYPE.hasBaseType(contentType))	//if this is an XEbook that isn't in an OEB zip file
+					  		|| (OEB_PACKAGE_MEDIA_TYPE.hasBaseType(zipEntryContentType) && !XEB_ZIP_MEDIA_TYPE.hasBaseType(contentType)))	//or if this is an OEB package that isn't in a XEB zip file
 						{
 							try
 							{
@@ -1270,20 +1270,20 @@ Log.trace("reading from stream into document"); //TODO del
 	public EditorKit getEditorKitForContentType(final String type)
 	{
 		EditorKit editorKit=null;	//we'll try to create an editor kit
-		final ContentType mediaType=ContentType.getInstance(type);  //create a new media type
+		final ContentType mediaType=ContentType.create(type);  //create a new media type
 		if(XHTML.isHTML(mediaType))	//if this is an XHTML media type
 		{
 			editorKit=new XHTMLEditorKit(mediaType, this);	//create a new XHTML editor kit for this media type
 		}
-	  else if(OEB_PACKAGE_MEDIA_TYPE.match(mediaType))	//if this is an OEB package
+	  else if(OEB_PACKAGE_MEDIA_TYPE.hasBaseType(mediaType))	//if this is an OEB package
 		{
 			editorKit=new OEBEditorKit(this);  //create a new OEB editor kit for the OEB package
 		}
-	  else if(XEBOOK_MEDIA_TYPE.match(mediaType))	//if this is an XEbook
+	  else if(XEBOOK_MEDIA_TYPE.hasBaseType(mediaType))	//if this is an XEbook
 		{
 			editorKit=new XEBEditorKit(this);  //create a new XEB editor kit for the XEbook
 		}
-	  else if(TEXT_PLAIN_MEDIA_TYPE.match(mediaType))	//if this is a plain text document
+	  else if(TEXT_PLAIN_MEDIA_TYPE.hasBaseType(mediaType))	//if this is a plain text document
 		{
 	  	editorKit=new BasicStyledEditorKit(this);  //create a new basic styled editor kit for the text
 		}

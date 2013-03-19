@@ -55,7 +55,7 @@ public class XMLEditorKit extends BasicStyledEditorKit
 {
 
 	/**The default media type this editor kit supports, <code>text/xml</code>.*/
-	protected final static ContentType DEFAULT_MEDIA_TYPE=ContentType.getInstance(ContentType.TEXT_PRIMARY_TYPE, ContentTypeConstants.XML_SUBTYPE);
+	protected final static ContentType DEFAULT_MEDIA_TYPE=ContentType.create(ContentType.TEXT_PRIMARY_TYPE, ContentTypeConstants.XML_SUBTYPE);
 	
 	/**The map of XML element kits keyed to XML namespaces.*/
 	protected final Map<String, XMLElementKit> namespaceXMLElementKitMap=new HashMap<String, XMLElementKit>();
