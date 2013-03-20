@@ -125,7 +125,7 @@ public class IdentificationPanel extends BasicVCardPanel
 	*/
 	public LocaledText getFormattedName()
 	{
-		final String fn=Strings.getNonEmptyString(formattedNameTextField.getText().trim());
+		final String fn=Strings.asNonEmptyString(formattedNameTextField.getText().trim());
 		return fn!=null ? new LocaledText(fn, selectFormattedNameLanguageAction.getLocale()) : null;
 	}
 

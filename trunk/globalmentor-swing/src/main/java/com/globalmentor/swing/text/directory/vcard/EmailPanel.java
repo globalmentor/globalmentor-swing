@@ -107,7 +107,7 @@ public class EmailPanel extends ModifiablePanel
 	*/
 	public Email getEmail()
 	{
-		final String emailAddress=Strings.getNonEmptyString(addressTextField.getText().trim());	//get the email address number from the panel
+		final String emailAddress=Strings.asNonEmptyString(addressTextField.getText().trim());	//get the email address number from the panel
 		if(emailAddress!=null)	//if an email address was given
 		{
 			return new Email(emailAddress, getEmailTypes());	//create and return email information representing the entered information

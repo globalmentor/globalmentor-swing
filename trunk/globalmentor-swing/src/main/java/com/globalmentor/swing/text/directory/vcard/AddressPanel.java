@@ -185,13 +185,13 @@ public class AddressPanel extends BasicVCardPanel
 	*/
 	public Address getAddress()
 	{
-		final String postOfficeBox=Strings.getNonEmptyString(postOfficeBoxTextField.getText().trim());
+		final String postOfficeBox=Strings.asNonEmptyString(postOfficeBoxTextField.getText().trim());
 			//trim the string in the street address text field and tokenize the lines
 		final String[] streetAddresses=StringTokenizers.getTokens(new StringTokenizer(streetAddressTextPane.getText().trim(), "\r\n"));
-		final String locality=Strings.getNonEmptyString(localityTextField.getText().trim());
-		final String region=Strings.getNonEmptyString(regionTextField.getText().trim());
-		final String postalCode=Strings.getNonEmptyString(postalCodeTextField.getText().trim());
-		final String countryName=Strings.getNonEmptyString(countryNameComboBox.getSelectedItem().toString().trim());
+		final String locality=Strings.asNonEmptyString(localityTextField.getText().trim());
+		final String region=Strings.asNonEmptyString(regionTextField.getText().trim());
+		final String postalCode=Strings.asNonEmptyString(postalCodeTextField.getText().trim());
+		final String countryName=Strings.asNonEmptyString(countryNameComboBox.getSelectedItem().toString().trim());
 		final Set<Address.Type> addressTypes=getAddressTypes();
 		final Locale locale=selectLanguageAction.getLocale();
 			//if address information was entered

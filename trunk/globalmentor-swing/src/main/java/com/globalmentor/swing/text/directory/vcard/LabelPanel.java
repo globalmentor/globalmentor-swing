@@ -105,7 +105,7 @@ public class LabelPanel extends BasicVCardPanel
 	*/
 	public Label getLabel()
 	{
-		final String labelText=Strings.getNonEmptyString(labelTextPane.getText().trim());
+		final String labelText=Strings.asNonEmptyString(labelTextPane.getText().trim());
 		if(labelText!=null)	//if label information was entered
 		{
 			final Set<Address.Type> addressTypes=getAddressTypes();
