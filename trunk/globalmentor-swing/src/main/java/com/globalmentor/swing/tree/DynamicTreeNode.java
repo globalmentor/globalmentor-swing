@@ -108,7 +108,7 @@ public abstract class DynamicTreeNode extends DefaultMutableTreeNode
 	}  
 
 	/**Dynamically loads child nodes when needed. Must be overridden to appropriately load children.
-	@exception IOException if there is an error loading the child nodes.
+	@throws IOException if there is an error loading the child nodes.
 	*/
 	protected abstract void loadChildNodes() throws IOException;
 	

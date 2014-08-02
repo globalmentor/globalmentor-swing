@@ -73,7 +73,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	/**Constructs a default basic styled document with content with a size of <code>BUFFER_SIZE_DEFAULT</code> 
 	 	and a style context that is scoped by the lifetime of the document and is not shared with other documents.
 	@param uriInputStreamable The source of input streams for resources.
-	@exception NullPointerException if the new source of input streams is <code>null</code>.
+	@throws NullPointerException if the new source of input streams is <code>null</code>.
 	*/
 	public BasicStyledDocument(final URIInputStreamable uriInputStreamable)
 	{
@@ -83,7 +83,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	/**Constructs a styled document with the default content storage implementation and a shared set of styles.
 	@param styles Resources and style definitions which may be shared across documents.
 	@param uriInputStreamable The source of input streams for resources.
-	@exception NullPointerException if the new source of input streams is <code>null</code>.
+	@throws NullPointerException if the new source of input streams is <code>null</code>.
 	*/
 	public BasicStyledDocument(final StyleContext styles, final URIInputStreamable uriInputStreamable)
 	{
@@ -94,7 +94,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	@param content The container for the content.
 	@param styles Resources and style definitions which may be shared across documents.
 	@param uriInputStreamable The source of input streams for resources.
-	@exception NullPointerException if the new source of input streams is <code>null</code>.
+	@throws NullPointerException if the new source of input streams is <code>null</code>.
 	*/
 	public BasicStyledDocument(final Content content, final StyleContext styles, final URIInputStreamable uriInputStreamable)
 	{
@@ -202,7 +202,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	/**Gets the location against which to resolve relative URIs.
 	@return The location against which to resolve relative URIs, or <code>null</code>
 		if there is no base URI.
-	//TODO del	@exception URISyntaxException Thrown if the a URI could not be created.
+	//TODO del	@throws URISyntaxException Thrown if the a URI could not be created.
 	@see Documents#BASE_URI_PROPERTY
 	*/
 	public URI getBaseURI()
@@ -214,7 +214,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	This implementation delegates to the editor kit's <code>URIInputStreamable</code>.
 	@param uri A complete URI to a resource.
 	@return An input stream to the contents of the resource represented by the given URI.
-	@exception IOException Thrown if an I/O error occurred.
+	@throws IOException Thrown if an I/O error occurred.
 	*/
 	public final InputStream getInputStream(final URI uri) throws IOException
 	{
@@ -225,7 +225,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	The calling class has the responsibility for closing the output stream.
 	@param uri A URI to a resource.
 	@return An output stream to the contents of the resource represented by the given URI.
-	@exception IOException Thrown if an I/O error occurred.
+	@throws IOException Thrown if an I/O error occurred.
 	*/
 	public OutputStream getOutputStream(final URI uri) throws IOException
 	{

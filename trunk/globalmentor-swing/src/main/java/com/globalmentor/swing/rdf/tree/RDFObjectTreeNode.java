@@ -124,7 +124,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode
 	}
 
 	/**Dynamically loads child nodes for all properties.
-	@exception IOException if there is an error loading the child nodes.
+	@throws IOException if there is an error loading the child nodes.
 	*/
 	protected void loadChildNodes() throws IOException
 	{

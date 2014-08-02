@@ -37,7 +37,7 @@ public class OEBEditorKit extends XEBEditorKit
 
 	/**Constructor.
 	@param uriInputStreamable The source of input streams for resources.
-	@exception NullPointerException if the new source of input streams is <code>null</code>.
+	@throws NullPointerException if the new source of input streams is <code>null</code>.
 	*/
 	public OEBEditorKit(final URIInputStreamable uriInputStreamable)
 	{
@@ -59,8 +59,8 @@ public class OEBEditorKit extends XEBEditorKit
 	@param inputStream The stream to read from.
 	@param document The destination for the insertion.
 	@param pos The location in the document to place the content >= 0.
-	@exception IOException Thrown on any I/O error
-	@exception BadLocationException Thrown if pos represents an invalid location
+	@throws IOException Thrown on any I/O error
+	@throws BadLocationException Thrown if pos represents an invalid location
 		within the document.
 	*/
 	public void read(final InputStream inputStream, final Document document, final int pos) throws IOException, BadLocationException

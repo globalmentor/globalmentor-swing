@@ -36,7 +36,7 @@ public class BasicDialog extends JDialog
 	 * This constructor sets the component's locale property to the value
 	 * returned by <code>JComponent.getDefaultLocale</code>.     
 	 * 
-	 * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+	 * @throws HeadlessException if GraphicsEnvironment.isHeadless()
 	 * returns true.
 	 * @see java.awt.GraphicsEnvironment#isHeadless
 	 * @see JComponent#getDefaultLocale
@@ -55,7 +55,7 @@ public class BasicDialog extends JDialog
 	 * returned by <code>JComponent.getDefaultLocale</code>.
 	 *
 	 * @param owner the <code>Frame</code> from which the dialog is displayed
-	 * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+	 * @throws HeadlessException if GraphicsEnvironment.isHeadless()
 	 * returns true.
 	 * @see java.awt.GraphicsEnvironment#isHeadless
 	 * @see JComponent#getDefaultLocale
@@ -76,7 +76,7 @@ public class BasicDialog extends JDialog
 	 * @param owner the <code>Frame</code> from which the dialog is displayed
 	 * @param modal  true for a modal dialog, false for one that allows
 	 *               others windows to be active at the same time
-	 * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+	 * @throws HeadlessException if GraphicsEnvironment.isHeadless()
 	 * returns true.
 	 * @see java.awt.GraphicsEnvironment#isHeadless
 	 * @see JComponent#getDefaultLocale
@@ -97,7 +97,7 @@ public class BasicDialog extends JDialog
 	 * @param owner the <code>Frame</code> from which the dialog is displayed
 	 * @param title  the <code>String</code> to display in the dialog's
 	 *			title bar
-	 * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+	 * @throws HeadlessException if GraphicsEnvironment.isHeadless()
 	 * returns true.
 	 * @see java.awt.GraphicsEnvironment#isHeadless
 	 * @see JComponent#getDefaultLocale
@@ -124,7 +124,7 @@ public class BasicDialog extends JDialog
 	 *			title bar
 	 * @param modal  true for a modal dialog, false for one that allows
 	 *               other windows to be active at the same time
-	 * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+	 * @throws HeadlessException if GraphicsEnvironment.isHeadless()
 	 * returns true.
 	 * @see java.awt.GraphicsEnvironment#isHeadless
 	 * @see JComponent#getDefaultLocale
@@ -154,7 +154,7 @@ public class BasicDialog extends JDialog
 	 * of the target screen device.  If <code>gc</code> is 
 	 * <code>null</code>, the same
 	 * <code>GraphicsConfiguration</code> as the owning Frame is used.    
-	 * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+	 * @throws HeadlessException if GraphicsEnvironment.isHeadless()
 	 * returns true.
 	 * @see java.awt.GraphicsEnvironment#isHeadless
 	 * @see JComponent#getDefaultLocale
@@ -172,7 +172,7 @@ public class BasicDialog extends JDialog
 	 * returned by <code>JComponent.getDefaultLocale</code>.
 	 *
 	 * @param owner the non-null <code>Dialog</code> from which the dialog is displayed
-	 * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+	 * @throws HeadlessException if GraphicsEnvironment.isHeadless()
 	 * returns true.
 	 * @see java.awt.GraphicsEnvironment#isHeadless
 	 * @see JComponent#getDefaultLocale
@@ -191,7 +191,7 @@ public class BasicDialog extends JDialog
 	 * @param owner the non-null <code>Dialog</code> from which the dialog is displayed
 	 * @param modal  true for a modal dialog, false for one that allows
 	 *               other windows to be active at the same time
-	 * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+	 * @throws HeadlessException if GraphicsEnvironment.isHeadless()
 	 * returns true.
 	 * @see java.awt.GraphicsEnvironment#isHeadless
 	 * @see JComponent#getDefaultLocale
@@ -210,7 +210,7 @@ public class BasicDialog extends JDialog
 	 * @param owner the non-null <code>Dialog</code> from which the dialog is displayed
 	 * @param title  the <code>String</code> to display in the dialog's
 	 *			title bar
-	 * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+	 * @throws HeadlessException if GraphicsEnvironment.isHeadless()
 	 * returns true.
 	 * @see java.awt.GraphicsEnvironment#isHeadless
 	 * @see JComponent#getDefaultLocale
@@ -231,7 +231,7 @@ public class BasicDialog extends JDialog
 	 *			title bar
 	 * @param modal  true for a modal dialog, false for one that allows
 	 *               other windows to be active at the same time
-	 * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+	 * @throws HeadlessException if GraphicsEnvironment.isHeadless()
 	 * returns true.
 	 * @see java.awt.GraphicsEnvironment#isHeadless
 	 * @see JComponent#getDefaultLocale
@@ -261,7 +261,7 @@ public class BasicDialog extends JDialog
 	 * of the target screen device.  If <code>gc</code> is 
 	 * <code>null</code>, the same
 	 * <code>GraphicsConfiguration</code> as the owning Dialog is used.    
-	 * @exception HeadlessException if GraphicsEnvironment.isHeadless()
+	 * @throws HeadlessException if GraphicsEnvironment.isHeadless()
 	 * @see java.awt.GraphicsEnvironment#isHeadless
 	 * @see JComponent#getDefaultLocale
 	 * returns true.

@@ -145,7 +145,7 @@ Log.trace("created horizontal rule view");
 		to be set to this value, preventing objects from being scaled down to nothing.
 	@param axis The axis, either <code>X_AXIS</code> or <code>Y_AXIS</code>.
 	@returns Zero as the minimum span the view can be rendered into.
-	@exception IllegalArgumentException Thrown if the axis is not recognized.
+	@throws IllegalArgumentException Thrown if the axis is not recognized.
 	@see View#getPreferredSpan
 	@see #setSize
 	*/
@@ -199,7 +199,7 @@ Log.trace("created horizontal rule view");
 	@param allocation the allocated region to render into.
 	@return The bounding box of the given position, or <code>null</code> if the
 		position is outside the model range the view represents.
-	@exception BadLocationException Thrown if the given position does not
+	@throws BadLocationException Thrown if the given position does not
 		represent a valid location in the associated document.
 	@see View#modelToView
 	*/

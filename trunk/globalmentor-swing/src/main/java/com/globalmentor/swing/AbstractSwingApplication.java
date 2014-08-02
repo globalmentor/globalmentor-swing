@@ -315,7 +315,7 @@ public abstract class AbstractSwingApplication extends AbstractApplication
 	/**Initializes the environment for the application.
 	@param application The application to start. 
 	@param args The command line arguments.
-	@exception Exception Thrown if anything goes wrong.
+	@throws Exception Thrown if anything goes wrong.
 	*/
 	protected static void initialize(final Application application, final String[] args) throws Exception
 	{

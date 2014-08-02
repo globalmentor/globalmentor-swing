@@ -166,7 +166,7 @@ public class XMLEditorKit extends BasicStyledEditorKit
 
 	/**Constructor which defaults to a content type of <code>text/xml</code>.
 	@param uriInputStreamable The source of input streams for resources.
-	@exception NullPointerException if the new source of input streams is <code>null</code>.
+	@throws NullPointerException if the new source of input streams is <code>null</code>.
 	*/
 	public XMLEditorKit(final URIInputStreamable uriInputStreamable)
 	{
@@ -219,9 +219,9 @@ public class XMLEditorKit extends BasicStyledEditorKit
 	@param publicationURL The URL of the OEB publication which has the information to load.
 	@param doc The destination for the insertion.
 	@param pos The location in the document to place the content. TODO decide if we want/need this
-	@exception IOException on any I/O error
-	@exception BadLocationException if pos represents an invalid location within the document.
-	@exception RuntimeException (will eventually be a BadLocationException) if pos is invalid.
+	@throws IOException on any I/O error
+	@throws BadLocationException if pos represents an invalid location within the document.
+	@throws RuntimeException (will eventually be a BadLocationException) if pos is invalid.
 	*/
 
 /*TODO fix somehow
@@ -262,10 +262,10 @@ TODO fix
 		 * @param doc The destination for the insertion.
 		 * @param pos The location in the document to place the
 		 *   content.
-		 * @exception IOException on any I/O error
-		 * @exception BadLocationException if pos represents an invalid
+		 * @throws IOException on any I/O error
+		 * @throws BadLocationException if pos represents an invalid
 		 *   location within the document.
-		 * @exception RuntimeException (will eventually be a BadLocationException)
+		 * @throws RuntimeException (will eventually be a BadLocationException)
 		 *            if pos is invalid.
 		 */
 	public void read(final Reader reader, final Document document, final int pos) throws IOException, BadLocationException
@@ -306,8 +306,8 @@ TODO fix
 	@param inputStream The stream to read from.
 	@param document The destination for the insertion.
 	@param pos The location in the document to place the content >= 0.
-	@exception IOException Thrown on any I/O error
-	@exception BadLocationException Thrown if pos represents an invalid location
+	@throws IOException Thrown on any I/O error
+	@throws BadLocationException Thrown if pos represents an invalid location
 		within the document.
 	*/
 	public void read(InputStream inputStream, Document document, int pos) throws IOException, BadLocationException
@@ -349,8 +349,8 @@ TODO fix
 	@param document The source of the data to write.
 	@param pos The location in the document to fetch the content (>=0).
 	@param len The amount to write out (>=0).
-	@exception IOException Thrown if any I/O error occurs.
-	@exception BadLocationException Thrown if the position represents an invalid
+	@throws IOException Thrown if any I/O error occurs.
+	@throws BadLocationException Thrown if the position represents an invalid
 		location within the document.
 	*/
 //TODO fix when XMLSerializer supports writers	public void write(final Writer writer, final Document document, final int pos, final int len) throws IOException, BadLocationException
@@ -363,8 +363,8 @@ TODO fix
 	@param document The source of the data to write.
 	@param pos The location in the document to fetch the content (>=0).
 	@param len The amount to write out (>=0).
-	@exception IOException Thrown if any I/O error occurs.
-	@exception BadLocationException Thrown if the position represents an invalid
+	@throws IOException Thrown if any I/O error occurs.
+	@throws BadLocationException Thrown if the position represents an invalid
 		location within the document.
 	*/
 	public void write(final OutputStream outputStream, final Document document, final int pos, final int len) throws IOException, BadLocationException
@@ -380,8 +380,8 @@ TODO fix
 	@param document The source of the data to write.
 	@param pos The location in the document to fetch the content (>=0).
 	@param len The amount to write out (>=0).
-	@exception IOException Thrown if any I/O error occurs.
-	@exception BadLocationException Thrown if the position represents an invalid
+	@throws IOException Thrown if any I/O error occurs.
+	@throws BadLocationException Thrown if the position represents an invalid
 		location within the document.
 	*/
 	public void write(final OutputStream outputStream, final Charset charset, final Document document, final int pos, final int len) throws IOException, BadLocationException
@@ -585,7 +585,7 @@ catch (BadLocationException e)
 	@param contentData The content to be inserted into the document.
 	@param swingXMLDocument The Swing document into which the content will be set.
 	@return The attribute set for the content data root.
-	@exception IllegalArgumentException if the given content data is not recognized or is not supported.
+	@throws IllegalArgumentException if the given content data is not recognized or is not supported.
 	*/
 	protected MutableAttributeSet appendElementSpecList(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final ContentData<?> contentData, final XMLDocument swingXMLDocument)
 	{
@@ -1069,7 +1069,7 @@ Log.trace("Current element type: ", attributeNameObject.getClass().getName()); /
 		@param object The content object.
 		@param baseURI The base URI of the object, or <code>null</code> if no base URI is available..
 		@param contentType The content type of the object.
-		@exception NullPointerException if the object or content type is <code>null</code>.
+		@throws NullPointerException if the object or content type is <code>null</code>.
 		*/
 		public ContentData(final O object, final URI baseURI, final ContentType contentType)
 		{
@@ -1081,7 +1081,7 @@ Log.trace("Current element type: ", attributeNameObject.getClass().getName()); /
 		@param baseURI The base URI of the object, or <code>null</code> if no base URI is available..
 		@param contentType The content type of the object.
 		@param description A description of the object, or <code>null</code> if no description is available.
-		@exception NullPointerException if the object or content type is <code>null</code>.
+		@throws NullPointerException if the object or content type is <code>null</code>.
 		*/
 		public ContentData(final O object, final URI baseURI, final ContentType contentType, final RDFResource description)
 		{
@@ -1103,7 +1103,7 @@ Log.trace("Current element type: ", attributeNameObject.getClass().getName()); /
 		/**Document and baseURI constructor
 		@param document The content document.
 		@param baseURI The base URI of the object.
-		@exception NullPointerException if the object or base URI is <code>null</code>.
+		@throws NullPointerException if the object or base URI is <code>null</code>.
 		*/
 /*TODO del if not needed
 		public XMLDocumentData(final org.w3c.dom.Document document, final URI baseURI)
@@ -1116,7 +1116,7 @@ Log.trace("Current element type: ", attributeNameObject.getClass().getName()); /
 		@param document The content document.
 		@param baseURI The base URI of the object.
 		@param description A description of the object, or <code>null</code> if no description is available.
-		@exception NullPointerException if the object or base URI is <code>null</code>.
+		@throws NullPointerException if the object or base URI is <code>null</code>.
 		*/
 /*TODO del if not needed
 		public XMLDocumentData(final org.w3c.dom.Document document, final URI baseURI, final RDFResource description)
@@ -1196,7 +1196,7 @@ Log.trace("Current element type: ", attributeNameObject.getClass().getName()); /
 		@param attributeSet The attribute set of the element.
 		@param baseURI The base URI of the document, used for generating full target
 			URIs for quick searching.
-		@exception BadLocationException for an invalid starting offset
+		@throws BadLocationException for an invalid starting offset
 		@see XMLDocument#insert
 		@see XMLDocument#appendElementSpecList
 		*/
@@ -1249,7 +1249,7 @@ Log.trace("Current element type: ", attributeNameObject.getClass().getName()); /
 			if the base URI is not applicable.
 		@return The attribute set used to represent the node; this attribute set
 			can be manipulated after the method returns.
-		@exception BadLocationException for an invalid starting offset
+		@throws BadLocationException for an invalid starting offset
 		@see XMLDocument#insert
 		@see XMLDocument#appendElementSpecListContent
 		*/
@@ -1283,7 +1283,7 @@ Log.trace("Current element type: ", attributeNameObject.getClass().getName()); /
 		@param baseURI The base URI of the document, used for generating full target
 			URIs for quick searching, or <code>null</code> if there is no base URI or
 			if the base URI is not applicable.
-		@exception BadLocationException for an invalid starting offset
+		@throws BadLocationException for an invalid starting offset
 		@see XMLDocument#insert
 		@see XMLDocument#appendElementSpecListContent
 		*/

@@ -29,7 +29,7 @@ public class SwingText
 	@param textComponent The editor.
 	@return The position (>=0) if the request can be computed, otherwise
 		a value of -1 will be returned.
-	@exception BadLocationException Thrown if the offset is out of range.
+	@throws BadLocationException Thrown if the offset is out of range.
 	 */
 	public static int getBegin(final JTextComponent textComponent) throws BadLocationException	//TODO this might better to in XMLSectionView.getNextVisualPosition... or something
 	{
@@ -69,7 +69,7 @@ public class SwingText
 	@param textComponent The editor.
 	@return The position (>=0) if the request can be computed, otherwise
 		a value of -1 will be returned.
-	@exception BadLocationException Thrown if the offset is out of range.
+	@throws BadLocationException Thrown if the offset is out of range.
 	 */
 	public static int getEnd(final JTextComponent textComponent) throws BadLocationException	//TODO this might better to in XMLSectionView.getNextVisualPosition... or something
 	{
@@ -151,7 +151,7 @@ Log.trace("view ends at: ", view.getEndOffset());
 	 * @param offs the offset in the document >= 0
 	 * @return the position >= 0 if the request can be computed, otherwise
 	 *  a value of -1 will be returned.
-	 * @exception BadLocationException if the offset is out of range
+	 * @throws BadLocationException if the offset is out of range
 	 */
 /**G**fix if needed	
 	public static final int getRowEnd(JTextComponent c, int offs) throws BadLocationException
@@ -183,7 +183,7 @@ return offs;
 	/**Returns a document's text for the given element.
 	@param element The element from which text should be retrieved.
 	@return The document's text that lies within the element's range.
-	@exception BadLocationException Thrown if the element's starting and ending
+	@throws BadLocationException Thrown if the element's starting and ending
 		offsets are invalid.
 	@see Element#getDocument
 	@see Element#getEndOffset

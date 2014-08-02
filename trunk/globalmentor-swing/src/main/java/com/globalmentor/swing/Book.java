@@ -287,7 +287,7 @@ Log.trace();  //TODO del
 		@param name The name to give the bookmark, or <code>null</code> if the
 			bookmark should not be given a name.
 		@param offset The position in the document at which the bookmark should be added.
-		@exception BadLocationException Thrown if the position represents an invalid
+		@throws BadLocationException Thrown if the position represents an invalid
 			location in the document
 		*/
 		public void addBookmark(final String name, final int offset) throws BadLocationException
@@ -300,7 +300,7 @@ Log.trace();  //TODO del
 		  the bookmark isn't already attached to the document. If the bookmark
 			already is added, no action will take place.
 		@param bookmark The bookmark to add.
-		@exception BadLocationException Thrown if the bookmark represents an invalid
+		@throws BadLocationException Thrown if the bookmark represents an invalid
 			location in the document
 		*/
 		public void addBookmark(final Bookmark bookmark) throws BadLocationException
@@ -412,7 +412,7 @@ Log.trace("ready to fire property change");
 		@param endOffset The position in the document which indicates the end of the
 			annotation.
 		@param color The highlight color of the annotation.
-		@exception BadLocationException Thrown if the position represents an invalid
+		@throws BadLocationException Thrown if the position represents an invalid
 			location in the document
 		*/
 		public void addAnnotation(final int startOffset, final int endOffset, final Color color) throws BadLocationException
@@ -425,7 +425,7 @@ Log.trace("ready to fire property change");
 		  the annotation isn't already attached to the document. If the annotation
 			already is added, no action will take place.
 		@param annotation The annotation to add.
-		@exception BadLocationException Thrown if the bookmark represents an invalid
+		@throws BadLocationException Thrown if the bookmark represents an invalid
 			location in the document
 		*/
 		public void addAnnotation(final Annotation annotation) throws BadLocationException
@@ -1339,7 +1339,7 @@ Log.trace("Relative offset: ", relativeOffset);
 
 	/**Reads the book content from a URI.
 	@param uri The location of the book.
-	@exception IOExeption Thrown if an I/O error occurs.
+	@throws IOExeption Thrown if an I/O error occurs.
 	@see OEBTextPane#read
 	*/
 	public void open(final URI uri) throws IOException
@@ -1367,7 +1367,7 @@ Log.trace("Relative offset: ", relativeOffset);
 
 	/**Closes and opens the book content from the same location.
 		If no file is open, no action is taken.
-	@exception IOExeption Thrown if an I/O error occurs.
+	@throws IOExeption Thrown if an I/O error occurs.
 	@see #getURI
 	@see #open
 	@see #close
@@ -1385,7 +1385,7 @@ Log.trace("Relative offset: ", relativeOffset);
 	/**Reads the book content from a reader.
 	@param in The stream to read from.
 	@param desc An object describing the stream.
-	@exception IOExeption Thrown if an I/O error occurs.
+	@throws IOExeption Thrown if an I/O error occurs.
 	@see OEBTextPane#read
 	*/
 /*TODO del

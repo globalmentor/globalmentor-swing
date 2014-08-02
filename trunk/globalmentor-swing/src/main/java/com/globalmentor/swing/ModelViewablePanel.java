@@ -113,7 +113,7 @@ public abstract class ModelViewablePanel<M> extends ModelPanel<M> implements Mod
 
 		/**Sets the view of the data.
 		@param newView The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
-		@exception IllegalArgumentException Thrown if the given view is not supported.
+		@throws IllegalArgumentException Thrown if the given view is not supported.
 		*/
 		public void setModelView(final int newView)
 		{
@@ -203,7 +203,7 @@ public abstract class ModelViewablePanel<M> extends ModelPanel<M> implements Mod
 	/**Loads the data from the model to the view, if necessary.
 	<p>This implementation loads the model normally and then loads the model for
 		the current view.</p>
-	@exception IOException Thrown if there was an error loading the model.
+	@throws IOException Thrown if there was an error loading the model.
 	@see #loadModel(int)
 	*/
 	public void loadModel() throws IOException
@@ -214,7 +214,7 @@ public abstract class ModelViewablePanel<M> extends ModelPanel<M> implements Mod
 
 	/**Loads the data from the model to the specified view, if necessary.
 	@param modelView The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
-	@exception IOException Thrown if there was an error loading the model.
+	@throws IOException Thrown if there was an error loading the model.
 	*/
 	protected void loadModel(final int modelView) throws IOException
 	{
@@ -223,7 +223,7 @@ public abstract class ModelViewablePanel<M> extends ModelPanel<M> implements Mod
 	/**Stores the current data being edited to the model, if necessary.
 	<p>This implementation first saves the model for the current view and then
 		saves the model normally.</p>
-	@exception IOException Thrown if there was an error saving the model.
+	@throws IOException Thrown if there was an error saving the model.
 	@see #saveModel(int)
 	*/
 	public void saveModel() throws IOException
@@ -235,7 +235,7 @@ public abstract class ModelViewablePanel<M> extends ModelPanel<M> implements Mod
 	/**Stores the current data being edited to the model, if necessary.
 	If no model is being edited or there is no valid view, no action occurs.
 	@param modelView The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
-	@exception IOException Thrown if there was an error saving the model.
+	@throws IOException Thrown if there was an error saving the model.
 	*/
 	protected void saveModel(final int modelView) throws IOException
 	{

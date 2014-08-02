@@ -131,9 +131,9 @@ Log.trace();  //TODO del
 		memory to be reclaimed, this method may reload the image.
 		<code>initialize()</code> must therefore have first been called to
 		appropriately set the image information.
-	@exception URISyntaxException Thrown if the image href does not allow a syntactically
+	@throws URISyntaxException Thrown if the image href does not allow a syntactically
 		correct URI to be contructed.
-	@exception IOException Thrown if there is an error getting the image, usually
+	@throws IOException Thrown if there is an error getting the image, usually
 		because the image needed to be loaded but could not be.
 	@see #freeImage
 	@see #initialize

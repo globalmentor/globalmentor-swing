@@ -110,7 +110,7 @@ final static String ELEMENT_END_STRING=String.valueOf(ELEMENT_END_CHAR);
 
 	/**Constructor.
 	@param uriInputStreamable The source of input streams for resources.
-	@exception NullPointerException if the new source of input streams is <code>null</code>.
+	@throws NullPointerException if the new source of input streams is <code>null</code>.
 	*/
 	public XMLDocument(final URIInputStreamable uriInputStreamable)
 	{
@@ -266,8 +266,8 @@ TODO comment
 	</ul>
 	@param href The specified location of the resource.
 	@return The specified resource.
-	@exception URISyntaxException Thrown if the given location results in a syntactically incorrect URI.
-	@exception IOException Thrown if the specified resource cannot be retrieved.
+	@throws URISyntaxException Thrown if the given location results in a syntactically incorrect URI.
+	@throws IOException Thrown if the specified resource cannot be retrieved.
 	*/
 	public Object getResource(final String href) throws URISyntaxException, IOException
 	{
@@ -293,7 +293,7 @@ TODO comment
 	@param uri The URI location of the resource.
 	@param mediaType The media type of the resource.
 	@return The specified resource.
-	@exception IOException Thrown if the specified resource cannot be retrieved.
+	@throws IOException Thrown if the specified resource cannot be retrieved.
 	*/
 	protected Object getResource(final URI uri, final ContentType mediaType) throws IOException
 	{
@@ -320,7 +320,7 @@ TODO comment
 		absolute.
 	@param href The specified location of the resource.
 	@return The URI of the specified resource.
-	@exception IllegalArgumentException if the given string violates RFC&nbsp;2396.
+	@throws IllegalArgumentException if the given string violates RFC&nbsp;2396.
 	@see #getBaseURI
 	*/
 	public URI getResourceURI(final String href)
@@ -359,8 +359,8 @@ TODO comment
 		base URI. The input stream should be closed when it is no longer needed.
 	@param href The specified location of the resource.
 	@return An open input stream to the resource.
-	@exception URISyntaxException Thrown if the given location results in a syntactically incorrect URI.
-	@exception IOException Thrown if an input stream to the specified resource
+	@throws URISyntaxException Thrown if the given location results in a syntactically incorrect URI.
+	@throws IOException Thrown if an input stream to the specified resource
 		cannot be created.
 	@see #getBaseURI
 //TODO check about returning null if the resource is not found
@@ -376,7 +376,7 @@ TODO comment
 	This implementation delegates to <code>getInputStream()</code>.
 	@param uri The specified location of the resource.
 	@return An open input stream to the resource.
-	@exception IOException Thrown if an input stream to the specified resource
+	@throws IOException Thrown if an input stream to the specified resource
 		cannot be created.
 //TODO check about returning null if the resource is not found
  	@see #getInputStream(URI)
@@ -397,7 +397,7 @@ TODO comment
 	@param resourceURI The specified location of the resource.
 	@param mediaType The media type of the resource.
 	@return The specified resource.
-	@exception IOException Thrown if the specified resource cannot be retrieved.
+	@throws IOException Thrown if the specified resource cannot be retrieved.
 	*/
 	protected Object loadResource(final URI resourceURI, final ContentType mediaType) throws IOException  //TODO change this to loadImage, loadClip, etc.
 	{
@@ -463,9 +463,9 @@ TODO comment
 	/**Inserts a group of new elements into the document
 	@param offset the starting offset
 	@data the element data
-	@exception BadLocationException for an invalid starting offset
+	@throws BadLocationException for an invalid starting offset
 	@see StyledDocument#insert
-	@exception BadLocationException  if the given position does not
+	@throws BadLocationException  if the given position does not
 	represent a valid location in the associated document.
 	*/
 	//TODO why do we override this?
@@ -762,7 +762,7 @@ Log.trace("after unlock, content is", getContent().length());
 		URIs for quick searching.
 	@return The attribute set used to represent the element; this attribute set
 		can be manipulated after the method returns.
-	@exception BadLocationException for an invalid starting offset
+	@throws BadLocationException for an invalid starting offset
 	@see XMLDocument#insert
 	*/
 /*TODO decide if we want this
@@ -779,7 +779,7 @@ Log.trace("after unlock, content is", getContent().length());
 		URIs for quick searching.
 	@return The attribute set used to represent the element; this attribute set
 		can be manipulated after the method returns.
-	@exception BadLocationException for an invalid starting offset
+	@throws BadLocationException for an invalid starting offset
 	@see XMLDocument#insert
 	*/
 /*TODO decide if we want this
@@ -835,7 +835,7 @@ Log.trace("we created a text element, we now think the offset is", offset);
 		URIs for quick searching.
 	@return The attribute set used to represent the element; this attribute set
 		can be manipulated after the method returns.
-	@exception BadLocationException for an invalid starting offset
+	@throws BadLocationException for an invalid starting offset
 	@see XMLDocument#insert
 	*/
 //TODO decide if we want this
@@ -1417,7 +1417,7 @@ fireUndoableEditUpdate(new UndoableEditEvent(this, evnt));
 		<p>The calling class has the responsibility for closing the input stream.</p>
 		@param uri A URI to a resource.
 		@return An input stream to the contents of the resource represented by the given URI.
-		@exception IOException Thrown if an I/O error occurred.
+		@throws IOException Thrown if an I/O error occurred.
 		*/
 		public InputStream getInputStream(final URI uri) throws IOException
 		{

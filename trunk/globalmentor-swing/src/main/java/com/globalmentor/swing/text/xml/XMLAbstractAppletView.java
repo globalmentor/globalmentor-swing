@@ -239,7 +239,7 @@ Log.trace("Applet size before start() width: "+d3.getWidth()+" height: "+d3.getH
 		has been set.
 	@return An applet meant for displaying, or if an error occurs loading the
 		applet, a component indicatin the error.
-///TODO fix	@exception ClassCastException Thrown if the class returned by
+///TODO fix	@throws ClassCastException Thrown if the class returned by
 	@see #getClass
 	@see #getClassName
 	*/
@@ -302,7 +302,7 @@ Log.error(e);		  //TODO fix; store errors in console of some sort, as well as in
 	/**Get a <code>Class</code> object to use for loading the applet.
 	@param className The name of the class to load.
 	@return The <code>Class</code> object of the applet to be instantiated.
-	@exception ClassNotFoundException Thrown if the given class cannot be found.
+	@throws ClassNotFoundException Thrown if the given class cannot be found.
 	@see XMLClassLoader
 	@see #getDocument
 	*/

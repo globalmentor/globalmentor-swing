@@ -67,7 +67,7 @@ Log.trace("Component preferred height: ", new Double(component.getPreferredSize(
 		<code>setWidth()</code> and <code>setHeight()</code>.
 	@param axis The axis, either <code>X_AXIS</code> or <code>Y_AXIS</code>.
 	@returns The maximum span the view can be rendered into.
-	@exception IllegalArgumentException Thrown if the axis is not recognized.
+	@throws IllegalArgumentException Thrown if the axis is not recognized.
 	@see View#getPreferredSpan
 	@see #getHeight
 	@see #getWidth

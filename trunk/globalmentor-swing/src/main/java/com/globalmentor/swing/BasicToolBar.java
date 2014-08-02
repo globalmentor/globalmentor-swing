@@ -167,10 +167,10 @@ public class BasicToolBar extends JToolBar
 	@param constraints An object expressing layout constraints for this component.
 	@param index The position in the container's list at which to insert the
 		component, where <code>-1</code> means append to the end.
-	@exception IllegalArgumentException Thrown if <code>index</code> is invalid.
-	@exception IllegalArgumentException Thrown if adding the container's parent
+	@throws IllegalArgumentException Thrown if <code>index</code> is invalid.
+	@throws IllegalArgumentException Thrown if adding the container's parent
 		to itself.
-	@exception IllegalArgumentException Thrown if adding a window to a container.
+	@throws IllegalArgumentException Thrown if adding a window to a container.
 	@see AbstractButton
 	@see #setupButton
 	*/

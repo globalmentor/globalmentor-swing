@@ -50,7 +50,7 @@ public class ViewComponentManager //TODO finish the class comments with examples
 	public interface Position extends Cloneable
 	{
 		/**@return A clone of the position.
-		@exception CloneNotSupportedException if the clone operation fails.
+		@throws CloneNotSupportedException if the clone operation fails.
 		*/
     public Object clone() throws CloneNotSupportedException;		
 	}
@@ -86,7 +86,7 @@ public class ViewComponentManager //TODO finish the class comments with examples
 		/**Constructs a location along an axis aligned in a region.
 		@param region The region along the axis relative to the origin.
 		@param alignment The alignment along the axis (0.0 to 1.0, inclusive) relative to the origin.
-		@exception IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
+		@throws IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
 		*/
 		public AxisLocation(final Region region, final float alignment)
 		{
@@ -159,7 +159,7 @@ public class ViewComponentManager //TODO finish the class comments with examples
 		}
 		
 		/**@return A clone of the position.
-		@exception CloneNotSupportedException if the clone operation fails.
+		@throws CloneNotSupportedException if the clone operation fails.
 		*/
     public Object clone() throws CloneNotSupportedException
 		{
@@ -188,7 +188,7 @@ public class ViewComponentManager //TODO finish the class comments with examples
 		/**Constructs a position at a location.
 		@param location The location coordinates.
 		@param centered Whether the component should be centered at its location.
-		@exception NullPointerException if the location is <code>null</code>.
+		@throws NullPointerException if the location is <code>null</code>.
 		*/
 		public LocationPosition(final Point location, final boolean centered)
 		{
@@ -197,7 +197,7 @@ public class ViewComponentManager //TODO finish the class comments with examples
 		}
 
 		/**@return A clone of the position.
-		@exception CloneNotSupportedException if the clone operation fails.
+		@throws CloneNotSupportedException if the clone operation fails.
 		*/
     public Object clone() throws CloneNotSupportedException
 		{
@@ -442,7 +442,7 @@ public class ViewComponentManager //TODO finish the class comments with examples
 	@param alignmentX The alignment along the X axis (0.0 to 1.0, inclusive) relative to the origin.
 	@param regionY The region along the Y axis relative to the origin.
 	@param alignmentY The alignment along the Y axis (0.0 to 1.0, inclusive) relative to the origin.
-	@exception IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
+	@throws IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
 	*/
 	public synchronized void add(final Component component, final AxisLocation.Region regionX, final float alignmentX, final AxisLocation.Region regionY, final float alignmentY)
 	{
@@ -459,7 +459,7 @@ public class ViewComponentManager //TODO finish the class comments with examples
 	@param regionY The region along the Y axis relative to the origin.
 	@param alignmentY The alignment along the Y axis (.0 to 1.0, inclusive) relative to the origin.
 	@param size The size of the component, relative to the view size.
-	@exception IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
+	@throws IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
 	*/
 	public synchronized void add(final Component component, final AxisLocation.Region regionX, final float alignmentX, final AxisLocation.Region regionY, final float alignmentY, final Dimension size)
 	{
@@ -477,7 +477,7 @@ public class ViewComponentManager //TODO finish the class comments with examples
 	@param alignmentY The alignment along the Y axis (0.0 to 1.0, inclusive) relative to the origin.
 	@param width The width of the component, relative to the view width.
 	@param height The height of the component, relative to the view width.
-		@exception IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
+		@throws IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
 	*/
 	public synchronized void add(final Component component, final AxisLocation.Region regionX, final float alignmentX, final AxisLocation.Region regionY, final float alignmentY, final int width, final int height)
 	{
@@ -917,7 +917,7 @@ Log.traceStack(); //TODO del
 		@param alignmentX The alignment along the X axis (0.0 to 1.0, inclusive) relative to the origin.
 		@param regionY The region along the Y axis relative to the origin.
 		@param alignmentY The alignment along the Y axis (0.0 to 1.0, inclusive) relative to the origin.
-		@exception IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
+		@throws IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
 		*/
 		public ComponentInfo(final Component component, final AxisLocation.Region regionX, final float alignmentX, final AxisLocation.Region regionY, final float alignmentY)
 		{
@@ -933,7 +933,7 @@ Log.traceStack(); //TODO del
 		@param alignmentY The alignment along the Y axis (0.0 to 1.0, inclusive) relative to the origin.
 		@param width The width of the component, relative to the view width.
 		@param height The height of the component, relative to the view width.
-		@exception IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
+		@throws IllegalArgumentException if the alignment is less than 0.0 or greater than 1.0.
 		*/
 		public ComponentInfo(final Component component, final AxisLocation.Region regionX, final float alignmentX, final AxisLocation.Region regionY, final float alignmentY, final int width, final int height)
 		{
@@ -942,7 +942,7 @@ Log.traceStack(); //TODO del
 		}
 
 		/**@return A deep clone of the component info, while keeping a reference to the same component.
-		@exception CloneNotSupportedException if the clone operation fails.
+		@throws CloneNotSupportedException if the clone operation fails.
 		*/
     public Object clone() throws CloneNotSupportedException
 		{

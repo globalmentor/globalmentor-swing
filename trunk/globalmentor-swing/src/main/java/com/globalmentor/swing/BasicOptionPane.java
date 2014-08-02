@@ -172,7 +172,7 @@ public class BasicOptionPane extends JOptionPane
 	 *		or if the <code>parentComponent</code> has no
 	 *		<code>Frame</code>, a default <code>Frame</code> is used
 	 * @param message   the <code>Object</code> to display
-	 * @exception HeadlessException if
+	 * @throws HeadlessException if
 	 *   <code>GraphicsEnvironment.isHeadless</code> returns
 	 *   <code>true</code>
 	 * @see java.awt.GraphicsEnvironment#isHeadless
@@ -200,7 +200,7 @@ public class BasicOptionPane extends JOptionPane
 	 *			<code>WARNING_MESSAGE</code>,
 	 *                  <code>QUESTION_MESSAGE</code>,
 	 *			or <code>PLAIN_MESSAGE</code>
-	 * @exception HeadlessException if
+	 * @throws HeadlessException if
 	 *   <code>GraphicsEnvironment.isHeadless</code> returns
 	 *   <code>true</code>
 	 * @see java.awt.GraphicsEnvironment#isHeadless
@@ -229,7 +229,7 @@ public class BasicOptionPane extends JOptionPane
 	 *			or <code>PLAIN_MESSAGE</code>
 	 * @param icon      an icon to display in the dialog that helps the user
 	 *                  identify the kind of message that is being displayed
-	 * @exception HeadlessException if
+	 * @throws HeadlessException if
 	 *   <code>GraphicsEnvironment.isHeadless</code> returns
 	 *   <code>true</code>
 	 * @see java.awt.GraphicsEnvironment#isHeadless
@@ -470,7 +470,7 @@ public class BasicOptionPane extends JOptionPane
 	 * @return an integer indicating the option chosen by the user, 
 	 *         		or <code>CLOSED_OPTION</code> if the user closed
 	 *                  the dialog
-	 * @exception HeadlessException if
+	 * @throws HeadlessException if
 	 *   <code>GraphicsEnvironment.isHeadless</code> returns
 	 *   <code>true</code>
 	 * @see java.awt.GraphicsEnvironment#isHeadless

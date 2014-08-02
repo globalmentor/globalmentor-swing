@@ -48,7 +48,7 @@ public class XHTMLEditorKit extends XMLEditorKit
 
 	/**Constructor.
 	@param uriInputStreamable The source of input streams for resources.
-	@exception NullPointerException if the new source of input streams is <code>null</code>.
+	@throws NullPointerException if the new source of input streams is <code>null</code>.
 	*/
 	public XHTMLEditorKit(final URIInputStreamable uriInputStreamable)
 	{
@@ -114,7 +114,7 @@ public class XHTMLEditorKit extends XMLEditorKit
 		if the base URI is not applicable.
 	@return The attribute set used to represent the node; this attribute set
 		can be manipulated after the method returns.
-	@exception BadLocationException for an invalid starting offset
+	@throws BadLocationException for an invalid starting offset
 	@see XMLDocument#insert
 	@see XMLDocument#appendElementSpecListContent
 	*/

@@ -180,7 +180,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //TODO s
 		Typically the view is told to render into the span that is returned,
 		although there is no guarantee. The parent may choose to resize or break
 		the view, although object views cannot normally be broken.
-	@exception IllegalArgumentException Thrown if the axis is not recognized.
+	@throws IllegalArgumentException Thrown if the axis is not recognized.
 	@see #getCurrentHeight
 	@see #getCurrentWidth
 	*/
@@ -203,7 +203,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //TODO s
 		to this value, preventing objects from being scaled down to nothing.
 	@param axis The axis, either <code>X_AXIS</code> or <code>Y_AXIS</code>.
 	@returns Zero as the minimum span the view can be rendered into.
-	@exception IllegalArgumentException Thrown if the axis is not recognized.
+	@throws IllegalArgumentException Thrown if the axis is not recognized.
 	@see View#getPreferredSpan
 	@see #setSize
 	*/
@@ -217,7 +217,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //TODO s
 		<code>setWidth()</code> and <code>setHeight()</code>.
 	@param axis The axis, either <code>X_AXIS</code> or <code>Y_AXIS</code>.
 	@returns The maximum span the view can be rendered into.
-	@exception IllegalArgumentException Thrown if the axis is not recognized.
+	@throws IllegalArgumentException Thrown if the axis is not recognized.
 	@see View#getPreferredSpan
 	@see #getHeight
 	@see #getWidth
@@ -267,7 +267,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //TODO s
      * @param pos the position to convert
      * @param a the allocated region to render into
      * @return the bounding box of the given position
-     * @exception BadLocationException  if the given position does not represent a
+     * @throws BadLocationException  if the given position does not represent a
      *   valid location in the associated document
      * @see View#modelToView
      */
@@ -292,7 +292,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //TODO s
 	@param pos The position to convert (>=0).
 	@param allocation The allocated region to render into.
 	@return The bounding box of the given position.
-	@exception BadLocationException Thrown if the given position does not
+	@throws BadLocationException Thrown if the given position does not
 		represent a valid location governed by the view in the associated document.
 	@see View#modelToView
 	*/

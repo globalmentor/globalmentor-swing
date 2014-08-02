@@ -104,9 +104,9 @@ public class ApplicationFrame extends BasicFrame
 
 	/**Sets the <code>contentPane</code> property. 
 	@param contentPane the <code>contentPane</code> object for this frame
-	@exception IllegalComponentStateException (a runtime
+	@throws IllegalComponentStateException (a runtime
 		exception) if the content pane parameter is <code>null</code>.
-	@exception ClassCastException Thrown if the content pane is not an instance
+	@throws ClassCastException Thrown if the content pane is not an instance
 		of <code>ApplicationContentPane</code>.
 	@see #ApplicationContentPane
 	*/

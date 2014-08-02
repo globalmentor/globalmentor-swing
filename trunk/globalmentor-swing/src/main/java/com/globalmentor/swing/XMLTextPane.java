@@ -141,7 +141,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 
 		/**Sets the base object for accessing input streams.
 		@param newURIInputStreamable The access to input streams via URIs based upon the first document loaded
-		@exception NullPointerException if the given object is <code>null</code>.
+		@throws NullPointerException if the given object is <code>null</code>.
 		*/
 		public void setBaseURIInputStreamable(final URIInputStreamable newURIInputStreamable) {baseURIInputStreamable=checkInstance(newURIInputStreamable, "URI input streamable cannot be null.");}
 
@@ -153,7 +153,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 
 		/**Sets the object for accessing input streams.
 		@param newURIInputStreamable The object that allows acces to input streams via URIs.
-		@exception NullPointerException if the given object is <code>null</code>.
+		@throws NullPointerException if the given object is <code>null</code>.
 		*/
 		public void setURIInputStreamable(final URIInputStreamable newURIInputStreamable) {uriInputStreamable=checkInstance(newURIInputStreamable);}
 
@@ -165,7 +165,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 		
 		/**Sets the implementation to use for retrieving an output stream to a URI.
 		@param outputStreamable The implementation to use for accessing a URI for output.
-		@exception NullPointerException if the given object is <code>null</code>.
+		@throws NullPointerException if the given object is <code>null</code>.
 		*/
 		public void setURIOutputStreamable(final URIOutputStreamable outputStreamable) {uriOutputStreamable=checkInstance(outputStreamable);}
 
@@ -361,7 +361,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 			highlighter based on the new search position.
 		@param newSearchOffset The position after which searching should begin.
 		@param newSearchLength The length of the match.
-		@exception BadLocationException Thrown if the given search offset and/or
+		@throws BadLocationException Thrown if the given search offset and/or
 			length do not represent a valid location in the document.
 		@see #resetSearchPosition
 		*/
@@ -596,7 +596,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	/**Associates the editor with a text document. This document must be a
 		com.globalmentor.swing.text.xml.XMLDocument.
 	@param doc The document to display and/or edit.
-	@exception IllegalArgumentException Thrown if doc is not a descendant of
+	@throws IllegalArgumentException Thrown if doc is not a descendant of
 		com.globalmentor.swing.text.xml.XMLDocument.
 	@see XMLTextPane#setXMLDocument
 	*/
@@ -614,7 +614,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 		<code>StyledDocument</code>.
 	<p>This version ensures that properties such as zoom are set on the document.</p>
 	@param document The document to display/edit.
-	@exception IllegalArgumentException Thrown if doc can't be narrowed to a
+	@throws IllegalArgumentException Thrown if doc can't be narrowed to a
 		<code>StyledDocument</code> which is the required type of model for this
 		text component.
 	*/
@@ -700,7 +700,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	This implementation delegates to the internal <code>URIInputStreamable</code>.
 	@param uri A URI to a resource.
 	@return An input stream to the contents of the resource represented by the given URI.
-	@exception IOException Thrown if an I/O error occurred.
+	@throws IOException Thrown if an I/O error occurred.
 	*/
 	public InputStream getInputStream(final URI uri) throws IOException
 	{
@@ -712,7 +712,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 	This implementation delegates to the internal <code>URIOutputStreamable</code>.
 	@param uri A URI to a resource.
 	@return An output stream to the contents of the resource represented by the given URI.
-	@exception IOException Thrown if an I/O error occurred.
+	@throws IOException Thrown if an I/O error occurred.
 	*/
 	public OutputStream getOutputStream(final URI uri) throws IOException
 	{
@@ -721,7 +721,7 @@ graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints
 
 	/**Closes and opens the content from the same location.
 		If there is no source URI, no action is taken.
-	@exception IOExeption Thrown if an I/O error occurs.
+	@throws IOExeption Thrown if an I/O error occurs.
 	@see #getBaseURI
 	@see #open
 	@see #close
@@ -792,7 +792,7 @@ try {
 		the component (such as an OEB document) and initializes the model using the
 		appropriate editor kit.
 	@param url The URL of the file which has the information to load.
-	@exception IOException as thrown by the stream being used to initialize.
+	@throws IOException as thrown by the stream being used to initialize.
 	@deprecated Replaced with setPage(URI) because of ambiguities in URL reserved character encoding.
 	@see JEditorPane#setPage
 	@see EditorKit#createDefaultDocument
@@ -818,7 +818,7 @@ try {
 	<p>This method must be called from inside the AWT event thread.</p>
 	<p>The current input stream locator is used.</p>
 	@param uri The URI of the resource which has the information to load.
-	@exception IOException as thrown by the stream being used to initialize.
+	@throws IOException as thrown by the stream being used to initialize.
 	@see JEditorPane#setPage
 	@see EditorKit#createDefaultDocument
 	@see #setDocument
@@ -836,8 +836,8 @@ try {
 	<p>This method must be called from inside the AWT thread.</p>
 	@param uri The URI of the resource which has the information to load.
 	@param uriInputStreamable The input stream locator to use for looking up input streams.
-	@exception IOException as thrown by the stream being used to initialize.
-	@exception NullPointerException if the given URI accessor is <code>null</code>.
+	@throws IOException as thrown by the stream being used to initialize.
+	@throws NullPointerException if the given URI accessor is <code>null</code>.
 	@see JEditorPane#setPage
 	@see EditorKit#createDefaultDocument
 	@see #setDocument
@@ -915,7 +915,7 @@ Log.trace("found zip file: ", uri);  //TODO del
 	<p>This method must be called from inside the AWT thread.</p>
 	@param baseURI The URI of the resource which has the information to load.
 	@param inputStream The input stream from which the document content should be read.
-	@exception IOException Thrown if there is an error loading the document.
+	@throws IOException Thrown if there is an error loading the document.
 	@see JEditorPane#setPage
 	@see EditorKit#createDefaultDocument
 	@see #setDocument
@@ -1000,7 +1000,7 @@ Log.trace("reading from stream"); //TODO del
 		}
 
 		/**Reads the document from the input stream and then closes the stream.
-		@exception IOException Thrown if there is an error loading the document.
+		@throws IOException Thrown if there is an error loading the document.
 		*/
 		public void load() throws IOException
 		{
@@ -1068,7 +1068,7 @@ Log.trace("reading from stream"); //TODO del
 	This implementation is only provided for completeness; the <code>setPage()</code> method uses its
 	own determination of the stream and sets the content type.
 	@param page The URL of the page.
-	@exception IOException if there is an error getting a stream to the page.
+	@throws IOException if there is an error getting a stream to the page.
 	*/
 	protected InputStream getStream(final URL page) throws IOException	//TODO fix setting the Document.StreamDescriptionProperty and update comment
 	{
@@ -1096,7 +1096,7 @@ Log.trace("reading from stream"); //TODO del
 		model as plain text.
 	@param in The stream from which to read.
 	@param desc an object describing the stream
-	@exception IOException Thrown by the stream being used to initialize.
+	@throws IOException Thrown by the stream being used to initialize.
 	@see JEditorPane#read
 	@see JTextPane#setDocument
 	*/
@@ -1118,7 +1118,7 @@ Log.trace("inside read()"); //TODO fix all this
 		operation is then restarted after building a new Reader with the new charset.
 	@param inputStream The <code>InputStream</code> to use
 	@param document The document to load.
-	@exception IOException Thrown if there is an error loading the document.
+	@throws IOException Thrown if there is an error loading the document.
 	*/
 	void read(InputStream inputStream, Document document) throws IOException
 	{
@@ -1378,7 +1378,7 @@ System.out.println("Inside XMLTextPage.insertUpdate(), fetching new paged view."
 		determination based upon a bias.</p>
 	@param pos The local location in the model to translate (>=0).
   @return The coordinates as a rectangle.
-	@exception BadLocationException  if the given position does not
+	@throws BadLocationException  if the given position does not
 		represent a valid location in the associated document.
 	@see TextUI#modelToView
 	*/

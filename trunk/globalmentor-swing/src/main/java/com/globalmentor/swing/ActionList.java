@@ -42,7 +42,7 @@ public class ActionList extends JList
 
 	/**Constructs a list that displays the elements in the specified, non-null model.
 	@param dataModel The data model for this list.
-	@exception IllegalArgumentException Thrown if <code>dataModel</code> is
+	@throws IllegalArgumentException Thrown if <code>dataModel</code> is
 		<code>null</code>.
 	*/
 	public ActionList(final ListModel dataModel)

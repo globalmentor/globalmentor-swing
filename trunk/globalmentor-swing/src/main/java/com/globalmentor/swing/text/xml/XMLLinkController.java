@@ -290,7 +290,7 @@ Log.trace("URI: ", uri);	//TODO del
 	@param element The element which may be a link element.
 	@return The URI of the link, or <code>null</code> if the element does not
 		represent a link or if the element's href is not present.
-	@exception URISyntaxException Thrown if the element's href and/or the
+	@throws URISyntaxException Thrown if the element's href and/or the
 		base URI do not allow a valid URI to be constructed.
 	@see #getLinkElementHRef(Element)
 	@see XMLDocument#getBaseURI()

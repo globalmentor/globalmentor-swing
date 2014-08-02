@@ -221,7 +221,7 @@ public abstract class ListModelEditStrategy<E>
 
 	/**Deletes an item in the list.
 	@param index The index of the item to delete.
- 	@exception ClassCastException if the element at the given index is not of the correct generic type <code>E</code>.
+ 	@throws ClassCastException if the element at the given index is not of the correct generic type <code>E</code>.
 	*/
 	public void delete(final int index)
 	{
@@ -250,7 +250,7 @@ public abstract class ListModelEditStrategy<E>
 	}
 
 	/**Edits the currently selected item in the list.
-	@exception ClassCastException if the element at the current index is not of the correct generic type <code>E</code>.
+	@throws ClassCastException if the element at the current index is not of the correct generic type <code>E</code>.
 	*/
 	public void edit()
 	{
@@ -259,7 +259,7 @@ public abstract class ListModelEditStrategy<E>
 
 	/**Edits an item in the list.
 	@param index The index of the item to delete. 
-	@exception ClassCastException if the element at the given index is not of the correct generic type <code>E</code>.
+	@throws ClassCastException if the element at the given index is not of the correct generic type <code>E</code>.
 	*/
 	public void edit(final int index)
 	{
@@ -323,7 +323,7 @@ public abstract class ListModelEditStrategy<E>
 	The lead selection is moved along with the item if appropriate.
 	@param oldIndex The index of the item to move. 
 	@param newIndex The new index to which to move the item.
-	@exception ClassCastException if the element at the given index is not of the correct generic type <code>E</code>.
+	@throws ClassCastException if the element at the given index is not of the correct generic type <code>E</code>.
 	*/
 	protected void move(final int oldIndex, final int newIndex)
 	{
@@ -360,9 +360,9 @@ public abstract class ListModelEditStrategy<E>
 	
 	/**Creates a new default object to be edited.
 	@return The new default object.
-	@exception IllegalAccessException Thrown if the class or its nullary 
+	@throws IllegalAccessException Thrown if the class or its nullary 
 		constructor is not accessible.
-	@exception InstantiationException Thrown if a class represents an abstract
+	@throws InstantiationException Thrown if a class represents an abstract
 		class, an interface, an array class, a primitive type, or void;
 		or if the class has no nullary constructor; or if the instantiation fails
 		for some other reason.

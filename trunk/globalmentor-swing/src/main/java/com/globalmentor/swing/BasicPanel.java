@@ -95,7 +95,7 @@ public class BasicPanel extends JPanel implements Scrollable, CanClosable, Defau
 
 		/**@return The preferences that should be used for this panel, or the default
 			preferences for this class if no preferences are specifically set.
-		@exception SecurityException Thrown if a security manager is present and
+		@throws SecurityException Thrown if a security manager is present and
 			it denies <code>RuntimePermission("preferences")</code>.
 		*/
 		public Preferences getPreferences() throws SecurityException
@@ -310,7 +310,7 @@ public class BasicPanel extends JPanel implements Scrollable, CanClosable, Defau
 		}
 
 		/**@return An array of all the listeners of the given type. 
-		@exception ClassCastException if the supplied class is not assignable to <code>EventListener</code>.
+		@throws ClassCastException if the supplied class is not assignable to <code>EventListener</code>.
 		*/
 		protected <T extends EventListener> T[] getEventListeners(final Class<T> eventListenerType)
 		{

@@ -135,7 +135,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 
 	/**Constructor.
 	@param uriInputStreamable The source of input streams for resources.
-	@exception NullPointerException if the new source of input streams is <code>null</code>.
+	@throws NullPointerException if the new source of input streams is <code>null</code>.
 	*/
 	public BasicStyledEditorKit(final URIInputStreamable uriInputStreamable)
 	{
@@ -178,7 +178,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 	This implementation delegates to the editor kit's <code>URIInputStreamable</code>.
 	@param uri A complete URI to a resource.
 	@return An input stream to the contents of the resource represented by the given URI.
-	@exception IOException Thrown if an I/O error occurred.
+	@throws IOException Thrown if an I/O error occurred.
 	*/
 	public final InputStream getInputStream(final URI uri) throws IOException
 	{

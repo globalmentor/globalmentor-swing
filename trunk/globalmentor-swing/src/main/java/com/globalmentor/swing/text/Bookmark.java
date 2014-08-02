@@ -125,7 +125,7 @@ public class Bookmark implements Comparable, Position
 		it is detached and reattached to the specified location.
 	@param document The document to which the bookmark should be attached.
 	@param offset The offset in the document at which the bookmark should be attached.
-	@exception BadLocationException Thrown if the given position does not
+	@throws BadLocationException Thrown if the given position does not
 		represent a valid location in the document.
 	*/
 	public void attach(final Document document, final int offset) throws BadLocationException
@@ -147,7 +147,7 @@ public class Bookmark implements Comparable, Position
 		should be attached.
 	@param endOffset The ending offset in the document at which the bookmark
 		should be attached.
-	@exception BadLocationException Thrown if one of the given positions does not
+	@throws BadLocationException Thrown if one of the given positions does not
 		represent a valid location in the document.
 	*/
 	public void attach(final Document document, final int startOffset, final int endOffset) throws BadLocationException
@@ -169,7 +169,7 @@ public class Bookmark implements Comparable, Position
 		If the bookmark is already attached to a document, it is detached and
 		reattached to another location.
 	@param document The document to which the bookmark should be attached.
-	@exception BadLocationException Thrown if that last attached position is no
+	@throws BadLocationException Thrown if that last attached position is no
 		longer valid.
 	*/
 /*TODO del
@@ -185,7 +185,7 @@ public class Bookmark implements Comparable, Position
 		If the bookmark is already attached to a document, it is detached and
 		reattached to another location.
 	@param document The document to which the bookmark should be attached.
-	@exception BadLocationException Thrown if that last attached position is no
+	@throws BadLocationException Thrown if that last attached position is no
 		longer valid.
 	*/
 	public void attach(final Document document) throws BadLocationException
@@ -240,7 +240,7 @@ public class Bookmark implements Comparable, Position
 	/**Constructs a bookmark attached to a document at a particular offset.
 	@param document The document to which the bookmark should be attached.
 	@param offset The offset in the document at which the bookmark should be attached.
-	@exception BadLocationException Thrown if the given position does not
+	@throws BadLocationException Thrown if the given position does not
 		represent a valid location in the document.
 	*/
 	public Bookmark(final Document document, final int offset) throws BadLocationException
@@ -255,7 +255,7 @@ public class Bookmark implements Comparable, Position
 		should be attached.
 	@param endOffset The ending offset in the document at which the bookmark
 		should be attached.
-	@exception BadLocationException Thrown if the given position does not
+	@throws BadLocationException Thrown if the given position does not
 		represent a valid location in the document.
 	*/
 	public Bookmark(final Document document, final int startOffset, final int endOffset) throws BadLocationException
@@ -267,7 +267,7 @@ public class Bookmark implements Comparable, Position
 	@param newName The new name of the bookmark.
 	@param document The document to which the bookmark should be attached.
 	@param offset The offset in the document at which the bookmark should be attached.
-	@exception BadLocationException Thrown if the given position does not
+	@throws BadLocationException Thrown if the given position does not
 		represent a valid location in the document.
 	*/
 	public Bookmark(final String newName, final Document document, final int offset) throws BadLocationException
@@ -371,7 +371,7 @@ Log.trace("Comparing bookmark "+this+" to object: ", object); //TODO del
 		less than, equal to, or greater than the specified bookmark, respectively.
 		If the bookmarks represent the same beginning and ending offsets, their
 		names are compared.
-	@exception ClassCastException Thrown if the specified object's type is not
+	@throws ClassCastException Thrown if the specified object's type is not
 		an <code>Bookmark</code>.
 	@see #Offset
 	*/

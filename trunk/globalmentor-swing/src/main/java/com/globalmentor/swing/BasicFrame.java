@@ -77,7 +77,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 
 		/**@return The preferences that should be used for this frame, or the default
 			preferences for this class if no preferences are specifically set.
-		@exception SecurityException Thrown if a security manager is present and
+		@throws SecurityException Thrown if a security manager is present and
 			it denies <code>RuntimePermission("preferences")</code>.
 		*/
 		public Preferences getPreferences() throws SecurityException
@@ -145,7 +145,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 		The value is set to <code>DISPOSE_ON_CLOSE</code> by default.
 		@param operation The operation which should be performed when the user closes
 			the frame
-		@exception IllegalArgumentException Thrown if defaultCloseOperation value 
+		@throws IllegalArgumentException Thrown if defaultCloseOperation value 
 			isn't a valid value.
 		@see JFrame#setDefaultCloseOperation
 		@throws SecurityException Thrown if <code>EXIT_ON_CLOSE</code> has been
@@ -223,7 +223,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 		"modified" property being changed, if the content pane is
 		<code>Modifiable</code>.
 	@param contentPane the <code>contentPane</code> object for this frame
-	@exception IllegalComponentStateException (a runtime
+	@throws IllegalComponentStateException (a runtime
 		exception) if the content pane parameter is <code>null</code>.
 	@see JFrame#getContentPane
 	@see Modifiable

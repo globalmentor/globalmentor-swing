@@ -35,7 +35,7 @@ public class DrawRectangle extends DrawShape
 	/**Sets the location and dimensions of the drawn shape.
 	@param shape The object specifying the new location and shape of the drawn
 		shape.
-	@exception IllegalArgumentException Thrown if the shape is not appropriate
+	@throws IllegalArgumentException Thrown if the shape is not appropriate
 		for a draw rectangle.
 	*/
 	public void setShape(final Shape shape) throws IllegalArgumentException
@@ -66,7 +66,7 @@ public class DrawRectangle extends DrawShape
 	/**Constructs a draw rectangle with a given color and shape.
 	@param color The color in which the shape should be drawn.
 	@param shape The shape of the draw rectangle.
-	@exception IllegalArgumentException Thrown if the shape is not appropriate
+	@throws IllegalArgumentException Thrown if the shape is not appropriate
 		for a draw rectangle.
 	*/
 	public DrawRectangle(final Color color, final Shape shape)

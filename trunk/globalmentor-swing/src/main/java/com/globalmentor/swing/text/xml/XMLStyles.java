@@ -398,7 +398,7 @@ public class XMLStyles
 		in relation to the base URI, if present in the attribute set.
 	@return An href that represents the href relative to any base URI defined in the
 		attribute set.
-	@exception URISyntaxException Thrown if one of the URIs used to determine
+	@throws URISyntaxException Thrown if one of the URIs used to determine
 		the relative href is invalid.
 	@see #getBaseURI
 	*/

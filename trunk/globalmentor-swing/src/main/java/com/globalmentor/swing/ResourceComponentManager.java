@@ -60,7 +60,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 	private Preferences preferences=null;
 	
 		/**@return The preferences that should be used for this object, or the default preferences for this class if no preferences are specifically set.
-		@exception SecurityException Thrown if a security manager is present and it denies <code>RuntimePermission("preferences")</code>.
+		@throws SecurityException Thrown if a security manager is present and it denies <code>RuntimePermission("preferences")</code>.
 		*/
 		public Preferences getPreferences() throws SecurityException
 		{
@@ -543,7 +543,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 	@param resource The resource to open.
 	@return An object representing the opened resource and its state, or
 		<code>null</code> if the process was canceled.
-	@exception IOException Thrown if there was an error reading the resource.
+	@throws IOException Thrown if there was an error reading the resource.
 	*/
 	protected ResourceComponentState read(final R resource) throws IOException
 	{
@@ -685,7 +685,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 	/**Writes a resource.
 	@param resource The resource to save.
 	@param component The component that contains the data to save.
-	@exception IOException Thrown if there was an error writing the resource.
+	@throws IOException Thrown if there was an error writing the resource.
 	*/
 	protected void write(final R resource, final Component component) throws IOException
 	{
@@ -931,7 +931,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		<p>This method delegates to the parent class, and is declared here solely
 			so that the component manager can change the resource represented.
 		@param resource The new resource to describe.
-		@exception NullPointerException Thrown if the resource is <code>null</code>.
+		@throws NullPointerException Thrown if the resource is <code>null</code>.
 		*/
 		protected void setResource(final R resource)
 		{
@@ -948,7 +948,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 		@param resource The description of the resource.
 		@param component The component that represents a view of the resource.
 		@param number A unique number representing the order created.
-		@exception NullPointerException Thrown if the resource is <code>null</code>.
+		@throws NullPointerException Thrown if the resource is <code>null</code>.
 		*/
 		public ResourceComponentState(final R resource, final Component component, final long number)
 		{

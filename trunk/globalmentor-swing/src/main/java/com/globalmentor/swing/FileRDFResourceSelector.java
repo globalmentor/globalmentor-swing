@@ -46,7 +46,7 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 	private Preferences preferences=null;
 	
 		/**@return The preferences that should be used for this object, or the default preferences for this class if no preferences are specifically set.
-		@exception SecurityException Thrown if a security manager is present and it denies <code>RuntimePermission("preferences")</code>.
+		@throws SecurityException Thrown if a security manager is present and it denies <code>RuntimePermission("preferences")</code>.
 		*/
 		public Preferences getPreferences() throws SecurityException
 		{
@@ -88,7 +88,7 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 	/**Retrieves a description of the resource with the given reference URI.
 	@param referenceURI The reference URI of the resource in question.
 	@return A description of the identified resource.
-	@exception IOException Thrown if there is an error retrieving the resource
+	@throws IOException Thrown if there is an error retrieving the resource
 		description.
 	*/
 	public RDFResource getResource(final URI referenceURI) throws IOException
@@ -112,8 +112,8 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 		<code>null</code> if there is no selected resource.
 	@return The selected resource, or <code>null</code> if selection was
 		canceled.
-	@exception SecurityException Thrown if selecting an input resource is not allowed.
-	@exception IOException Thrown if there is an error locating a resource.
+	@throws SecurityException Thrown if selecting an input resource is not allowed.
+	@throws IOException Thrown if there is an error locating a resource.
 	*/
 	public RDFResource selectInputResource(final RDFResource oldResource) throws SecurityException, IOException
 	{
@@ -165,8 +165,8 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 		<code>null</code> if there is no selected resource.
 	@return The selected resource, or <code>null</code> if selection was
 		canceled.
-	@exception SecurityException Thrown if selecting an output resource is not allowed.
-	@exception IOException Thrown if there is an error locating a resource.
+	@throws SecurityException Thrown if selecting an output resource is not allowed.
+	@throws IOException Thrown if there is an error locating a resource.
 	*/
 	public RDFResource selectOutputResource(final RDFResource oldResource) throws SecurityException, IOException
 	{

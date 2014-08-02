@@ -260,7 +260,7 @@ public abstract class AbstractListModelComponentSequencePanel<E> extends Abstrac
 	/**Determines the component to be displayed at the given step of the sequence.
 	@param index The zero-based index of the step in the sequence.
 	@return The component to be displayed at the given step of the sequence.
-	@exception ClassCastException if the element as the given index is not of the correct generic type <code>E</code>.
+	@throws ClassCastException if the element as the given index is not of the correct generic type <code>E</code>.
 	*/
 	protected Component getIndexedComponent(final int index)
 	{
@@ -272,7 +272,7 @@ public abstract class AbstractListModelComponentSequencePanel<E> extends Abstrac
 
 
 	/**@return The first component to be displayed in the sequence.
-	@exception ClassCastException if the element as the given index is not of the correct generic type <code>E</code>.
+	@throws ClassCastException if the element as the given index is not of the correct generic type <code>E</code>.
 	*/
 	protected Component getFirstComponent()
 	{
@@ -286,7 +286,7 @@ public abstract class AbstractListModelComponentSequencePanel<E> extends Abstrac
 	}
 
 	/**@return The next component to be displayed in the sequence.
-	@exception ClassCastException if the element as the given index is not of the correct generic type <code>E</code>.
+	@throws ClassCastException if the element as the given index is not of the correct generic type <code>E</code>.
 	*/
 	protected Component getNextComponent()
 	{
@@ -300,7 +300,7 @@ public abstract class AbstractListModelComponentSequencePanel<E> extends Abstrac
 	}
 
 	/**@return The previous component to be displayed in the sequence.
-	@exception ClassCastException if the element as the given index is not of the correct generic type <code>E</code>.
+	@throws ClassCastException if the element as the given index is not of the correct generic type <code>E</code>.
 	*/
 	protected Component getPreviousComponent()
 	{

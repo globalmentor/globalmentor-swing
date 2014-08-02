@@ -123,7 +123,7 @@ public class RDFPanel<R extends RDFResource, M extends ResourceModel<R>> extends
 
 	/**Loads the data from the model to the specified view, if necessary.
 	@param modelView The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
-	@exception IOException Thrown if there was an error loading the model.
+	@throws IOException Thrown if there was an error loading the model.
 	*/
 	protected void loadModel(final int modelView) throws IOException
 	{
@@ -165,7 +165,7 @@ public class RDFPanel<R extends RDFResource, M extends ResourceModel<R>> extends
 
 	/**Stores the current data being edited to the model, if necessary.
 	@param modelView The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
-	@exception IOException Thrown if there was an error saving the model.
+	@throws IOException Thrown if there was an error saving the model.
 	*/
 	protected void saveModel(final int modelView) throws IOException
 	{

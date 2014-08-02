@@ -62,7 +62,7 @@ public abstract class AbstractConfiguredFramedSwingApplication<C> extends Abstra
 		protected void setConfigurationDirectoryName(final String configurationDirectoryName) {this.configurationDirectoryName=configurationDirectoryName;}
 
 	/**@return The configuration directory for the application.
-	@exception SecurityException if a security manager exists and its <code>checkPropertyAccess</code> method doesn't allow
+	@throws SecurityException if a security manager exists and its <code>checkPropertyAccess</code> method doesn't allow
 		access to the user home system property.
 	@see OperatingSystem#getUserHomeDirectory()
 	@see #getConfigurationDirectoryName()
@@ -73,7 +73,7 @@ public abstract class AbstractConfiguredFramedSwingApplication<C> extends Abstra
 	}
 
 	/**@return An object representing the file containing the configuration information.
-	@exception SecurityException if a security manager exists and its <code>checkPropertyAccess</code> method doesn't allow
+	@throws SecurityException if a security manager exists and its <code>checkPropertyAccess</code> method doesn't allow
 		access to the user home system property.
 	@see #getConfigurationDirectory()
 	*/
@@ -128,7 +128,7 @@ public abstract class AbstractConfiguredFramedSwingApplication<C> extends Abstra
 	/**Initializes the application.
 	This method is called after construction but before application execution.
 	This version loads the configuration information, if it exists.
-	@exception Exception Thrown if anything goes wrong.
+	@throws Exception Thrown if anything goes wrong.
 	*/
 	public void initialize() throws Exception	//TODO create a flag that only allows initialization once
 	{

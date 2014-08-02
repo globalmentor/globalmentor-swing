@@ -98,7 +98,7 @@ public abstract class ZeroSpanView extends View
 	@param pos The position to convert (>=0).
 	@param allocation The allocated region to render into.
 	@return The bounding box of the given position.
-	@exception BadLocationException Thrown if the given position does not
+	@throws BadLocationException Thrown if the given position does not
 		represent a valid location governed by the view in the associated document.
 	@see View#modelToView
 	*/

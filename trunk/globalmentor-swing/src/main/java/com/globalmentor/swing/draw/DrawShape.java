@@ -121,7 +121,7 @@ public abstract class DrawShape implements Drawable
 	/**Sets the location and dimensions of the drawn shape.
 	@param shape The object specifying the new location and shape of the drawn
 		shape; must be appropriate for the particular instance of shape being drawn.
-	@exception IllegalArgumentException Thrown if the shape is inappropriate for
+	@throws IllegalArgumentException Thrown if the shape is inappropriate for
 		the shape being drawn.
 	*/
 	public abstract void setShape(final Shape shape) throws IllegalArgumentException;

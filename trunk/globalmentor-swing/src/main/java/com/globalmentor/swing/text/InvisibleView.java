@@ -73,8 +73,8 @@ public class InvisibleView extends ZeroSpanView
 	</ul>
 	@return The location within the model that best represents the next
 		location visual position. This version always returns -1.
-	@exception BadLocationException
-	@exception IllegalArgumentException if <code>direction</code>
+	@throws BadLocationException
+	@throws IllegalArgumentException if <code>direction</code>
 		doesn't have one of the legal values above
 	*/
 	public int getNextVisualPositionFrom(int pos, Position.Bias b, Shape a, int direction, Position.Bias[] biasRet) throws BadLocationException

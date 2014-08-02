@@ -84,7 +84,7 @@ public class XMLClassLoader extends SecureClassLoader
 //TODO fix: using the URI search path. Any URIs referring to JAR files are loaded and opened as needed until the class is found.
 	@param name The name of the class (not the class file).
 	@return The resulting class.
-	@exception ClassNotFoundException Thrown if the class could not be found.
+	@throws ClassNotFoundException Thrown if the class could not be found.
 	*/
 	protected Class findClass(final String name) throws ClassNotFoundException
 	{

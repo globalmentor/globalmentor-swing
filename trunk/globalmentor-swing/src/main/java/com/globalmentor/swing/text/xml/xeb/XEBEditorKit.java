@@ -62,7 +62,7 @@ public class XEBEditorKit extends XHTMLEditorKit	//TODO eventually go back to de
 	
 	/**Constructor.
 	@param uriInputStreamable The source of input streams for resources.
-	@exception NullPointerException if the new source of input streams is <code>null</code>.
+	@throws NullPointerException if the new source of input streams is <code>null</code>.
 	*/
 	public XEBEditorKit(final URIInputStreamable uriInputStreamable)
 	{
@@ -92,10 +92,10 @@ public class XEBEditorKit extends XHTMLEditorKit	//TODO eventually go back to de
 		 * @param doc The destination for the insertion.
 		 * @param pos The location in the document to place the
 		 *   content.
-		 * @exception IOException on any I/O error
-		 * @exception BadLocationException if pos represents an invalid
+		 * @throws IOException on any I/O error
+		 * @throws BadLocationException if pos represents an invalid
 		 *   location within the document.
-		 * @exception RuntimeException (will eventually be a BadLocationException)
+		 * @throws RuntimeException (will eventually be a BadLocationException)
 		 *            if pos is invalid.
 		 */
 	public void read(Reader in, Document doc, int pos) throws IOException, BadLocationException
@@ -182,8 +182,8 @@ System.out.println("Finished with file.");	//TODO del
 	@param inputStream The stream to read from.
 	@param document The destination for the insertion.
 	@param pos The location in the document to place the content >= 0.
-	@exception IOException Thrown on any I/O error
-	@exception BadLocationException Thrown if pos represents an invalid location
+	@throws IOException Thrown on any I/O error
+	@throws BadLocationException Thrown if pos represents an invalid location
 		within the document.
 	*/
 	public void read(InputStream inputStream, Document document, int pos) throws IOException, BadLocationException
@@ -216,8 +216,8 @@ System.out.println("Finished with file.");	//TODO del
 	@param rdf The RDF data model.
 	@param swingXMLDocument The destination for the insertion.
 	@param pos The location in the document to place the content (>=0).
-	@exception IOException Thrown on any I/O error
-	@exception BadLocationException Thrown if pos represents an invalid location within the document.
+	@throws IOException Thrown on any I/O error
+	@throws BadLocationException Thrown if pos represents an invalid location within the document.
 	*/
 	protected void read(final RDF rdf, final XMLDocument swingXMLDocument, int pos) throws IOException, BadLocationException
 	{
@@ -318,7 +318,7 @@ Log.trace(RDFResources.toString(rdf));
 	@param xmlDocumentList	The list to be populated with XML documents.
 	@param baseURIList The list to be populated with base URIs.
 	@param contentTypeList The list to be populated with content types.
-	@exception IOException if there is an error loading any of the documents.
+	@throws IOException if there is an error loading any of the documents.
 	*/
 /*TODO del if not needed
 	protected void loadSpine(final Binding binding, final XMLDocument swingXMLDocument, final XMLProcessor xmlProcessor, final List<org.w3c.dom.Document> xmlDocumentList, final List<URI> baseURIList, final List<ContentType> contentTypeList) throws IOException

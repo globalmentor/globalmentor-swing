@@ -108,7 +108,7 @@ public abstract class DefaultViewFactory implements ViewsFactory //TODO maybe us
 		indicate multiple views should represent the given element.
 	@return A view to represent the given element, or <code>null</code>
 		indicating the element should be represented by multiple views.
-	@exception IllegalArgumentException Thrown if the element is not recognized
+	@throws IllegalArgumentException Thrown if the element is not recognized
 		and there is no fallback view factory.
 	@see com.globalmentor.swing.text.ViewsFactory
 	*/

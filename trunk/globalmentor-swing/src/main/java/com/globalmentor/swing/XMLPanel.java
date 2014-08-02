@@ -108,7 +108,7 @@ public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeMo
 
 	/**Sets the data model.
 	@param newModel The data model for which this component provides a view.
-	@exception ClassCastException Thrown if the model is not an <code>XMLNodeModel</code>.
+	@throws ClassCastException Thrown if the model is not an <code>XMLNodeModel</code>.
 	*/
 	public void setModel(final XMLNodeModel<N> newModel)
 	{
@@ -237,7 +237,7 @@ updateStatus();	//testing; probably put a convenience method to create this list
 
 	/**Loads the data from the model to the specified view, if necessary.
 	@param modelView The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
-	@exception IOException Thrown if there was an error loading the model.
+	@throws IOException Thrown if there was an error loading the model.
 	*/
 	protected void loadModel(final int modelView) throws IOException	//TODO better refactor the Document and DocumentFragment-specific code out of this abstract class
 	{
@@ -297,7 +297,7 @@ updateStatus();	//testing; probably put a convenience method to create this list
 
 	/**Stores the current data being edited to the model, if necessary.
 	@param modelView The view of the data, such as <code>SUMMARY_MODEL_VIEW</code>.
-	@exception IOException Thrown if there was an error saving the model.
+	@throws IOException Thrown if there was an error saving the model.
 	*/
 	protected void saveModel(final int modelView) throws IOException
 	{

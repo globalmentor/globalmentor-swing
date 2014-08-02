@@ -81,7 +81,7 @@ public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implement
 		returned by <code>getResource()</code> being changed to another object,
 		invalidating the old resource description.
 	@param referenceURI The new reference URI of the document.
-	@exception IllegalArgumentException Thrown if the provided reference URI is
+	@throws IllegalArgumentException Thrown if the provided reference URI is
 		<code>null</code>.
 	*/
 /*TODO del when works
@@ -186,7 +186,7 @@ public abstract class AbstractMDIDocumentPanel extends ToolStatusPanel implement
 	/**Loads the resource by reading the contents of the resource from the given
 		input stream. Convenience implementation to read with no description.
 	@param inputStream The source of the content.
-	@exception IOException Thrown if there is an error reading the contents.
+	@throws IOException Thrown if there is an error reading the contents.
 	*/
 	public void read(final InputStream inputStream) throws IOException
 	{

@@ -67,7 +67,7 @@ public class Annotation extends Bookmark
 	/**Constructs an annotation attached to a document at a particular offset.
 	@param document The document to which the bookmark should be attached.
 	@param offset The offset in the document at which the annotation should be attached.
-	@exception BadLocationException Thrown if the given position does not
+	@throws BadLocationException Thrown if the given position does not
 		represent a valid location in the document.
 	*/
 	public Annotation(final Document document, final int offset) throws BadLocationException
@@ -82,7 +82,7 @@ public class Annotation extends Bookmark
 		should be attached.
 	@param endOffset The ending offset in the document at which the annotation
 		should be attached.
-	@exception BadLocationException Thrown if the given position does not
+	@throws BadLocationException Thrown if the given position does not
 		represent a valid location in the document.
 	*/
 	public Annotation(final Document document, final int startOffset, final int endOffset) throws BadLocationException
@@ -97,7 +97,7 @@ public class Annotation extends Bookmark
 		should be attached.
 	@param endOffset The ending offset in the document at which the annotation
 		should be attached.
-	@exception BadLocationException Thrown if the given position does not
+	@throws BadLocationException Thrown if the given position does not
 		represent a valid location in the document.
 	*/
 	public Annotation(final Document document, final int startOffset, final int endOffset, final Color color) throws BadLocationException
@@ -111,7 +111,7 @@ public class Annotation extends Bookmark
 	@param text The new text of the annotation.
 	@param document The document to which the annotation should be attached.
 	@param offset The offset in the document at which the annotation should be attached.
-	@exception BadLocationException Thrown if the given position does not
+	@throws BadLocationException Thrown if the given position does not
 		represent a valid location in the document.
 	*/
 	public Annotation(final String text, final Document document, final int offset) throws BadLocationException
@@ -173,7 +173,7 @@ public class Annotation extends Bookmark
 		another <code>Annnotation</code> object.
 	@return A negative integer, zero, or a positive integer as this annotation is
 		less than, equal to, or greater than the specified annotation, respectively.
-	@exception ClassCastException Thrown if the specified object's type is not
+	@throws ClassCastException Thrown if the specified object's type is not
 		an <code>Annotation</code>.
 	*/
 	public int compareTo(Object object) throws ClassCastException

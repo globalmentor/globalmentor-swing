@@ -42,7 +42,7 @@ public class RDFResourceLabelListCellRenderer extends SimpleListCellRenderer
 	/**Retrieves a label for a resource.
 	@param value The value of this list item.
 	@return The correct text for this list item.
-	@exception ClassCastException if the value is not an RDF resource.
+	@throws ClassCastException if the value is not an RDF resource.
 	@see RDFResource
 	*/
   protected String getListCellRendererString(final Object value)

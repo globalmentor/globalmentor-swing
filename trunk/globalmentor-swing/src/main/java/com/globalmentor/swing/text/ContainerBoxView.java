@@ -349,7 +349,7 @@ public class ContainerBoxView extends BoxView implements Inset
 		/**Fragments the managed components of a view, if supported, into its fragment view.
 		@param fromView The view being fragmented.
 		@param toFragmentView The fragment view into which the original view is being fragmented.
-		@exception ClassCastException if <code>toFragmentView</code> is not a <code>FragmentView</code>.
+		@throws ClassCastException if <code>toFragmentView</code> is not a <code>FragmentView</code>.
 		*/
 		protected void fragmentComponents(final BoxView fromView, final View toFragmentView)
 		{

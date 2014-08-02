@@ -94,7 +94,7 @@ public class TextPanel extends ModelPanel<StringBuilder>
 	}
 
 	/**Loads the data from the model to the view, if necessary.
-	@exception IOException Thrown if there was an error loading the model.
+	@throws IOException Thrown if there was an error loading the model.
 	*/
 	public void loadModel() throws IOException
 	{
@@ -103,7 +103,7 @@ public class TextPanel extends ModelPanel<StringBuilder>
 	}
 
 	/**Stores the current data being edited to the model, if necessary.
-	@exception IOException Thrown if there was an error loading the model.
+	@throws IOException Thrown if there was an error loading the model.
 	*/
 	public void saveModel() throws IOException
 	{

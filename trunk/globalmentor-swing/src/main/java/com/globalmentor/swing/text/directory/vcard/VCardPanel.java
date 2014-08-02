@@ -107,7 +107,7 @@ public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable
 //TODO---make the new ContainerUtilities.verifyDescendants() method select the tab if it desn't verify
 
 	/**Loads the data from the model to the view, if necessary.
-	@exception IOException Thrown if there was an error loading the model.
+	@throws IOException Thrown if there was an error loading the model.
 	*/
 	public void loadModel() throws IOException
 	{
@@ -131,7 +131,7 @@ public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable
 	}
 
 	/**Stores the current data being edited to the model, if necessary.
-	@exception IOException Thrown if there was an error loading the model.
+	@throws IOException Thrown if there was an error loading the model.
 	*/
 	public void saveModel() throws IOException
 	{
