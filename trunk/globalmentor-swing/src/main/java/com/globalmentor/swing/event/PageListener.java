@@ -18,16 +18,16 @@ package com.globalmentor.swing.event;
 
 import java.util.EventListener;
 
-/**Listener for changes in displayed page of an XMLTextPane or OEBBook.
-@author Garret Wilson
-@see com.globalmentor.swing.XMLTextPane
-*/
-public interface PageListener extends EventListener
-{
+/**
+ * Listener for changes in displayed page of an XMLTextPane or OEBBook.
+ * @author Garret Wilson
+ * @see com.globalmentor.swing.XMLTextPane
+ */
+public interface PageListener extends EventListener {
 
-	/**Called when the displayed page has changed.
-	@param e The page event.
-	*/
+	/**
+	 * Called when the displayed page has changed.
+	 * @param e The page event.
+	 */
 	void pageChanged(PageEvent e);
 }
-

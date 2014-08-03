@@ -18,22 +18,23 @@ package com.globalmentor.swing.text.xml;
 
 import javax.swing.text.*;
 
-/**Represents a CSS1-like list item.
-@author Garret Wilson
-*/
-public class XMLListItemView extends XMLBlockView	//TODO probably delete this entire class
+/**
+ * Represents a CSS1-like list item.
+ * @author Garret Wilson
+ */
+public class XMLListItemView extends XMLBlockView //TODO probably delete this entire class
 {
 
-	/**Constructs a fragment view for the paragraph.
-	@param element The element this view is responsible for.
-	@param axis The tiling axis, either View.X_AXIS or View.Y_AXIS.
-	*/
-	public XMLListItemView(Element element, int axis)
-	{
+	/**
+	 * Constructs a fragment view for the paragraph.
+	 * @param element The element this view is responsible for.
+	 * @param axis The tiling axis, either View.X_AXIS or View.Y_AXIS.
+	 */
+	public XMLListItemView(Element element, int axis) {
 		super(element, axis); //do the default construction
-//TODO del Log.trace("Creating a list view object.");
-//TODO del		setInsets((short)50, (short)50, (short)50, (short)50);	//TODO fix; testing
-//TODO del		setInsets((short)0, (short)25, (short)0, (short)0);	//TODO fix; testing
+		//TODO del Log.trace("Creating a list view object.");
+		//TODO del		setInsets((short)50, (short)50, (short)50, (short)50);	//TODO fix; testing
+		//TODO del		setInsets((short)0, (short)25, (short)0, (short)0);	//TODO fix; testing
 	}
 
 }

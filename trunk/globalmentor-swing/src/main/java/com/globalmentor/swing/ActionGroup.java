@@ -16,9 +16,9 @@
 
 package com.globalmentor.swing;
 
-/**Indicates that one or more actions are part of a mutually-excluseive group.
-@author Garret Wilson
-*/
-public interface ActionGroup
-{
+/**
+ * Indicates that one or more actions are part of a mutually-excluseive group.
+ * @author Garret Wilson
+ */
+public interface ActionGroup {
 }

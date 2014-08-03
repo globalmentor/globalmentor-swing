@@ -31,15 +31,13 @@ import com.globalmentor.text.directory.vcard.*;
  * href="http://www.ietf.org/rfc/rfc2426.txt">RFC 2426</a>, "vCard MIME Directory Profile".
  * @author Garret Wilson
  */
-public class TelephoneTypePanel extends BasicPanel
-{
+public class TelephoneTypePanel extends BasicPanel {
 
 	/** The checkbox for a telephone number associated with a residence. */
 	private final JCheckBox homeCheckBox;
 
 	/** @return The checkbox for a telephone number associated with a residence. */
-	public JCheckBox getHomeCheckBox()
-	{
+	public JCheckBox getHomeCheckBox() {
 		return homeCheckBox;
 	}
 
@@ -47,8 +45,7 @@ public class TelephoneTypePanel extends BasicPanel
 	private final JCheckBox messageCheckBox;
 
 	/** @return The checkbox for a telephone number that has voice messaging support. */
-	public JCheckBox getMessageCheckBox()
-	{
+	public JCheckBox getMessageCheckBox() {
 		return messageCheckBox;
 	}
 
@@ -56,8 +53,7 @@ public class TelephoneTypePanel extends BasicPanel
 	private final JCheckBox workCheckBox;
 
 	/** @return The checkbox for a telephone number associated with a place of work. */
-	public JCheckBox getWorkCheckBox()
-	{
+	public JCheckBox getWorkCheckBox() {
 		return workCheckBox;
 	}
 
@@ -65,8 +61,7 @@ public class TelephoneTypePanel extends BasicPanel
 	private final JCheckBox preferredCheckBox;
 
 	/** @return The checkbox for a preferred-use telephone number. */
-	public JCheckBox getPreferredCheckBox()
-	{
+	public JCheckBox getPreferredCheckBox() {
 		return preferredCheckBox;
 	}
 
@@ -74,8 +69,7 @@ public class TelephoneTypePanel extends BasicPanel
 	private final JCheckBox voiceCheckBox;
 
 	/** @return The checkbox for a voice telephone number. */
-	public JCheckBox getVoiceCheckBox()
-	{
+	public JCheckBox getVoiceCheckBox() {
 		return voiceCheckBox;
 	}
 
@@ -83,8 +77,7 @@ public class TelephoneTypePanel extends BasicPanel
 	private final JCheckBox faxCheckBox;
 
 	/** @return The checkbox for a facsimile telephone number. */
-	public JCheckBox getFaxCheckBox()
-	{
+	public JCheckBox getFaxCheckBox() {
 		return faxCheckBox;
 	}
 
@@ -92,8 +85,7 @@ public class TelephoneTypePanel extends BasicPanel
 	private final JCheckBox cellCheckBox;
 
 	/** @return The checkbox for a cellular telephone number. */
-	public JCheckBox getCellCheckBox()
-	{
+	public JCheckBox getCellCheckBox() {
 		return cellCheckBox;
 	}
 
@@ -101,8 +93,7 @@ public class TelephoneTypePanel extends BasicPanel
 	private final JCheckBox videoCheckBox;
 
 	/** @return The checkbox for a video conferencing telephone number. */
-	public JCheckBox getVideoCheckBox()
-	{
+	public JCheckBox getVideoCheckBox() {
 		return videoCheckBox;
 	}
 
@@ -110,8 +101,7 @@ public class TelephoneTypePanel extends BasicPanel
 	private final JCheckBox pagerCheckBox;
 
 	/** @return The checkbox for a paging device telephone number. */
-	public JCheckBox getPagerCheckBox()
-	{
+	public JCheckBox getPagerCheckBox() {
 		return pagerCheckBox;
 	}
 
@@ -119,8 +109,7 @@ public class TelephoneTypePanel extends BasicPanel
 	private final JCheckBox bbsCheckBox;
 
 	/** @return The checkbox for a bulletin board system telephone number. */
-	public JCheckBox getBBSCheckBox()
-	{
+	public JCheckBox getBBSCheckBox() {
 		return bbsCheckBox;
 	}
 
@@ -128,8 +117,7 @@ public class TelephoneTypePanel extends BasicPanel
 	private final JCheckBox modemCheckBox;
 
 	/** @return The checkbox for a modem-connected telephone number. */
-	public JCheckBox getModemCheckBox()
-	{
+	public JCheckBox getModemCheckBox() {
 		return modemCheckBox;
 	}
 
@@ -137,8 +125,7 @@ public class TelephoneTypePanel extends BasicPanel
 	private final JCheckBox carCheckBox;
 
 	/** @return The checkbox for a car-phone telephone number. */
-	public JCheckBox getCarCheckBox()
-	{
+	public JCheckBox getCarCheckBox() {
 		return carCheckBox;
 	}
 
@@ -146,8 +133,7 @@ public class TelephoneTypePanel extends BasicPanel
 	private final JCheckBox isdnCheckBox;
 
 	/** @return The checkbox for an ISDN service telephone number. */
-	public final JCheckBox getISDNCheckBox()
-	{
+	public final JCheckBox getISDNCheckBox() {
 		return isdnCheckBox;
 	}
 
@@ -155,8 +141,7 @@ public class TelephoneTypePanel extends BasicPanel
 	private final JCheckBox pcsCheckBox;
 
 	/** @return The checkbox for a personal communication services telephone number. */
-	public JCheckBox getPCSCheckBox()
-	{
+	public JCheckBox getPCSCheckBox() {
 		return pcsCheckBox;
 	}
 
@@ -165,8 +150,7 @@ public class TelephoneTypePanel extends BasicPanel
 	 * @param telephoneTypes The intended use.
 	 * @see Telephone#Type
 	 */
-	public void setTelephoneTypes(final Set<Telephone.Type> telephoneTypes)
-	{
+	public void setTelephoneTypes(final Set<Telephone.Type> telephoneTypes) {
 		homeCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.HOME));
 		messageCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.MSG));
 		workCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.WORK));
@@ -187,8 +171,7 @@ public class TelephoneTypePanel extends BasicPanel
 	 * @return The telephone intended use
 	 * @see Telephone#Type
 	 */
-	public Set<Telephone.Type> getTelephoneTypes()
-	{
+	public Set<Telephone.Type> getTelephoneTypes() {
 		final Set<Telephone.Type> telephoneTypes = EnumSet.noneOf(Telephone.Type.class); //start out without knowing the telephone type
 		if(homeCheckBox.isSelected())
 			telephoneTypes.add(Telephone.Type.HOME);
@@ -225,8 +208,7 @@ public class TelephoneTypePanel extends BasicPanel
 	 * Default constructor.
 	 * @see Telephone#DEFAULT_TYPE
 	 */
-	public TelephoneTypePanel()
-	{
+	public TelephoneTypePanel() {
 		this(EnumSet.of(Telephone.DEFAULT_TYPE)); //construct the panel with the default telephone type
 	}
 
@@ -234,8 +216,7 @@ public class TelephoneTypePanel extends BasicPanel
 	 * Telephone type constructor.
 	 * @param telephoneTypes The intended use.
 	 */
-	public TelephoneTypePanel(final Set<Telephone.Type> telephoneTypes)
-	{
+	public TelephoneTypePanel(final Set<Telephone.Type> telephoneTypes) {
 		super(new BasicGridBagLayout(), false); //construct the panel using a grid bag layout, but don't initialize the panel
 		homeCheckBox = new JCheckBox();
 		messageCheckBox = new JCheckBox();
@@ -257,8 +238,7 @@ public class TelephoneTypePanel extends BasicPanel
 	}
 
 	/** Initializes the user interface. */
-	public void initializeUI()
-	{
+	public void initializeUI() {
 		super.initializeUI(); //do the default user interface initialization
 		homeCheckBox.setText("Home"); //TODO i18n
 		messageCheckBox.setText("Message"); //TODO i18n
