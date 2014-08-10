@@ -42,8 +42,6 @@ import com.globalmentor.swing.event.*;
 import com.globalmentor.swing.text.*;
 //TODO fix import com.globalmentor.swing.text.rdf.maqro.MAQROViewFactory;
 import com.globalmentor.swing.text.xml.*;
-import com.globalmentor.swing.text.xml.oeb.OEBEditorKit;
-import com.globalmentor.swing.text.xml.xeb.XEBEditorKit;
 import com.globalmentor.swing.text.xml.xhtml.*;
 import com.globalmentor.text.ArgumentSyntaxException;
 import com.globalmentor.text.Text;
@@ -79,18 +77,6 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 
 	/** The "application/zip" content type. */
 	protected final static ContentType ZIP_MEDIA_TYPE = ContentType.create(ContentType.APPLICATION_PRIMARY_TYPE, ZIP_SUBTYPE);
-
-	/** The "application/x-oeb1-package+xml" content type. */
-	protected final static ContentType OEB_PACKAGE_MEDIA_TYPE = ContentType.create(ContentType.APPLICATION_PRIMARY_TYPE, OEB.X_OEB1_PACKAGE_XML_SUBTYPE);
-
-	/** The "application/x-oeb-publication+zip" content type. */
-	protected final static ContentType OEB_ZIP_MEDIA_TYPE = ContentType.create(ContentType.APPLICATION_PRIMARY_TYPE, OEB.X_OEB_PUBLICATION_ZIP_SUBTYPE);
-
-	/** The "application/x-xebook+rdf+xml" content type. */
-	protected final static ContentType XEBOOK_MEDIA_TYPE = ContentType.create(ContentType.APPLICATION_PRIMARY_TYPE, X_XEBOOK_RDF_XML_SUBTYPE);
-
-	/** The "application/x-xebook+rdf+xml+zip" content type. */
-	protected final static ContentType XEB_ZIP_MEDIA_TYPE = ContentType.create(ContentType.APPLICATION_PRIMARY_TYPE, X_XEBOOK_RDF_XML_ZIP_SUBTYPE);
 
 	/** The "text/plain" content type. */
 	protected final static ContentType TEXT_PLAIN_MEDIA_TYPE = ContentType.create(ContentType.TEXT_PRIMARY_TYPE, Text.PLAIN_SUBTYPE);
@@ -827,6 +813,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 		Log.trace("content type is first: ", contentType); //TODO del
 		InputStream inputStream = null; //we'll attempt to get an input stream based upon the content type
 		//if this appears to be an XEB book zip file, an OEB publication zip file or an application/zip file, change our input stream locator and switch to a URI inside the file
+		/*
 		if(OEB_ZIP_MEDIA_TYPE.hasBaseType(contentType) || XEB_ZIP_MEDIA_TYPE.hasBaseType(contentType) || ZIP_MEDIA_TYPE.hasBaseType(contentType)) {
 			Log.trace("found zip file: ", uri); //TODO del
 			if(URIs.FILE_SCHEME.equals(uri.getScheme())) { //if this is the file scheme
@@ -858,6 +845,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 				//if this is not a zip file, but some other sort of zip access, throw an exception
 				Log.error("Zip file must use URI file protocol"); //TODO fix
 		}
+		*/
 		inputStream = getInputStream(uri); //get an input stream to the URI
 		setContentType(contentType.toString()); //set the content type, which will select the appropriate editor kit
 
@@ -1205,10 +1193,12 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 		final ContentType mediaType = ContentType.create(type); //create a new media type
 		if(XHTML.isHTML(mediaType)) { //if this is an XHTML media type
 			editorKit = new XHTMLEditorKit(mediaType, this); //create a new XHTML editor kit for this media type
+		/*
 		} else if(OEB_PACKAGE_MEDIA_TYPE.hasBaseType(mediaType)) { //if this is an OEB package
 			editorKit = new OEBEditorKit(this); //create a new OEB editor kit for the OEB package
 		} else if(XEBOOK_MEDIA_TYPE.hasBaseType(mediaType)) { //if this is an XEbook
 			editorKit = new XEBEditorKit(this); //create a new XEB editor kit for the XEbook
+		*/
 		} else if(TEXT_PLAIN_MEDIA_TYPE.hasBaseType(mediaType)) { //if this is a plain text document
 			editorKit = new BasicStyledEditorKit(this); //create a new basic styled editor kit for the text
 		}
