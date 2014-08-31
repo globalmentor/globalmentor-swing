@@ -23,7 +23,6 @@ import com.globalmentor.rdf.RDFResource;
 import com.globalmentor.rdf.RDFResources;
 import com.globalmentor.rdf.dublincore.RDFDublinCore;
 import com.globalmentor.rdf.rdfs.RDFS;
-import com.globalmentor.rdf.xpackage.XPackage;
 import com.globalmentor.swing.SimpleListCellRenderer;
 
 /**
@@ -61,10 +60,7 @@ public class RDFResourceLabelListCellRenderer extends SimpleListCellRenderer {
 				if(referenceURI != null) { //if there is a reference URI
 					label = referenceURI.toString(); //use the string form of the reference URI
 				} else { //if there is no reference URI
-					label = XPackage.getLocationHRef(resource); //try to get an xpackage:location xlink:href
-					if(label == null) { //if there is no XPackage location href
-						label = resource.toString(); //settle for the string version of the resource
-					}
+					label = resource.toString(); //settle for the string version of the resource
 				}
 			}
 		}
