@@ -33,7 +33,7 @@ import javax.swing.event.EventListenerList;
 public class ActionList extends JList {
 
 	/** The key for mapping the action-firing action in the input and action maps. */
-	public final static String ACTION_KEY = "action";
+	public static final String ACTION_KEY = "action";
 
 	/** The list of action listeners. */
 	protected final EventListenerList actionListenerList = new EventListenerList();

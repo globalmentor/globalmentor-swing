@@ -37,7 +37,7 @@ import com.globalmentor.model.Modifiable;
 public abstract class AbstractConfiguredFramedSwingApplication<C> extends AbstractFramedSwingApplication implements Modifiable {
 
 	/** The filename of the configuration file. */
-	public final static String CONFIGURATION_FILENAME = "configuration.rdf";
+	public static final String CONFIGURATION_FILENAME = "configuration.rdf";
 
 	/** Whether the object has been modified; the default is not modified. */
 	private boolean modified = false;

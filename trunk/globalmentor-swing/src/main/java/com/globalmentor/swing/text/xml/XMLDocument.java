@@ -53,20 +53,20 @@ import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
 public class XMLDocument extends BasicStyledDocument {
 
 	/** The task of applying a stylesheet. */
-	public final static String APPLY_STYLESHEET_TASK = "applyStylesheet";
+	public static final String APPLY_STYLESHEET_TASK = "applyStylesheet";
 
 	/**
 	 * The character used to mark the end of an element so that caret positioning will work correctly at the end of block views.
 	 */
 	//TODO fix	final static char ELEMENT_END_CHAR=CharacterConstants.ZERO_WIDTH_NO_BREAK_SPACE_CHAR;	
 	//TODO fix; the ZWNBSP seems to make Swing want to break a line early or something
-	//TODO fix final static char ELEMENT_END_CHAR=CharacterConstants.ZERO_WIDTH_SPACE_CHAR;	
+	//TODO fix static final char ELEMENT_END_CHAR=CharacterConstants.ZERO_WIDTH_SPACE_CHAR;	
 
-	//TODO fix final static char ELEMENT_END_CHAR='\n';	
+	//TODO fix static final char ELEMENT_END_CHAR='\n';	
 
 	final static char ELEMENT_END_CHAR = Characters.ZERO_WIDTH_SPACE_CHAR;
 	final static String ELEMENT_END_STRING = String.valueOf(ELEMENT_END_CHAR);
-	//TODO fix final static char ELEMENT_END_CHAR=CharacterConstants.ZERO_WIDTH_NO_BREAK_SPACE_CHAR;	
+	//TODO fix static final char ELEMENT_END_CHAR=CharacterConstants.ZERO_WIDTH_NO_BREAK_SPACE_CHAR;	
 	//TODO fix	final static char ELEMENT_END_CHAR=CharacterConstants.PARAGRAPH_SIGN_CHAR;	
 
 	/** A map of soft references to resources that have been loaded. */

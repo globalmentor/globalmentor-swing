@@ -85,7 +85,7 @@ public class UnicodePanel extends ToolStatusPanel {
 	}
 
 	/** The dimension of each square code point cell. */
-	private final static int CELL_DIMENSION = 32; //TODO use a calculated value
+	private static final int CELL_DIMENSION = 32; //TODO use a calculated value
 
 	/** Initializes the user interface. */
 	protected void initializeUI() {

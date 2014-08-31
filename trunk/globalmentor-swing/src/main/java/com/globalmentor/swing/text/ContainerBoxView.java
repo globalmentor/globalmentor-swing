@@ -35,7 +35,7 @@ import com.globalmentor.log.Log;
 public class ContainerBoxView extends BoxView implements Inset {
 
 	/** The shared default break strategy for container views. */
-	public final static ViewBreakStrategy DEFAULT_BREAK_STRATEGY = new ContainerBreakStrategy();
+	public static final ViewBreakStrategy DEFAULT_BREAK_STRATEGY = new ContainerBreakStrategy();
 
 	/** The stategy for breaking this view into fragments. */
 	private ViewBreakStrategy breakStrategy = DEFAULT_BREAK_STRATEGY;
@@ -54,7 +54,7 @@ public class ContainerBoxView extends BoxView implements Inset {
 	}
 
 	/** Shared constant empty array of views. */
-	protected final static View[] NO_VIEWS = new View[0];
+	protected static final View[] NO_VIEWS = new View[0];
 
 	/** <code>true</code> if the cache is based upon recent information, even though there may not be a cached value available. */
 	private boolean cacheValid = false;

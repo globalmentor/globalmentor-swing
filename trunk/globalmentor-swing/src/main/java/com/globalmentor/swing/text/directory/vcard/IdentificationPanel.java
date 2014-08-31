@@ -42,13 +42,13 @@ import com.globalmentor.util.*;
 public class IdentificationPanel extends BasicVCardPanel {
 
 	/** The character to use when separating multiple values. */
-	protected final static char VALUE_SEPARATOR_CHAR = ',';
+	protected static final char VALUE_SEPARATOR_CHAR = ',';
 
 	/** The string to use when separating multiple values. */
-	protected final static String VALUE_SEPARATOR = "" + VALUE_SEPARATOR_CHAR + " ";
+	protected static final String VALUE_SEPARATOR = "" + VALUE_SEPARATOR_CHAR + " ";
 
 	/** The characters that can delimit values entered by users. */
-	protected final static String VALUE_DELIMITERS = ";" + VALUE_SEPARATOR_CHAR;
+	protected static final String VALUE_DELIMITERS = ";" + VALUE_SEPARATOR_CHAR;
 
 	/** The name panel. */
 	private final NamePanel namePanel;

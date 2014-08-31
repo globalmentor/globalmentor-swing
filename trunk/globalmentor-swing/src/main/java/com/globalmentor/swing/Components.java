@@ -29,7 +29,7 @@ import javax.swing.*;
 public class Components {
 
 	/** The enabled property. */
-	public final static String ENABLED_PROPERTY = "enabled";
+	public static final String ENABLED_PROPERTY = "enabled";
 
 	/** This class cannot be publicly instantiated. */
 	private Components() {

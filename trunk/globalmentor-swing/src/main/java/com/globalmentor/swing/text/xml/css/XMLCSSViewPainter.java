@@ -36,12 +36,12 @@ import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
 public class XMLCSSViewPainter {
 
 	/** The default list style types for different nestings of ordered lists. */
-	public final static String[] NESTED_ORDERED_LIST_STYLE_TYPES = new String[] { CSS_LIST_STYLE_TYPE_DECIMAL, CSS_LIST_STYLE_TYPE_UPPER_ALPHA,
+	public static final String[] NESTED_ORDERED_LIST_STYLE_TYPES = new String[] { CSS_LIST_STYLE_TYPE_DECIMAL, CSS_LIST_STYLE_TYPE_UPPER_ALPHA,
 			CSS_LIST_STYLE_TYPE_UPPER_ROMAN, CSS_LIST_STYLE_TYPE_LOWER_ALPHA };
 	/** The default list style types for different nestings of unordered lists. */
-	public final static String[] NESTED_UNORDERED_LIST_STYLE_TYPES = new String[] { CSS_LIST_STYLE_TYPE_DISC };
+	public static final String[] NESTED_UNORDERED_LIST_STYLE_TYPES = new String[] { CSS_LIST_STYLE_TYPE_DISC };
 
-	//TODO fix when other circle and square are supported	public final static String[] NESTED_UNORDERED_LIST_STYLE_TYPES=new String[]{CSS_LIST_STYLE_TYPE_DISC, CSS_LIST_STYLE_TYPE_CIRCLE, CSS_LIST_STYLE_TYPE_SQUARE}; 
+	//TODO fix when other circle and square are supported	public static final String[] NESTED_UNORDERED_LIST_STYLE_TYPES=new String[]{CSS_LIST_STYLE_TYPE_DISC, CSS_LIST_STYLE_TYPE_CIRCLE, CSS_LIST_STYLE_TYPE_SQUARE}; 
 
 	/**
 	 * Paints an XML view using CSS properties.

@@ -38,13 +38,13 @@ import com.globalmentor.util.*;
 public class OrganizationPanel extends BasicVCardPanel {
 
 	/** The character to use when separating multiple units. */
-	protected final static char UNIT_SEPARATOR_CHAR = ',';
+	protected static final char UNIT_SEPARATOR_CHAR = ',';
 
 	/** The string to use when separating multiple units. */
-	protected final static String UNIT_SEPARATOR = " " + UNIT_SEPARATOR_CHAR + " ";
+	protected static final String UNIT_SEPARATOR = " " + UNIT_SEPARATOR_CHAR + " ";
 
 	/** The characters that can delimit units entered by users. */
-	protected final static String UNIT_DELIMITERS = ";" + UNIT_SEPARATOR_CHAR;
+	protected static final String UNIT_DELIMITERS = ";" + UNIT_SEPARATOR_CHAR;
 
 	/** The label of the organization name. */
 	private final JLabel nameLabel;

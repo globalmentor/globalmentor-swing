@@ -34,12 +34,12 @@ import com.globalmentor.awt.Fonts;
 public class XMLCSSStyleContext extends StyleContext {
 
 	/** The available font family names in a sorted array. */
-	protected final static String[] SORTED_AVAILABLE_FONT_FAMILY_NAMES;
+	protected static final String[] SORTED_AVAILABLE_FONT_FAMILY_NAMES;
 
 	/**
 	 * Map of font family names, keyed to either a Unicode block or a <code>character</code>.
 	 */
-	//TODO del	protected final static Map characterFontFamilyNameMap=new HashMap();
+	//TODO del	protected static final Map characterFontFamilyNameMap=new HashMap();
 
 	/** The sorted list of available font family names. */
 	//TODO del	private static String[] sortedAvailableFontFamilyNameArray=null;

@@ -40,7 +40,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //TODO s
 	/**
 	 * The minimum amount of size to allow for changing; any change lower than this will result in no size change.
 	 */
-	protected final static int MINIMUM_SIZE_CHANGE = 2;
+	protected static final int MINIMUM_SIZE_CHANGE = 2;
 
 	/** The current bounds of the object. */
 	private Rectangle bounds = new Rectangle();

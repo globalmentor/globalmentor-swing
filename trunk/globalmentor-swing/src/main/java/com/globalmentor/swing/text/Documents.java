@@ -30,29 +30,29 @@ import com.globalmentor.rdf.RDF;
 public class Documents {
 
 	/** The <code>Boolean</code> property representing antialiased text. */
-	//TODO del if not needed	public final static String ANTIALIAS_DOCUMENT_PROPERTY="antialias";
+	//TODO del if not needed	public static final String ANTIALIAS_DOCUMENT_PROPERTY="antialias";
 
 	/** The name of the property that indicates the base URI against which relative URIs should be referenced. */
-	public final static String BASE_URI_PROPERTY = "baseURI";
+	public static final String BASE_URI_PROPERTY = "baseURI";
 
 	/**
 	 * The name of the document property which will contain whether the document should be paged, stored as a <code>Boolean</code>.
 	 */
-	public final static String PAGED_PROPERTY = "paged";
+	public static final String PAGED_PROPERTY = "paged";
 
 	/** The name of the document property which may contain the RDF data model. */
-	public final static String RDF_PROPERTY = "rdf";
+	public static final String RDF_PROPERTY = "rdf";
 
 	/** Whether or not text in this view or any child views should be antialiased, stored as a <code>Boolean</code>. */
-	public final static String ANTIALIAS_PROPERTY = "antialias";
+	public static final String ANTIALIAS_PROPERTY = "antialias";
 
 	/**
 	 * The name of the document property which will contain the zoom level stored as a <code>Float</code>.
 	 */
-	public final static String ZOOM_PROPERTY = "zoomFactor";
+	public static final String ZOOM_PROPERTY = "zoomFactor";
 
 	/** The default zoom level of the text pane. */
-	public final static float DEFAULT_ZOOM = 1.20f;
+	public static final float DEFAULT_ZOOM = 1.20f;
 
 	/**
 	 * Sets the location against which to resolve relative URIs. By default this will be the document's URI.

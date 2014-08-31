@@ -50,29 +50,29 @@ import static com.globalmentor.java.Objects.*;
 public class ActionManager implements Cloneable {
 
 	/** The <code>Integer</code> property that specifies the order of a menu action when returned in an iterator. */
-	public final static String MENU_ORDER_PROPERTY = ActionManager.class.getName() + Java.PACKAGE_SEPARATOR + "order";
+	public static final String MENU_ORDER_PROPERTY = ActionManager.class.getName() + Java.PACKAGE_SEPARATOR + "order";
 
 	//top-level menu order
-	public final static int FILE_MENU_ACTION_ORDER = 100;
-	public final static int EDIT_MENU_ACTION_ORDER = 200;
-	public final static int INSERT_MENU_ACTION_ORDER = 300;
-	public final static int VIEW_MENU_ACTION_ORDER = 400;
-	public final static int TOOL_MENU_ACTION_ORDER = 500;
-	public final static int CONFIGURE_MENU_ACTION_ORDER = 600;
-	public final static int WINDOW_MENU_ACTION_ORDER = 700;
-	public final static int HELP_MENU_ACTION_ORDER = 1000;
+	public static final int FILE_MENU_ACTION_ORDER = 100;
+	public static final int EDIT_MENU_ACTION_ORDER = 200;
+	public static final int INSERT_MENU_ACTION_ORDER = 300;
+	public static final int VIEW_MENU_ACTION_ORDER = 400;
+	public static final int TOOL_MENU_ACTION_ORDER = 500;
+	public static final int CONFIGURE_MENU_ACTION_ORDER = 600;
+	public static final int WINDOW_MENU_ACTION_ORDER = 700;
+	public static final int HELP_MENU_ACTION_ORDER = 1000;
 
 	//file menu order
-	public final static int FILE_NEW_MENU_ACTION_ORDER = 100;
-	public final static int FILE_OPEN_MENU_ACTION_ORDER = 200;
-	public final static int FILE_CLOSE_MENU_ACTION_ORDER = 300;
-	public final static int FILE_SAVE_MENU_ACTION_ORDER = 400;
-	public final static int FILE_SAVE_AS_MENU_ACTION_ORDER = 500;
-	public final static int FILE_REVERT_MENU_ACTION_ORDER = 600;
-	public final static int FILE_EXIT_MENU_ACTION_ORDER = 9999;
+	public static final int FILE_NEW_MENU_ACTION_ORDER = 100;
+	public static final int FILE_OPEN_MENU_ACTION_ORDER = 200;
+	public static final int FILE_CLOSE_MENU_ACTION_ORDER = 300;
+	public static final int FILE_SAVE_MENU_ACTION_ORDER = 400;
+	public static final int FILE_SAVE_AS_MENU_ACTION_ORDER = 500;
+	public static final int FILE_REVERT_MENU_ACTION_ORDER = 600;
+	public static final int FILE_EXIT_MENU_ACTION_ORDER = 9999;
 
 	//help menu order
-	public final static int HELP_ABOUT_MENU_ACTION_ORDER = 9999;
+	public static final int HELP_ABOUT_MENU_ACTION_ORDER = 9999;
 
 	/** The lazily-created action representing the top-level file menu. */
 	private static Action fileMenuAction = null;

@@ -99,11 +99,11 @@ import static com.globalmentor.java.Arrays.*;
 public class BasicPanel extends JPanel implements Scrollable, CanClosable, DefaultFocusable, Verifiable, ActionManaged {
 
 	/** The name of the bound icon property. */
-	public final static String ICON_PROPERTY = BasicPanel.class.getName() + Java.PACKAGE_SEPARATOR + "icon";
+	public static final String ICON_PROPERTY = BasicPanel.class.getName() + Java.PACKAGE_SEPARATOR + "icon";
 	/** The name of the bound title property. */
-	public final static String TITLE_PROPERTY = BasicPanel.class.getName() + Java.PACKAGE_SEPARATOR + "title"; //TODO maybe later move this to a titleable interface
+	public static final String TITLE_PROPERTY = BasicPanel.class.getName() + Java.PACKAGE_SEPARATOR + "title"; //TODO maybe later move this to a titleable interface
 	/** The name of the bound user mode property. */
-	public final static String USER_MODE_PROPERTY = BasicPanel.class.getName() + Java.PACKAGE_SEPARATOR + "userMode";
+	public static final String USER_MODE_PROPERTY = BasicPanel.class.getName() + Java.PACKAGE_SEPARATOR + "userMode";
 
 	/**
 	 * The preferences that should be used for this panel, or <code>null</code> if the default preferences for this class should be used.
@@ -242,11 +242,11 @@ public class BasicPanel extends JPanel implements Scrollable, CanClosable, Defau
 	}
 
 	/** The mode in which the user can best view the contents of the panel. */
-	public final static int VIEW_MODE = 1 << 0;
+	public static final int VIEW_MODE = 1 << 0;
 	/** The mode in which the user can best modify the contents of the panel. */
-	public final static int EDIT_MODE = 1 << 1;
+	public static final int EDIT_MODE = 1 << 1;
 	/** The mode in which the user can interact with the contents of the panel. */
-	public final static int INTERACT_MODE = 1 << 2;
+	public static final int INTERACT_MODE = 1 << 2;
 
 	/** The mode of interaction with the user, such as <code>EDIT_MODE</code>. */
 	private int userMode;

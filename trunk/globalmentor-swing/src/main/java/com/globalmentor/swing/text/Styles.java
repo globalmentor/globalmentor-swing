@@ -26,10 +26,10 @@ import javax.swing.text.MutableAttributeSet;
 public class Styles {
 
 	/** The characters to prepend to Swing-specific attribute names. */
-	public final static String SWING_ATTRIBUTE_START = "$";
+	public static final String SWING_ATTRIBUTE_START = "$";
 
 	/** Whether a view for this element should be visible or hidden. */
-	public final static String VISIBLE_ATTRIBUTE_NAME = SWING_ATTRIBUTE_START + "visible";
+	public static final String VISIBLE_ATTRIBUTE_NAME = SWING_ATTRIBUTE_START + "visible";
 
 	/**
 	 * Returns an attribute in the attribute set only if it is defined; the attribute is not resolved by searching the parent attribute set hierarchy.

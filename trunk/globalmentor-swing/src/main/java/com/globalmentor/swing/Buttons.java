@@ -27,7 +27,7 @@ import javax.swing.AbstractButton;
 public class Buttons {
 
 	/** The property representing the <code>Boolean</code> value of whether text should be hidden. */
-	public final static String HIDE_ACTION_TEXT_PROPERTY = "hideActionText";
+	public static final String HIDE_ACTION_TEXT_PROPERTY = "hideActionText";
 
 	/**
 	 * Creates a property change listener that will, in response to a toggle action's "selected" property changing, will update the button's selected state.

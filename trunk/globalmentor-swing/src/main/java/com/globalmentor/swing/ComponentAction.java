@@ -32,7 +32,7 @@ import static com.globalmentor.java.Objects.*;
 public abstract class ComponentAction<C extends Component> extends AbstractAction {
 
 	/** The property that represents the selected objects of the component, if the component implements <code>ItemSelectable</code>. */
-	//TODO del if not needed	public final static String SELECTED_OBJECTS_PROPERTY="selectedObjects";
+	//TODO del if not needed	public static final String SELECTED_OBJECTS_PROPERTY="selectedObjects";
 
 	/** The listener we use to find out when the proxied action is changing. */
 	//TODO del if not needed	private PropertyChangeListener actionPropertyChangeListener;

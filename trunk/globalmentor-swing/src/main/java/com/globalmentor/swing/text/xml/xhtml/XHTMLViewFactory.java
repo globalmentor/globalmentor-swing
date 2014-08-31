@@ -31,7 +31,7 @@ import static com.globalmentor.text.xml.xhtml.XHTML.*;
 public class XHTMLViewFactory extends XMLViewFactory {
 
 	/** A static application/java media type for quick reference in the view factory. */
-	protected final static ContentType APPLICATION_JAVA_MEDIA_TYPE = ContentType.create(ContentType.APPLICATION_PRIMARY_TYPE, ContentTypeConstants.JAVA_SUBTYPE);
+	protected static final ContentType APPLICATION_JAVA_MEDIA_TYPE = ContentType.create(ContentType.APPLICATION_PRIMARY_TYPE, ContentTypeConstants.JAVA_SUBTYPE);
 
 	/**
 	 * Creates a view for the given element. If the element specifies a namespace and a view factory has been registered for the given namespace, the view

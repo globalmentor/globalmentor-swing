@@ -48,76 +48,76 @@ public class XMLStyles {
 
 	/** The default font size. */
 	//TODO should this go elsewhere?
-	public final static int DEFAULT_FONT_SIZE = 12;
+	public static final int DEFAULT_FONT_SIZE = 12;
 
 	/** The default line height (line spacing). */
 	//TODO should this go elsewhere?
-	public final static float DEFAULT_LINE_HEIGHT = 1.0f;
+	public static final float DEFAULT_LINE_HEIGHT = 1.0f;
 
 	/** The default text indent. */
 	//TODO should this go elsewhere?
-	public final static int DEFAULT_TEXT_INDENT = 0;
+	public static final int DEFAULT_TEXT_INDENT = 0;
 
 	/**
 	 * Whether or not a component should get a page-break view. Overrides the paragraph view and block/inline attributes.
 	 * @see #PARAGRAPH_VIEW_ATTRIBUTE_NAME
 	 */
-	public final static String PAGE_BREAK_VIEW_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "pageBreakView";
+	public static final String PAGE_BREAK_VIEW_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "pageBreakView";
 
 	/**
 	 * The public ID of the document type of the document, the root element of which this set of attributes represents.
 	 */
-	public final static String XML_DOCTYPE_PUBLIC_ID = Styles.SWING_ATTRIBUTE_START + "xmlDocTypePublicID";
+	public static final String XML_DOCTYPE_PUBLIC_ID = Styles.SWING_ATTRIBUTE_START + "xmlDocTypePublicID";
 
 	/**
 	 * The system ID of the document type of the document, the root element of which this set of attributes represents.
 	 */
-	public final static String XML_DOCTYPE_SYSTEM_ID = Styles.SWING_ATTRIBUTE_START + "xmlDocTypeSystemID";
+	public static final String XML_DOCTYPE_SYSTEM_ID = Styles.SWING_ATTRIBUTE_START + "xmlDocTypeSystemID";
 
 	/** The local name of the XML element this set of attributes represents. */
-	public final static String XML_ELEMENT_LOCAL_NAME_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "xmlElementLocalName";
+	public static final String XML_ELEMENT_LOCAL_NAME_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "xmlElementLocalName";
 
 	/** The name of the XML element this set of attributes represents. */
-	public final static String XML_ELEMENT_NAME_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "xmlElementName";
+	public static final String XML_ELEMENT_NAME_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "xmlElementName";
 
 	/** The name of elements that are anonymously created. */
-	public final static String ANONYMOUS_XML_ELEMENT_NAME = Styles.SWING_ATTRIBUTE_START + "anonymous";
+	public static final String ANONYMOUS_XML_ELEMENT_NAME = Styles.SWING_ATTRIBUTE_START + "anonymous";
 
 	/** The namespace URI of the XML element this set of attributes represents. */
-	public final static String XML_ELEMENT_NAMESPACE_URI_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "xmlElementNamespaceURI";
+	public static final String XML_ELEMENT_NAMESPACE_URI_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "xmlElementNamespaceURI";
 
 	/**
 	 * A <code>Boolean</code> specifying whether the XML element this set of attributes represents is an empty element.
 	 */
-	public final static String XML_EMPTY_ELEMENT = Styles.SWING_ATTRIBUTE_START + "xmlEmptyElement";
+	public static final String XML_EMPTY_ELEMENT = Styles.SWING_ATTRIBUTE_START + "xmlEmptyElement";
 
 	/** The array of processing instructions this document contains. */
-	public final static String XML_PROCESSING_INSTRUCTIONS_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "xmlProcessingInstructions";
+	public static final String XML_PROCESSING_INSTRUCTIONS_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "xmlProcessingInstructions";
 
 	/** The name of the attribute representing the base URI. */
-	public final static String BASE_URI_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "baseURI";
+	public static final String BASE_URI_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "baseURI";
 
 	/** The name of the attribute representing the media type. */
-	public final static String MEDIA_TYPE_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "mediaType";
+	public static final String MEDIA_TYPE_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "mediaType";
 
 	/**
 	 * The name of the attribute representing the full XLink target ID URI, including for example the ID as a relative path.
 	 */
-	public final static String TARGET_URI_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "targetURI";
+	public static final String TARGET_URI_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "targetURI";
 
 	/** The RDF resource description of the document hierarchy this set of attributes represents. */
-	public final static String DOCUMENT_DESCRIPTION_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "documentDescription";
+	public static final String DOCUMENT_DESCRIPTION_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "documentDescription";
 
 	/** Whether or not text in this view or any child views should be antialiased. */
-	public final static String ANTIALIAS_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "antialias";
+	public static final String ANTIALIAS_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "antialias";
 
 	/**
 	 * An empty array of name/value pairs to return when, for example, no processing instructions are available.
 	 */
-	protected final static NameValuePair[] EMPTY_NAME_VALUE_PAIR_ARRAY = new NameValuePair[] {};
+	protected static final NameValuePair[] EMPTY_NAME_VALUE_PAIR_ARRAY = new NameValuePair[] {};
 
 	/** The delimiter used for forming combined namespaceURI+localName names for XML attributes. */
-	protected final static char ATTRIBUTE_NAMESPACE_DELIMITER = '$';
+	protected static final char ATTRIBUTE_NAMESPACE_DELIMITER = '$';
 
 	/**
 	 * Searches up the element hierarchy for an element with the given namespace URI and local name. The given element itself is not checked.
@@ -175,7 +175,7 @@ public class XMLStyles {
 	}
 
 	/** The name of the map of XML attributes. */
-	//TODO fix	public final static String XMLAttributesAttributeName="XMLAttributes";
+	//TODO fix	public static final String XMLAttributesAttributeName="XMLAttributes";
 
 	/**
 	 * Returns an XML attribute with the given namespace and local name from the attribute set. The attribute is resolved by searching the parent attribute set
@@ -589,7 +589,7 @@ public class XMLStyles {
 	}
 
 	/** The array of processing instructions this document contains. */
-	//TODO del if not needed	public final static String XML_PROCESSING_INSTRUCTIONS_ATTRIBUTE_NAME=SWING_ATTRIBUTE_START+"xmlProcessingInstructions";
+	//TODO del if not needed	public static final String XML_PROCESSING_INSTRUCTIONS_ATTRIBUTE_NAME=SWING_ATTRIBUTE_START+"xmlProcessingInstructions";
 
 	/**
 	 * Gets the XML element attributes the Swing attributes represent. The attribute is not resolved through the parent attribute set hierarchy.

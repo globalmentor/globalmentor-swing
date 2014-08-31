@@ -57,6 +57,6 @@ public class RDFStyles {
 	}
 
 	/** The RDF resource element this set of attributes represents. */
-	public final static String RDF_RESOURCE_ATTRIBUTE_NAME = SWING_ATTRIBUTE_START + "rdfResource";
+	public static final String RDF_RESOURCE_ATTRIBUTE_NAME = SWING_ATTRIBUTE_START + "rdfResource";
 
 }

@@ -45,7 +45,7 @@ public class ImageComponent extends JComponent implements Scrollable {
 	}
 
 	/** The property representing the zoom factor, the value of which is a <code>Double</code>. */
-	public final static String ZOOM_FACTOR_PROPERTY = "zoomFactor";
+	public static final String ZOOM_FACTOR_PROPERTY = "zoomFactor";
 
 	/** The amount to resize the image, with <code>1</code> equal to no resizing. */
 	private double zoomFactor = 1.0f;

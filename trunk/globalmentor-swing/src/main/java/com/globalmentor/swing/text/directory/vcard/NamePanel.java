@@ -36,19 +36,19 @@ import com.globalmentor.util.*;
 public class NamePanel extends BasicVCardPanel {
 
 	/** The character to use when separating multiple values. */
-	protected final static char VALUE_SEPARATOR_CHAR = '|';
+	protected static final char VALUE_SEPARATOR_CHAR = '|';
 
 	/** The string to use when separating multiple values. */
-	protected final static String VALUE_SEPARATOR = " " + VALUE_SEPARATOR_CHAR + " ";
+	protected static final String VALUE_SEPARATOR = " " + VALUE_SEPARATOR_CHAR + " ";
 
 	/** The characters that can delimit values entered by users. */
-	protected final static String VALUE_DELIMITERS = ",;" + VALUE_SEPARATOR_CHAR;
+	protected static final String VALUE_DELIMITERS = ",;" + VALUE_SEPARATOR_CHAR;
 
 	/** Example honorific prefixes for populating the combo box. */
-	protected final static String[] HONORIFIC_PREFIX_EXAMPLES = new String[] { "Dr.", "Miss.", "Mr.", "Mrs.", "Ms.", "Prof." }; //TODO i18n
+	protected static final String[] HONORIFIC_PREFIX_EXAMPLES = new String[] { "Dr.", "Miss.", "Mr.", "Mrs.", "Ms.", "Prof." }; //TODO i18n
 
 	/** Example honorific suffixes for populating the combo box. */
-	protected final static String[] HONORIFIC_SUFFIX_EXAMPLES = new String[] { "I", "II", "III", "Jr.", "Sr." }; //TODO i18n
+	protected static final String[] HONORIFIC_SUFFIX_EXAMPLES = new String[] { "I", "II", "III", "Jr.", "Sr." }; //TODO i18n
 
 	/** The label of the family name text field. */
 	private final JLabel familyNameLabel;

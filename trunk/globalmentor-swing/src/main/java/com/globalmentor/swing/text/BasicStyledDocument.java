@@ -44,7 +44,7 @@ import com.globalmentor.swing.text.xml.css.XMLCSSStyleContext;
 public class BasicStyledDocument extends DefaultStyledDocument implements URIAccessible {
 
 	/** The name of the document property which may contain the loaded publication description. */
-	public final static String PUBLICATION_PROPERTY_NAME = "publication";
+	public static final String PUBLICATION_PROPERTY_NAME = "publication";
 
 	/** The list of progress event listeners. */
 	private EventListenerList progressListenerList = new EventListenerList();

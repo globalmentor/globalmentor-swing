@@ -45,7 +45,7 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 {
 
 	/** The shared default break strategy for container views. */
-	protected final static ViewBreakStrategy DEFAULT_BREAK_STRATEGY = ContainerBoxView.DEFAULT_BREAK_STRATEGY;
+	protected static final ViewBreakStrategy DEFAULT_BREAK_STRATEGY = ContainerBoxView.DEFAULT_BREAK_STRATEGY;
 
 	/** The stategy for breaking this view into fragments. */
 	private ViewBreakStrategy breakStrategy = DEFAULT_BREAK_STRATEGY;

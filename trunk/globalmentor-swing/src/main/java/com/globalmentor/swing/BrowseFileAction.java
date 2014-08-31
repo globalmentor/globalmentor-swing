@@ -36,7 +36,7 @@ import com.globalmentor.java.*;
 public class BrowseFileAction extends AbstractAction {
 
 	/** The name of the file property. */
-	public final static String SELECTED_FILE_PROPERTY = BrowseFileAction.class.getName() + Java.PACKAGE_SEPARATOR + "file";
+	public static final String SELECTED_FILE_PROPERTY = BrowseFileAction.class.getName() + Java.PACKAGE_SEPARATOR + "file";
 
 	/** The selected file, or <code>null</code> if no file is selected. */
 	private File selectedFile = null;

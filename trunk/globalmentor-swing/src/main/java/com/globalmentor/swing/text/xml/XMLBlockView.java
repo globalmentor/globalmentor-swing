@@ -42,7 +42,7 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 public class XMLBlockView extends ContainerBoxView implements XMLCSSView, FragmentViewFactory {
 
 	/** The shared empty array of elements. */
-	protected final static Element[] NO_ELEMENTS = new Element[0];
+	protected static final Element[] NO_ELEMENTS = new Element[0];
 
 	/** Whether we're allowed to expand horizontally. */
 	protected final boolean isExpandX; //TODO is this used anymore?

@@ -27,13 +27,13 @@ public class UnicodeTableModel extends AbstractTableModel {
 
 	/** The number of Unicode code points. */
 	//TODO fix for extended Unicode code points
-	protected final static int UNICODE_CODE_POINT_COUNT = 0x10000; //TODO maybe put this in UnicodeConstants
+	protected static final int UNICODE_CODE_POINT_COUNT = 0x10000; //TODO maybe put this in UnicodeConstants
 
 	/** The number of rows of Unicode code points to show at a time. */
-	protected final static int ROW_COUNT = 0x10;
+	protected static final int ROW_COUNT = 0x10;
 
 	/** The number of columns of Unicode code points to show at a time. */
-	protected final static int COLUMN_COUNT = UNICODE_CODE_POINT_COUNT / ROW_COUNT;
+	protected static final int COLUMN_COUNT = UNICODE_CODE_POINT_COUNT / ROW_COUNT;
 
 	/** Default constructor. */
 	public UnicodeTableModel() {

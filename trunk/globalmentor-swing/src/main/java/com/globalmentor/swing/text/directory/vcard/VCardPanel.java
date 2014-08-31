@@ -33,9 +33,9 @@ import com.globalmentor.text.directory.vcard.*;
 public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable {
 
 	/** The view in which the VCard name and address information is shown. */
-	public final static int NAME_ADDRESS_MODEL_VIEW = -1;
+	public static final int NAME_ADDRESS_MODEL_VIEW = -1;
 	/** The view in which the explanation information is shown. */
-	public final static int EXPLANATORY_MODEL_VIEW = -2;
+	public static final int EXPLANATORY_MODEL_VIEW = -2;
 
 	/** The panel containing the name and address. */
 	private final NameAddressPanel nameAddressPanel;

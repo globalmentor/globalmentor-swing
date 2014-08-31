@@ -165,7 +165,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel {
 	}
 
 	/** The length of time, in milliseconds, to wait for confirmation when applicable. */
-	protected final static int CONFIRM_DELAY = 5000;
+	protected static final int CONFIRM_DELAY = 5000;
 
 	/** The timer that allows confirmation only within a specified time. */
 	private final Timer confirmTimer;

@@ -30,9 +30,9 @@ import com.globalmentor.awt.BasicGridBagLayout;
 public class PasswordPanel extends BasicPanel {
 
 	/** An object specifying insets for labels. */
-	private final static Insets LABEL_INSETS = new Insets(0, 0, 0, 4);
+	private static final Insets LABEL_INSETS = new Insets(0, 0, 0, 4);
 	/** An object specifying insets for fields. */
-	private final static Insets FIELD_INSETS = new Insets(0, 0, 8, 0);
+	private static final Insets FIELD_INSETS = new Insets(0, 0, 8, 0);
 
 	/** The label of the password entry. */
 	protected final JLabel passwordLabel;

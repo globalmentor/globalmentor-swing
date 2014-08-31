@@ -69,28 +69,28 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 {
 
 	/** The property representing the antialias setting. */
-	public final static String ANTIALIAS_PROPERTY = "antialias";
+	public static final String ANTIALIAS_PROPERTY = "antialias";
 
 	/** The property representing bookmark changes. */
-	public final static String BOOKMARKS_PROPERTY = "bookmarks";
+	public static final String BOOKMARKS_PROPERTY = "bookmarks";
 
 	/** The property representing the display page count. */
-	public final static String DISPLAY_PAGE_COUNT_PROPERTY = "displayPageCount";
+	public static final String DISPLAY_PAGE_COUNT_PROPERTY = "displayPageCount";
 
 	/** The property representing the history index. */
-	public final static String HISTORY_INDEX_PROPERTY = "historyIndex";
+	public static final String HISTORY_INDEX_PROPERTY = "historyIndex";
 
 	/** The property which stores the user data <code>File</code> object. */
-	//TODO del	public final static String USER_DATA_FILE_PROPERTY="userData";
+	//TODO del	public static final String USER_DATA_FILE_PROPERTY="userData";
 
 	/** The property representing the zoom level. */
-	public final static String ZOOM_PROPERTY = "zoom";
+	public static final String ZOOM_PROPERTY = "zoom";
 
 	/** The preference for storing the search text. */
 	protected final String SEARCH_TEXT_PREFERENCE = PreferencesUtilities.getPreferenceName(getClass(), "search.text");
 
 	/** The highlight painter used for displaying bookmark locations. */
-	protected final static BookmarkHighlightPainter bookmarkHighlightPainter = new BookmarkHighlightPainter();
+	protected static final BookmarkHighlightPainter bookmarkHighlightPainter = new BookmarkHighlightPainter();
 
 	/**
 	 * Keeps track of whether a mouse press or release was the popup trigger; if so, it disables the normal mouse click functionality from occurring.
@@ -1663,7 +1663,7 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 	protected static class BookmarkHighlightPainter extends LayeredHighlighter.LayerPainter {
 
 		/** The shared bookmark icon for indicating a bookmark. */
-		public final static Icon BOOKMARK_ICON = IconResources.getIcon(IconResources.BOOKMARK_ICON_FILENAME);
+		public static final Icon BOOKMARK_ICON = IconResources.getIcon(IconResources.BOOKMARK_ICON_FILENAME);
 
 		/** This method is never called in a layered highlighter. */
 		public void paint(final Graphics graphics, final int startOffset, final int endOffset, final Shape bounds, final JTextComponent textComponent) {

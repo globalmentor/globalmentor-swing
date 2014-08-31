@@ -26,7 +26,7 @@ public class TextComponents //TODO do we really want this and SwingText?
 {
 
 	/** The name of the property that indicates the current document. */
-	public final static String DOCUMENT_PROPERTY = "document";
+	public static final String DOCUMENT_PROPERTY = "document";
 
 	/** Default constructor. */
 	public TextComponents() {

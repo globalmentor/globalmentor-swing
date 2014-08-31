@@ -35,25 +35,25 @@ import com.globalmentor.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
 public class XMLCSSStyles {
 
 	//predefined colors
-	public final static Color COLOR_BLACK = new Color(CSS_COLOR_BLACK_VALUE);
-	public final static Color COLOR_GREEN = new Color(CSS_COLOR_GREEN_VALUE);
-	public final static Color COLOR_SILVER = new Color(CSS_COLOR_SILVER_VALUE);
-	public final static Color COLOR_LIME = new Color(CSS_COLOR_LIME_VALUE);
-	public final static Color COLOR_GRAY = new Color(CSS_COLOR_GRAY_VALUE);
-	public final static Color COLOR_OLIVE = new Color(CSS_COLOR_OLIVE_VALUE);
-	public final static Color COLOR_WHITE = new Color(CSS_COLOR_WHITE_VALUE);
-	public final static Color COLOR_YELLOW = new Color(CSS_COLOR_YELLOW_VALUE);
-	public final static Color COLOR_MAROON = new Color(CSS_COLOR_MAROON_VALUE);
-	public final static Color COLOR_NAVY = new Color(CSS_COLOR_NAVY_VALUE);
-	public final static Color COLOR_RED = new Color(CSS_COLOR_RED_VALUE);
-	public final static Color COLOR_BLUE = new Color(CSS_COLOR_BLUE_VALUE);
-	public final static Color COLOR_PURPLE = new Color(CSS_COLOR_PURPLE_VALUE);
-	public final static Color COLOR_TEAL = new Color(CSS_COLOR_TEAL_VALUE);
-	public final static Color COLOR_FUCHSIA = new Color(CSS_COLOR_FUCHSIA_VALUE);
-	public final static Color COLOR_AQUA = new Color(CSS_COLOR_AQUA_VALUE);
+	public static final Color COLOR_BLACK = new Color(CSS_COLOR_BLACK_VALUE);
+	public static final Color COLOR_GREEN = new Color(CSS_COLOR_GREEN_VALUE);
+	public static final Color COLOR_SILVER = new Color(CSS_COLOR_SILVER_VALUE);
+	public static final Color COLOR_LIME = new Color(CSS_COLOR_LIME_VALUE);
+	public static final Color COLOR_GRAY = new Color(CSS_COLOR_GRAY_VALUE);
+	public static final Color COLOR_OLIVE = new Color(CSS_COLOR_OLIVE_VALUE);
+	public static final Color COLOR_WHITE = new Color(CSS_COLOR_WHITE_VALUE);
+	public static final Color COLOR_YELLOW = new Color(CSS_COLOR_YELLOW_VALUE);
+	public static final Color COLOR_MAROON = new Color(CSS_COLOR_MAROON_VALUE);
+	public static final Color COLOR_NAVY = new Color(CSS_COLOR_NAVY_VALUE);
+	public static final Color COLOR_RED = new Color(CSS_COLOR_RED_VALUE);
+	public static final Color COLOR_BLUE = new Color(CSS_COLOR_BLUE_VALUE);
+	public static final Color COLOR_PURPLE = new Color(CSS_COLOR_PURPLE_VALUE);
+	public static final Color COLOR_TEAL = new Color(CSS_COLOR_TEAL_VALUE);
+	public static final Color COLOR_FUCHSIA = new Color(CSS_COLOR_FUCHSIA_VALUE);
+	public static final Color COLOR_AQUA = new Color(CSS_COLOR_AQUA_VALUE);
 
 	/** The name of the XML CSS style declaration map. */
-	public final static String XML_CSS_STYLE_ATTRIBUTE_NAME = "$xmlCSSStyle"; //TODO maybe change this to just "$cssStyle" if we decide to completely use the CSS DOM
+	public static final String XML_CSS_STYLE_ATTRIBUTE_NAME = "$xmlCSSStyle"; //TODO maybe change this to just "$cssStyle" if we decide to completely use the CSS DOM
 
 	/**
 	 * Gets the XML CSS style declaration the Swing attributes represent. The attribute is not resolved through the parent attribute set hierarchy.

@@ -36,7 +36,7 @@ public class LinkLabel extends JLabel {
 	protected final RolloverMouseAdapter rolloverMouseAdapter;
 
 	/** The property representing the rollover color. */
-	public final static String ROLLOVER_COLOR_PROPERTY = "rolloverColor";
+	public static final String ROLLOVER_COLOR_PROPERTY = "rolloverColor";
 
 	/** @return The rollover color; defaults to <code>Color.red</code>. */
 	public Color getRolloverColor() {
@@ -57,7 +57,7 @@ public class LinkLabel extends JLabel {
 	}
 
 	/** The property representing the link target URL. */
-	public final static String TARGET_PROPERTY = "target";
+	public static final String TARGET_PROPERTY = "target";
 
 	/** The link target URL; defaults to <code>null</code>. */
 	private String target = null;

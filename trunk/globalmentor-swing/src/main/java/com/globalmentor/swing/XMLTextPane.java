@@ -73,13 +73,13 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 {
 
 	/** The name of the property that indicates the current editor kit. */
-	public final static String EDITOR_KIT_PROPERTY = "editorKit";
+	public static final String EDITOR_KIT_PROPERTY = "editorKit";
 
 	/** The "application/zip" content type. */
-	protected final static ContentType ZIP_MEDIA_TYPE = ContentType.create(ContentType.APPLICATION_PRIMARY_TYPE, ZIP_SUBTYPE);
+	protected static final ContentType ZIP_MEDIA_TYPE = ContentType.create(ContentType.APPLICATION_PRIMARY_TYPE, ZIP_SUBTYPE);
 
 	/** The "text/plain" content type. */
-	protected final static ContentType TEXT_PLAIN_MEDIA_TYPE = ContentType.create(ContentType.TEXT_PRIMARY_TYPE, Text.PLAIN_SUBTYPE);
+	protected static final ContentType TEXT_PLAIN_MEDIA_TYPE = ContentType.create(ContentType.TEXT_PRIMARY_TYPE, Text.PLAIN_SUBTYPE);
 
 	//TODO fix asynchronous stop-gap kludge to correctly get the asynchronous setting from the document---if that's the best way to do it
 	protected boolean asynchronousLoad = false;
@@ -93,24 +93,24 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	}
 
 	/** The highlight painter used for highlighting search results. */
-	protected final static Highlighter.HighlightPainter searchHighlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.blue);
+	protected static final Highlighter.HighlightPainter searchHighlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.blue);
 
 	/** The task of constructing a document. */
-	public final static String CONSTRUCT_TASK = "construct";
+	public static final String CONSTRUCT_TASK = "construct";
 
 	/**
 	 * The task of paginating a document, if applicable. Identical to <code>XMLPagedView.PAGINATE_TASK</code>.
 	 * @see XMLPagedView#PAGINATE_TASK
 	 */
-	public final static String PAGINATE_TASK = XMLPagedView.PAGINATE_TASK;
+	public static final String PAGINATE_TASK = XMLPagedView.PAGINATE_TASK;
 
 	/**
 	 * A constant representing that the next search offset should be used, rather than an absolute search offset.
 	 */
-	public final static int NEXT_SEARCH_OFFSET = -1;
+	public static final int NEXT_SEARCH_OFFSET = -1;
 
 	//TODO del if not needed	/**The property representing the search position.*/
-	//TODO del if not needed	public final static String SEARCH_POSITION_PROPERTY="searchPositionProperty";
+	//TODO del if not needed	public static final String SEARCH_POSITION_PROPERTY="searchPositionProperty";
 
 	/** The list of page event listeners. */
 	private EventListenerList pageListenerList = new EventListenerList();
@@ -119,11 +119,11 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	private EventListenerList progressListenerList = new EventListenerList();
 
 	/** The left key stroke, predefined for quick comparison. */
-	//TODO del when keymap works	protected final static KeyStroke LEFT_KEY_STROKE=KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0);
+	//TODO del when keymap works	protected static final KeyStroke LEFT_KEY_STROKE=KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0);
 
 	/** The right key stroke, predefined for quick comparison. */
 	//TODO del when keymap works
-	//TODO del	protected final static KeyStroke RIGHT_KEY_STROKE=KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0);
+	//TODO del	protected static final KeyStroke RIGHT_KEY_STROKE=KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0);
 
 	/** The access to input streams via URIs based upon the first document loaded; used to reload. */
 	protected URIInputStreamable baseURIInputStreamable;
@@ -209,9 +209,9 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	}
 
 	/** The name of the key map for normal key functions. */
-	protected final static String BASIC_KEYMAP_NAME = "basicKeymap";
+	protected static final String BASIC_KEYMAP_NAME = "basicKeymap";
 	/** The name of the key map for paged key functions. */
-	protected final static String PAGED_KEYMAP_NAME = "pagedKeymap";
+	protected static final String PAGED_KEYMAP_NAME = "pagedKeymap";
 
 	//TODO del when works	protected final Keymap originalKeymap;  //the keymap originally installed; we'll install keymaps under this
 

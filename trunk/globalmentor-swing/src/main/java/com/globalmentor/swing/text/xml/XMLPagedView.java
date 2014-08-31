@@ -47,10 +47,10 @@ import com.globalmentor.swing.text.*;
  */
 public class XMLPagedView extends FlowView {
 
-	protected final static boolean THREADED = false; //TODO fix threading; currently unstable; recheck after fixing ispaginating ? (pagecount-1) bug
+	protected static final boolean THREADED = false; //TODO fix threading; currently unstable; recheck after fixing ispaginating ? (pagecount-1) bug
 
 	/** The task of paginating a document. */
-	public final static String PAGINATE_TASK = "PAGINATE";
+	public static final String PAGINATE_TASK = "PAGINATE";
 
 	/** The list of page event listeners. */
 	private EventListenerList pageListenerList = new EventListenerList();
@@ -59,7 +59,7 @@ public class XMLPagedView extends FlowView {
 	private EventListenerList progressListenerList = new EventListenerList();
 
 	/** The font used for painting page number. */
-	private final static Font PAGE_NUMBER_FONT = new Font("Serif", Font.PLAIN, 12); //TODO fix
+	private static final Font PAGE_NUMBER_FONT = new Font("Serif", Font.PLAIN, 12); //TODO fix
 
 	/** The insets for each page. */
 	private short pageTopInset, pageLeftInset, pageBottomInset, pageRightInset;
