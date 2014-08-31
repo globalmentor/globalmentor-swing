@@ -188,7 +188,7 @@ public abstract class TabbedViewPanel<M> extends ModelViewablePanel<M> {
 	public void addView(final int view, final String title, final Icon icon, final Component component, final String tip, final int index) {
 		getTabbedPane().insertTab(title, icon, component, tip, index); //add the component to the tabbed pane
 		setViewComponent(view, component); //associate that component with the view
-		//G***del if not needed		addModifyListeners(component);	//listen for any modifications of the view component TODO remove when a modifiable tabbed pane is created
+		//TODO del if not needed		addModifyListeners(component);	//listen for any modifications of the view component TODO remove when a modifiable tabbed pane is created
 	}
 
 	/**

@@ -145,7 +145,7 @@ public class LabelPanel extends BasicVCardPanel {
 		//TODO turn off tab-handling for labelAddressTextPane
 		labelTextPane.getDocument().addDocumentListener(getModifyDocumentListener());
 		final JScrollPane labelScrollPane = new JScrollPane(labelTextPane);
-		/*G***del if not needed
+		/*TODO del if not needed
 				labelScrollPane.setMinimumSize(new Dimension(streetAddressScrollPane.getMinimumSize().width, localityTextField.getPreferredSize().height*3));
 				streetAddressScrollPane.setPreferredSize(streetAddressScrollPane.getMinimumSize());
 		*/
@@ -163,7 +163,7 @@ public class LabelPanel extends BasicVCardPanel {
 	public boolean editAddressType() {
 		final AddressTypePanel addressTypePanel = new AddressTypePanel(getAddressTypes()); //create a new panel with our current address type 
 		//ask for the new address type; if they accept the changes
-		if(BasicOptionPane.showConfirmDialog(this, addressTypePanel, "Delivery Address Type", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) { //G***i18n
+		if(BasicOptionPane.showConfirmDialog(this, addressTypePanel, "Delivery Address Type", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) { //TODO i18n
 			setAddressTypes(addressTypePanel.getAddressTypes()); //update the address type
 			return true; //show that the user accepted the changes and that they were updated		
 		} else { //if the user cancels
@@ -176,10 +176,10 @@ public class LabelPanel extends BasicVCardPanel {
 
 		/** Default constructor. */
 		public EditAddressTypeAction() {
-			super("Type"); //create the base class G***i18n
-			putValue(SHORT_DESCRIPTION, "Edit type"); //set the short description G***i18n
-			putValue(LONG_DESCRIPTION, "Edit the delivery address type for this label."); //set the long description G***i18n
-			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_T)); //set the mnemonic key G***i18n
+			super("Type"); //create the base class TODO i18n
+			putValue(SHORT_DESCRIPTION, "Edit type"); //set the short description TODO i18n
+			putValue(LONG_DESCRIPTION, "Edit the delivery address type for this label."); //set the long description TODO i18n
+			putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_T)); //set the mnemonic key TODO i18n
 			putValue(SMALL_ICON, IconResources.getIcon(IconResources.PROPERTY_ICON_FILENAME)); //load the correct icon
 		}
 

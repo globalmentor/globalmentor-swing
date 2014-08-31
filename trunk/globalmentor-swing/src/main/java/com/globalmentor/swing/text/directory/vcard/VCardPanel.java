@@ -90,9 +90,9 @@ public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable {
 		telecommunicationsPanel = nameAddressPanel.getTelecommunicationsPanel();
 		explanatoryPanel = new ExplanatoryPanel();
 		addSupportedModelViews(new int[] { NAME_ADDRESS_MODEL_VIEW, EXPLANATORY_MODEL_VIEW }); //show which views we support
-		//G***del when works		setDefaultFocusComponent(nameAddressPanel);
+		//TODO del when works		setDefaultFocusComponent(nameAddressPanel);
 		initialize(); //initialize the panel
-		//G***del when works		setModified(false);	//show that the information has not yet been modified
+		//TODO del when works		setModified(false);	//show that the information has not yet been modified
 	}
 
 	/** Initialize the user interface. */
@@ -104,8 +104,8 @@ public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable {
 		organizationPanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);
 		telecommunicationsPanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);
 		explanatoryPanel.addPropertyChangeListener(modifyModifiedPropertyChangeListener);
-		addView(NAME_ADDRESS_MODEL_VIEW, "Name/Address", nameAddressPanel); //G***i18n
-		addView(EXPLANATORY_MODEL_VIEW, "Explanatory", explanatoryPanel); //G***i18n
+		addView(NAME_ADDRESS_MODEL_VIEW, "Name/Address", nameAddressPanel); //TODO i18n
+		addView(EXPLANATORY_MODEL_VIEW, "Explanatory", explanatoryPanel); //TODO i18n
 		setDefaultDataView(NAME_ADDRESS_MODEL_VIEW); //set the name/address view as the default view
 		super.initializeUI(); //do the default UI initialization
 		getTabbedPane().setTabPlacement(JTabbedPane.TOP); //place the tabs at the top of the panel
@@ -169,7 +169,7 @@ public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable {
 	 * @param oldView The view before the change.
 	 * @param newView The new view of the data
 	 */
-	/*G***fix or del
+	/*TODO fix or del
 		protected void onModelViewChange(final int oldView, final int newView)
 		{
 			super.onModelViewChange(oldView, newView);	//perform the default functionality

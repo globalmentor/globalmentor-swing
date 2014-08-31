@@ -32,7 +32,7 @@ public interface FragmentView {
 	 * the first fragment should be indented.
 	 * @return The index of this fragment in relation to the original unbroken view.
 	 */
-	//G***del	public int getFragmentIndex();
+	//TODO del	public int getFragmentIndex();
 
 	/**
 	 * Returns whether this is the first fragment in relation to the original view. A paragraph, for example, might be fragmented into several views, but only the
