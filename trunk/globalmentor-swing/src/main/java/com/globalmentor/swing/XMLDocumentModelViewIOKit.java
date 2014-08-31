@@ -16,6 +16,8 @@
 
 package com.globalmentor.swing;
 
+import static java.nio.charset.StandardCharsets.*;
+
 import java.io.*;
 import java.net.URI;
 
@@ -117,7 +119,7 @@ public class XMLDocumentModelViewIOKit extends ModelViewIOKit<XMLNodeModel<org.w
 		switch(xmlPanel.getModelView()) { //see which view is being shown
 			case XMLPanel.SOURCE_MODEL_VIEW: //if the source is being edited
 			{
-				final Writer writer = new OutputStreamWriter(outputStream, Charsets.UTF_8_CHARSET); //create a UTF-8 writer
+				final Writer writer = new OutputStreamWriter(outputStream, UTF_8); //create a UTF-8 writer
 				final JTextPane textPane = xmlPanel.getSourceTextPane(); //get a reference to the source text pane
 				final Document document = textPane.getDocument(); //get the document currently loaded into the text pane
 				try {

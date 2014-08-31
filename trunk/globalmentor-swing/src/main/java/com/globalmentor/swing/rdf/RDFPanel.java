@@ -16,12 +16,15 @@
 
 package com.globalmentor.swing.rdf;
 
+import static java.nio.charset.StandardCharsets.*;
+
 import java.io.*;
 import java.net.*;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
-import com.globalmentor.io.Charsets;
+
 import com.globalmentor.net.ResourceModel;
 import com.globalmentor.rdf.*;
 import com.globalmentor.swing.*;
@@ -137,7 +140,7 @@ public class RDFPanel<R extends RDFResource, M extends ResourceModel<R>> extends
 					final TreeNode treeNode = new RDFObjectTreeNode(model.getResource(), new RDFXMLGenerator()); //create a tree node for the resource
 					getRDFTree().setModel(new DefaultTreeModel(treeNode)); //create a new tree model and set the model for the tree
 				} else { //if we don't have any RDF resource
-				//TODO for no resource					getRDFTree().setModel(new DefaultTreeModel(treeNode));  //create a new tree model and set the model for the tree
+					//TODO for no resource					getRDFTree().setModel(new DefaultTreeModel(treeNode));  //create a new tree model and set the model for the tree
 				}
 				break;
 			case SOURCE_MODEL_VIEW: //if we're changing to the source view
@@ -178,7 +181,7 @@ public class RDFPanel<R extends RDFResource, M extends ResourceModel<R>> extends
 			{
 				final String sourceString = getSourceTextPane().getText(); //get the current source text
 				if(sourceString.length() > 0) { //if there is source text
-					final byte[] sourceBytes = sourceString.getBytes(Charsets.UTF_8_CHARSET); //convert the string to a series of UTF-8 bytes
+					final byte[] sourceBytes = sourceString.getBytes(UTF_8); //convert the string to a series of UTF-8 bytes
 					final InputStream inputStream = new BufferedInputStream(new ByteArrayInputStream(sourceBytes)); //create an input stream to the source as bytes
 					try {
 						final Document document = XML.parse(inputStream, model.getBaseURI(), true, new URIInputStreamableXMLEntityResolver(model)); //parse the XML document

@@ -18,6 +18,7 @@ package com.globalmentor.swing;
 
 import java.awt.BorderLayout;
 import java.io.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -26,6 +27,7 @@ import com.globalmentor.net.ContentType;
 import com.globalmentor.net.ContentTypeConstants;
 
 import static com.globalmentor.text.Text.*;
+import static java.nio.charset.StandardCharsets.*;
 
 import com.globalmentor.swing.text.xml.*;
 import com.globalmentor.swing.unicode.UnicodeStatusBar;
@@ -298,7 +300,7 @@ public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeMo
 			{
 				final String sourceText = getSourceText(); //get the source text being edited
 				if(sourceText.length() > 0) { //if we have source text
-					final byte[] sourceBytes = sourceText.getBytes(Charsets.UTF_8_CHARSET); //convert the string to a series of UTF-8 bytes
+					final byte[] sourceBytes = sourceText.getBytes(UTF_8); //convert the string to a series of UTF-8 bytes
 					final InputStream inputStream = new BufferedInputStream(new ByteArrayInputStream(sourceBytes)); //create an input stream to the source as bytes
 					try {
 						final Document document = XML.parse(inputStream, model.getBaseURI(), true, new URIInputStreamableXMLEntityResolver(model)); //parse the XML document

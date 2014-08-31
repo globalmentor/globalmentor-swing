@@ -20,14 +20,14 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.Charset;
 import java.util.*;
+
 import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 
-import static com.globalmentor.io.Charsets.*;
 import static com.globalmentor.java.Objects.*;
-//TODO fix import static org.urframework.maqro.MAQRO.*;
+import static java.nio.charset.StandardCharsets.*;
 
 import com.globalmentor.collections.IdentityHashSet;
 import com.globalmentor.io.*;
@@ -43,7 +43,6 @@ import com.globalmentor.swing.text.xml.css.*;
 import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.XMLSerializer;
 import com.globalmentor.text.xml.stylesheets.css.*;
-//TODO fix import org.urframework.maqro.Activity;
 
 import org.w3c.dom.*;
 import org.w3c.dom.css.*;
@@ -352,7 +351,7 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 	 * @throws BadLocationException Thrown if the position represents an invalid location within the document.
 	 */
 	public void write(final OutputStream outputStream, final Document document, final int pos, final int len) throws IOException, BadLocationException {
-		write(outputStream, UTF_8_CHARSET, document, pos, len); //write using UTF-8
+		write(outputStream, UTF_8, document, pos, len); //write using UTF-8
 	}
 
 	/**
@@ -1237,7 +1236,7 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 			//	TODO del Log.trace("inserting text data: \""+node.getNodeValue()+"\"");  //TODO del
 			final StringBuffer textStringBuffer = new StringBuffer(text); //TODO testing
 			if(textStringBuffer.length() > 0) { //if there is actually content (don't add empty text)
-			//	TODO del Log.trace("before collapsing whitespace: ", textStringBuffer);  //TODO del
+				//	TODO del Log.trace("before collapsing whitespace: ", textStringBuffer);  //TODO del
 
 				StringBuffers.collapse(textStringBuffer, Characters.WHITESPACE_CHARACTERS, " "); //TODO testing
 				//	TODO del Log.trace("after collapsing whitespace: ", textStringBuffer);  //TODO del
