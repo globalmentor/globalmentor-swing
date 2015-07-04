@@ -16,18 +16,18 @@
 
 package com.globalmentor.swing.text.xml.css;
 
+import static com.globalmentor.text.css.CSS.*;
+
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import javax.swing.text.*;
 
-import static com.globalmentor.text.xml.stylesheets.css.XMLCSS.*;
-
 import com.globalmentor.swing.text.Documents;
 import com.globalmentor.swing.text.FragmentView;
 import com.globalmentor.swing.text.Views;
 import com.globalmentor.swing.text.xml.XMLListView;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
+import com.globalmentor.text.css.CSS;
 
 /**
  * Class to paint XML CSS views.
@@ -61,7 +61,7 @@ public class XMLCSSViewPainter {
 		//TODO del when works		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		//get the allocation as a rectangle
 		final Rectangle allocRect = (allocation instanceof Rectangle) ? (Rectangle)allocation : allocation.getBounds();
-		final boolean isFragmentView = view instanceof FragmentView; //see if this view is a fragement of a larger, broken view
+		final boolean isFragmentView = view instanceof FragmentView; //see if this view is a fragment of a larger, broken view
 		//if this is a view fragment, see if it's the first fragment of the larger view
 		final boolean isFirstFragment = isFragmentView ? ((FragmentView)view).isFirstFragment() : true;
 		//paint the background
@@ -151,7 +151,7 @@ public class XMLCSSViewPainter {
 									break; //we now know our list index
 							}
 							//TODO we assume we found ourselves -- is there any instance in which we wouldn't, and how would we know?
-							final String markerString = XMLCSS.getMarkerString(listStyleType, listItemIndex); //get a string representing the marker for us to render
+							final String markerString = CSS.getMarkerString(listStyleType, listItemIndex); //get a string representing the marker for us to render
 							if(markerString != null) { //if we found a valid marker string
 								graphics.setFont(font); //switch to the same font as the one being used by the list item
 								final FontRenderContext fontRenderContext = graphics2D.getFontRenderContext(); //get the font rendering context

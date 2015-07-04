@@ -32,8 +32,7 @@ import com.globalmentor.swing.text.ViewBreakStrategy;
 import com.globalmentor.swing.text.xml.css.XMLCSSStyles;
 import com.globalmentor.swing.text.xml.css.XMLCSSView;
 import com.globalmentor.swing.text.xml.css.XMLCSSViewPainter;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
-
+import com.globalmentor.text.css.CSS;
 import com.globalmentor.awt.Inset;
 import com.globalmentor.log.Log;
 
@@ -174,7 +173,7 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 			//TODO fix			setLineSpacing(2);	//TODO fix; testing
 			//TODO del			setLineSpacing(1.5f);	//TODO fix; testing
 			setLineSpacing(XMLCSSStyles.getLineHeight(attributeSet)); //set the line height amount from our CSS attributes TODO fix this to correctly use the number
-			setVisible(!XMLCSS.CSS_DISPLAY_NONE.equals(XMLCSSStyles.getDisplay(attributeSet))); //the paragraph is visible only if it doesn't have a display of "none"
+			setVisible(!CSS.CSS_DISPLAY_NONE.equals(XMLCSSStyles.getDisplay(attributeSet))); //the paragraph is visible only if it doesn't have a display of "none"
 			//TODO del			LineSpacing=3;	//TODO fix; testing
 
 			final Document document = getDocument(); //get our document
@@ -330,7 +329,7 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 			}
 			final View parentView = getParent(); //get our parent view
 			final String parentDisplay = XMLCSSStyles.getDisplay(parentView.getAttributes()); //see what kind of parent we have
-			final boolean isInTableCell = XMLCSS.CSS_DISPLAY_TABLE_CELL.equals(parentDisplay); //see if we're inside a table cell
+			final boolean isInTableCell = CSS.CSS_DISPLAY_TABLE_CELL.equals(parentDisplay); //see if we're inside a table cell
 			setFirstLineIndented(!onlyObjectsPresent && (inlineViewCount > 1 || !isInTableCell)); //if there are only objects present in this paragraph, or if there's only one inline view in a table cell, we won't indent
 		} else { //if there is no content
 			setVisible(false); //make the entire paragraph invisible
@@ -357,7 +356,7 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 		if(axis == getAxis()) { //if they want to break along our tiling axis		  	
 			final String pageBreakAfter = XMLCSSStyles.getPageBreakAfter(getAttributes()); //see how the view considers breaking after it
 			//if we should avoid breaking after this view, and the provided length is more than we need (i.e. we aren't being asked to break in our middle)
-			if(XMLCSS.CSS_PAGE_BREAK_AFTER_AVOID.equals(pageBreakAfter) && len > getPreferredSpan(axis)) {
+			if(CSS.CSS_PAGE_BREAK_AFTER_AVOID.equals(pageBreakAfter) && len > getPreferredSpan(axis)) {
 				return BadBreakWeight; //don't allow breaking
 			} else { //if we aren't break-averse, get the highest break weight available; this has the advantage of allowing invisible views to return their low break weight
 				final float marginSpan = (axis == X_AXIS) ? getLeftInset() + getRightInset() : getTopInset() + getBottomInset(); //see how much margin we have to allow for
@@ -516,9 +515,9 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 				//TODO this currently doesn't work for subscripts of subscripts or superscripts of superscripts or a superscript followed by a subscript, etc.
 				final int relativeOffset = offsets[relativeIndex]; //get the span to which we're relative
 				final int relativeSpan = spans[relativeIndex]; //get the span to which we're relative
-				if(XMLCSS.CSS_VERTICAL_ALIGN_SUPER.equals(verticalAlign)) { //if this is superscript
+				if(CSS.CSS_VERTICAL_ALIGN_SUPER.equals(verticalAlign)) { //if this is superscript
 					offsets[i] = relativeOffset - Math.round(relativeSpan * .20f); //move the box 20% above the relative box of the relative box's height
-				} else if(XMLCSS.CSS_VERTICAL_ALIGN_SUB.equals(verticalAlign)) { //if this is subscript
+				} else if(CSS.CSS_VERTICAL_ALIGN_SUB.equals(verticalAlign)) { //if this is subscript
 					//TODO fix; right now, it doesn't compensate for the linespacing
 					offsets[i] = relativeOffset + Math.round(relativeSpan * .60f); //move the box 20% below the relative box of the relative box's height
 				}
@@ -640,7 +639,7 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 		 * @param element The element this view is responsible for.
 		 * @param axis The tiling axis, either View.X_AXIS or View.Y_AXIS.
 		 * @param wholeView The original, unfragmented view from which this fragment (or one or more intermediate fragments) was broken.
-		 * @param firstFragment Whether this is the first fragement of the original view.
+		 * @param firstFragment Whether this is the first fragment of the original view.
 		 * @param lastFragment Whether this is the last fragment of the original view.
 		 */
 		public XMLParagraphFragmentView(final Element element, final int axis, final View wholeView, final boolean firstFragment, final boolean lastFragment) {
@@ -669,7 +668,7 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 		 */
 		protected void layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans) { //TODO testing
 			super.layoutMinorAxis(targetSpan, axis, offsets, spans); //do the default layout
-			//if we're the first fragement, there is at least one row, and the first line should be indented
+			//if we're the first fragment, there is at least one row, and the first line should be indented
 			if(isFirstFragment() && offsets.length > 0 && isFirstLineIndented())
 				//TODO del when works			if(offsets.length>0)	//if there is at least one row, and the first line should be indented
 				offsets[0] += firstLineIndent; //add the correct indentation amount to the first row TODO use an accessor function here for firstLineIndent, if we can

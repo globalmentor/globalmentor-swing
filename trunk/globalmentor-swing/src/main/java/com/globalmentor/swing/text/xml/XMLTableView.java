@@ -27,7 +27,7 @@ import com.globalmentor.swing.text.xml.css.XMLCSSStyles;
 import com.globalmentor.swing.text.xml.css.XMLCSSViewPainter;
 
 import static com.globalmentor.swing.text.SwingText.*;
-import static com.globalmentor.text.xml.stylesheets.css.XMLCSS.*;
+import static com.globalmentor.text.css.CSS.*;
 
 import javax.swing.text.html.HTML;
 import org.w3c.dom.css.*;
@@ -1371,8 +1371,8 @@ class XMLTableView extends TableView implements Cloneable {
 			 * Constructs a fragment view for the table row.
 			 * @param element The element this view is responsible for.
 			 * @param axis The tiling axis, either View.X_AXIS or View.Y_AXIS.
-			 * @param firstFragment Whether this is the first fragement of the original view.
-			 * @param lastFragment Whether this is the last fragement of the original view.
+			 * @param firstFragment Whether this is the first fragment of the original view.
+			 * @param lastFragment Whether this is the last fragment of the original view.
 			 */
 			public XMLTableRowFragmentView(Element element, final boolean firstFragment, final boolean lastFragment) {
 				super(element, X_AXIS, XMLTableView.this, firstFragment, lastFragment); //do the default construction

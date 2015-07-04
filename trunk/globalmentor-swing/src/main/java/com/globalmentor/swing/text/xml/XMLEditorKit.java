@@ -40,9 +40,11 @@ import com.globalmentor.swing.*;
 import com.globalmentor.swing.text.BasicStyledEditorKit;
 //TODO fix import com.globalmentor.swing.text.rdf.maqro.MAQROXMLElementKit;
 import com.globalmentor.swing.text.xml.css.*;
+import com.globalmentor.text.css.CSS;
 import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.XMLSerializer;
-import com.globalmentor.text.xml.stylesheets.css.*;
+import com.globalmentor.text.xml.processor.stylesheets.css.XMLCSSStyleDeclaration;
+import com.globalmentor.text.xml.processor.stylesheets.css.XMLCSSStylesheetApplier;
 
 import org.w3c.dom.*;
 import org.w3c.dom.css.*;
@@ -686,7 +688,7 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 		//TODO del if we can get away with it		XMLStyleConstants.setXMLElementName(pageBreakAttributeSet, XMLCSSStyleConstants.AnonymousAttributeValue); //show by its name that this is an anonymous box TODO maybe change this to setAnonymous
 		XMLStyles.setPageBreakView(pageBreakAttributeSet, true); //show that this element should be a page break view
 		final XMLCSSStyleDeclaration cssStyle = new XMLCSSStyleDeclaration(); //create a new style declaration
-		cssStyle.setDisplay(XMLCSS.CSS_DISPLAY_BLOCK); //show that the page break element should be a block element, so no anonymous blocks will be created around it
+		cssStyle.setDisplay(CSS.CSS_DISPLAY_BLOCK); //show that the page break element should be a block element, so no anonymous blocks will be created around it
 		XMLCSSStyles.setXMLCSSStyle(pageBreakAttributeSet, cssStyle); //store the constructed CSS style in the attribute set
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(pageBreakAttributeSet, DefaultStyledDocument.ElementSpec.StartTagType)); //create the beginning of a page break element spec
 		//TODO fix		final SimpleAttributeSet contentAttributeSet=new SimpleAttributeSet();	//create a new attribute for this content
@@ -857,9 +859,9 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 				if(childXMLNode.getNodeType() == Node.ELEMENT_NODE) { //if this is an element
 					//get the display CSS property for the child element, but don't resolve up the attribute set parent hierarchy TODO can we be sure this will be a primitive value?
 					final CSSPrimitiveValue cssDisplayProperty = (CSSPrimitiveValue)XMLCSSStyles.getCSSPropertyCSSValue(childSwingElement.getAttributes(),
-							XMLCSS.CSS_PROP_DISPLAY, false);
+							CSS.CSS_PROP_DISPLAY, false);
 					isInlineChild = cssDisplayProperty != null ? //if the child element knows its CSS display
-					XMLCSS.CSS_DISPLAY_INLINE.equals(cssDisplayProperty.getStringValue())
+					CSS.CSS_DISPLAY_INLINE.equals(cssDisplayProperty.getStringValue())
 							: //see if the display is "inline"
 							true; //if there is no display, assume it is inline
 				}
@@ -1258,7 +1260,7 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 					if(parentElement.getChildNodes().item(parentElement.getChildNodes().getLength() - 1) == node) { //if this is the last node
 						final CSSStyleDeclaration cssStyle = getXMLStylesheetApplier().getStyle(parentElement);
 						//see if the element is inline (text is always inline
-						final boolean isInline = XMLCSS.isDisplayInline(cssStyle);
+						final boolean isInline = CSS.isDisplayInline(cssStyle);
 						if(!isInline) {
 							textStringBuffer.append('\n'); //TODO testing
 						}

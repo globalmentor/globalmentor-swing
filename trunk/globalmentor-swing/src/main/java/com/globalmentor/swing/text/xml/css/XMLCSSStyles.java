@@ -22,11 +22,11 @@ import javax.swing.text.MutableAttributeSet;
 import org.w3c.dom.css.*;
 
 import com.globalmentor.log.Log;
+import com.globalmentor.text.xml.processor.stylesheets.css.XMLCSSPrimitiveValue;
 
 import static com.globalmentor.swing.text.Styles.*;
 import static com.globalmentor.swing.text.xml.XMLStyles.*;
-import static com.globalmentor.text.xml.stylesheets.css.XMLCSS.*;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSSPrimitiveValue;
+import static com.globalmentor.text.css.CSS.*;
 
 /**
  * A collection of utilities used for rendering XML using CSS in Swing.

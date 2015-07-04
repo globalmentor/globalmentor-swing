@@ -30,7 +30,8 @@ import com.globalmentor.java.Characters;
 import com.globalmentor.log.Log;
 import com.globalmentor.swing.text.*;
 import com.globalmentor.swing.text.xml.css.*;
-import com.globalmentor.text.xml.stylesheets.css.*;
+import com.globalmentor.text.css.CSS;
+import com.globalmentor.text.xml.processor.stylesheets.css.XMLCSSStyleDeclaration;
 
 import org.w3c.dom.css.CSSStyleDeclaration;
 
@@ -143,7 +144,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 				final AttributeSet attributeSet = element.getAttributes(); //get the attributes of the element
 				final CSSStyleDeclaration cssStyle = XMLCSSStyles.getXMLCSSStyle(attributeSet); //get the CSS style of the element (this method make sure the attributes are present)
 				//see if this element is inline (text is always inline, regardless of what the display property says)
-				final boolean isInline = XMLCSS.isDisplayInline(cssStyle) || AbstractDocument.ContentElementName.equals(element.getName());
+				final boolean isInline = CSS.isDisplayInline(cssStyle) || AbstractDocument.ContentElementName.equals(element.getName());
 				if(isInline) { //if this is an inline child element
 					inlineElementList.add(element); //add the element to the inline element list
 				} else { //if this is a block element
@@ -191,7 +192,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 		final MutableAttributeSet anonymousAttributeSet = new SimpleAttributeSet(); //create an anonymous attribute set for this anonymous box
 		XMLStyles.setAnonymous(anonymousAttributeSet); //set the XML name of the attribute set to the anonymous name
 		final XMLCSSStyleDeclaration anonymousCSSStyle = new XMLCSSStyleDeclaration(); //create a new style declaration
-		anonymousCSSStyle.setDisplay(XMLCSS.CSS_DISPLAY_BLOCK); //show that the anonymous element should be a block element
+		anonymousCSSStyle.setDisplay(CSS.CSS_DISPLAY_BLOCK); //show that the anonymous element should be a block element
 		XMLCSSStyles.setXMLCSSStyle(anonymousAttributeSet, anonymousCSSStyle); //store the constructed CSS style in the attribute set
 		//put the child elements into an array
 		final Element[] childElements = childElementCollection.toArray(new Element[childElementCollection.size()]);
@@ -200,7 +201,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 			final Element childElement = childElements[i]; //get a reference to this child element
 			final AttributeSet childAttributeSet = childElement.getAttributes(); //get the child element attributes
 			//if this child element doesn't have a CSS display of "none", it's visible unless something else (the editor kit, for instance) specified it to be hidden 
-			if(!XMLCSS.CSS_DISPLAY_NONE.equals(XMLCSSStyles.getDisplay(childAttributeSet))) {
+			if(!CSS.CSS_DISPLAY_NONE.equals(XMLCSSStyles.getDisplay(childAttributeSet))) {
 				if(Styles.isVisible(childAttributeSet)) { //if we haven't for some reason we've explicitly set this view to be hidden
 					isHidden = false; //we've found a visible child, so we can't make the anonymous element hidden
 				}
@@ -241,7 +242,7 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 		if(axis == getAxis()) { //if they want to break along our tiling axis
 			final String pageBreakAfter = XMLCSSStyles.getPageBreakAfter(getAttributes()); //see how the view considers breaking after it
 			//if we should avoid breaking after this view, and the provided length is more than we need (i.e. we aren't being asked to break in our middle)
-			if(XMLCSS.CSS_PAGE_BREAK_AFTER_AVOID.equals(pageBreakAfter) && len > getPreferredSpan(axis)) {
+			if(CSS.CSS_PAGE_BREAK_AFTER_AVOID.equals(pageBreakAfter) && len > getPreferredSpan(axis)) {
 				return BadBreakWeight; //don't allow breaking
 			} else { //if we aren't break-averse, get the highest break weight available; this has the advantage of allowing invisible views to return their low break weight
 				final float marginSpan = (axis == X_AXIS) ? getLeftInset() + getRightInset() : getTopInset() + getBottomInset(); //see how much margin we have to allow for

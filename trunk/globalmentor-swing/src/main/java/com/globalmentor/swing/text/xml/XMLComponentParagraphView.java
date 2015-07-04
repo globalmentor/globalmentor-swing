@@ -219,7 +219,7 @@ public class XMLComponentParagraphView extends XMLParagraphView implements ViewC
 		 * @param element The element this view is responsible for.
 		 * @param axis The tiling axis, either View.X_AXIS or View.Y_AXIS.
 		 * @param wholeView The original, unfragmented view from which this fragment (or one or more intermediate fragments) was broken.
-		 * @param firstFragment Whether this is the first fragement of the original view.
+		 * @param firstFragment Whether this is the first fragment of the original view.
 		 * @param lastFragment Whether this is the last fragment of the original view.
 		 * @param compensateInsets <code>true</code> if the view should update minimum insets to compensate for components located in the insets, or
 		 *          <code>false</code> if the normal insets should be used.

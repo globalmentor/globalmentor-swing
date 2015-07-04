@@ -1521,7 +1521,7 @@ public class XMLPagedView extends FlowView {
 				ViewUtilities.reparentHierarchy(getView(i));  //reparent all views under this one
 			}
 			*/
-			Views.reparentHierarchy(this); //make sure all the child views have correct parents (previous layouts could cause, for instance, a paragraph row to think it has a parent of a now-unused paragraph fragement)
+			Views.reparentHierarchy(this); //make sure all the child views have correct parents (previous layouts could cause, for instance, a paragraph row to think it has a parent of a now-unused paragraph fragment)
 			super.layout(width, height); //do the default layout
 		}
 

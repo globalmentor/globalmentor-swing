@@ -23,8 +23,10 @@ import com.globalmentor.log.Log;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.swing.text.*;
 import com.globalmentor.swing.text.xml.css.XMLCSSStyles;
+import com.globalmentor.text.css.CSS;
 import com.globalmentor.text.xml.XML;
-import com.globalmentor.text.xml.stylesheets.css.*;
+import com.globalmentor.text.xml.processor.stylesheets.css.XMLCSSPrimitiveValue;
+import com.globalmentor.text.xml.processor.stylesheets.css.XMLCSSStyleDeclaration;
 
 import org.w3c.dom.css.CSSStyleDeclaration;
 
@@ -182,13 +184,13 @@ public class XMLViewFactory implements ViewsFactory {
 				//TODO del Log.trace("Child "+childIndex+" attributes: ", com.globalmentor.swing.text.AttributeSetUtilities.getAttributeSetString(childElement.getAttributes()));
 				//TODO del Log.trace("Child "+childIndex+" style: ", childCSSStyle);
 				//if this element is inline (text is always inline, regardless of what the display property says)
-				if(XMLCSS.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName()))
+				if(CSS.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName()))
 					hasInlineChildren = true; //show that there are inline children
 				else
 					//if this isn't inline, we'll assume it's some sort of block element
 					hasBlockChildren = true; //show that there are block children
 			}
-			final boolean isBlockElement = !XMLCSS.isDisplayInline(cssStyle); //see if this is a block-level element
+			final boolean isBlockElement = !CSS.isDisplayInline(cssStyle); //see if this is a block-level element
 			final boolean isTableRow; //we'll see if this element has table row display
 			if(cssStyle != null) { //if this element has style
 			//TODO del Log.trace("Element has style"); //TODO del
@@ -199,7 +201,7 @@ public class XMLViewFactory implements ViewsFactory {
 							final CSS2Properties cssProperties=(CSS2Properties)cssStyle;  //get the CSS2Properties interface, which is expected to be implemented by the DOM CSSStyleDeclaration
 				*/
 				final XMLCSSStyleDeclaration cssProperties = (XMLCSSStyleDeclaration)cssStyle; //get the CSS2Properties interface, which is expected to be implemented by the DOM CSSStyleDeclaration TODO fix
-				isTableRow = XMLCSS.CSS_DISPLAY_TABLE_ROW.equals(cssProperties.getDisplay()); //TODO testing tableflow
+				isTableRow = CSS.CSS_DISPLAY_TABLE_ROW.equals(cssProperties.getDisplay()); //TODO testing tableflow
 			} else
 				//if this element has no style, it can't be a table row
 				isTableRow = false; //this element is not a table row
@@ -269,21 +271,21 @@ public class XMLViewFactory implements ViewsFactory {
 			Log.trace("3"); //TODO del
 			//TODO del				final XMLCSSPrimitiveValue cssDisplayProperty=(XMLCSSPrimitiveValue)attributeSet.getAttribute(XMLCSSConstants.CSS_PROP_DISPLAY);	//get the display property TODO can we be sure this will be a primitive value?
 			//TODO use the style constants to get the display property, maybe
-			final XMLCSSPrimitiveValue cssDisplayProperty = (XMLCSSPrimitiveValue)XMLCSSStyles.getCSSPropertyCSSValue(attributeSet, XMLCSS.CSS_PROP_DISPLAY, false); //get the display property for this element, but don't resolve up the attribute set parent hierarchy TODO can we be sure this will be a primitive value?
+			final XMLCSSPrimitiveValue cssDisplayProperty = (XMLCSSPrimitiveValue)XMLCSSStyles.getCSSPropertyCSSValue(attributeSet, CSS.CSS_PROP_DISPLAY, false); //get the display property for this element, but don't resolve up the attribute set parent hierarchy TODO can we be sure this will be a primitive value?
 			Log.trace("4"); //TODO del
 			if(cssDisplayProperty != null) { //if this element has a CSS display property
 				Log.trace("Found display property: ", cssDisplayProperty);
 				final String cssDisplayString = cssDisplayProperty.getStringValue(); //get the display value
 				//TODO del System.out.println("XML view factory found element with display: "+cssDisplayString);	//TODO del
-				if(cssDisplayString.equals(XMLCSS.CSS_DISPLAY_BLOCK)) //if this should be block display
+				if(cssDisplayString.equals(CSS.CSS_DISPLAY_BLOCK)) //if this should be block display
 					return new XMLBlockView(element, View.Y_AXIS); //create a block view
-				else if(cssDisplayString.equals(XMLCSS.CSS_DISPLAY_LIST_ITEM)) //if this should be a list item
+				else if(cssDisplayString.equals(CSS.CSS_DISPLAY_LIST_ITEM)) //if this should be a list item
 					return new XMLListItemView(element, View.Y_AXIS); //create a list item view TODO change this to an XMLListItem(element)
-				else if(cssDisplayString.equals(XMLCSS.CSS_DISPLAY_TABLE)) //if this should be a table
+				else if(cssDisplayString.equals(CSS.CSS_DISPLAY_TABLE)) //if this should be a table
 					return new XMLTableView(element); //create a table view
-				else if(cssDisplayString.equals(XMLCSS.CSS_DISPLAY_TABLE_CELL)) //if this should be table cell
+				else if(cssDisplayString.equals(CSS.CSS_DISPLAY_TABLE_CELL)) //if this should be table cell
 					return new XMLBlockView(element, View.Y_AXIS); //create a table cell view TODO change to the correct table cell view class
-				else if(XMLCSS.CSS_DISPLAY_NONE.equals(cssDisplayString)) //if this element should have no display
+				else if(CSS.CSS_DISPLAY_NONE.equals(cssDisplayString)) //if this element should have no display
 					return new InvisibleView(element); //create a hidden view
 					/*TODO important; fix
 

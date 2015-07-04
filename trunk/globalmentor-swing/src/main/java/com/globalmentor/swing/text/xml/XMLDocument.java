@@ -42,9 +42,9 @@ import com.globalmentor.sound.sampled.SampledSounds;
 import com.globalmentor.swing.event.ProgressEvent;
 import com.globalmentor.swing.text.*;
 import com.globalmentor.swing.text.xml.css.*;
-import com.globalmentor.text.xml.stylesheets.css.AbstractXMLCSSStylesheetApplier;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSS;
-import com.globalmentor.text.xml.stylesheets.css.XMLCSSStyleDeclaration;
+import com.globalmentor.text.css.CSS;
+import com.globalmentor.text.xml.processor.stylesheets.css.AbstractXMLCSSStylesheetApplier;
+import com.globalmentor.text.xml.processor.stylesheets.css.XMLCSSStyleDeclaration;
 
 /**
  * A document that models XML.
@@ -819,7 +819,7 @@ public class XMLDocument extends BasicStyledDocument {
 			final AttributeSet childAttributeSet = childElement.getAttributes(); //get the attributes of the child
 			final CSSStyleDeclaration childCSSStyle = XMLCSSStyles.getXMLCSSStyle(childElement.getAttributes()); //get the CSS style of the element (this method makes sure the attributes are present)
 			//see if this element is inline (text is always inline, regardless of what the display property says) TODO probably make some convenience method for this, and update XMLViewFactory
-			final boolean isInline = XMLCSS.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName());
+			final boolean isInline = CSS.isDisplayInline(childCSSStyle) || AbstractDocument.ContentElementName.equals(childElement.getName());
 			if(!isInline) { //if this element is not inline, add an element end character
 				try {
 					//TODO del					insertString(childElement.getEndOffset(), XMLEditorKit.ELEMENT_END_STRING, childAttributeSet);	//TODO testing
@@ -1084,7 +1084,7 @@ public class XMLDocument extends BasicStyledDocument {
 			assert paragraphAttributeSet != null : "Paragraph has no attributes.";
 			Log.trace("this paragraph attribute set: ", com.globalmentor.swing.text.AttributeSets.getAttributeSetString(paragraphAttributeSet)); //TODO del; use relative class name
 			final CSSStyleDeclaration paragraphCSSStyle = XMLCSSStyles.getXMLCSSStyle(paragraphAttributeSet); //get the CSS style of the element (this method makes sure the attributes are present)
-			if(!XMLCSS.isDisplayInline(paragraphCSSStyle)) //if this element is marked as a paragraph
+			if(!CSS.isDisplayInline(paragraphCSSStyle)) //if this element is marked as a paragraph
 			//TODO del whenw orks			if(XMLStyleConstants.isParagraphView(paragraphAttributeSet))  //if this element is not marked as a paragraph
 			{
 				Log.trace("paragraph is paragraph"); //TODO del
