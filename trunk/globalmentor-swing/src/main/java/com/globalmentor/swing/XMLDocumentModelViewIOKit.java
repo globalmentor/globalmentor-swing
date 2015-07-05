@@ -34,7 +34,7 @@ import com.globalmentor.text.xml.XMLNodeModel;
  * An implementation for loading information into a view or saving information from an XML panel using a model's I/O kit.
  * <p>
  * This implementation knows how to switch to the XML panel's source view if there is an error loading the XML data.
- * @author GarretWilson
+ * @author Garret Wilson
  * @see ModelIOKit
  */
 public class XMLDocumentModelViewIOKit extends ModelViewIOKit<XMLNodeModel<org.w3c.dom.Document>> {
