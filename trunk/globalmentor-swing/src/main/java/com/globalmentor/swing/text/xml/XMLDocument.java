@@ -1132,12 +1132,12 @@ public class XMLDocument extends BasicStyledDocument {
 				final AttributeSet documentAttributeSet = swingDocumentElement.getAttributes(); //get the attribute set of the document element
 				final URI documentBaseURI = XMLStyles.getBaseURI(documentAttributeSet); //get the URI of this document
 				final ContentType documentMediaType = XMLStyles.getMediaType(documentAttributeSet); //see what media type this document is
-				final RDFResource description = XMLStyles.getDocumentDescription(documentAttributeSet); //see if there is an RDF resource describing this document
+				//TODO convert external stylesheet gathering to something general final RDFResource description = XMLStyles.getDocumentDescription(documentAttributeSet); //see if there is an RDF resource describing this document
 
 				final SwingXMLCSSStylesheetApplier stylesheetApplier = getSwingStylesheetApplier(); //get the stylesheet applier
 				//TODO make sure the stylesheet applier correctly distinguishes between document base URI for internal stylesheets and publication base URI for package-level base URIs
 				//get all stylesheets for this document
-				final CSSStyleSheet[] styleSheets = stylesheetApplier.getStylesheets(swingDocumentElement, documentBaseURI, documentMediaType, description);
+				final CSSStyleSheet[] styleSheets = stylesheetApplier.getStylesheets(swingDocumentElement, documentBaseURI, documentMediaType/*TODO convert to something general, description*/);
 				//apply the stylesheets
 				for(int i = 0; i < styleSheets.length; ++i) { //look at each stylesheet
 					//prepare a progress message: "Applying stylesheet X to XXXXX.html"
