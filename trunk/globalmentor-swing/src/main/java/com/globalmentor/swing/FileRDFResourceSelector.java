@@ -28,7 +28,6 @@ import com.globalmentor.log.Log;
 import static com.globalmentor.net.URIs.*;
 
 import com.globalmentor.net.ResourceSelector;
-import com.globalmentor.net.http.HTTPClient;
 import com.globalmentor.rdf.*;
 import com.globalmentor.util.prefs.PreferencesUtilities;
 
@@ -69,21 +68,11 @@ public class FileRDFResourceSelector extends DefaultURIAccessible implements Res
 	}
 
 	/**
-	 * Parent component constructor using a default HTTP client.
+	 * Parent component constructor.
 	 * @param parentComponent The component to serve as a parent for file dialogs.
 	 */
 	public FileRDFResourceSelector(final Component parentComponent) {
-		this(parentComponent, HTTPClient.getInstance()); //construct the class with the default HTTP client
-	}
-
-	/**
-	 * Parent component and HTTP client constructor.
-	 * @param parentComponent The component to serve as a parent for file dialogs.
-	 * @param httpClient The client used to access HTTP URIs.
-	 */
-	public FileRDFResourceSelector(final Component parentComponent, final HTTPClient httpClient) {
-		super(httpClient); //call the default constructor, using the default implementation for accessing files and the given HTTP client for accessing HTTP
-		this.parentComponent = parentComponent; //save the parent component
+	this.parentComponent = parentComponent; //save the parent component
 	}
 
 	/**

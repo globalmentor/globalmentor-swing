@@ -33,7 +33,7 @@ import com.globalmentor.swing.event.ProgressListener;
 import com.globalmentor.swing.text.xml.css.XMLCSSStyleContext;
 
 /**
- * A document that provised basic functionality including:
+ * A document that provides basic functionality including:
  * <ul>
  * <li>Knowing how to retrieve streams to URIs.</li>
  * <li>Knowing how to change the relative font size.</li>
