@@ -27,6 +27,7 @@ import static com.globalmentor.java.Objects.*;
 
 import com.globalmentor.swing.*;
 import com.globalmentor.swing.text.TextComponents;
+import com.globalmentor.text.Unicode;
 import com.globalmentor.text.unicode.*;
 
 /**
@@ -139,7 +140,7 @@ public class UnicodeStatusBar extends StatusBar {
 			this.codePoint = codePoint; //save the code point
 			unicodeCharacter = codePoint >= 0 ? UnicodeData.getUnicodeCharacter(codePoint) : null; //if a code point was indicated, try to get a character corresponding to the code point
 			if(codePoint >= 0) { //if a valid code point was indicated
-				unicodeCharacterValueLabel.setText(UnicodeCharacter.getCodePointString(codePoint)); //show the Unicode character value
+				unicodeCharacterValueLabel.setText(Unicode.getCodePointString(codePoint)); //show the Unicode character value
 				if(unicodeCharacter != null) { //if we found Unicode character information
 					unicodeCharacterNameLabel.setText(unicodeCharacter.getUniqueCharacterName()); //show the Unicode character name
 				} else { //if we didn't find a Unicode character
