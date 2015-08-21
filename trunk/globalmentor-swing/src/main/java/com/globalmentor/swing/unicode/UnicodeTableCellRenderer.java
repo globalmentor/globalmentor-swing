@@ -24,7 +24,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import com.globalmentor.awt.Fonts;
-import com.globalmentor.text.unicode.*;
+import com.globalmentor.unicode.*;
 
 /**
  * A renderer that displays Unicode code points in a table.

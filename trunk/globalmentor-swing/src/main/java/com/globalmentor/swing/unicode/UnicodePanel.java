@@ -33,7 +33,7 @@ import static com.globalmentor.swing.Components.*;
 import com.globalmentor.awt.Fonts;
 import com.globalmentor.swing.*;
 import com.globalmentor.swing.event.ListDataAdapter;
-import com.globalmentor.text.unicode.*;
+import com.globalmentor.unicode.*;
 
 /**
  * A panel that shows the set of Unicode code points and related information. This panel fires an action when a Unicode code point has been selected.

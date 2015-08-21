@@ -28,7 +28,7 @@ import static com.globalmentor.java.Objects.*;
 import com.globalmentor.swing.*;
 import com.globalmentor.swing.text.TextComponents;
 import com.globalmentor.text.Unicode;
-import com.globalmentor.text.unicode.*;
+import com.globalmentor.unicode.*;
 
 /**
  * A status bar showing Unicode code point value, name, and category.
