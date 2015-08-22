@@ -16,7 +16,7 @@
 
 package com.globalmentor.swing.text.xml.css;
 
-import static com.globalmentor.text.css.CSS.*;
+import static com.globalmentor.w3c.spec.CSS.*;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
@@ -27,7 +27,7 @@ import com.globalmentor.swing.text.Documents;
 import com.globalmentor.swing.text.FragmentView;
 import com.globalmentor.swing.text.Views;
 import com.globalmentor.swing.text.xml.XMLListView;
-import com.globalmentor.text.css.CSS;
+import com.globalmentor.w3c.spec.CSS;
 
 /**
  * Class to paint XML CSS views.

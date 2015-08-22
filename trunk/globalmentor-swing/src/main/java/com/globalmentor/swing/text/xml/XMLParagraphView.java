@@ -32,7 +32,7 @@ import com.globalmentor.swing.text.ViewBreakStrategy;
 import com.globalmentor.swing.text.xml.css.XMLCSSStyles;
 import com.globalmentor.swing.text.xml.css.XMLCSSView;
 import com.globalmentor.swing.text.xml.css.XMLCSSViewPainter;
-import com.globalmentor.text.css.CSS;
+import com.globalmentor.w3c.spec.CSS;
 import com.globalmentor.awt.Inset;
 import com.globalmentor.log.Log;
 

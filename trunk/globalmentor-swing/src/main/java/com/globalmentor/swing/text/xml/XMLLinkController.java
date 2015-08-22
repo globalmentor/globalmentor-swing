@@ -28,9 +28,12 @@ import javax.swing.text.*;
 import com.globalmentor.java.*;
 import com.globalmentor.log.Log;
 import com.globalmentor.net.*;
+import com.globalmentor.oebps.spec.OEB;
 import com.globalmentor.swing.event.XMLLinkEvent;
 import com.globalmentor.text.xml.oeb.*;
 import com.globalmentor.text.xml.xlink.*;
+import com.globalmentor.w3c.spec.XLink;
+
 import static com.globalmentor.text.xml.xhtml.XHTML.*;
 
 /**

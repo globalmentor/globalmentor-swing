@@ -33,6 +33,7 @@ import javax.swing.text.*; //TODO del when image click code is moved elsewhere
 import com.globalmentor.io.*;
 import com.globalmentor.log.Log;
 import com.globalmentor.net.*;
+import com.globalmentor.oebps.spec.OEBGuide;
 import com.globalmentor.rdf.*;
 import com.globalmentor.swing.event.*;
 import com.globalmentor.swing.rdf.*;

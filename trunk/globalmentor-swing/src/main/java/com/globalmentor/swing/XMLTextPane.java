@@ -38,6 +38,7 @@ import com.globalmentor.io.*;
 import com.globalmentor.log.Log;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.net.URIs;
+import com.globalmentor.oebps.spec.OEB;
 import com.globalmentor.swing.event.*;
 import com.globalmentor.swing.text.*;
 //TODO fix import com.globalmentor.swing.text.rdf.maqro.MAQROViewFactory;
@@ -46,7 +47,6 @@ import com.globalmentor.swing.text.xml.xhtml.*;
 import com.globalmentor.text.ArgumentSyntaxException;
 import com.globalmentor.text.Text;
 import com.globalmentor.text.xml.XML;
-import com.globalmentor.text.xml.oeb.OEB;
 import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.util.zip.*;
 

@@ -40,11 +40,11 @@ import com.globalmentor.swing.*;
 import com.globalmentor.swing.text.BasicStyledEditorKit;
 //TODO fix import com.globalmentor.swing.text.rdf.maqro.MAQROXMLElementKit;
 import com.globalmentor.swing.text.xml.css.*;
-import com.globalmentor.text.css.CSS;
 import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.XMLSerializer;
 import com.globalmentor.text.xml.processor.stylesheets.css.XMLCSSStyleDeclaration;
 import com.globalmentor.text.xml.processor.stylesheets.css.XMLCSSStylesheetApplier;
+import com.globalmentor.w3c.spec.CSS;
 
 import org.w3c.dom.*;
 import org.w3c.dom.css.*;

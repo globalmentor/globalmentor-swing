@@ -30,8 +30,8 @@ import com.globalmentor.java.Characters;
 import com.globalmentor.log.Log;
 import com.globalmentor.swing.text.*;
 import com.globalmentor.swing.text.xml.css.*;
-import com.globalmentor.text.css.CSS;
 import com.globalmentor.text.xml.processor.stylesheets.css.XMLCSSStyleDeclaration;
+import com.globalmentor.w3c.spec.CSS;
 
 import org.w3c.dom.css.CSSStyleDeclaration;
 

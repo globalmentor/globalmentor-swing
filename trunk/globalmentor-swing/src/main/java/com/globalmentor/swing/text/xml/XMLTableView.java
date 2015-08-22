@@ -27,7 +27,7 @@ import com.globalmentor.swing.text.xml.css.XMLCSSStyles;
 import com.globalmentor.swing.text.xml.css.XMLCSSViewPainter;
 
 import static com.globalmentor.swing.text.SwingText.*;
-import static com.globalmentor.text.css.CSS.*;
+import static com.globalmentor.w3c.spec.CSS.*;
 
 import javax.swing.text.html.HTML;
 import org.w3c.dom.css.*;

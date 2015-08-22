@@ -26,7 +26,7 @@ import com.globalmentor.text.xml.processor.stylesheets.css.XMLCSSPrimitiveValue;
 
 import static com.globalmentor.swing.text.Styles.*;
 import static com.globalmentor.swing.text.xml.XMLStyles.*;
-import static com.globalmentor.text.css.CSS.*;
+import static com.globalmentor.w3c.spec.CSS.*;
 
 /**
  * A collection of utilities used for rendering XML using CSS in Swing.
