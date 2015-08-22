@@ -41,7 +41,6 @@ import com.globalmentor.swing.text.*;
 import com.globalmentor.swing.text.Annotation;
 import com.globalmentor.swing.text.xml.*;
 import com.globalmentor.swing.text.xml.xhtml.XHTMLSwingText;
-import com.globalmentor.text.xml.oeb.*;
 import com.globalmentor.util.prefs.PreferencesUtilities;
 
 /**
