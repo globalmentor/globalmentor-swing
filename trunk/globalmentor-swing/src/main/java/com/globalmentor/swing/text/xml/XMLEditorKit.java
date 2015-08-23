@@ -27,6 +27,8 @@ import javax.swing.text.Document;
 import javax.swing.text.Element;
 
 import static com.globalmentor.java.Objects.*;
+import static com.globalmentor.text.xml.XML.*;
+import static com.globalmentor.w3c.spec.XML.*;
 import static java.nio.charset.StandardCharsets.*;
 
 import com.globalmentor.collections.IdentityHashSet;
@@ -625,7 +627,7 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 				XMLStyles.setXMLDocTypeSystemID(documentAttributeSet, documentType.getSystemId()); //store the system ID
 		}
 		//store the processing instructions
-		final List processingInstructionList = XML.getNodesByName(xmlDocument, Node.PROCESSING_INSTRUCTION_NODE, "*", false); //get a list of all the processing instructions in the document TODO use a constant here
+		final List processingInstructionList = getNodesByName(xmlDocument, Node.PROCESSING_INSTRUCTION_NODE, "*", false); //get a list of all the processing instructions in the document TODO use a constant here
 		if(processingInstructionList.size() > 0) { //if there are processing instructions
 			final NameValuePair[] processingInstructions = new NameValuePair[processingInstructionList.size()]; //create enough name/value pairs for processing instructions
 			for(int processingInstructionIndex = 0; processingInstructionIndex < processingInstructionList.size(); ++processingInstructionIndex) { //look at each of the processing instruction nodes
@@ -770,7 +772,7 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 		final AttributeSet attributeSet = swingElement.getAttributes(); //get the element's attribute set
 		assert attributeSet != null : "Missing attributes for document element."; //assert that we have an attribute set
 		final String elementName = XMLStyles.getXMLElementName(attributeSet); //get the name of this element
-		final DOMImplementation domImplementation = XML.createDocumentBuilder(true).getDOMImplementation(); //create a new DOM implementation
+		final DOMImplementation domImplementation = createDocumentBuilder(true).getDOMImplementation(); //create a new DOM implementation
 		final DocumentType documentType; //we'll create a document type only if we find a system ID
 		final String docTypeSystemID = XMLStyles.getXMLDocTypeSystemID(attributeSet); //get the document type system ID if there is one
 		if(docTypeSystemID != null) { //if we found a system ID
@@ -871,8 +873,8 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 				*/
 				if(!isInlineChild) { //if the child element is not inline
 					hasBlockChild = true; //show that at least one child has block display
-					XML.appendText(xmlElement, "\n"); //skip to the next line for a pretty formatted XML document
-					XML.appendText(xmlElement, Strings.createString('\t', level + 1)); //indent to the correct level
+					appendText(xmlElement, "\n"); //skip to the next line for a pretty formatted XML document
+					appendText(xmlElement, Strings.createString('\t', level + 1)); //indent to the correct level
 				}
 				xmlElement.appendChild(childXMLNode); //append the XML node we created
 				/*TODO del if not needed
@@ -882,8 +884,8 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 			}
 			//*G**del when works			if(!isInlineChild)  //if the last child element was not inline
 			if(hasBlockChild) { //if any of the children were not inline
-				XML.appendText(xmlElement, "\n"); //skip to the next line for a pretty formatted XML document
-				XML.appendText(xmlElement, Strings.createString('\t', level)); //indent to the correct level
+				appendText(xmlElement, "\n"); //skip to the next line for a pretty formatted XML document
+				appendText(xmlElement, Strings.createString('\t', level)); //indent to the correct level
 			}
 		}
 
@@ -1232,7 +1234,7 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 				textAttributeSet = attributeSet; //use the attribute set provided	
 			} else { //if there are no attributes provided (artificial text is being manually inserted, for instance)
 				final SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet(); //create a new attribute for this content
-				XMLStyles.setXMLElementName(simpleAttributeSet, XML.TEXT_NODE_NAME); //set the name of the content to ensure it will not get its name from its parent element (this would happen if there was no name explicitly set)
+				XMLStyles.setXMLElementName(simpleAttributeSet, TEXT_NODE_NAME); //set the name of the content to ensure it will not get its name from its parent element (this would happen if there was no name explicitly set)
 				textAttributeSet = simpleAttributeSet; //use the default atribute set we created
 			}
 			//	TODO del Log.trace("inserting text data: \""+node.getNodeValue()+"\"");  //TODO del
@@ -1295,7 +1297,7 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 			XMLStyles.setXMLElementName(attributeSet, elementQName); //store the element's name in the attribute set
 			if(elementNamespaceURI != null) //if the element has a namespace URI specified
 				XMLStyles.setXMLElementNamespaceURI(attributeSet, elementNamespaceURI.toString()); //store the element's namespace URI in the attribute set
-			final String localName = XML.getLocalName(elementQName); //get the element's local name from the qualified name
+			final String localName = getLocalName(elementQName); //get the element's local name from the qualified name
 			XMLStyles.setXMLElementLocalName(attributeSet, localName); //store the element's local name in the attribute set
 			if(style != null) //if style was given TODO should we instead do this unconditionally?
 				XMLCSSStyles.setXMLCSSStyle(attributeSet, style); //store the CSS style in the attribute set

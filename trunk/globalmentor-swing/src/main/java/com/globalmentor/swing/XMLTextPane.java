@@ -46,9 +46,9 @@ import com.globalmentor.swing.text.xml.*;
 import com.globalmentor.swing.text.xml.xhtml.*;
 import com.globalmentor.text.ArgumentSyntaxException;
 import com.globalmentor.text.Text;
-import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.util.zip.*;
+import com.globalmentor.w3c.spec.XML;
 
 import static com.globalmentor.collections.iterators.Iterators.*;
 import static com.globalmentor.java.Objects.*;
@@ -1092,7 +1092,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	 * @param mediaType The media type of the XML document fragment.
 	 */
 	public void setXML(final DocumentFragment xmlDocumentFragment, final URI baseURI, final ContentType mediaType) {
-		final DOMImplementation domImplementation = XML.createDocumentBuilder(true).getDOMImplementation();
+		final DOMImplementation domImplementation = createDocumentBuilder(true).getDOMImplementation();
 		//create a document with an document element of <xhtml:div> TODO create something less XHTML-ish and more generic
 		final org.w3c.dom.Document xmlDocument = domImplementation.createDocument(XHTML.XHTML_NAMESPACE_URI.toString(),
 				XML.createQName(XHTML.XHTML_NAMESPACE_PREFIX, XHTML.ELEMENT_DIV), null);

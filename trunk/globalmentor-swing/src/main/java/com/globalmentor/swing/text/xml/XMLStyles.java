@@ -30,7 +30,7 @@ import com.globalmentor.model.NameValuePair;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.rdf.RDFResource;
 import com.globalmentor.swing.text.Styles;
-import com.globalmentor.text.xml.XML;
+import com.globalmentor.w3c.spec.XML;
 
 /**
  * A collection of utilities for working with XML values used Swing style.
