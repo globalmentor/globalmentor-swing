@@ -514,7 +514,7 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 	 * @return The RDF data model associated with the book, or <code>null</code> if there is no RDF metadata. // TODO this will eventually probably go somewhere
 	 *         else, when this turns into an XMLReader component or something; we'll probably store the publication in a property
 	 */
-	public RDF getRDF() {
+	public RDFModel getRDF() {
 		final Document document = getXMLTextPane().getDocument(); //get the document associated with the text pane
 		if(document instanceof BasicStyledDocument) //if the document is a basic styled document
 			return ((BasicStyledDocument)document).getRDF(); //get the RDF data model from the XML document TODO why don't we get the property value directly?
@@ -1370,7 +1370,7 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 		searchAction.setEnabled(uri != null); //only enable searching if there is a file open
 		searchAgainAction.setEnabled(uri != null); //only enable searching if there is a file open
 		//TODO transfer this to BookApplicationPanel		reloadAction.setEnabled(book.getURI()!=null);  //only enable the reload button if there is a file open
-		final RDF rdf = getRDF(); //get the loaded metadata
+		final RDFModel rdf = getRDF(); //get the loaded metadata
 		getViewPropertiesAction().setEnabled(rdf != null); //only enable the properties button if there is RDF TODO do we want to show the RDF or the publication description?
 	}
 
@@ -2084,7 +2084,7 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 		 * @param actionEvent The event causing the action.
 		 */
 		public void actionPerformed(final ActionEvent actionEvent) {
-			final RDF rdf = getRDF(); //get the loaded metadata
+			final RDFModel rdf = getRDF(); //get the loaded metadata
 			if(rdf != null) { //if we have RDF
 				final RDFResource publication = getPublication(); //get the loaded publication
 				//create a new panel in which to show the RDF

@@ -40,10 +40,10 @@ public class RDFTree extends JTree //TODO eventually delete this class and just 
 	RDFResourceTreeCellRenderer rdfResourceTreeCellRenderer = new RDFResourceTreeCellRenderer();
 
 	/** The RDF data model being displayed. */
-	private RDF rdf;
+	private RDFModel rdf;
 
 	/** @return The RDF data model being displayed. */
-	public RDF getRDF() {
+	public RDFModel getRDF() {
 		return rdf;
 	}
 
@@ -77,14 +77,14 @@ public class RDFTree extends JTree //TODO eventually delete this class and just 
 
 	/** Default constructor. */
 	public RDFTree() {
-		this(new RDF()); //create a panel with defualt RDF
+		this(new RDFModel()); //create a panel with defualt RDF
 	}
 
 	/**
 	 * RDF data model constructor.
 	 * @param rdf The RDF data model to display.
 	 */
-	public RDFTree(final RDF rdf) {
+	public RDFTree(final RDFModel rdf) {
 		this(rdf, null); //construct the panel without specifying a resource
 	}
 
@@ -93,7 +93,7 @@ public class RDFTree extends JTree //TODO eventually delete this class and just 
 	 * @param rdf The RDF data model in which the resource lies, or the data model from which to display resources if no specific resource is specified.
 	 * @param resource The resource to display in the panel, or <code>null</code> if all resources should be displayed.
 	 */
-	public RDFTree(final RDF rdf, final RDFResource resource) {
+	public RDFTree(final RDFModel rdf, final RDFResource resource) {
 		setRDF(rdf, resource); //set the resource being displayed
 		initializeUI(); //initialize the UI
 	}
@@ -113,7 +113,7 @@ public class RDFTree extends JTree //TODO eventually delete this class and just 
 	 * </p>
 	 * @param rdfModel The RDF data model from which to display resources.
 	 */
-	public void setRDF(final RDF rdfModel) {
+	public void setRDF(final RDFModel rdfModel) {
 		setRDF(rdfModel, null); //set the RDF without showing a particular resource
 	}
 
@@ -125,7 +125,7 @@ public class RDFTree extends JTree //TODO eventually delete this class and just 
 	 * @param rdfModel The RDF data model in which the resource lies, or the data model from which to display resources if no specific resource is specified.
 	 * @param resource The resource to display in the panel, or <code>null</code> if all resources should be displayed.
 	 */
-	public void setRDF(final RDF rdfModel, final RDFResource resource) {
+	public void setRDF(final RDFModel rdfModel, final RDFResource resource) {
 		rdf = rdfModel; //save the RDF
 		rdfResource = resource; //save the resource
 		rdfXMLifier = new RDFXMLGenerator(); //switch to a new RDF XMLifier, so that new namespace prefixes can be created

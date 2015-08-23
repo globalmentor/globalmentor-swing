@@ -21,7 +21,7 @@ import java.net.URI;
 import javax.swing.text.Document;
 
 import com.globalmentor.java.Booleans;
-import com.globalmentor.rdf.RDF;
+import com.globalmentor.rdf.RDFModel;
 
 /**
  * A collection of utility methods for working with Swing text {@link Document} and derived objects.
@@ -98,9 +98,9 @@ public class Documents {
 	 * @param document The document from which to retrieve the property.
 	 * @return The RDF data model where metadata is stored, or <code>null</code> if there is no RDF metadata stored in the document document.
 	 */
-	public static RDF getRDF(final Document document) {
+	public static RDFModel getRDF(final Document document) {
 		final Object rdf = document.getProperty(RDF_PROPERTY); //get the RDF metadata property from the document
-		return rdf instanceof RDF ? (RDF)rdf : null; //return the RDF, if that's really what it is; otherwise, return null
+		return rdf instanceof RDFModel ? (RDFModel)rdf : null; //return the RDF, if that's really what it is; otherwise, return null
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class Documents {
 	 * @param document The document the property of which to set.
 	 * @param rdf The RDF data model.
 	 */
-	public static void setRDF(final Document document, final RDF rdf) {
+	public static void setRDF(final Document document, final RDFModel rdf) {
 		document.putProperty(RDF_PROPERTY, rdf); //store the RDF in the document
 	}
 

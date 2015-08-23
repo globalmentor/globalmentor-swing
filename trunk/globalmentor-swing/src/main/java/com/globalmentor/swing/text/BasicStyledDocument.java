@@ -60,7 +60,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	/**
 	 * @return The RDF data model where metadata is stored, or <code>null</code> if there is no metadata document.
 	 */
-	public RDF getRDF() {
+	public RDFModel getRDF() {
 		return Documents.getRDF(this); //retrieve the RDF property value
 	}
 
@@ -68,7 +68,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	 * Sets the RDF data model where metadata is stored.
 	 * @param rdf The RDF data model.
 	 */
-	public void setRDF(final RDF rdf) {
+	public void setRDF(final RDFModel rdf) {
 		Documents.setRDF(this, rdf); //set the RDF
 	}
 

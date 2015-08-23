@@ -37,7 +37,7 @@ public class RDFTreeUtilities {
 	 * @see Resource#getReferenceURI
 	 * @see FilePropertiesConstants
 	 */
-	public static MutableTreeNode createFileResourceTreeNode(final RDF rdf, final List<? extends Resource> topLevelResourceList) {
+	public static MutableTreeNode createFileResourceTreeNode(final RDFModel rdf, final List<? extends Resource> topLevelResourceList) {
 		final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Resources"); //create the root node TODO i18n; fix
 		//create the top-level resources
 		final Iterator<? extends Resource> topLevelResourceIterator = topLevelResourceList.iterator(); //get an iterator to all the top-level resources

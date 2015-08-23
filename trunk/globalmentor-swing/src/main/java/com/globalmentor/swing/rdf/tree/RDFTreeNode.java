@@ -39,8 +39,8 @@ public class RDFTreeNode extends DynamicTreeNode {
 	 * @return The RDF data momdel this tree node represents, already cast to <code>RDF</code>.
 	 * @see DefaultMutableTreeNode#getUserObject
 	 */
-	public RDF getRDF() {
-		return (RDF)getUserObject(); //return the user object cast to an RDF
+	public RDFModel getRDF() {
+		return (RDFModel)getUserObject(); //return the user object cast to an RDF
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class RDFTreeNode extends DynamicTreeNode {
 	 * @param rdfXMLifier The RDF XML-ifier to use for creating labels.
 	 * @param comparator The object that determines how the resources will be sorted, or <code>null</code> if the resources should not be sorted.
 	 */
-	public RDFTreeNode(final RDF rdf, final RDFXMLGenerator rdfXMLifier/*TODO fix, final Comparator comparator*/) {
+	public RDFTreeNode(final RDFModel rdf, final RDFXMLGenerator rdfXMLifier/*TODO fix, final Comparator comparator*/) {
 		super(rdf); //store the RDF data model as the user object
 		xmlifier = rdfXMLifier; //save the XMLifier we'll use for generating labels
 		//TODO fix		setComparator(comparator);	//set the comparator
