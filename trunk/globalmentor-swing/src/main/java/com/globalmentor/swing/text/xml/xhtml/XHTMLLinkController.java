@@ -20,7 +20,7 @@ import javax.swing.text.*;
 
 import com.globalmentor.swing.text.xml.*;
 
-import static com.globalmentor.text.xml.xhtml.XHTML.*;
+import static com.globalmentor.w3c.spec.HTML.*;
 
 /**
  * Class to watch the associated component and fire hyperlink events on it when appropriate.

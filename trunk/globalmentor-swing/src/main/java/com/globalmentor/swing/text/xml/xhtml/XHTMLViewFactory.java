@@ -22,7 +22,7 @@ import com.globalmentor.net.ContentType;
 import com.globalmentor.net.ContentTypeConstants;
 import com.globalmentor.swing.text.xml.*;
 
-import static com.globalmentor.text.xml.xhtml.XHTML.*;
+import static com.globalmentor.w3c.spec.HTML.*;
 
 /**
  * A factory to build views for elements from XHTML based upon the name and/or attributes of each element.

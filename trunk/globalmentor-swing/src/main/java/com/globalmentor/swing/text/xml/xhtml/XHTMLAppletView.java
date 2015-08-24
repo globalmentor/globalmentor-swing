@@ -18,7 +18,7 @@ package com.globalmentor.swing.text.xml.xhtml;
 
 import javax.swing.text.*;
 
-import static com.globalmentor.text.xml.xhtml.XHTML.*;
+import static com.globalmentor.w3c.spec.HTML.*;
 
 import com.globalmentor.java.*;
 import com.globalmentor.swing.text.xml.*;

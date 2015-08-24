@@ -35,7 +35,7 @@ import com.globalmentor.text.xml.URIInputStreamableXMLEntityResolver;
 import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.XMLNodeModel;
 import com.globalmentor.text.xml.XMLSerializer;
-import com.globalmentor.text.xml.xhtml.XHTML;
+import com.globalmentor.w3c.spec.HTML;
 
 import org.w3c.dom.*;
 
@@ -176,7 +176,7 @@ public abstract class XMLPanel<N extends Node> extends TabbedViewPanel<XMLNodeMo
 		unicodeStatusBar = new UnicodeStatusBar(); //create a new Unicode status bar
 
 		//TODO fix		emphasisAction=new EmphasisAction();  //TODO testing
-		emphasisAction = new InsertXMLElementAction("<em>emphasis</em>", XHTML.XHTML_NAMESPACE_URI, XHTML.ELEMENT_EM, getXMLTextPane()); //TODO testing
+		emphasisAction = new InsertXMLElementAction("<em>emphasis</em>", HTML.XHTML_NAMESPACE_URI, HTML.ELEMENT_EM, getXMLTextPane()); //TODO testing
 
 		if(initialize) //if we should initialize
 			initialize(); //initialize the panel

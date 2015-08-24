@@ -48,6 +48,7 @@ import com.globalmentor.text.ArgumentSyntaxException;
 import com.globalmentor.text.Text;
 import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.util.zip.*;
+import com.globalmentor.w3c.spec.HTML;
 import com.globalmentor.w3c.spec.XML;
 
 import static com.globalmentor.collections.iterators.Iterators.*;
@@ -527,10 +528,10 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 		loadKeymap(pagedKeymap, PAGED_KEY_BINDINGS, getActions()); //load our custom keymap TODO what happens if this is set and then the editor kit is changed?
 		updateKeymap(); //update the keymap based upon our current settings
 		final ViewFactory xhtmlViewFactory = new XHTMLViewFactory(); //create a view factory fo XHTML
-		registerViewFactory(XHTML.XHTML_NAMESPACE_URI.toString(), xhtmlViewFactory); //associate the XHTML view factory with XHTML elements
+		registerViewFactory(HTML.XHTML_NAMESPACE_URI.toString(), xhtmlViewFactory); //associate the XHTML view factory with XHTML elements
 		registerViewFactory(OEB.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlViewFactory); //associate the XHTML view factory with OEB elements
 		final XMLLinkController xhtmlLinkController = new XHTMLLinkController(); //create a link controller for XHTML
-		registerLinkController(XHTML.XHTML_NAMESPACE_URI.toString(), xhtmlLinkController); //associate the XHTML view factory with XHTML elements
+		registerLinkController(HTML.XHTML_NAMESPACE_URI.toString(), xhtmlLinkController); //associate the XHTML view factory with XHTML elements
 		registerLinkController(OEB.OEB1_DOCUMENT_NAMESPACE_URI.toString(), xhtmlLinkController); //associate the XHTML link controller with OEB elements
 		//TODO fix		final ViewFactory maqroViewFactory=new MAQROViewFactory();  //create a view factory fo MAQRO
 		//TODO convert to URF		registerViewFactory(MAQRO.MAQRO_NAMESPACE_URI.toString(), maqroViewFactory);  //associate the MAQRO view factory with MAQRO elements
@@ -721,7 +722,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 			if(isXML(contentType)) { //if this is XML TODO all this special handling needs to go in the editor kit; really, this should go in the code using the text pane, complementary to the decoding
 				if(text.length() > 0) { //if there is any text
 					if(text.charAt(0) != '<') //if this text doesn't start with markup TODO use a constant
-						text = "<div xmlns=\"" + XHTML.XHTML_NAMESPACE_URI + "\">" + text + "</div>"; //wrap the text with a <div> element TODO this assumes a lot about HTML; make this more generic if we can---see the namespace code from XMLPanel
+						text = "<div xmlns=\"" + HTML.XHTML_NAMESPACE_URI + "\">" + text + "</div>"; //wrap the text with a <div> element TODO this assumes a lot about HTML; make this more generic if we can---see the namespace code from XMLPanel
 				}
 			}
 		} catch(final ArgumentSyntaxException argumentSyntaxException) {
@@ -1094,8 +1095,8 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	public void setXML(final DocumentFragment xmlDocumentFragment, final URI baseURI, final ContentType mediaType) {
 		final DOMImplementation domImplementation = createDocumentBuilder(true).getDOMImplementation();
 		//create a document with an document element of <xhtml:div> TODO create something less XHTML-ish and more generic
-		final org.w3c.dom.Document xmlDocument = domImplementation.createDocument(XHTML.XHTML_NAMESPACE_URI.toString(),
-				XML.createQName(XHTML.XHTML_NAMESPACE_PREFIX, XHTML.ELEMENT_DIV), null);
+		final org.w3c.dom.Document xmlDocument = domImplementation.createDocument(HTML.XHTML_NAMESPACE_URI.toString(),
+				XML.createQName(HTML.XHTML_NAMESPACE_PREFIX, HTML.ELEMENT_DIV), null);
 		//import the document fragment and append it to the root element of our document
 		xmlDocument.getDocumentElement().appendChild(xmlDocument.importNode(xmlDocumentFragment, true));
 		setXML(xmlDocument, baseURI, mediaType); //set the XML using our created enclosing document

@@ -33,6 +33,7 @@ import com.globalmentor.swing.event.XMLLinkEvent;
 import com.globalmentor.w3c.spec.XLink;
 
 import static com.globalmentor.text.xml.xhtml.XHTML.*;
+import static com.globalmentor.w3c.spec.HTML.*;
 
 /**
  * Class to watch the associated component and fire hyperlink events on it when appropriate. This class interprets links according to the XLink specification,

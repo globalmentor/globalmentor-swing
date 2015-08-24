@@ -25,7 +25,7 @@ import com.globalmentor.swing.text.xml.*;
 import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.xhtml.*;
 
-import static com.globalmentor.text.xml.xhtml.XHTML.*;
+import static com.globalmentor.w3c.spec.HTML.*;
 
 import org.w3c.dom.*;
 

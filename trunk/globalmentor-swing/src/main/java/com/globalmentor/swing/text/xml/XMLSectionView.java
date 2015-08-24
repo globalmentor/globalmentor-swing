@@ -26,7 +26,7 @@ import static com.globalmentor.swing.text.rdf.RDFStyles.*;
 import com.globalmentor.log.Log;
 import com.globalmentor.swing.text.*;
 import com.globalmentor.swing.text.xml.xhtml.XHTMLSwingText;
-import com.globalmentor.text.xml.xhtml.XHTML;
+import com.globalmentor.w3c.spec.HTML;
 
 /**
  * A view to represent an entire section. This view understands that its child elements represent XML document trees.
@@ -110,7 +110,7 @@ public class XMLSectionView extends XMLBlockView {
 							final String childElementLocalName = XMLStyles.getXMLElementLocalName(childAttributeSet); //get the child element local name
 							Log.trace("Looking at child: ", childElementLocalName); //TODO del
 							//if this element is an HTML <body> element 
-							if(XHTML.ELEMENT_BODY.equals(childElementLocalName) && XHTMLSwingText.isHTMLElement(childAttributeSet, documentAttributeSet)) {
+							if(HTML.ELEMENT_BODY.equals(childElementLocalName) && XHTMLSwingText.isHTMLElement(childAttributeSet, documentAttributeSet)) {
 								final int bodyChildElementCount = childElement.getElementCount(); //find out how many children the body element has
 								for(int bodyChildIndex = 0; bodyChildIndex < bodyChildElementCount; ++bodyChildIndex) { //look at each of the body element's children
 									Log.trace("Adding body child element: ", bodyChildIndex);

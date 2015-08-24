@@ -22,7 +22,7 @@ import java.net.URISyntaxException;
 
 import javax.swing.text.*;
 
-import static com.globalmentor.text.xml.xhtml.XHTML.*;
+import static com.globalmentor.w3c.spec.HTML.*;
 
 import com.globalmentor.awt.*;
 import com.globalmentor.log.Log;
