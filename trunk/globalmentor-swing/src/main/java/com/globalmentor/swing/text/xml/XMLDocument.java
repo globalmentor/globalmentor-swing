@@ -42,9 +42,9 @@ import com.globalmentor.sound.sampled.SampledSounds;
 import com.globalmentor.swing.event.ProgressEvent;
 import com.globalmentor.swing.text.*;
 import com.globalmentor.swing.text.xml.css.*;
-import com.globalmentor.text.xml.processor.stylesheets.css.AbstractXMLCSSStylesheetApplier;
-import com.globalmentor.text.xml.processor.stylesheets.css.XMLCSSStyleDeclaration;
 import com.globalmentor.w3c.spec.CSS;
+import com.globalmentor.xml.dom.impl.stylesheets.css.AbstractXMLCSSStylesheetApplier;
+import com.globalmentor.xml.dom.impl.stylesheets.css.XMLCSSStyleDeclaration;
 
 /**
  * A document that models XML.
