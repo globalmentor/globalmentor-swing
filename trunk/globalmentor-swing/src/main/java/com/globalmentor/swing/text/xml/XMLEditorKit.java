@@ -27,8 +27,8 @@ import javax.swing.text.Document;
 import javax.swing.text.Element;
 
 import static com.globalmentor.java.Objects.*;
-import static com.globalmentor.text.xml.XML.*;
 import static com.globalmentor.w3c.spec.XML.*;
+import static com.globalmentor.xml.XML.*;
 import static java.nio.charset.StandardCharsets.*;
 
 import com.globalmentor.collections.IdentityHashSet;
@@ -42,11 +42,11 @@ import com.globalmentor.swing.*;
 import com.globalmentor.swing.text.BasicStyledEditorKit;
 //TODO fix import com.globalmentor.swing.text.rdf.maqro.MAQROXMLElementKit;
 import com.globalmentor.swing.text.xml.css.*;
-import com.globalmentor.text.xml.XML;
-import com.globalmentor.text.xml.XMLSerializer;
 import com.globalmentor.text.xml.processor.stylesheets.css.XMLCSSStyleDeclaration;
 import com.globalmentor.text.xml.processor.stylesheets.css.XMLCSSStylesheetApplier;
 import com.globalmentor.w3c.spec.CSS;
+import com.globalmentor.xml.XML;
+import com.globalmentor.xml.XMLSerializer;
 
 import org.w3c.dom.*;
 import org.w3c.dom.css.*;

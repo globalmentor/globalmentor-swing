@@ -27,8 +27,8 @@ import javax.swing.text.*;
 import com.globalmentor.io.*;
 import com.globalmentor.model.ModelView;
 import com.globalmentor.model.ModelViewIOKit;
-import com.globalmentor.text.xml.XMLDocumentModelIOKit;
-import com.globalmentor.text.xml.XMLNodeModel;
+import com.globalmentor.xml.XMLDocumentModelIOKit;
+import com.globalmentor.xml.XMLNodeModel;
 
 /**
  * An implementation for loading information into a view or saving information from an XML panel using a model's I/O kit.

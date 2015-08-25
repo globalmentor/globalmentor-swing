@@ -21,8 +21,8 @@ import java.net.URI;
 
 import javax.swing.text.*;
 
-import static com.globalmentor.text.xml.xhtml.XHTML.*;
 import static com.globalmentor.w3c.spec.HTML.*;
+import static com.globalmentor.xml.xhtml.XHTML.*;
 
 import com.globalmentor.io.*;
 import com.globalmentor.net.ContentType;

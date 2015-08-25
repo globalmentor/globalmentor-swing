@@ -46,15 +46,15 @@ import com.globalmentor.swing.text.xml.*;
 import com.globalmentor.swing.text.xml.xhtml.*;
 import com.globalmentor.text.ArgumentSyntaxException;
 import com.globalmentor.text.Text;
-import com.globalmentor.text.xml.xhtml.XHTML;
 import com.globalmentor.util.zip.*;
 import com.globalmentor.w3c.spec.HTML;
 import com.globalmentor.w3c.spec.XML;
+import com.globalmentor.xml.xhtml.XHTML;
 
 import static com.globalmentor.collections.iterators.Iterators.*;
 import static com.globalmentor.java.Objects.*;
 import static com.globalmentor.net.ContentTypeConstants.*;
-import static com.globalmentor.text.xml.XML.*;
+import static com.globalmentor.xml.XML.*;
 
 /**
  * A text component that can be marked up with attributes that are represented graphically. Most importantly, this class supports paged XML information.

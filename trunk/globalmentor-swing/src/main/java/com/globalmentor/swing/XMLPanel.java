@@ -31,11 +31,11 @@ import static java.nio.charset.StandardCharsets.*;
 
 import com.globalmentor.swing.text.xml.*;
 import com.globalmentor.swing.unicode.UnicodeStatusBar;
-import com.globalmentor.text.xml.URIInputStreamableXMLEntityResolver;
-import com.globalmentor.text.xml.XML;
-import com.globalmentor.text.xml.XMLNodeModel;
-import com.globalmentor.text.xml.XMLSerializer;
 import com.globalmentor.w3c.spec.HTML;
+import com.globalmentor.xml.URIInputStreamableXMLEntityResolver;
+import com.globalmentor.xml.XML;
+import com.globalmentor.xml.XMLNodeModel;
+import com.globalmentor.xml.XMLSerializer;
 
 import org.w3c.dom.*;
 

@@ -16,7 +16,7 @@
 
 package com.globalmentor.swing.text.xml;
 
-import com.globalmentor.text.xml.XMLNamedObject;
+import com.globalmentor.xml.XMLNamedObject;
 
 /**
  * An XML attribute stored in a Swing attribute set.

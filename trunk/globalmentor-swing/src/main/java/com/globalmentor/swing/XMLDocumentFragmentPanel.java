@@ -18,9 +18,8 @@ package com.globalmentor.swing;
 
 import java.net.URI;
 import com.globalmentor.net.*;
-
-import com.globalmentor.text.xml.XMLNodeModel;
-import com.globalmentor.text.xml.XML;
+import com.globalmentor.xml.XML;
+import com.globalmentor.xml.XMLNodeModel;
 
 import org.w3c.dom.*;
 

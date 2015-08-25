@@ -18,7 +18,7 @@ package com.globalmentor.swing;
 
 import com.globalmentor.net.ContentType;
 import com.globalmentor.net.ContentTypeConstants;
-import com.globalmentor.text.xml.XMLNodeModel;
+import com.globalmentor.xml.XMLNodeModel;
 
 import org.w3c.dom.*;
 

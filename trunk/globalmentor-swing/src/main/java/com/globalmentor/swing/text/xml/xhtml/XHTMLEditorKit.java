@@ -22,8 +22,8 @@ import javax.swing.text.AttributeSet;
 import com.globalmentor.io.*;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.swing.text.xml.*;
-import com.globalmentor.text.xml.XML;
-import com.globalmentor.text.xml.xhtml.*;
+import com.globalmentor.xml.XML;
+import com.globalmentor.xml.xhtml.*;
 
 import static com.globalmentor.w3c.spec.HTML.*;
 

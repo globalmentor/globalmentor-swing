@@ -23,10 +23,10 @@ import com.globalmentor.log.Log;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.swing.text.*;
 import com.globalmentor.swing.text.xml.css.XMLCSSStyles;
-import com.globalmentor.text.xml.XML;
 import com.globalmentor.text.xml.processor.stylesheets.css.XMLCSSPrimitiveValue;
 import com.globalmentor.text.xml.processor.stylesheets.css.XMLCSSStyleDeclaration;
 import com.globalmentor.w3c.spec.CSS;
+import com.globalmentor.xml.XML;
 
 import org.w3c.dom.css.CSSStyleDeclaration;
 

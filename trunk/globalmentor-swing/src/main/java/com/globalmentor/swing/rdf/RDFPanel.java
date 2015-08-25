@@ -29,9 +29,9 @@ import com.globalmentor.net.ResourceModel;
 import com.globalmentor.rdf.*;
 import com.globalmentor.swing.*;
 import com.globalmentor.swing.rdf.tree.*;
-import com.globalmentor.text.xml.URIInputStreamableXMLEntityResolver;
-import com.globalmentor.text.xml.XML;
-import com.globalmentor.text.xml.XMLSerializer;
+import com.globalmentor.xml.URIInputStreamableXMLEntityResolver;
+import com.globalmentor.xml.XML;
+import com.globalmentor.xml.XMLSerializer;
 
 import org.w3c.dom.*;
 
