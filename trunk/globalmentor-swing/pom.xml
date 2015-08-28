@@ -54,6 +54,12 @@
 
 		<dependency>
 			<groupId>com.globalmentor</groupId>
+			<artifactId>globalmentor-oebps-spec</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.globalmentor</groupId>
 			<artifactId>globalmentor-rdf</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
