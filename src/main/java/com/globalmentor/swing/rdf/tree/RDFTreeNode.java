@@ -17,6 +17,9 @@
 package com.globalmentor.swing.rdf.tree;
 
 import java.io.IOException;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import com.globalmentor.rdf.*;
 import com.globalmentor.swing.tree.*;
 
@@ -37,7 +40,7 @@ public class RDFTreeNode extends DynamicTreeNode {
 	/**
 	 * Convenience function for retrieving the represented RDF data model.
 	 * @return The RDF data momdel this tree node represents, already cast to <code>RDF</code>.
-	 * @see DefaultMutableTreeNode#getUserObject
+	 * @see DefaultMutableTreeNode#getUserObject()
 	 */
 	public RDFModel getRDF() {
 		return (RDFModel)getUserObject(); //return the user object cast to an RDF
@@ -75,7 +78,6 @@ public class RDFTreeNode extends DynamicTreeNode {
 	 * Constructs a tree node from an RDF data model.
 	 * @param rdf The RDF data model represented by this node.
 	 * @param rdfXMLifier The RDF XML-ifier to use for creating labels.
-	 * @param comparator The object that determines how the resources will be sorted, or <code>null</code> if the resources should not be sorted.
 	 */
 	public RDFTreeNode(final RDFModel rdf, final RDFXMLGenerator rdfXMLifier/*TODO fix, final Comparator comparator*/) {
 		super(rdf); //store the RDF data model as the user object

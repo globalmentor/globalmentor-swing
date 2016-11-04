@@ -100,7 +100,7 @@ public class ProgressEvent extends EventObject {
 	}
 
 	/**
-	 * Returns whether the progress has reached its goal. If the progress is below zero, <code>false</code> will be returned.
+	 * @return Whether the progress has reached its goal. If the progress is below zero, <code>false</code> will be returned.
 	 * @see #getValue
 	 * @see #getMaximum
 	 */
@@ -123,7 +123,7 @@ public class ProgressEvent extends EventObject {
 
 	/**
 	 * Creates a progress event with a task and status, but an unknown progress.
-	 * @param The source of the event (typically <code>this</code>).
+	 * @param source The source of the event (typically <code>this</code>).
 	 * @param task The task being performed.
 	 * @param status The status message.
 	 */

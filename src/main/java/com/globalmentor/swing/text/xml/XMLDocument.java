@@ -144,11 +144,11 @@ public class XMLDocument extends BasicStyledDocument {
 				final MutableAttributeSet bodyAttributeSet=createAttributeSet("body", null, blockCSSStyle);  //TODO testing; comment; use a constant; fix namespace
 				final MutableAttributeSet pAttributeSet=createAttributeSet("p", null, blockCSSStyle);  //TODO testing; comment; use a constant; fix namespace
 		//TODO del		XMLCSSStyleConstants.setParagraphView(pAttributeSet, true);	//show that the paragraph element should have a paragraph view
-
-
+		
+		
 				writeLock();  //grab a write-lock for this initialization and abandon it during initialization so in normal operation we can detect an illegitimate attempt to mutate attributes
 				final Element[] buff=new Element[1];  //create an element array for insertion of elements
-
+		
 				final BranchElement section=new SectionElement(); //create a new section
 				final BranchElement html=new BranchElement(section, htmlAttributeSet); //create a new paragraph to represent the document
 				final BranchElement body=new BranchElement(html, bodyAttributeSet); //create a new paragraph to represent the HTML body
@@ -163,13 +163,13 @@ public class XMLDocument extends BasicStyledDocument {
 		*/
 
 		/*TODO del
-
+		
 					BranchElement paragraph = new BranchElement(section, null);
-
+		
 					LeafElement brk = new LeafElement(paragraph, null, 0, 1);
 					buff[0] = brk;
 					paragraph.replace(0, 0, buff);
-
+		
 					final Element[] sectionBuffer=new Element[2];  //TODO testing
 					sectionBuffer[0] = html;
 					sectionBuffer[1] = paragraph;
@@ -314,13 +314,13 @@ public class XMLDocument extends BasicStyledDocument {
 		ContentType mediaType = null; //we start out not knowing the media type of the resource
 		final RDFResource publication = getPublication(); //get the publication description
 		if(publication != null) { //if there is a description of the publication
-		/*TODO fix with URF
-						//get the manifest resource which represents the requested resource
-					final RDFResource resource=XPackageUtilities.getManifestItemByLocationHRef(publication, getBaseURI(), href);
-				  if(resource!=null) {	//if the item is listed in the manifest
-						mediaType=Marmot.getMediaType(resource);  //get the resource's media type
-					}
-		*/
+			/*TODO fix with URF
+							//get the manifest resource which represents the requested resource
+						final RDFResource resource=XPackageUtilities.getManifestItemByLocationHRef(publication, getBaseURI(), href);
+					  if(resource!=null) {	//if the item is listed in the manifest
+							mediaType=Marmot.getMediaType(resource);  //get the resource's media type
+						}
+			*/
 		}
 		if(mediaType == null) { //if we couldn't find a media type from the publication description
 			mediaType = Files.getMediaType(href); //get the media type from the extension of the href, if any
@@ -420,9 +420,9 @@ public class XMLDocument extends BasicStyledDocument {
 	/**
 	 * Inserts a group of new elements into the document
 	 * @param offset the starting offset
-	 * @data the element data
+	 * @param data the element data
 	 * @throws BadLocationException for an invalid starting offset
-	 * @see StyledDocument#insert
+	 * @see DefaultStyledDocument#insert(int, ElementSpec[])
 	 * @throws BadLocationException if the given position does not represent a valid location in the associated document.
 	 */
 	//TODO why do we override this?
@@ -447,14 +447,14 @@ public class XMLDocument extends BasicStyledDocument {
 		        final int firstPStart = getParagraphElement(chngStart).getStartOffset();
 		        final int lastPEnd = getParagraphElement(chngEnd).getEndOffset();
 		Log.trace("first paragrah start: "+firstPStart+" last paragraph end: "+lastPEnd);
-
+		
 		*/
 
 		/*TODO fix
 			if(attr == null) {
 					attr = contentAttributeSet;
 			}
-
+		
 			// If this is the composed text element, merge the content attribute to it
 			else if (attr.isDefined(StyleConstants.ComposedTextAttribute)) {
 					((MutableAttributeSet)attr).addAttributes(contentAttributeSet);
@@ -473,7 +473,7 @@ public class XMLDocument extends BasicStyledDocument {
 	 * This version is given public access so that it can be accessed by the editor kit.
 	 * </p>
 	 * @param elementSpecs The array of element specifications that define the document.
-	 * @see XMLEditorKit#setXML(org.w3c.dom.Document[], URI[], MediaType[], XMLDocument)
+	 * @see XMLEditorKit#setXML(org.w3c.dom.Document, URI, ContentType, XMLDocument)
 	 */
 	public void create(ElementSpec[] elementSpecs) {
 		super.create(elementSpecs); //create the document normally
@@ -593,14 +593,14 @@ public class XMLDocument extends BasicStyledDocument {
 							for(int processingInstructionIndex=0; processingInstructionIndex<processingInstructionList.size(); ++processingInstructionIndex) {	//look at each of the processing instruction nodes
 								final ProcessingInstruction processingInstruction=(ProcessingInstruction)processingInstructionList.get(processingInstructionIndex);	//get a reference to this processing instruction
 								processingInstructions[processingInstructionIndex]=new NameValuePair(processingInstruction.getTarget(), processingInstruction.getData()); //create a name/value pair from the processing instruction
-
+	
 									//add an attribute representing the processing instruction, prepended by the special characters for a processing instruction
 	//TODO del when works							attributeSet.addAttribute(XMLStyleConstants.XML_PROCESSING_INSTRUCTION_ATTRIBUTE_START+processingInstruction.getTarget(), processingInstruction.getData());
-
+	
 							}
 							XMLStyleUtilities.setXMLProcessingInstructions(documentAttributeSet, processingInstructions); //add the processing instructions
 						}
-
+	
 	//TODO fix					if(XHTMLSwingTextUtilities.isHTMLDocumentElement(documentAttributeSet);	//see if this is an HTML document
 	//TODO fix					{
 	//TODO fix						if(childAttributeSet instanceof MutableAttributeSet)	//TODO testing
@@ -611,10 +611,10 @@ public class XMLDocument extends BasicStyledDocument {
 	//TODO fix					}
 	//TODO fix				}
 					sectionElement.replace(0, sectionElement.getChildCount(), childElements);	//add the document children to the section
-
+	
 	//TODO del				Log.trace("before creating document, content has length", content.length());
 	//TODO del Log.trace("ready to insert", stringBuilder.length());
-
+	
 	//TODO fix				content.insertString(0, stringBuilder.toString());	//TODO find a better way to replace the content
 					
 		
@@ -630,7 +630,7 @@ public class XMLDocument extends BasicStyledDocument {
 	//TODO fix		    event.addEdit(cEdit);
 	//TODO fix buffer.create(length, data, evnt);
 					buffer=new ElementBuffer(sectionElement);	//TODO testing
-
+	
 			    // update bidi (possibly)
 		//TODO del	    super.insertUpdate(evnt, null);
 	//TODO fix		    insertUpdate(event, null);
@@ -649,12 +649,12 @@ public class XMLDocument extends BasicStyledDocument {
 	    	throw new AssertionError(badLocationException);
 	    }
 		}
-
+	
 		protected int getContent(final org.w3c.dom.Document xmlDocument, final StringBuilder stringBuilder)
 		{
 			return getContent(xmlDocument.getDocumentElement(), stringBuilder);
 		}
-
+	
 		protected int getContent(final org.w3c.dom.Element xmlElement, final StringBuilder stringBuilder)
 		{
 			int childContentLength=0;
@@ -754,11 +754,11 @@ public class XMLDocument extends BasicStyledDocument {
 
 	/**
 	 * Appends information from an XML element tree into a list of element specs.
-	 * @param elementSpecList The list of element specs to be inserted into the document.
-	 * @param xmlElement The XML element tree.
-	 * @param baseURI The base URI of the document, used for generating full target URIs for quick searching.
+	 * @param parentElement The list of element specs to be inserted into the document.
+	 * @param offset The offset in the document (&gt;=0).
+	 * @param text The text to be inserted into the new element.
+	 * @param attributeSet The attribute set for the element.
 	 * @return The attribute set used to represent the element; this attribute set can be manipulated after the method returns.
-	 * @throws BadLocationException for an invalid starting offset
 	 * @see XMLDocument#insert
 	 */
 	//TODO decide if we want this
@@ -809,6 +809,10 @@ public class XMLDocument extends BasicStyledDocument {
 		}
 	*/
 
+	/**
+	 * Creates an ending element block to the given element.
+	 * @param element The element to be used to the creation of its ending element.
+	 */
 	protected void insertBlockElementEnds(final Element element) { //TODO testing
 		Element previousChildElement = null; //keep track of the last child element
 		AttributeSet previousChildAttributeSet = null; //keep track of the last child element's attributes
@@ -857,7 +861,7 @@ public class XMLDocument extends BasicStyledDocument {
 	 */
 	/*TODO del; testing bidiarray
 	    private byte[] calculateBidiLevels( int firstPStart, int lastPEnd ) {
-
+	
 	        byte levels[] = new byte[ lastPEnd - firstPStart ];
 	        int  levelsEnd = 0;
 		Boolean defaultDirection = null;
@@ -865,14 +869,14 @@ public class XMLDocument extends BasicStyledDocument {
 		if (d instanceof Boolean) {
 		    defaultDirection = (Boolean) d;
 		}
-
+	
 	        // For each paragraph in the given range of paragraphs, get its
 	        // levels array and add it to the levels array for the entire span.
 	        for(int o=firstPStart; o<lastPEnd; ) {
 	            Element p = getParagraphElement( o );
 	            int pStart = p.getStartOffset();
 	            int pEnd = p.getEndOffset();
-
+	
 		    // default run direction for the paragraph.  This will be
 		    // null if there is no direction override specified (i.e.
 		    // the direction will be determined from the content).
@@ -881,9 +885,9 @@ public class XMLDocument extends BasicStyledDocument {
 		    if (d instanceof Boolean) {
 			direction = (Boolean) d;
 		    }
-
+	
 	Log.trace("updateBidi: paragraph start = " + pStart + " paragraph end = " + pEnd);
-
+	
 	            // Create a Bidi over this paragraph then get the level
 	            // array.
 	            String pText;
@@ -901,20 +905,20 @@ public class XMLDocument extends BasicStyledDocument {
 			bidiAnalyzer = new Bidi( pText.toCharArray() );
 		    }
 	            byte[] pLevels = bidiAnalyzer.getLevels();
-
+	
 	Log.trace("Ready to do Bidi arraycopy with pLevels of length: "+pLevels.length+" levels of length: "+levels.length+" levelsEnd: "+levelsEnd);
-
-
+	
+	
 	            System.arraycopy( pLevels, 0, levels, levelsEnd, pLevels.length );
 	            levelsEnd += pLevels.length;
-
+	
 	            o =  p.getEndOffset();
 	        }
-
+	
 	        // REMIND(bcb) remove this code when debugging is done.
 	        if( levelsEnd != levels.length )
 	            throw new Error("levelsEnd assertion failed.");
-
+	
 	        return levels;
 	    }
 	*/
@@ -930,7 +934,7 @@ public class XMLDocument extends BasicStyledDocument {
 			remove(0, getLength());
 		    }
 		    writeLock();
-
+	
 		    // install the content
 		    Content c = getContent();
 		    int n = data.length;
@@ -942,17 +946,17 @@ public class XMLDocument extends BasicStyledDocument {
 			}
 		    }
 		    UndoableEdit cEdit = c.insertString(0, sb.toString());
-
+	
 		    // build the event and element structure
 		    int length = sb.length();
 		    DefaultDocumentEvent evnt =
 			new DefaultDocumentEvent(0, length, DocumentEvent.EventType.INSERT);
 		    evnt.addEdit(cEdit);
 		    buffer.create(length, data, evnt);
-
+	
 		    // update bidi (possibly)
 		    super.insertUpdate(evnt, null);
-
+	
 		    // notify the listeners
 		    evnt.end();
 		    fireInsertUpdate(evnt);
@@ -962,7 +966,7 @@ public class XMLDocument extends BasicStyledDocument {
 		} finally {
 		    writeUnlock();
 		}
-
+	
 	    }
 	*/
 
@@ -994,28 +998,28 @@ public class XMLDocument extends BasicStyledDocument {
 			Log.trace("comparing to: ", attributeSet.getAttribute(attribute)); //TODO del
 			if(value.equals(attributeSet.getAttribute(attribute))) //if the value matches
 				return element; //return this element
-				/*TODO del when works; recheck exactly what this kludge was doing
-							else	//if the value doesn't match, we'll see if they are trying to match the target ID TODO this is a big kludge to get linking to work with OEB in the short term
-								//TODO this kludge checks to see if we're looking for a target ID; if so,
-								//	and we're looking for a file (not a fragment), see if the part before
-								//	the '#' matches (the first element, for now, should have at least the
-								//	full path for the target ID
-							{
-				Log.trace("element doesn't match: ", attributeSet.getAttribute(attribute));
-								if(attribute.equals(XMLStyleConstants.TARGET_ID_PATH_ATTRIBUTE_NAME)) {	//if they are looking for the target ID
-									final String compareValue=(String)value;	//cast to a string the attribute that we're comparing
-				Log.trace("comparing with: ", compareValue);
-									if(compareValue.indexOf('#')==-1) {	//if we're looking for an absolute target ID (not a fragment)
-										String thisValue=(String)attributeSet.getAttribute(attribute);	//get the attribute we're comparing with
-										final int poundIndex=thisValue.indexOf('#');	//get the index of any pound symbol in this attribute
-										if(poundIndex!=-1)	//if this attribute has a '#'
-											thisValue=thisValue.substring(0, poundIndex);	//remove the pound sign and everything after it
-								    if(compareValue.equals(thisValue))	//if the value matches
-											return element;	//return this element
-									}
+			/*TODO del when works; recheck exactly what this kludge was doing
+						else	//if the value doesn't match, we'll see if they are trying to match the target ID TODO this is a big kludge to get linking to work with OEB in the short term
+							//TODO this kludge checks to see if we're looking for a target ID; if so,
+							//	and we're looking for a file (not a fragment), see if the part before
+							//	the '#' matches (the first element, for now, should have at least the
+							//	full path for the target ID
+						{
+			Log.trace("element doesn't match: ", attributeSet.getAttribute(attribute));
+							if(attribute.equals(XMLStyleConstants.TARGET_ID_PATH_ATTRIBUTE_NAME)) {	//if they are looking for the target ID
+								final String compareValue=(String)value;	//cast to a string the attribute that we're comparing
+			Log.trace("comparing with: ", compareValue);
+								if(compareValue.indexOf('#')==-1) {	//if we're looking for an absolute target ID (not a fragment)
+									String thisValue=(String)attributeSet.getAttribute(attribute);	//get the attribute we're comparing with
+									final int poundIndex=thisValue.indexOf('#');	//get the index of any pound symbol in this attribute
+									if(poundIndex!=-1)	//if this attribute has a '#'
+										thisValue=thisValue.substring(0, poundIndex);	//remove the pound sign and everything after it
+							    if(compareValue.equals(thisValue))	//if the value matches
+										return element;	//return this element
 								}
 							}
-				*/
+						}
+			*/
 		}
 		//TODO del if not needed		if(!element.isLeaf())	//if the
 		//TODO del if not needed		{
@@ -1038,7 +1042,7 @@ public class XMLDocument extends BasicStyledDocument {
 			    Object name = names.nextElement();
 			    if ((name instanceof HTML.Tag) &&
 				(attr.getAttribute(name) instanceof AttributeSet)) {
-
+	
 				AttributeSet check = (AttributeSet)attr.
 				                     getAttribute(name);
 				if (check.isDefined(attribute) &&
@@ -1071,7 +1075,7 @@ public class XMLDocument extends BasicStyledDocument {
 	 * This version of the method is crucial; without it, <code>AbstractDocument.calculateBidiLevels()</code> can receive incorrect paragraph beginning and ending
 	 * information and throw an <code>ArrayIndexOutOfBoundsException</code>. Editing also requires the functionality in this method.
 	 * </p>
-	 * @param pos The starting offset (>=0);
+	 * @param pos The starting offset (&gt;=0);
 	 * @return The element with the paragraph view attribute set, or if none is set, the parent element of the leaf element at the given position.
 	 */
 	public Element getParagraphElement(int pos) {
@@ -1096,11 +1100,13 @@ public class XMLDocument extends BasicStyledDocument {
 	}
 
 	/**
-	 * Returns true if the text in the range <code>p0</code> to <code>p1</code> is left to right. Imported from {@link AbstractDocument} version 1.112 02/02/00 by
-	 * Timothy Prinzing because that version has class access and cannot be called from the revised com.globalmentor.swing.text.GlyphPainter, which in turn has
-	 * been taken out of its package so that it can be created by com.globalmentor.swing.text.TextLayoutStrategy, which had to be rewritten to allow antialised
-	 * text because of a JDK 1.3.x bug that caused a <code>Graphic/code> object not to correctly create a
-		<code>FontRenderContext</code> that recognized the antialised font property.
+	 * @return <code>true</code> if the text in the range <code>p0</code> to <code>p1</code> is left to right. Imported from {@link AbstractDocument} version
+	 *         1.112 02/02/00 by Timothy Prinzing because that version has class access and cannot be called from the revised
+	 *         com.globalmentor.swing.text.GlyphPainter, which in turn has been taken out of its package so that it can be created by
+	 *         com.globalmentor.swing.text.TextLayoutStrategy, which had to be rewritten to allow antialised text because of a JDK 1.3.x bug that caused a
+	 *         <code>Graphic</code> object not to correctly create a <code>FontRenderContext</code> that recognized the antialised font property.
+	 * @param p0 The first position of the text to be verified.
+	 * @param p1 The last position of the text to be verified.
 	 */
 	public boolean isLeftToRight(int p0, int p1) {
 		if(!getProperty(Java.I18N_PROPERTY_NAME).equals(Boolean.TRUE)) {
@@ -1116,10 +1122,7 @@ public class XMLDocument extends BasicStyledDocument {
 		return true;
 	}
 
-	/**
-	 * Discovers any referenced styles to this document, loads the stylesheets, and applies the styles to the Swing element attributes.
-	 * @param swingDocument The Swing document containing the data.
-	 */
+	/** Discovers any referenced styles to this document, loads the stylesheets, and applies the styles to the Swing element attributes. */
 	public void applyStyles() {
 		Log.trace("Ready to applystyles"); //TODO fix
 		writeLock(); //get a lock on the document
@@ -1137,12 +1140,13 @@ public class XMLDocument extends BasicStyledDocument {
 				final SwingXMLCSSStylesheetApplier stylesheetApplier = getSwingStylesheetApplier(); //get the stylesheet applier
 				//TODO make sure the stylesheet applier correctly distinguishes between document base URI for internal stylesheets and publication base URI for package-level base URIs
 				//get all stylesheets for this document
-				final CSSStyleSheet[] styleSheets = stylesheetApplier.getStylesheets(swingDocumentElement, documentBaseURI, documentMediaType/*TODO convert to something general, description*/);
+				final CSSStyleSheet[] styleSheets = stylesheetApplier.getStylesheets(swingDocumentElement, documentBaseURI,
+						documentMediaType/*TODO convert to something general, description*/);
 				//apply the stylesheets
 				for(int i = 0; i < styleSheets.length; ++i) { //look at each stylesheet
 					//prepare a progress message: "Applying stylesheet X to XXXXX.html"
-					final String progressMessage = format("Applying stylesheet {0} to {1}", Integer.valueOf(i + 1), documentBaseURI != null ? documentBaseURI.toString()
-							: "unknown"); //TODO i18n; fix documentURI if null
+					final String progressMessage = format("Applying stylesheet {0} to {1}", Integer.valueOf(i + 1),
+							documentBaseURI != null ? documentBaseURI.toString() : "unknown"); //TODO i18n; fix documentURI if null
 					Log.trace(progressMessage); //TODO del
 					fireMadeProgress(new ProgressEvent(this, APPLY_STYLESHEET_TASK, progressMessage, swingDocumentElementIndex, swingDocumentElementCount)); //fire a progress message saying that we're applying a stylesheet
 					//TODO del System.out.println("applying stylesheet: "+i+" of "+styleSheetList.getLength());  //TODO del
@@ -1161,31 +1165,31 @@ public class XMLDocument extends BasicStyledDocument {
 	/*TODO fix
 		public void emphasis() {	//TODO testing
 			writeLock();  //TODO testing
-
+	
 			
-
-
+	
+	
 	//TODO fix		final Element[] buff=new Element[1];  //create an element array for insertion of elements
 			final Element characterElement=getCharacterElement(60);
 	//TODO fix		final AttributeSet emAttributeSet=createAttributeSet("em", XHTMLConstants.XHTML_NAMESPACE_URI.toString());	//TODO testirng
 			final AttributeSet emAttributeSet=createAttributeSet(XHTMLConstants.XHTML_NAMESPACE_URI, "em");	//TODO testirng
 	//TODO fix		final Element branchElement=createBranchElement(characterElement.getParentElement(), emAttributeSet);
 	//TODO fix		buff[0]=branchElement;
-
+	
 		final List elementSpecList=new ArrayList();	//create an array to hold our element specs
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(emAttributeSet, DefaultStyledDocument.ElementSpec.StartTagType));
 	appendElementSpecListContent(elementSpecList, "test", null, null);	//TODO fix
 		elementSpecList.add(new DefaultStyledDocument.ElementSpec(emAttributeSet, DefaultStyledDocument.ElementSpec.EndTagType));
-
+	
 		final DefaultStyledDocument.ElementSpec[] elementSpecs=(DefaultStyledDocument.ElementSpec[])elementSpecList.toArray(new DefaultStyledDocument.ElementSpec[elementSpecList.size()]);
-
-
+	
+	
 	DefaultDocumentEvent evnt =	new DefaultDocumentEvent(60, 4, DocumentEvent.EventType.INSERT);
 	//TODO fix		evnt.addEdit(cEdit);
 	//TODO fix		buffer.create(1, buff, evnt);
 	*/
 	/*TODO fix
-
+	
 		try
 		{
 			insert(60, elementSpecs);
@@ -1197,21 +1201,21 @@ public class XMLDocument extends BasicStyledDocument {
 	*/
 	/*TODO fix
 	buffer.insert(60, 4, elementSpecs, evnt);
-
+	
 	// update bidi (possibly)
 	insertUpdate(evnt, null);
-
+	
 	// notify the listeners
 	evnt.end();
 	fireInsertUpdate(evnt);
 	fireUndoableEditUpdate(new UndoableEditEvent(this, evnt));
-
+	
 	*/
 
 	/*TODO fix
 			// update bidi (possibly)
 			super.insertUpdate(evnt, null);
-
+	
 			// notify the listeners
 			evnt.end();
 			fireInsertUpdate(evnt);
@@ -1220,9 +1224,9 @@ public class XMLDocument extends BasicStyledDocument {
 
 	/*TODO del
 			final Element[] buff=new Element[1];  //create an element array for insertion of elements
-
+	
 			createBranchElement()
-
+	
 			final BranchElement section=new SectionElement(); //create a new section
 			final BranchElement html=new BranchElement(section, htmlAttributeSet); //create a new paragraph to represent the document
 			final BranchElement body=new BranchElement(html, bodyAttributeSet); //create a new paragraph to represent the HTML body
@@ -1234,13 +1238,13 @@ public class XMLDocument extends BasicStyledDocument {
 			body.replace(0, 0, buff);
 			buff[0]=body;  //insert the body
 			html.replace(0, 0, buff);
-
+	
 				BranchElement paragraph = new BranchElement(section, null);
-
+	
 				LeafElement brk = new LeafElement(paragraph, null, 0, 1);
 				buff[0] = brk;
 				paragraph.replace(0, 0, buff);
-
+	
 				final Element[] sectionBuffer=new Element[2];  //TODO testing
 				sectionBuffer[0] = html;
 				sectionBuffer[1] = paragraph;
@@ -1261,8 +1265,8 @@ public class XMLDocument extends BasicStyledDocument {
 
 	/**
 	 * Inserts an XML element into the document around the indicated selection.
-	 * @param offset The offset in the document (>=0).
-	 * @param length The length (>=0).
+	 * @param offset The offset in the document (&gt;=0).
+	 * @param length The length (&gt;=0).
 	 * @param elementNamespaceURI The namespace of the XML element.
 	 * @param elementQName The qualified name of the XML element.
 	 */
@@ -1278,7 +1282,7 @@ public class XMLDocument extends BasicStyledDocument {
 			appendElementSpecListContent(elementSpecList, StringUtilities.makeString('*', length), null, null);	//TODO fix; comment
 			elementSpecList.add(new DefaultStyledDocument.ElementSpec(elementAttributeSet, DefaultStyledDocument.ElementSpec.EndTagType));
 			final DefaultStyledDocument.ElementSpec[] elementSpecs=(DefaultStyledDocument.ElementSpec[])elementSpecList.toArray(new DefaultStyledDocument.ElementSpec[elementSpecList.size()]);
-
+	
 			DefaultDocumentEvent evnt=new DefaultDocumentEvent(offset, length, DocumentEvent.EventType.INSERT);
 			buffer.insert(offset, length, elementSpecs, evnt);	//insert the element's specifications
 		//TODO fix	insertUpdate(evnt, null);	//update after the insert
@@ -1311,7 +1315,7 @@ public class XMLDocument extends BasicStyledDocument {
 
 		/**
 		 * Returns the object that represents the root element of the given document.
-		 * @param The object representing the XML document.
+		 * @param document The object representing the XML document.
 		 * @return The object representing the root element of the XML document.
 		 */
 		protected Element getDocumentElement(final Element document) {

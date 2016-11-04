@@ -53,7 +53,7 @@ public class TelecommunicationsPanel extends ContentPanel {
 	/** The action for removing an address. */
 	//TODO fix	private final Action removeAddressAction;
 
-	/** @return The action for removing an address. */
+	///** @return The action for removing an address. */
 	//TODO fix		public Action getRemoveAddressAction() {return removeAddressAction;}
 
 	protected final JToolBar buttonToolBar;
@@ -229,10 +229,8 @@ public class TelecommunicationsPanel extends ContentPanel {
 	protected void addComponent(final Component component) {
 		//TODO use the new BasicGridBagLayout methods here
 		//add the component to the content panel, in a location based upon the components already present 
-		getContentPanel().add(
-				component,
-				new GridBagConstraints(0, getContentPanel().getComponentCount(), 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH,
-						Containers.NO_INSETS, 0, 0));
+		getContentPanel().add(component, new GridBagConstraints(0, getContentPanel().getComponentCount(), 1, 1, 1.0, 1.0, GridBagConstraints.WEST,
+				GridBagConstraints.BOTH, Containers.NO_INSETS, 0, 0));
 		setModified(true); //show that we've been modified by the addition of this component
 		/*TODO del; we may not even need this pack method any more, if revalidate() works
 				if(getParentOptionPane()!=null) {	//if this panel is inside an option pane

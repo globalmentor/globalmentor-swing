@@ -66,10 +66,10 @@ public class XMLPagedView extends FlowView {
 
 	/**
 	 * Sets the insets for each page.
-	 * @param top The page top inset (>=0).
-	 * @param left The pageleft inset (>=0).
-	 * @param bottom The page bottom inset (>=0).
-	 * @param right The page right inset (>=0).
+	 * @param top The page top inset (&gt;=0).
+	 * @param left The pageleft inset (&gt;=0).
+	 * @param bottom The page bottom inset (&gt;=0).
+	 * @param right The page right inset (&gt;=0).
 	 */
 	protected void setPageInsets(final short top, final short left, final short bottom, final short right) {
 		pageTopInset = top;
@@ -78,22 +78,22 @@ public class XMLPagedView extends FlowView {
 		pageBottomInset = bottom;
 	}
 
-	/** @return The left inset of each page (>=0). */
+	/** @return The left inset of each page (&gt;=0). */
 	protected short getPageLeftInset() {
 		return pageLeftInset;
 	}
 
-	/** @return The right inset of each page (>=0). */
+	/** @return The right inset of each page (&gt;=0). */
 	protected short getPageRightInset() {
 		return pageRightInset;
 	}
 
-	/** @return The top inset of each page (>=0). */
+	/** @return The top inset of each page (&gt;=0). */
 	protected short getPageTopInset() {
 		return pageTopInset;
 	}
 
-	/** @return The bottom inset of each page (>=0). */
+	/** @return The bottom inset of each page (&gt;=0). */
 	protected short getPageBottomInset() {
 		return pageBottomInset;
 	}
@@ -173,7 +173,7 @@ public class XMLPagedView extends FlowView {
 		//TODO del Log.trace("requesting page", newPageIndex);
 		newPageIndex = getCanonicalPageIndex(newPageIndex); //make sure the page passed is the canonical one
 		if(pageIndex != newPageIndex) { //if we're really changing the page number
-		//TODO del Log.trace("Changing from page: "+PageIndex+" to page "+newPageIndex+" pageCount: "+getPageCount()); //TODO del
+			//TODO del Log.trace("Changing from page: "+PageIndex+" to page "+newPageIndex+" pageCount: "+getPageCount()); //TODO del
 			//first, tell all the views on the current pages they are about to be hidden
 			if(pageIndex != -1 && getPageCount() > 0) { //if there is a page already being displayed, and we have at least one page
 				final int pageBeginIndex = getPageBeginIndex(); //see which page we're showing first
@@ -333,7 +333,7 @@ public class XMLPagedView extends FlowView {
 
 	/**
 	 * Determines the index of the page at the given position
-	 * @param pos The position (>=0) in the model.
+	 * @param pos The position (&gt;=0) in the model.
 	 * @return The logical index of the page representing the given position, or -1 if there is no page that represents that position.
 	 */
 	public int getPageIndex(final int pos) {
@@ -356,7 +356,7 @@ public class XMLPagedView extends FlowView {
 
 	/**
 	 * Determines if the page at the given index is currently showing
-	 * @Param pageIndex The logical index of the page to check.
+	 * @param pageIndex The logical index of the page to check.
 	 * @return <code>true</code> if the specified page is one of the pages being displayed.
 	 * @see #getPageBeginIndex()
 	 * @see #getPageEndIndex()
@@ -367,8 +367,10 @@ public class XMLPagedView extends FlowView {
 
 	/**
 	 * Returns whether or not a page index has been laid out. This is synchronized so that the strategy will never by set to null while it is being checked.
+	 * @param pageIndex The index of the page.
 	 * @return <code>true</code> if the indicated view has been laid out.
-	 * @see #onLayoutComplete //TODO we need to change this to make sure that the page given is valid
+	 * 
+	 *         <!-- @see #onLayoutComplete //TODO we need to change this to make sure that the page given is valid -->
 	 */
 	public synchronized boolean isLaidOut(final int pageIndex) { //(newswing threadlayout)
 		return pageIndex >= 0 && pageIndex < getViewCount();
@@ -396,8 +398,8 @@ public class XMLPagedView extends FlowView {
 	/**
 	 * Replaces child views. If there are no views to remove this acts as an insert. If there are no views to add this acts as a remove. This version first hides
 	 * the view hierarchy being removed so that views may remove components and hide other information as needed.
-	 * @param offset The starting index (0&lt;=<var>offset</var>&lt;<=<code>getViewCount()</code>) into the child views to insert the new views.
-	 * @param length the number of existing child views (0&lt;=<var>length</var>&lt;<=<code>getViewCount()-<var>offset</var></code>) to remove.
+	 * @param offset The starting index (0&lt;=<var>offset</var>&lt;=<code>getViewCount()</code>) into the child views to insert the new views.
+	 * @param length the number of existing child views (0&lt;=<var>length</var>&lt;=<code>getViewCount()-<var>offset</var></code>) to remove.
 	 * @param views the child views to add, or <code>null</code> if no children are being added.
 	 * @see Views#hideView(View)
 	 */
@@ -449,9 +451,8 @@ public class XMLPagedView extends FlowView {
 	 * @param allocation The allocated region to render into.
 	 * @see View#paint
 	 * @see BoxView#paint
-	 * @see XMLPagedView.getPageCount
-	 * @see XMLPagedView.getPageIndex
-	 * @see #paintPage
+	 * @see XMLPagedView#getPageCount()
+	 * @see XMLPagedView#getPageIndex()
 	 */
 	public void paint(final Graphics graphics, final Shape allocation) {
 		if(!isPaginating()) {
@@ -560,7 +561,7 @@ public class XMLPagedView extends FlowView {
 	/* ***FlowView methods*** */
 
 	/*Returns the span of the view at the given child index, minus any insets.
-	@index The index of the child view.
+	@param index The index of the child view.
 	@return The layout span minus this child's vertical insets.
 	*/
 	public int getFlowSpan(int index) {
@@ -580,7 +581,7 @@ public class XMLPagedView extends FlowView {
 
 	/**
 	 * Calculates the location along the flow axis at which the flow span will start, accounting for insets.
-	 * @index The index of the child view.
+	 * @param index The index of the child view.
 	 * @return The starting location along the flow axis.
 	 */
 	public int getFlowStart(int index) {
@@ -600,7 +601,7 @@ public class XMLPagedView extends FlowView {
 	/**
 	 * Creates a view to hold a page-worth of children. This version of the function returns an XMLPagedView#Page
 	 * @return The new page view.
-	 * @see XMLPagedView#Page
+	 * @see XMLPagedView.Page
 	 */
 	protected View createRow() {
 		return new Page(getElement()); //create a new page based upon the same element we're based on
@@ -636,7 +637,7 @@ public class XMLPagedView extends FlowView {
 		  	{
 		  		if(!THREADED || layoutThread==null)
 		  		{
-
+	
 			final int flowAxis=getFlowAxis();	//get the flow axis
 			final int axis=getAxis();	//get our tiling axis
 			final int displayPageCount=getDisplayPageCount();	//see how many pages we're displaying
@@ -662,11 +663,11 @@ public class XMLPagedView extends FlowView {
 	/**
 	 * Lays out the children. If the span along the flow axis has changed, layout is marked as invalid which which will cause the superclass behavior to
 	 * recalculate the layout along the box axis. The FlowStrategy.layout method will be called to rebuild the flow rows as appropriate. If the height of this
-	 * view changes (determined by the perferred size along the box axis), a preferenceChanged is called. Following all of that, the normal box layout of the
+	 * view changes (determined by the preferred size along the box axis), a preferenceChanged is called. Following all of that, the normal box layout of the
 	 * superclass is performed.
 	 *
-	 * @param width the width to lay out against >= 0. This is the width inside of the inset area.
-	 * @param height the height to lay out against >= 0 This is the height inside of the inset area.
+	 * @param width the width to lay out against &gt;= 0. This is the width inside of the inset area.
+	 * @param height the height to lay out against &gt;= 0 This is the height inside of the inset area.
 	 */
 	protected void layout(int width, int height) {
 		if(THREADED) { //if we should thread layout
@@ -681,8 +682,8 @@ public class XMLPagedView extends FlowView {
 
 	/**
 	 * Immediately lays out the view. This version updates the page size and then calls the super layout method.
-	 * @param width The layout width (>=0).
-	 * @param height The layout height (>=0).
+	 * @param width The layout width (&gt;=0).
+	 * @param height The layout height (&gt;=0).
 	 */
 	protected void layoutImmediately(final int width, int height) {
 		final int flowAxis = getFlowAxis(); //get the flow axis
@@ -829,8 +830,8 @@ public class XMLPagedView extends FlowView {
 
 	/**
 	 * Finds the child view at the given point.
-	 * @param x The horizontal coordinate (>=0).
-	 * @param y The vertical coordinate (>=0).
+	 * @param x The horizontal coordinate (&gt;=0).
+	 * @param y The vertical coordinate (&gt;=0).
 	 * @param allocation The parent's inner allocation on entry, which should be changed to the child's allocation on exit.
 	 * @return The child view at the specified point.
 	 */
@@ -872,24 +873,24 @@ public class XMLPagedView extends FlowView {
 
 	/**
 	 * Provides a mapping from the view coordinate space to the logical coordinate space of the model.
-	 * @param x The horizontal coordinate of the view location to convert (>=0).
-	 * @param y The vertical coordinate of the view location to convert (>=0).
+	 * @param x The horizontal coordinate of the view location to convert (&gt;=0).
+	 * @param y The vertical coordinate of the view location to convert (&gt;=0).
 	 * @param a The allocated region to render into.
-	 * @return The location within the model that best represents the given point in the view (>=0).
+	 * @return The location within the model that best represents the given point in the view (&gt;=0).
 	 * @see View#viewToModel
 	 */
 	public int viewToModel(float x, float y, Shape a, Position.Bias[] bias) {
 		//TODO what if we're in the middle of paginating?
 		//TODO del Log.trace("Inside XMLPagedView.viewToModel() for x: "+x+" y: "+y);
 		if(!isAllocationValid()) { //if our allocation isn't value
-		//TODO del Log.trace("Inside XMLPagedView.viewToModel(), allocation isn't valid; changing size");
+			//TODO del Log.trace("Inside XMLPagedView.viewToModel(), allocation isn't valid; changing size");
 			final Rectangle allocationRect = a.getBounds(); //get the bounds of the area into which the caller thinks we've been rendered TODO this probably isn't the best thing to do under a threaded scenario
 			setSize(allocationRect.width, allocationRect.height); //update our size
 		}
 		//TODO fix	return super.viewToModel(x, y, a, bias);
 		final Rectangle insideAlloc = getInsideAllocation(a); //get the inside allocation, with insets removed
 		if(isBefore((int)x, (int)y, insideAlloc)) { //if the point is before the information that is showing
-		//TODO del Log.trace("XMLPagedView.viewToModel() is before");
+			//TODO del Log.trace("XMLPagedView.viewToModel() is before");
 			int returnValue = -1; //we'll default to a -1 if we can't find a correct position
 			try {
 				returnValue = getNextVisualPositionFrom(-1, Position.Bias.Forward, a, EAST, bias);
@@ -903,7 +904,7 @@ public class XMLPagedView extends FlowView {
 			}
 			return returnValue; //return whatever value we found
 		} else if(isAfter((int)x, (int)y, insideAlloc)) { //if the point is after the information that is showing
-		//TODO del Log.trace("XMLPagedView.viewToModel() is after");
+			//TODO del Log.trace("XMLPagedView.viewToModel() is after");
 			int returnValue = -1; //we'll default to a -1 if we can't find a correct position
 			try {
 				returnValue = getNextVisualPositionFrom(-1, Position.Bias.Forward, a, WEST, bias);
@@ -917,7 +918,7 @@ public class XMLPagedView extends FlowView {
 			}
 			return returnValue; //return whatever value we found
 		} else { //if the location is within our displayed content area
-		//TODO del Log.trace("XMLPagedView.viewToModel() is within our displayed content; ready to call getViewAtPoint()");
+			//TODO del Log.trace("XMLPagedView.viewToModel() is within our displayed content; ready to call getViewAtPoint()");
 			final View view = getViewAtPoint((int)x, (int)y, insideAlloc); //locate the appropriate child
 			//TODO del Log.trace("XMLPagedView.viewToModel() found view: "+Debug.getNullStatus(view));
 			if(view != null) //if we found a view at the specified point
@@ -931,8 +932,8 @@ public class XMLPagedView extends FlowView {
 	 * and the default along the x axis.
 	 *
 	 * @param axis may be either View.X_AXIS or View.Y_AXIS
-	 * @returns the desired alignment. This should be a value between 0.0 and 1.0 inclusive, where 0 indicates alignment at the origin and 1.0 indicates alignment
-	 *          to the full span away from the origin. An alignment of 0.5 would be the center of the view.
+	 * @return the desired alignment. This should be a value between 0.0 and 1.0 inclusive, where 0 indicates alignment at the origin and 1.0 indicates alignment
+	 *         to the full span away from the origin. An alignment of 0.5 would be the center of the view.
 	 */
 	public float getAlignment(int axis) {
 		return 0;
@@ -1005,7 +1006,7 @@ public class XMLPagedView extends FlowView {
 
 	/**
 	 * Notifies all listeners that have registered interest for progress that progress has been made.
-	 * @param status The status to display.
+	 * @param progressEvent The event object representing the progress made.
 	 */
 	protected void fireMadeProgress(final ProgressEvent progressEvent) {
 		final Object[] listeners = progressListenerList.getListenerList(); //get the non-null array of listeners
@@ -1284,7 +1285,7 @@ public class XMLPagedView extends FlowView {
 		 * the row. If a forced break is encountered, the break will be positioned there.
 		 * 
 		 * @param rowIndex the row to adjust to the current layout span.
-		 * @param desiredSpan the current layout span >= 0
+		 * @param desiredSpan the current layout span &gt;= 0
 		 * @param x the location r starts at.
 		 */
 		protected void adjustRow(FlowView fv, int rowIndex, int desiredSpan, int x) {
@@ -1417,8 +1418,8 @@ public class XMLPagedView extends FlowView {
 					container.setCursor(originalCursor); //set the cursor back to its original form
 				}
 			}
-			fireMadeProgress(new ProgressEvent(flowView, PAGINATE_TASK, "Paginated all " + flowView.getViewCount() + " pages.", flowView.getViewCount(),
-					flowView.getViewCount())); //show that we paginated all the pages TODO i18n
+			fireMadeProgress(
+					new ProgressEvent(flowView, PAGINATE_TASK, "Paginated all " + flowView.getViewCount() + " pages.", flowView.getViewCount(), flowView.getViewCount())); //show that we paginated all the pages TODO i18n
 			//fire a page event with our current page number, since our page count changed
 			firePageEvent(new PageEvent(this, getPageIndex(), getPageCount()));
 		}
@@ -1503,19 +1504,19 @@ public class XMLPagedView extends FlowView {
 		 * Performs layout on the page pool. This implementation first takes the important step of reparenting the entire hierarchy of views in the pool. Some whole
 		 * views could have been parented to fragments, and without reparenting, layout cannot reliably occur. Without this step, some views would prefer a size
 		 * under the old layout, resulting in vertical gaps if layout changed from small to large.
-		 * @param width The width inside the insets (>=0).
-		 * @param height The height inside the insets (>=0).
+		 * @param width The width inside the insets (&gt;=0).
+		 * @param height The height inside the insets (&gt;=0).
 		 */
 		protected void layout(int width, int height) { //TODO eventually something similar should go into all layout-able views; this works here because it is in the top-most hierarchy and reparents the entire hierarchy
-		/*TODO del
-					for(int i=getViewCount()-1 ; i>=0; --i) {	//look at each child view
-						final View childView=getView(i); //get a reference to the child view
-					  if(childView.getParent()!=XMLPagedView.this) {	//if this view has a different parent than this one
-							childView.setParent(XMLPagedView.this);	//set this view's parent to the parent view
-					  }
-						ViewUtilities.reparentHierarchy(childView);
-					}
-		*/
+			/*TODO del
+						for(int i=getViewCount()-1 ; i>=0; --i) {	//look at each child view
+							final View childView=getView(i); //get a reference to the child view
+						  if(childView.getParent()!=XMLPagedView.this) {	//if this view has a different parent than this one
+								childView.setParent(XMLPagedView.this);	//set this view's parent to the parent view
+						  }
+							ViewUtilities.reparentHierarchy(childView);
+						}
+			*/
 			/*TODO fix
 			for(int i=getViewCount()-1; i>=0; --i) {	//look at each child view
 				ViewUtilities.reparentHierarchy(getView(i));  //reparent all views under this one

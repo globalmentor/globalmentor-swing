@@ -120,7 +120,7 @@ public class XHTMLEditorKit extends XMLEditorKit {
 	 * @return The attribute set used to represent the node; this attribute set can be manipulated after the method returns.
 	 * @throws BadLocationException for an invalid starting offset
 	 * @see XMLDocument#insert
-	 * @see XMLDocument#appendElementSpecListContent
+	 * @see DefaultXMLElementKit#appendElementSpecListContent
 	 */
 	/*TODO del when not needed; make sure default stylesheet hides the <head> element
 		protected MutableAttributeSet appendElementSpecListNode(final List elementSpecList, final Node node, final URI baseURI)

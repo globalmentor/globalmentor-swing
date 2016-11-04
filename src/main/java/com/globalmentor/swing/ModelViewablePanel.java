@@ -156,7 +156,7 @@ public abstract class ModelViewablePanel<M> extends ModelPanel<M> implements Mod
 	 * Constructor with optional initialization that uses a <code>FlowLayout</code>.
 	 * @param model The data model for which this component provides a view.
 	 * @param initialize <code>true</code> if the panel should initialize itself by calling the initialization methods.
-	 * @see #FlowLayout
+	 * @see FlowLayout
 	 */
 	public ModelViewablePanel(final M model, final boolean initialize) {
 		this(new FlowLayout(), model, initialize); //construct the panel with a flow layout by default

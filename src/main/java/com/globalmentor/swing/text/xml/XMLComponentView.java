@@ -34,6 +34,7 @@ public class XMLComponentView extends XMLAbstractComponentView {
 	/**
 	 * Creates a new view that represents a component, supplying the component to display in the view.
 	 * @param element The element for which to create the view.
+	 * @param component The component which the view will be created.
 	 */
 	public XMLComponentView(final Element element, final Component component) {
 		super(element); //do the default constructing
@@ -61,7 +62,7 @@ public class XMLComponentView extends XMLAbstractComponentView {
 	 * Determines the maximum span for this view along an axis. This currently returns the permanent size of the object, initialized by <code>setWidth()</code>
 	 * and <code>setHeight()</code>.
 	 * @param axis The axis, either <code>X_AXIS</code> or <code>Y_AXIS</code>.
-	 * @returns The maximum span the view can be rendered into.
+	 * @return The maximum span the view can be rendered into.
 	 * @throws IllegalArgumentException Thrown if the axis is not recognized.
 	 * @see View#getPreferredSpan
 	 * @see #getHeight

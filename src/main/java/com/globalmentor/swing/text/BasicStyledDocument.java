@@ -113,8 +113,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	 * creating the font using the attribute context.
 	 * @param attributeSet The attribute set from which to retrieve values.
 	 * @return The constructed font.
-	 * @see DefaultStyledDocument.getFont
-	 * @see XMLStyleContext#getFont
+	 * @see XMLCSSStyleContext#getFont(AttributeSet)
 	 */
 	public Font getFont(final AttributeSet attributeSet) {
 		final float zoomFactor = Documents.getZoom(this, Documents.DEFAULT_ZOOM); //get the zoom factor, assuming a default value if no value is specified
@@ -132,10 +131,9 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	 * cannot be displayed in the specified font.
 	 * @param family The font family (such as "Monospaced")
 	 * @param style The style of the font (such as <code>Font.PLAIN</code>).
-	 * @param size The point size (>=1)
+	 * @param size The point size (&gt;=1)
 	 * @return The new font.
-	 * @see DefaultStyledDocument.getFont
-	 * @see XMLStyleContext#getFont
+	 * @see StyleContext#getFont(String, int, int)
 	 */
 	public Font getFont(final String family, final int style, final int size) {
 		//use the attribute context to get the font based upon the specifications
@@ -146,8 +144,8 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	 * Gets a new font for the specified character by searching all available fonts. Fonts are cached by Unicode block and character, for faster searching in
 	 * future queries.
 	 * @param c The character for which a font should be returned.
-	 * @param style The style of the font (such as <code>Font.PLAIN</cod>).
-	 * @param size The point size (>=1).
+	 * @param style The style of the font (such as <code>Font.PLAIN</code>).
+	 * @param size The point size (&gt;=1).
 	 * @return The new font, or <code>null</code> if a font could not be found to display this character.
 	 * @see XMLCSSStyleContext#getFont
 	 */
@@ -237,7 +235,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 
 	/**
 	 * Notifies all listeners that have registered interest for progress that progress has been made.
-	 * @param status The status to display.
+	 * @param progressEvent The event object representing the progress made.
 	 */
 	protected void fireMadeProgress(final ProgressEvent progressEvent) {
 		//TODO del if not needed		final ProgressEvent progressEvent=new ProgressEvent(this, status);	//create a new progress event

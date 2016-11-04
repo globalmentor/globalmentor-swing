@@ -34,6 +34,7 @@ public class Styles {
 	/**
 	 * Returns an attribute in the attribute set only if it is defined; the attribute is not resolved by searching the parent attribute set hierarchy.
 	 * @param attributeSet The attribute set, which may be <code>null</code>.
+	 * @param attributeName The attribute name.
 	 * @return The attribute if the attribute is defined, else <code>null</code>.
 	 */
 	public static Object getDefinedAttribute(final AttributeSet attributeSet, final String attributeName) {

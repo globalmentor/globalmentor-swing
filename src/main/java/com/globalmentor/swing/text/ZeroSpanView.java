@@ -44,7 +44,7 @@ public abstract class ZeroSpanView extends View {
 
 	/**
 	 * Determines the preferred span for this view. Returns 0.
-	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS<code>).
+	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS</code>).
 	 * @return The span the view would like to be rendered into.
 	 * @see View#getPreferredSpan
 	 */
@@ -54,7 +54,7 @@ public abstract class ZeroSpanView extends View {
 
 	/**
 	 * Determines the minimum span for this view along an axis. Returns 0.
-	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS<code>).
+	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS</code>).
 	 * @return The minimum span the view can be rendered into.
 	 * @see View#getMinimumSpan
 	 */
@@ -64,7 +64,7 @@ public abstract class ZeroSpanView extends View {
 
 	/**
 	 * Determines the maximum span for this view along an axis. Returns 0.
-	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS<code>).
+	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS</code>).
 	 * @return The maximum span the view can be rendered into.
 	 * @see View#getMaximumSpan
 	 */
@@ -74,8 +74,8 @@ public abstract class ZeroSpanView extends View {
 
 	/**
 	 * Provides a mapping from the view coordinate space to the logical coordinate space of the model.
-	 * @param x The X coordinate (>= 0).
-	 * @param y The Y coordinate (>= 0).
+	 * @param x The X coordinate (&gt;= 0).
+	 * @param y The Y coordinate (&gt;= 0).
 	 * @param allocation The allocated region to render into.
 	 * @return The location within the model that best represents the given point in the view
 	 * @see View#viewToModel
@@ -94,7 +94,7 @@ public abstract class ZeroSpanView extends View {
 
 	/**
 	 * Provides a mapping from the coordinate space of the model to that of the view.
-	 * @param pos The position to convert (>=0).
+	 * @param pos The position to convert (&gt;=0).
 	 * @param allocation The allocated region to render into.
 	 * @return The bounding box of the given position.
 	 * @throws BadLocationException Thrown if the given position does not represent a valid location governed by the view in the associated document.

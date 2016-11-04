@@ -64,6 +64,8 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 	 * Constructs an XMLBlockView, specifying whether the view should be allowed to expand to a maximum size for the given axes.
 	 * @param element The element this view is responsible for.
 	 * @param axis The tiling axis, either View.X_AXIS or View.Y_AXIS.
+	 * @param expandX Whether the XMLBlockView is allowed to expand horizontally.
+	 * @param expandY Whether the XMLBlockView is allowed to expand vertically.
 	 */
 	public XMLBlockView(final Element element, final int axis, final boolean expandX, final boolean expandY) {
 		super(element, axis); //construct the parent class
@@ -234,8 +236,8 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 	 * Along the flow axis, the best break weight of child views within the allowed span is returned. If this view does not like breaks after it, this method
 	 * always returns <code>View.BadBreakWeight</code>.
 	 * @param axis The breaking axis, either View.X_AXIS or View.Y_AXIS.
-	 * @param pos The potential location of the start of the broken view (>=0). This may be useful for calculating tab positions.
-	 * @param len Specifies the relative length from <var>pos</var> where a potential break is desired (>=0).
+	 * @param pos The potential location of the start of the broken view (&gt;=0). This may be useful for calculating tab positions.
+	 * @param len Specifies the relative length from <var>pos</var> where a potential break is desired (&gt;=0).
 	 * @return The weight, which should be a value between <code>View.ForcedBreakWeight</code> and <code>View.BadBreakWeight.</code>
 	 */
 	public int getBreakWeight(int axis, float pos, float len) { //TODO add support for requiring a certain number of child views
@@ -267,11 +269,11 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 	/**
 	 * Breaks this view on the given axis at the given length. This implementation delegates to the view break strategy.
 	 * @param axis The axis to break along, either View.X_AXIS or View.Y_AXIS.
-	 * @param offset The location in the model where the fragment should start its representation (>=0).
-	 * @param pos The position along the axis that the broken view would occupy (>=0).
-	 * @param length Specifies the distance along the axis where a potential break is desired (>=0).
+	 * @param offset The location in the model where the fragment should start its representation (&gt;=0).
+	 * @param pos The position along the axis that the broken view would occupy (&gt;=0).
+	 * @param length Specifies the distance along the axis where a potential break is desired (&gt;=0).
 	 * @return The fragment of the view that represents the given span, or the view itself if it cannot be broken
-	 * @see ViewBreakStrategy#breakView()
+	 * @see ViewBreakStrategy#breakView(BoxView, int, int, float, float, FragmentViewFactory)
 	 */
 	public View breakView(final int axis, final int offset, final float pos, final float length) {
 		final float marginSpan = (axis == X_AXIS) ? getLeftInset() + getRightInset() : getTopInset() + getBottomInset(); //see how much margin we have to allow for
@@ -280,10 +282,10 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 
 	/**
 	 * Creates a view that represents a portion of the element. This implementation delegates to the view break strategy.
-	 * @param p0 The starting offset (>=0). This should be a value greater or equal to the element starting offset and less than the element ending offset.
-	 * @param p1 The ending offset (>p0). This should be a value less than or equal to the elements end offset and greater than the elements starting offset.
+	 * @param p0 The starting offset (&gt;=0). This should be a value greater or equal to the element starting offset and less than the element ending offset.
+	 * @param p1 The ending offset (&gt;p0). This should be a value less than or equal to the elements end offset and greater than the elements starting offset.
 	 * @return The view fragment, or itself if the view doesn't support breaking into fragments.
-	 * @see ViewBreakStrategy#createFragment()
+	 * @see ViewBreakStrategy#createFragment(BoxView, int, int, FragmentViewFactory)
 	 */
 	public View createFragment(int p0, int p1) {
 		return getBreakStrategy().createFragment(this, p0, p1, this); //ask the view break strategy to break our view, using this view as the view fragment factory
@@ -338,25 +340,25 @@ public class XMLBlockView extends ContainerBoxView implements XMLCSSView, Fragme
 		cacheSynchronized = true; //show that we now have the most up-to-date information in the cache
 	}
 
-	/** @return The left inset (>=0), ensuring the information is up to date. */
+	/** @return The left inset (&gt;=0), ensuring the information is up to date. */
 	protected short getLeftInset() {
 		synchronize(); //make sure our cached properties are updated.
 		return super.getLeftInset(); //return the value
 	}
 
-	/** @return The right inset (>=0), ensuring the information is up to date. */
+	/** @return The right inset (&gt;=0), ensuring the information is up to date. */
 	protected short getRightInset() {
 		synchronize(); //make sure our cached properties are updated.
 		return super.getRightInset(); //return the value
 	}
 
-	/** @return The top inset (>=0), ensuring the information is up to date. */
+	/** @return The top inset (&gt;=0), ensuring the information is up to date. */
 	protected short getTopInset() {
 		synchronize(); //make sure our cached properties are updated.
 		return super.getTopInset(); //return the value
 	}
 
-	/** @return The bottom inset (>=0), ensuring the information is up to date. */
+	/** @return The bottom inset (&gt;=0), ensuring the information is up to date. */
 	protected short getBottomInset() {
 		synchronize(); //make sure our cached properties are updated.
 		return super.getBottomInset(); //return the value

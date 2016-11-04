@@ -29,7 +29,6 @@ public class ToolBars {
 	 * Creates a toolbar separator of default size, with an orientation appropriate for the given toolbar. The default size is determined by the current look and
 	 * feel.
 	 * @param toolBar The toolbar for which a separator should be created.
-	 * @param orientation The orientation of the separator, either <code>JSeparator.HORIZONTAL</code> or <code>JSeparator.VERTICAL</code>. The separator should
 	 *          usually be the opposite orientation of the toolbar within which it will be placed.
 	 * @return The created toolbar separator.
 	 */
@@ -41,6 +40,7 @@ public class ToolBars {
 	 * Creates a toolbar separator of a specified size, with an orientation appropriate for the given toolbar.
 	 * @param toolBar The toolbar for which a separator should be created.
 	 * @param size The size of the separator, or <code>null</code> if the default size determined by the current look and feel should be used.
+	 * @return The toolbar separator of the specified size, with an orientation appropriate for the given toolbar.
 	 */
 	public static JToolBar.Separator createToolBarSeparator(final JToolBar toolBar, final Dimension size) {
 		final int orientation; //decide which orientation to use, depending on the toolbar's orientation
@@ -72,6 +72,7 @@ public class ToolBars {
 	 * @param orientation The orientation of the separator, either <code>JSeparator.HORIZONTAL</code> or <code>JSeparator.VERTICAL</code>. The separator should
 	 *          usually be the opposite orientation of the toolbar within which it will be placed.
 	 * @param size The size of the separator, or <code>null</code> if the default size determined by the current look and feel should be used.
+	 * @return The toolbar separator of the specified size.
 	 */
 	public static JToolBar.Separator createToolBarSeparator(final int orientation, final Dimension size) {
 		final JToolBar.Separator separator = new JToolBar.Separator(size); //create a new separator

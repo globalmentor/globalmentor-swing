@@ -25,7 +25,6 @@ import com.globalmentor.rdf.*;
 /**
  * Utilities for manipulating trees of RDF resources.
  * @author Garret Wilson
- * @see FilePropertiesConstants
  */
 public class RDFTreeUtilities {
 
@@ -34,8 +33,7 @@ public class RDFTreeUtilities {
 	 * @param rdf The RDF data model.
 	 * @param topLevelResourceList The list of resources, each a <code>Resource</code>, that each indicate the URI of a parent resource to appear under the root.
 	 * @return A single tree node under which resoure nodes have been created to represent a file structure.
-	 * @see Resource#getReferenceURI
-	 * @see FilePropertiesConstants
+	 * @see Resource#getURI()
 	 */
 	public static MutableTreeNode createFileResourceTreeNode(final RDFModel rdf, final List<? extends Resource> topLevelResourceList) {
 		final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Resources"); //create the root node TODO i18n; fix

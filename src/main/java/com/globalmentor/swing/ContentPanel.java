@@ -50,7 +50,7 @@ public class ContentPanel extends ModifiablePanel implements CanClosable {
 	private final Object contentConstraints;
 
 	/**
-	 * The constraints to use in positioning the content component; defaults to <code>BorderLayout.CENTER</code>.
+	 * @return The constraints to use in positioning the content component; defaults to <code>BorderLayout.CENTER</code>.
 	 */
 	protected Object getContentConstraints() {
 		return contentConstraints;

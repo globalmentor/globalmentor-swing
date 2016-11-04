@@ -98,7 +98,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 
 	/**
 	 * Sets the default cursor used for hyperlink.
-	 * @param newDefaultCursor The cursor to display by default when the mouse is over a link.
+	 * @param newLinkCursor The cursor to display by default when the mouse is over a link.
 	 */
 	public void setDefaultLinkCursor(final Cursor newLinkCursor) {
 		defaultLinkCursor = newLinkCursor;
@@ -110,7 +110,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 	 * @param uri The link for which a cursor should be obtained.
 	 * @return The cursor to display when the mouse is over the given link.
 	 */
-	public Cursor getLinkCursor(final Document Document, final URI uri) {
+	public Cursor getLinkCursor(final Document xmlDocument, final URI uri) {
 		return getDefaultLinkCursor(); //return the default link cursor
 	}
 
@@ -430,7 +430,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 
 	/**
 	 * Notifies all listeners that have registered interest for progress that progress has been made.
-	 * @param status The status to display.
+	 * @param progressEvent The event object representing the progress made.
 	 */
 	protected void fireMadeProgress(final ProgressEvent progressEvent) {
 		//TODO del if not needed		final ProgressEvent progressEvent=new ProgressEvent(this, status);	//create a new progress event

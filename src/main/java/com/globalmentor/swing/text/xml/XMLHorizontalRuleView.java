@@ -140,7 +140,7 @@ public class XMLHorizontalRuleView extends View //TODO later move to XHTML packa
 	 * Determines the minimum span for this view along an axis. Since horizontal rule views are by default resizable, this method returns zero. This zero is
 	 * required because <code>setSize()</code> expects this value and will refuse to be set to this value, preventing objects from being scaled down to nothing.
 	 * @param axis The axis, either <code>X_AXIS</code> or <code>Y_AXIS</code>.
-	 * @returns Zero as the minimum span the view can be rendered into.
+	 * @return Zero as the minimum span the view can be rendered into.
 	 * @throws IllegalArgumentException Thrown if the axis is not recognized.
 	 * @see View#getPreferredSpan
 	 * @see #setSize
@@ -172,10 +172,9 @@ public class XMLHorizontalRuleView extends View //TODO later move to XHTML packa
 	/**
 	 * Determines how attractive a break opportunity in this view is. This is implemented to request a forced break.
 	 * @param axis The axis (<code>X_AXIS</code> or <code>Y_AXIS</code>).
-	 * @param pos The potential location of the start of the broken view (>=0). This may be useful for calculating tab positions.
-	 * @param len Specifies the relative length from <em>pos</em> where a potential break is desired (>=0).
-	 * @return The break weight, a value between <code>ForcedBreakWeight<code> and
-		<code>BadBreakWeight</code>, inclusive.
+	 * @param pos The potential location of the start of the broken view (&gt;=0). This may be useful for calculating tab positions.
+	 * @param len Specifies the relative length from <em>pos</em> where a potential break is desired (&gt;=0).
+	 * @return The break weight, a value between <code>ForcedBreakWeight</code> and <code>BadBreakWeight</code>, inclusive.
 	 */
 	public int getBreakWeight(final int axis, final float pos, final float len) {
 		if(axis == X_AXIS) { //try to break along the X axis

@@ -101,6 +101,7 @@ public class BasicToolBar extends JToolBar {
 	/**
 	 * Orientation constructor with optional initialization.
 	 * @param orientation The orientation of the toolbar, either <code>HORIZONTAL</code> or <code>VERTICAL</code>.
+	 * @param initialize <code>true</code> if the toolbar should initialize itself by calling the initialization methods.
 	 */
 	public BasicToolBar(final int orientation, final boolean initialize) {
 		this(null, orientation, initialize); //construct the toolbar with no name

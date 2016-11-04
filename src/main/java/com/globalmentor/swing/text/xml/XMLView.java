@@ -37,8 +37,8 @@ public class XMLView //TODO maybe delete this class
 	 * </ul>
 	 * This will result in the view being broken with the maximum number of child views that can fit within the required span.
 	 * @param axis The breaking axis, either View.X_AXIS or View.Y_AXIS.
-	 * @param pos The potential location of the start of the broken view (>=0). This may be useful for calculating tab positions.
-	 * @param len Specifies the relative length from <em>pos</em> where a potential break is desired (>=0).
+	 * @param pos The potential location of the start of the broken view (&gt;=0). This may be useful for calculating tab positions.
+	 * @param len Specifies the relative length from <em>pos</em> where a potential break is desired (&gt;=0).
 	 * @return The weight, which should be a value between View.ForcedBreakWeight and View.BadBreakWeight.
 	 * @see LabelView
 	 * @see ParagraphView
@@ -67,9 +67,9 @@ public class XMLView //TODO maybe delete this class
 	 * Creates a view that represents a portion of the element. This is potentially useful during formatting operations for taking measurements of fragments of
 	 * the view. If the view doesn't support fragmenting, it should return itself.<br/>
 	 * This view does support fragmenting. It is implemented to return a new view that contains the required child views.
-	 * @param p0 The starting offset (>=0). This should be a value greater or equal to the element starting offset and less than the element ending offset.
-	 * @param p1 The ending offset (>p0). This should be a value less than or equal to the elements end offset and greater than the elements starting offset.
-	 * @returns The view fragment, or itself if the view doesn't support breaking into fragments.
+	 * @param p0 The starting offset (&gt;=0). This should be a value greater or equal to the element starting offset and less than the element ending offset.
+	 * @param p1 The ending offset (&gt;p0). This should be a value less than or equal to the elements end offset and greater than the elements starting offset.
+	 * @return The view fragment, or itself if the view doesn't support breaking into fragments.
 	 * @see View#createFragment
 	 */
 	/*TODO fix

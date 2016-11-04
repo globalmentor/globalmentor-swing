@@ -27,6 +27,7 @@ import javax.swing.text.*;
 import javax.swing.text.html.ImageView;
 
 import com.globalmentor.log.Log;
+import com.globalmentor.swing.text.xml.xhtml.XHTMLImageView;
 
 /**
  * View that displays an image. The image reference is kept using a soft pointer so that when memory is low the JVM can reclaim the image memory. The image,
@@ -131,12 +132,11 @@ public abstract class XMLImageView extends XMLObjectView implements ImageObserve
 	}
 
 	/**
-	 * Returns the image to be drawn. Because memory usage may cause the image memory to be reclaimed, this method may reload the image. <code>initialize()</code>
-	 * must therefore have first been called to appropriately set the image information.
-	 * @throws URISyntaxException Thrown if the image href does not allow a syntactically correct URI to be contructed.
+	 * @return The image to be drawn. Because memory usage may cause the image memory to be reclaimed, this method may reload the image. <code>initialize()</code>
+	 *         must therefore have first been called to appropriately set the image information.
+	 * @throws URISyntaxException Thrown if the image href does not allow a syntactically correct URI to be constructed.
 	 * @throws IOException Thrown if there is an error getting the image, usually because the image needed to be loaded but could not be.
 	 * @see #freeImage
-	 * @see #initialize
 	 */
 	protected Image getImage() throws URISyntaxException, IOException {
 		Log.trace("XMLImageView.getImage(): ", getHRef()); //TODO del

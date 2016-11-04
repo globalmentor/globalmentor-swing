@@ -211,8 +211,8 @@ public abstract class XMLAbstractComponentView extends XMLObjectView {
 	/**
 	 * Sets the size of the object, while keeping the object in the same proportions. Informs the component manager that it should update the components if
 	 * needed.
-	 * @param width The width (>=0).
-	 * @param height The height (>=0).
+	 * @param width The width (&gt;=0).
+	 * @param height The height (&gt;=0).
 	 */
 	public void setSize(float width, float height) {
 		super.setSize(width, height); //do the default size setting

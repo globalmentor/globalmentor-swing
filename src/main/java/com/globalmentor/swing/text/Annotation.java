@@ -100,6 +100,7 @@ public class Annotation extends Bookmark {
 	 * @param document The document to which the bookmark should be attached.
 	 * @param startOffset The starting offset in the document at which the annotation should be attached.
 	 * @param endOffset The ending offset in the document at which the annotation should be attached.
+	 * @param color The highlight color to be used on the annotation.
 	 * @throws BadLocationException Thrown if the given position does not represent a valid location in the document.
 	 */
 	public Annotation(final Document document, final int startOffset, final int endOffset, final Color color) throws BadLocationException {
@@ -122,6 +123,7 @@ public class Annotation extends Bookmark {
 	/**
 	 * Constructs an annotation at a particular offset, but not attached to a document.
 	 * @param offset The offset in the document at which the annotation should be attached.
+	 * @throws BadLocationException Thrown if the given position does not represent a valid location for a document.
 	 */
 	public Annotation(final int offset) throws BadLocationException {
 		super(offset); //construct the parent
@@ -131,6 +133,7 @@ public class Annotation extends Bookmark {
 	 * Constructs an annotation with text at a particular offset, but not attached to a document.
 	 * @param text The text of the annotation.
 	 * @param offset The offset in the document at which the bookmark should be attached.
+	 * @throws BadLocationException Thrown if the given position does not represent a valid location for a document.
 	 */
 	public Annotation(final String text, final int offset) throws BadLocationException {
 		super(offset); //construct the parent
@@ -141,8 +144,7 @@ public class Annotation extends Bookmark {
 	 * If <code>object</code> is a <code>Annotation</code>, compares the bookmark-related attributes then compares the name and color. Otherwise, compares the
 	 * objects using the superclass functionality.
 	 * @param object The object with which to compare this annotation; should be a <code>Annotation</code>
-	 * @return <code>true<code> if this annotation equals that specified in
-		<code>object</code>.
+	 * @return <code>true</code> if this annotation equals that specified in <code>object</code>.
 	 * @see #getText
 	 * @see #getEndOffset
 	 * @see #getName

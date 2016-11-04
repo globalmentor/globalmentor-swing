@@ -148,7 +148,7 @@ public class TelephoneTypePanel extends BasicPanel {
 	/**
 	 * Places the delivery telephone type into the various fields.
 	 * @param telephoneTypes The intended use.
-	 * @see Telephone#Type
+	 * @see Telephone.Type
 	 */
 	public void setTelephoneTypes(final Set<Telephone.Type> telephoneTypes) {
 		homeCheckBox.setSelected(telephoneTypes.contains(Telephone.Type.HOME));
@@ -168,8 +168,8 @@ public class TelephoneTypePanel extends BasicPanel {
 	}
 
 	/**
-	 * @return The telephone intended use
-	 * @see Telephone#Type
+	 * @return The telephone intended use.
+	 * @see Telephone.Type
 	 */
 	public Set<Telephone.Type> getTelephoneTypes() {
 		final Set<Telephone.Type> telephoneTypes = EnumSet.noneOf(Telephone.Type.class); //start out without knowing the telephone type

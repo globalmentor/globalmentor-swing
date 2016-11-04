@@ -19,6 +19,8 @@ package com.globalmentor.swing;
 import java.awt.*;
 import javax.swing.*;
 
+import com.globalmentor.awt.BasicGridBagLayout;
+
 /**
  * A panel that can contain a toolbar and a status. The panel uses a basic grid bag layout with the border paradigm, and content can be added by a component
  * being placed in the panel center.

@@ -65,7 +65,7 @@ public class TreeModelSelectionUpdateAdapter extends TreeModelAdapter {
 	 * If the parent node of the deleted node is not a <code>TreeNode</code>, the parent path will be selected.
 	 * </p>
 	 * @param treeModelEvent The event, with <code>treeModelEvent.getPath()</code> returning the former parent of the deleted node(s), and
-	 *          <code>treeModelEvent.getChildIndices()</code> returning, in ascending order, the index(es) the node(s) had before being deleted.</p>
+	 *          <code>treeModelEvent.getChildIndices()</code> returning, in ascending order, the index(es) the node(s) had before being deleted.
 	 */
 	public void treeNodesRemoved(final TreeModelEvent treeModelEvent) {
 		final JTree tree = getTree(); //get our tree component

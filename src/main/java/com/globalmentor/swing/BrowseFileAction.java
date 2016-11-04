@@ -80,7 +80,6 @@ public class BrowseFileAction extends AbstractAction {
 
 	/**
 	 * Sets the method for choosing files.
-	 * @param fileChooser The method for choosing files.
 	 */
 	public void setFileChooser() {
 		this.fileChooser = fileChooser;

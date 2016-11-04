@@ -44,7 +44,7 @@ public class UnicodePanel extends ToolStatusPanel {
 	/** The table containing the Unicode code points. */
 	private final ActionTable unicodeTable;
 
-	/** @retuirn The table containing the Unicode code points. */
+	/** @return The table containing the Unicode code points. */
 	protected ActionTable getUnicodeTable() {
 		return unicodeTable;
 	}

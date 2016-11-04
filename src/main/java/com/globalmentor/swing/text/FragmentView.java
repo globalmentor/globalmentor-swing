@@ -53,7 +53,7 @@ public interface FragmentView {
 	 */
 	public void setParent(final View parent);
 
-	/** @return The number of child views (>=0). */
+	/** @return The number of child views (&gt;=0). */
 	public int getViewCount();
 
 	/**
@@ -74,10 +74,10 @@ public interface FragmentView {
 
 	/**
 	 * Inserts a single child view. This is a convenience call to <code>replace()</code>.
-	 * @param offset The offset of the view to insert before (>=0).
+	 * @param offset The offset of the view to insert before (&gt;=0).
 	 * @param view The view to insert.
 	 */
-	public void insert(final int offsset, final View view);
+	public void insert(final int offset, final View view);
 
 	/**
 	 * Appends a single child view. This is a convenience call to <code>replace()</code>.

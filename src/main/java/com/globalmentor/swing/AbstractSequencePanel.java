@@ -81,7 +81,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel {
 	private final ProxyAction advanceAction;
 
 	/**
-	 * The action for advancing; serves as a proxy for the start, next, and finish actions, depending on the state of the sequence.
+	 * @return The action for advancing; serves as a proxy for the start, next, and finish actions, depending on the state of the sequence.
 	 * @see #getStartAction()
 	 * @see #getNextAction()
 	 * @see #getFinishAction()
@@ -176,7 +176,7 @@ public abstract class AbstractSequencePanel extends ToolStatusPanel {
 	/** The action currently being confirmed and which, if confirmed, will be performed. */
 	private Action confirmingAction;
 
-	/** The action currently being confirmed and which, if confirmed, will be performed. */
+	/** @return The action currently being confirmed and which, if confirmed, will be performed. */
 	protected Action getConfirmingAction() {
 		return confirmingAction;
 	}

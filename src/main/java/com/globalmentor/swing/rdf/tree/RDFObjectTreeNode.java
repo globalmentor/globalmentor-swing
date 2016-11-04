@@ -18,6 +18,9 @@ package com.globalmentor.swing.rdf.tree;
 
 import java.io.IOException;
 import java.util.*;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import com.globalmentor.rdf.*;
 import com.globalmentor.rdf.rdfs.*;
 import com.globalmentor.swing.tree.*;
@@ -40,7 +43,7 @@ public class RDFObjectTreeNode extends DynamicTreeNode {
 	/**
 	 * Convenience function for retrieving the represented RDF object.
 	 * @return The RDF object this tree node represents, already cast to a <code>RDFObject</code>.
-	 * @see DefaultMutableTreeNode#getUserObject
+	 * @see DefaultMutableTreeNode#getUserObject()
 	 */
 	public RDFObject getRDFObject() {
 		return (RDFResource)getUserObject(); //return the user object cast to an RDF resource

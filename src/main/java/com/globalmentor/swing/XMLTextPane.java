@@ -28,6 +28,7 @@ import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.event.*;
+import javax.swing.plaf.TextUI;
 
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.DocumentFragment;
@@ -223,7 +224,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 					BasicStyledEditorKit.DISPLAY_ELEMENT_TREE_ACTION_NAME),
 			//bind (ctrl+shift+'u') to the editor kit's show element tree action
 			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK),
-					BasicStyledEditorKit.DISPLAY_UNICODE_TABLE_ACTION_NAME) };
+					BasicStyledEditorKit.DISPLAY_UNICODE_TABLE_ACTION_NAME)};
 
 	/** Paged key bindings beyond basic key bindings. */
 	protected static final KeyBinding[] PAGED_KEY_BINDINGS = {
@@ -234,7 +235,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 			//bind (pageup) to the XML editor kit's previous page action
 			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0), BasicStyledEditorKit.PREVIOUS_PAGE_ACTION_NAME),
 			//bind (pagedown) to the XML editor kit's next page action
-			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0), BasicStyledEditorKit.NEXT_PAGE_ACTION_NAME), };
+			new KeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0), BasicStyledEditorKit.NEXT_PAGE_ACTION_NAME),};
 
 	/**
 	 * The the paged view, if any, displayed on this component. This view does not have to be at the root of the view tree.
@@ -243,7 +244,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 
 	/**
 	 * @return The paged view the pages of which can be controlled, or <code>null</code> if there is no paged view.
-	 * @see XMLTextPane#fetchPagedView
+	 * <!-- @see XMLTextPane#fetchPagedView : This method is unavailable at the moment -->
 	 */
 	protected XMLPagedView getPagedView() {
 		return pagedView;
@@ -252,10 +253,9 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	/**
 	 * Sets the paged view the pages of which can be controlled.
 	 * @param pagedView The paged view to be paged, <code>null</code> if there should be no paged view.
-	 * @see XMLTextPane#fetchPagedView
 	 */
 	public void setPagedView(final XMLPagedView pagedView) { //TODO make this protected if we can
-	//TODO del			Log.traceStack("Setting the paged view");  //TODO del
+		//TODO del			Log.traceStack("Setting the paged view");  //TODO del
 
 		//TODO remove the listeners from any previous page view, if present
 		this.pagedView = pagedView; //set our paged view
@@ -284,7 +284,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	public void setZoom(final float newZoom) {
 		//TODO del			final float oldZoomFactor=getZoomFactor(); //get the current zoom factor
 		if(zoom != newZoom) { //if the zoom factor is really changing
-		//TODO del Log.trace("changing view factor from "+oldZoomFactor+" to "+newZoomFactor); //TODO del
+			//TODO del Log.trace("changing view factor from "+oldZoomFactor+" to "+newZoomFactor); //TODO del
 			zoom = newZoom; //set the new zoom factor
 			Documents.setZoom(getDocument(), zoom); //store the new zoom factor in the document
 			//TODO del				document.putProperty(XMLDocument.ZOOM_FACTOR_PROPERTY, new Float(zoomFactor)); //store the new zoom factor in the document
@@ -325,16 +325,16 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	public void setAntialias(final boolean newAntialias) {
 		final boolean oldAntialias = isAntialias(); //get the current antialias value
 		if(oldAntialias != newAntialias) { //if the antialias is really changing
-		//TODO del					//store the new value as a property in the document
-		//TODO del				getDocument().putProperty(DocumentConstants.ANTIALIAS_DOCUMENT_PROPERTY, new Boolean(newAntialias));
-		//TODO del				final AttributeSet pagedViewAttributeSet=pagedView.getAttributes();  //get the paged view's attribute set
-		//TODO del				if(pagedViewAttributeSet instanceof MutableAttributeSet)  //if we can change the paged view's attributes
+			//TODO del					//store the new value as a property in the document
+			//TODO del				getDocument().putProperty(DocumentConstants.ANTIALIAS_DOCUMENT_PROPERTY, new Boolean(newAntialias));
+			//TODO del				final AttributeSet pagedViewAttributeSet=pagedView.getAttributes();  //get the paged view's attribute set
+			//TODO del				if(pagedViewAttributeSet instanceof MutableAttributeSet)  //if we can change the paged view's attributes
 			antialias = newAntialias; //set the new antialias status variable so that we can set whatever new document is installed
 			Documents.setAntialias(getDocument(), newAntialias); //store the new antialias setting in the document
 			final XMLPagedView pagedView = getPagedView(); //get a reference to our paged view
 			if(pagedView != null) { //if we have a paged view
-			//TODO del					XMLStyleUtilities.setAntialias((MutableAttributeSet)pagedView.getAttributes(), newAntialias);  //set the view's antialias property
-			//TODO fix, if needed				  pagedView.changedUpdate(new javax.swing.text.AbstractDocument.DefaultDocumentEvent(0, getDocument().getLength(), DocumentEvent.EventType.CHANGE), getBounds(), pagedView.getViewFactory());  //send a synthetic changeUpdate() so that all the children and layout strategies can get a chance to reinitialize
+				//TODO del					XMLStyleUtilities.setAntialias((MutableAttributeSet)pagedView.getAttributes(), newAntialias);  //set the view's antialias property
+				//TODO fix, if needed				  pagedView.changedUpdate(new javax.swing.text.AbstractDocument.DefaultDocumentEvent(0, getDocument().getLength(), DocumentEvent.EventType.CHANGE), getBounds(), pagedView.getViewFactory());  //send a synthetic changeUpdate() so that all the children and layout strategies can get a chance to reinitialize
 
 				pagedView.repaginate(); //relayout the paged view TODO use something more generic for when we don't have a paged view
 			}
@@ -354,9 +354,8 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	private int searchOffset = -1;
 
 	/**
-	 * Returns the position after which searching will begin, or -1 if searching has not been performed or no match was found on the last search. If
-	 * <code>getSearchLength()</code> is greater than zero, this indicates the beginning position of the last match found.
-	 * @see #getSearchLength
+	 * @return The position after which searching will begin, or -1 if searching has not been performed or no match was found on the last search. If it is greater
+	 * than zero, this indicates the beginning position of the last match found.
 	 */
 	public int getSearchOffset() {
 		return searchOffset;
@@ -486,7 +485,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 		//TODO testing hint
 		/*TODO del
 		        Graphics2D graphics2D=(Graphics2D)getGraphics();
-
+		
 		                AffineTransform xf
 		                    = GraphicsEnvironment.getLocalGraphicsEnvironment()
 		                    .getDefaultScreenDevice().getDefaultConfiguration()
@@ -695,10 +694,8 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 
 	/**
 	 * Closes and opens the content from the same location. If there is no source URI, no action is taken.
-	 * @throws IOExeption Thrown if an I/O error occurs.
+	 * @throws IOException Thrown if an I/O error occurs.
 	 * @see #getBaseURI
-	 * @see #open
-	 * @see #close
 	 */
 	protected void reload() throws IOException {
 		final URI uri = getBaseURI(); //get the current base URI
@@ -856,7 +853,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 				loadKeymap(defaultKeymap, DEFAULT_KEY_BINDINGS, getActions()); //load our custom keymap TODO what happens if this is set and then the editor kit changes?
 				final Keymap pagedKeymap=addKeymap(PAGED_KEYMAP_NAME, xmlKeymap); //create a new keymap for paging
 				loadKeymap(pagedKeymap, PAGED_KEY_BINDINGS, getActions()); //load our custom keymap TODO what happens if this is set and then the editor kit is changed?
-
+		
 				updateKeymap();	//TODO testing for paging keys
 		*/
 		load(baseURI, inputStream); //load the content using the given input stream
@@ -1088,7 +1085,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	 * The installed editor kit will be used to create a new document, into which the XML data will be loaded. If the installed editor kit is not an
 	 * <code>XMLEditorKit</code>, no action occurs.
 	 * </p>
-	 * @param documentFragment The XML document fragment that contains the data.
+	 * @param xmlDocumentFragment The XML document fragment that contains the data.
 	 * @param baseURI The base URI, corresponding to the XML document fragment.
 	 * @param mediaType The media type of the XML document fragment.
 	 */
@@ -1108,7 +1105,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	 * The installed editor kit will be used to create a new document, into which the XML data will be loaded. If the installed editor kit is not an
 	 * <code>XMLEditorKit</code>, no action occurs.
 	 * </p>
-	 * @param document The XML document that contains the data.
+	 * @param xmlDocument The XML document that contains the data.
 	 * @param baseURI The base URI, corresponding to the XML document.
 	 * @param mediaType The media type of the XML document.
 	 */
@@ -1170,13 +1167,13 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 			{
 				Debug.notify("Content type: "+type);  //TODO del; fix
 				super(type);  //TODO fix
-
-
+	
+	
 	//TODO fix			xmlEditorKit.read(url, document, 0);	//read the file from the given URL
-
-
-
-
+	
+	
+	
+	
 	    }
 	*/
 
@@ -1194,12 +1191,12 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 		final ContentType mediaType = ContentType.create(type); //create a new media type
 		if(XHTML.isHTML(mediaType)) { //if this is an XHTML media type
 			editorKit = new XHTMLEditorKit(mediaType, this); //create a new XHTML editor kit for this media type
-		/*
-		} else if(OEB_PACKAGE_MEDIA_TYPE.hasBaseType(mediaType)) { //if this is an OEB package
-			editorKit = new OEBEditorKit(this); //create a new OEB editor kit for the OEB package
-		} else if(XEBOOK_MEDIA_TYPE.hasBaseType(mediaType)) { //if this is an XEbook
-			editorKit = new XEBEditorKit(this); //create a new XEB editor kit for the XEbook
-		*/
+			/*
+			} else if(OEB_PACKAGE_MEDIA_TYPE.hasBaseType(mediaType)) { //if this is an OEB package
+				editorKit = new OEBEditorKit(this); //create a new OEB editor kit for the OEB package
+			} else if(XEBOOK_MEDIA_TYPE.hasBaseType(mediaType)) { //if this is an XEbook
+				editorKit = new XEBEditorKit(this); //create a new XEB editor kit for the XEbook
+			*/
 		} else if(TEXT_PLAIN_MEDIA_TYPE.hasBaseType(mediaType)) { //if this is a plain text document
 			editorKit = new BasicStyledEditorKit(this); //create a new basic styled editor kit for the text
 		}
@@ -1283,10 +1280,11 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	 * <p>
 	 * This version provides access to the text UI version that allows a determination based upon a bias.
 	 * </p>
-	 * @param pos The local location in the model to translate (>=0).
+	 * @param pos The local location in the model to translate (&gt;=0).
+	 * @param bias The bias toward the previous character or the next character represented by the position, in case the position is a boundary of two views.
 	 * @return The coordinates as a rectangle.
 	 * @throws BadLocationException if the given position does not represent a valid location in the associated document.
-	 * @see TextUI#modelToView
+	 * @see TextUI#modelToView(JTextComponent, int, javax.swing.text.Position.Bias)
 	 */
 	public Rectangle modelToView(int pos, Position.Bias bias) throws BadLocationException {
 		return getUI().modelToView(this, pos, bias); //ask the UI for the correct view rectangle
@@ -1435,6 +1433,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	}
 
 	/**
+	 * @param pageIndex The index of the page to be verified.
 	 * @return <code>true</code> if the specified page is one of the pages being displayed.
 	 */
 	public boolean isPageShowing(final int pageIndex) {
@@ -1474,16 +1473,16 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 				final int offset = element.getStartOffset(); //get the starting position of the element
 				go(offset); //go to the beginning of the element
 			} else { //if there is no matching element in the document
-			/*TODO bring back after BrowserLauncher is linked externally
-
-							try
-							{
-								BrowserLauncher.openURL(uri.toString());	//TODO testing; comment; decide if we want this done here or by the caller
-							}
-							catch(IOException e) {	//if there is an IO exception browsing to the URI
-								Log.error(e); //we don't expect to see this exception
-							}
-			*/
+				/*TODO bring back after BrowserLauncher is linked externally
+				
+								try
+								{
+									BrowserLauncher.openURL(uri.toString());	//TODO testing; comment; decide if we want this done here or by the caller
+								}
+								catch(IOException e) {	//if there is an IO exception browsing to the URI
+									Log.error(e); //we don't expect to see this exception
+								}
+				*/
 			}
 		}
 	}
@@ -1501,7 +1500,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 
 	/**
 	 * Searches the document for the given text and returns its first encountered offset. Searching begins after the last search position, if
-	 * <code>getSearchOffset()</code>>=0. If the search position is -1, the beginning of the current page is used. Search offset and length are updated so that
+	 * <code>getSearchOffset()</code>&gt;=0. If the search position is -1, the beginning of the current page is used. Search offset and length are updated so that
 	 * the results will be correctly highlighted.
 	 * @param searchText The text for which to search. This version does a case insensitive comparison.
 	 * @return The model offset of the first text match.
@@ -1512,8 +1511,8 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 
 	/**
 	 * Searches the document for the given text and returns its first encountered offset. Searching begins at <code>searchOffset</code>, if it does not equal
-	 * <code>NEXT_SEARCH_OFFSET</code>. Otherwise, searching begins after the last search position, if <code>getSearchOffset()</code>>=0. If the search position
-	 * is -1, the beginning of the current page is used. Search offset and length are updated so that the results will be correctly highlighted.
+	 * <code>NEXT_SEARCH_OFFSET</code>. Otherwise, searching begins after the last search position, if <code>getSearchOffset()</code>&gt;=0. If the search
+	 * position is -1, the beginning of the current page is used. Search offset and length are updated so that the results will be correctly highlighted.
 	 * @param searchText The text for which to search. This version does a case insensitive comparison.
 	 * @param searchOffset The offset at which the search should begin, or <code>NEXT_SEARCH_OFFSET</code> if the search should begin after the match position of
 	 *          the last search.
@@ -1625,7 +1624,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 
 	/**
 	 * Notifies all listeners that have registered interest for progress that progress has been made.
-	 * @param status The status to display.
+	 * @param progressEvent The event object representing the progress made.
 	 */
 	protected void fireMadeProgress(final ProgressEvent progressEvent) {
 		final Object[] listeners = progressListenerList.getListenerList(); //get the non-null array of listeners
@@ -1647,7 +1646,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 
 	/**
 	 * Creates an audio clip. This method conforms to the <code>AppletContext</code> interface.
-	 * @param URL An absolute URI giving the location of the audio clip.
+	 * @param url An absolute URI giving the location of the audio clip.
 	 * @return The audio clip at the specified URL.
 	 */
 	public AudioClip getAudioClip(final URL url) {
@@ -1673,11 +1672,12 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	}
 
 	/**
-	 * Returns an <code>Image</code> object that can then be painted on the screen. The <code>url</code> argument<code> </code>that is passed as an argument must
-	 * specify an absolute URL.
+	 * Returns an <code>Image</code> object that can then be painted on the screen. The <code>url</code> argument that is passed as an argument must specify an
+	 * absolute URL.
 	 * <p>
 	 * This method always returns immediately, whether or not the image exists. When the applet attempts to draw the image on the screen, the data will be loaded.
 	 * The graphics primitives that draw the image will incrementally paint on the screen.
+	 * </p>
 	 *
 	 * @param url an absolute URL giving the location of the image.
 	 * @return the image at the specified URL.
@@ -1718,9 +1718,9 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	/**
 	 * Requests that the browser or applet viewer show the Web page indicated by the <code>url</code> argument. The <code>target</code> argument indicates in
 	 * which HTML frame the document is to be displayed. The target argument is interpreted as follows:
-	 * <p>
 	 * <center>
 	 * <table border="3">
+	 * <caption>Determination of note attributes from parameter values.</caption>
 	 * <tr>
 	 * <td><code>"_self"</code>
 	 * <td>Show in the window and frame that contain the applet.
@@ -1744,7 +1744,6 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	 * </tr>
 	 * </table>
 	 * </center>
-	 * <p>
 	 * An applet viewer or browser is free to ignore <code>showDocument</code>.
 	 *
 	 * @param url an absolute URL giving the location of the document.
@@ -1768,11 +1767,11 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	 * <p>
 	 * For security reasons, mapping of streams and keys exists for each codebase. In other words, applet from one codebase cannot access the streams created by
 	 * an applet from a different codebase
-	 * <p>
-	 * @param key key with which the specified value is to be associated.
-	 * @param stream stream to be associated with the specified key. If this parameter is <code>null<code>, the specified key is removed 
-	 *               in this applet context.
-	 * @throws <code>IOException</code> if the stream size exceeds a certain size limit. Size limit is decided by the implementor of this interface.
+	 * </p>
+	 * @param key The key with which the specified value is to be associated.
+	 * @param stream The stream to be associated with the specified key. If this parameter is <code>null</code>, the specified key is removed in this applet
+	 *          context.
+	 * @throws IOException if the stream size exceeds a certain size limit. Size limit is decided by the implementor of this interface.
 	 * @since JDK1.4
 	 */
 	public void setStream(String key, InputStream stream) throws IOException {
@@ -1784,7 +1783,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	 * <p>
 	 * For security reasons, mapping of streams and keys exists for each codebase. In other words, applet from one codebase cannot access the streams created by
 	 * an applet from a different codebase
-	 * <p>
+	 * </p>
 	 * @return the stream to which this applet context maps the key
 	 * @param key key whose associated stream is to be returned.
 	 * @since JDK1.4
@@ -1798,7 +1797,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	 * <p>
 	 * For security reasons, mapping of streams and keys exists for each codebase. In other words, applet from one codebase cannot access the streams created by
 	 * an applet from a different codebase
-	 * <p>
+	 * </p>
 	 * @return an Iterator of all the names of the streams in this applet context.
 	 * @since JDK1.4
 	 */

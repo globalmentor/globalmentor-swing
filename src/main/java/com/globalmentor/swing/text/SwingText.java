@@ -27,7 +27,7 @@ public class SwingText {
 	/**
 	 * Determines the beginning model position of the text component, ensuring that the returned value is not represented by a hidden view.
 	 * @param textComponent The editor.
-	 * @return The position (>=0) if the request can be computed, otherwise a value of -1 will be returned.
+	 * @return The position (&gt;=0) if the request can be computed, otherwise a value of -1 will be returned.
 	 * @throws BadLocationException Thrown if the offset is out of range.
 	 */
 	public static int getBegin(final JTextComponent textComponent) throws BadLocationException { //TODO this might better to in XMLSectionView.getNextVisualPosition... or something
@@ -62,7 +62,7 @@ public class SwingText {
 	/**
 	 * Determines the ending model position of the text component, ensuring that the returned value is not represented by a hidden view.
 	 * @param textComponent The editor.
-	 * @return The position (>=0) if the request can be computed, otherwise a value of -1 will be returned.
+	 * @return The position (&gt;=0) if the request can be computed, otherwise a value of -1 will be returned.
 	 * @throws BadLocationException Thrown if the offset is out of range.
 	 */
 	public static int getEnd(final JTextComponent textComponent) throws BadLocationException { //TODO this might better to in XMLSectionView.getNextVisualPosition... or something
@@ -82,9 +82,9 @@ public class SwingText {
 	/**
 	 * Finds the last descendant view (the view with the topmost z-order) that represents the given position.
 	 * @param view The view in the hierchy at which to start the search.
-	 * @param pos The model position (>=0).
+	 * @param pos The model position (&gt;=0).
 	 * @param bias The bias toward the previous character or the next character represented by the position, in case the position is a boundary of two views.
-	 * @returns The deepest descendant view representing the given position, or <code>null</code> if no view represents that position.
+	 * @return The deepest descendant view representing the given position, or <code>null</code> if no view represents that position.
 	 */
 	public static View getLeafView(final View view, final int pos, final Position.Bias bias) {
 		/*TODO del
@@ -110,7 +110,7 @@ public class SwingText {
 	 * Searches down an element hierarchy and finds the leaf element that contains the given position. Modified from
 	 * <code>javax.swing.text.DefaultStyledDocument.getCharacterElement()</code>.
 	 * @param rootElement The element representing the root of the hierarchy to search.
-	 * @param pos The position in the document (>=0).
+	 * @param pos The position in the document (&gt;=0).
 	 * @return The leaf element for the given position.
 	 * @see javax.swing.text.DefaultStyledDocument#getCharacterElement
 	 */
@@ -150,7 +150,7 @@ public class SwingText {
 	 * @see Element#getDocument
 	 * @see Element#getEndOffset
 	 * @see Element#getStartOffset
-	 * @see Element#getText
+	 * @see Document#getText
 	 */
 	public static String getText(final Element element) throws BadLocationException {
 		final Document document = element.getDocument(); //get the element's document

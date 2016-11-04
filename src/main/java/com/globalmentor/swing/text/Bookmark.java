@@ -119,7 +119,7 @@ public class Bookmark implements Comparable, Position {
 	 * Determines whether the bookmark contains a given offset, meaning that the the offset is equal to or greater than the start offset and less than the ending
 	 * offset. For the special condition for which the bookmark has no ending offset (that is, the ending offset is equal to the beginning offset), this method
 	 * returns <code>true</code> if the given offset equals the beginning offset.
-	 * @param An offset in a document.
+	 * @param offset An offset in a document.
 	 * @return <code>true</code> if the bookmark contains the given offset, or if the bookmark has no ending position and the bookmark's beginning offset matching
 	 *         the given offset.
 	 */
@@ -262,6 +262,7 @@ public class Bookmark implements Comparable, Position {
 	/**
 	 * Constructs a bookmark at a particular offset, but not attached to a document.
 	 * @param offset The offset in the document at which the bookmark should be attached.
+	 * @throws BadLocationException Thrown if the given position does not represent a valid location in the document.
 	 */
 	public Bookmark(final int offset) throws BadLocationException {
 		setOffset(offset); //set our local offset
@@ -271,6 +272,7 @@ public class Bookmark implements Comparable, Position {
 	 * Constructs a named bookmark at a particular offset, but not attached to a document.
 	 * @param newName The new name of the bookmark.
 	 * @param offset The offset in the document at which the bookmark should be attached.
+	 * @throws BadLocationException Thrown if the given position does not represent a valid location in the document.
 	 */
 	public Bookmark(final String newName, final int offset) throws BadLocationException {
 		setName(newName); //set the name of the bookmark
@@ -278,7 +280,7 @@ public class Bookmark implements Comparable, Position {
 	}
 
 	/**
-	 * @return The current offset (>=0) within the document. This allows this class to fulfill the requirements of the <code>Position</code> interface.
+	 * @return The current offset (&gt;=0) within the document. This allows this class to fulfill the requirements of the <code>Position</code> interface.
 	 */
 	public int getOffset() {
 		final Position position = getPosition(); //get the position
@@ -286,7 +288,7 @@ public class Bookmark implements Comparable, Position {
 	}
 
 	/**
-	 * @return The current offset (>=0) within the document. This is a convenience method equivalent to <code>getStartOffset()</code> to provide the converse to
+	 * @return The current offset (&gt;=0) within the document. This is a convenience method equivalent to <code>getStartOffset()</code> to provide the converse to
 	 *         <code>getEndOffset()</code>.
 	 * @see #getOffset
 	 */
@@ -295,7 +297,7 @@ public class Bookmark implements Comparable, Position {
 	}
 
 	/**
-	 * @return The current ending offset (>=0) within the document, which will be equal to <code>getStartOffset()</code> if the bookmark is attached but no ending
+	 * @return The current ending offset (&gt;=0) within the document, which will be equal to <code>getStartOffset()</code> if the bookmark is attached but no ending
 	 *         offset is defined.
 	 */
 	public int getEndOffset() {
@@ -316,8 +318,7 @@ public class Bookmark implements Comparable, Position {
 	 * If <code>object</code> is a <code>Bookmark</code>, compares the name, start, and ending offsets. Otherwise, compares the objects using the superclass
 	 * functionality.
 	 * @param object The object with which to compare this bookmark; should be a <code>Bookmark</code>
-	 * @return <code>true<code> if this bookmark equals that specified in
-		<code>object</code>.
+	 * @return <code>true</code> if this bookmark equals that specified in <code>object</code>.
 	 * @see #getStartOffset
 	 * @see #getEndOffset
 	 * @see #getName
@@ -346,7 +347,7 @@ public class Bookmark implements Comparable, Position {
 	 * @return A negative integer, zero, or a positive integer as this bookmark is less than, equal to, or greater than the specified bookmark, respectively. If
 	 *         the bookmarks represent the same beginning and ending offsets, their names are compared.
 	 * @throws ClassCastException Thrown if the specified object's type is not an <code>Bookmark</code>.
-	 * @see #Offset
+	 * @see #offset
 	 */
 	public int compareTo(Object object) throws ClassCastException {
 		final Bookmark bookmark = (Bookmark)object; //cast the object to a bookmark

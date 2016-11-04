@@ -27,6 +27,8 @@ import javax.swing.text.*;
 import com.globalmentor.io.*;
 import com.globalmentor.model.ModelView;
 import com.globalmentor.model.ModelViewIOKit;
+import com.globalmentor.model.Modifiable;
+import com.globalmentor.model.Verifiable;
 import com.globalmentor.xml.XMLDocumentModelIOKit;
 import com.globalmentor.xml.XMLNodeModel;
 
@@ -35,7 +37,7 @@ import com.globalmentor.xml.XMLNodeModel;
  * <p>
  * This implementation knows how to switch to the XML panel's source view if there is an error loading the XML data.
  * @author Garret Wilson
- * @see ModelIOKit
+ * @see ModelViewIOKit
  */
 public class XMLDocumentModelViewIOKit extends ModelViewIOKit<XMLNodeModel<org.w3c.dom.Document>> {
 

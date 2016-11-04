@@ -193,7 +193,7 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 	/**
 	 * Returns a factory for producing views for models that use this editor kit.
 	 * @return A factory to produce views for this editor kit.
-	 * @see #DefaultXMLViewFactory
+	 * @see DefaultXMLViewFactory
 	 */
 	public ViewFactory getViewFactory() {
 		return defaultViewFactory;
@@ -202,7 +202,7 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 	/**
 	 * Returns a controller for handling hyperlinks.
 	 * @return A class to control hyperlinking.
-	 * @see #DefaulXMLLinkController
+	 * @see DefaultXMLLinkController
 	 */
 	public XMLLinkController getLinkController() {
 		return defaultLinkController;
@@ -256,8 +256,8 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 	 * document must be inside the body Element, if you do not insert into the body an exception will be thrown. When inserting into a non-empty document all tags
 	 * outside of the body (head, title) will be dropped.
 	 *
-	 * @param in The stream to read from
-	 * @param doc The destination for the insertion.
+	 * @param reader The stream to read from
+	 * @param document The destination for the insertion.
 	 * @param pos The location in the document to place the content.
 	 * @throws IOException on any I/O error
 	 * @throws BadLocationException if pos represents an invalid location within the document.
@@ -298,7 +298,7 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 	 * Inserts content from the given stream which is expected to be in a format appropriate for this kind of content handler.
 	 * @param inputStream The stream to read from.
 	 * @param document The destination for the insertion.
-	 * @param pos The location in the document to place the content >= 0.
+	 * @param pos The location in the document to place the content &gt;= 0.
 	 * @throws IOException Thrown on any I/O error
 	 * @throws BadLocationException Thrown if pos represents an invalid location within the document.
 	 */
@@ -337,8 +337,8 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 	 * and the entire document is written.
 	 * @param writer The writer to write to
 	 * @param document The source of the data to write.
-	 * @param pos The location in the document to fetch the content (>=0).
-	 * @param len The amount to write out (>=0).
+	 * @param pos The location in the document to fetch the content (&gt;=0).
+	 * @param len The amount to write out (&gt;=0).
 	 * @throws IOException Thrown if any I/O error occurs.
 	 * @throws BadLocationException Thrown if the position represents an invalid location within the document.
 	 */
@@ -349,8 +349,8 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 	 * and the entire document is written. By default UTF-8 encoding is used.
 	 * @param outputStream The stream to write to.
 	 * @param document The source of the data to write.
-	 * @param pos The location in the document to fetch the content (>=0).
-	 * @param len The amount to write out (>=0).
+	 * @param pos The location in the document to fetch the content (&gt;=0).
+	 * @param len The amount to write out (&gt;=0).
 	 * @throws IOException Thrown if any I/O error occurs.
 	 * @throws BadLocationException Thrown if the position represents an invalid location within the document.
 	 */
@@ -364,8 +364,8 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 	 * @param outputStream The stream to write to.
 	 * @param charset The charset to use when serializing.
 	 * @param document The source of the data to write.
-	 * @param pos The location in the document to fetch the content (>=0).
-	 * @param len The amount to write out (>=0).
+	 * @param pos The location in the document to fetch the content (&gt;=0).
+	 * @param len The amount to write out (&gt;=0).
 	 * @throws IOException Thrown if any I/O error occurs.
 	 * @throws BadLocationException Thrown if the position represents an invalid location within the document.
 	 */
@@ -682,7 +682,6 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 	 * Appends a page break to the element spec list.
 	 * @param elementSpecList The list of element specs to be inserted into the document.
 	 * @see XMLDocument#insert
-	 * @see XMLDocument#appendElementSpecList
 	 */
 	protected void appendElementSpecListPageBreak(final List<DefaultStyledDocument.ElementSpec> elementSpecList) {
 		//TODO del Log.trace("XMLDocument.appendElementSpecListPageBreak()");	//TODO del
@@ -814,6 +813,7 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 
 	/**
 	 * Converts the given Swing element to an XML node.
+	 * @param xmlDocument The XML element tree.
 	 * @param swingElement The Swing element containing the data to be converted to an XML node.
 	 * @return A DOM element representing the Swing node.
 	 */
@@ -823,6 +823,7 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 
 	/**
 	 * Converts the given Swing element to an XML node indenting to the given level.
+	 * @param xmlDocument The XML element tree.
 	 * @param swingElement The Swing element containing the data to be converted to an XML node.
 	 * @param level The zero-based level of indentation.
 	 * @return A DOM element representing the Swing node.
@@ -1147,9 +1148,8 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 		 * @param node The XML node tree, such as an element or a document fragment.
 		 * @param attributeSet The attribute set of the element.
 		 * @param baseURI The base URI of the document, used for generating full target URIs for quick searching.
-		 * @throws BadLocationException for an invalid starting offset
 		 * @see XMLDocument#insert
-		 * @see XMLDocument#appendElementSpecList
+		 * @see DefaultXMLElementKit#appendElementSpecList(List, org.w3c.dom.Element, URI)
 		 */
 		protected void appendElementSpecListContent(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final Node node,
 				final MutableAttributeSet attributeSet, final URI baseURI) {
@@ -1192,9 +1192,8 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 		 * @param baseURI The base URI of the document, used for generating full target URIs for quick searching, or <code>null</code> if there is no base URI or if
 		 *          the base URI is not applicable.
 		 * @return The attribute set used to represent the node; this attribute set can be manipulated after the method returns.
-		 * @throws BadLocationException for an invalid starting offset
 		 * @see XMLDocument#insert
-		 * @see XMLDocument#appendElementSpecListContent
+		 * @see DefaultXMLElementKit#appendElementSpecListContent
 		 */
 		protected MutableAttributeSet appendElementSpecListNode(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final org.w3c.dom.Node node,
 				final URI baseURI) {
@@ -1223,9 +1222,8 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 		 * @param attributeSet The attribute set representing the text, or <code>null</code> if default attributes should be used.
 		 * @param baseURI The base URI of the document, used for generating full target URIs for quick searching, or <code>null</code> if there is no base URI or if
 		 *          the base URI is not applicable.
-		 * @throws BadLocationException for an invalid starting offset
 		 * @see XMLDocument#insert
-		 * @see XMLDocument#appendElementSpecListContent
+		 * @see DefaultXMLElementKit#appendElementSpecListContent
 		 */
 		protected void appendElementSpecListContent(final List<DefaultStyledDocument.ElementSpec> elementSpecList, final org.w3c.dom.Node node,
 				final AttributeSet attributeSet, final URI baseURI, final String text) { //TODO remove the node parameter if not needed
@@ -1306,7 +1304,7 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 
 		/**
 		 * Creates an attribute set for the given XML node.
-		 * @param node The XML node, such as an element or text.
+		 * @param xmlNode The XML node, such as an element or text.
 		 * @param baseURI The base URI of the document, used for generating full target URIs for quick searching, or <code>null</code> if there is no base URI or if
 		 *          the base URI is not applicable.
 		 * @return An attribute set reflecting the CSS attributes of the element.

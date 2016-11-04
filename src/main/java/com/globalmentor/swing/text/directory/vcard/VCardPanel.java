@@ -75,7 +75,7 @@ public class VCardPanel extends TabbedViewPanel<VCard> implements Verifiable {
 	/** The panel containing the explanatory information. */
 	private final ExplanatoryPanel explanatoryPanel;
 
-	/** The panel containing the explanatory information. */
+	/** @return The panel containing the explanatory information. */
 	public ExplanatoryPanel getExplanatoryPanel() {
 		return explanatoryPanel;
 	}

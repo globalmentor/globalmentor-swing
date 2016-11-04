@@ -80,7 +80,7 @@ public class XPackageTreeCellRenderer extends RDFResourceTreeCellRenderer {
 	 * @param userObject The user object for which a key should be returned.
 	 * @return The key for looking up data for the user object, or <code>null</code> if no key could be determined for the user object or if the user object is
 	 *         <code>null</code>.
-	 * @see com.globalmentor.io.ContentTypes#getBaseContentType(ContentType)
+	 * @see ContentType#getBaseContentType()
 	 */
 	protected Object getUserObjectKey(final Object userObject) {
 		if(userObject instanceof RDFResource) { //if this is an RDF resource

@@ -64,7 +64,7 @@ public abstract class XMLComponentImageView extends XMLImageView implements View
 	/**
 	 * Called when the view is being hidden by a parent that hides views, such as a paged view. This implementation hides associated components, if available.
 	 * @param showing <code>true</code> if the view is beginning to be shown, <code>false</code> if the view is beginning to be hidden.
-	 * @see #getComponent
+	 * @see #getComponentManager
 	 */
 	public void setShowing(final boolean showing) {
 		componentManager.setShowing(showing); //tell the component manager our new status
@@ -85,8 +85,8 @@ public abstract class XMLComponentImageView extends XMLImageView implements View
 	/**
 	 * Sets the size of the object, while keeping the object in the same proportions. Informs the component manager that it should update the components if
 	 * needed.
-	 * @param width The width (>=0).
-	 * @param height The height (>=0).
+	 * @param width The width (&gt;=0).
+	 * @param height The height (&gt;=0).
 	 */
 	public void setSize(float width, float height) {
 		componentManager.setSize(getWidth(), getHeight(), getCurrentWidth(), getCurrentHeight()); //tell the component manager our new size

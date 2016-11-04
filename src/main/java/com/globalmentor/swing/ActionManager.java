@@ -377,8 +377,8 @@ public class ActionManager implements Cloneable {
 		/**
 		 * Compares actions by menu order. Actions with no order specified will be sorted in front of those that do, and two menu actions with the same order or no
 		 * specified order will be sorted in the order in which they were added to the manager.
-		 * @param object1 The first object to be compared; must be an <code>Action.</code>.
-		 * @param object2 The second object to be compared; must be an <code>Action.</code>
+		 * @param action1 The first object to be compared; must be an <code>Action.</code>.
+		 * @param action2 The second object to be compared; must be an <code>Action.</code>
 		 * @return A negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second.
 		 * @throws ClassCastException Thrown if the arguments' types prevent them from being compared by this comparator.
 		 */

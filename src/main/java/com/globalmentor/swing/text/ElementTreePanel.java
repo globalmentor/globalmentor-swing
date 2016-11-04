@@ -153,6 +153,7 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
 
 	/**
 	 * Resets the JTextComponent to <code>editor</code>. This will update the tree accordingly.
+	 * @param editor The new editor.
 	 */
 	public void setEditor(JTextComponent editor) {
 		if(this.editor == editor) {
@@ -333,6 +334,7 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
 
 	/**
 	 * Updates the tree based on the event type. This will invoke either updateTree with the root element, or handleChange.
+	 * @param event The event to update the tree.
 	 */
 	protected void updateTree(DocumentEvent event) {
 		updatingSelection = true;
@@ -402,6 +404,10 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
 
 	/**
 	 * Returns a TreePath to the element at <code>position</code>.
+	 * @param position The position of the root object on the tree.
+	 * @param root The root object of the tree.
+	 * @param rootElement The root element of the tree.
+	 * @return The TreePath to the element.
 	 */
 	protected TreePath getPathForIndex(int position, Object root, Element rootElement) {
 		TreePath path = new TreePath(root);
@@ -436,7 +442,7 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
 
 		/**
 		 * Returns the child of <I>parent</I> at index <I>index</I> in the parent's child array. <I>parent</I> must be a node previously obtained from this data
-		 * source. This should not return null if <i>index</i> is a valid index for <i>parent</i> (that is <i>index</i> >= 0 && <i>index</i> <
+		 * source. This should not return null if <i>index</i> is a valid index for <i>parent</i> (that is <i>index</i> &gt;= 0 &amp;&amp; <i>index</i> &lt;
 		 * getChildCount(<i>parent</i>)).
 		 *
 		 * @param parent a node in the tree, obtained from this data source

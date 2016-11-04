@@ -35,7 +35,7 @@ public class AddressTypePanel extends BasicPanel {
 	/** The checkbox for a domestic delivery address. */
 	private final JCheckBox domesticCheckBox;
 
-	/** The checkbox for a domestic delivery address. */
+	/** @return The checkbox for a domestic delivery address. */
 	public JCheckBox getDomesticCheckbox() {
 		return domesticCheckBox;
 	}
