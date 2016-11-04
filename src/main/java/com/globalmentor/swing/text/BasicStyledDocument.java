@@ -169,7 +169,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 
 	/** @return The description of the publication, or <code>null</code> if there is no publication associated with this document. */
 	public RDFResource getPublication() {
-		return asInstance(getProperty(PUBLICATION_PROPERTY_NAME), RDFResource.class); //get the publication from the document, if there is one
+		return asInstance(getProperty(PUBLICATION_PROPERTY_NAME), RDFResource.class).orElse(null); //get the publication from the document, if there is one
 	}
 
 	/**

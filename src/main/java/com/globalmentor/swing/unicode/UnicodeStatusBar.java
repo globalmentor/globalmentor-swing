@@ -87,7 +87,8 @@ public class UnicodeStatusBar extends StatusBar {
 	protected final PropertyChangeListener documentPropertyChangeListener = new PropertyChangeListener() {
 
 		public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
-			onDocumentChange(asInstance(propertyChangeEvent.getOldValue(), Document.class), asInstance(propertyChangeEvent.getNewValue(), Document.class));
+			onDocumentChange(asInstance(propertyChangeEvent.getOldValue(), Document.class).orElse(null),
+					asInstance(propertyChangeEvent.getNewValue(), Document.class).orElse(null));
 		}
 	};
 
