@@ -20,9 +20,9 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.*;
 
-import com.globalmentor.awt.BasicGridBagLayout;
+import static java.util.Objects.*;
 
-import static com.globalmentor.java.Objects.*;
+import com.globalmentor.awt.BasicGridBagLayout;
 
 /**
  * Allows entry and optional verification of a password.
@@ -51,7 +51,7 @@ public class UserPasswordPanel extends BasicPanel {
 	 * @throws NullPointerException if the given username is <code>null</code>.
 	 */
 	public void setUsername(final String username) {
-		usernameField.setText(checkInstance(username, "User name cannot be null."));
+		usernameField.setText(requireNonNull(username, "User name cannot be null."));
 	}
 
 	/** The panel for password input. */
