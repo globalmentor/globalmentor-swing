@@ -441,7 +441,7 @@ public class XMLStyles {
 	 * @return The RDF resource, or <code>null</code> if the element has no RDF resource.
 	 */
 	public static RDFResource getDocumentDescription(final AttributeSet attributeSet) {
-		return asInstance(getDefinedAttribute(attributeSet, DOCUMENT_DESCRIPTION_ATTRIBUTE_NAME), RDFResource.class); //get the document description
+		return asInstance(getDefinedAttribute(attributeSet, DOCUMENT_DESCRIPTION_ATTRIBUTE_NAME), RDFResource.class).orElse(null); //get the document description
 	}
 
 	/**

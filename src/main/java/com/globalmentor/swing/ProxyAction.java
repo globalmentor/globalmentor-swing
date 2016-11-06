@@ -152,7 +152,6 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 	 * @see AbstractAction
 	 * @see #getProxiedAction
 	 * @see #configurePropertiesFromAction
-	 * @beaninfo bound: true attribute: visualUpdate false description: The Action instance connected with this ActionEvent source
 	 */
 	public void setProxiedAction(final Action action) {
 		final Action oldAction = getProxiedAction(); //see what action we had before

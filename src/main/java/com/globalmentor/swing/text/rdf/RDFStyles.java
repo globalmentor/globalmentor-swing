@@ -44,7 +44,7 @@ public class RDFStyles {
 	 * @return The RDF resource, or <code>null</code> if the element has no RDF resource.
 	 */
 	public static RDFResource getRDFResource(final AttributeSet attributeSet) {
-		return asInstance(getDefinedAttribute(attributeSet, RDF_RESOURCE_ATTRIBUTE_NAME), RDFResource.class); //get the RDF resource
+		return asInstance(getDefinedAttribute(attributeSet, RDF_RESOURCE_ATTRIBUTE_NAME), RDFResource.class).orElse(null); //get the RDF resource
 	}
 
 	/**
