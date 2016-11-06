@@ -165,7 +165,7 @@ public abstract class ComponentAction<C extends Component> extends AbstractActio
 			final Action action = (Action)propertyChangeEvent.getSource(); //get the source of the event
 			final C component = getComponent(); //get the component we represent
 			if(component != null) { //if we have a component
-				final JComponent jComponent = asInstance(component, JComponent.class); //get the component as a JComponent, if it is one
+				final JComponent jComponent = asInstance(component, JComponent.class).orElse(null); //get the component as a JComponent, if it is one
 				final String propertyName = propertyChangeEvent.getPropertyName(); //get the property name
 				if(Components.ENABLED_PROPERTY.equals(propertyName)) { //if the enabled state is changing, we must change the actual property (which will change the property value), rather than just changing the underlying value or the actual property won't change
 					component.setEnabled(((Boolean)propertyChangeEvent.getNewValue()).booleanValue()); //update the enabled state

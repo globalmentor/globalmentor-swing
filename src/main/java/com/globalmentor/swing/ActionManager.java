@@ -384,8 +384,8 @@ public class ActionManager implements Cloneable {
 		 */
 		public int compare(final Action action1, final Action action2) {
 			//get the orders, if any
-			final Integer orderInteger1 = asInstance(action1.getValue(MENU_ORDER_PROPERTY), Integer.class);
-			final Integer orderInteger2 = asInstance(action2.getValue(MENU_ORDER_PROPERTY), Integer.class);
+			final Integer orderInteger1 = asInstance(action1.getValue(MENU_ORDER_PROPERTY), Integer.class).orElse(null);
+			final Integer orderInteger2 = asInstance(action2.getValue(MENU_ORDER_PROPERTY), Integer.class).orElse(null);
 			if(orderInteger1 == null) { //if the first action doesn't have an order
 				if(orderInteger2 == null) { //if neither action has an order, sort by name
 					return super.compare(action1, action2); //return the default order as specified by the provided default order list
