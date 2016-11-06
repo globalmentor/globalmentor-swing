@@ -25,7 +25,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
-import static com.globalmentor.java.Objects.*;
+import static java.util.Objects.*;
 
 import com.globalmentor.io.*;
 import com.globalmentor.log.Log;
@@ -148,7 +148,7 @@ public class BasicStyledEditorKit extends StyledEditorKit implements URIInputStr
 	 * @throws NullPointerException if the new source of input streams is <code>null</code>.
 	 */
 	public BasicStyledEditorKit(final URIInputStreamable uriInputStreamable) {
-		this.uriInputStreamable = checkInstance(uriInputStreamable, "Missing URIInputStreamable"); //store the URIInputStreamable
+		this.uriInputStreamable = requireNonNull(uriInputStreamable, "Missing URIInputStreamable"); //store the URIInputStreamable
 	}
 
 	/**

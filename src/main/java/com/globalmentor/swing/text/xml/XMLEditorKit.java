@@ -26,7 +26,8 @@ import javax.swing.text.*;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 
-import static com.globalmentor.java.Objects.*;
+import static java.util.Objects.*;
+
 import static com.globalmentor.w3c.spec.XML.*;
 import static com.globalmentor.xml.XML.*;
 import static java.nio.charset.StandardCharsets.*;
@@ -1039,10 +1040,10 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 		 * @throws NullPointerException if the object or content type is <code>null</code>.
 		 */
 		public ContentData(final O object, final URI baseURI, final ContentType contentType, final RDFResource description) {
-			this.object = checkInstance(object, "Object cannot be null");
+			this.object = requireNonNull(object, "Object cannot be null");
 			this.baseURI = baseURI;
 			//TODO del when works			this.baseURI=checkNull(baseURI, "Base URI cannot be null");
-			this.contentType = checkInstance(contentType, "Content type cannot be null");
+			this.contentType = requireNonNull(contentType, "Content type cannot be null");
 			this.description = description;
 		}
 	}

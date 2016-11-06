@@ -30,6 +30,8 @@ import javax.swing.text.*;
 import javax.swing.event.*;
 import javax.swing.plaf.TextUI;
 
+import static java.util.Objects.*;
+
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.DocumentFragment;
 
@@ -53,7 +55,6 @@ import com.globalmentor.w3c.spec.XML;
 import com.globalmentor.xml.xhtml.XHTML;
 
 import static com.globalmentor.collections.iterators.Iterators.*;
-import static com.globalmentor.java.Objects.*;
 import static com.globalmentor.net.ContentTypeConstants.*;
 import static com.globalmentor.xml.XML.*;
 
@@ -141,7 +142,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	 * @throws NullPointerException if the given object is <code>null</code>.
 	 */
 	public void setBaseURIInputStreamable(final URIInputStreamable newURIInputStreamable) {
-		baseURIInputStreamable = checkInstance(newURIInputStreamable, "URI input streamable cannot be null.");
+		baseURIInputStreamable = requireNonNull(newURIInputStreamable, "URI input streamable cannot be null.");
 	}
 
 	/** The access to input streams via URIs. */
@@ -158,7 +159,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	 * @throws NullPointerException if the given object is <code>null</code>.
 	 */
 	public void setURIInputStreamable(final URIInputStreamable newURIInputStreamable) {
-		uriInputStreamable = checkInstance(newURIInputStreamable);
+		uriInputStreamable = requireNonNull(newURIInputStreamable);
 	}
 
 	/** The implementation to use for retrieving an output stream to a URI. */
@@ -175,7 +176,7 @@ public class XMLTextPane extends JTextPane implements AppletContext, /*TODO del 
 	 * @throws NullPointerException if the given object is <code>null</code>.
 	 */
 	public void setURIOutputStreamable(final URIOutputStreamable outputStreamable) {
-		uriOutputStreamable = checkInstance(outputStreamable);
+		uriOutputStreamable = requireNonNull(outputStreamable);
 	}
 
 	/** The current position of the mouse. */

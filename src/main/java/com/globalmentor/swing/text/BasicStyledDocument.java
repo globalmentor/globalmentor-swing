@@ -23,6 +23,8 @@ import java.io.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 
+import static java.util.Objects.*;
+
 import static com.globalmentor.java.Objects.*;
 
 import com.globalmentor.io.*;
@@ -101,7 +103,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 	 */
 	public BasicStyledDocument(final Content content, final StyleContext styles, final URIInputStreamable uriInputStreamable) {
 		super(content, styles); //construct the parent class
-		this.uriInputStreamable = checkInstance(uriInputStreamable, "Missing URIInputStreamable"); //store the URIInputStreamable
+		this.uriInputStreamable = requireNonNull(uriInputStreamable, "Missing URIInputStreamable"); //store the URIInputStreamable
 		//TODO fix		setProperty(AbstractDocument.I18NProperty);  //TODO testing i18n
 		//TODO fix		putProperty("i18n", Boolean.TRUE);  //TODO testing i18n
 		Log.trace("Document i18n property: ", getProperty("i18n")); //TODO testing i18n		
@@ -167,7 +169,7 @@ public class BasicStyledDocument extends DefaultStyledDocument implements URIAcc
 
 	/** @return The description of the publication, or <code>null</code> if there is no publication associated with this document. */
 	public RDFResource getPublication() {
-		return asInstance(getProperty(PUBLICATION_PROPERTY_NAME), RDFResource.class); //get the publication from the document, if there is one
+		return asInstance(getProperty(PUBLICATION_PROPERTY_NAME), RDFResource.class).orElse(null); //get the publication from the document, if there is one
 	}
 
 	/**

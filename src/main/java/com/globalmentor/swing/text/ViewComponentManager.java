@@ -18,11 +18,12 @@ package com.globalmentor.swing.text;
 
 import java.awt.*;
 import java.util.*;
+
 import static java.lang.Math.*;
 import static java.util.Collections.*;
-import javax.swing.text.*;
+import static java.util.Objects.*;
 
-import static com.globalmentor.java.Objects.*;
+import javax.swing.text.*;
 
 import com.globalmentor.awt.Inset;
 
@@ -206,7 +207,7 @@ public class ViewComponentManager //TODO finish the class comments with examples
 		 * @throws NullPointerException if the location is <code>null</code>.
 		 */
 		public LocationPosition(final Point location, final boolean centered) {
-			this.location = checkInstance(location, "Location cannot be null."); //save the location
+			this.location = requireNonNull(location, "Location cannot be null."); //save the location
 			this.centered = centered; //save the centered specification
 		}
 

@@ -66,73 +66,73 @@
 		<dependency>
 			<groupId>com.globalmentor</groupId>
 			<artifactId>globalmentor-core</artifactId>
-			<version>0.5.0</version>
+			<version>0.5.3-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.globalmentor</groupId>
 			<artifactId>globalmentor-application</artifactId>
-			<version>0.5.0</version>
+			<version>0.5.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.globalmentor</groupId>
 			<artifactId>globalmentor-awt</artifactId>
-			<version>0.5.0</version>
+			<version>0.5.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.globalmentor</groupId>
 			<artifactId>globalmentor-applet</artifactId>
-			<version>0.5.0</version>
+			<version>0.5.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.globalmentor</groupId>
 			<artifactId>globalmentor-oebps-spec</artifactId>
-			<version>0.5.0</version>
+			<version>0.5.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.globalmentor</groupId>
 			<artifactId>globalmentor-rdf</artifactId>
-			<version>0.5.0</version>
+			<version>0.5.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.globalmentor</groupId>
 			<artifactId>globalmentor-sound</artifactId>
-			<version>0.5.0</version>
+			<version>0.5.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.globalmentor</groupId>
 			<artifactId>globalmentor-text-directory-vcard</artifactId>
-			<version>0.5.0</version>
+			<version>0.5.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.globalmentor</groupId>
 			<artifactId>globalmentor-unicode</artifactId>
-			<version>0.5.0</version>
+			<version>0.5.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.globalmentor</groupId>
 			<artifactId>globalmentor-w3c-spec</artifactId>
-			<version>0.5.0</version>
+			<version>0.5.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.globalmentor</groupId>
 			<artifactId>globalmentor-xml-dom-impl</artifactId>
-			<version>0.5.0</version>
+			<version>0.5.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.globalmentor</groupId>
 			<artifactId>urframework</artifactId>
-			<version>0.5.0</version>
+			<version>0.5.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
