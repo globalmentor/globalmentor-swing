@@ -118,7 +118,7 @@ public class ApplicationFrame extends BasicFrame {
 	 * @param contentPane the <code>contentPane</code> object for this frame
 	 * @throws IllegalComponentStateException (a runtime exception) if the content pane parameter is <code>null</code>.
 	 * @throws ClassCastException Thrown if the content pane is not an instance of <code>ApplicationContentPane</code>.
-	 * @see #ApplicationContentPane
+	 * @see ApplicationContentPane
 	 */
 	public void setContentPane(final Container contentPane) {
 		super.setContentPane((ApplicationContentPane)contentPane); //make sure the content pane is of the correct type

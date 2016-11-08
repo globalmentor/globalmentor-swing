@@ -294,6 +294,7 @@ public class BasicPanel extends JPanel implements Scrollable, CanClosable, Defau
 
 	/**
 	 * Adds the listener as a listener of the specified type.
+	 * @param <T> The type of the event listener.
 	 * @param eventListenerType The type of the listener to be added.
 	 * @param eventListener the listener to be added
 	 */
@@ -303,14 +304,17 @@ public class BasicPanel extends JPanel implements Scrollable, CanClosable, Defau
 
 	/**
 	 * Removes the listener as a listener of the specified type.
-	 * @param eventListenerType the type of the listener to be removed
-	 * @param eventListener the listener to be removed
+	 * @param <T> The type of the event listener.
+	 * @param eventListenerType the type of the listener to be removed.
+	 * @param eventListener the listener to be removed.
 	 */
 	public <T extends EventListener> void removeEventListener(final Class<T> eventListenerType, T eventListener) {
 		getEventListenerList().remove(eventListenerType, eventListener); //remove the listener from the list of event listeners
 	}
 
 	/**
+	 * @param <T> The type of the event listener.
+	 * @param eventListenerType the type of the listener to be removed.
 	 * @return An array of all the listeners of the given type.
 	 * @throws ClassCastException if the supplied class is not assignable to <code>EventListener</code>.
 	 */
@@ -324,7 +328,7 @@ public class BasicPanel extends JPanel implements Scrollable, CanClosable, Defau
 
 	/**
 	 * Default constructor that uses a <code>FlowLayout</code>.
-	 * @see #FlowLayout
+	 * @see FlowLayout
 	 */
 	public BasicPanel() {
 		this(true); //initialize the panel
@@ -333,7 +337,7 @@ public class BasicPanel extends JPanel implements Scrollable, CanClosable, Defau
 	/**
 	 * Constructor with optional initialization that uses a <code>FlowLayout</code>.
 	 * @param initialize <code>true</code> if the panel should initialize itself by calling the initialization methods.
-	 * @see #FlowLayout
+	 * @see FlowLayout
 	 */
 	public BasicPanel(final boolean initialize) {
 		this(new FlowLayout(), initialize); //construct the panel with a flow layout by default
@@ -480,7 +484,7 @@ public class BasicPanel extends JPanel implements Scrollable, CanClosable, Defau
 	 * </p>
 	 * @param newValue The chosen value.
 	 * @see JOptionPane#setValue
-	 * @see #getValue
+	 * @see JOptionPane#getValue()
 	 */
 	public void setOptionPaneValue(final Object newValue) {
 		final JOptionPane optionPane = getParentOptionPane(); //get the option pane in which we're embedded
@@ -496,7 +500,7 @@ public class BasicPanel extends JPanel implements Scrollable, CanClosable, Defau
 	 * @return the <code>Object</code> chosen by the user, <code>UNINITIALIZED_VALUE</code> if the user has not yet made a choice, or <code>null</code> if the
 	 *         user closed the window without making a choice or this panel is not embedded in a <code>JOptionPane</code>.
 	 * @see JOptionPane#getValue
-	 * @see #setValue
+	 * @see JOptionPane#setValue
 	 */
 	public Object getOptionPaneValue() {
 		final JOptionPane optionPane = getParentOptionPane(); //get the option pane in which we're embedded
@@ -504,7 +508,7 @@ public class BasicPanel extends JPanel implements Scrollable, CanClosable, Defau
 	}
 
 	/**
-	 * Creates a list selection listener that, when the list selection changes, updates the status.
+	 * @return A list selection listener that, when the list selection changes, updates the status.
 	 * @see #updateStatus
 	 */
 	public ListSelectionListener createUpdateStatusListSelectionListener() {
@@ -517,7 +521,7 @@ public class BasicPanel extends JPanel implements Scrollable, CanClosable, Defau
 	}
 
 	/**
-	 * Creates a property change listener that, when any property changes, updates the modified status to <code>true</code>.
+	 * @return A property change listener that, when any property changes, updates the modified status to <code>true</code>.
 	 * @see #setModified
 	 */
 	/*TODO bring back
@@ -530,7 +534,7 @@ public class BasicPanel extends JPanel implements Scrollable, CanClosable, Defau
 	*/
 
 	/**
-	 * Creates a property change listener that, when a property chnages, updates the status.
+	 * @return A property change listener that, when a property chnages, updates the status.
 	 * @see #updateStatus
 	 */
 	public PropertyChangeListener createUpdateStatusPropertyChangeListener() {
@@ -543,7 +547,7 @@ public class BasicPanel extends JPanel implements Scrollable, CanClosable, Defau
 	}
 
 	/**
-	 * Creates an action listener that, when an action occurs, updates the status.
+	 * @return An action listener that, when an action occurs, updates the status.
 	 * @see #updateStatus
 	 */
 	/*TODO bring back; or maybe we don't need, now that we have createUpdateStatusItemListener()
@@ -556,7 +560,7 @@ public class BasicPanel extends JPanel implements Scrollable, CanClosable, Defau
 	*/
 
 	/**
-	 * Creates a document listener that, when a document is modified, updates the status.
+	 * @return A document listener that, when a document is modified, updates the status.
 	 * @see #updateStatus
 	 */
 	public DocumentListener createUpdateStatusDocumentListener() {
@@ -569,7 +573,7 @@ public class BasicPanel extends JPanel implements Scrollable, CanClosable, Defau
 	}
 
 	/**
-	 * Creates an item listener that, when an item state changes, updates the status.
+	 * @return An item listener that, when an item state changes, updates the status.
 	 * @see #updateStatus
 	 */
 	public ItemListener createUpdateStatusItemListener() {
@@ -582,7 +586,7 @@ public class BasicPanel extends JPanel implements Scrollable, CanClosable, Defau
 	}
 
 	/**
-	 * Creates a list data listener that, when a list model is modified, updates the status.
+	 * @return A list data listener that, when a list model is modified, updates the status.
 	 * @see #updateStatus
 	 */
 	public ListDataListener createUpdateStatusListDataListener() {

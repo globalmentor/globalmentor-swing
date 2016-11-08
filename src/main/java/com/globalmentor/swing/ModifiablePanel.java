@@ -137,7 +137,7 @@ public class ModifiablePanel extends BasicPanel implements Modifiable {
 
 	/**
 	 * Default constructor that uses a <code>FlowLayout</code>.
-	 * @see #FlowLayout
+	 * @see FlowLayout
 	 */
 	public ModifiablePanel() {
 		this(true); //initialize the panel
@@ -146,7 +146,7 @@ public class ModifiablePanel extends BasicPanel implements Modifiable {
 	/**
 	 * Constructor with optional initialization that uses a <code>FlowLayout</code>.
 	 * @param initialize <code>true</code> if the panel should initialize itself by calling the initialization methods.
-	 * @see #FlowLayout
+	 * @see FlowLayout
 	 */
 	public ModifiablePanel(final boolean initialize) {
 		this(new FlowLayout(), initialize); //construct the panel with a flow layout by default
@@ -313,7 +313,7 @@ public class ModifiablePanel extends BasicPanel implements Modifiable {
 	}
 
 	/**
-	 * Creates an item listener that, when an item state changes, updates the modified status to <code>true</code>.
+	 * @return An item listener that, when an item state changes, updates the modified status to <code>true</code>.
 	 * @see #setModified
 	 */
 	public ItemListener createModifyItemListener() {
@@ -352,7 +352,7 @@ public class ModifiablePanel extends BasicPanel implements Modifiable {
 	*/
 
 	/**
-	 * Creates a property change listener that, when the given property changes, updates the modified status to <code>true</code>.
+	 * @return A property change listener that, when the given property changes, updates the modified status to <code>true</code>.
 	 * @param propertyName The name of the property that, when changed, will set the modified status to <code>true</code>.
 	 * @see #setModified
 	 */

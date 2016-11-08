@@ -67,7 +67,7 @@ public class Views {
 	 * If the given view factory implements <code>ViewsFactory</code>, this implementation will ask the views factory to create as many views as needed for the
 	 * entire element hierarchy, essentially collapsing all child elements into a single level.
 	 * </p>
-	 * @param elements The elements for which one or more views should be created.
+	 * @param element The element for which one or more views should be created.
 	 * @param viewFactory The view factory to use for creating views, preferably a <code>ViewsFactory</code>.
 	 * @param viewList The list of views to which the views should be added.
 	 * @see ViewsFactory

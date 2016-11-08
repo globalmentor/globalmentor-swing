@@ -27,6 +27,7 @@ public class Borders {
 
 	/**
 	 * Creates a default border. Using this method promotes consistency across components.
+	 * @return The default titled border based on a default border.
 	 */
 	public static Border createDefaultBorder() {
 		return BorderFactory.createEtchedBorder(EtchedBorder.LOWERED); //return a lowered etched border
@@ -34,6 +35,7 @@ public class Borders {
 
 	/**
 	 * Creates a default titled border based on a default border. Using this method promotes consistency across components.
+	 * @return The default titled border based on a default border.
 	 * @see #createDefaultBorder()
 	 */
 	public static TitledBorder createDefaultTitledBorder() {

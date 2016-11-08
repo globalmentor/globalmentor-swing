@@ -30,7 +30,10 @@ public interface Editable {
 	/** @return Whether the object can be edited. */
 	public boolean isEditable();
 
-	/** Sets whether the object can be edited. */
+	/**
+	 * Sets whether the object can be edited.
+	 * @param newEditable The new editable state.
+	 */
 	public void setEditable(final boolean newEditable);
 
 }

@@ -27,6 +27,7 @@ import com.globalmentor.awt.BasicGridBagLayout;
 import com.globalmentor.awt.Containers;
 import com.globalmentor.java.*;
 import com.globalmentor.swing.*;
+import com.globalmentor.swing.itu.TelephoneNumberPanel;
 import com.globalmentor.text.directory.vcard.*;
 
 /**
@@ -58,7 +59,7 @@ public class EmailPanel extends ModifiablePanel {
 	/**
 	 * Shows or hides the telephone number labels.
 	 * @param visible <code>true</code> if the labels should be shown, <code>false</code> if they should be hidden.
-	 * @see TelephoneNumberPanel#setLabelsVisible
+	 * @see TelephoneNumberPanel#setLabelsVisible(boolean)
 	 */
 	public void setLabelsVisible(final boolean visible) {
 		//TODO fix		telephoneNumberPanel.setLabelsVisible(visible);	//pass the request on to the telephone number panel
@@ -115,7 +116,7 @@ public class EmailPanel extends ModifiablePanel {
 	}
 
 	/**
-	 * Email constructor for a default telephone type of {@value Email#DEFAULT_TYPE}.
+	 * Email constructor for a default telephone type of {@link Email#DEFAULT_TYPE}.
 	 * @param email The email information to place in the fields, or <code>null</code> if default information should be displayed.
 	 */
 	public EmailPanel(final Email email) {
@@ -123,9 +124,8 @@ public class EmailPanel extends ModifiablePanel {
 	}
 
 	/**
-	 * Email address and type constructor for a default telephone type of {@value Email#DEFAULT_TYPE}.
+	 * Email address and type constructor for a default telephone type of {@link Email#DEFAULT_TYPE}.
 	 * @param emailAddress The email address to place in the fields, or <code>null</code> if default information should be displayed.
-	 * @param emailTypess The email address types.
 	 */
 	public EmailPanel(final String emailAddress) {
 		this(emailAddress, EnumSet.of(Email.DEFAULT_TYPE));
@@ -134,7 +134,7 @@ public class EmailPanel extends ModifiablePanel {
 	/**
 	 * Email address and type constructor.
 	 * @param emailAddress The email address to place in the fields, or <code>null</code> if default information should be displayed.
-	 * @param emailTypess The email address types.
+	 * @param emailTypes The email address types.
 	 */
 	public EmailPanel(final String emailAddress, final Set<Email.Type> emailTypes) {
 		super(new BasicGridBagLayout(), false); //construct the panel using a grid bag layout, but don't initialize the panel

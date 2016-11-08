@@ -48,6 +48,7 @@ public class XMLCSSViewPainter {
 	 * @param graphics The rendering surface to use.
 	 * @param allocation The allocated region to render into.
 	 * @param view The view being rendered.
+	 * @param attributeSet The attribute set containing CSS properties.
 	 * @see View#paint
 	 */
 	public static void paint(final Graphics graphics, final Shape allocation, final View view, final AttributeSet attributeSet) {

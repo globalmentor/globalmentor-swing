@@ -28,6 +28,7 @@ import com.globalmentor.io.*;
 import com.globalmentor.net.ContentType;
 import com.globalmentor.net.ContentTypeConstants;
 import com.globalmentor.swing.text.xml.XMLStyles;
+import com.globalmentor.xml.xhtml.XHTML;
 
 /**
  * Provides utility functions to manipulate Swing text classes representing XHTML.
@@ -43,9 +44,9 @@ public class XHTMLSwingText {
 	 * Gets the element in the hierarchy responsible for the given position that represents an image, if any. The current implementation assumes that an image can
 	 * only be the element directly above a character element.
 	 * @param defaultStyledDocument The document containing the position.
-	 * @param pos The position in the document (>=0).
+	 * @param pos The position in the document (&gt;=0).
 	 * @return The element representing an image, or <code>null</code> if no elements at the given position represent an image.
-	 * @see #isImageElement
+	 * @see #isImage(AttributeSet)
 	 */
 	public static Element getImageElement(final DefaultStyledDocument defaultStyledDocument, final int pos) {
 		final Element element = defaultStyledDocument.getCharacterElement(pos); //get the leaf element at this position
@@ -89,7 +90,7 @@ public class XHTMLSwingText {
 	 * @param documentAttributeSet The document element's attribute set.
 	 * @return <code>true</code> if the specified attribute set represents an XHTML or OEB element, or <code>false</code> if otherwise or the specified attribute
 	 *         set was <code>null</code>.
-	 * @see XHTMLUtilities#isHTML(MediaType)
+	 * @see XHTML#isHTML(ContentType)
 	 * @see XHTML#isHTMLNamespaceURI(URI)
 	 */
 	public static boolean isHTMLDocumentElement(final AttributeSet documentAttributeSet) {
@@ -121,7 +122,7 @@ public class XHTMLSwingText {
 	 * @param documentAttributeSet The document element's attribute set.
 	 * @return <code>true</code> if the specified attribute set represents an XHTML or OEB element, or <code>false</code> if otherwise or the specified attribute
 	 *         set was <code>null</code>.
-	 * @see XHTMLUtilities#isHTML(MediaType)
+	 * @see XHTML#isHTML(ContentType)
 	 * @see XHTML#isHTMLNamespaceURI(URI)
 	 * @see #isHTMLDocumentElement(AttributeSet)
 	 */

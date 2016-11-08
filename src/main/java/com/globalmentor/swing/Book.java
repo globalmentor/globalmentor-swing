@@ -33,6 +33,7 @@ import javax.swing.text.*; //TODO del when image click code is moved elsewhere
 import com.globalmentor.io.*;
 import com.globalmentor.log.Log;
 import com.globalmentor.net.*;
+import com.globalmentor.oebps.spec.OEBCSS;
 import com.globalmentor.oebps.spec.OEBGuide;
 import com.globalmentor.rdf.*;
 import com.globalmentor.swing.event.*;
@@ -707,6 +708,7 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 
 	/**
 	 * Adds a history position to the list. If there were future history positions, they are removed.
+	 * @param position The position of the list where the history will be added.
 	 */
 	protected void addHistory(final Position position) {
 		//make sure all history positions after and including the current history index are removed
@@ -928,7 +930,7 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 
 	/**
 	 * Invoked when a hyperlink action occurs.
-	 * @param hEvent The hyperlink event.
+	 * @param hyperlinkEvent The hyperlink event.
 	 */
 	public void hyperlinkUpdate(HyperlinkEvent hyperlinkEvent) {
 		if(hyperlinkEvent.getEventType() == HyperlinkEvent.EventType.ENTERED) //if the cursor is entering a hyperlink
@@ -1268,8 +1270,8 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 	/**
 	 * Reads the book content from a URI.
 	 * @param uri The location of the book.
-	 * @throws IOExeption Thrown if an I/O error occurs.
-	 * @see OEBTextPane#read
+	 * @throws IOException Thrown if an I/O error occurs.
+	 * @see Book#getXMLTextPane()
 	 */
 	public void open(final URI uri) throws IOException {
 		close(); //close whatever book is open
@@ -1294,7 +1296,7 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 
 	/**
 	 * Closes and opens the book content from the same location. If no file is open, no action is taken.
-	 * @throws IOExeption Thrown if an I/O error occurs.
+	 * @throws IOException Thrown if an I/O error occurs.
 	 * @see #getURI
 	 * @see #open
 	 * @see #close
@@ -1311,8 +1313,8 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 	 * Reads the book content from a reader.
 	 * @param in The stream to read from.
 	 * @param desc An object describing the stream.
-	 * @throws IOExeption Thrown if an I/O error occurs.
-	 * @see OEBTextPane#read
+	 * @throws IOException Thrown if an I/O error occurs.
+	 * @see Book#getXMLTextPane()
 	 */
 	/*TODO del
 		public void read(final Reader in, final Object desc) throws IOException
@@ -1322,7 +1324,7 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 	*/
 
 	/**
-	 * Returns a new object reflecting the book's user data. This user data should be considered read-only, as its information may reference information in the
+	 * @return A new object reflecting the book's user data. This user data should be considered read-only, as its information may reference information in the
 	 * book.
 	 */
 	public UserData getUserData() {
@@ -1409,6 +1411,7 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 
 	/**
 	 * @return <code>true</code> if the specified page is one of the pages being displayed.
+	 * @param pageIndex The index of the page to be verified.
 	 */
 	public boolean isPageShowing(final int pageIndex) {
 		return getXMLTextPane().isPageShowing(pageIndex); //ask the paged view whether this page is showing

@@ -155,7 +155,7 @@ public class ImageComponent extends JComponent implements Scrollable {
 	 * possible without enlargement. If the image is already contained within its container at normal size, or the image component has no parent container, no
 	 * action occurs. //TODO fix The zoom factor is not changed immediately, but is changed later in the AWT thread so that any container sizes may first be
 	 * correctly setup.
-	 * @see #setZoomfactor
+	 * @see #setZoomFactor(double)
 	 */
 	public void fitImage() {
 		final Dimension imageSize = getImageSize(); //get the size of the image

@@ -73,10 +73,10 @@ public class AddressesPanel extends ContentPanel {
 	/** The stored array of labels we keep so that they won't be lost. */
 	//TODO del	private LocaleText[] labels=new LocaleText[]{};	//TODO allow these to be edited in the panel
 
-	/**
-	 * Places the labels into the tabs.
-	 * @param labels The labels to place in the tabs.
-	 */
+	///**
+	// * Places the labels into the tabs.
+	// * @param labels The labels to place in the tabs.
+	// */
 	/*TODO del
 		public void setLabels(LocaleText[] labels)
 		{
@@ -84,7 +84,7 @@ public class AddressesPanel extends ContentPanel {
 		}
 	*/
 
-	/** @return An array of entered labels. */
+	///** @return An array of entered labels. */
 	/*TODO del
 		public LocaleText[] getLabels()
 		{
@@ -222,8 +222,7 @@ public class AddressesPanel extends ContentPanel {
 
 	/**
 	 * Adds an address panel to the tabbed pane.
-	 * @param address The address to add.
-	 * @return The address panel that represents the added address.
+	 * @param addressPanel The address to add.
 	 */
 	protected void addAddressPanel(final AddressPanel addressPanel) {
 		addressPanel.addPropertyChangeListener(getModifyModifiedPropertyChangeListener()); //listen for changes to the address and update the modified status in response TODO remove when we have a modifiable tabbed pane
@@ -247,8 +246,7 @@ public class AddressesPanel extends ContentPanel {
 
 	/**
 	 * Adds a label panel to the tabbed pane.
-	 * @param label The label to add.
-	 * @return The label panel that represents the added label.
+	 * @param labelPanel The label to add.
 	 */
 	protected void addLabelPanel(final LabelPanel labelPanel) {
 		labelPanel.addPropertyChangeListener(getModifyModifiedPropertyChangeListener()); //listen for changes to the label and update the modified status in response TODO remove when we have a modifiable tabbed pane

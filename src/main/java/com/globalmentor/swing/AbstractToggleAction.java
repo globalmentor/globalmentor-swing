@@ -42,6 +42,7 @@ public abstract class AbstractToggleAction extends AbstractAction {
 	/**
 	 * Sets the selected state of the action. Any component that represents this action should automatically update its visual status in response to a change of
 	 * this property.
+	 * @param selected The new value for the select state.
 	 * @see #SELECTED_KEY
 	 */
 	public void setSelected(final boolean selected) {

@@ -60,7 +60,7 @@ public class ButtonContentPanel extends ContentPanel {
 		return mouseListener; //return the mouse listener
 	}
 
-	/** The button to display in the border of the panel. */
+	/** @return The button to display in the border of the panel. */
 	public AbstractButton getButton() {
 		return (AbstractButton)getButtonPanel().getContentComponent();
 	}
@@ -76,7 +76,7 @@ public class ButtonContentPanel extends ContentPanel {
 	/** The label to display in the border of the panel. */
 	private JLabel label = null;
 
-	/** The label to display in the border of the panel. */
+	/** @return The label to display in the border of the panel. */
 	public JLabel getLabel() {
 		return label;
 	}

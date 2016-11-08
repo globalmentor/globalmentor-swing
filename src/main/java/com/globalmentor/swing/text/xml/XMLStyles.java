@@ -58,20 +58,13 @@ public class XMLStyles {
 	//TODO should this go elsewhere?
 	public static final int DEFAULT_TEXT_INDENT = 0;
 
-	/**
-	 * Whether or not a component should get a page-break view. Overrides the paragraph view and block/inline attributes.
-	 * @see #PARAGRAPH_VIEW_ATTRIBUTE_NAME
-	 */
+	/** Whether or not a component should get a page-break view. Overrides the paragraph view and block/inline attributes. */
 	public static final String PAGE_BREAK_VIEW_ATTRIBUTE_NAME = Styles.SWING_ATTRIBUTE_START + "pageBreakView";
 
-	/**
-	 * The public ID of the document type of the document, the root element of which this set of attributes represents.
-	 */
+	/** The public ID of the document type of the document, the root element of which this set of attributes represents. */
 	public static final String XML_DOCTYPE_PUBLIC_ID = Styles.SWING_ATTRIBUTE_START + "xmlDocTypePublicID";
 
-	/**
-	 * The system ID of the document type of the document, the root element of which this set of attributes represents.
-	 */
+	/** The system ID of the document type of the document, the root element of which this set of attributes represents. */
 	public static final String XML_DOCTYPE_SYSTEM_ID = Styles.SWING_ATTRIBUTE_START + "xmlDocTypeSystemID";
 
 	/** The local name of the XML element this set of attributes represents. */
@@ -159,6 +152,7 @@ public class XMLStyles {
 
 	/**
 	 * Determines if the given attribute set represents an XML element with the given namespace URI and local name.
+	 * @param attributeSet The attribute set, which may be <code>null</code>.
 	 * @param namespaceURI The XML namespace, or <code>null</code> if the element is not in a namespace.
 	 * @param localName The XML local name.
 	 * @return <code>true</code> if the given attribute set represents an XML element with the given namespace and local name.
@@ -447,13 +441,13 @@ public class XMLStyles {
 	 * @return The RDF resource, or <code>null</code> if the element has no RDF resource.
 	 */
 	public static RDFResource getDocumentDescription(final AttributeSet attributeSet) {
-		return asInstance(getDefinedAttribute(attributeSet, DOCUMENT_DESCRIPTION_ATTRIBUTE_NAME), RDFResource.class); //get the document description
+		return asInstance(getDefinedAttribute(attributeSet, DOCUMENT_DESCRIPTION_ATTRIBUTE_NAME), RDFResource.class).orElse(null); //get the document description
 	}
 
 	/**
 	 * Sets the RDF resource description of the document hierarchy represented by the attribute set.
 	 * @param attributeSet The attribute set
-	 * @param rdfResource The RDF resource.
+	 * @param documentDescription The RDF resource.
 	 */
 	public static void setDocumentDescription(final MutableAttributeSet attributeSet, final RDFResource documentDescription) {
 		attributeSet.addAttribute(DOCUMENT_DESCRIPTION_ATTRIBUTE_NAME, documentDescription); //add the attribute to the attribute set
@@ -507,7 +501,7 @@ public class XMLStyles {
 	/**
 	 * Sets the local name of the XML element.
 	 * @param attributeSet The attribute set
-	 * @param xmlElementName The local name of the XML element.
+	 * @param xmlElementLocalName The local name of the XML element.
 	 */
 	public static void setXMLElementLocalName(final MutableAttributeSet attributeSet, final String xmlElementLocalName) {
 		attributeSet.addAttribute(XML_ELEMENT_LOCAL_NAME_ATTRIBUTE_NAME, xmlElementLocalName); //add the attribute to the attribute set

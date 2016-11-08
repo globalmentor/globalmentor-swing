@@ -47,7 +47,7 @@ public class XMLLineBreakView extends XMLInlineView {
 
 	/**
 	 * Determines the preferred span for this view. Returns 0 for the X axis.
-	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS<code>).
+	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS</code>).
 	 * @return The span the view would like to be rendered into.
 	 * @see View#getPreferredSpan
 	 */
@@ -57,7 +57,7 @@ public class XMLLineBreakView extends XMLInlineView {
 
 	/**
 	 * Determines the minimum span for this view along an axis. Returns 0 for the X axis.
-	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS<code>).
+	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS</code>).
 	 * @return The minimum span the view can be rendered into.
 	 * @see View#getMinimumSpan
 	 */
@@ -67,7 +67,7 @@ public class XMLLineBreakView extends XMLInlineView {
 
 	/**
 	 * Determines the maximum span for this view along an axis. Returns 0 for the X axis.
-	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS<code>).
+	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS</code>).
 	 * @return The maximum span the view can be rendered into.
 	 * @see View#getMaximumSpan
 	 */

@@ -77,9 +77,9 @@ public class XMLCSSStyleContext extends StyleContext {
 	 * Gets a new font, retrieved from a cache if possible. This method is not thread safe.
 	 * @param family The font family (such as "Monospaced").
 	 * @param style The style of the font (such as <code>Font.PLAIN</code>).
-	 * @param size The point size (>=1).
+	 * @param size The point size (&gt;=1).
 	 * @return A font with the given parameters, from the cache if possible.
-	 * @see Fonts#getFont(String, int, size)
+	 * @see Fonts#getFont(String, int, int)
 	 */
 	public Font getFont(final String family, final int style, final int size) {
 		return Fonts.getFont(family, style, size); //pass the request on the the font utilities
@@ -88,8 +88,8 @@ public class XMLCSSStyleContext extends StyleContext {
 	/**
 	 * Gets a new font for the specified character by searching all available fonts.
 	 * @param c The character for which a font should be returned.
-	 * @param style The style of the font (such as <code>Font.PLAIN</cod>).
-	 * @param size The point size (>=1).
+	 * @param style The style of the font (such as <code>Font.PLAIN</code>).
+	 * @param size The point size (&gt;=1).
 	 * @return The new font, or <code>null</code> if a font could not be found that matched this character.
 	 * @see Fonts#getFont(char, int, int)
 	 */
@@ -189,6 +189,8 @@ public class XMLCSSStyleContext extends StyleContext {
 	/**
 	 * Constructs transient variables before the object is read from a stream.
 	 * @param objectInputStream The stream from which the object is being read.
+	 * @throws ClassNotFoundException if the class represented by the given object input stream could not be found.
+	 * @throws IOException Thrown if any I/O error occurs.
 	 */
 	private void readObject(ObjectInputStream objectInputStream) throws ClassNotFoundException, IOException {
 		//TODO del		searchFontKey=new FontKey(null, 0, 0);  //create a new font key for searching

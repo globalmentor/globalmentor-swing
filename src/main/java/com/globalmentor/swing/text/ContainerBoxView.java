@@ -150,7 +150,7 @@ public class ContainerBoxView extends BoxView implements Inset {
 	/**
 	 * Fetches the portion of the model for which this view is responsible. This version uses the cached starting offset, if available; otherwise, the default
 	 * starting offset is returned.
-	 * @return The starting offset into the model (>=0).
+	 * @return The starting offset into the model (&gt;=0).
 	 */
 	public int getStartOffset() {
 		verifyCache(); //make sure the cache is valid
@@ -160,7 +160,7 @@ public class ContainerBoxView extends BoxView implements Inset {
 	/**
 	 * Fetches the portion of the model for which this view is responsible. This version uses the cached ending offset, if available; otherwise, the default
 	 * ending offset is returned.
-	 * @return The ending offset into the model (>=0).
+	 * @return The ending offset into the model (&gt;=0).
 	 */
 	public int getEndOffset() {
 		verifyCache(); //make sure the cache is valid
@@ -170,7 +170,7 @@ public class ContainerBoxView extends BoxView implements Inset {
 	/**
 	 * Returns the index of the child at the given model position in the container. This implementation queries each view directly and does not assume that there
 	 * is a direct correspondence between each child view and the underlying element hierarchy.
-	 * @param pos The position (>=0) in the model.
+	 * @param pos The position (&gt;=0) in the model.
 	 * @return The index of the view representing the given position, or -1 if there is no view on this container which represents that position.
 	 */
 	protected int getViewIndexAtPosition(final int pos) {
@@ -189,9 +189,9 @@ public class ContainerBoxView extends BoxView implements Inset {
 		 * given length.
 		 * @param view The view to break.
 		 * @param axis The axis to break along, either <code>View.X_AXIS</code> or <code>View.Y_AXIS</code>.
-		 * @param offset The location in the model where the fragment should start its representation (>=0).
-		 * @param pos the position along the axis that the broken view would occupy (>=0).
-		 * @param length The distance along the axis where a potential break is desired (>=0).
+		 * @param offset The location in the model where the fragment should start its representation (&gt;=0).
+		 * @param pos the position along the axis that the broken view would occupy (&gt;=0).
+		 * @param length The distance along the axis where a potential break is desired (&gt;=0).
 		 * @param fragmentViewFactory The source of fragment views.
 		 * @return The fragment of the view that represents the given span, if the view can be broken. If the view doesn't support breaking behavior, the view
 		 *         itself is returned.
@@ -264,8 +264,8 @@ public class ContainerBoxView extends BoxView implements Inset {
 		 * Creates a view that represents a portion of the element. If the view doesn't support fragmenting, the view itself will be returned. This implementation
 		 * returns a new view that contains the required child views.
 		 * @param view The view to break.
-		 * @param p0 The starting offset (>=0). This should be a value greater or equal to the element starting offset and less than the element ending offset.
-		 * @param p1 The ending offset (>p0). This should be a value less than or equal to the elements end offset and greater than the elements starting offset.
+		 * @param p0 The starting offset (&gt;=0). This should be a value greater or equal to the element starting offset and less than the element ending offset.
+		 * @param p1 The ending offset (&gt;p0). This should be a value less than or equal to the elements end offset and greater than the elements starting offset.
 		 * @param fragmentViewFactory The source of fragment views.
 		 * @return The view fragment, or the view itself if the view doesn't support breaking into fragments.
 		 * @see View#createFragment
@@ -303,10 +303,11 @@ public class ContainerBoxView extends BoxView implements Inset {
 		/**
 		 * Creates a fragment view into which pieces of this view will be placed. The fragment view will be given the correct parent.
 		 * @param fragmentViewFactory The source of fragment views.
-		 * @param view The view to break.
+		 * @param parentView The view to break.
 		 * @param childViews the child views to include in the fragment
 		 * @param isFirstFragment Whether this fragment holds the first part of the original view.
 		 * @param isLastFragment Whether this fragment holds the last part of the original view.
+		 * @return The fragment view.
 		 */
 		protected View createFragmentView(final FragmentViewFactory fragmentViewFactory, final View parentView, final View[] childViews,
 				final boolean isFirstFragment, final boolean isLastFragment) {

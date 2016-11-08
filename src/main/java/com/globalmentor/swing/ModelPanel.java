@@ -81,7 +81,7 @@ public class ModelPanel<M> extends ModifiablePanel implements ModelView<M> {
 	 * Constructor with optional initialization that uses a <code>FlowLayout</code>.
 	 * @param model The data model for which this component provides a view.
 	 * @param initialize <code>true</code> if the panel should initialize itself by calling the initialization methods.
-	 * @see #FlowLayout
+	 * @see FlowLayout
 	 */
 	public ModelPanel(final M model, final boolean initialize) {
 		this(new FlowLayout(), model, initialize); //construct the panel with a flow layout by default

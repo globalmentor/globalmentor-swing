@@ -119,7 +119,7 @@ public class ContainerView extends CompositeView {
 	/**
 	 * Fetches the portion of the model for which this view is responsible. This version uses the cached starting offset, if available; otherwise, the default
 	 * starting offset is returned.
-	 * @return The starting offset into the model (>=0).
+	 * @return The starting offset into the model (&gt;=0).
 	 */
 	public int getStartOffset() {
 		verifyCache(); //make sure the cache is valid
@@ -129,7 +129,7 @@ public class ContainerView extends CompositeView {
 	/**
 	 * Fetches the portion of the model for which this view is responsible. This version uses the cached ending offset, if available; otherwise, the default
 	 * ending offset is returned.
-	 * @return The ending offset into the model (>=0).
+	 * @return The ending offset into the model (&gt;=0).
 	 */
 	public int getEndOffset() {
 		verifyCache(); //make sure the cache is valid
@@ -139,7 +139,7 @@ public class ContainerView extends CompositeView {
 	/**
 	 * Returns the index of the child at the given model position in the container. This implementation queries each view directly and does not assume that there
 	 * is a direct correspondence between each child view and the underlying element hierarchy.
-	 * @param pos The position (>=0) in the model.
+	 * @param pos The position (&gt;=0) in the model.
 	 * @return The index of the view representing the given position, or -1 if there is no view on this container which represents that position.
 	 */
 	protected int getViewIndexAtPosition(final int pos) {
@@ -150,7 +150,7 @@ public class ContainerView extends CompositeView {
 	 * Returns the index of the child of the given view at the given model position in the container. This implementation queries each view directly and does not
 	 * assume that there is a direct correspondence between each child view and the underlying element hierarchy.
 	 * @param view The view the children of which should be examined.
-	 * @param pos The position (>=0) in the model.
+	 * @param pos The position (&gt;=0) in the model.
 	 * @return The index of the view representing the given position, or -1 if there is no view on this container which represents that position.
 	 */
 	public static int getViewIndexAtPosition(final View view, final int pos) {
@@ -231,8 +231,8 @@ public class ContainerView extends CompositeView {
 	/**
 	 * Tests whether a point lies before the rectangle range. Implemented to return false, as hit detection is not performed on the logical view.
 	 *
-	 * @param x the X coordinate >= 0
-	 * @param y the Y coordinate >= 0
+	 * @param x the X coordinate &gt;= 0
+	 * @param y the Y coordinate &gt;= 0
 	 * @param alloc the rectangle
 	 * @return true if the point is before the specified range
 	 */
@@ -243,8 +243,8 @@ public class ContainerView extends CompositeView {
 	/**
 	 * Tests whether a point lies after the rectangle range. Implemented to return false, as hit detection is not performed on the logical view.
 	 *
-	 * @param x the X coordinate >= 0
-	 * @param y the Y coordinate >= 0
+	 * @param x the X coordinate &gt;= 0
+	 * @param y the Y coordinate &gt;= 0
 	 * @param alloc the rectangle
 	 * @return true if the point is after the specified range
 	 */
@@ -255,8 +255,8 @@ public class ContainerView extends CompositeView {
 	/**
 	 * Fetches the child view at the given point. Implemented to return null, as hit detection is not performed on the logical view.
 	 *
-	 * @param x the X coordinate >= 0
-	 * @param y the Y coordinate >= 0
+	 * @param x the X coordinate &gt;= 0
+	 * @param y the Y coordinate &gt;= 0
 	 * @param alloc the parent's allocation on entry, which should be changed to the child's allocation on exit
 	 * @return the child view
 	 */
@@ -267,7 +267,7 @@ public class ContainerView extends CompositeView {
 	/**
 	 * Returns the allocation for a given child. Implemented to do nothing, as the logical view doesn't perform layout on the children.
 	 *
-	 * @param index the index of the child, >= 0 && < getViewCount()
+	 * @param index the index of the child, &gt;= 0 &amp;&amp; &lt; getViewCount()
 	 * @param a the allocation to the interior of the box on entry, and the allocation of the child view at the index on exit.
 	 */
 	protected void childAllocation(int index, Rectangle a) {

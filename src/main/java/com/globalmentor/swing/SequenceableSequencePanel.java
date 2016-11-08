@@ -31,7 +31,8 @@ import com.globalmentor.model.Sequenceable;
  * <p>
  * The current collected sequence of components are kept in an internal stack, an can be iterated at any time using {@link #getSequenceHistoryIterator()}. This
  * iterator will return all components starting with the initial component up to but not including the current component, which can be returned using
- * {@link #getContentComponent()}./p>
+ * {@link #getContentComponent()}.
+ * </p>
  * @author Garret Wilson
  * @see Sequenceable
  * @see ContentPanel#getContentComponent()
@@ -66,8 +67,6 @@ public class SequenceableSequencePanel extends AbstractComponentSequencePanel //
 	/**
 	 * Constructor that specifies the first component and allows optional initialization.
 	 * @param firstComponent The first component in the sequence.
-	 * @param hasToolBar Whether this panel should have a toolbar.
-	 * @param hasStatusBar Whether this panel should have a status bar.
 	 * @param initialize <code>true</code> if the panel should initialize itself by calling the initialization methods.
 	 */
 	public SequenceableSequencePanel(final Component firstComponent, final boolean initialize) {

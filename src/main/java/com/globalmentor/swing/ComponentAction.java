@@ -82,7 +82,7 @@ public abstract class ComponentAction<C extends Component> extends AbstractActio
 	 * Creates and configures a component for use in adding to a container.
 	 * @return A new component suitable for adding to a container.
 	 * @see #createComponent()
-	 * @see #configureComponent(C)
+	 * @see #configureComponent(Component)
 	 */
 	public C createConfiguredComponent() {
 		final C component = createComponent(); //create the component

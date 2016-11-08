@@ -202,7 +202,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //TODO s
 	/**
 	 * Determines the preferred span for this view along an axis. This returns the currently calculated spans.
 	 * @param axis The axis, either <code>X_AXIS</code> or <code>Y_AXIS</code>.
-	 * @returns The span the view would like to be rendered into. Typically the view is told to render into the span that is returned, although there is no
+	 * @return The span the view would like to be rendered into. Typically the view is told to render into the span that is returned, although there is no
 	 *          guarantee. The parent may choose to resize or break the view, although object views cannot normally be broken.
 	 * @throws IllegalArgumentException Thrown if the axis is not recognized.
 	 * @see #getCurrentHeight
@@ -223,7 +223,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //TODO s
 	 * Determines the minimum span for this view along an axis. Since object views are by default resizable, this method returns zero. This zero is required
 	 * because <code>setSize()</code> expects this value and will refuse to be set to this value, preventing objects from being scaled down to nothing.
 	 * @param axis The axis, either <code>X_AXIS</code> or <code>Y_AXIS</code>.
-	 * @returns Zero as the minimum span the view can be rendered into.
+	 * @return Zero as the minimum span the view can be rendered into.
 	 * @throws IllegalArgumentException Thrown if the axis is not recognized.
 	 * @see View#getPreferredSpan
 	 * @see #setSize
@@ -236,7 +236,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //TODO s
 	 * Determines the maximum span for this view along an axis. This currently returns the permanent size of the object, initialized by <code>setWidth()</code>
 	 * and <code>setHeight()</code>.
 	 * @param axis The axis, either <code>X_AXIS</code> or <code>Y_AXIS</code>.
-	 * @returns The maximum span the view can be rendered into.
+	 * @return The maximum span the view can be rendered into.
 	 * @throws IllegalArgumentException Thrown if the axis is not recognized.
 	 * @see View#getPreferredSpan
 	 * @see #getHeight
@@ -258,7 +258,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //TODO s
 	 * default along the x axis.
 	 *
 	 * @param axis may be either X_AXIS or Y_AXIS
-	 * @returns the desired alignment. This should be a value between 0.0 and 1.0 where 0 indicates alignment at the origin and 1.0 indicates alignment to the
+	 * @return the desired alignment. This should be a value between 0.0 and 1.0 where 0 indicates alignment at the origin and 1.0 indicates alignment to the
 	 *          full span away from the origin. An alignment of 0.5 would be the center of the view.
 	 */
 	/*TODO fix
@@ -299,7 +299,7 @@ public abstract class XMLObjectView extends View implements ViewHidable //TODO s
 
 	/**
 	 * Provides a mapping from the coordinate space of the model to that of the view.
-	 * @param pos The position to convert (>=0).
+	 * @param pos The position to convert (&gt;=0).
 	 * @param allocation The allocated region to render into.
 	 * @return The bounding box of the given position.
 	 * @throws BadLocationException Thrown if the given position does not represent a valid location governed by the view in the associated document.
@@ -343,8 +343,8 @@ public abstract class XMLObjectView extends View implements ViewHidable //TODO s
 
 	/**
 	 * Provides a mapping from the view coordinate space to the logical coordinate space of the model.
-	 * @param x The X coordinate (>= 0).
-	 * @param y The Y coordinate (>= 0).
+	 * @param x The X coordinate (&gt;= 0).
+	 * @param y The Y coordinate (&gt;= 0).
 	 * @param allocation The allocated region to render into.
 	 * @return The location within the model that best represents the given point in the view
 	 * @see View#viewToModel
@@ -377,8 +377,8 @@ public abstract class XMLObjectView extends View implements ViewHidable //TODO s
 
 	/**
 	 * Sets the size of the object, while keeping the object in the same proportions.
-	 * @param width The width (>=0).
-	 * @param height The height (>=0).
+	 * @param width The width (&gt;=0).
+	 * @param height The height (&gt;=0).
 	 */
 	public void setSize(float width, float height) {
 		/*TODO del

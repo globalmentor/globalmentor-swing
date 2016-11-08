@@ -17,6 +17,7 @@
 package com.globalmentor.swing.tree;
 
 import javax.swing.*;
+import javax.swing.event.TreeModelEvent;
 import javax.swing.tree.*;
 
 /**
@@ -114,13 +115,13 @@ public class Trees {
 	 * <p>
 	 * This method must be called <em>after</em> the node is removed.
 	 * </p>
-	 * @param parentNode The parent tree node of the child that has been deleted.
+	 * @param parentPath The parent tree node path of the child that has been deleted.
 	 * @param index The index at which the child node was located.
 	 * @return The node that should be selected after the node has been removed.
-	 * @see TreeModelEvent#getChildIndices
-	 * @see TreeModelEvent#getChildren
-	 * @see TreeModelEvent#getTreePath
-	 * @see #getRemainingNode
+	 * @see TreeModelEvent#getChildIndices()
+	 * @see TreeModelEvent#getChildren()
+	 * @see TreeModelEvent#getTreePath()
+	 * @see #getRemainingNode(DefaultMutableTreeNode)
 	 */
 	public static TreePath getRemainingPath(final TreePath parentPath, final int index) {
 		final Object parentNode = parentPath.getLastPathComponent(); //get the last path component

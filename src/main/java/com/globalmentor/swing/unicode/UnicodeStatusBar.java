@@ -180,7 +180,7 @@ public class UnicodeStatusBar extends StatusBar {
 	/**
 	 * Updates the status when a text component caret is updated by updating the Unicode status labels to represent the character under the caret.
 	 * @param caretEvent The event that holds information about the caret change.
-	 * @see #updateStatus(JTextComponent, int)
+	 * @see #updateStatus(Document, int)
 	 */
 	protected void updateStatus(final CaretEvent caretEvent) {
 		final Object source = caretEvent.getSource(); //get the source of the event
@@ -192,7 +192,7 @@ public class UnicodeStatusBar extends StatusBar {
 	/**
 	 * Updates the status when a text component document is changed if that change appears under the cursor.
 	 * @param documentEvent The event that holds information about the document change.
-	 * @see #updateStatus(JTextComponent, int)
+	 * @see #updateStatus(Document, int)
 	 */
 	protected void updateStatus(final DocumentEvent documentEvent) {
 		final int position = getPosition(); //get our current position

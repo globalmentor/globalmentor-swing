@@ -46,7 +46,7 @@ import com.globalmentor.util.prefs.Preferencesable;
  * An abstract class that manages resources, their views, and their modified states. This class does not actually change the displayed component in any
  * container, relying on some other class to perform that function in response to a change in resource component state.
  * @param <R> The type of resource the components of which are being managed.
- * @see ResourceComponentManager#ResourceComponentState
+ * @see ResourceComponentManager#resourceComponentState
  * @author Garret Wilson
  */
 public abstract class ResourceComponentManager<R extends Resource> implements Preferencesable {
@@ -310,7 +310,6 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 	/**
 	 * Determines if all open resources and associated components can close.
 	 * @return <code>true</code> if all open resources and associated components can close.
-	 * @see #canClose(ResourceComponentState)
 	 */
 	public boolean canCloseAll() {
 		//for a better user experience, check the current resource component state first
@@ -330,7 +329,6 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 	/**
 	 * Determines if the current resource, if any, and its component can close.
 	 * @return <code>true</code> if the resource, if any, and its component can close.
-	 * @see #canClose(ResourceComponentState)
 	 */
 	/*TODO fix
 		public boolean canClose()
@@ -474,7 +472,6 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 	 * @param resource The resource to open, or <code>null</code> if a resource should be chosen.
 	 * @return <code>true</code> if the resource was successfully opened, or <code>false</code>if the operation was canceled.
 	 * @see ResourceSelector#selectInputResource(Resource)
-	 * @see #setResourceComponentState(ResourceComponentState)
 	 */
 	public boolean open(R resource) { //TODO test; this is being made public to retrofit the old MentoractTeacherPanel; tread carefully, lest we corrupt the API needlessly
 		try {
@@ -535,6 +532,7 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 	 * @param resource The resource to open.
 	 * @param inputStream The input stream from which to read the data.
 	 * @throws IOException Thrown if there is an error reading the data.
+	 * @return The component read from the input stream.
 	 */
 	protected abstract Component read(final R resource, final InputStream inputStream) throws IOException;
 
@@ -550,7 +548,6 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 	 * For normal operation, this method should not be modified and <code>save(Resource)</code> should be overridden.
 	 * </p>
 	 * @return <code>true</code> if there was a resource to save and the operation was not canceled.
-	 * @see #save(Resource)
 	 * @see #saveAs
 	 * @see #getResourceComponentState()
 	 */
@@ -572,7 +569,6 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 	 * </p>
 	 * @param resourceComponentState The state information of the resource to be saved.
 	 * @return <code>true</code> if the operation was not canceled.
-	 * @see #save(Resource)
 	 * @see #saveAs
 	 * @see #getResourceComponentState()
 	 */
@@ -611,7 +607,6 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 	 * Saves the open resource after first asking for a URI.
 	 * @param resourceComponentState The state information of the resource to save.
 	 * @return <code>true</code> if the operation was not canceled.
-	 * @see #setResourceComponentState(ResourceComponentState)
 	 */
 	protected boolean saveAs(final ResourceComponentState resourceComponentState) {
 		try {
@@ -846,7 +841,6 @@ public abstract class ResourceComponentManager<R extends Resource> implements Pr
 	/**
 	 * A representation of a resource and its associated view. A resource component state always represents a valid resource and a valid component, although the
 	 * resource may be anonymous with no reference URI.
-	 * @param <R2> The type of resource the state of which is being stored.
 	 * @author Garret Wilson
 	 */
 	public class ResourceComponentState extends DefaultObjectState<R> {

@@ -49,8 +49,8 @@ public class InvisibleView extends ZeroSpanView {
 	 * implementation therefore returns <code>BadBreakWeight+1</code>. This prevents invisible views from coming between and breaking visible views that should
 	 * not be separated (the first has page-break-after: avoid, for example).
 	 * @param axis The breaking axis, either View.X_AXIS or View.Y_AXIS.
-	 * @param pos The potential location of the start of the broken view (>=0).
-	 * @param len Specifies the relative length from <var>pos</var> where a potential break is desired (>=0).
+	 * @param pos The potential location of the start of the broken view (&gt;=0).
+	 * @param len Specifies the relative length from <var>pos</var> where a potential break is desired (&gt;=0).
 	 * @return The weight, which should be a value between <code>View.ForcedBreakWeight</code> and <code>View.BadBreakWeight.</code>
 	 */
 	public int getBreakWeight(int axis, float pos, float len) {
@@ -62,7 +62,7 @@ public class InvisibleView extends ZeroSpanView {
 	 * <p>
 	 * As this view is always hidden, it always returns -1.
 	 * </p>
-	 * @param pos The position to convert (>=0).
+	 * @param pos The position to convert (&gt;=0).
 	 * @param a The allocated region in which to render.
 	 * @param direction The direction from the current position that can be thought of as the arrow keys typically found on a keyboard. This will be one of the
 	 *          following values:
@@ -73,7 +73,7 @@ public class InvisibleView extends ZeroSpanView {
 	 *          <li>SwingConstants.SOUTH</li>
 	 *          </ul>
 	 * @return The location within the model that best represents the next location visual position. This version always returns -1.
-	 * @throws BadLocationException
+	 * @throws BadLocationException Thrown if the position represents an invalid location within the document.
 	 * @throws IllegalArgumentException if <code>direction</code> doesn't have one of the legal values above
 	 */
 	public int getNextVisualPositionFrom(int pos, Position.Bias b, Shape a, int direction, Position.Bias[] biasRet) throws BadLocationException {

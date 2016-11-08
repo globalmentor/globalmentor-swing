@@ -110,7 +110,7 @@ public class AnonymousElement implements Element //TODO isn't there a better nam
 	/**
 	 * Fetches the offset from the beginning of the document that this element begins at. The elements are assumed to be stored in logical order, so this returns
 	 * the offset of the first child.
-	 * @return The starting offset (>=0).
+	 * @return The starting offset (&gt;=0).
 	 */
 	public int getStartOffset() {
 		return childElementArray[0].getStartOffset(); //return the offset of the first element
@@ -123,7 +123,7 @@ public class AnonymousElement implements Element //TODO isn't there a better nam
 	 * All the default Document implementations descend from AbstractDocument. AbstractDocument models an implied break at the end of the document. As a result of
 	 * this, it is possible for this to return a value greater than the length of the document.
 	 * </p>
-	 * @return The ending offset (>=0).
+	 * @return The ending offset (&gt;=0).
 	 * @see AbstractDocument
 	 */
 	public int getEndOffset() {
@@ -132,8 +132,8 @@ public class AnonymousElement implements Element //TODO isn't there a better nam
 
 	/**
 	 * Gets the child element index closest to the given offset. The offset is specified relative to the beginning of the document.
-	 * @param offset The specified offset (>=0).
-	 * @return The element index (>=0), or -1 if .
+	 * @param offset The specified offset (&gt;=0).
+	 * @return The element index (&gt;=0), or -1 if .
 	 */
 	public int getElementIndex(final int offset) {
 		for(int childElementIndex = getElementCount() - 1; childElementIndex >= 0; --childElementIndex) { //look at each element
@@ -146,7 +146,7 @@ public class AnonymousElement implements Element //TODO isn't there a better nam
 
 	/**
 	 * Returns the number of child elements contained by this element.
-	 * @return The number of child elements (>=0).
+	 * @return The number of child elements (&gt;=0).
 	 */
 	public int getElementCount() {
 		return childElementArray.length;
@@ -154,7 +154,7 @@ public class AnonymousElement implements Element //TODO isn't there a better nam
 
 	/**
 	 * Fetches the child element at the given index.
-	 * @param index The specified index (>=0).
+	 * @param index The specified index (&gt;=0).
 	 * @return The child element requested.
 	 */
 	public Element getElement(final int index) {

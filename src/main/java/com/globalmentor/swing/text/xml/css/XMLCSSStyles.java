@@ -612,6 +612,7 @@ public class XMLCSSStyles {
 	/**
 	 * Gets the CSS <code>text-indent</code> setting from the attribute set in pixels. TODO actually, right now it returns the value in points; fix this
 	 * @param attributeSet The attribute set containing CSS properties.
+	 * @param font The font to be used when calculating relative lengths, such as <code>ems</code>.
 	 * @return The text indent amount in pixels or, if text indent is not specified, the default amount, which is 0. //TODO testing font; comment
 	 */
 	public static float getTextIndent(final AttributeSet attributeSet, final Font font) { //TODO we'll probably need to pass a length here or something

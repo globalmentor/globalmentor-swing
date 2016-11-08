@@ -35,7 +35,7 @@ public class TextComponents //TODO do we really want this and SwingText?
 	/**
 	 * Removes all highlights using a particular highlight painter from a text component.
 	 * @param textComponent The text component which has the highlights.
-	 * @param hightlightPainter The painter the highlights of which should be removed.
+	 * @param highlightPainter The painter the highlights of which should be removed.
 	 * @return The number of highlights removed.
 	 */
 	public static int removeHighlights(final JTextComponent textComponent, final Highlighter.HighlightPainter highlightPainter) {
@@ -55,7 +55,7 @@ public class TextComponents //TODO do we really want this and SwingText?
 	/**
 	 * Removes a highlight from a text component if the highlight uses a particular highlight painter and has a particular offset and length.
 	 * @param textComponent The text component which has the highlights.
-	 * @param hightlightPainter The painter a highlight of which should be removed.
+	 * @param highlightPainter The painter a highlight of which should be removed.
 	 * @para
 	 * @return The number of highlights removed.
 	 */

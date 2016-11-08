@@ -46,16 +46,16 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 	/** The shared default break strategy for container views. */
 	protected static final ViewBreakStrategy DEFAULT_BREAK_STRATEGY = ContainerBoxView.DEFAULT_BREAK_STRATEGY;
 
-	/** The stategy for breaking this view into fragments. */
+	/** The strategy for breaking this view into fragments. */
 	private ViewBreakStrategy breakStrategy = DEFAULT_BREAK_STRATEGY;
 
-	/** @return The stategy for breaking this view into fragments. */
+	/** @return The strategy for breaking this view into fragments. */
 	protected ViewBreakStrategy getBreakStrategy() {
 		return breakStrategy;
 	}
 
 	/**
-	 * Sets the stategy for breaking this view into fragments.
+	 * Sets the strategy for breaking this view into fragments.
 	 * @param strategy The strategy to use for creating view fragments.
 	 */
 	protected void setBreakStrategy(final ViewBreakStrategy strategy) {
@@ -69,7 +69,7 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 
 	/**
 	 * Gets the justification of the paragraph. This is present because <code>ParagraphView</code> ParagraphView provides no accessor functions for justification.
-	 * @preturn The justification of the paragraph.
+	 * @return The justification of the paragraph.
 	 */
 	public int getJustification() {
 		return justification;
@@ -90,7 +90,7 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 
 	/**
 	 * Gets the line spacing of the paragraph. This is present because <code>ParagraphView</code> ParagraphView provides no accessor functions for line spacing.
-	 * @preturn The line spacing of the paragraph.
+	 * @return The line spacing of the paragraph.
 	 */
 	public float getLineSpacing() {
 		return lineSpacing;
@@ -201,7 +201,7 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 	/**
 	 * Returns the constraining span to flow against for the given child index. This is called by the <code>FlowStrategy</code> while it is updating the flow.
 	 * This method overrides the standard version to allow first-line indentions.
-	 * @param index The index of the row being updated (>=0 and <getViewCount()).
+	 * @param index The index of the row being updated (&gt;=0 and &lt; getViewCount()).
 	 * @see ParagraphView#getFlowSpan
 	 * @see #getFlowStart
 	 */
@@ -240,7 +240,6 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 	 * @param offsets The offsets from the origin of the view for each of the child views. This is a return value and is filled in by the implementation of this
 	 *          method.
 	 * @param spans The span of each child view. This is a return value and is filled in by the implementation of this method.
-	 * @returns the offset and span for each child view in the offsets and spans parameters.
 	 */
 	protected void layoutMinorAxis(final int targetSpan, final int axis, final int[] offsets, final int[] spans) {
 		super.layoutMinorAxis(targetSpan, axis, offsets, spans); //do the default layout
@@ -267,7 +266,7 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 
 	/**
 	 * Determines the preferred span for this view. Returns 0 if the view is not visible, otherwise it calls the superclass method to get the preferred span.
-	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS<code>).
+	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS</code>).
 	 * @return The span the view would like to be rendered into.
 	 * @see javax.swing.text.ParagraphView#getPreferredSpan
 	 */
@@ -278,7 +277,7 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 	/**
 	 * Determines the minimum span for this view along an axis. Returns 0 if the view is not visible, otherwise it calls the superclass method to get the minimum
 	 * span.
-	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS<code>).
+	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS</code>).
 	 * @return The minimum span the view can be rendered into.
 	 * @see javax.swing.text.ParagraphView#getMinimumSpan
 	 */
@@ -289,7 +288,7 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 	/**
 	 * Determines the maximum span for this view along an axis. Returns 0 if the view is not visible, otherwise it calls the superclass method to get the maximum
 	 * span.
-	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS<code>).
+	 * @param axis The axis (<code>View.X_AXIS</code> or <code>View.Y_AXIS</code>).
 	 * @return The maximum span the view can be rendered into.
 	 * @see javax.swing.text.ParagraphView#getMaximumSpan
 	 */
@@ -347,8 +346,8 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 	 * </dl>
 	 * This will result in the view being broken with the maximum number of child views that can fit within the required span.
 	 * @param axis The breaking axis, either View.X_AXIS or View.Y_AXIS.
-	 * @param pos The potential location of the start of the broken view (>=0). This may be useful for calculating tab positions.
-	 * @param len Specifies the relative length from <var>pos</var> where a potential break is desired (>=0).
+	 * @param pos The potential location of the start of the broken view (&gt;=0). This may be useful for calculating tab positions.
+	 * @param len Specifies the relative length from <var>pos</var> where a potential break is desired (&gt;=0).
 	 * @return The weight, which should be a value between <code>View.ForcedBreakWeight
 		and View.BadBreakWeight.</code>
 	 */
@@ -381,11 +380,11 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 	/**
 	 * Breaks this view on the given axis at the given length. This implementation delegates to the view break strategy.
 	 * @param axis The axis to break along, either View.X_AXIS or View.Y_AXIS.
-	 * @param offset The location in the model where the fragment should start its representation (>=0).
-	 * @param pos The position along the axis that the broken view would occupy (>=0).
-	 * @param length Specifies the distance along the axis where a potential break is desired (>=0).
+	 * @param offset The location in the model where the fragment should start its representation (&gt;=0).
+	 * @param pos The position along the axis that the broken view would occupy (&gt;=0).
+	 * @param length Specifies the distance along the axis where a potential break is desired (&gt;=0).
 	 * @return The fragment of the view that represents the given span, or the view itself if it cannot be broken
-	 * @see ViewBreakStrategy#breakView()
+	 * @see ViewBreakStrategy#breakView(BoxView, int, int, float, float, FragmentViewFactory)
 	 */
 	public View breakView(final int axis, final int offset, final float pos, final float length) {
 		final float marginSpan = (axis == X_AXIS) ? getLeftInset() + getRightInset() : getTopInset() + getBottomInset(); //see how much margin we have to allow for
@@ -394,10 +393,10 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 
 	/**
 	 * Creates a view that represents a portion of the element. This implementation delegates to the view break strategy.
-	 * @param p0 The starting offset (>=0). This should be a value greater or equal to the element starting offset and less than the element ending offset.
-	 * @param p1 The ending offset (>p0). This should be a value less than or equal to the elements end offset and greater than the elements starting offset.
+	 * @param p0 The starting offset (&gt;=0). This should be a value greater or equal to the element starting offset and less than the element ending offset.
+	 * @param p1 The ending offset (&gt;p0). This should be a value less than or equal to the elements end offset and greater than the elements starting offset.
 	 * @return The view fragment, or itself if the view doesn't support breaking into fragments.
-	 * @see ViewBreakStrategy#createFragment()
+	 * @see ViewBreakStrategy#createFragment(BoxView, int, int, FragmentViewFactory)
 	 */
 	public View createFragment(int p0, int p1) {
 		return getBreakStrategy().createFragment(this, p0, p1, this); //ask the view break strategy to break our view, using this view as the view fragment factory
@@ -498,7 +497,6 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 		 * @param offsets the offsets from the origin of the view for each of the child views. This is a return value and is filled in by the implementation of this
 		 *          method.
 		 * @param spans the span of each child view. This is a return value and is filled in by the implementation of this method.
-		 * @returns the offset and span for each child view in the offsets and spans parameters.
 		 */
 		protected void layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans) { //TODO verify this method
 			baselineLayout(targetSpan, axis, offsets, spans); //do a baseline layout of the row
@@ -546,7 +544,6 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 	 * gives the logical child views access to the view hierarchy, and calculates a preferred span. It doesn't do any rendering, layout, or model/view
 	 * translation. This class replicates functionality of <code>FlowView.LogicalView</code> with special view loading for paragraph children to accomodate nested
 	 * style tags. This class does not descend from <code>FlowView.LogicalView</code> because that class has package visibility.
-	 * @see FlowView#LogicalView
 	 */
 	protected class LinePoolView extends ContainerView {
 
@@ -573,7 +570,7 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 		 * create a view for each child element, as normal. If the view factory returns <code>null</code> for an element, however, the element's children will be
 		 * iterated and the same process will take place. This allows nested inline elements to be correctly turned into inline views by a view factory which
 		 * recognizes this procedure, with the view factory determining which element hierarchies should be iterated (such as XHTML <code>&lt;em&gt;</code>) and
-		 * which should not (such as XHTML <code>&img;</code>). View factories which do not support this procedure will function as normal.
+		 * which should not (such as XHTML <code>&lt;img&gt;</code>). View factories which do not support this procedure will function as normal.
 		 * @param viewFactory The view factory.
 		 * @see #setParent
 		 */
@@ -664,7 +661,6 @@ public class XMLParagraphView extends ParagraphView implements Inset, XMLCSSView
 		 * @param offsets The offsets from the origin of the view for each of the child views. This is a return value and is filled in by the implementation of this
 		 *          method.
 		 * @param spans The span of each child view. This is a return value and is filled in by the implementation of this method.
-		 * @returns the offset and span for each child view in the offsets and spans parameters.
 		 */
 		protected void layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans) { //TODO testing
 			super.layoutMinorAxis(targetSpan, axis, offsets, spans); //do the default layout

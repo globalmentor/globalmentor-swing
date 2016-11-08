@@ -225,6 +225,7 @@ public abstract class AbstractListModelComponentSequencePanel<E> extends Abstrac
 
 	/**
 	 * Goes to the indicated step in the sequence.
+	 * @param index The zero-based index of the step in the sequence.
 	 * @see #setIndex
 	 */
 	public void go(final int index) {

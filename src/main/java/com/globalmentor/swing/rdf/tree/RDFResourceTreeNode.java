@@ -32,7 +32,7 @@ public class RDFResourceTreeNode extends DefaultMutableTreeNode {
 	/**
 	 * Convenience function for retrieving the represented RDF resource.
 	 * @return The RDF resource this tree node represents, already cast to a <code>RDFResource</code>.
-	 * @see DefaultMutableTreeNode#getUserObject
+	 * @see DefaultMutableTreeNode#getUserObject()
 	 */
 	public RDFResource getRDFResource() {
 		return (RDFResource)getUserObject(); //return the user object cast to an RDF resource

@@ -31,12 +31,12 @@ import com.globalmentor.awt.Inset;
  * Manages AWT/Swing components for a particular view. Used with a view that contains AWT/Swing components.
  * <p>
  * Views that use the view manager should:
+ * </p>
  * <ul>
  * <li>call {@link ViewComponentManager#setLocation(Shape)} from within <code>View.paint()</code> after calling the view's default version.</li>
  * <li>call {@link ViewComponentManager#setSize(float, float)} from within {@link View#setSize(float, float)} after calling the view's default version.</li>
  * <li>call {@link ViewComponentManager#setShowing(boolean)} as needed.</li>
  * </ul>
- * </p>
  * <p>
  * If region-based positioning is used, the associated view should implement {@link Inset}.
  * </p>
@@ -232,7 +232,7 @@ public class ViewComponentManager //TODO finish the class comments with examples
 
 	/**
 	 * The map of component information, each keyed to a component being managed.
-	 * @see #ComponentInfo
+	 * @see ComponentInfo
 	 */
 	protected final Map<Component, ComponentInfo> componentInfoMap = new HashMap<Component, ComponentInfo>();
 
@@ -528,10 +528,10 @@ public class ViewComponentManager //TODO finish the class comments with examples
 		component.setVisible(showing); //show or hide the component appropriately
 		final Container container = getView().getContainer(); //get the container the view is placed in
 		if(showing) { //if we're now showing the component
-		//TODO del Log.trace("showing component"); //TODO del
+			//TODO del Log.trace("showing component"); //TODO del
 			if(container != null && component.getParent() != container) { //if we have a valid container, and the component isn't already in the container
-			//TODO del Log.trace("component into container"); //TODO del
-			//TODO del System.out.println("component size before added to container: "+component.getSize().getWidth()+" height: "+component.getSize().getHeight());  //TODO del
+				//TODO del Log.trace("component into container"); //TODO del
+				//TODO del System.out.println("component size before added to container: "+component.getSize().getWidth()+" height: "+component.getSize().getHeight());  //TODO del
 				container.add(component); //add the component to the container
 				//TODO del System.out.println("component size after added to container: "+component.getSize().getWidth()+" height: "+component.getSize().getHeight());  //TODO del
 
@@ -542,7 +542,7 @@ public class ViewComponentManager //TODO finish the class comments with examples
 			//TODO testing a way to remove the component from the container
 			//TODO del Log.trace("Container: ", container);  //TODO del
 			if(container != null && component.getParent() == container) { //if we have a valid container, and the component is in the container
-			//TODO del Log.trace("removing component from container"); //TODO del
+				//TODO del Log.trace("removing component from container"); //TODO del
 				container.remove(component); //remove the component from the container
 			}
 		}
@@ -551,8 +551,8 @@ public class ViewComponentManager //TODO finish the class comments with examples
 	/**
 	 * Indicates the view size is changing, and modifies the locations of all components appropriately that have registered a location relative to the absolute
 	 * view size. This version sets the full size to match the scaled size.
-	 * @param newScaledWidth The current scaled width (>=0).
-	 * @param newScaledHeight The current scaled height (>=0).
+	 * @param newScaledWidth The current scaled width (&gt;=0).
+	 * @param newScaledHeight The current scaled height (&gt;=0).
 	 * @see #setSize(float, float, float, float)
 	 */
 	public void setSize(final float newScaledWidth, final float newScaledHeight) {
@@ -562,10 +562,10 @@ public class ViewComponentManager //TODO finish the class comments with examples
 	/**
 	 * Indicates the view size is changing, and modifies the locations of all components appropriately that have registered a location relative to the absolute
 	 * view size. The absolute size of the view must first have been set.
-	 * @param newFullWidth The unscaled width (>=0).
-	 * @param newFullHeight The unscaled height (>=0).
-	 * @param newScaledWidth The current scaled width (>=0).
-	 * @param newScaledHeight The current scaled height (>=0).
+	 * @param newFullWidth The unscaled width (&gt;=0).
+	 * @param newFullHeight The unscaled height (&gt;=0).
+	 * @param newScaledWidth The current scaled width (&gt;=0).
+	 * @param newScaledHeight The current scaled height (&gt;=0).
 	 * @see #updateComponentScaledPositions()
 	 */
 	public void setSize(final float newFullWidth, final float newFullHeight, final float newScaledWidth, final float newScaledHeight) {

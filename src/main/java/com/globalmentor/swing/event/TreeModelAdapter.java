@@ -72,7 +72,7 @@ public class TreeModelAdapter implements TreeModelListener {
 	 * <p>
 	 * Invoked after the tree has drastically changed structure from a given node down. If the path returned by e.getPath() is of length one and the first element
 	 * does not identify the current root node the first element should become the new root of the tree.
-	 * <p>
+	 * </p>
 	 * 
 	 * <p>
 	 * Use <code>e.getPath()</code> to get the path to the node. <code>e.getChildIndices()</code> returns null.

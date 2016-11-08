@@ -91,13 +91,13 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 	 * //TODO fix
 	 * <p>
 	 * If the <code>Action</code> passed in is <code>null</code>, the following things will occur:
+	 * </p>
 	 * <ul>
 	 * <li>the text is set to <code>null</code>,
 	 * <li>the icon is set to <code>null</code>,
 	 * <li>enabled is set to true,
 	 * <li>the tooltip text is set to <code>null</code>
 	 * </ul>
-	 * </p>
 	 * @param action The <code>Action</code> from which to get the properties, or <code>null</code>.
 	 * @see Action
 	 * @see #setProxiedAction
@@ -133,7 +133,7 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 			}
 			setEnabled(action.isEnabled()); //update the enabled property (which isn't stored using a normal key/value pair, as are the other properties)
 		} else { //if there is no action
-		//TODO del Log.trace("no action; disabling"); //TODO del
+			//TODO del Log.trace("no action; disabling"); //TODO del
 			//TODO fix the properties appropriately
 			setEnabled(false); //disable this action
 		}
@@ -147,31 +147,29 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 	 * A side-effect of setting the <code>Action</code> is that the <code>ActionEvent</code> source's properties are immediately set from the values in the
 	 * <code>Action</code> (performed by the method <code>configurePropertiesFromAction</code>) and subsequently updated as the <code>Action</code>'s properties
 	 * change (via a <code>PropertyChangeListener</code> created by the method <code>createActionPropertyChangeListener</code>).
-	 * <p>
+	 * </p>
 	 * @param action The <code>Action</code> to be proxied, or <code>null</code> if proxying should be discontinued.
 	 * @see AbstractAction
 	 * @see #getProxiedAction
 	 * @see #configurePropertiesFromAction
-	 * @see #createActionPropertyChangeListener
-	 * @beaninfo bound: true attribute: visualUpdate false description: The Action instance connected with this ActionEvent source
 	 */
 	public void setProxiedAction(final Action action) {
 		final Action oldAction = getProxiedAction(); //see what action we had before
 		if(proxiedAction == null || !proxiedAction.equals(action)) { //if we didn't have an action or if they want a new action
 			proxiedAction = action; //update the action
 			if(oldAction != null) { //if we had an action before
-			//TODO del				removeActionListener(oldAction);  //don't listen for the old action anymore
+				//TODO del				removeActionListener(oldAction);  //don't listen for the old action anymore
 				oldAction.removePropertyChangeListener(this); //don't listen for the old action anymore
 				//TODO del if not needed				actionPropertyChangeListener=null;  //we no longer need the listener for the old action
 			}
 			configurePropertiesFromAction(proxiedAction); //now that we have a new action, configure our properties from it
 			if(proxiedAction != null) { //if we now have an action
-			/*TODO do we need this?
-					// Don't add if it is already a listener
-					if (!isListener(ActionListener.class, action)) {
-					    addActionListener(action);
-						}
-			*/
+				/*TODO do we need this?
+						// Don't add if it is already a listener
+						if (!isListener(ActionListener.class, action)) {
+						    addActionListener(action);
+							}
+				*/
 				proxiedAction.addPropertyChangeListener(this); //add ourselves as a listener to the property changes of the proxied action
 				/*TODO del if not needed
 							//create a listener to find out when the proxied action changes properties
@@ -201,7 +199,7 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 		//TODO del Log.trace("property being changed: ", propertyName);  //TODO del
 		/*TODO del; not needed; "enabled" property changes apparently property propogate
 				if("enabled".equals(propertyName)) {	//if the enabled property is changing, we'll have to call the method manually, apparently
-
+		
 				}
 				else
 		*/
@@ -238,14 +236,14 @@ public class ProxyAction extends AbstractAction implements PropertyChangeListene
 		{
 			return new ProxyActionPropertyChangeListener(this, proxiedAction);  //create a listener and return it
 		}
-
+	
 		private static class ProxiedActionPropertyChangeListener extends AbstractActionPropertyChangeListener
 		{
 			ProxiedActionPropertyChangeListener(final ProxyAction proxyAction, final Action proxiedAction)
 			{
 		    super(proxyAction, proxiedAction);
 		  }
-
+	
 			public void propertyChange(PropertyChangeEvent e)
 			{
 				final String propertyName=e.getPropertyName();  //get the property name being changed

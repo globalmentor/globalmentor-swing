@@ -103,7 +103,7 @@ public class XMLInlineView extends GlyphView implements TabableView {
 
 	/**
 	 * Sets whether or not this view is underlined.
-	 * @param underlined Whether or not this view should be underlined
+	 * @param underline Whether or not this view should be underlined
 	 */
 	protected void setUnderline(boolean underline) {
 		Underline = underline;
@@ -225,7 +225,7 @@ public class XMLInlineView extends GlyphView implements TabableView {
 	//TODO fix    }
 
 	/**
-	 * Fetch the FontMetrics used for this view.
+	 * @return The FontMetrics used for this view.
 	 * @deprecated FontMetrics are not used for glyph rendering when running in the Java2 SDK.
 	 */
 	protected FontMetrics getFontMetrics() {
@@ -283,7 +283,7 @@ public class XMLInlineView extends GlyphView implements TabableView {
 	 * style context to retrieve all fonts.) If the associated document is not an <code>XMLDocument</code>, a new font is created.
 	 * @param family The font family (such as "Monospaced")
 	 * @param style The style of the font (such as <code>Font.PLAIN</code>).
-	 * @param size The point size (>=1)
+	 * @param size The point size (&gt;=1)
 	 * @return The new font.
 	 */
 	public Font getFont(final String family, final int style, final int size) { //TODO maybe put this in an XMLGlyphView
@@ -323,8 +323,8 @@ public class XMLInlineView extends GlyphView implements TabableView {
 	 * future queries. This implementation passes the request on to the <code>XMLDocument</code> if the associated document is an instance of
 	 * <code>XMLDocument</code>, or returns <code>null</code> if not.
 	 * @param c The character for which a font should be returned.
-	 * @param style The style of the font (such as <code>Font.PLAIN</cod>).
-	 * @param size The point size (>=1).
+	 * @param style The style of the font (such as <code>Font.PLAIN</code>).
+	 * @param size The point size (&gt;=1).
 	 * @return The new font, or <code>null</code> if a font could not be found to display this character.
 	 * @see XMLDocument#getFont
 	 */

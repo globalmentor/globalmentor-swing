@@ -222,7 +222,7 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 	 * @see JFrame#getContentPane
 	 * @see Modifiable
 	 * @see Modifiable#MODIFIED_PROPERTY
-	 * @see #getModifiedPropertyChangeListener
+	 * @see #getModifiedUpdateStatusPropertyChangeListener
 	 */
 	public void setContentPane(final Container contentPane) {
 		final Container oldContentPane = getContentPane(); //get the current content pane
@@ -458,7 +458,8 @@ public class BasicFrame extends JFrame implements DefaultFocusable, CanClosable,
 	private final Map actionGroupButtonGroupMap = new HashMap();
 
 	/**
-	 * Retrieves a button group for the given action group. If no button group exists for the given action group, one is created.
+	 * @return A button group for the given action group. If no button group exists for the given action group, one is created.
+	 * @param actionGroup The action group to retrieve its button group.
 	 */
 	protected ButtonGroup getButtonGroup(final ActionGroup actionGroup) {
 		ButtonGroup buttonGroup = (ButtonGroup)actionGroupButtonGroupMap.get(actionGroup); //get a button group group for this action group

@@ -344,8 +344,8 @@ class XMLTableView extends TableView implements Cloneable {
 	 * Determines how attractive a break opportunity in this view is. This is implemented to forward to the superclass for the A axis. Along the Y axis,
 	 * <code>GoodBreakWeight</code> will be returned.
 	 * @param axis The breaking axis, either View.X_AXIS or View.Y_AXIS.
-	 * @param pos The potential location of the start of the broken view (>=0). This may be useful for calculating tab positions.
-	 * @param len Specifies the relative length from <em>pos</em> where a potential break is desired (>=0).
+	 * @param pos The potential location of the start of the broken view (&gt;=0). This may be useful for calculating tab positions.
+	 * @param len Specifies the relative length from <em>pos</em> where a potential break is desired (&gt;=0).
 	 * @return The weight, which should be a value between View.ForcedBreakWeight and View.BadBreakWeight.
 	 * @see XMLBlockView
 	 * @see GoodBreakWeight
@@ -364,9 +364,9 @@ class XMLTableView extends TableView implements Cloneable {
 	 * Breaks this view on the given axis at the given length. This is implemented to attempt to break on the largest number of child views that can fit within
 	 * the given length.
 	 * @param axis The axis to break along, either View.X_AXIS or View.Y_AXIS.
-	 * @param p0 the location in the model where the fragment should start its representation (>=0).
-	 * @param pos the position along the axis that the broken view would occupy (>=0). This may be useful for things like tab calculations.
-	 * @param len Specifies the distance along the axis where a potential break is desired (>=0).
+	 * @param p0 the location in the model where the fragment should start its representation (&gt;=0).
+	 * @param pos the position along the axis that the broken view would occupy (&gt;=0). This may be useful for things like tab calculations.
+	 * @param len Specifies the distance along the axis where a potential break is desired (&gt;=0).
 	 * @return The fragment of the view that represents the given span, if the view can be broken. If the view doesn't support breaking behavior, the view itself
 	 *         is returned.
 	 * @see View#breakView
@@ -431,9 +431,9 @@ class XMLTableView extends TableView implements Cloneable {
 	 * Creates a view that represents a portion of the element. This is potentially useful during formatting operations for taking measurements of fragments of
 	 * the view. If the view doesn't support fragmenting, it should return itself.<br/>
 	 * This view does support fragmenting. It is implemented to return a new view that contains the required child views.
-	 * @param p0 The starting offset (>=0). This should be a value greater or equal to the element starting offset and less than the element ending offset.
-	 * @param p1 The ending offset (>p0). This should be a value less than or equal to the elements end offset and greater than the elements starting offset.
-	 * @returns The view fragment, or itself if the view doesn't support breaking into fragments.
+	 * @param p0 The starting offset (&gt;=0). This should be a value greater or equal to the element starting offset and less than the element ending offset.
+	 * @param p1 The ending offset (&gt;p0). This should be a value less than or equal to the elements end offset and greater than the elements starting offset.
+	 * @return The view fragment, or itself if the view doesn't support breaking into fragments.
 	 * @see View#createFragment
 	 */
 	public View createFragment(int p0, int p1) {
@@ -686,7 +686,7 @@ class XMLTableView extends TableView implements Cloneable {
 	 * @param reqs the requirements desired for each column. This is the column maximum of the cells minimum, preferred, and maximum requested span.
 	 * @param spans the return value of how much to allocated to each column.
 	 * @param offsets the return value of the offset from the origin for each column.
-	 * @returns the offset from the origin and the span for each column in the offsets and spans parameters.
+	 * @return the offset from the origin and the span for each column in the offsets and spans parameters.
 	 */
 	protected void layoutColumns(int targetSpan, int[] offsets, int[] spans, SizeRequirements[] reqs) {
 		// allocate using the convenience method on SizeRequirements
@@ -706,7 +706,6 @@ class XMLTableView extends TableView implements Cloneable {
 	 * @param offsets the offsets from the origin of the view for each of the child views. This is a return value and is filled in by the implementation of this
 	 *          method.
 	 * @param spans the span of each child view. This is a return value and is filled in by the implementation of this method.
-	 * @returns the offset and span for each child view in the offsets and spans parameters.
 	 */
 	protected void layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans) {
 		Log.trace("TODO search");
@@ -918,7 +917,7 @@ class XMLTableView extends TableView implements Cloneable {
 	 *
 	 * @param pos the search position >= 0
 	 * @param a the allocation to the table on entry, and the allocation of the view containing the position on exit
-	 * @returns the view representing the given position, or null if there isn't one
+	 * @return the view representing the given position, or null if there isn't one
 	 */
 	protected View getViewAtPosition(int pos, Rectangle a) {
 		int n = getViewCount();
@@ -1059,8 +1058,8 @@ class XMLTableView extends TableView implements Cloneable {
 		 * Determines how attractive a break opportunity in this view is. This is implemented to forward to the superclass for the A axis. Along the Y axis,
 		 * <code>GoodBreakWeight</code> will be returned.
 		 * @param axis The breaking axis, either View.X_AXIS or View.Y_AXIS.
-		 * @param pos The potential location of the start of the broken view (>=0). This may be useful for calculating tab positions.
-		 * @param len Specifies the relative length from <em>pos</em> where a potential break is desired (>=0).
+		 * @param pos The potential location of the start of the broken view (&gt;=0). This may be useful for calculating tab positions.
+		 * @param len Specifies the relative length from <em>pos</em> where a potential break is desired (&gt;=0).
 		 * @return The weight, which should be a value between View.ForcedBreakWeight and View.BadBreakWeight.
 		 * @see XMLBlockView
 		 * @see GoodBreakWeight
@@ -1080,9 +1079,9 @@ class XMLTableView extends TableView implements Cloneable {
 		 * Breaks this view on the given axis at the given length. This is implemented to attempt to break on the largest number of child views that can fit within
 		 * the given length.
 		 * @param axis The axis to break along, either View.X_AXIS or View.Y_AXIS.
-		 * @param p0 the location in the model where the fragment should start its representation (>=0).
-		 * @param pos the position along the axis that the broken view would occupy (>=0). This may be useful for things like tab calculations.
-		 * @param len Specifies the distance along the axis where a potential break is desired (>=0).
+		 * @param p0 the location in the model where the fragment should start its representation (&gt;=0).
+		 * @param pos the position along the axis that the broken view would occupy (&gt;=0). This may be useful for things like tab calculations.
+		 * @param len Specifies the distance along the axis where a potential break is desired (&gt;=0).
 		 * @return The fragment of the view that represents the given span, if the view can be broken. If the view doesn't support breaking behavior, the view
 		 *         itself is returned.
 		 * @see View#breakView
@@ -1138,9 +1137,9 @@ class XMLTableView extends TableView implements Cloneable {
 		 * Creates a view that represents a portion of the element. This is potentially useful during formatting operations for taking measurements of fragments of
 		 * the view. If the view doesn't support fragmenting, it should return itself.<br/>
 		 * This view does support fragmenting. It is implemented to return a new view that contains the required child views.
-		 * @param p0 The starting offset (>=0). This should be a value greater or equal to the element starting offset and less than the element ending offset.
-		 * @param p1 The ending offset (>p0). This should be a value less than or equal to the elements end offset and greater than the elements starting offset.
-		 * @returns The view fragment, or itself if the view doesn't support breaking into fragments.
+		 * @param p0 The starting offset (&gt;=0). This should be a value greater or equal to the element starting offset and less than the element ending offset.
+		 * @param p1 The ending offset (&gt;p0). This should be a value less than or equal to the elements end offset and greater than the elements starting offset.
+		 * @return The view fragment, or itself if the view doesn't support breaking into fragments.
 		 * @see View#createFragment
 		 */
 		public View createFragment(int p0, int p1) {
@@ -1242,7 +1241,6 @@ class XMLTableView extends TableView implements Cloneable {
 		 * @param offsets the offsets from the origin of the view for each of the child views. This is a return value and is filled in by the implementation of this
 		 *          method.
 		 * @param spans the span of each child view. This is a return value and is filled in by the implementation of this method.
-		 * @returns the offset and span for each child view in the offsets and spans parameters.
 		 */
 		protected void layoutMajorAxis(int targetSpan, int axis, int[] offsets, int[] spans) {
 			int col = 0;
@@ -1281,7 +1279,6 @@ class XMLTableView extends TableView implements Cloneable {
 		 * @param offsets the offsets from the origin of the view for each of the child views. This is a return value and is filled in by the implementation of this
 		 *          method.
 		 * @param spans the span of each child view. This is a return value and is filled in by the implementation of this method.
-		 * @returns the offset and span for each child view in the offsets and spans parameters.
 		 */
 		protected void layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans) {
 			Log.trace("TODO search");
@@ -1329,7 +1326,7 @@ class XMLTableView extends TableView implements Cloneable {
 		 *
 		 * @param pos the search position >= 0
 		 * @param a the allocation to the table on entry, and the allocation of the view containing the position on exit
-		 * @returns the view representing the given position, or null if there isn't one
+		 * @return the view representing the given position, or null if there isn't one
 		 */
 		protected View getViewAtPosition(int pos, Rectangle a) {
 			int n = getViewCount();

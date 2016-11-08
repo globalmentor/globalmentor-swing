@@ -21,7 +21,6 @@ import java.util.EventListener;
 /**
  * Indicates the implementing class can listen for modification events.
  * @author Garret Wilson
- * @see ModificationEvent
  */
 public interface ModificationListener extends EventListener {
 

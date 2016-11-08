@@ -56,6 +56,8 @@ public class XMLAnonymousBlockView extends XMLBlockView //TODO do we even need t
 	 * @param attributes The attributes for the anonymous block view.
 	 * @param childElements The children of <code>element</code> for which this anonymous view is responsible.
 	 * @param axis The tiling axis, either View.X_AXIS or View.Y_AXIS.
+	 * @param expandX Whether the XMLBlockView is allowed to expand horizontally.
+	 * @param expandY Whether the XMLBlockView is allowed to expand vertically.
 	 */
 	public XMLAnonymousBlockView(final Element element, final AttributeSet attributes, final Element[] childElements, final int axis, final boolean expandX,
 			final boolean expandY) {

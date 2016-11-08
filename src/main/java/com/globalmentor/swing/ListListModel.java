@@ -30,7 +30,7 @@ public class ListListModel<E> extends AbstractListModel implements List<E> { //T
 	/** The list this class proxies. */
 	protected final List<E> list;
 
-	/** The list this class proxies. */
+	/** @return The list this class proxies. */
 	public final List<E> getList() {
 		return list;
 	}

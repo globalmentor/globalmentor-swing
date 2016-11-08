@@ -48,8 +48,7 @@ public class MDIManager implements InternalFrameListener //TODO replace this cla
 	//TODO fix		protected ObsoleteApplicationFrame getApplicationFrame() {return applicationFrame;}
 
 	/**
-	 * Creates a MDI destop manager that manages internal framems in a desktop pane.
-	 * @param newApplicationFrame The application frame for which this object is a manager.
+	 * Creates a MDI desktop manager that manages internal frames in a desktop pane.
 	 * @param newDesktopPane The desktop pane that will holds the internal frames.
 	 */
 	public MDIManager(/*TODO fix final ObsoleteApplicationFrame newApplicationFrame, */final JDesktopPane newDesktopPane) {

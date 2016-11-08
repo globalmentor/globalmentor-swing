@@ -81,7 +81,7 @@ public class TelephonePanel extends BasicVCardPanel {
 	/**
 	 * Shows or hides the telephone number labels.
 	 * @param visible <code>true</code> if the labels should be shown, <code>false</code> if they should be hidden.
-	 * @see TelephoneNumberPanel#setLabelsVisible
+	 * @see TelephoneNumberPanel#setLabelsVisible(boolean)
 	 */
 	public void setLabelsVisible(final boolean visible) {
 		telephoneNumberPanel.setLabelsVisible(visible); //pass the request on to the telephone number panel
@@ -149,7 +149,7 @@ public class TelephonePanel extends BasicVCardPanel {
 
 	/**
 	 * Telephone number and telephone type constructor.
-	 * @param telephone The telephone information to place in the fields, or <code>null</code> if default information should be displayed.
+	 * @param telephoneNumber The telephone number to place in the fields, or <code>null</code> if default information should be displayed.
 	 * @param telephoneTypes The intended use.
 	 */
 	public TelephonePanel(final TelephoneNumber telephoneNumber, final Set<Telephone.Type> telephoneTypes) {
