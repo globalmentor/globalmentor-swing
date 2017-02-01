@@ -101,14 +101,14 @@ public class LanguagePanel extends BasicPanel {
 			protected String getListCellRendererString(final Object value) { //return the display language of each locales
 				if(value instanceof Locale) { //TODO fix all this better, and use a non-null object for the language
 					final Locale locale = (Locale)value;
-					final StringBuffer stringBuffer = new StringBuffer(locale.getDisplayLanguage());
+					final StringBuilder stringBuilder = new StringBuilder(locale.getDisplayLanguage());
 					final String displayCountry = locale.getDisplayCountry();
 					if(displayCountry != null && displayCountry.length() > 0)
-						stringBuffer.append(' ').append('(').append(displayCountry).append(')');
+						stringBuilder.append(' ').append('(').append(displayCountry).append(')');
 					final String displayVariant = locale.getDisplayVariant();
 					if(displayVariant != null && displayVariant.length() > 0)
-						stringBuffer.append(' ').append('(').append(displayVariant).append(')');
-					return stringBuffer.toString();
+						stringBuilder.append(' ').append('(').append(displayVariant).append(')');
+					return stringBuilder.toString();
 				} else {
 					return NO_LANGUAGE; //TODO fix
 					//TODO fix							return value.toString();	//TODO fix

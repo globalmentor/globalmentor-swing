@@ -938,7 +938,7 @@ public class XMLDocument extends BasicStyledDocument {
 		    // install the content
 		    Content c = getContent();
 		    int n = data.length;
-		    StringBuffer sb = new StringBuffer();
+		    StringBuilder sb = new StringBuilder();
 		    for (int i = 0; i < n; i++) {
 			ElementSpec es = data[i];
 			if (es.getLength() > 0) {

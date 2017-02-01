@@ -170,9 +170,9 @@ public class RDFObjectTreeNode extends DynamicTreeNode {
 	public String toString() {
 		final Object userObject = getUserObject(); //get the user object we're representing
 		final RDFResource property = getProperty(); //see if the object should be considered in the context of a property
-		final StringBuffer stringBuffer = new StringBuffer(); //create a new string buffer
+		final StringBuilder stringBuilder = new StringBuilder(); //create a new string buffer
 		if(property != null) { //if we are the object of a property
-			stringBuffer.append(getXMLGenerator().getLabel(property.getURI())); //append "property"
+			stringBuilder.append(getXMLGenerator().getLabel(property.getURI())); //append "property"
 		}
 		if(userObject instanceof RDFResource) { //if we're representing a resource
 			final RDFResource resource = (RDFResource)userObject; //cast the user object to a resource
@@ -181,44 +181,44 @@ public class RDFObjectTreeNode extends DynamicTreeNode {
 			boolean hasPredicateToken = false; //we'll note whether we ever have something to represent the predicate of the statement
 			if(type != null) { //if we have a type
 				if(property != null && !hasPredicateToken) //if we had a property but no predicate representation
-					stringBuffer.append(':'); //append a colon to separate the property from the rest
+					stringBuilder.append(':'); //append a colon to separate the property from the rest
 				if(hasPredicateToken) //if we had something to represent the predicate
-					stringBuffer.append(' '); //append a space to separate the rest
-				stringBuffer.append('(').append(getXMLGenerator().getLabel(type.getURI())).append(')'); //append "(type)"
+					stringBuilder.append(' '); //append a space to separate the rest
+				stringBuilder.append('(').append(getXMLGenerator().getLabel(type.getURI())).append(')'); //append "(type)"
 				hasPredicateToken = true; //show that we have something to represent the predicate
 			}
 			if(label != null) { //if there is a label
 				if(property != null && !hasPredicateToken) //if we had a property but no predicate representation
-					stringBuffer.append(':'); //append a colon to separate the property from the rest
+					stringBuilder.append(':'); //append a colon to separate the property from the rest
 				if(hasPredicateToken) //if we had something to represent the predicate
-					stringBuffer.append(' '); //append a space to separate the rest
-				stringBuffer.append(label); //append the text of the label
+					stringBuilder.append(' '); //append a space to separate the rest
+				stringBuilder.append(label); //append the text of the label
 				hasPredicateToken = true; //show that we have something to represent the predicate
 			}
 			if(resource.getURI() != null) { //if there is no label and this is not a blank node resource
 				if(property != null && !hasPredicateToken) //if we had a property but no predicate representation
-					stringBuffer.append(':'); //append a colon to separate the property from the rest
+					stringBuilder.append(':'); //append a colon to separate the property from the rest
 				if(hasPredicateToken) //if we had something to represent the predicate
-					stringBuffer.append(' '); //append a space to separate the rest
-				stringBuffer.append('[').append(getXMLGenerator().getLabel(resource.getURI())).append(']'); //append "[referenceURI]" label
+					stringBuilder.append(' '); //append a space to separate the rest
+				stringBuilder.append('[').append(getXMLGenerator().getLabel(resource.getURI())).append(']'); //append "[referenceURI]" label
 				hasPredicateToken = true; //show that we have something to represent the predicate
 			}
 			final RDFObject literalValue = RDFResources.getValue(resource); //get the rdf:value property value, if there is one
 			if(literalValue instanceof RDFLiteral) { //if this resource has a literal value
 				if(property != null && !hasPredicateToken) //if we had a property but no predicate representation
-					stringBuffer.append(':'); //append a colon to separate the property from the rest
+					stringBuilder.append(':'); //append a colon to separate the property from the rest
 				if(hasPredicateToken) //if we had something to represent the predicate
-					stringBuffer.append(' '); //append a space to separate the rest
-				stringBuffer.append('{').append(((RDFLiteral)literalValue).getLexicalForm()).append('}'); //append "{lexicalForm}" label
+					stringBuilder.append(' '); //append a space to separate the rest
+				stringBuilder.append('{').append(((RDFLiteral)literalValue).getLexicalForm()).append('}'); //append "{lexicalForm}" label
 				hasPredicateToken = true; //show that we have something to represent the predicate				
 			}
-			return stringBuffer.toString(); //return the resource string we constructed
+			return stringBuilder.toString(); //return the resource string we constructed
 		} else if(userObject instanceof RDFLiteral) { //if we're representing a literal
 			final RDFLiteral literal = (RDFLiteral)userObject; //cast the user oject to an RDF literal
 			if(property != null) //if we had a property
-				stringBuffer.append(':').append(' '); //append ": " to separate the property from the literal
-			stringBuffer.append('"').append(literal.getLexicalForm()).append('"'); //append the literal value in quotes
-			return stringBuffer.toString(); //return the literal string we constructed
+				stringBuilder.append(':').append(' '); //append ": " to separate the property from the literal
+			stringBuilder.append('"').append(literal.getLexicalForm()).append('"'); //append the literal value in quotes
+			return stringBuilder.toString(); //return the literal string we constructed
 		} else
 			//if we're representing neither a resource nor a literal (this should logically never happen)
 			return super.toString(); //return the default string version
