@@ -45,11 +45,11 @@ public class XMLAttribute extends XMLNamedObject {
 
 	/** @return A string representation of the XML attribute in the form (namespace) qname="value". */
 	public String toString() {
-		final StringBuffer stringBuffer = new StringBuffer(); //create a new string buffer
+		final StringBuilder stringBuilder = new StringBuilder(); //create a new string buffer
 		if(getNamespaceURI() != null) { //if we have a namespace
-			stringBuffer.append('(').append(getNamespaceURI()).append(')').append(' '); //append the namespace if there is one
+			stringBuilder.append('(').append(getNamespaceURI()).append(')').append(' '); //append the namespace if there is one
 		}
-		stringBuffer.append(getQName()).append('=').append('"').append(getValue()).append('"');
-		return stringBuffer.toString(); //return the value we constructed
+		stringBuilder.append(getQName()).append('=').append('"').append(getValue()).append('"');
+		return stringBuilder.toString(); //return the value we constructed
 	}
 }

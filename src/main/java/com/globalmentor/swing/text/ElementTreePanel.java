@@ -86,7 +86,7 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
 				String asString;
 
 				if(as != null) {
-					StringBuffer retBuffer = new StringBuffer("[");
+					StringBuilder retBuffer = new StringBuilder("[");
 					Enumeration names = as.getAttributeNames();
 
 					while(names.hasMoreElements()) {

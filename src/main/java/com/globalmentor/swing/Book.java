@@ -983,14 +983,14 @@ public class Book extends ToolStatusPanel implements PageListener, AdjustmentLis
 					statusSlider.setMaximum(pageCount);  //show how many pages there are
 					statusSlider.setValue(pageIndex+1);  //show which page we're on
 			*/
-			final StringBuffer toolTipTextStringBuffer = new StringBuffer("Page "); //construct a string with the current page number TODO i18n
-			toolTipTextStringBuffer.append(pageIndex + 1); //add the page number to the string
+			final StringBuilder toolTipTextStringBuilder = new StringBuilder("Page "); //construct a string with the current page number TODO i18n
+			toolTipTextStringBuilder.append(pageIndex + 1); //add the page number to the string
 			if(displayPageCount > 1) { //if there are more than one page being shown
-				toolTipTextStringBuffer.append('-'); //a separator
-				toolTipTextStringBuffer.append(pageIndex + displayPageCount <= pageCount ? pageIndex + displayPageCount : pageCount); //add the last page number in the range to the string
+				toolTipTextStringBuilder.append('-'); //a separator
+				toolTipTextStringBuilder.append(pageIndex + displayPageCount <= pageCount ? pageIndex + displayPageCount : pageCount); //add the last page number in the range to the string
 			}
-			scrollBar.setToolTipText(toolTipTextStringBuffer.toString()); //add the tooltip text showing the page number
-			//TODO *fix		statusSlider.setToolTipText(toolTipTextStringBuffer.toString());  //add the tooltip text showing the page number
+			scrollBar.setToolTipText(toolTipTextStringBuilder.toString()); //add the tooltip text showing the page number
+			//TODO *fix		statusSlider.setToolTipText(toolTipTextStringBuilder.toString());  //add the tooltip text showing the page number
 		}
 		previousPageAction.setEnabled(pageIndex > 0); //we can only go back if the new page index is greater than zero
 		nextPageAction.setEnabled(pageIndex + displayPageCount < pageCount); //we can only go forwards if the turning the page would not be over the total number of pages

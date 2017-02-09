@@ -836,11 +836,11 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 			if(elementKind.equals(AbstractDocument.ContentElementName)) { //if this is is content
 				try {
 					//get the text this content Swing element represents
-					final StringBuffer stringBuffer = new StringBuffer(swingElement.getDocument().getText(swingElement.getStartOffset(),
+					final StringBuilder stringBuilder = new StringBuilder(swingElement.getDocument().getText(swingElement.getStartOffset(),
 							swingElement.getEndOffset() - swingElement.getStartOffset()));
 					//remove every instance of the artificial end-of-block-element character, as well as any hard return that the user might have entered during editing
-					StringBuffers.removeEveryChar(stringBuffer, XMLDocument.ELEMENT_END_STRING + '\n');
-					return xmlDocument.createTextNode(stringBuffer.toString()); //create a text node with the content and return the node
+					StringBuilders.removeEveryChar(stringBuilder, XMLDocument.ELEMENT_END_STRING + '\n');
+					return xmlDocument.createTextNode(stringBuilder.toString()); //create a text node with the content and return the node
 				} catch(BadLocationException badLocationException) { //in the unlikely event that we try to access a bad location
 					throw new AssertionError(badLocationException); //report an error
 				}
@@ -1237,21 +1237,21 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 				textAttributeSet = simpleAttributeSet; //use the default atribute set we created
 			}
 			//	TODO del Log.trace("inserting text data: \""+node.getNodeValue()+"\"");  //TODO del
-			final StringBuffer textStringBuffer = new StringBuffer(text); //TODO testing
-			if(textStringBuffer.length() > 0) { //if there is actually content (don't add empty text)
-				//	TODO del Log.trace("before collapsing whitespace: ", textStringBuffer);  //TODO del
+			final StringBuilder textStringBuilder = new StringBuilder(text); //TODO testing
+			if(textStringBuilder.length() > 0) { //if there is actually content (don't add empty text)
+				//	TODO del Log.trace("before collapsing whitespace: ", textStringBuilder);  //TODO del
 
-				StringBuffers.collapse(textStringBuffer, Characters.WHITESPACE_CHARACTERS, " "); //TODO testing
-				//	TODO del Log.trace("after collapsing whitespace: ", textStringBuffer);  //TODO del
+				StringBuilders.collapse(textStringBuilder, Characters.WHITESPACE_CHARACTERS, " "); //TODO testing
+				//	TODO del Log.trace("after collapsing whitespace: ", textStringBuilder);  //TODO del
 				//	TODO del Log.trace("Adding text with attributes: ", contentAttributeSet);	//TODO del
-				//	TODO fix textStringBuffer.append(CharacterConstants.WORD_JOINER_CHAR);	//TODO testing
-				//	TODO fix textStringBuffer.append(CharacterConstants.ZERO_WIDTH_NO_BREAK_SPACE_CHAR);	//TODO testing
-				//	TODO fix textStringBuffer.append(ELEMENT_END_CHAR);	//put a dummy character at the end of the element so that caret positioning will work correctly at the end of block views
+				//	TODO fix textStringBuilder.append(CharacterConstants.WORD_JOINER_CHAR);	//TODO testing
+				//	TODO fix textStringBuilder.append(CharacterConstants.ZERO_WIDTH_NO_BREAK_SPACE_CHAR);	//TODO testing
+				//	TODO fix textStringBuilder.append(ELEMENT_END_CHAR);	//put a dummy character at the end of the element so that caret positioning will work correctly at the end of block views
 
 				//	TODO del	if(node.getParentNode()!=null && "null".equals(XMLStyleUtilities.getXMLElementLocalName(attributeSet.getResolveParent())))
 				/*TODO fix
 							if(node.getParentNode()!=null && "div".equals(node.getParentNode().getLocalName())) {	//TODO testing; fix
-				textStringBuffer.append('\n');	//TODO testing
+				textStringBuilder.append('\n');	//TODO testing
 								
 							}
 				*/
@@ -1263,12 +1263,12 @@ public class XMLEditorKit extends BasicStyledEditorKit {
 						//see if the element is inline (text is always inline
 						final boolean isInline = CSS.isDisplayInline(cssStyle);
 						if(!isInline) {
-							textStringBuffer.append('\n'); //TODO testing
+							textStringBuilder.append('\n'); //TODO testing
 						}
 					}
 				}
 
-				final String content = textStringBuffer.toString(); //convert the string buffer to a string
+				final String content = textStringBuilder.toString(); //convert the string buffer to a string
 				elementSpecList.add(new DefaultStyledDocument.ElementSpec(textAttributeSet, DefaultStyledDocument.ElementSpec.ContentType, content.toCharArray(), 0,
 						content.length()));
 			}

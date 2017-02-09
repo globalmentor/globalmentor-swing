@@ -39,19 +39,19 @@ public class AttributeSets //TODO do we really want this class with a Styles cla
 	 */
 	public static String getAttributeSetString(final AttributeSet attributeSet) {
 		if(attributeSet != null) { //if a valid attribute set was passed
-			final StringBuffer stringBuffer = new StringBuffer("["); //create a new string buffer to hold the string informaiton
+			final StringBuilder stringBuilder = new StringBuilder("["); //create a new string buffer to hold the string informaiton
 			final Enumeration names = attributeSet.getAttributeNames(); //get the enumeration of names
 			while(names.hasMoreElements()) { //while there are more names
 				final Object nextName = names.nextElement(); //get the next name
 				if(nextName != StyleConstants.ResolveAttribute) {
-					stringBuffer.append(" ");
-					stringBuffer.append(nextName);
-					stringBuffer.append("=");
-					stringBuffer.append(attributeSet.getAttribute(nextName));
+					stringBuilder.append(" ");
+					stringBuilder.append(nextName);
+					stringBuilder.append("=");
+					stringBuilder.append(attributeSet.getAttribute(nextName));
 				}
 			}
-			stringBuffer.append(" ]");
-			return stringBuffer.toString(); //return the string buffer as a string
+			stringBuilder.append(" ]");
+			return stringBuilder.toString(); //return the string buffer as a string
 		} else
 			//if valid attribute set was returned
 			return ""; //return an empty string

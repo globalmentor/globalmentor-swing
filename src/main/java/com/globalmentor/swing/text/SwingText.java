@@ -178,12 +178,12 @@ public class SwingText {
 			final Element[] elementBuffer=new Element[1]; //create an element buffer for this one element
 			swingElementBuffer[0]=element; //place the leaf element in the buffer
 			parentElement.replace(index, 0, elementBuffer); //insert the element into the parent
-
-
+	
+	
 			final int insertBeginPos=element
-
+	
 							final LeafElement swingLeafElement=(LeafElement)createLeafElement(swingParentElement, contentAttributeSet, oldLength-1, oldLength+textStringBuffer.length()-1);  //TODO testing
-
+	
 						  return swingLeafElement;  //TODO testing
 	/*TODO fix
 							final Element[] swingElementBuffer=new Element[1]; //create an element buffer for this one element
@@ -191,7 +191,7 @@ public class SwingText {
 							final int siblingCount=swingParentElement.getChildCount(); //find out how many children the parent already has
 	Log.trace("text sibling count: ", siblingCount);  //TODO del
 							swingParentElement.replace(siblingCount, 0, swingElementBuffer); //place the leaf element in the parent
-
+	
 	*/
 
 }
